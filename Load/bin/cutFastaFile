@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+#  
+#  Program to read DNA sequences from a fasta file,
+#  and save them as individual files.
+#
+#  Les Klimczak 7/14/98
+
+if (@ARGV < 1) {
+        print "usage: cut_fasta.pl dna_fasta_file\n";
+        die;
+}
+
+$dir = @ARGV[1];
+
+$dnaseq_lib = shift;
+
+$| = 1;                         # forces immediate prints into files rather than the buffer.
+
+open (SOURCE, $dnaseq_lib);             # opens the file of sequences (sequence library)
+
+# writes sequence file into hash with Locus# or Cluster# as keys
+
+while (<SOURCE>){
+#Ed Comment 8/26/04 -Spooled data from GUS has Extra line breaks.  May need to 
+#chop lines and add a carriage return only before and after the occurance of
+#each name, or else we may need a clean-GUS-FASTA script
+  if (/^\>(\S+).*$/){
+    $key = "$1";
+  } else {
+    $sequences{$key} .= $_;
+  }
+}
+close SOURCE;
+
+foreach $key (keys %sequences) {
+  open (OUTPUT, ">$dir/$key");
+  print (OUTPUT ">$key\n");
+  print (OUTPUT "$sequences{$key}\n");
+  close OUTPUT;
+}

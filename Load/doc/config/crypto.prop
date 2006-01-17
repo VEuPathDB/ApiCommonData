@@ -1,0 +1,34 @@
+# 16 May 2005
+
+#stopBefore=load_nrdb_2005-03-10
+
+downloadDir=/u/jkissing/mheiges/pipeline/downloads
+pipelineDir=/u/jkissing/mheiges/pipeline/
+
+project_name=gusproject
+
+commit="--commit"
+#commit=""
+dbcommit="--commit"
+
+taxonomy.restart=1
+
+dbest.restart=1
+dbest.password=notused
+
+dbest.login=mheiges
+dbest.dbi=""
+dbest.dblink=@CDEV1
+
+nrdb.tempTableLogin=G
+nrdb.tempTablePassword=P
+nrdb.tempTableDbi="dbi:Oracle:host=hostname.edu;sid=gustest4"
+#nrdb.delete=--delete
+nrdb.delete=""
+nrdb.insert=--plugin
+# set to "" if tempTable has already been loaded
+nrdb.tempTableCreate=--makeTemp
+nrdb.restart=0
+
+# cryptoB sres.externaldatabaserelease.external_database_release_id
+nrdb.sourceDB=5:gnl,9:pdb,8:dbj,4:tpd,11:emb,12:sp,3:pir,14144:genpept,1:ref,2:gb,6:tpe,13:prf,7:bbs,10:pat,14143:tpg

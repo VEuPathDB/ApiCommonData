@@ -1,0 +1,56 @@
+Apache Ant Mystery Error Solved
+
+Today I went around with a little problem with Apache Ant. It had me stumped for a while, so I thought I would share my gained wisdom.
+
+I was trying to build the latest beta release of DSpace, which involves running ant. For some reason, I was getting some pretty weird errors, so I checked and found out that I was using an older version of Ant (1.5.2, I think). The latest version is 1.6.1, so I thought I would upgrade and see whether that fixed the problem.
+
+Well, not upgrade, exactly, since earlier today I had just installed RedHat Linux Enterprise WS. It comes pre-installed with Ant, and I didn't want to delete that copy. However, it is very common on Linux systems to run multiple versions of a program (just watch the symlinks and your $PATH!), so I was not worried.
+
+I downloaded and installed the binary version of 1.6.1 from Apache, but it produced a segfault every time I ran ant. I never did figure that one out, but no problem, since I could compile my own from source, right?
+
+Yeah, great thinking. After it bootstrapped itself a couple of times during the build, I got this message:
+
+    Exception in thread "main " java.lang.NoClassDefFoundError: org/apache/tools/ant/launch/Launcher
+
+I tried everything I could think of, searching the Internet for clues. I munged my $CLASSPATH, my $ANT_HOME, my $PATH, and anything else I could think of. All the suggestions from the 'net were coming up a dead end. Or so I thought...
+
+I found this message describing the same problem and what seemed like an odd solution. On RedHat Enterprise, you may have the following directory: /usr/share/ant If you do, removing/renaming the directory will solve the problem.
+
+Apparently, this type of problem happens when trying to run two versions of Ant concurrently on one system. Not everyone has these problems, and for some a different fix solves the problem. But for me, this did the trick: after renaming the directory, the new version of Ant compiled and DSpace compiled as well.
+
+Some questions do still remain:
+
+   1. Why did the compilation of DSpace with the included version of Ant fail initially?
+   2. Why did the binary version of 1.6.1 downloaded from Apache fail with a segfault continually?
+   3. What is the root cause of the error message on systems with the /usr/share/ant problem? The directory has a README file that specifically mentions that the JAR file inside the directory has nothing to do with the main system Ant, and so removal should certainly not interfere.
+   4. Why would this directory and its included JAR file have any effect when running a different version of Ant that could not possibly reference it (that is, all $PATH statements referenced a new version, etc.)? It acted almost as if it were resident in memory or something equally bizarre that could not possibly have been the case.
+   5. Why does this problem manifest itself during attempted installation of DSpace as the following error that seems to indicate missing classes from the JDK (which are in fact not missing):
+
+          [javac] Compiling 132 source files to /home/asnagy/dspace-1_2-beta2-source/build/classes
+          [javac] /home/asnagy/dspace-1_2-beta2-source/src/org/dspace/app/mediafilter/HTMLFilter.java:49: error: Class or interface `javax.swing.text.ChangedCharSetException" not
+          found in import.
+          [javac] import javax.swing.text.ChangedCharSetException;
+          [javac] ^
+          [javac] /home/asnagy/dspace-1_2-beta2-source/src/org/dspace/app/mediafilter/HTMLFilt
+          er.java:125: error: Type `HTMLEditorKit" not found in the declaration of the local
+          variable `kit".
+          [javac] HTMLEditorKit kit = new HTMLEditorKit();
+          [javac] ^
+          [javac] /home/asnagy/dspace-1_2-beta2-source/src/org/dspace/app/mediafilter/JPEGFilt
+          er.java:52: error: Class or interface `javax.imageio.ImageIO" not found in import.
+          [javac] import javax.imageio.ImageIO;
+          [javac] ^
+          [javac] 3 errors
+
+   6. What will happen to my RedHat system when I use the auto-update feature and it wants to patch Ant? I guess if I notice a recurrence of this problem, I'll know where to look, but that's irritating.
+
+One option, I suppose, is simply to remove the default Ant package that comes with RedHat Enterprise. To me that seems harsh. Posted by Jason on June 30, 2004 08:04 PM | TrackBack | Links to this post
+Comments
+
+This made my day. Thank you for sharing...
+Posted by: at July 14, 2004 06:01 PM
+
+I had this identical problem on Fedora2. Simply renaming the /usr/share/ant obviously takes it out of the search path and allows you to use your own install of ant.
+
+Note that there are many problems like this, for instance with MySQL i had a very similar problem... it's always an interesting point to keep in mind.
+Posted by: Gerry at August 6, 2004 11:40 AM 

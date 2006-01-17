@@ -1,0 +1,130 @@
+#!/usr/bin/perl
+
+# Wrapper around SignalP (tested with release 3.0). Can iterate over subsets 
+# of the input FASTA file to accomodate SignalP's limit of 2,000 sequences 
+# per invocation. The results are pooled into a single file and validated
+# for completeness by comparing the number of results vs number of input
+# sequences.
+#
+# Improved prediction of signal peptides: SignalP 3.0.
+# Jannick Dyrl¿v Bendtsen, Henrik Nielsen, Gunnar von Heijne and S¿ren Brunak.
+# J. Mol. Biol., 340:783-795, 2004.
+#
+# mheiges@uga.edu 11 August 2005
+
+use strict;
+use CBIL::Bio::FastaFile;
+use Getopt::Long;
+use File::Basename; 
+sub fail;
+sub usage;
+sub cleanup;
+sub validResults;
+
+$SIG{INT} = sub {
+    print "Interrupted by user. Cleaning up and exiting...\n";
+    cleanup;
+    exit(1);
+};
+
+
+my $this = basename($0);
+
+my ($seqFile, $taskSize, $binPath, $outFile, $options, $nice, $tempDir);
+$taskSize = 2000;
+$outFile = "$this.out";
+$tempDir = "/tmp";
+$nice = 1;
+GetOptions('seqFile=s'   => \$seqFile, 
+           'taskSize=i'  => \$taskSize,
+           'outFile=s'   => \$outFile,
+           'binPath=s'   => \$binPath,
+           'options=s'   => \$options,
+           'nice!'       => \$nice,
+           'tempDir'     => \$tempDir
+            );
+
+usage if !($seqFile and $binPath and $options);
+
+my $tmpSeqSubset = "$tempDir/${$}_seqsubset.fsa";
+my $tmpResult = "$tempDir/${$}_tmpSigP.txt";
+
+die "\nResult file '$outFile' already exists. Cowardly refusing to overwrite it. Exiting.\n" if -e $outFile;
+
+print "Creating index for $seqFile\n";
+my $fastaFile = CBIL::Bio::FastaFile->new($seqFile);
+my $seqCount = $fastaFile->getCount();
+
+print "analyzing $seqCount sequences\n";
+for (my $start = 0; $start < $fastaFile->getCount(); $start += $taskSize) {
+    cleanup; # remove any pieces from a previous script run or loop
+    
+    my $end = ($start + $taskSize < $seqCount) ? 
+              ($start + $taskSize) : $seqCount;
+             
+    $fastaFile->writeSeqsToFile($start, $end, $tmpSeqSubset);
+    
+    my $cmd = ($nice ? 'nice ': '') . 
+              "$binPath $options -d $tmpResult $tmpSeqSubset";
+    
+    print "running '$cmd' on sequences $start to $end \n";
+    qx($cmd);
+    
+    my $removeHeader = "|grep -e '^[^\s*#]'" if ($start > 0);
+    (-e $tmpResult) ? qx(cat $tmpResult $removeHeader >> $outFile) : 
+                    fail "No results for sequences $start to $end. Exiting.\n";
+}
+
+
+unless (validResults) { fail "VALIDATION WARNING: Number of signalP results in '$outFile' and number of sequences in '$seqFile' differ.\n"; }
+print "DONE: results saved to '$outFile'\n";
+
+cleanup;
+exit;
+
+##########################################
+
+sub validResults {
+    open(F, $outFile) or fail "Can not open results file '$outFile' for validation.\n";
+    my $ct;
+    do { $ct++ if m/^[^\s*#]/ } while (<F>);
+    close F;
+    return $ct == $seqCount;
+}
+
+sub cleanup {
+    unlink $tmpSeqSubset 
+        or warn "could not remove temp file: '$tmpSeqSubset'" 
+        if (-e $tmpSeqSubset);
+        
+    unlink $tmpResult 
+        or warn "could not remove temp file: '$tmpResult'" 
+        if (-e $tmpResult);
+}
+
+sub fail {
+    my ($msg) = @_;
+    print STDOUT "\n$msg";
+    cleanup;
+    exit;
+}
+
+sub usage {
+    die "
+    Runs SignalP on a FASTA file of protein sequences. 
+    Since SignalP 3.0 has a limit of 2,000 sequences per invocation, 
+    $this can run SignalP on subsets of input sequences 
+    and pool the results. The number of results vs number of sequences
+    intput is compared to validate completeness.
+    
+    Usage: $this [args]\n
+    args:
+    --seqFile=<path to protein FASTA file> (required)
+    --binPath=<path to SignalP executable> (required)
+    --options=<SignalP command options, excluding '-d'> (required)
+    --nice|no-nice <run with lower processor scheduling priority?> (default: nice)
+    --taskSize=<no. seqs per interation> (default: 2000)
+    --outFile=<name of output> (default: $this.out)
+    --tempDir=<directory path to store temp files during execution> (default: /tmp)
+    \n";
+}

@@ -1,0 +1,214 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use GUS::Pipeline::Manager;
+#use GUS::Pipeline::MakeTaskDirs;
+use ApiComplexa::DataLoad::MakeTaskDirs;
+use GUS::Pipeline::NfsCluster;
+use GUS::Pipeline::SshCluster;
+use CBIL::Util::PropertySet;
+use CBIL::Util::GenomeDir;
+use File::Basename;
+
+# the "Steps" module contains all the pipeline-step routines
+# that are called below.
+
+use ApiComplexa::DataLoad::Steps;
+
+$| = 1;
+umask 002;
+
+
+my $propertiesFile = $ARGV[0];
+
+&usage unless -e $propertiesFile;
+
+# [name, default (or null if reqd), comment]
+my @properties = 
+(
+ # properties required by Pipeline API  - incomplete, waiting for steps
+ ["blastmatrix.taskSize", "",  "number of seqs to process per blastmatrix subtask"],
+ #["blastsimilarity.params", "", "paramters for blastsimilarity"],
+ ["blastsimilarity.taskSize", "",  "number of seqs to process per blastsimilarity subtask"],
+ ["buildDir",   "",  "root of the build's directory tree"],
+ ["cap4Dir", "", "directory containing executable cap4"],
+ ["clusterServer", "",  "full name of cluster server"],
+ ["contigDbName", "", "sres.externaldatabase.name for contigs"],
+ ["contigDbRlsVer", "", "sres.externaldatabaserelease.version for contigs"],
+ ["externalDbDir", "", "directory for downloading data from external databases"],
+ ["fileOfRepeats", "", "repeat file for use by repeatmasker"],
+# ["gb_db_rel_id", "", "genbank external_database_release_id"],
+ ["genusNickname", "", "e.g Crypto"],
+ ["gusConfigFile",           "",  ""],
+ ["includeSubspecies", "", "yes or no, get a list of taxon_ids for the subspecies of the given taxon_id(ncbi_tax_id)"],
+ ["intermedCluster.length",  "",  "min length cut-off for clustering algorithm"],
+ ["intermedCluster.percent",  "",  "min percent identity cutoff for clustering algorithm"],
+ ["intermedCluster.logbase",  "",  ""],
+ ["intermedCluster.consistentEnds",  "",  "requirement for consistent ends, yes or no"],
+ ["intermedCluster.cliqueSzArray",  "",  ""],
+ ["intermedCluster.logbaseArray",  "",  ""],
+ ["gusConfigFile",  "",  "gus configuration file"],
+ ["loadContigs-nrdbRestart",  "",  "algorithm_invocation_id(s) of previous starts, for restart of BLAST similarity loading plugin"],
+ ["nrdbDbName" , "","the externaldatabase.name for nrdb"],
+ ["nrdbDbRlsVer" , "","the externaldatabaserelease.version for the current nrdb"],
+ ["nodePath",             "",  "full path of scratch dir on cluster node"],
+ ["phrapDir",             "",  "full path of directory containing phrap software"],
+ ["projectId",             "",  "project_id from core.projectInfo"],
+ ["release",   "",  "build release number"],
+ ["repeatmask.dangleMax", "","option for trimDangling in repeatMasker"],
+ ["repeatmask.options",   "",  "number of seqs to process per blastmatrix subtask"],
+ ["repeatmask.path",      "",  "path on node of repeatmask executable"],
+ ["repeatmask.taskSize",  "",  "number of seqs to process per repeatmask subtask"],
+ ["serverPath", "",  "full path of update dir on cluster server"],
+ ["speciesNickname", "",  "list eg Cparvum,Chominis"],
+ ["stopBefore",   "none",  "the step to stop before.  uses the signal name"],
+ ["taskSize",  "",  "number of seqs to process per subtask"],
+ ["ncbiTaxId", "", "tax_id from NCBI taxonomy db"],
+ ["testNextPlugin", "false", "'true' to run in no-commit mode the first plugin not yet done and then exit"],
+ ["wuBlastBinPathCluster",         "",  "path of wu blast bin dir on Liniac"]
+ ); 
+
+my $propertySet  = CBIL::Util::PropertySet->new($propertiesFile, \@properties, 1);
+
+my $buildDir = $propertySet->getProp('buildDir');
+my $release = $propertySet->getProp('release');
+my $genusNickname = $propertySet->getProp('genusNickname');
+my $buildName = "$release/analysis_pipeline/$genusNickname";
+my $pipelineDir = "$buildDir/$buildName";
+
+##########################  The Pipeline  ##########################
+
+my $cluster;
+if ($propertySet->getProp('clusterServer') ne "none") {
+  $cluster = GUS::Pipeline::SshCluster->new($propertySet->getProp('clusterServer'),
+					  $propertySet->getProp('clusterUser') );
+} else {
+  $cluster = GUS::Pipeline::NfsCluster->new();
+}
+
+my $mgr = GUS::Pipeline::Manager->new($pipelineDir, $propertySet, 
+				      $propertiesFile, $cluster, 
+				      $propertySet->getProp('testNextPlugin'));
+
+
+$mgr->{buildName} = $buildName;
+$mgr->{pipelineDir} = $pipelineDir;
+$mgr->{propertiesFile} = $propertiesFile;
+$mgr->{propertySet} = $propertySet;
+
+my $taxonHsh = &getTaxonIdFromTaxId($mgr);
+$mgr->{taxonHsh} = $taxonHsh;
+
+my $contigDbRlsHsh = &getContigDbRlsHsh($mgr);
+$mgr->{contigDbRlsHsh} = $contigDbRlsHsh;
+
+&createPipelineDir($mgr); # signal createDir
+&createBlastMatrixDir($mgr,"IntermedTranscriptCons", "IntermedTranscriptCons");
+&createBlastMatrixDir($mgr,"IntermedTranscriptCons", "UnallignededTranscripts");
+&createBlastMatrixDir($mgr,"UnallignededTranscripts", "UnallignededTranscripts");
+&createSimilarityDir($mgr,"Contigs","nrdb","(\d+)","matrix=BLOSUM62 V=100 B=1000000 -hspmax=1000000 W=4 T=18 -gi E=1e-3 -wordmask=seg -hspsepQmax=50000","blastx");
+&createSimilarityDir($mgr,"annotatedProteins","nrdb","(\d+)","matrix=BLOSUM62  -topcomboN=1 V=10 B=10 W=4 T=18 -span1 -gi E=1e-3 -wordmask=seg","blastp");
+
+&createRepeatMaskDir($mgr,"NewTranscripts");
+&createRepeatMaskDir($mgr,"IntermedTranscriptCons");
+&createRepeatMaskDir($mgr,"UnalignedTranscripts");
+&createRepeatMaskDir($mgr,"FinalTranscriptCons");
+&createGenomeDir($mgr,"NewTranscripts", "Contigs");   # signal createGenomeDir
+&createGenomeDir($mgr,"finalTranscriptCons", "Contigs");
+
+&copyPipelineDirToComputeCluster($mgr); # signal dir2cluster
+&extractContigs($mgr);    # signal extractContigs
+&concatContigFiles($mgr);
+&copyFilesToComputeCluster($mgr,"*Contigs");
+
+&extractNRDB($mgr);   # signal ${name}Extract
+&copyFilesToComputeCluster($mgr,"nrdb");  # signal nrdbToCluster
+&startProteinBlastOnComputeCluster($mgr,"contigs");  # signal blastnrdb
+
+&extractAnnotatedProteins($mgr);
+&copyFilesToComputeCluster($mgr,"annotatedProteins");
+&startProteinBlastOnComputeCluster($mgr,"annotatedProteins");
+ 
+&copyFilesFromComputeCluster($mgr,"Contigs-nrdb","similarity"); # signal copycontigs-nrdbResultsFromCluster
+&loadProteinBlast($mgr, "Contigs-nrdb","DoTS::ExternalAASequence"); # signal loadSims_contigs-nrdb
+ 
+&copyFilesFromComputeCluster($mgr,"annotatedProteins-nrdb","similarity");
+&loadProteinBlast($mgr, "annotatedProteins-nrdb","DoTS::TranslatedAASequence");
+
+&makeTranscriptSeqs($mgr);
+&extractTranscriptSeqs($mgr,"NewTranscripts");
+
+&copyFilesToComputeCluster($mgr,"*NewTranscripts"); # signal CparvumNewTranscripts; initial assembly - assuming updates - using genomic alignments
+&startTranscriptAlignToContigs($mgr,"NewTranscripts"); # signal NewTranscriptsAlignToContigs
+
+&copyFilesFromComputeCluster($mgr,"CparvumNewTranscripts","repeatmask"); # signal copyNewTranscriptsResultsFromCluster
+&copyFilesFromComputeCluster($mgr,"CparvumNewTranscripts-Contigs","genome"); # signal copyNewTranscripts-contigsResultsFromCluster
+&loadContigAlignments($mgr, "NewTranscripts", "Contigs");
+
+&clusterByContigAlign($mgr, "initial");
+&splitCluster("initial", $mgr);  # signal initialSplitCluster
+&assembleTranscripts("", $propertySet->getProp('reassemble'), "initial", $mgr); # signal reassembleAssemble
+&reassembleTranscripts("initial", $mgr); # signal initialReassemble
+&deleteAssembliesWithNoTranscripts($mgr, "initial");
+
+&extractAssemblies($mgr,"intermedTranscriptCons");          # signal intermedTranscriptConsExtract; final assembly 
+&copyFilesToComputeCluster($mgr,"intermedTranscriptCons"); # signal intermedTranscriptConsToCluster
+&extractTranscriptSeqs($mgr,"unalignededTranscripts");
+&copyFilesToComputeCluster($mgr,"unalignedtranscripts"); # signal unalignedtranscriptsToCluster
+&startTranscriptMatrixOnComputeCluster($mgr,"intermed");
+&copyFilesFromComputeCluster($mgr,"intermedTranscriptCons","matrix"); # signal copy${name}ResultsFromCluster
+&clusterByBlastSim($mgr,"intermed","intermed-intermed","unaligned-unaligned","intermed-unaligned");
+&splitCluster($mgr,"intermed"); # signal intermedSplitCluster
+&assembleTranscripts("--assemble_old", "no", "intermed", $mgr);
+&reassembleTranscripts("intermed", $mgr); # signal intermedReassemble
+&deleteAssembliesWithNoTranscripts($mgr, "intermed");
+
+&extractAssemblies($mgr,"finalTranscriptCons"); # signal finalTranscriptConsExtract; extract final assemblies, map to contigs, load results into db
+&copyFilesToComputeCluster($mgr,"finalTranscriptCons"); # signal finalTranscriptConsToCluster
+&startTranscriptAlignToContigs($mgr,"finalTranscriptCons"); # signal finalTranscriptConsAlignToContigs
+&copyFilesFromComputeCluster($mgr,"finalTranscriptCons-contigs", "genome"); # signal copyfinalTranscriptCons-contigsResultsFromCluster
+&loadContigAlignments($mgr, "finalTranscripts", "contigs"); 
+
+&extractAnnotatedProteins($mgr, "SignalP", "70");
+&copyFilesToComputeCluster($mgr,"SignalP"); # signal unalignedtranscriptsToCluster
+&runAAFeaturePredictor($mgr, "SignalP","signalp -t euk","/usr/local/jk/signalp-3.0/")
+&copyFilesFromComputeCluster($mgr,"SignalP"); # signal copy${name}ResultsFromCluster
+&loadSignalPData($mgr, "SignalP")
+
+&extractAnnotatedProteins($mgr, "TMHmm");
+&copyFilesToComputeCluster($mgr,"TMHmm"); # signal unalignedtranscriptsToCluster
+&runAAFeaturePredictor($mgr, "TMHmm", "tmhmm -short", "/usr/local/TMHMM/bin/")
+&copyFilesFromComputeCluster($mgr,"TMHmm"); # signal copy${name}ResultsFromCluster
+&loadTMHmmData($mgr, "TMHmm");
+
+=cut   Mummer!
+&extractSingleTaxaAnnotatedProteins($mgr, "MMR", "Cryptosporidium parvum"); #NEED TO GENERATE PARVUM AND HOMINIS ONLY files
+&extractSingleTaxaAnnotatedProteins($mgr, "MMR", "Cryptosporidium hominis");
+&copyFilesToComputeCluster($mgr,"MMR");                              # YOU NEED TO MOVE BOTH PARVUM AND HOMINIS OVER
+&runRefAndQryAlgorithm($mgr, "MMR", "nucmer --prefix=ref_qry", "/usr/local/MUMmer/")
+                                 #/usr/local/MUMmer/nucmer --prefix=ref_qry C_parvum.fasta C_hominis.fasta >mummer.ou
+&copyFilesFromComputeCluster($mgr,"MMR"); # signal copy${name}ResultsFromCluster
+&loadMMRData($mgr, "MMR");
+=cut
+                                                                                                                             
+
+
+=cut   Pfam!
+#need to load Pfam-full.A in resourecs as well as MOST RECENT MODLES ONTO THE CLUSTER
+&extractAnnotatedProteins($mgr, "Pfam");
+&copyFilesToComputeCluster($mgr,"Pfam");
+&runAAFeaturePredictor($mgr, "Pfam", "hmmpfam -cut_ga -a 0 --acc Pfam_ls", "/usr/local/bin/")
+&copyFilesFromComputeCluster($mgr,"Pfam"); # signal copy${name}ResultsFromCluster
+&loadPfamData($mgr, "Pfam");
+=cut
+                                                                                                                             
+
+
+
+$mgr->goodbye("Pipeline complete!\n");
+
+
+
+
+

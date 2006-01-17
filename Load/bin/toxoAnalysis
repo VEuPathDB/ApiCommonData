@@ -1,0 +1,139 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use GUS::Pipeline::Manager;
+use ApiComplexa::DataLoad::MakeTaskDirs;
+#use GUS::Pipeline::MakeTaskDirs;
+use GUS::Pipeline::NfsCluster;
+use GUS::Pipeline::SshCluster;
+use CBIL::Util::PropertySet;
+use CBIL::Util::GenomeDir;
+use File::Basename;
+
+# the "Steps" module contains all the pipeline-step routines
+# that are called below.
+
+use ApiComplexa::DataLoad::Steps;
+
+$| = 1;
+umask 002;
+
+
+my $propertiesFile = $ARGV[0];
+
+&usage unless -e $propertiesFile;
+
+# [name, default (or null if reqd), comment]
+my @properties = 
+(
+ # properties required by Pipeline API  - incomplete, waiting for steps
+ ["buildDir",   "",  "root of the build's directory tree"],
+ ["clusterServer", "",  "full name of cluster server"],
+ ["contact", "", "comma delimited string name,first,last for entry into sres.contact"],
+ ["gusConfigFile",  "",  "gus configuration file"],
+ ["genusNickname", "", "e.g. toxo,crypto"],	
+ ["nodePath",             "",  "full path of scratch dir on cluster node"],
+ ["release",   "",  "build release number"],
+ ["serverPath", "",  "full path of update dir on cluster server"],
+ ["speciesNickname", "",  "eg Pvivax,mus,or hum"],
+ ["stopBefore",   "none",  "the step to stop before.  uses the signal name"],
+ ["ncbiTaxId", "", "tax_id from NCBI taxonomy db"],
+ ["nrdbDbName" , "","the externaldatabase.name for nrdb"],
+ ["nrdbDbRlsVer" , "","the externaldatabaserelease.version for the current nrdb"],
+ ["testNextPlugin", "false", "'true' to run in no-commit mode the first plugin not yet done and then exit"],
+ ["chromDbName", "","sres.externaldatabase.name for chromosomes"],
+ ["chromDbRlsVer", "","sres.externaldatabaserelease.version for chromosomes"], 	
+ ["SignalPDir",   "",  "Location of SignalP application"],
+ ["TMHmmDir",   "",  "Location of TM application"]
+); 
+
+my $propertySet  = CBIL::Util::PropertySet->new($propertiesFile, \@properties, 1);
+
+my $buildDir = $propertySet->getProp('buildDir');
+my $release = $propertySet->getProp('release');
+my $speciesNickname = $propertySet->getProp('speciesNickname');
+my $buildName = "$release/analysis_pipeline/$speciesNickname";
+my $pipelineDir = "$buildDir/$buildName";
+
+##########################  The Pipeline  ##########################
+
+my $cluster;
+if ($propertySet->getProp('clusterServer') ne "none") {
+  $cluster = GUS::Pipeline::SshCluster->new($propertySet->getProp('clusterServer'),
+					  $propertySet->getProp('clusterUser') );
+} else {
+  $cluster = GUS::Pipeline::NfsCluster->new();
+}
+
+my $mgr = GUS::Pipeline::Manager->new($pipelineDir, $propertySet, 
+				      $propertiesFile, $cluster, 
+				      $propertySet->getProp('testNextPlugin'));
+
+$mgr->{buildName} = $buildName;
+
+$mgr->{pipelineDir} = $pipelineDir;
+
+$mgr->{propertiesFile} = $propertiesFile;
+
+$mgr->{propertySet} = $propertySet;
+
+my $taxonHsh = &getTaxonIdFromTaxId($mgr);
+
+$mgr->{taxonHsh} = $taxonHsh;
+
+&createPipelineDir($mgr); 
+
+&extractChroms($mgr,"Tgondii");
+
+$mgr->{sageTagArrays}=({Tgondii=>[{name=>"T. gondii 3p SAGE tags from M. White lab",ver=>1},{name=>"T. gondii 5p SAGE tags from M. White lab",ver=>1}]});
+
+&extractSageTags($mgr,"Tgondii");
+
+$mgr->{scaffolds}=({Tgondii=>[{name=>"T. gondii scaffolds",ver=>"2005-07-13"}]});
+                                                                                                                                
+&extractScaffolds($mgr,"Tgondii");
+
+&mapSageTagsToScaffolds($mgr,"Tgondii");
+
+&loadSageTagMap($mgr,"Tgondii");
+
+&extractNRDB($mgr);
+
+&createSimilarityDir($mgr,"TgondiiScaffolds","nrdb","(\\d+)","matrix=BLOSUM62 V=100 B=1000000 -hspmax=1000000 W=4 T=18 -gi E=1e-3 -wordmask=seg -hspsepQmax=50000 -span1","blastx");
+
+&copyPipelineDirToComputeCluster($mgr); 
+
+&copyFilesToComputeCluster($mgr,"TgondiiScaffolds");
+
+&copyFilesToComputeCluster($mgr,"nrdb");
+
+&startProteinBlastOnComputeCluster($mgr,"TgondiiScaffolds");
+
+&copyFilesFromComputeCluster($mgr,"TgondiiScaffolds-nrdb","similarity"); 
+
+&loadProteinBlast($mgr, "TgondiiScaffolds-nrdb","DoTS::ExternalNASequence", "DoTS::ExternalAASequence"); 
+
+&createSageTagNormFiles ($mgr,"T. gondii 3p SAGE tag frequencies",50000);
+
+&insertNormSageTagFreqs ($mgr,"T. gondii 3p SAGE tag frequencies");
+
+#BlastP on annotated-proteins
+#&extractAnnotatedProteins($mgr);
+#&copyFilesToComputeCluster($mgr,"annotatedProteins");
+#&startProteinBlastOnComputeCluster($mgr,"annotatedProteins");
+#&copyFilesFromComputeCluster($mgr,"annotatedProteins-nrdb","similarity");
+#&loadProteinBlast($mgr, "annotatedProteins-nrdb","DoTS::TranslatedAASequence");
+
+#SignalP on annotated-proteins
+#&runSignalP($mgr, "SignalP","annotatedProteins")
+#&loadSignalPData($mgr, "SignalP", "SignalP")
+
+#TMHmm on annotated-proteins
+#&runTMHmm($mgr, "TMHmm","annotatedProteins")
+#&loadTMHmmData($mgr, "TMHmm", "TMHmm.out", "TMHmm"); 
+
+
+
+$mgr->goodbye("Pipeline complete!\n");
+

@@ -1,0 +1,140 @@
+#!/usr/bin/perl
+
+# nice wrapper around TMHMM. Tested on TMHMM2.0c 
+# Runs TMHMM under 'nice' by default.
+# mheiges@uga.edu 11 August 2005
+
+use strict;
+use CBIL::Bio::FastaFile;
+use Getopt::Long;
+use File::Basename; 
+sub fail;
+sub usage;
+sub cleanup;
+sub validResults;
+
+$SIG{INT} = sub {
+    print "Interrupted by user. Cleaning up and exiting...\n";
+    cleanup;
+    exit(1);
+};
+
+
+my $this = basename($0);
+
+my ($seqFile, $binPath, $outFile, $nice, $basedir, $srcdir, 
+    $bindir, $libdir, $workdir, $html, $short, $plot, $v1);
+
+$outFile = "$this.out";
+#$workdir = '/tmp'; # plot graphics,if any, go here
+$nice = 1;
+# TMHMM's defaults:
+$plot = 1;       # Produce graphics
+
+GetOptions('seqFile=s'   => \$seqFile, 
+           'binPath=s'   => \$binPath,
+           'outFile=s'   => \$outFile,
+           'nice!'       => \$nice,
+           # tmhmm options:
+           'basedir=s'   => \$basedir,
+           'srcdir=s'    => \$srcdir,
+           'bindir=s'    => \$bindir,
+           'libdir=s'    => \$libdir,
+           'workdir=s'   => \$workdir,
+           'html!'       => \$html,
+           'short!'      => \$short,
+           'plot!'       => \$plot,
+           'v1!'         => \$v1
+            );
+
+usage if !($seqFile and $binPath);
+
+my $html_Opt = '-html' if $html;
+my $plot_Opt = '-noplot' if !$plot;
+my $short_Opt = '-short' if $short;
+my $v1_Opt = '-v1' if $v1;
+my $basedir_Opt = "-basedir $basedir" if $basedir;
+my $srcdir_Opt = "-srcdir $srcdir" if $srcdir;
+my $bindir_Opt = "-bindir $bindir" if $bindir;
+my $libdir_Opt = "-libdir $libdir" if $libdir;
+my $workdir_Opt = "-workdir $workdir" if $workdir;
+
+
+die "\nResult file '$outFile' already exists. Cowardly refusing to overwrite it. Exiting.\n" if -e $outFile;
+die "\nCan not find tmhmm at '$binPath'. Exiting.\n" if !-e $binPath;
+die "\nCan not find input sequence file '$seqFile'. Exiting.\n" if !-e $seqFile;
+
+print "Creating index for $seqFile\n";
+# if index already exists we may not have created it. won't delete it later.
+my $leaveIndex++ if -e "$seqFile.db"; 
+my $fastaFile = CBIL::Bio::FastaFile->new($seqFile);
+my $seqCount = $fastaFile->getCount();
+
+print "analyzing $seqCount sequences\n";
+
+my $cmd = ($nice ? 'nice ': '') .
+          "$binPath $html_Opt $plot_Opt $short_Opt " .
+          "$v1_Opt $basedir_Opt $srcdir_Opt "        .
+          "$bindir_Opt $libdir_Opt $workdir_Opt "    .
+          "$seqFile > $outFile";
+
+print "running '$cmd'\n";
+qx($cmd);
+
+unless (validResults) { fail "VALIDATION WARNING: Number of tmhmm results in '$outFile' and number of sequences in '$seqFile' differ.\n"; }
+print "DONE: results saved to '$outFile'\n";
+
+cleanup;
+exit;
+
+##########################################
+
+# validate short and long formats. either format may be wrapped in html.
+sub validResults {
+    open(F, $outFile) or fail "Can not open results file '$outFile' for validation.\n";
+    my $ct;
+    if ($short_Opt) {
+        do { $ct++ if m/len=\d+\s+ExpAA=\d+/ } while (<F>);
+    } else {
+        do { $ct++ if m/^#.*?Length: \d+\s*$/ } while (<F>);
+    }
+    close F;
+    return $ct == $seqCount;
+}
+
+sub cleanup {
+    unlink "$seqFile.db"  if -e "$seqFile.db"  && !$leaveIndex;
+    unlink "$seqFile.pag" if -e "$seqFile.pag" && !$leaveIndex;
+    unlink "$seqFile.dir" if -e "$seqFile.dir" && !$leaveIndex;
+}
+
+sub fail {
+    my ($msg) = @_;
+    print STDOUT "\n$msg";
+    cleanup;
+    exit;
+}
+
+sub usage {
+    die "
+    Runs TMHMM on a FASTA file of protein sequences. 
+    The number of results vs number of sequences
+    intput is compared to validate completeness.
+    
+    Usage: $this [args]\n
+    args:
+    --seqFile=<path to protein FASTA file> (required)
+    --binPath=<path to TMHMM executable> (required)
+    --nice|nonice <run with lower processor scheduling priority?> (default: nice)
+    --outFile=<name of output> (default: $this.out)
+    --workdir=<directory path to store graphics, if any> (default: .)
+    --basedir=<basis directory for TMHMM package (defaults to binPath directory)>
+    --srcdir=<script directory (default: basedir/bin)>
+    --bindir=<bin directory (default: basedir/bin)>
+    --libdir=<library directory (default: basedir/lib)>
+    --html=<produce HTML output (default: off)>
+    --short=<short output format (default: off)>
+    --plot=<produce graphics (default: on)>
+    --v1=<use old version 1 model (default: off)>
+    \n";
+}

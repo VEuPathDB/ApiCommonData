@@ -1,0 +1,94 @@
+#####################################
+# properties file for Crypto pipeline
+
+#stopBefore=blastnrdb 
+
+# I think the commit prop is being ignored
+commit = ""
+
+genusNickname=crypto
+speciesNickname=Cparvum,Chominis
+ncbiTaxId=Cparvum:5807,Chominis:237895  
+
+# speciesNickname:sres.externaldatabase.name
+contigDbName=Cparvum:C. parvum contigs,Chominis:C. hominis contigs
+# speciesNickname:sres.externaldatabaserelease.version
+contigDbRlsVer=Cparvum:2005-03-10,Chominis:2005-03-10
+
+# working directory
+buildDir = /u/jkissing/mheiges/analysisPipeline
+release = 1.0.0
+# pipelineDir will be buildDir/release/analysis_pipeline
+
+# FQDN or the word none
+clusterServer = kiwi.rcr.uga.edu
+# login for cluster
+clusterUser = mheiges
+# pre-existing dir on cluster where pipeline dir will be copied to
+serverPath=/scratch/mheiges/analysisPipeline
+
+# where DistribJob should create temp node directories
+nodePath=/scratch/mheiges/analysisPipeline
+nodeClass=DJob::DistribJob::PBSNode
+
+serverExternalDbDir = /genomics/binf/db/others/crypto
+externalDbDir = /scratch/mheiges/thirdparty
+
+# vector file for cross_match screening
+# ftp://ftp.ncbi.nih.gov/blast/db/FASTA/vector.gz
+fileOfRepeats = vector
+
+# full path of directory containing phrap's cross_match 
+phrapDir = /usr/local/genome/phrap
+
+
+# number of sequences to be processed by each node
+blastmatrix.taskSize = 2
+blastsimilarity.Bparam = 50
+blastsimilarity.Eparam = 0.05
+blastsimilarity.taskSize = 150
+blastsimilarity.Vparam = 100
+blastsimilarity.params = ""
+
+cap4Dir = /usr/local/jk/cap4/CurrentRelease/bin
+
+genome.taskSize = 5
+genome.path = /usr/local/bin/blat
+genome.options = ""
+genome.version = 1
+
+
+
+
+gb_db_rel_id = 10
+
+gusConfigFile = $ENV{HOME}/.gus.properties
+
+intermedCluster.cliqueSzArray = '1000,1000,1000,1000'
+intermedCluster.consistentEnds = yes
+intermedCluster.length = 75
+intermedCluster.logbase = 25
+intermedCluster.logbaseArray = '20,10,5,2'
+intermedCluster.percent = 95
+
+
+loadContigs-nrdbRestart = ""
+loadannotatedProteins-nrdbRestart = ""
+loadNrdbRestart = ""
+nrdbDbName = NRDB
+nrdbDbRlsVer = 2005-03-10
+nrdb_db_rls_id=3541
+
+projectId = 4
+
+repeatmask.dangleMax = 30
+# appropriate options or the word NONE without quotes
+repeatmask.options = NONE
+repeatmask.path = /usr/local/RepeatMasker
+repeatmask.taskSize = 150
+
+taskSize = 150
+wuBlastBinPathCluster = /opt/WU_BLAST
+ncbiBlastBinPathCluster = ""
+
+includeSubspecies = no

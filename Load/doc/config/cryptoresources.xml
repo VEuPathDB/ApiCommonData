@@ -1,0 +1,101 @@
+<resourcesPipeline repository="login.pcbi.upenn.edu:/files/efr"
+                   downloadDir="@downloadDir@">
+
+
+  <resource resource="taxonomy" version="2005-03-10" 
+            url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+            plugin="GUS::Supported::Plugin::LoadTaxon"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+     <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+     <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+     <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+     <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+     <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ @commit@</pluginArgs>
+  </resource>
+
+
+  <resource resource="SO" version="1.40"
+            url="http://cvs.sourceforge.net/viewcvs.py/*checkout*/song/ontology/so.definition?rev=1.40"
+            plugin="GUS::Supported::Plugin::InsertSequenceOntology"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --output-document=so.definition</wgetArgs>
+     <pluginArgs>--inputFile @downloadDir@/SO/so.definition --soVersion 1.40 --soCvsVersion 1.40</pluginArgs>
+  </resource>
+
+  <resource resource="CparvumContigs" version="2005-03-10" 
+            url="none"
+            plugin="ApiComplexa::DataLoad::Plugin::LoadAnnotatedSeqs"
+            extDbName="C. parvum contigs"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip="Acquired manually from genbank"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--manual</wgetArgs> 
+     <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --map_xml @pipelineDir@/config/genbank2gus.xml --data_file @downloadDir@/CparvumContigs/c.parvum.gb --file_format genbank --seq_type Contig --fail_dir @pipelineDir@/plugins/CparvumContigs/failures --project_name @project_name@ @commit@</pluginArgs>
+  </resource>
+
+  <resource resource="ChominisContigs" version="2005-03-10" 
+            url="none"
+            plugin="ApiComplexa::DataLoad::Plugin::LoadAnnotatedSeqs"
+            extDbName="C. hominis contigs"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip="Acquired manually from genbank"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--manual</wgetArgs> 
+     <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --map_xml @pipelineDir@/config/genbank2gus.xml --data_file @downloadDir@/ChominisContigs/c.hominis.gb --file_format genbank --seq_type Contig  --fail_dir @pipelineDir@/plugins/ChominisContigs/failures --project_name @project_name@ @commit@</pluginArgs>
+  </resource>
+
+
+
+  <resource resource="CparvumRNAs" version="2005-03-10" 
+            url="none"
+            plugin="ApiComplexa::DataLoad::Plugin::LoadAnnotatedSeqs"
+            extDbName="C. parvum RNAs"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip="Acquired manually from genbank"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--manual</wgetArgs> 
+     <unpack>genbankFileFilter --targetFile @downloadDir@/CparvumRNAs/c.parvum.rnas.gb --inputFiles @downloadDir@/CparvumRNAs/*.seq.gz --lineFilters "^\s+ORGANISM\s+Cryptosporidium parvum, ^\w+\s+\w+\s+\w+\s+\w+\s+mRNA"</unpack>
+     <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --map_xml @pipelineDir@/config/genbank2gus.xml --data_file @downloadDir@/CparvumRNAs/c.parvum.rnas.gb --file_format genbank  --seq_type mRNA --fail_dir @pipelineDir@/plugins/CparvumRNAs/failures --project_name @project_name@ @commit@</pluginArgs>
+  </resource>
+ 
+
+  <resource resource="CparvumESTs" version="2005-03-10"
+            url="ftp://ftp.ncbi.nih.gov/repository/dbEST/bcp/"
+            plugin="ApiComplexa::DataLoad::Plugin::dbEST"
+            extDbName="C. parvum ESTs"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip="Acquired from dbEST"
+            dbCommit=@dbcommit@>
+      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept="*delete.200501*,*insert.200501*" </wgetArgs>
+      <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --dblink @dbest.dblink@ --log dbEST.log --fullupdate --span 500 --taxon_name_list "'Cryptosporidium parvum'" --restart_number @dbest.restart@ @commit@</pluginArgs>
+  </resource>
+
+
+  <resource resource="ChominisESTs" version="2005-03-10"
+            url="ftp://ftp.ncbi.nih.gov/repository/dbEST/bcp/"
+            plugin="ApiComplexa::DataLoad::Plugin::dbEST"
+            extDbName="C. hominis ESTs"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip="Acquired from dbEST"
+            dbCommit=@dbcommit@>
+      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept="*delete.200501*,*insert.200501*" </wgetArgs>
+      <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --dblink @dbest.dblink@ --log dbEST.log --fullupdate --span 500 --taxon_name_list "'Cryptosporidium hominis'" --restart_number @dbest.restart@ @commit@</pluginArgs>
+  </resource>
+
+
+  <resource resource="nrdb" version="2005-03-10" 
+            url="ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/"
+            plugin="GUS::Supported::Plugin::LoadNRDB"
+            extDbName="NRDB"
+            extDbRlsVer="2005-03-10"
+            extDbRlsDescrip =">March 7, 2005 release of nrdb"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz</wgetArgs>
+     <unpack> gunzip @downloadDir@/nrdb/nr.gz </unpack>
+     <pluginArgs>--tempLogin @nrdb.tempTableLogin@ --tempPassword @nrdb.tempTablePassword@ --sourceDB @nrdb.sourceDB@ --dbiStr @nrdb.tempTableDbi@ --restart @nrdb.restart@ --gitax @downloadDir@/taxonomy/gi_taxid_prot.dmp --nrdbFile @downloadDir@/nrdb/nr --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% @nrdb.tempTableCreate@ @nrdb.insert@ @nrdb.delete@ @commit@</pluginArgs>
+  </resource>
+
+
+</resourcesPipeline>
+

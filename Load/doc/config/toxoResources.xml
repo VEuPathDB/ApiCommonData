@@ -1,0 +1,110 @@
+<resourcesPipeline repository="login.pcbi.upenn.edu:/files/efr"
+                   downloadDir="@downloadDir@">
+
+
+  <resource resource="taxonomy" version="2005-03-10" 
+            url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+            plugin="GUS::Common::Plugin::LoadTaxon"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+     <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+     <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+     <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+     <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+     <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+  </resource>
+
+  <resource resource="SO" version="1.41"
+            url="http://cvs.sourceforge.net/viewcvs.py/*checkout*/song/ontology/so.definition?rev=1.41"
+            plugin="GUS::Supported::Plugin::InsertSequenceOntology"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --output-document=so.definition</wgetArgs>
+     <pluginArgs>--inputFile @downloadDir@/SO/so.definition --soVersion 1.41 --soCvsVersion 1.41 </pluginArgs>
+  </resource>
+
+  <resource resource="ToxoChroms" version="2005-04-26" 
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/seq/"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            extDbName="T. gondii chroms"
+            extDbRlsVer="2005-04-26"
+            extDbRlsDescrip="chromosome"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=chromosome.nt</wgetArgs>
+     <pluginArgs>--comment "load predicted %EXT_DB_NAME%" --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceTypeName "chromosome" --nucleotideType "DNA" --ncbiTaxId @ncbiTaxId@ --sequenceFile @downloadDir@/ToxoChroms/chromosome.nt --regexSourceId ">(\S+)\s" --regexChromosome ">(\S+)\s" --regexDesc ">\S+\s+(.+)\b" --tableName DoTS::VirtualSequence @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="3primeToxoSageTags" version="2005-04-26" 
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/sage/"
+            plugin="GUS::RAD::Plugin::ArrayLoader"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=3prime.raw</wgetArgs>
+     <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' 3prime.raw > 3prime</unpack>
+     <pluginArgs>--cfg_file @pipelineDir@/@ToxoSageTags.3PrimeConfigFile@ --data_file @downloadDir@/3primeToxoSageTags/3prime --manufacturer @ToxoSageTags.Contact@ --technology_type @ToxoSageTags.OntologyEntryValue@ @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="5primeToxoSageTags" version="2005-04-26" 
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/sage/"
+            plugin="GUS::RAD::Plugin::ArrayLoader"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=5prime.raw</wgetArgs>
+     <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' 5prime.raw > 5prime</unpack>
+     <pluginArgs>--cfg_file @pipelineDir@/@ToxoSageTags.5PrimeConfigFile@ --data_file @downloadDir@/5primeToxoSageTags/5prime --manufacturer @ToxoSageTags.Contact@ --technology_type @ToxoSageTags.OntologyEntryValue@ @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="ToxoSageTagFreqs" version="2005-04-26" 
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/sage/"
+            plugin="GUS::Community::Plugin::LoadSageResults"
+            extDbRlsDescrip="3prime sage tag freqs from White lab"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=freqs.tsv</wgetArgs> 
+     <pluginArgs>--contact @ToxoSageTags.Contact@ --arrayDesignName @ToxoSageTagResults.arrayDesignName@ --arrayDesignVersion @ToxoSageTagResults.arrayDesignVersion@ --studyName @ToxoSageTagResults.studyName@ --studyDescription @ToxoSageTagResults.studyDescription@ --freqFile @downloadDir@/ToxoSageTagFreqs/freqs.tsv @commit@</pluginArgs>
+  </resource>
+
+<resource resource="nrdb" version="2005-07-08" 
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/"
+            plugin="GUS::Supported::Plugin::LoadNRDB"
+            extDbName="NRDB"
+            extDbRlsVer="2005-07-08"
+            extDbRlsDescrip ="abreviated version constructed by A.Mackey"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=apinr.fa.gz</wgetArgs> 
+     <unpack> gunzip @downloadDir@/nrdb/apinr.fa.gz </unpack>
+     <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --tempLogin @nrdb.tempTableLogin@ --tempPassword @nrdb.tempTablePassword@ --sourceDB @nrdb.sourceDB@ --dbiStr @nrdb.tempTableDbi@ --restart @nrdb.restart@ --gitax @downloadDir@/taxonomy/gi_taxid_prot.dmp --nrdbFile @downloadDir@/nrdb/apinr.fa @nrdb.tempTableCreate@ @nrdb.insert@ @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="TgondiiScaffolds" version="2005-07-13"
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            extDbName="T. gondii scaffolds"
+            extDbRlsVer="2005-07-13"
+            extDbRlsDescrip="scaffolds"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=Tg10x-scaffolds.fa</wgetArgs>
+     <pluginArgs>--comment "load %EXT_DB_NAME%" --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceTypeName "DNA" --soTermName "supercontig" --nucleotideType "DNA" --ncbiTaxId @ncbiTaxId@ --sequenceFile @downloadDir@/TgondiiScaffolds/Tg10x-scaffolds.fa --regexSourceId ">(\d+)\s" --regexDesc ">\S+\s+(.+)\b" --tableName DoTS::ExternalNASequence @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="TgondiiScaffToChrom" version="2005-07-13"
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/"
+            plugin="ApiComplexa::DataLoad::Plugin::InsertVirtualSequenceFromMapping"
+            extDbName="T. gondii scaffold to chromosome map"
+            extDbRlsVer="2005-07-13"
+            extDbRlsDescrip="scaffolds mapped to chromosomes"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=chromosome-mapping.tsv</wgetArgs>
+     <pluginArgs>--mappingInput @downloadDir@/TgondiiScaffToChrom/chromosome-mapping.tsv --sourceExtDbRlsName "T. gondii scaffolds" --sourceExtD\bRlsVer "2005-07-13" --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --comment "load %EXT_DB_NAME%" @commit@</pluginArgs>
+  </resource>
+
+ <resource resource="Tg10x-StanforSNPs" version="2005-08-19"
+            url="ftp://roos-compbio2.bio.upenn.edu/amackey/toxodb/"
+            plugin="ApiComplexa::DataLoad::Plugin::InsertSnps"
+            extDbName="Tg10x-StanfordSNPs"
+            extDbRlsVer="2005-08-19"
+            extDbRlsDescrip="T. gondii SNPs mapped to scaffold sequences"
+            dbCommit=@dbcommit@>
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=Tg10x-StanfordSNPs.gff</wgetArgs>
+     <pluginArgs>--reference ME49 --naExternalDatabaseName "T. gondii scaffolds" --naExternalDatabaseVersion "2005-07-13" --snpExternalDatabaseName %EXT_DB_NAME% --snpExternalDatabaseVersion %EXT_DB_RLS_VER% --organism "T. gondii" --snpFile @downloadDir@/Tg10x-StanforSNPs/Tg10x-StanfordSNPs.gff --comment "insert %EXT_DB_NAME%" @commit@</pluginArgs>
+  </resource>
+
+</resourcesPipeline>
+
+ 

@@ -1,0 +1,28 @@
+From the little flurry of emails before, I'm guessing that to optimize your bang per buck, the pipeline for you to start with
+should be:
+
+1: download and import contigs & scaffolding info from TIGR
+
+2: "download" and import chromosomal "superassembly" from me (in the tab-delimited format I showed you earlier); this will later
+be downloaded from toxomap.wustl.edu
+
+3: "download" and import genetic map markers, BAC mappings, SAGE tag data and various gene models (TwinScanEt, GlimmerHMM,
+TigrScan, GeneFinder, GLEAN, etc.), all in GFF format, with scaffold coordinates, from me as the "producer" [later, the SAGE
+data will come direct from Mike White's lab at Montana State, etc]
+
+4: generate protein predictions from the gene models in your native "GUS" way
+
+5: pick up with Martin's protein annotation pipeline (TmHMM, hmmpfam, SignalP, BLAST-vs-nr, etc).
+
+6: I'll give you the codon volatility-calculating software to calculate volatility scores for each protein prediction.
+
+7: Feng Chen (fengchen@sas.upenn.edu) should be contacted about getting OrthoMCL orthology predictions for each gene (I think
+these are currently based off TwinScanEt gene models, but you should confirm with him, and figure out how you want to see the
+data).
+
+These alone would give you a breadth of data similar to what's already in PlasmoDB ...
+
+So what I really need to give you is an FTP/WWW site from which to pull the data items I've marked above as coming (temporarily)
+from me; you don't (at this point) need to know how I built them.  That way you can charge ahead with data, without worrying
+about methods.  Later, I can say "gee, I'd like to no longer be the provider for TwinScan gene models; here's how to make them
+yourself, if you still want them at all [policy decisions!]"

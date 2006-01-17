@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+
+my ($verbose,$idSQL,$gusConfigFile);
+&GetOptions("verbose!"=> \$verbose,
+            "idSQL=s"=> \$idSQL,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+
+die "usage: getValueFromTable --idSQL --verbose --gusConfigFile [\$GUS_CONFIG_FILE]\n"
+unless ($idSQL);
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+
+
+print STDERR "idSQL: $idSQL\n" if $verbose;
+
+
+my $sth = $dbh->prepareAndExecute($idSQL);
+
+my $value = $sth->fetchrow_array();
+
+$sth->finish();
+
+die "there is no value returned for the query:\n\t$idSQL\n" unless $value;
+
+print $value;
+
+ 
+
