@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertVirtualSequenceFromMapping;
+package ApiComplexa::DataLoad::Plugin::InsertVirtualSequenceFromMapping;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 

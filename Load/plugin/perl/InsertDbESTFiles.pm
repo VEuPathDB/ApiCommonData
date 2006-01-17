@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertDbESTFiles;
+package ApiComplexa::DataLoad::Plugin::InsertDbESTFiles;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

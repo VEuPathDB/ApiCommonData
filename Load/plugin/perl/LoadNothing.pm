@@ -10,7 +10,7 @@
 ## created January 9, 2006  by Jennifer Dommer
 #############################################################################
 
-package ApiCommonData::Load::Plugin::LoadNothing;
+package ApiComplexa::DataLoad::Plugin::LoadNothing;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

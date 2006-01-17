@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::LoadSignalP;
+package ApiComplexa::DataLoad::Plugin::LoadSignalP;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################
