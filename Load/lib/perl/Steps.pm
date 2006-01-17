@@ -1537,7 +1537,7 @@ sub makeBuildNameRls {
 sub usage {
   my $prog = `basename $0`;
   chomp $prog;
-  print STDERR "usage: $prog propertiesfile\n";
+  print STDERR "usage: $prog propertiesfile [-printXML]\n";
   exit 1;
 }
 
