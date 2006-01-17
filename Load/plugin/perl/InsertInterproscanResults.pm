@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertInterproscanResults;
+package ApiCommonData::Load::Plugin::InsertInterproscanResults;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

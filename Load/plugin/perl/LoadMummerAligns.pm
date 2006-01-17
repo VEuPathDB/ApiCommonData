@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::LoadMummerAligns;
+package ApiCommonData::Load::Plugin::LoadMummerAligns;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################

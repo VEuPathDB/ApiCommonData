@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::LoadSODefinitions;
+package ApiCommonData::Load::Plugin::LoadSODefinitions;
 @ISA = qw(GUS::PluginMgr::Plugin);
  
 use strict;

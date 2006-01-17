@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertSnps;
+package ApiCommonData::Load::Plugin::InsertSnps;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

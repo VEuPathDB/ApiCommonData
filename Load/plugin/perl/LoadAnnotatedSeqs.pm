@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::LoadAnnotatedSeqs;
+package ApiCommonData::Load::Plugin::LoadAnnotatedSeqs;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -17,8 +17,8 @@ use Bio::SeqFeature::Generic;
 use Bio::Location::Fuzzy;
 
 use GUS::PluginMgr::Plugin;
-use ApiComplexa::DataLoad::BioperlMapParser;
-use ApiComplexa::DataLoad::BioperlFeatureMapper;
+use ApiCommonData::Load::BioperlMapParser;
+use ApiCommonData::Load::BioperlFeatureMapper;
 
 #GENERAL USAGE TABLES
 use GUS::Model::SRes::ExternalDatabase;
@@ -219,7 +219,7 @@ sub run{
 #-----------------------------------------------------------
 # Load your Bioperl to Gus map object
 #-----------------------------------------------------------
-   my $mapper = new ApiComplexa::DataLoad::BioperlMapParser->parseMap($self->getArg('map_xml')) || die "not a valid map file";
+   my $mapper = new ApiCommonData::Load::BioperlMapParser->parseMap($self->getArg('map_xml')) || die "not a valid map file";
 
    my $in = new Bio::SeqIO(-format=>$format, -file=>$self->getArg('data_file'));
 
@@ -481,7 +481,7 @@ sub makeImmediateFeature {
    my ($self, $inputFeature, $mapper, $seqId) = @_;
    
    my $featureMap = $mapper->{$inputFeature->primary_tag()};
-   my $featureMapper = ApiComplexa::DataLoad::BioperlFeatureMapper->new();
+   my $featureMapper = ApiCommonData::Load::BioperlFeatureMapper->new();
    my $gusObj = $featureMapper->getGusTable($featureMap);
    my $soFeat = $featureMapper->getSOFeature($featureMap);
    my @transformArray = split(/\./,$gusObj);

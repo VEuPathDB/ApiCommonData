@@ -1,7 +1,7 @@
-package ApiComplexa::DataLoad::BioperlFeatMapperSet;
+package ApiCommonData::Load::BioperlFeatMapperSet;
 
 use strict;
-use ApiComplexa::DataLoad::BioperlFeatMapper;
+use ApiCommonData::Load::BioperlFeatMapper;
 
 use XML::Simple;
 
@@ -40,7 +40,7 @@ sub _parseMapFile {
 
   while (my ($name, $feature) = each %{$mapperSet}) {
     $featureMappersByName{$name} = 
-      ApiComplexa::DataLoad::BioperlFeatMapper->new($name, $feature, $mapXml);
+      ApiCommonData::Load::BioperlFeatMapper->new($name, $feature, $mapXml);
   }
 
   return \%featureMappersByName;

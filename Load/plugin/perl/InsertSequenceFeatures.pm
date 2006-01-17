@@ -1,5 +1,5 @@
 
-package ApiComplexa::DataLoad::Plugin::InsertSequenceFeatures;
+package ApiCommonData::Load::Plugin::InsertSequenceFeatures;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -11,8 +11,8 @@ use Bio::Tools::GFF;
 use Bio::SeqFeature::Tools::Unflattener;
 
 use GUS::PluginMgr::Plugin;
-use ApiComplexa::DataLoad::BioperlFeatMapperSet;
-use ApiComplexa::DataLoad::SequenceIterator;
+use ApiCommonData::Load::BioperlFeatMapperSet;
+use ApiCommonData::Load::SequenceIterator;
 
 #GENERAL USAGE TABLES
 use GUS::Model::SRes::ExternalDatabase;
@@ -317,7 +317,7 @@ sub run{
   my ($self) = @_;
 
   $self->{mapperSet} =
-    ApiComplexa::DataLoad::BioperlFeatMapperSet->new($self->getArg('mapFile'));
+    ApiCommonData::Load::BioperlFeatMapperSet->new($self->getArg('mapFile'));
 
   my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
 				     $self->getArg('extDbRlsVer'))
@@ -460,7 +460,7 @@ sub getSeqIO {
       push @seqs, $seq;
     }
 
-    $bioperlSeqIO = ApiComplexa::DataLoad::SequenceIterator->new(\@seqs);
+    $bioperlSeqIO = ApiCommonData::Load::SequenceIterator->new(\@seqs);
 
   } else {
     $bioperlSeqIO = Bio::SeqIO->new(-format => $format,

@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::LoadTMDomains;
+package ApiCommonData::Load::Plugin::LoadTMDomains;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################

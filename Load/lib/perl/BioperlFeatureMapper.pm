@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::BioperlFeatureMapper;
+package ApiCommonData::Load::BioperlFeatureMapper;
 
 ############################################
 # Take sub-part of an object returned from FeatureMapper

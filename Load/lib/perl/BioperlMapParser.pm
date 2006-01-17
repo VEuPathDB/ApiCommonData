@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::BioperlMapParser;
+package ApiCommonData::Load::BioperlMapParser;
 
 use strict 'vars'; # TODO-AJM: Why just 'vars'?? Do we have
                    # strict-breaking 'subs' or 'refs' somewhere?

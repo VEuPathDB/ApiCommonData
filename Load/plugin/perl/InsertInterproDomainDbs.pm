@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertInterproDomainDbs;
+package ApiCommonData::Load::Plugin::InsertInterproDomainDbs;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

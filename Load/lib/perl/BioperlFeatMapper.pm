@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::BioperlFeatMapper;
+package ApiCommonData::Load::BioperlFeatMapper;
 
 use strict 'vars';
 use CBIL::Util::Disp;

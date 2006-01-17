@@ -7,7 +7,7 @@
 ## Drafted from the old LoadSequenceOntologyPlugin, Oct, 2005 E.R.
 #######################################################################
 
-package ApiComplexa::DataLoad::Plugin::InsertSequenceOntologyOBO;
+package ApiCommonData::Load::Plugin::InsertSequenceOntologyOBO;
 @ISA = qw(GUS::PluginMgr::Plugin);
  
 use strict;

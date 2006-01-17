@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertUserProjectGroupRows;
+package ApiCommonData::Load::Plugin::InsertUserProjectGroupRows;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-package ApiComplexa::DataLoad::MakeTaskDirs;
+package ApiCommonData::Load::MakeTaskDirs;
 
 
 ##############################################################################

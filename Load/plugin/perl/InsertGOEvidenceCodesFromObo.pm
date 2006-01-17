@@ -7,7 +7,7 @@
 ##
 #######################################################################
  
-package ApiComplexa::DataLoad::Plugin::InsertGOEvidenceCodesFromObo;
+package ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict;

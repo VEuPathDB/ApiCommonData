@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::GOannotater;
+package ApiCommonData::Load::GOannotater;
 
 use strict;
 

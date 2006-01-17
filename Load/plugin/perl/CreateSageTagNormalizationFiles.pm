@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::CreateSageTagNormalizationFiles;
+package ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

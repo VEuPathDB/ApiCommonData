@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::LoadPfamOutput;
+package ApiCommonData::Load::Plugin::LoadPfamOutput;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################

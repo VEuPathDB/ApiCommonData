@@ -567,7 +567,7 @@ sub loadSageTagMap {
       my $args = "--tagToSeqFile $inputFile";
 
       $mgr->runPlugin("load${tagName}To${scafName}SageTagMap",
-		      "ApiComplexa::DataLoad::Plugin::LoadSageTagFeature", $args,
+		      "ApiCommonData::Load::Plugin::LoadSageTagFeature", $args,
 		      "Loading ${tagName}To${scafName} SAGE Tag map results");
     }
   }
@@ -1144,7 +1144,7 @@ sub createSageTagNormFiles {
   my $args = "--paramValue $paramValue --studyName '$name' --fileDir $fileDir --contact $contact";
 
   $mgr->runPlugin($signal,
-                  "ApiComplexa::DataLoad::Plugin::CreateSageTagNormalizationFiles",
+                  "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles",
                   $args,"Creating files for $name");
 }
 
@@ -1202,7 +1202,7 @@ sub loadSignalPData{
 
   my $args = "--data_file $resultFile --algName 'SignalP' --algVer '$version' --algDesc '$desc' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --project_name $projectName --useSourceId";
 
-  $mgr->runPlugin("${species}LoadSignalP", "ApiComplexa::DataLoad::Plugin::LoadSignalP", $args, "Loading $species SignalP results");
+  $mgr->runPlugin("${species}LoadSignalP", "ApiCommonData::Load::Plugin::LoadSignalP", $args, "Loading $species SignalP results");
 }
 
 sub createTmhmmDir {
@@ -1254,7 +1254,7 @@ sub loadTMHmmData{
 
   my $args = "--data_file $resultFile --algName TMHMM --algDesc '$desc' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
 
-  $mgr->runPlugin("${species}LoadTMDomains", "ApiComplexa::DataLoad::Plugin::LoadTMDomains", $args, "Loading $species TMHMM output");
+  $mgr->runPlugin("${species}LoadTMDomains", "ApiCommonData::Load::Plugin::LoadTMDomains", $args, "Loading $species TMHMM output");
 }
 
 sub insertAASeqMWMinMax {
@@ -1547,7 +1547,7 @@ sub insertTaxonRow {
   my $args = "--name $name --nameClass $nameClass --rank $rank --parentNcbiTaxId $parentTaxId --parentRank $parentRank";
 
    $mgr->runPlugin("${name}TaxonInserted",
-                  "ApiComplexa::DataLoad::Plugin::InsertTaxonAndTaxonName",
+                  "ApiCommonData::Load::Plugin::InsertTaxonAndTaxonName",
                   $args, "Inserting taxon and taxonname rows for $name");
 }
 
@@ -1700,7 +1700,7 @@ sub loadPfamData{
   my $extDbRlsVer = $propertySet->getProp('contigDbRlsVer');
 
   my $args = "--data_file $file --algname $alg --algVer $ver --alg_desc $desc --$extDbName $extDbName --extDbRlsVer $extDbRlsVer";
-  $mgr->runPlugin("LoadPfamOutput", "ApiComplexa::DataLoad::Plugin::LoadPfamOutput", $args, "Loading $name output");
+  $mgr->runPlugin("LoadPfamOutput", "ApiCommonData::Load::Plugin::LoadPfamOutput", $args, "Loading $name output");
 }
 
 sub makeUserProjectGroup {

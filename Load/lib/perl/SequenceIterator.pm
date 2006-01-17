@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::SequenceIterator;
+package ApiCommonData::Load::SequenceIterator;
 
 use strict;
 use vars qw(@ISA);
