@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertPfamEntries;
+package ApiCommonData::Load::Plugin::InsertPfamEntries;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 

@@ -33,7 +33,7 @@
 # -------------------------------------------------------------
 
 
-package GUS::Common::Plugin::LoadPfam;
+package ApiCommonData::Load::Plugin::LoadPfam;
 @ISA = qw(GUS::PluginMgr::Plugin); #defines what is inherited
 
 use strict;

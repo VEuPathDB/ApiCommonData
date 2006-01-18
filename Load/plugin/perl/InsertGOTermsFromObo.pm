@@ -1,4 +1,4 @@
-package ApiComplexa::DataLoad::Plugin::InsertGOTermsFromObo;
+package ApiCommonData::Load::Plugin::InsertGOTermsFromObo;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
