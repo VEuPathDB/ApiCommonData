@@ -10,7 +10,7 @@
 ## created January 9, 2006  by Jennifer Dommer
 #############################################################################
 
-package ApiComplexa::DataLoad::Plugin::LoadNothing;
+package ApiCommonData::Load::Plugin::LoadNothing;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -58,20 +58,20 @@ my $argsDeclaration =
   ];
 
 sub new {
-    my ($class) = @_;
-    my $self = {};
-    bless($self,$class);
+  my ($class) = @_;
+  $class = ref $class || $class;
 
-    $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision$', # cvs fills this in!
-		       name => ref($self),
-		       argsDeclaration => $argsDeclaration,
-		       documentation => $documentation
-		      });
+  my $self = bless({}, $class);
 
-    return $self;
+  $self->initialize({ requiredDbVersion => 3.5,
+                      cvsRevision       => '$Revision$',
+                      name              => ref($self),
+                      argsDeclaration   => $argsDeclaration,
+                      documentation     => $documentation
+                   });
+
+  return $self;
 }
-
 
 sub run {
 return "Successfully did nothing\n";
