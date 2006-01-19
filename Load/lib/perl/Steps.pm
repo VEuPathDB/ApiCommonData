@@ -72,6 +72,22 @@ sub createSimilarityDir {
 
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
+#my $documentation =
+# { name => $blastType,
+#   input => "$queryFile, $subjectFile",
+#   output => "BLAST results",
+#   descrip => "$blastType was used ",
+#   tools => [
+#      { name => $blastType,
+#        version => "",
+#        params => $bsParams,
+#        url => "",
+#        credits => ""
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
+
   return if $mgr->startStep("Creating ${queryFile}-${subjectFile} similarity dir", $signal);
 
   my $buildName = $mgr->{'buildName'};        # release/speciesNickname
@@ -448,6 +464,22 @@ sub  loadAveragedProfiles {
 
   my $args = "--externalDatabaseSpec '$dbSpec' --profileSetNames '$setName'";
 
+#my $documentation =
+# { name => "Average Expression Profiles",
+#   input => "",
+#   output => "",
+#   descrip => "",
+#   tools => [
+#      { name => "",
+#        version => "",
+#        params => "",
+#        url => "",
+#        credits => ""
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
+
   $mgr->runPlugin($signal,
                   "PlasmoDBData::Load::Plugin::InsertAveragedProfiles", $args,
                   "Inserting averaged profiles for $setName");
@@ -465,6 +497,22 @@ sub calculateExpressionStats {
   my $buildDir = $propertySet->getProp('buildDir');
 
   my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --timePointsMappingFile '$buildDir/$mappingFile' --percentProfileSet '$percentsAveraged'";
+
+#my $documentation =
+# { name => "Calculation of Summary Statistics on Expression Profiles",
+#   input => "",
+#   output => "",
+#   descrip => "",
+#   tools => [
+#      { name => "",
+#        version => "",
+#        params => "",
+#        url => "",
+#        credits => ""
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
 
   $mgr->runPlugin($signal,
                   "PlasmoDBData::Load::Plugin::CalculateProfileSummaryStats", $args,
@@ -759,6 +807,14 @@ sub fixGeneAliases {
 
   my $args = "--mappingFiles $files";
 
+#my $documentation =
+# { name => "Correction of Gene Aliases",
+#   input => "Gene names and aliases",
+#   output => "a corrected list of gene aliases",
+#   descrip => "Gene IDs have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including old IDs.  Each Gene has exactly one current ID.  All old IDs are treated as "aliases."  We clean away aliases that are either identical to a source_id or that point to more than one source_id."
+#   };
+#$mgr->documentStep($signal, $documentation);
+
   $mgr->runPlugin("correctGeneAliases",
                   "PlasmoDBData::Load::Plugin::CorrectGeneAliases", $args,
                   "Correct gene aliases in GUS");
@@ -954,6 +1010,14 @@ sub loadLowComplexitySequences {
   my $input = "$mgr->{pipelineDir}/seqfiles/$file";
 
   my $args = "--seqFile $input --fileFormat 'fasta' --extDbName '$extdbName' --extDbVersion '$extDbRlsVer' --seqType $type --maskChar $mask $opt";
+
+#my $documentation =
+# { name => "Filtering Low Complexity Sequences",
+#   input => "DNA or protein sequences",
+#   output => "Sequences containing regions of low complexity marked with a 'mask' character",
+#    descrip => "",
+#   };
+#$mgr->documentStep($signal, $documentation);
 
   $mgr->runPlugin("load$file",
 		  "PlasmoDBData::Load::Plugin::InsertLowComplexityFeature", $args,
@@ -1169,6 +1233,23 @@ sub runSignalP {
 
   my $signal = "${species}RunSignalP";
 
+#my $documentation =
+# { name => "SignalP",
+#   input => "protein sequences",
+#   output => "set of signal peptides",
+#   descrip => "",
+#   tools => [
+#      { name => "SiganlP",
+#        version => "",
+#        params => "-t euk -f short -m nn+hmm -q -trunc 70",
+#        url => "",
+#        pubmedIds => "",
+#        credits => ""
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
+
   return if $mgr->startStep("Running SignalP for $species", $signal);
   
   my $propertySet = $mgr->{propertySet};
@@ -1225,6 +1306,21 @@ sub runTMHmm{
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${species}RunTMHMM";
+
+#my $documentation =
+# { name => "Find transmembrane domains",
+#   input => "protein sequences",
+#   output => "transmembrane domains",
+#   descrip => "",
+#   tools => [
+#      { name => "tmhmm",
+#        version => "1.0.0",
+#        url => "",
+#        credits => ""
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
 
   return if $mgr->startStep("Running TMHMM for $species", $signal);
 
@@ -1283,6 +1379,20 @@ sub insertAAiP {
   $signal =~ s/\.//g;
 
   my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
+
+#my $documentation =
+# { name => "Protein Isoelectric Point Calculations",
+#   input => "protein sequences",
+#   output => "isoelectric points",
+#   descrip => "We use the Bio::Tools::pICalculator to calculate the isoelectric points of the translations in our database.",
+#   tools => [
+#      { name => "Bio::Tools::pICalculator",
+#        url => "http://cvs.bioperl.org/cgi-bin/viewcvs/viewcvs.cgi/bioperl-live/Bio/Tools/pICalculator.pm",
+#        credits => "Merck & Co. Inc."
+#      },
+#     ]
+#   };
+#$mgr->documentStep($signal, $documentation);
 
   $mgr->runPlugin($signal,
 		  "PlasmoDBData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
