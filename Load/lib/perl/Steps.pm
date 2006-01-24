@@ -72,21 +72,34 @@ sub createSimilarityDir {
 
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
-#my $documentation =
-# { name => $blastType,
-#   input => "$queryFile, $subjectFile",
-#   output => "BLAST results",
-#   descrip => "$blastType was used ",
-#   tools => [
-#      { name => $blastType,
-#        version => "",
-#        params => $bsParams,
-#        url => "",
-#        credits => ""
-#      },
-#     ]
-#   };
-#$mgr->documentStep($signal, $documentation);
+  my $description="";
+
+  if ($blastType eq "blastx"){
+    $description .= "DNA sequences were run against nr using $blastType with the the parameters '$bsParams' to generate the six-frame conceptual translation product alignments.";
+  }
+  elsif ($blastType eq "blastp"){
+    $description .= "Proteins were run against nr using $blastType with the the parameters '$bsParams' to generate protein alignments.";
+  }
+  elsif ($blastType eq "blastn"){
+    $description .= "DNA sequences were run against nr using $blastType with the the parameters '$bsParams' to generate nucleotide alignments.";
+  }
+
+my $documentation =
+ { name => $blastType,
+   input => "$queryFile, $subjectFile",
+   output => "$blastType alignments",
+   descrip => $description,
+   tools => [
+      { name => $blastType,
+        version => "2.0",
+        params => $bsParams,
+        url => "http://blast.wustl.edu/blast/executables",
+        pubmedIds => "",
+        credits => "Warren R. Gish, Saint Louis, Missouri"
+      },
+     ]
+   };
+$mgr->documentStep($signal, $documentation);
 
   return if $mgr->startStep("Creating ${queryFile}-${subjectFile} similarity dir", $signal);
 
@@ -467,13 +480,14 @@ sub  loadAveragedProfiles {
 #my $documentation =
 # { name => "Average Expression Profiles",
 #   input => "",
-#   output => "",
+#   output => "Averaged expression profiles.",
 #   descrip => "",
 #   tools => [
 #      { name => "",
 #        version => "",
 #        params => "",
 #        url => "",
+#        pubmedIds => "",
 #        credits => ""
 #      },
 #     ]
@@ -501,16 +515,9 @@ sub calculateExpressionStats {
 #my $documentation =
 # { name => "Calculation of Summary Statistics on Expression Profiles",
 #   input => "",
-#   output => "",
+#   output => "Expression profile summary statistics",
 #   descrip => "",
-#   tools => [
-#      { name => "",
-#        version => "",
-#        params => "",
-#        url => "",
-#        credits => ""
-#      },
-#     ]
+#   tools => []
 #   };
 #$mgr->documentStep($signal, $documentation);
 
@@ -807,15 +814,18 @@ sub fixGeneAliases {
 
   my $args = "--mappingFiles $files";
 
-#my $documentation =
-# { name => "Correction of Gene Aliases",
-#   input => "Gene names and aliases",
-#   output => "a corrected list of gene aliases",
-#   descrip => "Gene IDs have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including old IDs.  Each Gene has exactly one current ID.  All old IDs are treated as "aliases."  We clean away aliases that are either identical to a source_id or that point to more than one source_id."
-#   };
-#$mgr->documentStep($signal, $documentation);
+  my $signal = "correctGeneAliases";
 
-  $mgr->runPlugin("correctGeneAliases",
+  my $documentation =
+    { name => "Correction of Gene Aliases",
+      input => "Gene names and aliases",
+      output => "a corrected list of gene aliases",
+      descrip => "Gene IDs have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including old IDs.  Each Gene has exactly one current ID.  All old IDs are treated as 'aliases.'  We clean away aliases that are either identical to a source_id or that point to more than one source_id.",
+      tools => []
+    };
+  $mgr->documentStep($signal, $documentation);
+
+  $mgr->runPlugin($signal,
                   "PlasmoDBData::Load::Plugin::CorrectGeneAliases", $args,
                   "Correct gene aliases in GUS");
 }
@@ -1011,15 +1021,26 @@ sub loadLowComplexitySequences {
 
   my $args = "--seqFile $input --fileFormat 'fasta' --extDbName '$extdbName' --extDbVersion '$extDbRlsVer' --seqType $type --maskChar $mask $opt";
 
-#my $documentation =
-# { name => "Filtering Low Complexity Sequences",
-#   input => "DNA or protein sequences",
-#   output => "Sequences containing regions of low complexity marked with a 'mask' character",
-#    descrip => "",
-#   };
-#$mgr->documentStep($signal, $documentation);
+  my $signal = "load$file";
 
-  $mgr->runPlugin("load$file",
+  my $description = "";
+  if ($type eq "protein") {
+    $description = "seg was used to generate low complexity features."
+  }
+  else {
+    $description = "dust was used to generate low complexity features."
+  }
+
+  my $documentation =
+    { name => "Filtering Low Complexity Sequences",
+      input => "$type sequences",
+      output => "$type sequences containing regions of low complexity marked with the 'mask' character '$mask'",
+      descrip => $description,
+      tools => []
+    };
+  $mgr->documentStep($signal, $documentation);
+
+  $mgr->runPlugin($signal,
 		  "PlasmoDBData::Load::Plugin::InsertLowComplexityFeature", $args,
 		  "Loading low complexity sequence file $file");
 
@@ -1233,22 +1254,22 @@ sub runSignalP {
 
   my $signal = "${species}RunSignalP";
 
-#my $documentation =
-# { name => "SignalP",
-#   input => "protein sequences",
-#   output => "set of signal peptides",
-#   descrip => "",
-#   tools => [
-#      { name => "SiganlP",
-#        version => "",
-#        params => "-t euk -f short -m nn+hmm -q -trunc 70",
-#        url => "",
-#        pubmedIds => "",
-#        credits => ""
-#      },
-#     ]
-#   };
-#$mgr->documentStep($signal, $documentation);
+my $documentation =
+ { name => "SignalP",
+   input => "protein sequences",
+   output => "signal peptide predictions",
+   descrip => "We ran a local installation of SignalP 3.0 to identify potential signal peptides.",
+   tools => [
+      { name => "SignalP",
+        version => "3.0",
+        params => $options,
+        url => "",
+        pubmedIds => "15223320",
+        credits => "Bendtsen JD, Nielsen H, von Heijne G, Brunak S."
+      },
+     ]
+   };
+$mgr->documentStep($signal, $documentation);
 
   return if $mgr->startStep("Running SignalP for $species", $signal);
   
@@ -1307,20 +1328,22 @@ sub runTMHmm{
 
   my $signal = "${species}RunTMHMM";
 
-#my $documentation =
-# { name => "Find transmembrane domains",
-#   input => "protein sequences",
-#   output => "transmembrane domains",
-#   descrip => "",
-#   tools => [
-#      { name => "tmhmm",
-#        version => "1.0.0",
-#        url => "",
-#        credits => ""
-#      },
-#     ]
-#   };
-#$mgr->documentStep($signal, $documentation);
+my $documentation =
+ { name => "Find transmembrane domains",
+   input => "protein sequences",
+   output => "transmembrane domains",
+   descrip => "We ran a local installation of tmhmm2.0a on $species to identify the transmembrane domains associated with this organism",
+   tools => [
+      { name => "tmhmm",
+        version => "2.0a",
+        params => "",
+        url => "",
+        pubmedIds => "11152613",
+        credits => "Anders Krogh, Bjorn Larsson, Gunnar von Heijne, and Erik L.L. Sonnhammer"
+      },
+     ]
+   };
+$mgr->documentStep($signal, $documentation);
 
   return if $mgr->startStep("Running TMHMM for $species", $signal);
 
@@ -1380,19 +1403,14 @@ sub insertAAiP {
 
   my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
 
-#my $documentation =
-# { name => "Protein Isoelectric Point Calculations",
-#   input => "protein sequences",
-#   output => "isoelectric points",
-#   descrip => "We use the Bio::Tools::pICalculator to calculate the isoelectric points of the translations in our database.",
-#   tools => [
-#      { name => "Bio::Tools::pICalculator",
-#        url => "http://cvs.bioperl.org/cgi-bin/viewcvs/viewcvs.cgi/bioperl-live/Bio/Tools/pICalculator.pm",
-#        credits => "Merck & Co. Inc."
-#      },
-#     ]
-#   };
-#$mgr->documentStep($signal, $documentation);
+my $documentation =
+ { name => "Protein Isoelectric Point Calculations",
+   input => "protein sequences",
+   output => "isoelectric points",
+   descrip => "The pK values used to calculate the isoelectric point come from EMBOSS.  The calculation of the isoelectric point has a default cutoff of two decimal points.",
+   tools => [],
+   };
+$mgr->documentStep($signal, $documentation);
 
   $mgr->runPlugin($signal,
 		  "PlasmoDBData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
