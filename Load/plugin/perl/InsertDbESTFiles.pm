@@ -7,6 +7,7 @@ use DBI;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Model::DoTS::SequenceType;
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::DoTS::Source;
 use GUS::Model::DoTS::EST;
@@ -142,13 +143,19 @@ sub new {
 sub run {
     my $self = shift;
 
+    my $extDb = $self->getExtDbRlsId($self->getArg('extDbName'),
+                                     $self->getArg('extDbRlsVer'))
+                or die "Couldn't retrieve external database!\n";
+    my $seqType = $self->getSeqType();
+
+    #SET THE EXTERNAL DATABASE NAME INTO THE CONTEXT
     my $file = $self->getArgs()->{'inputFile'} || die "No Such Input File";
     open (ESTs, "<$file");
     my ($est, $estCt, $section, $subCat, $content);
 
     while (<ESTs>) {
          if (/\|\|/) {
-            my $gusSeq = $self->processEST($est);
+            my $gusSeq = $self->processEST($est, $seqType, $extDb);
             #unless ($gusSeq->retrieveFromDB()) { 
                 $gusSeq->submit();
             #}
@@ -193,14 +200,14 @@ sub parseLine {
 
 
 sub processEST {
-   my ($self, $est) = @_;
+   my ($self, $est, $seqType, $extDb) = @_;
 
     my $organism = $est->{'LIBRARY'}->{'Organism'};
     unless ($self->{$organism}) {
        $self->setTaxonId($organism);
     }
 
-     my $gusSeq = $self->buildSequence($est);
+     my $gusSeq = $self->buildSequence($est, $seqType, $extDb);
          my $gusRefLink = $self->getOrCreateReference($est);
          $gusSeq->addChild($gusRefLink);
          #my $gusNaFeat = $self->buildSourceFeat($est);
@@ -223,7 +230,7 @@ return $gusSeq;
 
 
 sub buildSequence {
-    my ($self, $est) = @_;
+    my ($self, $est, $seqType, $extDb) = @_;
 
     my $organism = $est->{'LIBRARY'}->{'Organism'};
     my $seq = $est->{'SEQUENCE'}->{'content'};
@@ -236,12 +243,15 @@ sub buildSequence {
                                           -id=>0);
 
     my $seqcount  =  Bio::Tools::SeqStats->new(-seq=>$bioSeq);
-      $gusSeq->setSourceId($est->{'IDENTIFIERS'}->{'EST name'});
+      #$gusSeq->setSourceId($est->{'IDENTIFIERS'}->{'EST name'});  #Changed per Mark's request
+      $gusSeq->setSourceId($est->{'IDENTIFIERS'}->{'GenBank Acc'});
       $gusSeq->setSecondaryIdentifier($est->{'IDENTIFIERS'}->{'GenBank Acc'});
       $gusSeq->setName($est->{'IDENTIFIERS'}->{'EST name'});
       $gusSeq->setTaxonId($self->{$organism});
       $gusSeq->setSequenceVersion(0);
+      $gusSeq->setExternalDatabaseReleaseId($extDb);
       $gusSeq->setDescription($est->{'COMMENTS'}->{'content'});
+      $gusSeq->setSequenceTypeId($seqType);
       $gusSeq->setSequence($seq);
       $gusSeq->setACount(%$seqcount->{'A'});
       $gusSeq->setCCount(%$seqcount->{'C'});
@@ -435,6 +445,19 @@ sub setTaxonId{
    $taxon->retrieveFromDB() || die "invalid organism name: $organism";
    $self->{$organism} = $taxon->get('taxon_id') || die "Failed to retrieve SRes::TaxonName for name = $organism\n";
 return 1;
+}
+
+
+sub getSeqType {
+   my $self = shift;
+
+   my $gusSeqTypObj = GUS::Model::DoTS::SequenceType->new( {
+                       'name' => 'EST', } );
+
+   $gusSeqTypObj->retrieveFromDB() || die 'Sequence Type Table Not Initialized';
+   my $seqType = $gusSeqTypObj->getId();
+
+return $seqType;
 }
 
 
