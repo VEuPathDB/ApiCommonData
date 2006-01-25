@@ -1279,8 +1279,8 @@ sub documentSignalP {
 
   my $documentation =
     { name => "SignalP",
-      input => "protein sequences",
-      output => "signal peptide predictions",
+      input => "Protein sequences",
+      output => "Signal peptide predictions",
       descrip => "SignalP is used to identify signal peptides and their likely cleavage sites.",
       tools => [
 		{ name => "SignalP",
@@ -1356,8 +1356,8 @@ sub documentTMHMM {
 
   my $documentation =
     { name => "Predict transmembrane domains",
-      input => "protein sequences",
-      output => "predicted transmembrane domain topology",
+      input => "Protein sequences",
+      output => "Predicted transmembrane domain topology",
       descrip => "TMHMM is used to predict transmembrane domain presence and topology",
       tools => [
 		{ name => "tmhmm",
@@ -1431,7 +1431,7 @@ sub documentAAip {
 
     my $documentation =
       { name => "Protein pI (isoelectric point) calculation",
-	input => "protein sequences",
+	input => "Protein sequences",
 	output => "pI (isoelectric point) values",
 	descrip => "The pKa values used to calculate pI are those used in the EMBOSS package; the pI is calculated to only two decimal points.",
 	tools => [],
