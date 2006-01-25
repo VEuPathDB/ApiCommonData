@@ -68,20 +68,26 @@ sub createBlastMatrixDir {
 sub documentBlast {
   my ($mgr, $blastType, $query, $subject, $bsParams) = @_;
 
-  my $description .= "????";
+  my %descriptions =
+    ( BLASTP => "WU-BLASTP is used to identify statistically significant protein sequence similarities found between protein sequence queries and protein sequence libraries",
+      BLASTX => "WU-BLASTX is used to identify statistically significant DNA-protein sequence similarities found between DNA sequence queries and protein sequence libraries",
+      BLASTN => "WU-BLASTN is used to identify statistically signficant DNA sequence similarities found between DNA sequence queries and DNA sequence libraries"
+    );
+
+  my $description = $descriptions{$blastType} || "No description available for $blastType";
 
   my $documentation =
-    { name => "$blastType of $query against $subject",
+    { name => "WU-$blastType ($query vs. $subject)",
       input => "$query and $subject",
       output => "$blastType alignments",
       descrip => $description,
       tools => [
 		{ name => $blastType,
-		  version => "2.0",
+		  version => "2.0 [06-Apr-2005]",
 		  params => $bsParams,
-		  url => "http://blast.wustl.edu/blast/executables",
+		  url => "http://blast.wustl.edu",
 		  pubmedIds => "",
-		  credits => "Warren R. Gish, Saint Louis, Missouri"
+		  credits => "Warren R. Gish, Washington University, Saint Louis, Missouri"
 		},
 	       ]
     };
@@ -821,15 +827,15 @@ sub calculateProteinMolWt {
 sub documentGeneAliases {
   my ($mgr) = @_;
 
-  my $documentation =
-    { name => "Correction of Gene Aliases",
-      input => "Gene names and aliases",
-      output => "a corrected list of gene aliases",
-      descrip => "Gene IDs have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including old IDs.  Each Gene has exactly one current ID.  All old IDs are treated as 'aliases.'  We clean away aliases that are either identical to a source_id or that point to more than one source_id.",
-      tools => []
-    };
+#   my $documentation =
+#     { name => "Tracking of Gene Aliases",
+#       input => "Gene identifiers and other aliases",
+#       output => "a corrected list of gene aliases",
+#       descrip => "Gene identifiers (or IDs) have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including older, outdated IDs.  Each gene has exactly one current 'systematic' ID.  All other IDs are treated as 'aliases.'  To ensure the uniqueness of each alias, we remove any that could refer to more than one current systematic ID.",
+#       tools => []
+#     };
 
-  $mgr->documentStep('geneAliases', $documentation);
+#   $mgr->documentStep('geneAliases', $documentation);
 
 
 }
@@ -1038,9 +1044,9 @@ sub documentLowComplexity {
   my $description = "$tool was used to mask low complexity regions.";
 
   my $documentation =
-    { name => "Filter Low Complexity Sequences ($seqType)",
+    { name => "Filter Low Complexity $seqType Sequences",
       input => "$seqType sequences",
-      output => "$seqType sequences containing regions of low complexity marked with the 'mask' character '$mask'",
+      output => "$seqType sequences containing regions of low complexity are masked with the character '$mask'",
       descrip => $description,
       tools => []
     };
@@ -1275,12 +1281,12 @@ sub documentSignalP {
     { name => "SignalP",
       input => "protein sequences",
       output => "signal peptide predictions",
-      descrip => "We ran a local installation of SignalP 3.0 to identify potential signal peptides.",
+      descrip => "SignalP is used to identify signal peptides and their likely cleavage sites.",
       tools => [
 		{ name => "SignalP",
 		  version => "3.0",
 		  params => $options,
-		  url => "",
+		  url => "http://www.cbs.dtu.dk/services/SignalP/",
 		  pubmedIds => "15223320",
 		  credits => "Bendtsen JD, Nielsen H, von Heijne G, Brunak S."
 		},
@@ -1349,10 +1355,10 @@ sub documentTMHMM {
   my ($mgr) = @_; 
 
   my $documentation =
-    { name => "Find transmembrane domains",
+    { name => "Predict transmembrane domains",
       input => "protein sequences",
-      output => "transmembrane domains",
-      descrip => "We ran a local installation of tmhmm 2.0a to identify transmembrane domains",
+      output => "predicted transmembrane domain topology",
+      descrip => "TMHMM is used to predict transmembrane domain presence and topology",
       tools => [
 		{ name => "tmhmm",
 		  version => "2.0a",
@@ -1424,10 +1430,10 @@ sub documentAAip {
   my ($mgr) = @_;
 
     my $documentation =
-      { name => "Protein Isoelectric Point Calculations",
+      { name => "Protein pI (isoelectric point) calculation",
 	input => "protein sequences",
-	output => "isoelectric points",
-	descrip => "The pK values used to calculate the isoelectric point come from EMBOSS.  The calculation of the isoelectric point has a default cutoff of two decimal points.",
+	output => "pI (isoelectric point) values",
+	descrip => "The pKa values used to calculate pI are those used in the EMBOSS package; the pI is calculated to only two decimal points.",
 	tools => [],
       };
   $mgr->documentStep('AAip', $documentation);
