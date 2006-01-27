@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use List::Util qw(min max);
+
+my $sql = <<EOSQL;
+SELECT clone_info.clone_name as scaffold,
+       least(cds.end5, cds.end3) as cds_start,
+       greatest(cds.end5, cds.end3) as cds_stop,
+       if(cds.end5 > cds.end3, 1, 0) as is_reversed,
+       least(exon.end5, exon.end3) as exon_start,
+       greatest(exon.end5, exon.end3) as exon_stop,
+       model.feat_name as source_id,
+       ident.com_name as product
+FROM   clone_info
+       INNER JOIN asm_feature AS tu ON (tu.asmbl_id = clone_info.asmbl_id)
+       INNER JOIN ident ON (tu.feat_name = ident.feat_name)
+       INNER JOIN feat_link AS tu_link ON (tu_link.parent_feat = tu.feat_name)
+       INNER JOIN asm_feature AS model ON (tu_link.child_feat = model.feat_name)
+       INNER JOIN phys_ev ON (model.feat_name = phys_ev.feat_name)
+       INNER JOIN feat_link AS model_link ON (model_link.parent_feat = model.feat_name)
+       INNER JOIN asm_feature AS exon ON (model_link.child_feat = exon.feat_name)
+       INNER JOIN feat_link AS exon_link ON (exon_link.parent_feat = exon.feat_name)
+       LEFT JOIN asm_feature AS cds ON (exon_link.child_feat = cds.feat_name)
+WHERE  clone_info.is_public = 1
+  AND  tu.feat_type = "TU"
+  AND  model.feat_type = "model"
+  AND  exon.feat_type = "exon"
+  AND  cds.feat_type = "CDS"
+  AND  phys_ev.ev_type = "working"
+ORDER BY clone_name ASC, source_id ASC, IF(cds.end5 > cds.end3, -cds.end3, cds.end5) ASC
+EOSQL
+
+
+my $lastid;
+my $i = 0;
+my @genes;
+while () {
+  my $id = $_->[3];
+  if ($lastid && $id ne $lastid) {
+    $i++;
+    $lastid = $id;
+  }
+  push @{$genes[$i]}, $_;
+}
+
+for (@genes) {
+  my @cds = @$_;
+  print join("\n", join("\t", $cds[0]->[0], "TIGRannot", "mRNA", min(map {$_->[1]} @cds), max(map {$_->[2]} @cds), ".", $str, ".", "GenePrediction $cds[0]->[3]"), map { join("\t",$_->[0], "TIGRannot", "CDS", $_->[1], $_->[2], ".", $str, ".", "GenePrediction $cds[0]->[3]") } @cds); 
+}
+
+
+
