@@ -1,8 +1,9 @@
-package ApiCommon::Data::Plugin::TransformGFFToVirtualCoordinates;
+package ApiCommonData::Load::Plugin::TransformGFFToVirtualCoordinates;
 
 use strict;
 use base qw(GUS::PluginMgr::Plugin);
 
+use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
 use Bio::Coordinate::Pair;
 
@@ -34,7 +35,7 @@ my $argsDeclaration =
    stringArg({ name           => 'gffVersion',
 	       descr          => 'version of GFF being read and written',
 	       reqd           => 0,
-               default        => 2.5
+               default        => 2.5,
 	       constraintFunc => undef,
 	       isList         => 0,
 	     }),
@@ -109,6 +110,7 @@ sub run {
 
   my %coordinateMap;
 
+  my $dbh = $self->getQueryHandle(); 
   my $sth = $dbh->prepare(<<EOSQL);
 
   SELECT vs.source_id,
