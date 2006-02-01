@@ -20,6 +20,7 @@ use GUS::Model::DoTS::AALocation;
 
 use GUS::Model::SRes::GOEvidenceCode;
 use GUS::Model::SRes::GOTerm;
+use GUS::Model::SRes::GOSynonym;
 use GUS::Model::DoTS::GOAssocInstEvidCode;
 use GUS::Model::DoTS::GOAssociationInstanceLOE;
 use GUS::Model::DoTS::GOAssociationInstance;
@@ -685,8 +686,13 @@ sub getGOId {
    my ($self, $goId) = @_;
 
    my $gusObj = GUS::Model::SRes::GOTerm->new( { 'go_id' => $goId, } );
-   $gusObj->retrieveFromDB() || die "No entry for the this go term";
+   my $altObj = GUS::Model::SRes::GOSynonym->new( { 'source_id' => $goId, } );
+   $gusObj->retrieveFromDB();
    my $gusId = $gusObj->getId();
+      unless ($gusId) {
+         $altObj->retrieveFromDB() || die "Go Term not found: $goId";
+         $gusId = $altObj->getGoTermId();
+      }
 
 return $gusId;
 }
