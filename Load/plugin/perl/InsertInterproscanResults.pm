@@ -686,10 +686,10 @@ sub getGOId {
    my ($self, $goId) = @_;
 
    my $gusObj = GUS::Model::SRes::GOTerm->new( { 'go_id' => $goId, } );
-   my $altObj = GUS::Model::SRes::GOSynonym->new( { 'source_id' => $goId, } );
    $gusObj->retrieveFromDB();
    my $gusId = $gusObj->getId();
       unless ($gusId) {
+         my $altObj = GUS::Model::SRes::GOSynonym->new( { 'source_id' => $goId, } );
          $altObj->retrieveFromDB() || die "Go Term not found: $goId";
          $gusId = $altObj->getGoTermId();
       }
