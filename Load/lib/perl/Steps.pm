@@ -293,122 +293,6 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
-sub extractContigs {
-  my ($mgr) = @_;
-
-  my $propertySet = $mgr->{propertySet};
-
-  my $signal = "extractContigs";
-
-  return if $mgr->startStep("Extracting contigs from GUS", $signal);
-
-  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
-
-  my $taxonHsh = $mgr->{taxonHsh};
-  my $contigDbRlsHsh =  $mgr->{contigDbRlsHsh};
-
-  my $speciesList = $propertySet->getProp('speciesNickname');
-  my @speciesArr = split(/\,/,$speciesList);
-
-  foreach my $species (@speciesArr) {
-    my $contigFile = "$mgr->{pipelineDir}/seqfiles/${species}Contigs.fsa";
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal${species}.log";
-    my $dbRlsId = $contigDbRlsHsh->{$species}->[2];
-    my $taxonId = $taxonHsh->{$species};
-    my $sql = my $sql = "select x.na_sequence_id, x.description,
-            'length='||x.length,x.sequence
-             from dots.ExternalNASequence x, dots.sequencetype s
-             where x.taxon_id = $taxonId
-             and x.external_database_release_id = $dbRlsId
-             and x.sequence_type_id = s.sequence_type_id
-             and lower(s.name) = 'contig'";
-
-    my $cmd = "dumpSequencesFromTable.pl --gusConfigFile $gusConfigFile  --outputFile $contigFile --idSQL \"$sql\" --verbose 2>> $logFile";
-
-    $mgr->runCmd($cmd);
-  }
-
-  $mgr->endStep($signal);
-}
-
-
-sub extractScaffolds {
-  my ($mgr,$species) = @_;
-  my $propertySet = $mgr->{propertySet};
-
-  my $signal = "extract${species}Scaffolds";
-
-  return if $mgr->startStep("Extracting $species scaffolds from GUS", $signal);
-
-  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
-
-  my $taxonId = $mgr->{taxonHsh}->{$species};
-
-  foreach my $scaffolds (@{$mgr->{scaffolds}->{$species}}) {
-    my $dbName =  $scaffolds->{name};
-    my $dbVer =  $scaffolds->{ver};
-
-    my $name = $dbName;
-    $name =~ s/\s/\_/g;
-
-    my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbVer);
-
-    my $scaffoldFile = "$mgr->{pipelineDir}/seqfiles/${name}Scaffolds.fsa";
-
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
-
-    my $sql = "select x.na_sequence_id, x.description,
-            'length='||x.length,x.sequence
-             from dots.ExternalNASequence x, sres.sequenceontology s
-             where x.taxon_id = $taxonId
-             and x.external_database_release_id = $dbRlsId
-             and x.sequence_ontology_id = s.sequence_ontology_id
-             and lower(s.term_name) = 'supercontig'";
-
-    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile  --outputFile $scaffoldFile --idSQL \"$sql\" --verbose\ 2>> $logFile";
-
-    $mgr->runCmd($cmd);
-  }
-
-  $mgr->endStep($signal);
-}
-
-
-sub extractChroms {
-  my ($mgr,$species) = @_;
-
-  my $propertySet = $mgr->{propertySet};
-
-  my $signal = "extractChroms";
-  return if $mgr->startStep("Extracting chroms from GUS", $signal);
-
-  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
-
-  my $taxonId = $mgr->{taxonHsh}->{$species};
-
-  my $extDbName =  $propertySet->getProp('chromDbName');
-  my $extDbRlsVer =  $propertySet->getProp('chromDbRlsVer');
-
-  my $dbRlsId = &getDbRlsId($mgr,$extDbName,$extDbRlsVer);
-
-  my $chromFile = "$mgr->{pipelineDir}/seqfiles/${species}Chrom.fsa";
-
-  my $logFile = "$mgr->{pipelineDir}/logs/$signal${species}.log";
-
-  my $sql = "select v.na_sequence_id, v.description,
-            'length='||v.length,v.sequence
-             from dots.VirtualSequence v, dots.sequencetype s
-             where v.taxon_id = $taxonId
-             and v.external_database_release_id = $dbRlsId
-             and v.sequence_type_id = s.sequence_type_id
-             and lower(s.name) = 'chromosome'";
-
-    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile  --outputFile $chromFile --idSQL \"$sql\" --verbose\ 2>> $logFile";
-
-  $mgr->runCmd($cmd);
-
-  $mgr->endStep($signal);
-}
 
 sub extractIdsFromBlastResult {
   my ($mgr,$simDir,$idType) = @_;
@@ -650,30 +534,6 @@ sub loadSageTagMap {
 
 
 
-sub concatContigFiles {
-   my ($mgr) = @_;
-
-   my $propertySet = $mgr->{propertySet};
-
-   my $signal = "concatContigs"; 
-   return if $mgr->startStep("Concatenating contig files", $signal);
-
-   my $speciesList = $propertySet->getProp('speciesNickname');
-   my @speciesArr = split(/\,/,$speciesList);
-
-  # my $genus =  $propertySet->getProp('genusNickname');
-  # my $totalContigs = "$mgr->{pipelineDir}/seqfiles/${genus}Contigs.fsa";
-   my $totalContigs = "$mgr->{pipelineDir}/seqfiles/Contigs.fsa";
-
-   foreach my $species (@speciesArr) {
-     my $file = "$mgr->{pipelineDir}/seqfiles/${species}Contigs.fsa";
-     my $cmd = "cat $file >> $totalContigs";
-     $mgr->runCmd($cmd);
-   }
-
-   $mgr->endStep($signal);
-}
-
 sub concatFiles {
    my ($mgr,$files,$catFile,$fileDir) = @_;
 
@@ -687,38 +547,6 @@ sub concatFiles {
 
    $mgr->endStep($signal);
 }
-
-
-sub extractAnnotatedProteins {
-  my ($mgr, $fname) = @_;
-
-  if ($fname eq '') {
-    $fname = 'annotatedProteins';
-  }
-
-  my $propertySet = $mgr->{propertySet};
-
-  my $taxonHsh = $mgr->{taxonHsh};
-  my $contigDbRlsHsh =  $mgr->{contigDbRlsHsh};
-
-  my $contigDbRlsIds = join(",",map{$_->[2]} values %$contigDbRlsHsh);
-  my $taxonIds = join(",",values %$taxonHsh);
-
-  my $sql = "select t.aa_sequence_id, 'length='||t.length,t.sequence
-             from dots.ExternalNASequence x, dots.nafeature f, 
-             dots.sequencetype s,dots.translatedaafeature a, 
-             dots.translatedaasequence t
-             where x.taxon_id in ($taxonIds)
-             and x.external_database_release_id in ($contigDbRlsIds)
-             and x.sequence_type_id = s.sequence_type_id
-             and lower(s.name) = 'contig'
-             and x.na_sequence_id = f.na_sequence_id 
-             and f.na_feature_id = a.na_feature_id
-             and a.aa_sequence_id = t.aa_sequence_id";
-
-  &extractProteinSeqs($mgr,$fname,$sql);
-}
-
 
 sub extractNRDB {
   my ($mgr) = @_;
@@ -1688,18 +1516,6 @@ sub copyFilesFromComputeCluster {
   $mgr->endStep($signal);
 }
 
-sub makeBuildName {
-  my ($nickName, $release) = @_;
-
-  return makeBuildNameRls($nickName, $release);
-}
-
-sub makeBuildNameRls {
-  my ($nickName, $release) = @_;
-
-  return "release${release}/" . $nickName;
-}
-
 sub usage {
   my $prog = `basename $0`;
   chomp $prog;
@@ -1802,37 +1618,6 @@ sub getTableId {
   return  $tableId;
 }
 
-
-sub cutFastaFileOnCluster {
-  my ($mgr, $name) = @_;
-  my $propertySet = $mgr->{propertySet};
-
-  my $signal = $name;
-  my $buildName = $mgr->{'buildName'};        # release/speciesNickname
-  my $serverPath = $propertySet->getProp('serverPath');
-  my $nodePath = $propertySet->getProp('nodePath');
-
-  my $analsPath = "$nodePath/$buildName/analysis/$name";
-  my $seqPath = "$nodePath/$buildName/seqfiles/";
-  my $seqFile = "$name.fsa";
-
-  my $cmd = "mkdir $analsPath";
-  $mgr->runCmd($cmd);
-
-#  my $in = Bio::SeqIO->new(-file   => $seqPath$seqFile,
-#                           -format => "fasta");
-
-#  while (my $seq = $in->next_seq()) {
-#    Bio::SeqIO->new(-file   => ">$analsPath/" . $seq->display_id(),
-#                    -format => "fasta"
-#                   )->write_seq($seq);
-#  }
-
-  my $cmd = "cutFastaFile $seqPath$seqFile $analsPath";
-  $mgr->runCmd($cmd);
-
-  $mgr->endStep($signal);
-}
 
 sub runPFamHmm{
   my ($mgr,$name,$cmd,$dir) = @_;
