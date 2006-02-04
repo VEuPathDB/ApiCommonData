@@ -49,24 +49,37 @@ my $argsDeclaration =
   ];
 
 my $purpose = <<PURPOSE;
+Convert an input GFF file/stream using real sequence coordinates to
+the equivalent virtual sequence coordinates (as defined by a virtual
+sequence mapping already stored in GUS).
 PURPOSE
 
+
 my $purposeBrief = <<PURPOSE_BRIEF;
+Convert real sequence coordinates to virtual coordinates in GFF.
 PURPOSE_BRIEF
 
 my $notes = <<NOTES;
+When input sequences do not participate in a virtual sequence, no
+mapping is performed.  For proper operation, this plugin also requires
+that NASequence entries have correct (non-NULL) 'length' attributes.
 NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
+None.
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
+DoTS.VirtualSequence, DoTS.SequencePiece
 TABLES_DEPENDED_ON
 
 my $howToRestart = <<RESTART;
+No restart necessary; this plugin does not save any information to the
+database.
 RESTART
 
 my $failureCases = <<FAIL_CASES;
+None known.
 FAIL_CASES
 
 my $documentation =
@@ -105,8 +118,15 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($self->getOption("extDbRlsSpec"));
   my $virtualExtDbRlsId = $self->getExtDbRlsId($self->getOption("virtualExtDbRlsSpec"));
 
-  my $gffIn     = Bio::Tools::GFF->new(-fh   => \*STDIN,     -gff_version => $gffVersion, -preferred_groups => [$groupTag]);
-  my $gffOut    = Bio::Tools::GFF->new(-fh   => \*STDOUT,    -gff_version => $gffVersion, -preferred_groups => [$groupTag]);
+  my $gffIn  = Bio::Tools::GFF->new(-fh => \*STDIN,
+				    -gff_version => $gffVersion,
+				    -preferred_groups => [$groupTag]
+				   );
+
+  my $gffOut = Bio::Tools::GFF->new(-fh => \*STDOUT,
+				    -gff_version => $gffVersion,
+				    -preferred_groups => [$groupTag]
+				   );
 
   my %coordinateMap;
 
@@ -119,9 +139,9 @@ sub run {
          sp.distance_from_left,
 	 sp.strand_orientation
 
-  FROM   DoTS.SequencePiece sp,
+  FROM   DoTS.SequencePiece   sp,
          DoTS.VirtualSequence vs,
-         Dots.NASequence nas
+         Dots.NASequence      nas
 
   WHERE  sp.virtual_na_sequence_id = vs.na_sequence_id
     AND  sp.piece_na_sequence_id = nas.na_sequence_id
@@ -131,7 +151,6 @@ sub run {
 
   ORDER BY vs.source_id ASC,
            sp.sequence_order ASC
-
 EOSQL
 
   $sth->execute($virtualExtDbRlsId, $extDbRlsId);
@@ -141,10 +160,11 @@ EOSQL
   while (my ($virtualSequenceId, $sequenceId,
 	     $length, $distanceFromLeft, $orientation) = $sth->fetchrow_array()) {
 
-    if ($lastVirtualSequenceId && $lastVirtualSequenceId ne $virtualSequenceId) {
+    if (defined($lastVirtualSequenceId) && $lastVirtualSequenceId ne $virtualSequenceId) {
       $offset = 0;
-      $lastVirtualSequenceId = $virtualSequenceId;
     }
+
+    $lastVirtualSequenceId = $virtualSequenceId;
 
     $offset += $distanceFromLeft;
 
@@ -169,7 +189,8 @@ EOSQL
     if (exists $coordinateMap{$feature->seq_id}) {
 
       # calculate new location in virtual coordinates:
-      my $virtualLocation = $coordinateMap{$feature->seq_id}->map($feature->location)->match();
+      my $virtualLocation =
+	$coordinateMap{$feature->seq_id}->map($feature->location)->match();
 
       unless ($virtualLocation) {
 	die <<EODIE;
