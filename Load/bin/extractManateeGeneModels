@@ -7,14 +7,20 @@ use List::Util qw(min max);
 use DBI;
 use Getopt::Long qw(GetOptions);
 
-my ($database, $user, $password);
+my ($database, $user, $password, $outfile);
 GetOptions("user:s" => \$user,
        "database|db:s" => \$database,
        "password|pw:s" => \$password,
+       "outfile=s" => \$outfile
       );
 
 my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
   or die $DBI::errstr;
+
+#unless (-e $outfile){
+
+#}
+open (OUT, "> $outfile") or die "Can't open file $outfile: $!\n";
 
 #Fetch all TU from manateeTg
 my $sql = <<EOSQL;
@@ -74,12 +80,12 @@ EOSQL
 	}
 
 	#print gff
-	print join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
-print "\n";
+	print OUT join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
+print OUT "\n";
 
 	if ($isPseudo){
-	  print join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Pseudogene 1 ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
-print "\n";
+	  print OUT join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Pseudogene 1 ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
+print OUT "\n";
 
 	}
 
@@ -93,5 +99,6 @@ print "\n";
 
 
 $sthTu->finish();
+close(OUT);
 $dbh->disconnect()
     or warn "Disconnection failed: $DBI::errstr\n";
