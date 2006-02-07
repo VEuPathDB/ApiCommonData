@@ -15,7 +15,7 @@ GetOptions("user:s" => \$user,
 	   "password|pw=s" => \$password,
 	   "outfile:s" => \$outfile,
 	   "annotation" => \$annotation,
-	   "source" => \$source,
+	   "source:s" => \$source,
 	  );
 
 if ($annotation && $source) {
@@ -37,12 +37,18 @@ if ($outfile) {
 
 my $sthTU = $dbh->prepare(<<EOSQL);
   SELECT tu_link.parent_feat,
-         ident.product,
+         LEAST(tu.end5, tu.end3) AS tu_start,
+         GREATEST(tu.end5, tu.end3) AS tu_stop,
+         ident.com_name,
          ident.is_pseudogene,
          ident.ec_
-  FROM   feat_link AS tu_link
-         INNER JOIN ident ON (tu_link.parent_feat = ident.feat_name)
+  FROM   ident
+         INNER JOIN asm_feature AS tu USING (feat_name)
+         INNER JOIN feat_link AS tu_link ON (tu_link.parent_feat = tu.feat_name)
   WHERE  tu_link.child_feat = ?
+    AND  tu.feat_type = "TU"
+  ORDER BY tu.date DESC
+  LIMIT 1
 EOSQL
 
 my $sthModel = $dbh->prepare(<<EOSQL);
@@ -57,6 +63,7 @@ my $sthModel = $dbh->prepare(<<EOSQL);
          INNER JOIN phys_ev USING (feat_name)
   WHERE  model.feat_type = "model"
     AND  phys_ev.ev_type = ?
+    AND  clone_info.is_public = 1
 EOSQL
 
 my $sthExon = $dbh->prepare(<<EOSQL);
@@ -85,24 +92,24 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
   my $strand = $isReversed ? "-" : "+";
 
   $sthTU->execute($sourceId);
-  my ($tuName, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
+  my ($tuName, $tuStart, $tuStop, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
 
   print OUT join("\t",
 		 $scaffold,
 		 $annotation ? "annotation" : $source,
 		 "transcript",
-		 $modelStart,
-		 $modelStop,
+		 $tuStart || $modelStart,
+		 $tuStop || $modelStop,
 		 ".",
 		 $strand,
 		 ".",
 		 join(" ; ",
 		      qq{GenePrediction "$sourceId"},
-		      ($product ? qq{Note "$product"} : undef),
-		      ($tuName ? qq{TU "$tuName"} : undef),
-		      ($isPseudo ? "Pseudo 1" : undef),
-		      ($isPseudo ? "ECNumber $ecNumber" : undef),
-		      ($proteinSeq ? qq{Protein "$proteinSeq"} : undef),
+		      ($product ? qq{Note "$product"} : ()),
+		      ($tuName ? qq{TU "$tuName"} : ()),
+		      ($isPseudo ? "Pseudo 1" : ()),
+		      ($ecNumber ? "ECNumber $ecNumber" : ()),
+		      ($proteinSeq ? qq{Protein "$proteinSeq"} : ()),
 		     )
 		), "\n";
 
@@ -136,8 +143,27 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		     join(" ; ",
 			  qq{GenePrediction "$sourceId"},
 			  qq{OrderNumber $exonCount},
+			  qq{CodingStart $CDSStart},
 			  qq{CodingEnd $CDSStop},
-			  qq{CodingStart $CDSStart}
+			 ),
+		    ), "\n";
+    }
+
+    unless ($cdsCount) {
+      print OUT join("\t",
+		     $scaffold,
+		     $annotation ? "annotation" : $source,
+		     "exon",
+		     $exonStart,
+		     $exonStop,
+		     ".",
+		     $strand,
+		     "0",
+		     join(" ; ",
+			  qq{GenePrediction "$sourceId"},
+			  qq{OrderNumber $exonCount},
+			  qq{CodingStart $exonStart},
+			  qq{CodingEnd $exonStop},
 			 ),
 		    ), "\n";
     }
