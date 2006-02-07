@@ -2,103 +2,147 @@
 
 use strict;
 use warnings;
-use List::Util qw(min max);
 
 use DBI;
+use List::Util qw(min max);
 use Getopt::Long qw(GetOptions);
 
-my ($database, $user, $password, $outfile);
+my ($database, $user, $password,
+    $outfile, $annotation, $source);
+
 GetOptions("user:s" => \$user,
-       "database|db:s" => \$database,
-       "password|pw:s" => \$password,
-       "outfile=s" => \$outfile
-      );
+	   "database|db=s" => \$database,
+	   "password|pw=s" => \$password,
+	   "outfile:s" => \$outfile,
+	   "annotation" => \$annotation,
+	   "source" => \$source,
+	  );
+
+if ($annotation && $source) {
+  die "Please choose either --annotation *or* --source flags, not both\n";
+}
+
+if ($annotation) {
+  $source = "working";
+}
 
 my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
   or die $DBI::errstr;
 
-#unless (-e $outfile){
-
-#}
-open (OUT, "> $outfile") or die "Can't open file $outfile: $!\n";
-
-#Fetch all TU from manateeTg
-my $sql = <<EOSQL;
-SELECT clone_info.clone_name as scaffold, ident.com_name as product, tu.feat_name AS feat_name, ident.is_pseudogene FROM clone_info, asm_feature AS tu, ident WHERE tu.asmbl_id = clone_info.asmbl_id AND clone_info.is_public = 1 AND tu.feat_type = "TU" AND tu.feat_name = ident.feat_name
-EOSQL
-
-my $sthTu = $dbh->prepare($sql);
-$sthTu->execute();
-
-while ( my($scaffold, $product, $featName, $isPseudo) = $sthTu->fetchrow_array()) {
-
-  #fetch all models for each featName
-
-  my $featNameQuoted = $dbh->quote($featName);
-
-  $sql = <<EOSQL;
-SELECT model.feat_name as source_id from feat_link AS tu_link, asm_feature AS model, phys_ev WHERE tu_link.parent_feat = $featNameQuoted AND tu_link.child_feat = model.feat_name AND model.feat_type = "model" AND model.feat_name = phys_ev.feat_name AND phys_ev.ev_type = "working"
-EOSQL
-
-  my $sthModel = $dbh->prepare($sql);
-  $sthModel->execute();
-  while ( my($sourceId) = $sthModel->fetchrow_array()) {
-
-    my $exonCount = 0;
-
-    #select all exons from manateeTg
-
-    my $sourceIdQuoted = $dbh->quote($sourceId);
-
-    $sql = <<EOSQL;
-SELECT least(exon.end5, exon.end3) as exon_start, greatest(exon.end5, exon.end3) as exon_stop, exon.feat_name AS feat_name FROM feat_link AS model_link, asm_feature AS exon WHERE model_link.parent_feat = $sourceIdQuoted AND model_link.child_feat = exon.feat_name AND exon.feat_type = "exon"
-EOSQL
-
-    my $sthExon = $dbh->prepare($sql);
-    $sthExon->execute();
-    while ( my($exonStart, $exonEnd, $exonFeature) = $sthExon->fetchrow_array()) {
-
-      $exonCount ++;
-
-      # select all CDS from manateeTg
-
-      my $exonFeatureQuoted = $dbh->quote($exonFeature);
-
-      $sql = <<EOSQL;
-SELECT least(cds.end5, cds.end3) as cds_start, greatest(cds.end5, cds.end3) as cds_stop, if(cds.end5 > cds.end3, 1, 0) as is_reversed FROM feat_link AS exon_link LEFT JOIN asm_feature AS cds ON (exon_link.child_feat = cds.feat_name) WHERE exon_link.parent_feat = $exonFeatureQuoted AND cds.feat_type = "CDS"
-EOSQL
-
-      my $sthCDS = $dbh->prepare($sql);
-      $sthCDS->execute();
-      while ( my($CDSStart, $CDSEnd, $isReversed) = $sthCDS->fetchrow_array()) {
-
-	if ($isReversed == 1){
-	  $isReversed = "-";
-	}
-	else{
-	  $isReversed = "+";
-	}
-
-	#print gff
-	print OUT join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
-print OUT "\n";
-
-	if ($isPseudo){
-	  print OUT join("\n", join("\t", $scaffold, "TIGRannot", "transcript", $exonStart, $exonEnd, ".", $isReversed, ".", "GenePrediction \"$sourceId\" ;", "Note \"$product\" ;", "Pseudogene 1 ;", "Protein"), join("\t", $scaffold, "TIGRannot", "exon", $exonStart, $exonEnd, ".", $isReversed, "0", "GenePrediction \"$sourceId\" ;", "OrderNumber $exonCount ;", "CodingEnd $CDSEnd ;", "CodingStart $CDSStart"));
-print OUT "\n";
-
-	}
-
-      }
-      $sthCDS->finish();
-    }
-    $sthExon->finish();
-  }
-  $sthModel->finish();
+if ($outfile) {
+  open(OUT, ">$outfile") or die "Can't open file $outfile: $!\n";
+} else {
+  *OUT = \*STDOUT;
 }
 
+my $sthTU = $dbh->prepare(<<EOSQL);
+  SELECT tu_link.parent_feat,
+         ident.product,
+         ident.is_pseudogene,
+         ident.ec_
+  FROM   feat_link AS tu_link
+         INNER JOIN ident ON (tu_link.parent_feat = ident.feat_name)
+  WHERE  tu_link.child_feat = ?
+EOSQL
 
-$sthTu->finish();
+my $sthModel = $dbh->prepare(<<EOSQL);
+  SELECT clone_info.clone_name AS scaffold,
+         model.feat_name AS model_id,
+         LEAST(model.end5, model.end3) AS model_start,
+         GREATEST(model.end5, model.end3) AS model_stop,
+         IF(model.end5 > model.end3, 1, 0) AS is_reversed,
+         model.protein AS protein
+  FROM   clone_info
+         INNER JOIN asm_feature AS model USING (asmbl_id)
+         INNER JOIN phys_ev USING (feat_name)
+  WHERE  model.feat_type = "model"
+    AND  phys_ev.ev_type = ?
+EOSQL
+
+my $sthExon = $dbh->prepare(<<EOSQL);
+  SELECT LEAST(exon.end5, exon.end3) AS exon_start,
+         GREATEST(exon.end5, exon.end3) AS exon_stop,
+         exon.feat_name AS feat_name
+  FROM   feat_link AS model_link
+         INNER JOIN asm_feature AS exon ON (model_link.child_feat = exon.feat_name)
+  WHERE  model_link.parent_feat = ?
+    AND  exon.feat_type = "exon"
+  ORDER BY IF(exon.end5 > exon.end3, -exon.end5, exon.end5) ASC
+EOSQL
+
+my $sthCDS = $dbh->prepare(<<EOSQL);
+  SELECT LEAST(cds.end5, cds.end3) AS cds_start,
+         GREATEST(cds.end5, cds.end3) AS cds_stop
+  FROM   feat_link AS exon_link
+         INNER JOIN asm_feature AS cds ON (exon_link.child_feat = cds.feat_name)
+  WHERE  exon_link.parent_feat = ?
+    AND  cds.feat_type = "CDS"
+EOSQL
+
+$sthModel->execute($source);
+while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinSeq) = $sthModel->fetchrow_array()) {
+
+  my $strand = $isReversed ? "-" : "+";
+
+  $sthTU->execute($sourceId);
+  my ($tuName, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
+
+  print OUT join("\t",
+		 $scaffold,
+		 $annotation ? "annotation" : $source,
+		 "transcript",
+		 $modelStart,
+		 $modelStop,
+		 ".",
+		 $strand,
+		 ".",
+		 join(" ; ",
+		      qq{GenePrediction "$sourceId"},
+		      ($product ? qq{Note "$product"} : undef),
+		      ($tuName ? qq{TU "$tuName"} : undef),
+		      ($isPseudo ? "Pseudo 1" : undef),
+		      ($isPseudo ? "ECNumber $ecNumber" : undef),
+		      ($proteinSeq ? qq{Protein "$proteinSeq"} : undef),
+		     )
+		), "\n";
+
+  my $exonCount = 0;
+
+  # select all exons from this model
+  $sthExon->execute($sourceId);
+  while (my ($exonStart, $exonStop, $exonFeature) = $sthExon->fetchrow_array()) {
+    $exonCount++;
+
+    # select all CDS from this exon
+    $sthCDS->execute($exonFeature);
+    my $cdsCount = 0;
+    while (my ($CDSStart, $CDSStop) = $sthCDS->fetchrow_array()) {
+      $cdsCount++;
+
+      if ($cdsCount > 1) {
+	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
+      }
+
+      #print gff
+      print OUT join("\t",
+		     $scaffold,
+		     $annotation ? "annotation" : $source,
+		     "exon",
+		     $exonStart,
+		     $exonStop,
+		     ".",
+		     $strand,
+		     "0",
+		     join(" ; ",
+			  qq{GenePrediction "$sourceId"},
+			  qq{OrderNumber $exonCount},
+			  qq{CodingEnd $CDSStop},
+			  qq{CodingStart $CDSStart}
+			 ),
+		    ), "\n";
+    }
+  }
+}
+
 close(OUT);
-$dbh->disconnect()
-    or warn "Disconnection failed: $DBI::errstr\n";
+$dbh->disconnect();
