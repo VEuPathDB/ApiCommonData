@@ -1,0 +1,37 @@
+#!/usr/perl
+
+use strict;
+
+my $project = $ARGV[0];
+my $tag = $ARGV[1];
+
+&usage unless (scalar(@ARGV) == 2 && ($project eq "ApiDB"
+				      || $project eq "CryptoDB"
+				      || $project eq "PlasmoDB"
+				      || $project eq "ToxoDB"));
+
+my $urlRoot = "https://www.cbil.upenn.edu/svn";
+
+my $urlRootProj = "$urlRoot/apidb/$project";
+my $urlRootApiComm = "$urlRoot/apidb/ApiCommon";
+
+foreach my $sub (("Data", "Website", "WebService")) {
+  &cmd("svn copy $urlRootProj$sub/trunk $urlRootProj$sub/branches/$tag");
+  &cmd("svn copy $urlRootApiComm$sub/trunk $urlRootApiComm$sub/branches/$tag");
+}
+
+&cmd("svn copy $urlRoot/gus/GusAppFramework/trunk $urlRoot/gus/GusAppFramework/branches/internal/$tag");
+
+sub cmd {
+    my ($cmd) = @_;
+
+    print STDERR "Running '$cmd'\n\n";
+    my $output = `$cmd`;
+    my $status = $? >> 8;
+    die "\n" if ($status);
+}
+
+sub usage {
+  print STDERR "\nusage:  apiBranch ApiDB|CryptoDB|PlasmoDB|ToxoDB tag\n\n";
+  exit(1);
+}
