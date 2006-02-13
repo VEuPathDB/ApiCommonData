@@ -171,4 +171,8 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 }
 
 close(OUT);
+$sthTU->finish();
+$sthModel->finish();
+$sthExon->finish();
+$sthCDS->finish();
 $dbh->disconnect();
