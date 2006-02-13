@@ -56,8 +56,8 @@ sub calc_phase {
     my ($mRNA) = grep { $_->primary_tag eq "mRNA" } @{$gene};
     ($mRNA) = grep { $_->primary_tag eq "transcript"} @{$gene} unless ($mRNA);
 
-    my ($vulgar) = $mRNA->get_tag_values("vulgar") if $mRNA;
-    ($vulgar) = $mRNA->get_tag_values("VULGAR") if ($mRNA && !$vulgar);
+    my ($vulgar) = $mRNA->get_tag_values("vulgar") if $mRNA && $mRNA->has_tag("vulgar");
+    ($vulgar) = $mRNA->get_tag_values("VULGAR") if ($mRNA && !$vulgar && $mRNA->has_tag("VULGAR"));
 
     if ($vulgar && $vulgar =~ m/ F \d+ \d+/) {
       warn $mRNA . " has frameshifts, cannot (yet) be processed\n";
