@@ -1,0 +1,198 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+use Bio::Tools::GFF;
+use Bio::Index::Fasta;
+use Bio::Tools::CodonTable;
+use List::Util qw(min max);
+
+use Getopt::Long qw(GetOptions);
+
+my $gffVersion = 2.5;
+my $fastaIdx;
+my $codonTable = 1;
+my $groupTag = "GenePrediction";
+
+GetOptions("gffVersion:s" => \$gffVersion,
+	   "fastaIndex:s" => \$fastaIdx,
+	   "codonTable:i" => \$codonTable,
+	   "groupTag:s"   => \$groupTag,
+	   );
+
+my $in = Bio::Tools::GFF->new(-fh => \*STDIN, -gff_version => $gffVersion);
+my $out = Bio::Tools::GFF->new(-fh => \*STDOUT, -gff_version => $gffVersion);
+
+$fastaIdx = Bio::Index::Fasta->new(-filename => $fastaIdx) if $fastaIdx;
+
+my %seqs;
+
+my $ct = Bio::Tools::CodonTable->new(-id => $codonTable);
+
+my @gene;
+my $last;
+while (my $f = $in->next_feature) {
+    if($f->has_tag($groupTag)) {
+	my ($name) = $f->get_tag_values($groupTag);
+	if(defined($last) && $last ne $name) {
+	    calc_phase(\@gene);
+	    $out->write_feature(@gene);
+	    @gene = ();
+	}
+	$last = $name;
+	push @gene, $f;
+    } else {
+	$out->write_feature($f);
+    }
+}
+
+calc_phase(\@gene) if @gene;
+$out->write_feature(@gene) if @gene;
+
+sub calc_phase {
+
+    my $gene = shift @_;
+
+    my ($mRNA) = grep { $_->primary_tag eq "mRNA" } @{$gene};
+    ($mRNA) = grep { $_->primary_tag eq "transcript"} @{$gene} unless ($mRNA);
+
+    my ($vulgar) = $mRNA->get_tag_values("vulgar") if $mRNA;
+    ($vulgar) = $mRNA->get_tag_values("VULGAR") if ($mRNA && !$vulgar);
+
+    if ($vulgar && $vulgar =~ m/ F \d+ \d+/) {
+      warn $mRNA . " has frameshifts, cannot (yet) be processed\n";
+      @$gene = ();
+      return;
+    }
+
+    my @gene =
+	sort {
+	  $a->start <=> $b->start;
+	} grep {
+	  $_->primary_tag eq "CDS" || $_->primary_tag eq "exon";
+	} @{$gene};
+
+    if (grep { $_->primary_tag eq "exon" } @gene) {
+      if (grep { $_->primary_tag eq "CDS" } @gene
+	 ) {
+	@gene = grep { $_->primary_tag eq "CDS" } @gene;
+      } else {
+	@gene = grep {
+	  if ($_->has_tag("CodingStart")) {
+	    my ($start) = $_->get_tag_values("CodingStart");
+	    $start > 0;
+	  } else {
+	    0;
+	  }
+	} @gene;
+      }
+    }
+
+    unless (@gene) {
+      warn $gene->[0]->gff_string . " doesn't have any CDS or exon subfeatures\n";
+      @$gene = ();
+      return;
+    }
+
+    @gene = reverse @gene if $gene[0]->strand() == -1;
+
+    my $cdslen = $gene[0]->frame;
+
+    if($gene[0]->has_tag("ExonType")) {
+	my ($type) = $gene[0]->get_tag_values("ExonType");
+	if ( ($type eq "Internal") ||
+	     ($type eq "Terminal" && @gene == 1)) {
+	    my $len = 0;
+	    for my $f (@gene) {
+	      if ($f->primary_tag eq "CDS") {
+		$len += $f->length;
+	      } else {
+		my ($start) = $f->get_tag_values("CodingStart");
+		my ($stop) = $f->get_tag_values("CodingEnd");
+		$len += abs($stop - $start) + 1;
+	      }
+	    }
+	    my $phase = $gene[0]->frame; $phase = undef if $phase eq ".";
+	    $phase = $len % 3 unless defined $phase;
+	    $cdslen = $phase == 1 ? 2 : $phase == 2 ? 1 : 0;
+	} else {
+	    $cdslen = 0;
+	}
+	for (@gene) { $_->remove_tag("ExonType"); }
+    } elsif ($cdslen eq ".") {
+      if ($fastaIdx) {
+	my $cds;
+	for (@gene) {
+	  my ($start, $stop);
+	  if ($_->primary_tag eq "CDS") {
+	    $start = $_->start;
+	    $stop = $_->end;
+	  } else {
+	    ($start) = $_->get_tag_values("CodingStart");
+	    ($stop) = $_->get_tag_values("CodingEnd");
+	    ($start, $stop) = ($stop, $start) if $start > $stop;
+	  }
+	  my $subseq = ($seqs{$_->seq_id} ||= $fastaIdx->fetch($_->seq_id))->subseq($start, $stop);
+	  if ($gene[0]->strand() == -1) {
+	    $subseq =~ tr/acgtrymkswhbvdnxACGTRYMKSWHBVDNX/tgcayrkmswdvbhnxTGCAYRKMSWDVBHNX/;
+	    $subseq = reverse $subseq;
+	  }
+	  $cds .= $subseq;
+	}
+	my @valid =
+	  grep {
+	    my $trans = $ct->translate(substr($cds, $_));
+	    $trans =~ s/\*$//;
+	    $trans !~ m/\*/;
+	  } (0..2);
+	if (@valid == 0) {
+	  warn "No valid translation frame:\n" . $gene->[0]->gff_string . "\n";
+	  @$gene = ();
+	  return;
+	} elsif (@valid == 1) {
+	  $cdslen = shift @valid;
+	} else {
+	  if ($valid[0] == 0) {
+	    warn "Multiple valid offsets for unknown first phase CDS; choosing phase 0\n" . $gene->[0]->gff_string . "\n";
+	    $cdslen = 0;
+	  } else {
+	    warn "Multiple valid offsets for unknown first phase CDS; can't choose, so skipping\n" . $gene->[0]->gff_string . "\n";
+	    @$gene = ();
+	    return;
+	  }
+	}
+      } else {
+	$cdslen = 0;
+      }
+    } else {
+      $cdslen = (3 - $cdslen) % 3;
+    }
+
+    for my $f (@gene) {
+      my $phase = $cdslen % 3;
+      $f->frame($phase == 1 ? 2 : $phase == 2 ? 1 : 0);
+      if ($f->primary_tag eq "CDS") {
+	$cdslen += $f->length;
+      } else {
+	my ($start) = $f->get_tag_values("CodingStart");
+	my ($stop) = $f->get_tag_values("CodingEnd");
+	$cdslen += abs($stop - $start) + 1;
+      }
+    }
+
+    @$gene = @gene;
+
+    unless ($mRNA) {
+      $mRNA = $gene[0]->new;
+      $mRNA->seq_id($gene[0]->seq_id);
+      $mRNA->start(min(map { $_->start } @gene));
+      $mRNA->end(max(map { $_->end } @gene));
+      $mRNA->primary_tag("mRNA");
+      $mRNA->source_tag($gene[0]->source_tag);
+      $mRNA->strand($gene[0]->strand);
+      $mRNA->add_tag_value($groupTag => $gene[0]->get_tag_values($groupTag));
+    }
+
+    unshift @$gene, $mRNA;
+
+}
