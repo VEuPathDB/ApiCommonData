@@ -118,7 +118,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
       }
 
       push @exons, join("\t",
-			$scaffold,
+			"TGG_".$scaffold,
 			$annotation ? "annotation" : $source,
 			"exon",
 			$exonStart,
@@ -137,7 +137,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 
     unless ($cdsCount) {
       push @exons, join("\t",
-			$scaffold,
+			"TGG_".$scaffold,
 			$annotation ? "annotation" : $source,
 			"exon",
 			$exonStart,
@@ -156,7 +156,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
   }
 
   print OUT join("\t",
-		 $scaffold,
+		 "TGG_".$scaffold,
 		 $annotation ? "annotation" : $source,
 		 "transcript",
 		 $minStart,
