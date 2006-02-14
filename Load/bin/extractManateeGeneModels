@@ -94,12 +94,73 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
   $sthTU->execute($sourceId);
   my ($tuName, $tuStart, $tuStop, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
 
+  my $exonCount = 0;
+
+  my ($minStart, $maxStop);
+  my @exons;
+
+  # select all exons from this model
+  $sthExon->execute($sourceId);
+  while (my ($exonStart, $exonStop, $exonFeature) = $sthExon->fetchrow_array()) {
+    $exonCount++;
+
+    $minStart = $minStart ? min($exonStart, $minStart) : $exonStart;
+    $maxStop  = $maxStop ? max($exonStop, $maxStop) : $exonStop;
+
+    # select all CDS from this exon
+    $sthCDS->execute($exonFeature);
+    my $cdsCount = 0;
+    while (my ($CDSStart, $CDSStop) = $sthCDS->fetchrow_array()) {
+      $cdsCount++;
+
+      if ($cdsCount > 1) {
+	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
+      }
+
+      push @exons, join("\t",
+			$scaffold,
+			$annotation ? "annotation" : $source,
+			"exon",
+			$exonStart,
+			$exonStop,
+			".",
+			$strand,
+			"0",
+			join(" ; ",
+			     qq{GenePrediction "$sourceId"},
+			     qq{OrderNumber $exonCount},
+			     qq{CodingStart $CDSStart},
+			     qq{CodingEnd $CDSStop},
+			    ),
+		       );
+    }
+
+    unless ($cdsCount) {
+      push @exons, join("\t",
+			$scaffold,
+			$annotation ? "annotation" : $source,
+			"exon",
+			$exonStart,
+			$exonStop,
+			".",
+			$strand,
+			"0",
+			join(" ; ",
+			     qq{GenePrediction "$sourceId"},
+			     qq{OrderNumber $exonCount},
+			     qq{CodingStart @{[$annotation ? -1 : $exonStart]}},
+			     qq{CodingEnd @{[$annotation ? -1 : $exonStop]}},
+			    ),
+		       );
+    }
+  }
+
   print OUT join("\t",
 		 $scaffold,
 		 $annotation ? "annotation" : $source,
 		 "transcript",
-		 $tuStart || $modelStart,
-		 $tuStop || $modelStop,
+		 $minStart,
+		 $maxStop,
 		 ".",
 		 $strand,
 		 ".",
@@ -113,61 +174,8 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		     )
 		), "\n";
 
-  my $exonCount = 0;
+  print OUT join("\n", @exons), "\n";
 
-  # select all exons from this model
-  $sthExon->execute($sourceId);
-  while (my ($exonStart, $exonStop, $exonFeature) = $sthExon->fetchrow_array()) {
-    $exonCount++;
-
-    # select all CDS from this exon
-    $sthCDS->execute($exonFeature);
-    my $cdsCount = 0;
-    while (my ($CDSStart, $CDSStop) = $sthCDS->fetchrow_array()) {
-      $cdsCount++;
-
-      if ($cdsCount > 1) {
-	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
-      }
-
-      #print gff
-      print OUT join("\t",
-		     $scaffold,
-		     $annotation ? "annotation" : $source,
-		     "exon",
-		     $exonStart,
-		     $exonStop,
-		     ".",
-		     $strand,
-		     "0",
-		     join(" ; ",
-			  qq{GenePrediction "$sourceId"},
-			  qq{OrderNumber $exonCount},
-			  qq{CodingStart $CDSStart},
-			  qq{CodingEnd $CDSStop},
-			 ),
-		    ), "\n";
-    }
-
-    unless ($cdsCount) {
-      print OUT join("\t",
-		     $scaffold,
-		     $annotation ? "annotation" : $source,
-		     "exon",
-		     $exonStart,
-		     $exonStop,
-		     ".",
-		     $strand,
-		     "0",
-		     join(" ; ",
-			  qq{GenePrediction "$sourceId"},
-			  qq{OrderNumber $exonCount},
-			  qq{CodingStart $exonStart},
-			  qq{CodingEnd $exonStop},
-			 ),
-		    ), "\n";
-    }
-  }
 }
 
 close(OUT);
