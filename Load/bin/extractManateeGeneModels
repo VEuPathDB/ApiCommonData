@@ -166,10 +166,10 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		 ".",
 		 join(" ; ",
 		      qq{GenePrediction "$sourceId"},
-		      ($product ? qq{Note "$product"} : ()),
-		      ($tuName ? qq{TU "$tuName"} : ()),
-		      ($isPseudo ? "Pseudo 1" : ()),
-		      ($ecNumber ? "ECNumber $ecNumber" : ()),
+		      ($product    ? qq{Note "$product"} : ()),
+		      ($tuName     ? qq{TU "$tuName"} : ()),
+		      ($isPseudo   ? "Pseudo 1" : ()),
+		      ($ecNumber   ? qq{ECNumber "$ecNumber"} : ()),
 		      ($proteinSeq ? qq{Protein "$proteinSeq"} : ()),
 		     )
 		), "\n";
