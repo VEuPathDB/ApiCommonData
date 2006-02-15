@@ -20,6 +20,7 @@ sub createPipelineDir {
   $mgr->runCmd("mkdir -p $pipelineDir/sage") unless (-e "$pipelineDir/sage");
   $mgr->runCmd("mkdir -p $pipelineDir/analysis") unless (-e "$pipelineDir/analysis");
   $mgr->runCmd("mkdir -p $pipelineDir/similarity") unless (-e "$pipelineDir/similarity");
+  $mgr->runCmd("mkdir -p $pipelineDir/iprscan") unless (-e "$pipelineDir/iprscan");
 
   my @Species = split(/,/,$allSpecies);
 
