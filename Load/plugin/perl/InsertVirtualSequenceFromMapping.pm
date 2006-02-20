@@ -209,29 +209,35 @@ my $count = 0;
 
     for my $piece (@$seqs) {
       my ($sourceSeq, $orientation, $orderedBy, $orientedBy) = @$piece;
-      $seqOrder++;
-      my $sourceSeqId = $sourceSeq->getId();
-      my $seqPiece = GUS::Model::DoTS::SequencePiece->new({ piece_na_sequence_id   => $sourceSeqId,
-							    virtual_na_sequence_id => $virtSeqId,
-							    sequence_order         => $seqOrder,
-							    strand_orientation     => $orientation,
-							    distance_from_left     => 0, # number of N's
-							                                 # between this and
-							                                 # last piece
+
+      if ($target eq $sourceSeq->getSourceId()) {
+	  # for the case when scaffold does not map to any chromosome in mapping input file
+	  # and we do not create an entry in SequencePiece table
+      } else {
+	$seqOrder++;
+	my $sourceSeqId = $sourceSeq->getId();
+	my $seqPiece = GUS::Model::DoTS::SequencePiece->new({ piece_na_sequence_id   => $sourceSeqId,
+							      virtual_na_sequence_id => $virtSeqId,
+							      sequence_order         => $seqOrder,
+							      strand_orientation     => $orientation,
+							      distance_from_left     => 0, # number of N's
+							                                   # between this and
+							                                   # last piece
 							  });
-      $seqPiece->submit();
+	$seqPiece->submit();
 
-      my $pieceSeq = $sourceSeq->getSequence();
+	my $pieceSeq = $sourceSeq->getSequence();
 
-      if ($orientation == -1) {
-        $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq();
+	if ($orientation == -1) {
+	  $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq();
+        }
+
+	# TODO: implement option for inserting spacing between elements
+	# (e.g. "NNNNN...");
+
+	$seq .= $pieceSeq;
+	$offset = $offset + length($pieceSeq);
       }
-
-      # TODO: implement option for inserting spacing between elements
-      # (e.g. "NNNNN...");
-
-      $seq .= $pieceSeq;
-      $offset = $offset + length($pieceSeq);
     }
 
     $virtualSeq->setSequence($seq);
