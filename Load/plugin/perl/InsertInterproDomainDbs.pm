@@ -35,6 +35,15 @@ stringArg({name => 'iproVersion',
          format=>'Text'
         }),
 
+fileArg({name => 'inPath',
+         descr => 'user specified path to the directory containing all of the iprscan consitutent dbs.',
+         constraintFunc=> undef,
+         reqd  => 0,
+         mustExist => 0,
+         isList => 0,
+         format=>'Text'
+        }),
+
 fileArg({name => 'restartFile',
          descr => 'log file containing/for storing entries from last run/this run',
          constraintFunc=> undef,
@@ -380,6 +389,7 @@ sub loadConfig{
 
      my $dbLst = [];
      my $cFile = $self->getArgs()->{'confFile'} || die "No Conf File";
+     my $inPath = $self->getArgs()->{'inPath'};
      my $conf = $self->parseSimple($cFile);
 
      #List of DBs supported by this plugin
@@ -411,6 +421,9 @@ sub loadConfig{
         my $rel = $dbs->{$db}->{'release'};
         my $ver = $dbs->{$db}->{'ver'};
         my $file = $dbs->{$db}->{'filename'};
+        if ($inPath) {
+          $file = "$inPath$file";
+        }
            if ($iprVer ne $rel) {
               die "$db - $ver: Database release inconsistent with declared interpro version";
            }
