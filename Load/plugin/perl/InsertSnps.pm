@@ -4,7 +4,7 @@ package ApiCommonData::Load::Plugin::InsertSnps;
 use strict;
 
 use GUS::PluginMgr::Plugin;
-use GUS::Model::DoTS::ExternalNASequence;
+use GUS::Model::DoTS::VirtualSequence;
 use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
@@ -84,7 +84,7 @@ sub getDocumentation {
 
   my $tablesAffected = [['DoTS::SeqVariation', 'One or more rows inserted per SNP, row number equal to strain number'],['DoTS::NALocation', 'A single row inserted per SNP']];
 
-  my $tablesDependedOn = [['DoTS::ExternalNASequence', 'Genome sequence containing the SNP'], ['SRes::SequenceOntology',  'SequenceOntology term equal to SNP required']];
+  my $tablesDependedOn = [['DoTS::VirtualSequence', 'Genome sequence containing the SNP'], ['SRes::SequenceOntology',  'SequenceOntology term equal to SNP required']];
 
   my $howToRestart = "Use restart option and last processed row number from STDOUT file.";
 
@@ -131,6 +131,12 @@ sub run {
   $self->logCommit();
   $self->logArgs();
 
+  my $dbh = $self->getDbHandle();
+  $dbh->{'LongReadLen'} = 10_000_000;
+
+  $dbh = $self->getQueryHandle();
+  $dbh->{'LongReadLen'} = 10_000_000;
+
   my ($linesProcessed) = $self->processSnpFile();
 
   my $file = $self->getArg('snpFile');
@@ -146,7 +152,8 @@ sub processSnpFile{
 
   my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
 
-  $self->{'soId'} = $self->getSoId();
+  my $termName = 'SNP';
+  $self->{'soId'} = $self->getSoId($termName);
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
 
@@ -203,10 +210,10 @@ sub getSeqVars {
   my @data = split (/;/, $line->[8]);
 
   my $sourceId = $data[0];
+  # $sourceId =~ s/SNP\s(\S+)\s/$1/;
+  $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
 
   my $organism = $self->getArg('organism');
-
-  $sourceId =~ s/SNP\s(\S+)\s/$1/;
 
   my $start = $line->[3];
 
@@ -219,7 +226,7 @@ sub getSeqVars {
   my @seqVarRows;
 
   foreach my $element (@data) {
-    if ($element =~ /Allele\s(\w+):([\w\-]+)/) {
+    if ($element =~ /Allele\s\"(\w+):([\w\-]+)\"/) {
 
       my $strain = $1;
       my $base = $2;
@@ -241,9 +248,9 @@ sub getSeqVars {
 }
 
 sub getSoId {
-  my ($self) = @_;
+  my ($self, $termName) = @_;
 
-  my $so = GUS::Model::SRes::SequenceOntology->new({'term_name'=>'SNP'});
+  my $so = GUS::Model::SRes::SequenceOntology->new({'term_name'=>$termName});
 
   if (!$so->retrieveFromDB()) {
     $self->error("No row has been added for term_name = SNP in the sres.sequenceontology table\n");
@@ -256,13 +263,20 @@ sub getSoId {
 }
 
 sub getNaSeq {
-   my ($self,$line) = @_;
+  my ($self,$line) = @_;
 
-   my $sourceId = $line->[0];
+  my $sourceId = $line->[0];
+
+  # special case, when scaffold not mapped to a chr:
+  if ($sourceId eq "Unk") {
+    my @data = split (/;/, $line->[8]);
+    $sourceId = $data[0];
+    $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
+}
 
    my $extDbRlsId = $self->{'naExtDbRlsId'};
 
-   my $naSeq = GUS::Model::DoTS::ExternalNASequence->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
+   my $naSeq = GUS::Model::DoTS::VirtualSequence->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
 
    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
 
