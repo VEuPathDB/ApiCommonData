@@ -37,7 +37,7 @@ my $sthGOAssoc = $dbh->prepare(<<EOSQL);
          go_role_link.go_id,
          go_role_link.qualifier,
          go_role_link.assigned_by,
-         go_role_link.date,
+         DATE_FORMAT(go_role_link.date, "%Y%m%d"),
          go_evidence.ev_code,
          go_evidence.with_ev,
          go_term.type
