@@ -112,11 +112,11 @@ sub run {
   my ($self) = @_;
 
 
-  my $groupTag = $self->getOption("groupTag");
-  my $gffVersion = $self->getOption("gffVersion");
+  my $groupTag = $self->getArg("groupTag");
+  my $gffVersion = $self->getArg("gffVersion");
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getOption("extDbRlsSpec"));
-  my $virtualExtDbRlsId = $self->getExtDbRlsId($self->getOption("virtualExtDbRlsSpec"));
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg("extDbRlsSpec"));
+  my $virtualExtDbRlsId = $self->getExtDbRlsId($self->getArg("virtualExtDbRlsSpec"));
 
   my $gffIn  = Bio::Tools::GFF->new(-fh => \*STDIN,
 				    -gff_version => $gffVersion,
