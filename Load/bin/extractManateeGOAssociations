@@ -32,26 +32,21 @@ if ($outfile) {
 
 my $sthGOAssoc = $dbh->prepare(<<EOSQL);
 
-  SELECT phys_ev.feat_name,
+  SELECT tu.child_feat,
          ident.com_name,
          go_role_link.go_id,
          go_role_link.qualifier,
-         go_role_link.assigned_by,
+         go_evidence.evidence,
          DATE_FORMAT(go_role_link.date, "%Y%m%d"),
          go_evidence.ev_code,
          go_evidence.with_ev,
          go_term.type
-  FROM   clone_info
-         INNER JOIN asm_feature AS model USING (asmbl_id)
-         INNER JOIN phys_ev USING (feat_name)
-         INNER JOIN feat_link AS tu ON (phys_ev.feat_name = tu.child_feat)
-         INNER JOIN go_role_link ON (tu.parent_feat = go_role_link.feat_name)
+
+  FROM   feat_link AS tu
+         INNER JOIN ident ON (ident.feat_name = tu.parent_feat)
+         INNER JOIN go_role_link USING (feat_name)
          INNER JOIN go_evidence ON (go_role_link.id = go_evidence.role_link_id)
-         LEFT JOIN common.go_term AS go_term ON (go_role_link.go_id = go_term.go_id)
-         LEFT JOIN ident ON (ident.feat_name = tu.parent_feat)
-  WHERE  phys_ev.ev_type = "working"
-    AND  model.feat_type = "model"
-    AND  clone_info.is_public = 1
+         LEFT JOIN go_term ON (go_role_link.go_id = go_term.go_id)
 
 EOSQL
 
