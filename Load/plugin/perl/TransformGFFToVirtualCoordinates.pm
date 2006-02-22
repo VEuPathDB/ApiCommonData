@@ -10,9 +10,18 @@ use Bio::Coordinate::Pair;
 my $argsDeclaration =
   [
    fileArg({ name           => 'inputFile',
-	     descr          => 'The GFF file',
+	     descr          => 'The input GFF file',
 	     reqd           => 1,
 	     mustExist      => 1,
+	     format         => 'GFF format',
+	     constraintFunc => undef,
+	     isList         => 0,
+	   }),
+
+   fileArg({ name           => 'outputFile',
+	     descr          => 'The output GFF file',
+	     reqd           => 1,
+	     mustExist      => 0,
 	     format         => 'GFF format',
 	     constraintFunc => undef,
 	     isList         => 0,
@@ -111,6 +120,8 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $inputFile = $self->getArg("inputFile");
+  my $outputFile = $self->getArg("outputFile");
 
   my $groupTag = $self->getArg("groupTag");
   my $gffVersion = $self->getArg("gffVersion");
@@ -118,12 +129,12 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg("extDbRlsSpec"));
   my $virtualExtDbRlsId = $self->getExtDbRlsId($self->getArg("virtualExtDbRlsSpec"));
 
-  my $gffIn  = Bio::Tools::GFF->new(-fh => \*STDIN,
+  my $gffIn  = Bio::Tools::GFF->new(-file => $inputFile,
 				    -gff_version => $gffVersion,
 				    -preferred_groups => [$groupTag]
 				   );
 
-  my $gffOut = Bio::Tools::GFF->new(-fh => \*STDOUT,
+  my $gffOut = Bio::Tools::GFF->new(-file => $outputFile,
 				    -gff_version => $gffVersion,
 				    -preferred_groups => [$groupTag]
 				   );
@@ -141,7 +152,7 @@ sub run {
 
   FROM   DoTS.SequencePiece   sp,
          DoTS.VirtualSequence vs,
-         Dots.NASequence      nas
+         Dots.ExternalNASequence      nas
 
   WHERE  sp.virtual_na_sequence_id = vs.na_sequence_id
     AND  sp.piece_na_sequence_id = nas.na_sequence_id

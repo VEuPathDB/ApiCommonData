@@ -316,6 +316,12 @@ sub new {
 sub run{
   my ($self) = @_;
 
+  my $dbh = $self->getDbHandle();
+  $dbh->{'LongReadLen'} = 10_000_000;
+
+  $dbh = $self->getQueryHandle();
+  $dbh->{'LongReadLen'} = 10_000_000;
+
   $self->{mapperSet} =
     ApiCommonData::Load::BioperlFeatMapperSet->new($self->getArg('mapFile'));
 
