@@ -134,7 +134,7 @@ sub run {
 				    -preferred_groups => [$groupTag]
 				   );
 
-  my $gffOut = Bio::Tools::GFF->new(-file => $outputFile,
+  my $gffOut = Bio::Tools::GFF->new(-file => ">$outputFile",
 				    -gff_version => $gffVersion,
 				    -preferred_groups => [$groupTag]
 				   );
@@ -186,7 +186,7 @@ EOSQL
 								    -strand => +1,
 								  ),
 				 -out => Bio::Location::Simple->new( -seq_id => $virtualSequenceId,
-								     -start => $offset + 1
+								     -start => $offset + 1,
 								     -end => $offset + $length,
 								     -strand => $orientation,
 								   ),
@@ -199,6 +199,13 @@ EOSQL
 
     if (exists $coordinateMap{$feature->seq_id}) {
 
+      $SIG{__DIE__} = sub {
+	use Data::Dumper;
+	die Dumper($feature->seq_id,
+		   $coordinateMap{$feature->seq_id},
+		   $feature->location,
+		  ), @_;
+      };
       # calculate new location in virtual coordinates:
       my $virtualLocation =
 	$coordinateMap{$feature->seq_id}->map($feature->location)->match();
@@ -239,4 +246,9 @@ EODIE
 
     $gffOut->write_feature($feature);
   }
+
+my $msg = "Transformation complete.\n";
+
+return $msg;
+
 }
