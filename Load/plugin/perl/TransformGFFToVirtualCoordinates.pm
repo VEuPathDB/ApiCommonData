@@ -199,13 +199,6 @@ EOSQL
 
     if (exists $coordinateMap{$feature->seq_id}) {
 
-      $SIG{__DIE__} = sub {
-	use Data::Dumper;
-	die Dumper($feature->seq_id,
-		   $coordinateMap{$feature->seq_id},
-		   $feature->location,
-		  ), @_;
-      };
       # calculate new location in virtual coordinates:
       my $virtualLocation =
 	$coordinateMap{$feature->seq_id}->map($feature->location)->match();
