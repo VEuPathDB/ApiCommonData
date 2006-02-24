@@ -127,10 +127,6 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  $self->logAlgInvocationId();
-  $self->logCommit();
-  $self->logArgs();
-
   my $dbh = $self->getDbHandle();
   $dbh->{'LongReadLen'} = 10_000_000;
 
@@ -141,10 +137,9 @@ sub run {
 
   my $file = $self->getArg('snpFile');
 
-  my $resultDescrip = "$linesProcessed lines of SNP file $file processed";
+  return "$linesProcessed lines of SNP file $file processed\n";
 
-  $self->setResultDescr($resultDescrip);
-  $self->logData($resultDescrip);
+
 }
 
 sub processSnpFile{
@@ -193,7 +188,7 @@ sub processSnpFile{
 
     $lineNum++;
 
-    $self->logData("processed file line number = $lineNum\n");
+    $self->log("processed file line number = $lineNum\n");
   }
 
   return $lineNum;
@@ -266,13 +261,6 @@ sub getNaSeq {
   my ($self,$line) = @_;
 
   my $sourceId = $line->[0];
-
-  # special case, when scaffold not mapped to a chr:
-  if ($sourceId eq "Unk") {
-    my @data = split (/;/, $line->[8]);
-    $sourceId = $data[0];
-    $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
-}
 
    my $extDbRlsId = $self->{'naExtDbRlsId'};
 
