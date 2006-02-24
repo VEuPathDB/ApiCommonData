@@ -731,7 +731,7 @@ sub getOrCreateGOAssociation {
                    'go_term_id' => $goId,
                    'is_not' => 0,
                    'is_deprecated' => 0,
-                   'defining' => 0, } );
+                   'defining' => 1, } );
     unless ($gusGOA->retrieveFromDB()) {
        $gusGOA->submit(); 
     }
