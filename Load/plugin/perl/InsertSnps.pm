@@ -4,7 +4,6 @@ package ApiCommonData::Load::Plugin::InsertSnps;
 use strict;
 
 use GUS::PluginMgr::Plugin;
-use GUS::Model::DoTS::VirtualSequence;
 use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
@@ -39,6 +38,12 @@ sub getArgumentsDeclaration{
 	       }),
      stringArg({name => 'naExternalDatabaseVersion',
 		descr => 'sres.externaldatabaserelease.version for the genome sequences',
+		constraintFunc => undef,
+		reqd => 1,
+		isList => 0
+	       }),
+     stringArg({name => 'seqTable',
+		descr => 'where do we find the nucleotide sequences',
 		constraintFunc => undef,
 		reqd => 1,
 		isList => 0
@@ -84,7 +89,7 @@ sub getDocumentation {
 
   my $tablesAffected = [['DoTS::SeqVariation', 'One or more rows inserted per SNP, row number equal to strain number'],['DoTS::NALocation', 'A single row inserted per SNP']];
 
-  my $tablesDependedOn = [['DoTS::VirtualSequence', 'Genome sequence containing the SNP'], ['SRes::SequenceOntology',  'SequenceOntology term equal to SNP required']];
+  my $tablesDependedOn = [['SRes::SequenceOntology',  'SequenceOntology term equal to SNP required']];
 
   my $howToRestart = "Use restart option and last processed row number from STDOUT file.";
 
@@ -216,7 +221,7 @@ sub getSeqVars {
 
   my $ref = $self->getArg('reference');
 
-  my $standard = $end = $start + 1 ? 'insertion' : 'substitute';
+  my $standard = $end = $start + 1 ? 'insertion' : 'substitution';
 
   my @seqVarRows;
 
@@ -226,9 +231,9 @@ sub getSeqVars {
       my $strain = $1;
       my $base = $2;
 
-      $standard = $end = $start + 1 ? 'insertion' : 'substitute';
+      $standard = $end = $start + 1 ? 'insertion' : 'substitution';
       $standard = 'reference' if lc($ref) eq lc($strain);
-      $standard = 'deletion' if ($standard eq 'substitute' && $base =~ /-/);
+      $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
 
       my $seqvar =  GUS::Model::DoTS::SeqVariation->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId,'name'=>'SNP','standard_name'=>$standard,'sequence_ontology_id'=>$soId,'strain'=>$strain,'allele'=>$base,'organism'=>$organism});
 
@@ -262,14 +267,17 @@ sub getNaSeq {
 
   my $sourceId = $line->[0];
 
-   my $extDbRlsId = $self->{'naExtDbRlsId'};
+  my $extDbRlsId = $self->{'naExtDbRlsId'};
 
-   my $naSeq = GUS::Model::DoTS::VirtualSequence->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
+  my ($seqTable) = $self->getArg("seqTable");
+  $seqTable = "GUS::Model::$seqTable";
+  eval "require $seqTable";
 
-   $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
+  my $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
 
-   return $naSeq;
+  $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
 
+  return $naSeq;
 }
 
 sub getNaLoc {
