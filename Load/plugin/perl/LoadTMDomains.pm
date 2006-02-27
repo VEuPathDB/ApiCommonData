@@ -328,7 +328,7 @@ sub retSeqIdFromSrcId {
 							      'external_database_release_id' => $dbRlsId,
 							     } );
 
-  $gusTabl->retrieveFromDB() || die ("Source Id $seqId not found in TranslatedAASequence"); 
+  $gusTabl->retrieveFromDB() || die ("Source Id $seqId not found in TranslatedAASequence with external database release id of $dbRlsId"); 
   my $aaSeqId = $gusTabl->getId();
 
   return $aaSeqId;
