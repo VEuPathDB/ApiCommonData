@@ -160,6 +160,7 @@ EOF
       if (/\/\//) {
          my $gusHash = $self->mapStandardDataValues($dataHash, $name);
          $self->submitGusEntry($gusHash);
+         $self->undefPointerCache();
          $eCount++;
       }
       elsif (/^([A-Z]+\s+)(.+)/) { 
@@ -195,6 +196,7 @@ sub loadPrints{
       if (/gm\;/) {
          my $gusHash = $self->mapPrintsData($dataHash, $name);
          $self->submitGusEntry($gusHash);
+         $self->undefPointerCache();
          $eCount++;
       }
       my @dataAry = split(/\;/);
@@ -229,6 +231,7 @@ sub loadGene3DCathFiles{
          my $gusHash = $self->mapCathFileData($dataHash, $name);
          $self->submitGusEntry($gusHash);
          $dataHash = undef;
+         $self->undefPointerCache();
          $eCount++;
       }
          my @dataAry = split(/\t/);
@@ -292,6 +295,7 @@ sub loadPanther {
  		      'name' => $dataAry[1],
  		      'description' => $dataAry[3], };
       $self->submitGusEntry($gusHash);
+      $self->undefPointerCache();
       $eCount++;
    }
 return $eCount;
@@ -312,6 +316,7 @@ sub loadSuperfamily {
  		      'name' => $dataAry[2],
  		      'description' => $dataAry[4], };
       $self->submitGusEntry($gusHash);
+      $self->undefPointerCache();
       $eCount++;
    }
 return $eCount;
@@ -340,6 +345,7 @@ sub loadPirsf {
     		             'description' => $dataAry[2], 
                              };
                $self->submitGusEntry($gusHash);
+               $self->undefPointerCache();
                $eCount++;
            }
            @dataAry = undef;
@@ -369,6 +375,7 @@ sub loadSmart {
  		         'name' => $dataAry[0],
  		         'description' => $dataAry[2], };
       $self->submitGusEntry($gusHash);
+      $self->undefPointerCache();
       $eCount++;
    }
 return $eCount;
