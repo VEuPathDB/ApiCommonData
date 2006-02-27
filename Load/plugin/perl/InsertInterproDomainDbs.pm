@@ -151,7 +151,11 @@ sub loadStandardFile { #prosite, uniprot, tigrfams, pfam
 
    my $dataHash = {};
    my $eCount = 0;
-   open STDRD, "$file" or die "No such file";
+   open STDRD, "$file" or die <<"EOF";
+$file not found. 
+Check the filename attribute for '$name' in '@{[$self->getArgs()->{'confFile'}]}'.
+The filename value should be a path relative to --inPath ('@{[$self->getArgs()->{'inPath'}]}').
+EOF
    while (<STDRD>) {
       if (/\/\//) {
          my $gusHash = $self->mapStandardDataValues($dataHash, $name);
@@ -422,7 +426,7 @@ sub loadConfig{
         my $ver = $dbs->{$db}->{'ver'};
         my $file = $dbs->{$db}->{'filename'};
         if ($inPath) {
-          $file = "$inPath$file";
+          $file = "$inPath/$file";
         }
            if ($iprVer ne $rel) {
               die "$db - $ver: Database release inconsistent with declared interpro version";
