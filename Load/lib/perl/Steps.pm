@@ -1236,7 +1236,7 @@ sub loadTMHmmData{
 
   my $args = "--data_file $resultFile --algName TMHMM --algDesc '$desc' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
 
-  $mgr->runPlugin("${species}LoadTMDomains", "ApiComplexa::DataLoad::Plugin::LoadTMDomains", $args, "Loading $species TMHMM output");
+  $mgr->runPlugin("${species}LoadTMDomains", "ApiCommonData::Load::Plugin::LoadTMDomains", $args, "Loading $species TMHMM output");
 }
 
 sub insertAASeqMWMinMax {
