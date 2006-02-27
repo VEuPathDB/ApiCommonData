@@ -1,0 +1,213 @@
+#!/usr/bin/perl
+
+# Find open reading frames in DNA sequences.
+# Bio::SeqIO supported formats accepted for input.
+#
+# todo: make seqObj without any existing features that currently get picked up 
+# (when inputting Genbank format,for example) so the output will only have ORF 
+# features
+#
+# mheiges@uga.edu 26 Feb 2006
+# $$Id$$
+
+use strict;
+use Getopt::Long;
+use Bio::Seq;
+use Bio::SeqFeature::Generic;
+use Bio::SeqIO;
+
+use constant DEBUG => 0;
+
+#### default settings ####
+
+my $startCodon;
+my $stopCodon = 'taa|tga|tag';
+my $outFormat = 'genbank';
+my $minPepLength = 50;
+
+####
+
+my ($dataset, $outFile);
+&GetOptions("dataset=s"       => \$dataset,
+            "outFile=s"       => \$outFile,
+            "outFormat=s"     => \$outFormat,
+            "startCodon=s"    => \$startCodon,
+            "minPepLength=i"  => \$minPepLength);
+
+usage() and exit(1) unless ($dataset);
+die "$dataset not found\n" unless (-e $dataset);
+open (STDOUT, ">>$outFile") if ($outFile); # look at me clobbering STDOUT!
+
+my $stopRegex  = qr/(?=$stopCodon)/i;
+my $startRegex = qr/$startCodon/i;
+
+
+
+if ( -f $dataset ) {
+    print STDERR "Processing $dataset\n" if DEBUG;
+    processOneFile($dataset);
+} elsif ( -d $dataset ) {
+    opendir(DIR, $dataset) or die("Cannot open directory $dataset\n");
+    while (my $file = readdir(DIR)) {
+        next if ($file =~ /^\.\.?$/);
+        print STDERR "Processing $file\n" if DEBUG;
+        processOneFile($file);
+    }
+    closedir(DIR);
+ }
+
+
+
+
+
+###############################################################
+###############################################################
+
+sub processOneFile {
+
+    my ($fastaFile) = @_;
+    $fastaFile =~ s/(.*\.gz)\s*$/gzip -dc < $1|/;
+    $fastaFile =~ s/(.*\.Z)\s*$/uncompress -c < $1|/;
+    
+    my $seqIO = Bio::SeqIO->new(-file => $fastaFile);
+    
+    while (my $seqObj = $seqIO->next_seq) {
+        $seqObj->alphabet('dna'),
+        $seqObj->accession_number($seqObj->display_name),
+        processOneSeq($seqObj);
+    }
+    
+}
+
+sub processOneSeq {
+    my ($seqObj) = @_;
+    my %strand = ('1'  => $seqObj,
+                  '-1' => $seqObj->revcom);
+    
+    for my $direction (keys %strand) {
+        print STDERR "\n* ", $strand{$direction}->seq , "\n" if DEBUG;
+        for (my $frame = 1; $frame <= 3; $frame++) {
+            print STDERR "\nFrame $frame\n" if DEBUG;
+            findOrfs($seqObj, $strand{$direction}, $frame, $direction);
+        }
+    }
+    my $io = Bio::SeqIO->new(-format => $outFormat, -fh => \*STDOUT );       
+    $io->write_seq($seqObj);
+}
+
+sub findOrfs {
+    my ($seqObj, $strandObj, $frame, $direction) = @_;
+    my ($pos, $start, $end);
+
+    $start = $frame if (! $startCodon);
+    
+    my $seq = \$strandObj->seq;
+    my $shift = $frame -1;
+    while ($$seq =~ m/^.{$shift}|(.{3})*?/g) {
+        $pos = pos($$seq);
+
+         $start = $pos -2 if ($startCodon && $1 =~ $startRegex);
+        
+        if ($1 =~ $stopRegex) { 
+            $end = $pos  - 3;
+            if (isValid($start, $end)) {
+                ($start, $end) = revCoords($seqObj, $start, $end, $frame) if (-1 == $direction);
+                printSeq($strandObj, $start, $end) if DEBUG;
+                addFeat($seqObj, $start, $end, $frame, $direction);
+            }
+            
+            $end   = undef;            
+            $start = ($startCodon) ? undef : $pos +1;
+        }
+    }
+    my $l = $strandObj->length - $frame +1;
+    $end = length($strandObj->length - $l %3);
+    if (isValid($start, $end)) {
+        ($start, $end) = revCoords($seqObj, $start, $end, $frame) if (-1 == $direction);
+        printSeq($strandObj, $start, $end) if DEBUG;
+        addFeat($seqObj, $start, $end, $frame, $direction);
+    }
+     
+      
+}
+
+sub revCoords {
+    my ($refSeq, $start, $end, $frame) = @_;
+    my $oend = $end;
+    $end = $refSeq->length - $start +1;
+    $start = $refSeq->length - $oend +1;
+    return ($start, $end);
+}
+
+sub isValid {
+    my ($start, $end) = @_;
+    return ($start and
+            $start < $end and
+            (($end - $start +1) / 3) >= $minPepLength);
+}
+
+sub printSeq {
+        my ($seqObj, $s, $e) = @_;
+        return if $e <= $s;
+        my $orf = Bio::Seq->new(-seq=>$seqObj->seq)->subseq($s, $e);
+      #  $orf =~ s/(...)/$1 /g;
+        print STDERR $orf, "\n";
+}
+
+
+sub addFeat {
+    my ($seqObj, $start, $end, $frame, $direction) = @_;
+
+    $frame += 3 if (-1 == $direction);
+    
+    my $translation = (-1 == $direction) ? 
+    $seqObj->trunc($start, $end)->revcom->translate->seq :
+    $seqObj->trunc($start, $end)->translate->seq;
+
+    my $locus_tag = (-1 == $direction) ?
+    "@{[$seqObj->display_name]}-${frame}-${end}-${start}" :
+    "@{[$seqObj->display_name]}-${frame}-${start}-${end}";
+    
+    my $feat = new Bio::SeqFeature::Generic(-start  => $start,
+                                            -end    => $end,
+                                            -strand => $direction,
+                                            -primary => 'ORF',
+                                            -tag => {
+                                              locus_tag   => $locus_tag,
+                                              translation => $translation }
+                                          );
+                                            
+      $seqObj->add_SeqFeature($feat);
+
+}
+
+sub usage {
+    chomp(my $self = `basename $0`);
+    print <<"EOF";
+usage: $self --dataset pathToInput --outFile pathToOutput
+
+  --dataset *string* (Required)
+        One sequence file or a directory of sequence files for ORF extraction.
+        Files can be any BioPerl Bio::SeqIO supported format. (FASTA, GenBank, etc).
+        gzip (.gz) and compress (.Z) files are supported.
+  
+  --outFile *string*
+        Path to file to receive output. Outputs to STDOUT if not defined.
+        
+  --minPepLength *integer*
+        Minimum length of translated ORF to keep. Default is 50aa.
+  
+  --startCodon *string*
+        Regular expression for start codon. Default is none, all ORFs between
+        Stop codons are searched. Examples: 'ATG', 'CUG|UUG'
+EOF
+}
+
+__DATA__
+    foreach my $feat ( $strandObj->top_SeqFeatures() ) {
+           if( $feat->primary_tag eq 'ORF' ) {
+              print STDOUT "Location ",$feat->start,":",
+                    $feat->end," GFF[",$feat->gff_string,"]\n";
+	   }
+        }
+
