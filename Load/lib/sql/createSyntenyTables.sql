@@ -3,7 +3,7 @@ GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
 
 ------------------------------------------------------------------------------
 
-CREATE TABLE Api.Synteny (
+CREATE TABLE ApiDB.Synteny (
  synteny_id  NUMBER(10),
  external_database_release_id NUMBER(10),
  a_na_sequence_id  NUMBER(10),	
