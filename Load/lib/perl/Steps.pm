@@ -375,6 +375,68 @@ sub documentProfileAveraging {
 
 }
 
+sub findTandemRepeats {
+  my ($mgr,$file,$fileDir,$args) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "run${file}TRF";
+
+  return if $mgr->startStep("Finding tandem repeats in $file", $signal);
+
+  $mgr->runCmd("mkdir $mgr->{pipelineDir}/trf");
+
+  my $cmd = "cp ${fileDir}/$file $mgr->{pipelineDir}/trf" unless (-e "$mgr->{pipelineDir}/trf/$file");
+
+  $mgr->runCmd($cmd) if $cmd;
+
+  if ("$mgr->{pipelineDir}/trf/$file" =~ /\.gz/) {
+
+    $mgr->runCmd("gunzip $mgr->{pipelineDir}/trf/$file");
+
+    $file =~ s/\.gz//;
+  }
+
+  my $trfPath =  $propertySet->getProp('trfPath');
+
+  $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/trf/$file $args -d";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub runBLASTZ {
+  my ($mgr,$queryDir,$targetFile,$args) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $blastzPath =  $propertySet->getProp('blastzPath');
+
+  opendir(DIR,$queryDir);
+
+  my $signal;
+
+  my $outputFile;
+
+  while(my $file = readdir(DIR)) {
+
+    $signal = "blastz${file}_$targetFile";
+
+    $outputFile = $file;
+
+    $outputFile =~ s/\.\w+$/\.laj/;
+
+    next if $mgr->startStep("Running BLASTZ for $file vs $targetFile", $signal);
+
+    $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/${file}_${targetFile}");
+
+    $mgr->runCmd("${blastzPath}/blastz ${queryDir}/$file  $targetFile $args > $mgr->{pipelineDir}/similarity/${file}_${targetFile}/$outputFile");
+
+    $mgr->endStep($signal);
+  }
+}
+
 sub  loadAveragedProfiles {
   my ($mgr,$dbSpec,$setName) = @_;
 
@@ -651,6 +713,47 @@ sub calculateProteinMolWt {
   $mgr->runPlugin("calc${species}ProtMolWt",
                   "GUS::Supported::Plugin::CalculateAASequenceMolWt", $args,
                   "Calculating $species translated aa sequence MW in $table");
+}
+
+sub runExportPred {
+  my ($mgr,$name) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "exportPred$name";
+
+  return if $mgr->startStep("Predicting the exportome of $name", $signal);
+
+  my $exportpredPath = $propertySet->getProp('exportpredPath');
+
+  my $outputFile = $name;
+
+  $outputFile =~ s/\.\w+$/\.exptprd/;
+
+  my $cmd = "${exportpredPath}/exportpred input=$mgr->{pipelineDir}/seqfiles/$name --output=$mgr->{pipelineDir}/misc/$outputFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub loadExportPredResults { #to be finished upon completion of plugin
+  my ($mgr,$name) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "loadExportPred$name";
+
+  $name =~ s/\.\w+/\.exptprd/;
+
+  my $inputFile = "$mgr->{pipelineDir}/misc/$name";
+
+  my $args = "";
+
+  $mgr->runPlugin($signal,
+		  "PlasmoDBData::Load::Plugin::InsertExportPredResults",
+		  "$args",
+		  "Loading exportpred results for $name");
 }
 
 sub documentGeneAliases {
