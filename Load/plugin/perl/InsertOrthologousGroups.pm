@@ -152,7 +152,7 @@ sub run {
     $seqGroupLoaded++;
 
     foreach my $element (@$foundIds) {
-      if(my $geneFeatureId = ApiCommonDataData::Load::Util::getGeneFeatureId($self, $element)) {
+      if(my $geneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $element)) {
 
         my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
           new({sequence_id => $geneFeatureId,
