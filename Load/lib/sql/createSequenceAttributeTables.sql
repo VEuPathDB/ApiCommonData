@@ -1,0 +1,100 @@
+GRANT references ON DoTS.NaSequenceImp TO ApiDB;
+GRANT references ON DoTS.AaSequenceImp TO ApiDB;
+------------------------------------------------------------------------------
+
+CREATE TABLE ApiDB.AaSequenceAttribute (
+  aa_sequence_attribute_id NUMBER(10),
+  aa_sequence_id NUMBER(10),
+  isoelectric_point FLOAT(2),
+  min_molecular_weight FLOAT(2),
+  max_molecular_weight FLOAT(2),
+  hydropathicity_gravy_score FLOAT(2),
+  aromaticity_score     FLOAT(2),
+  MODIFICATION_DATE     DATE,
+  USER_READ             NUMBER(1),
+  USER_WRITE            NUMBER(1),
+  GROUP_READ            NUMBER(1),
+  GROUP_WRITE           NUMBER(1),
+  OTHER_READ            NUMBER(1),
+  OTHER_WRITE           NUMBER(1),
+  ROW_USER_ID           NUMBER(12),
+  ROW_GROUP_ID          NUMBER(3),
+  ROW_PROJECT_ID        NUMBER(4),
+  ROW_ALG_INVOCATION_ID NUMBER(12),
+  FOREIGN KEY (aa_sequence_id) REFERENCES DoTS.AASequenceImp (aa_sequence_id),
+  PRIMARY KEY (aa_sequence_attribute_id)
+);
+
+CREATE SEQUENCE ApiDB.AaSequenceAttribute_sq;
+
+GRANT insert, select, update, delete ON ApiDB.AaSequenceAttribute TO gus_w;
+GRANT select ON ApiDB.AaSequenceAttribute TO gus_r;
+GRANT select ON ApiDB.AaSequenceAttribute_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'AaSequenceAttribute',
+       'Standard', 'synteny_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+
+------------------------------------------------------------------------------
+
+CREATE TABLE ApiDB.NaSequenceAttribute (
+  na_sequence_attribute_id NUMBER(10),
+  na_sequence_id           NUMBER(10),
+  volatility_score         FLOAT(4),
+  volatility_pmantissa     FLOAT(3),
+  volatility_pexponent     NUMBER(4),
+  karlins_delta            FLOAT(3),
+  effective_codon_number   FLOAT(1),
+  codon_bias_index         FLOAT(2),
+  codon_adaptation_index   FLOAT(2),
+  frequency_optimal_codons FLOAT(2),
+  synonymous_mutation_rate FLOAT(2),
+  nonsynonymous_mutation_rate FLOAT(2),  
+  MODIFICATION_DATE     DATE,
+  USER_READ             NUMBER(1),
+  USER_WRITE            NUMBER(1),
+  GROUP_READ            NUMBER(1),
+  GROUP_WRITE           NUMBER(1),
+  OTHER_READ            NUMBER(1),
+  OTHER_WRITE           NUMBER(1),
+  ROW_USER_ID           NUMBER(12),
+  ROW_GROUP_ID          NUMBER(3),
+  ROW_PROJECT_ID        NUMBER(4),
+  ROW_ALG_INVOCATION_ID NUMBER(12),
+  FOREIGN KEY (na_sequence_id) REFERENCES DoTS.NASequenceImp (na_sequence_id),
+  PRIMARY KEY (na_sequence_attribute_id)
+);
+
+CREATE SEQUENCE ApiDB.NaSequenceAttribute_sq;
+
+GRANT insert, select, update, delete ON ApiDB.NaSequenceAttribute TO gus_w;
+GRANT select ON ApiDB.NaSequenceAttribute TO gus_r;
+GRANT select ON ApiDB.NaSequenceAttribute_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'NaSequenceAttribute',
+       'Standard', 'synteny_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+
+------------------------------------------------------------------------------
+
+exit;
