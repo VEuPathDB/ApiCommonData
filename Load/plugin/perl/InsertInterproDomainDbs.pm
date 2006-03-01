@@ -121,6 +121,7 @@ sub run {
     my $self = shift;
 
     my $dbs = $self->loadConfig();
+    my $dbCount = 0;
 
      foreach my $db (@$dbs) {
         my $file = $self->{$db}->{'file'};
@@ -140,8 +141,10 @@ sub run {
            my $eCount = $self->$subR($db,$file);
            $self->undefPointerCache();
            $self->log("$db:$eCount entries processed");
+           $dbCount++; 
         }
      }
+   return "Completed loading $dbCount databases.";
 }
 
 
