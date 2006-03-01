@@ -190,6 +190,8 @@ sub _processSimilarity {
 
   my ($queryStart, $queryEnd, $subjStart, $subjEnd);
 
+  ($score) = $score =~ m/s\s+(\d+)/;
+  
   @hsps = map {
     my $hsp;
     @{$hsp}{qw(queryStart subjStart queryEnd subjEnd percId)} =
@@ -236,6 +238,7 @@ sub _processSimilarity {
       number_identical   => sprintf("%d", sum(map { $_->{percId} * $_->{alnLen} } @hsps)),
       number_positive    => sprintf("%d", sum(map { $_->{percId} * $_->{alnLen} } @hsps)),
       is_reversed        => ($context->{queryIsReversed} || $context->{subjIsReversed}),
+      score              => $score,
      });
 
   for my $hsp (@hsps) {
