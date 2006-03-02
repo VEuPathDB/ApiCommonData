@@ -17,6 +17,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use FileHandle;
 use Carp;
 use ApiCommonData::Load::Utility::ECAnnotater;
+use ApiCommonData::Load::Util;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -33,7 +34,7 @@ my $tablesAffected =
 my $tablesDependedOn = [[ ]];
 
 my $howToRestart = <<PLUGIN_RESTART;
-There is currently no restart method
+There is currently no restart method (The ECAnnotater object checks for duplicates and will not resubmit existing entries, so restart can just be restarting the run from the beginning of the file.)
 PLUGIN_RESTART
 
 my $failureCases = <<PLUGIN_FAILURE_CASES;
@@ -71,13 +72,13 @@ my $argsDeclaration =
 	      isList => 0,
 	     }),
    stringArg({name => 'ECDbName',
-	      descr => 'the evidence code with which data should be entered into the AASequenceEnzymeClass table',
+	      descr => 'the name of the Enzyme database in SRes.ExternalDatabase',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
    stringArg({name => 'ECReleaseNumber',
-	      descr => 'the evidence code with which data should be entered into the AASequenceEnzymeClass table',
+	      descr => 'the version of the Enzyme database in SRes.ExternalDatabaseRelease',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -92,7 +93,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 3950 $', # cvs fills this in!
+		       cvsRevision => '$Revision: 3951 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -119,7 +120,7 @@ sub getMapping {
 
   my $lineCt = 0;
 
-  my $evidCode = $self->getArg('evidenceCode');
+  my $evidenceDescription = $self->getArg('evidenceCode');
 
   my $dbRls = $self->getExtDbRlsId($self->getArg('ECDbName'),
                                      $self->getArg('ECReleaseNumber'))
@@ -144,8 +145,14 @@ sub getMapping {
 
 	$self->log("Processing Pfid: $locusTag, ECNumber: $ecNumber\n");
 
-        my $aaSeq = $annotater->getAASeqIdFromGeneId($locusTag);
-        $annotater->addEnzymeClassAssoc($aaSeq,$ecNumber,$dbRls,$evidCode);
+        my $aaSeq = ApiCommonData::Load::Util::getAASeqIdFromGeneId($locusTag);
+        my $ecAssociation = {
+                    'ecNumber' => $ecNumber,
+                    'evidenceDescription' => $evidenceDescription,
+                    'releaseId' => $dbRls,
+                    'sequenceId' => $aaSeq,
+                              };
+        $annotater->addEnzymeClassAssociation($ecAssociation);
       
         $lineCt++;
       }
