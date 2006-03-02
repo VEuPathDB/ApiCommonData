@@ -2,6 +2,9 @@ package ApiCommonData::Load::Util;
 
 use strict;
 
+use GUS::Model::DoTS::TranslatedAAFeature;
+use GUS::Model::DoTS::TranslatedAASequence;
+
 # return null if not found:  be sure to check handle that condition!!
 sub getGeneFeatureId {
   my ($plugin, $sourceId) = @_;
@@ -28,4 +31,36 @@ AND nfng.na_gene_id = g.na_gene_id
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
 }
 
+
+sub getAASeqIdFromFeatId {
+  my ($featId) = shift;
+
+  my $gusTAAF = GUS::Model::DoTS::TranslatedAAFeature->new( { 'na_feature_id' => $featId, } );
+
+  $gusTAAF->retrieveFromDB()
+    or die "no translated aa sequence: $featId";
+
+  my $gusAASeq = $gusTAAF->getAaSequenceId();
+
+  return $gusAASeq;
+}
+
+
+sub getAASeqIdFromGeneId {
+  my $featId = shift;
+
+  my $gusTAAF = GUS::Model::DoTS::TranslatedAASequence->new( { 'source_id' => $featId, } );
+
+  $gusTAAF->retrieveFromDB() ||
+       die "no translated aa sequence: $featId";
+
+  my $gusAASeq = $gusTAAF->getId();
+
+  return $gusAASeq;
+}
+
+
+
 1;
+
+
