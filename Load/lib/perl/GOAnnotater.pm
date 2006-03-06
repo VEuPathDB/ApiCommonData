@@ -31,21 +31,21 @@ sub new {
 sub getGoTermId {
   my ($self, $goTermId) = @_;
 
-  my $goTermId = $self->{goTermIds}->{$goId};
+  my $goTermId = $self->{goTermIds}->{$goTermId};
 
   $goTermId
-    || $self->userError("Can't find GoTerm in database for GO Id: $goId");
+    || $self->userError("Can't find GoTerm in database for GO Id: $goTermId");
 
   return $goTermId;
 }
 
 
 sub getEvidenceCode {
-  my ($self, $evidType) = @_;
+  my ($self, $evidenceCode) = @_;
     
-  my $evId = $self->{evidenceIds}->{$evidenceCode};
-    $evId || $self->userError("Evidence code '$evidenceCode' not found in db.");
-  return $evId;
+  my $evidenceId = $self->{evidenceIds}->{$evidenceCode};
+    $evidenceId || $self->userError("Evidence code '$evidenceCode' not found in db.");
+  return $evidenceId;
   
 }
 
@@ -113,7 +113,7 @@ return $instId;
 
 
 sub _initGoTermIds {
-   my ($self, $dbRlsId) = @_
+  my ($self, $goDbRlsId) = @_;
 
   if (!$self->{goTermIds}) {
     my $sql = "SELECT go_term_id, go_id FROM SRes.GOTerm WHERE external_database_release_id = $goDbRlsId";
