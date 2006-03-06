@@ -1,4 +1,4 @@
-package ApiCommonData::Load::GOannotater;
+package ApiCommonData::Load::GOAnnotater;
 
 use strict;
 
@@ -10,47 +10,58 @@ use GUS::Model::DoTS::GOAssociationInstance;
 use GUS::Model::DoTS::GOAssociation;
 
 
-
-
 sub new {
    my $class = shift;
+   my $goRelease = shift;
    my $self = {};
    bless($self, $class);
+
+   $self->{'dbRls'} = $goRelease;
+#IS LOE A ONE TIME THING OR KEEP GETTING IT??
+   
+   #Initialize some of your hashs here (contexts) so you can more quickly operate.
+   $self->_initEvidenceCodes();
+   $self->_initGoTermIds();
+   
    return $self;
 }
 
 
-sub getGOId {
-   my ($self, $goId) = @_;
+#getGOId
+sub getGoTermId {
+  my ($self, $goTermId) = @_;
 
-   my $gusObj = GUS::Model::SRes::GOTerm->new( { 'go_id' => $goId, } );
-   $gusObj->retrieveFromDB() || die "No entry for the this go term";
-   my $gusId = $gusObj->getId();
+  my $goTermId = $self->{goTermIds}->{$goId};
 
-return $gusId;
+  $goTermId
+    || $self->userError("Can't find GoTerm in database for GO Id: $goId");
+
+  return $goTermId;
 }
 
 
 sub getEvidenceCode {
-    my ($self, $evidType) = @_;
-
-    my $gusObj = GUS::Model::SRes::GOEvidenceCode->new( { 'name' => $evidType, } );
-    $gusObj->retrieveFromDB() || die "No entry for the this evidence type";
-    my $gusId = $gusObj->getId();
+  my ($self, $evidType) = @_;
     
-return $gusId;
+  my $evId = $self->{evidenceIds}->{$evidenceCode};
+    $evId || $self->userError("Evidence code '$evidenceCode' not found in db.");
+  return $evId;
+  
 }
 
-sub getOrCreateLOE {
+#getOrCreateLOE
+sub getLoeId {
   my ($self, $loeName) = @_;
 
-  my $gusObj = GUS::Model::DoTS::GOAssociationInstanceLOE->new( {
-                         'name' => $loeName, } );
+  if (!$self->{$loeName}) {
+    my $gusObj = GUS::Model::DoTS::GOAssociationInstanceLOE->new( {
+              'name' => $loeName, } );
+      unless ($gusObj->retrieveFromDB) { $gusObj->submit(); }
+      my $loeId = $gusObj->getId();
+    $self->{$loeName} = $loeId;
+  }
 
- unless ($gusObj->retrieveFromDB) { $gusObj->submit(); }
- my $loeId = $gusObj->getId();
-
-return $loeId;
+  return $self->{$loeName};
 }
 
 
@@ -100,6 +111,32 @@ sub getOrCreateGoInstance {
 return $instId;
 }
 
-    
+
+sub _initGoTermIds {
+   my ($self, $dbRlsId) = @_
+
+  if (!$self->{goTermIds}) {
+    my $sql = "SELECT go_term_id, go_id FROM SRes.GOTerm WHERE external_database_release_id = $goDbRlsId";
+
+    my $stmt = $self->prepareAndExecute($sql);
+    while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
+      $self->{goTermIds}->{$go_id} = $go_term_id;
+    }
+
+  }
+}
+
+
+sub _initEvidenceCodes {
+   my $self = shift;
+
+   my $sql = "select go_evidence_code_id, name from sres.goevidencecode";
+      my $stmt = $self->prepareAndExecute($sql);
+      while (my ($id, $name) = $stmt->fetchrow_array()) { 
+        $self->{evidenceIds}->{$name} = $id;
+      }
+}
+
+
 1;
 
