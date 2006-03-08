@@ -6,7 +6,7 @@ use strict;
 use DBI;
 use XML::Twig;
 use XML::Simple;
-use Data::Dumper;
+use ApiCommonData::Load::Utility::GOAnnotater;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
@@ -17,14 +17,6 @@ use GUS::Model::DoTS::DomainFeature;
 use GUS::Model::DoTS::ExternalAASequence;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::AALocation;
-
-use GUS::Model::SRes::GOEvidenceCode;
-use GUS::Model::SRes::GOTerm;
-use GUS::Model::SRes::GOSynonym;
-use GUS::Model::DoTS::GOAssocInstEvidCode;
-use GUS::Model::DoTS::GOAssociationInstanceLOE;
-use GUS::Model::DoTS::GOAssociationInstance;
-use GUS::Model::DoTS::GOAssociation;
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -88,6 +80,13 @@ stringArg({name => 'iprVer',
 
 stringArg({name => 'iprDataVer',
        descr => 'version of interpro database release you are using',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+
+stringArg({name => 'goVersions',
+       descr => 'A delimited string in name^version:name^version format of the component GO databases.',
        constraintFunc=> undef,
        reqd  => 1,
        isList => 0
@@ -206,8 +205,12 @@ sub run {
 
     my $file = $self->getArgs()->{'resultFile'} || die "No Such Input File";
 
+    #print $self->getArg('goVersions');
+    my @goDbRlsIds = split(/\:/,$self->getArg('goVersions'));
+    my $GOAnnotater = ApiCommonData::Load::Utility::GOAnnotater->new($self,\@goDbRlsIds);
+
     my $twig = XML::Twig->new( twig_roots => {
-                               protein => processTwig($self), 
+                               protein => processTwig($self,$GOAnnotater), 
                                              } );
     $twig->parsefile($file);
     $twig->purge;
@@ -224,11 +227,12 @@ sub run {
 
 sub processTwig {
    my $self = shift;
+   my $GOannotater = shift;
 
    return sub { 
     my $twig = shift; 
 
-        my $gusObj = $self->processProteinResults($twig);
+        my $gusObj = $self->processProteinResults($twig, $GOannotater);
             ($self->{'protCount'})++;
         $self->undefPointerCache();
 
@@ -238,7 +242,7 @@ sub processTwig {
 
 
 sub processProteinResults {
-    my ($self, $twig) = @_;
+    my ($self, $twig, $GOAnnotater) = @_;
 
     my $elt = $twig->root;
     my $protein = $elt->next_elt();
@@ -266,7 +270,7 @@ sub processProteinResults {
         }
         if ($interpro->tag() eq 'classification') {
             my $classId = $interpro->att('id');
-            $self->buildClassification($aaId,$classId);
+            $self->buildClassification($aaId,$classId,$GOAnnotater);
         }
         if ($interpro->tag() eq 'match') {
            if ($interpro->att('id') =~ /tmhmm/ or $interpro->att('id') =~ /signalp/) {
@@ -423,14 +427,25 @@ return $gusDom;
 
 
 sub buildClassification {
-    my ($self, $aaId, $classId) = @_;
+    my ($self, $aaId, $classId, $annotater) = @_;
 
      if ($classId =~ /^GO:\d+/) {
-        my $goId = $self->getGOId($classId);
-        my $evid = $self->getEvidenceCode('IEA');
-        my $loe = $self->getOrCreateLOE('interpro results');
-        my $asoc = $self->getOrCreateGOAssociation($goId,$aaId,$self->{'RefTableId'});
-        my $goInstance = $self->getOrCreateGoInstance($asoc,$evid,$loe,'1');
+        my $goId = 
+           $annotater->getGoTermId($classId);
+        my $evidence = 
+           $annotater->getEvidenceCode('IEA');
+        my $loe = 
+           $annotater->getLoeId('interpro results');
+        my $association = 
+           $annotater->getOrCreateGOAssociation($goId,$aaId,$self->{'RefTableId'},1,0);
+           my $goHash = {
+                     'goAssociation' => $association,
+                     'evidenceCode' => $evidence,
+                     'lineOfEvidence' => $loe,
+                     'isPrimary' => '1',
+                             };
+        my $goInstance = 
+           $annotater->getOrCreateGOInstance($goHash);
      }
      else {
         print "Not a GO Id";
@@ -681,92 +696,6 @@ sub retSeqIdFromSrcId {
 
 
     
-######GO
-sub getGOId {
-   my ($self, $goId) = @_;
-
-   my $gusObj = GUS::Model::SRes::GOTerm->new( { 'go_id' => $goId, } );
-   $gusObj->retrieveFromDB();
-   my $gusId = $gusObj->getId();
-      unless ($gusId) {
-         my $altObj = GUS::Model::SRes::GOSynonym->new( { 'source_id' => $goId, } );
-         $altObj->retrieveFromDB() || die "Go Term not found: $goId";
-         $gusId = $altObj->getGoTermId();
-      }
-
-return $gusId;
-}
-
-
-sub getEvidenceCode {
-    my ($self, $evidType) = @_;
-
-    my $gusObj = GUS::Model::SRes::GOEvidenceCode->new( { 'name' => $evidType, } );
-    $gusObj->retrieveFromDB() || die "No entry for the this evidence type";
-    my $gusId = $gusObj->getId();
-    
-return $gusId;
-}
-
-sub getOrCreateLOE {
-  my ($self, $loeName) = @_;
-
-  my $gusObj = GUS::Model::DoTS::GOAssociationInstanceLOE->new( {
-                         'name' => $loeName, } );
-
- unless ($gusObj->retrieveFromDB) { $gusObj->submit(); }
- my $loeId = $gusObj->getId();
-
-return $loeId;
-}
-
-
-sub getOrCreateGOAssociation {
-  my ($self, $goId, $aaId, $tableId) = @_;
-
-
-     my $gusGOA = GUS::Model::DoTS::GOAssociation->new( {
-                   'table_id' => $tableId,
-                   'row_id' => $aaId,
-                   'go_term_id' => $goId,
-                   'is_not' => 0,
-                   'is_deprecated' => 0,
-                   'defining' => 1, } );
-    unless ($gusGOA->retrieveFromDB()) {
-       $gusGOA->submit(); 
-    }
-    my $goAssc = $gusGOA->getId();
-
-return $goAssc;
-}
-
-sub deprecateGOInstances {
-return 1;
-}
-
-
-sub getOrCreateGoInstance {
- my ($self, $asscId, $evidId, $loeId, $isPrim) = @_;  
-
- my $gusObj = GUS::Model::DoTS::GOAssociationInstance->new( {
-                      'go_association_id' => $asscId,
-                      'go_assoc_inst_loe_id' => $loeId,
-                      'is_primary' => $isPrim,
-                      'is_deprecated' => 0, } );
- 
- unless ($gusObj->retrieveFromDB) { $gusObj->submit(); }
- my $instId = $gusObj->getId();
-
- my $evdObj = GUS::Model::DoTS::GOAssocInstEvidCode->new( {
-                     'go_evidence_code_id' => $evidId,
-                     'go_association_instance_id' => $instId, } );
-
-
- unless ($evdObj->retrieveFromDB) { $evdObj->submit(); }
-
-return $instId;
-}
-
     
 1;
 
