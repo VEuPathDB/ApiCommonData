@@ -432,20 +432,34 @@ sub buildClassification {
      if ($classId =~ /^GO:\d+/) {
         my $goId = 
            $annotater->getGoTermId($classId);
+
         my $evidence = 
            $annotater->getEvidenceCode('IEA');
+
         my $loe = 
            $annotater->getLoeId('interpro results');
-        my $association = 
-           $annotater->getOrCreateGOAssociation($goId,$aaId,$self->{'RefTableId'},1,0);
-           my $goHash = {
+
+        my $goAssociation = {
+                           'tableId' => $self->{'RefTableId'},
+                           'rowId' => $aaId,
+                           'goId' => $goId,
+                           'isNot' => 0,
+                           'isDefining' => 1,
+                            };
+
+        my $association =
+           $annotater->getOrCreateGOAssociation($goAssociation);
+
+           my $goInstance = {
                      'goAssociation' => $association,
                      'evidenceCode' => $evidence,
                      'lineOfEvidence' => $loe,
                      'isPrimary' => '1',
                              };
+
         my $goInstance = 
-           $annotater->getOrCreateGOInstance($goHash);
+           $annotater->getOrCreateGOInstance($goInstance);
+
      }
      else {
         print "Not a GO Id";
