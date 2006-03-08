@@ -14,6 +14,7 @@ sub new {
    my $class = shift;
    my $plugin = shift;
    my $goRelease = shift;
+
    my $self = {};
    bless($self, $class);
 
@@ -26,7 +27,6 @@ sub new {
 }
 
 
-#getGOId
 sub getGoTermId {
   my ($self, $goId) = @_;
 
@@ -43,21 +43,27 @@ sub getEvidenceCode {
   my ($self, $evidenceCode) = @_;
     
   my $evidenceId = $self->{evidenceIds}->{$evidenceCode};
-    $evidenceId || $self->userError("Evidence code '$evidenceCode' not found in db.");
+       $evidenceId || $self->userError("Evidence code '$evidenceCode' not found in db.");
 
   return $evidenceId;
 }
 
-#getOrCreateLOE
+
 sub getLoeId {
   my ($self, $loeName) = @_;
 
   if (!$self->{$loeName}) {
     my $gusObj = GUS::Model::DoTS::GOAssociationInstanceLOE->new( {
-              'name' => $loeName, } );
-      unless ($gusObj->retrieveFromDB) { $gusObj->submit(); }
+              'name' => $loeName,
+               } );
+
+      unless ($gusObj->retrieveFromDB) { 
+                          $gusObj->submit();
+                         }
+
       my $loeId = $gusObj->getId();
-    $self->{$loeName} = $loeId;
+ 
+      $self->{$loeName} = $loeId;
   }
 
   return $self->{$loeName};
@@ -73,14 +79,18 @@ sub getOrCreateGOAssociation {
                    'go_term_id' => $goId,
                    'is_not' => $isNot,
                    'is_deprecated' => 0,
-                   'defining' => $isDefining, } );
+                   'defining' => $isDefining,
+                    } );
+
     unless ($gusGOA->retrieveFromDB()) {
        $gusGOA->submit(); 
     }
+
     my $goAssociationId = $gusGOA->getId();
 
 return $goAssociationId;
 }
+
 
 sub deprecateGOInstances {
 return 1;
@@ -118,13 +128,22 @@ sub _initGoTermIds {
    my ($self,$goRelease) = @_;
 
    foreach my $dbRlsId (@$goRelease) {
-      my $sql = "SELECT go_term_id, go_id FROM SRes.GOTerm WHERE external_database_release_id = $dbRlsId";
 
-        #my $stmt = $self->prepareAndExecute($sql);
+      my ($dbName,$dbVersion) = split(/\^/,$dbRlsId);
+
+      my $goVersion = $self->{plugin}->getExtDbRlsId($dbName,
+                                                   $dbVersion,)
+              or die "Couldn't retrieve external database!\n";
+
+      my $sql = "SELECT go_term_id, 
+                     go_id FROM SRes.GOTerm WHERE 
+                     external_database_release_id = $goVersion";
+
         my $stmt = $self->{plugin}->prepareAndExecute($sql);
+
         while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
            $self->{goTermIds}->{$go_id} = $go_term_id;
-       }
+        }
     }
 }
 
@@ -134,6 +153,7 @@ sub _initEvidenceCodes {
 
    my $sql = "select go_evidence_code_id, name from sres.goevidencecode";
       my $stmt = $self->{plugin}->prepareAndExecute($sql);
+
       while (my ($id, $name) = $stmt->fetchrow_array()) { 
         $self->{evidenceIds}->{$name} = $id;
       }
