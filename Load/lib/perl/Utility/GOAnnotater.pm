@@ -13,7 +13,9 @@ use GUS::Model::DoTS::GOAssociation;
 sub new {
    my $class = shift;
    my $plugin = shift;
-   my $goRelease = shift;
+   my $goRelease = shift;   #At least ONE record (or more in array type) of format name^version, 
+                            # The name is the name of your GO database in sres.externaldatabase
+                            # version is the version in sres.externaldatabaserelease
 
    my $self = {};
    bless($self, $class);
@@ -163,8 +165,6 @@ sub _initGoTermIds {
         }
     }
 }
-
-
 
 1;
 
