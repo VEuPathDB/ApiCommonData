@@ -124,6 +124,18 @@ return $instId;
 }
 
 
+sub _initEvidenceCodes {
+   my $self = shift;
+
+   my $sql = "select go_evidence_code_id, name from sres.goevidencecode";
+      my $stmt = $self->{plugin}->prepareAndExecute($sql);
+
+      while (my ($id, $name) = $stmt->fetchrow_array()) { 
+        $self->{evidenceIds}->{$name} = $id;
+      }
+}
+
+
 sub _initGoTermIds {
    my ($self,$goRelease) = @_;
 
@@ -137,7 +149,12 @@ sub _initGoTermIds {
 
       my $sql = "SELECT go_term_id, 
                      go_id FROM SRes.GOTerm WHERE 
-                     external_database_release_id = $goVersion";
+                     external_database_release_id = $goVersion
+                 UNION
+                 SELECT go_term_id,
+                     source_id FROM SRes.GOSynonym WHERE
+                     external_database_release_id = $goVersion
+                     AND source_id is not null";
 
         my $stmt = $self->{plugin}->prepareAndExecute($sql);
 
@@ -147,17 +164,6 @@ sub _initGoTermIds {
     }
 }
 
-
-sub _initEvidenceCodes {
-   my $self = shift;
-
-   my $sql = "select go_evidence_code_id, name from sres.goevidencecode";
-      my $stmt = $self->{plugin}->prepareAndExecute($sql);
-
-      while (my ($id, $name) = $stmt->fetchrow_array()) { 
-        $self->{evidenceIds}->{$name} = $id;
-      }
-}
 
 
 1;
