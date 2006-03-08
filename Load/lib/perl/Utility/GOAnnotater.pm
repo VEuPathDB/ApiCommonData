@@ -71,15 +71,15 @@ sub getLoeId {
 
 
 sub getOrCreateGOAssociation {
-  my ($self, $goId, $rowId, $tableId, $isNot, $isDefining) = @_;
+  my ($self, $goAssc) = @_;
 
      my $gusGOA = GUS::Model::DoTS::GOAssociation->new( {
-                   'table_id' => $tableId,
-                   'row_id' => $rowId,
-                   'go_term_id' => $goId,
-                   'is_not' => $isNot,
+                   'table_id' => $goAssc->{'tableId'},
+                   'row_id' => $goAssc->{'rowId'},
+                   'go_term_id' => $goAssc->{'goId'},
+                   'is_not' => $goAssc->{'isNot'},
                    'is_deprecated' => 0,
-                   'defining' => $isDefining,
+                   'defining' => $goAssc->{'isDefining'},
                     } );
 
     unless ($gusGOA->retrieveFromDB()) {
