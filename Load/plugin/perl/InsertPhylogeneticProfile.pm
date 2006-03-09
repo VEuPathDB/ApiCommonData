@@ -121,6 +121,8 @@ sub run {
   }
   close(FILE);
 
+  @fullProfile = sort(@fullProfile);
+
   my $numberLoaded = $self->_makePhylogeneticProfiles(\%geneProfiles, \@fullProfile);
 
   return("Loaded $numberLoaded ApiDB::PhylogeneticProfile entries");
