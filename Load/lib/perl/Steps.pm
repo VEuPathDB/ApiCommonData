@@ -384,24 +384,28 @@ sub findTandemRepeats {
 
   return if $mgr->startStep("Finding tandem repeats in $file", $signal);
 
-  $mgr->runCmd("mkdir $mgr->{pipelineDir}/trf");
+  my $trfDir = "$mgr->{pipelineDir}/trf";
 
-  my $cmd = "cp ${fileDir}/$file $mgr->{pipelineDir}/trf" unless (-e "$mgr->{pipelineDir}/trf/$file");
+  $mgr->runCmd("mkdir $trfDir");
 
   $mgr->runCmd($cmd) if $cmd;
 
-  if ("$mgr->{pipelineDir}/trf/$file" =~ /\.gz/) {
+  if ($file =~ /\.gz/) {
 
-    $mgr->runCmd("gunzip $mgr->{pipelineDir}/trf/$file");
+    $mgr->runCmd("gunzip $mgr->{pipelineDir}/${fileDir}/$file");
 
     $file =~ s/\.gz//;
   }
 
   my $trfPath =  $propertySet->getProp('trfPath');
 
-  $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/trf/$file $args -d";
+  chdir $trfDir || die "Can't chdir to $trfDir";
+
+  $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d";
 
   $mgr->runCmd($cmd);
+
+  chdir $mgr->{pipelineDir} || die "Can't chdir to $mgr->{pipelineDir}";
 
   $mgr->endStep($signal);
 }
@@ -411,7 +415,7 @@ sub runBLASTZ {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $blastzPath =  $propertySet->getProp('blastzPath');
+  my $blastzPath = $propertySet->getProp('blastzPath');
 
   opendir(DIR,$queryDir);
 
@@ -726,6 +730,8 @@ sub runExportPred {
 
   my $exportpredPath = $propertySet->getProp('exportpredPath');
 
+  $name = "${name}AnnotatedProteins.fsa";
+
   my $outputFile = $name;
 
   $outputFile =~ s/\.\w+$/\.exptprd/;
@@ -737,21 +743,24 @@ sub runExportPred {
   $mgr->endStep($signal);
 }
 
-sub loadExportPredResults { #to be finished upon completion of plugin
-  my ($mgr,$name) = @_;
+ga PlasmoDBData::Load::Plugin::InsertExportPredFeature --inputFile  ~/ep/pf.ep --seqTable DoTS::AASequence --seqExtDbRlsSpec "Sanger P.  falciparum chromosomes|2005-09-26" --extDbRlsSpec "Sanger P.  falciparum chromosomes|2005-09-26"
+
+
+sub loadExportPredResults {
+  my ($mgr,$name,$sourceIdDb,$genDb) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "loadExportPred$name";
+  $name = "${name}AnnotatedProteins.exptprd";
 
-  $name =~ s/\.\w+/\.exptprd/;
+  my $signal = "loadExportPred$name";
 
   my $inputFile = "$mgr->{pipelineDir}/misc/$name";
 
-  my $args = "";
+  my $args = "--inputFile  $name --seqTable DoTS::AASequence --seqExtDbRlsSpec $sourceIdDb --extDbRlsSpec $genDb";
 
   $mgr->runPlugin($signal,
-		  "PlasmoDBData::Load::Plugin::InsertExportPredResults",
+		  "PlasmoDBData::Load::Plugin::InsertExportPredFeature",
 		  "$args",
 		  "Loading exportpred results for $name");
 }
@@ -1563,7 +1572,7 @@ sub runAssemblePlugin {
   $mgr->runCmd("mkdir -p $assemDir");
   chdir $assemDir || die "Can't chdir to $assemDir";
 
-  my $cmd = "runUpdateAssembliesPlugin --clusterFile $file.$suffix --pluginCmd \"$pluginCmd\" 2>> $logfile";
+  my $cmd = "runUpdateAssembliesPlugin --clusterFie $file.$suffix --pluginCmd \"$pluginCmd\" 2>> $logfile";
   $mgr->runCmdInBackground($cmd);
 }
 
