@@ -410,6 +410,22 @@ sub findTandemRepeats {
   $mgr->endStep($signal);
 }
 
+sub loadTandemRepeats {
+  my ($mgr,$file,$args,$dbName,$dbRlsVer) = @_;
+
+  $args =~ s/\s+/\./g;
+
+  my $tandemRepFile = "$mgr->{pipelineDir}/trf/${file}.${args}.dat";
+
+  my $signal = "load$tandemRepFile";
+
+  my $args = "--tandemRepeatFile $tandemRepFile --extDbName $dbName --extDbVersion $dbRlsVer";
+
+  $mgr->runPlugin($signal,
+                  "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args,
+                  "Inserting tandem repeats for $file");
+}
+
 sub runBLASTZ {
   my ($mgr,$queryDir,$targetFile,$args) = @_;
 
