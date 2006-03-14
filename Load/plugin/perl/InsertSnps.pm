@@ -226,20 +226,23 @@ sub getSeqVars {
   my @seqVarRows;
 
   foreach my $element (@data) {
-    if ($element =~ /Allele\s\"(\w+):([\w\-]+)\"/) {
+    if ($element =~ /Allele\s+(.*)/) {
+      my $data = $1;
+      while ($data =~ m/(\w+):([\w\-]+)/g) {
 
-      my $strain = $1;
-      my $base = $2;
+	my $strain = $1;
+	my $base = $2;
 
-      $standard = $end = $start + 1 ? 'insertion' : 'substitution';
-      $standard = 'reference' if lc($ref) eq lc($strain);
-      $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
+	$standard = $end = $start + 1 ? 'insertion' : 'substitution';
+	$standard = 'reference' if lc($ref) eq lc($strain);
+	$standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
 
-      my $seqvar =  GUS::Model::DoTS::SeqVariation->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId,'name'=>'SNP','standard_name'=>$standard,'sequence_ontology_id'=>$soId,'strain'=>$strain,'allele'=>$base,'organism'=>$organism});
+	my $seqvar =  GUS::Model::DoTS::SeqVariation->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId,'name'=>'SNP','standard_name'=>$standard,'sequence_ontology_id'=>$soId,'strain'=>$strain,'allele'=>$base,'organism'=>$organism});
 
-      $seqvar->retrieveFromDB();
+	$seqvar->retrieveFromDB();
 
-      push (@seqVarRows, $seqvar);
+	push (@seqVarRows, $seqvar);
+      }
     }
   }
 
