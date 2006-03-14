@@ -1379,7 +1379,7 @@ sub insertAASeqMWMinMax {
   my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
 
   $mgr->runPlugin($signal,
-		  "PlasmoDBData::Load::Plugin::CalculateAASeqMolWtMinMax",
+		  "ApiCommonData::Load::Plugin::CalculateAASeqMolWtMinMax",
 		  $args, "Calculating and loading $extDbRlsName AA MW min and max");
 }
 
@@ -1408,7 +1408,7 @@ sub insertAAiP {
   my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
 
   $mgr->runPlugin($signal,
-		  "PlasmoDBData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
+		  "ApiCommonData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
 		  $args, "Calculating and loading $extDbRlsName AA iP");
 }
 
