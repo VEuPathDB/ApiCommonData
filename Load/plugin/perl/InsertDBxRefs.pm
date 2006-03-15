@@ -67,14 +67,14 @@ my $argsDeclaration =
 	  mustExist => 1,
 	  format => 'Three column tab delimited file in the order gene_id, DbRef_pk, DbRef_remark'
         }),
-   stringArg({name => 'NAFeatureDbName',
-	      descr => 'the external database name in SRes.ExternalDatabase that the NAFeatures were loaded with.',
+   stringArg({name => 'extDbName',
+	      descr => 'the external database name with which to load the DBRefs.',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'NAFeatureReleaseNumber',
-	      descr => 'the version of the external database in SRes.ExternalDatabaseRelease that the NAFeatures were loaded with',
+   stringArg({name => 'extDbReleaseNumber',
+	      descr => 'the version of the external database with which to load the DBRefs',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -114,8 +114,8 @@ sub getMapping {
 
   my $lineCt = 0;
 
-  my $dbRls = $self->getExtDbRlsId($self->getArg('NAFeatureDbName'),
-                                     $self->getArg('NAFeatureReleaseNumber'))
+  my $dbRls = $self->getExtDbRlsId($self->getArg('extDbName'),
+                                     $self->getArg('extDbReleaseNumber'))
       || die "Couldn't retrieve external database!\n";
 
   open (XREFMAP, "$mappingFile") ||
