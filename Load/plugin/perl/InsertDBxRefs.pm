@@ -118,14 +118,13 @@ sub getMapping {
                                      $self->getArg('NAFeatureReleaseNumber'))
       || die "Couldn't retrieve external database!\n";
 
-print "db release = $dbRls\n";
   open (XREFMAP, "$mappingFile") ||
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
     while (<XREFMAP>) {
 	chomp;
 	my ($locusTag, $dbRef, $remark) = split('\t', $_);
-	print "source ID = $locusTag, dbRef = $dbRef, remarks = $remark \n";
+
 	if (!$dbRef || !$locusTag){
 	  $self->log("Missing a required field. dbRef: $dbRef, locusTag: $locusTag.");
 	  next;
@@ -158,24 +157,25 @@ sub makeDbXRef {
 					     external_database_release_id => $dbRls,
 					   });
 
-  unless ($dbRef->retrieveFromDB()) {
-print "submitting dbRef $dbRef->{'primary_identifier'}\n";
-    $dbRef->submit();
-  }
+    $dbRef->submit() unless $dbRef->retrieveFromDB();
+
 
   my $dbRefId = $dbRef->getId();
 
-print "New ID: $dbRefId\n";
-
   my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $locusTag);
-print "NAFeatID: $naFeatId\n";
+
+  unless($naFeatId){
+    $self->log("Skipping: source_id $locusTag not found in database.");
+    next;
+  }
+
   my $dbXref = GUS::Model::DoTS::DbRefNAFeature->new({
 						    na_feature_id => $naFeatId,
 						    db_ref_id => $dbRefId,
 						    });
 
-  $dbXref->submit();
-print "submitted new mapping\n";
+  $dbXref->submit() unless $dbXref->retrieveFromDB();
+
 }
 
 1;
