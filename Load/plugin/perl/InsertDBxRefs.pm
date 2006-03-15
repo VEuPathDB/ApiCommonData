@@ -139,6 +139,8 @@ sub getMapping {
 
 	$self->makeDbXRef($locusTag, $dbRef, $remark, $dbRls);
 
+	$self->undefPointerCache();
+
         $lineCt++;
       }
 
