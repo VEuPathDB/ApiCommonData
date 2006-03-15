@@ -388,7 +388,7 @@ sub findTandemRepeats {
 
   $mgr->runCmd("mkdir $trfDir");
 
-  $mgr->runCmd($cmd) if $cmd;
+#  $mgr->runCmd($cmd) if $cmd;
 
   if ($file =~ /\.gz/) {
 
@@ -401,7 +401,7 @@ sub findTandemRepeats {
 
   chdir $trfDir || die "Can't chdir to $trfDir";
 
-  $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d";
+  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d";
 
   $mgr->runCmd($cmd);
 
@@ -759,7 +759,6 @@ sub runExportPred {
   $mgr->endStep($signal);
 }
 
-ga PlasmoDBData::Load::Plugin::InsertExportPredFeature --inputFile  ~/ep/pf.ep --seqTable DoTS::AASequence --seqExtDbRlsSpec "Sanger P.  falciparum chromosomes|2005-09-26" --extDbRlsSpec "Sanger P.  falciparum chromosomes|2005-09-26"
 
 
 sub loadExportPredResults {
