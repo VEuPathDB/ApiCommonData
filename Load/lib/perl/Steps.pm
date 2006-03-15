@@ -1803,5 +1803,53 @@ sub makeUserProjectGroup {
 }
 
 
+# $seqFile from earlier extractNaSeq() step, outputs gff file to sseqfiles
+sub makeOrfFile {
+  my ($mgr, $seqFile, $minPepLength) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $outFile = $seqFile;
+  $outFile =~ s/\.\w+\b//;
+  $outFile = "${outFile}_orf${minPepLength}.gff";
+  $outFile = "$mgr->{pipelineDir}/seqfiles/$outFile";
+  
+  my $signal = "makeOrfFileFrom_${seqFile}";
+  return if $mgr->startStep("makeOrfFile from $seqFile", $signal);
+
+  my $cmd = <<"EOF";
+orfFinder --dataset seqfiles/$seqFile \\
+--minPepLength $minPepLength \\
+--outFile $outFile
+EOF
+
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+    
+}
+
+sub loadOrfFile {
+    my ($mgr, $orfFile, $extDbName, $extDbRlsVer, $mapFile, $soCvsVersion) = @_;
+    
+    my $signal = "load_$orfFile";
+    
+    my $args = <<"EOF";
+--extDbName '$extDbName'  \\
+--extDbRlsVer '$extDbRlsVer' \\
+--mapFile $mapFile \\
+--inputFileOrDir $mgr->{pipelineDir}/seqfiles/$orfFile \\
+--fileFormat gff3   \\
+--seqSoTerm ORF  \\
+--soCvsVersion $soCvsVersion \\
+--naSequenceSubclass ExternalNASequence \\
+EOF
+
+    $mgr->runPlugin(
+        $signal, 
+        "GUS::Supported::Plugin::InsertSequenceFeatures", 
+        $args, 
+        "Loading $orfFile output");
+
+}
+
 
 1;
