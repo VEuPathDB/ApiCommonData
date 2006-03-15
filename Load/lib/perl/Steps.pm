@@ -736,23 +736,23 @@ sub calculateProteinMolWt {
 }
 
 sub runExportPred {
-  my ($mgr,$name) = @_;
+  my ($mgr,$species) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "exportPred$name";
+  my $signal = "exportPred$species";
 
-  return if $mgr->startStep("Predicting the exportome of $name", $signal);
+  return if $mgr->startStep("Predicting the exportome of $species", $signal);
 
   my $exportpredPath = $propertySet->getProp('exportpredPath');
 
-  $name = "${name}AnnotatedProteins.fsa";
+  my $name = "${species}AnnotatedProteins.fsa";
 
   my $outputFile = $name;
 
   $outputFile =~ s/\.\w+$/\.exptprd/;
 
-  my $cmd = "${exportpredPath}/exportpred input=$mgr->{pipelineDir}/seqfiles/$name --output=$mgr->{pipelineDir}/misc/$outputFile";
+  my $cmd = "${exportpredPath}/exportpred --input=$mgr->{pipelineDir}/seqfiles/$name --output=$mgr->{pipelineDir}/misc/$outputFile";
 
   $mgr->runCmd($cmd);
 
@@ -760,19 +760,18 @@ sub runExportPred {
 }
 
 
-
 sub loadExportPredResults {
-  my ($mgr,$name,$sourceIdDb,$genDb) = @_;
+  my ($mgr,$species,$sourceIdDb,$genDb) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  $name = "${name}AnnotatedProteins.exptprd";
+  my $name = "${species}AnnotatedProteins.exptprd";
 
-  my $signal = "loadExportPred$name";
+  my $signal = "loadExportPred$species";
 
   my $inputFile = "$mgr->{pipelineDir}/misc/$name";
 
-  my $args = "--inputFile  $name --seqTable DoTS::AASequence --seqExtDbRlsSpec $sourceIdDb --extDbRlsSpec $genDb";
+  my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec $sourceIdDb --extDbRlsSpec $genDb";
 
   $mgr->runPlugin($signal,
 		  "PlasmoDBData::Load::Plugin::InsertExportPredFeature",
