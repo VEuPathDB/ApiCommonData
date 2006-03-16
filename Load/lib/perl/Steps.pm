@@ -419,9 +419,9 @@ sub loadTandemRepeats {
 
   my $tandemRepFile = "$mgr->{pipelineDir}/trf/${file}.${args}.dat";
 
-  my $signal = "load$tandemRepFile";
+  my $signal = "load${file}.TRF";
 
-  my $args = "--tandemRepeatFile $tandemRepFile --extDbName $dbName --extDbVersion $dbRlsVer";
+  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
 
   $mgr->runPlugin($signal,
                   "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args,
