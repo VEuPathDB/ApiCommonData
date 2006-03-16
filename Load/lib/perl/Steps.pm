@@ -403,7 +403,7 @@ sub findTandemRepeats {
 
   chdir $trfDir || die "Can't chdir to $trfDir";
 
-  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d 2>> $logFile";
+  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d > $logFile";
 
   $mgr->runCmd($cmd);
 
