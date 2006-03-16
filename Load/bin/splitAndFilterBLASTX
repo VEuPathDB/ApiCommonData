@@ -12,6 +12,7 @@ use GUS::Supported::GusConfig;
 
 my $verbose = 0;
 my $gusConfigFile;
+my @taxa;
 my $maxOverlap = 25;
 my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
 my $inputFile;
@@ -180,19 +181,22 @@ while (<OLD>) {
 }
 close(OLD);
 
-rename $filename, $outputFile;
+rename($filename, $outputFile)
+  or die "Couldn't replace outputFile with $filename: $!\n";
 
 # clean up temporary tables:
 for my $taxonId ("root", @taxa) {
   $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
 }
 
+exit();
+
 sub process {
   my ($data) = $sum =~ m/Sum:\s+(\S+)/;
   my ($gi,
       $score, $pvalue,
-      $sstart, $send,
-      $qstart, $qend,
+      $sstart, $sstop,
+      $qstart, $qstop,
       $num, $length,
       $ident, $posit,
       $reversed, $frame,
@@ -204,12 +208,12 @@ sub process {
   # convert a DNA source_id to a surrogate primary key:
   my $contig_id = $contigs{$queryId} ||= $i++;
 
-  $search->execute($contig_id, $reversed, $qstart, $qstop);
-  my ($count) = $search->fetchrow_array();
+  $search{$taxonId}->execute($contig_id, $reversed, $qstart, $qstop);
+  my ($count) = $search{$taxonId}->fetchrow_array();
   unless ($count >= $maxOverlap) {
-    $insert->execute($contig_id, $reversed, $qstart, $qstop);
-    print OUT $idLine unless $seen{$queryId}++;
-    print OUT $sum, @hsps;
+    $insert{$taxonId}->execute($contig_id, $reversed, $qstart, $qstop);
+    print OUTPUT $idLine unless $seen{$queryId}++;
+    print OUTPUT $sum, @hsps;
   }
 }
 
