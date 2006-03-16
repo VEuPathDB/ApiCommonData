@@ -240,8 +240,16 @@ sub _setGOTermSynonyms {
 
   for my $synonym (@$synonyms) {
     my ($type, $text) = @$synonym;
+
+    my $sourceId;
+    if ($type eq "alt_id") {
+	$sourceId = $text;
+	$text = undef;
+    }
+
     my $goSynonym = GUS::Model::SRes::GOSynonym->new({
       text                         => $text,
+      source_id                    => $sourceId,
       external_database_release_id => $extDbRlsId,
     });
     $goTerm->addChild($goSynonym);
