@@ -205,6 +205,9 @@ sub process {
   my $ncbiTaxonId = $gi2ncbiTaxonId{$gi}
     or die "Couldn't find NCBI taxon identifier for: $gi\n";
 
+  my $taxonId = calcTaxonId($ncbiTaxonId);
+  $taxonId = "root" unless defined $taxonId;
+
   # convert a DNA source_id to a surrogate primary key:
   my $contig_id = $contigs{$queryId} ||= $i++;
 
@@ -217,3 +220,13 @@ sub process {
   }
 }
 
+my %ncbiTaxonIdMap;
+sub calcTaxonId {
+
+  my ($ncbiTaxonId) = @_;
+
+  return $ncbiTaxonIdMap{$ncbiTaxonId} ||= do {
+    
+  };
+
+}
