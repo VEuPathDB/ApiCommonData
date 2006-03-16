@@ -1,0 +1,215 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long qw(GetOptions);
+
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my $verbose = 0;
+my $gusConfigFile;
+my $maxOverlap = 25;
+my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
+my $inputFile;
+my $outputFile;
+
+GetOptions("verbose!"        => \$verbose,
+           "gusConfigFile=s" => \$gusConfigFile,
+           "taxon=s"         => \@taxa,
+           "maxOverlap=i"    => \$maxOverlap,
+           "gi2taxidFile=s"  => \$gi2taxidFile,
+           "inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $gi2taxidFile) {
+  die "Must supply a valid gi2taxid mapping file!\n";
+}
+
+if ($gi2taxidFile =~ m/\.gz$/) {
+  open(GI2TAXID, "gunzip -c $gi2taxidFile |") or die $!;
+} else {
+  open(GI2TAXID, "<$gi2taxidFile") or die $!;
+}
+
+unless (-e $inputFile) {
+  die "The specified inputFile is not valid!\n";
+}
+
+if ($inputFile =~ m/\.gz$/) {
+  open(INPUT, "gunzip -c $inputFile |") or die $!;
+} else {
+  open(INPUT, "<$inputFile") or die $!;
+}
+
+open(OUTPUT, ">$outputFile")
+  or die "Couldn't open outputFile for writing: $!\n";
+
+
+# first scan of the inputFile is just to collect GI #'s for which we
+# want to know NCBI taxon identifiers:
+my %gi2ncbiTaxonId;
+while (<INPUT>) {
+  if (m/Sum:\s+(\d+)/) {
+    $gi2ncbiTaxonId{$1} = 0;
+  }
+}
+close(INPUT);
+
+# now scan the NCBI taxon identifier mapping, saving only the GI #'s
+# we care about:
+while (<GI2TAXID>) {
+  chomp;
+  my ($gi, $ncbiTaxonId) = split(" ", $_, 2);
+  $gi2ncbiTaxonId{$gi} = $ncbiTaxonId
+    if exists $gi2ncbiTaxonId{$gi};
+}
+close(GI2TAXID);
+
+# reopen for actual parsing:
+if ($inputFile =~ m/\.gz$/) {
+  open(INPUT, "gunzip -c $inputFile |") or die $!;
+} else {
+  open(INPUT, "<$inputFile") or die $!;
+}
+
+my $gusConfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
+                                         $gusConfig->getDatabaseLogin(),
+                                         $gusConfig->getDatabasePassword(),
+                                         $verbose, 0, 1,
+                                         $gusConfig->getCoreSchemaName()
+                                        )->getQueryHandle();
+
+# confirm that we have all valid taxa, and convert names to NCBI taxon
+# identifiers:
+@taxa = map {
+  my $taxon = $_;
+  my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
+  SELECT ncbi_tax_id
+  FROM   SRes.Taxon t,
+         SRes.TaxonName tn
+  WHERE  t.taxon_id = tn.taxon_id
+    AND  tn.name_class = 'scientific name'
+    AND  tn.name = ?
+EOSQL
+
+  unless ($ncbiTaxonId) {
+    die "Invalid taxon: $taxon\n";
+  }
+
+  $ncbiTaxonId;
+} @taxa;
+
+
+# setup taxon-specific hit location storage tables:
+
+my %insert;
+my %search;
+for my $taxonId ("root", @taxa) {
+
+  $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
+  $dbh->do(<<EOSQL);
+  CREATE TEMPORARY TABLE hits_${taxonId} (
+    contig_id INT UNSIGNED NOT NULL,
+    start INT UNSIGNED NOT NULL,
+    stop INT UNSIGNED NOT NULL,
+    is_reversed TINYINT UNSIGNED NOT NULL,
+    INDEX (contig_id, is_reversed, start, stop)
+  )
+EOSQL
+
+  $insert{$taxonId} = $dbh->prepare(<<EOSQL);
+  INSERT INTO hits_${taxonId} (contig_id, is_reversed, start, stop)
+            VALUES (        ?,      ?,     ?,    ?)
+EOSQL
+
+  $search{$taxonId} = $dbh->prepare(<<EOSQL);
+  SELECT COUNT(*)
+  FROM   hits_${taxonId}
+  WHERE  contig_id = ?
+    AND  is_reversed = ?
+    AND  ? <= stop
+    AND  ? >= start
+EOSQL
+
+}
+
+my %contigs;
+my $i = 1;
+my $queryId;
+my $idLine;
+my $sum;
+my @hsps;
+my %seen;
+
+while (<INPUT>) {
+  if (m/^\s*HSP\d+:\s*(\S+)/) {
+    push @hsps, $_;
+  } else {
+
+    process() if @hsps;
+    undef @hsps;
+
+    if (m/^>(\S+)/) {
+      $queryId = $1;
+      $idLine = $_;
+    } elsif (m/^\s*Sum:/) {
+      $sum = $_;
+    }
+  }
+}
+process() if @hsps;
+close(INPUT);
+close(OUTPUT);
+
+# rescan output file to replace counts:
+my ($fh, $filename) = tempfile();
+open(OLD, "<$outputFile") or die "Couldn't reopen outputFile: $!\n";
+while (<OLD>) {
+  if (m/^>(\S+)/) {
+    print $fh ">$1 (@[{$seen{$1} || 0}] subjects)\n";
+  } else {
+    print $fh $_;
+  }
+}
+close(OLD);
+
+rename $filename, $outputFile;
+
+# clean up temporary tables:
+for my $taxonId ("root", @taxa) {
+  $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
+}
+
+sub process {
+  my ($data) = $sum =~ m/Sum:\s+(\S+)/;
+  my ($gi,
+      $score, $pvalue,
+      $sstart, $send,
+      $qstart, $qend,
+      $num, $length,
+      $ident, $posit,
+      $reversed, $frame,
+     ) = split(":", $data, 13);
+
+  my $ncbiTaxonId = $gi2ncbiTaxonId{$gi}
+    or die "Couldn't find NCBI taxon identifier for: $gi\n";
+
+  # convert a DNA source_id to a surrogate primary key:
+  my $contig_id = $contigs{$queryId} ||= $i++;
+
+  $search->execute($contig_id, $reversed, $qstart, $qstop);
+  my ($count) = $search->fetchrow_array();
+  unless ($count >= $maxOverlap) {
+    $insert->execute($contig_id, $reversed, $qstart, $qstop);
+    print OUT $idLine unless $seen{$queryId}++;
+    print OUT $sum, @hsps;
+  }
+}
+
