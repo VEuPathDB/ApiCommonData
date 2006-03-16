@@ -380,13 +380,15 @@ sub findTandemRepeats {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "run${file}TRF";
+  my $signal = "run${file}.TRF";
 
   return if $mgr->startStep("Finding tandem repeats in $file", $signal);
 
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
   my $trfDir = "$mgr->{pipelineDir}/trf";
 
-  $mgr->runCmd("mkdir $trfDir");
+  $mgr->runCmd("mkdir -p $trfDir");
 
 #  $mgr->runCmd($cmd) if $cmd;
 
@@ -401,7 +403,7 @@ sub findTandemRepeats {
 
   chdir $trfDir || die "Can't chdir to $trfDir";
 
-  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d";
+  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
@@ -771,7 +773,7 @@ sub loadExportPredResults {
 
   my $inputFile = "$mgr->{pipelineDir}/misc/$name";
 
-  my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec $sourceIdDb --extDbRlsSpec $genDb";
+  my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec '$sourceIdDb' --extDbRlsSpec '$genDb'";
 
   $mgr->runPlugin($signal,
 		  "PlasmoDBData::Load::Plugin::InsertExportPredFeature",
