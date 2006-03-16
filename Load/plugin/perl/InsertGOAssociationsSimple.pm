@@ -306,6 +306,22 @@ sub getGoTermId {
       $self->{goTermIds}->{$go_id} = $go_term_id;
     }
 
+    # also collect SRes.GOSynonym's:
+    $sql = <<EOSQL;
+
+  SELECT g.go_term_id, s.source_id
+  FROM   SRes.GOTerm g,
+         SRes.GOSynonym s
+  WHERE  g.go_term_id = s.go_term_id
+    AND  s.source_id IS NOT NULL
+    AND  g.external_database_release_id = $goDbRlsId
+EOSQL
+
+    $stmt = $self->prepareAndExecute($sql);
+    while (my ($go_term_id, $go_id) - $stmt->fetchrow_array()) {
+      $self->{goTermids}->{$go_id} = $go_term_id;
+    }
+
   }
 
   my $goTermId = $self->{goTermIds}->{$goId};

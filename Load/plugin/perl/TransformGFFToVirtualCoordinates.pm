@@ -5,7 +5,6 @@ use base qw(GUS::PluginMgr::Plugin);
 
 use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
-use Bio::Coordinate::Pair;
 
 my $argsDeclaration =
   [
@@ -139,69 +138,21 @@ sub run {
 				    -preferred_groups => [$groupTag]
 				   );
 
-  my %coordinateMap;
-
   my $dbh = $self->getQueryHandle(); 
-  my $sth = $dbh->prepare(<<EOSQL);
-
-  SELECT vs.source_id,
-         nas.source_id,
-         nas.length, -- requires that LENGTH field be filled!!
-         sp.distance_from_left,
-	 sp.strand_orientation
-
-  FROM   DoTS.SequencePiece   sp,
-         DoTS.VirtualSequence vs,
-         Dots.ExternalNASequence      nas
-
-  WHERE  sp.virtual_na_sequence_id = vs.na_sequence_id
-    AND  sp.piece_na_sequence_id = nas.na_sequence_id
-
-    AND  vs.external_database_release_id = ?
-    AND  nas.external_database_release_id = ?
-
-  ORDER BY vs.source_id ASC,
-           sp.sequence_order ASC
-EOSQL
-
-  $sth->execute($virtualExtDbRlsId, $extDbRlsId);
-
-  my $lastVirtualSequenceId;
-  my $offset = 0;
-  while (my ($virtualSequenceId, $sequenceId,
-	     $length, $distanceFromLeft, $orientation) = $sth->fetchrow_array()) {
-
-    if (defined($lastVirtualSequenceId) && $lastVirtualSequenceId ne $virtualSequenceId) {
-      $offset = 0;
-    }
-
-    $lastVirtualSequenceId = $virtualSequenceId;
-
-    $offset += $distanceFromLeft;
-
-    $coordinateMap{$sequenceId} =
-      Bio::Coordinate::Pair->new(-in => Bio::Location::Simple->new( -seq_id => $sequenceId,
-								    -start => 1,
-								    -end => $length,
-								    -strand => +1,
-								  ),
-				 -out => Bio::Location::Simple->new( -seq_id => $virtualSequenceId,
-								     -start => $offset + 1,
-								     -end => $offset + $length,
-								     -strand => $orientation,
-								   ),
-				);
-    $offset += $length;
-
-  }
+  
+  my $map = ApiCommonData::Load::VirtualSequenceMap->new({ extDbRlsId  => $extDbRlsId,
+							   virtDbRlsId => $virtDbRlsId,
+							   dbh         => $dbh,
+							 });
 
   while (my $feature = $gffIn->next_feature) {
 
-    if (exists $coordinateMap{$feature->seq_id}) {
+    my $result = $map->map($feature->location);
+
+    if ($result) {
 
       # calculate new location in virtual coordinates:
-      my $virtualLocation =
-	$coordinateMap{$feature->seq_id}->map($feature->location)->match();
+      my $virtualLocation = $match->match();
 
       unless ($virtualLocation) {
 	die <<EODIE;
