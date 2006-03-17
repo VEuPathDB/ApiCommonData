@@ -1383,6 +1383,22 @@ sub insertAASeqMWMinMax {
 		  $args, "Calculating and loading $extDbRlsName AA MW min and max");
 }
 
+sub insertAASeqMWMinMaxPlasmo {   ##temporary duplication of step to use a duplicated plugin in plasmoDBData which uses the PlasmoDB space
+  my ($mgr,$table,$extDbRlsName,$extDbRlsVer) = @_;
+
+  my $signal = "${extDbRlsName}MinMax";
+
+  $signal =~ s/\s//g;
+
+  $signal =~ s/\.//g;
+
+  my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
+
+  $mgr->runPlugin($signal,
+		  "PlasmoDBData::Load::Plugin::CalculateAASeqMolWtMinMax",
+		  $args, "Calculating and loading $extDbRlsName AA MW min and max");
+}
+
 sub documentAAip {
   my ($mgr) = @_;
 
@@ -1409,6 +1425,22 @@ sub insertAAiP {
 
   $mgr->runPlugin($signal,
 		  "ApiCommonData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
+		  $args, "Calculating and loading $extDbRlsName AA iP");
+}
+
+sub insertAAiPPlasmo { ##temporary dup of step to use dup plugin that uses a table in the PlasmoDB spacexs
+  my ($mgr,$table,$extDbRlsName,$extDbRlsVer) = @_;
+
+   my $signal = "${extDbRlsName}IP";
+
+  $signal =~ s/\s//g;
+
+  $signal =~ s/\.//g;
+
+  my $args = "--extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'  --seqTable '$table'";
+
+  $mgr->runPlugin($signal,
+		  "PlasmoDBData::Load::Plugin::CalculateAASequenceIsoelectricPoint",
 		  $args, "Calculating and loading $extDbRlsName AA iP");
 }
 
