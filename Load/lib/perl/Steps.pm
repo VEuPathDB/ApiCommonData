@@ -1853,4 +1853,77 @@ EOF
 }
 
 
+###########IPRSCAN#####################
+sub createIprscanDir{
+  my ($mgr, $app) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "createIprscanDir-$app";
+  return if $mgr->startStep("Creating iprscan $app dir", $signal);
+
+  my $iprscanDir = "$mgr->{'pipelineDir'}/iprscan/$app";
+
+  $mgr->runCmd("mkdir $iprscanDir");
+
+  $mgr->endStep($signal);
+}
+
+                                                                                                                            
+#Run Iprscan Job
+sub runIprscanJob {
+  my ($mgr,$species,$app) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $serverPath = $propertySet->getProp('serverPath');
+
+  my $outFile = "${species}.$app";
+  my $outDir = "$serverPath/$mgr->{buildName}/iprscan/$app/";
+
+  my $signal = "$app.${species}";
+  return if $mgr->startStep("Starting iprscan job $signal", $signal);
+                                                                                                                             
+  my $iprscanDir = $propertySet->getProp('iprscan.path');
+                                                                                                                             
+  my $logFile = "$serverPath/$mgr->{buildName}/logs/${app}_${species}.log";  #Do we want this to be the wrapper log too?
+                                                                                                                             
+  my $input = "$mgr->{pipelineDir}/seqfiles/${species}AnnotatedProteins.fsa";
+ 
+  #$mgr->runCmd("iprJobWrapper $app $input $outDir/$app $outfile $iprscanDir");
+  #iprJobWrapper hmmpfam /scratch/chkuo/api3/gus.files/api3.8/tg.GUS.fasta /scratch/erobinso /usr/local/iprscan42/bin
+                                                                                                                             
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "Please Run: \'iprJobWrapper $app $input $outDir $outFile $iprscanDir\'";
+  my $clusterLogMsg = "monitor $logFile";
+                                                                                                                             
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+
+
+#LoadIprscanResults.
+sub loadIprscanResults{
+  my ($mgr,$species,$app,$extDbName,$extDbRlsVer) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $resultFile = "$mgr->{pipelineDir}/iprscan/$app/${species}.$app";
+
+  my $signal = "$app.${species}.load";
+  return if $mgr->startStep("Starting Data Load $signal", $signal);
+
+  my $conf = $propertySet->getProp('iprscan.conf');
+  my $iprver = $propertySet->getProp('iprscan.version');
+  my $iprdataver = $propertySet->getProp('iprscan.dataversion');
+  my $goversions = $propertySet->getProp('iprscan.goversions');
+
+  my $args = "--resultFile=$resultFile --confFile=$conf --queryTable=TranslatedAASequence --extDbName='$extDbName' --extDbRlsVer='$extDbRlsVer' --iprVer=$iprver --iprDataVer=$iprdataver --goVersions=$goversions";
+
+  $mgr->runPlugin($signal, 
+        "ApiCommonData::Load::Plugin::InsertInterproscanResults", 
+        $args,
+        "Loading ${species} Iprscan $app output");
+}
+
+
 1;
