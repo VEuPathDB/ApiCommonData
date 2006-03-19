@@ -50,7 +50,6 @@ if ($inputFile =~ m/\.gz$/) {
 open(OUTPUT, ">$outputFile")
   or die "Couldn't open outputFile for writing: $!\n";
 
-
 # first scan of the inputFile is just to collect GI #'s for which we
 # want to know NCBI taxon identifiers:
 my %gi2ncbiTaxonId;
@@ -117,10 +116,10 @@ for my $taxonId ("root", @taxa) {
   $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
   $dbh->do(<<EOSQL);
   CREATE TEMPORARY TABLE hits_${taxonId} (
-    contig_id INT UNSIGNED NOT NULL,
-    start INT UNSIGNED NOT NULL,
-    stop INT UNSIGNED NOT NULL,
-    is_reversed TINYINT UNSIGNED NOT NULL,
+    contig_id INTEGER NOT NULL,
+    start INTEGER NOT NULL,
+    stop INTEGER NOT NULL,
+    is_reversed INTEGER NOT NULL,
     INDEX (contig_id, is_reversed, start, stop)
   )
 EOSQL
@@ -221,12 +220,36 @@ sub process {
 }
 
 my %ncbiTaxonIdMap;
+my $lookup = $dbh->prepare(<<EOSQL);
+
+  SELECT t.ncbi_tax_id, f.hierarchy
+  FROM   sres.taxon t,
+         ( SELECT e.taxon_id, level AS hierarchy
+           FROM   sres.taxon e
+                  START WITH e.ncbi_tax_id = ?
+                  CONNECT BY PRIOR e.parent_id = e.taxon_id
+         ) f
+  WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
+    AND  t.taxon_id = f.taxon_id
+  ORDER BY f.hierarchy ASC
+
+EOSQL
+
 sub calcTaxonId {
 
   my ($ncbiTaxonId) = @_;
 
   return $ncbiTaxonIdMap{$ncbiTaxonId} ||= do {
-    
+    my $taxonId = "root";
+    if (@taxa) {
+      $lookup->execute($ncbiTaxonId);
+      if (my $row = $lookup->fetchrow_arrayref()) {
+	($taxonId) = @$row;
+      }
+      $lookup->finish();
+    }
+
+    $taxonId;
   };
 
 }
