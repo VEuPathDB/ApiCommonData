@@ -873,7 +873,7 @@ sub modifyPlasmoDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyDefLine -infile $inFile -ouitfile $outFile -extDb $extDb -extDbVer $extDbVer -type $type");
+  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb $extDb -extDbVer $extDbVer -type $type");
 
   $mgr->endStep($signal);
 }
