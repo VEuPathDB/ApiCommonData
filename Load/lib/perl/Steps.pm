@@ -294,6 +294,46 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
+sub extractScaffolds {
+  my ($mgr,$species) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "extract${species}Scaffolds";
+
+  return if $mgr->startStep("Extracting $species scaffolds from GUS", $signal);
+
+  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
+
+  my $taxonId = $mgr->{taxonHsh}->{$species};
+
+  foreach my $scaffolds (@{$mgr->{scaffolds}->{$species}}) {
+    my $dbName =  $scaffolds->{name};
+    my $dbVer =  $scaffolds->{ver};
+
+    my $name = $dbName;
+    $name =~ s/\s/\_/g;
+
+    my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbVer);
+
+    my $scaffoldFile = "$mgr->{pipelineDir}/seqfiles/${name}Scaffolds.fsa";
+
+    my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
+
+    my $sql = "select x.na_sequence_id, x.description,
+            'length='||x.length,x.sequence
+             from dots.ExternalNASequence x, sres.sequenceontology s
+             where x.taxon_id = $taxonId
+             and x.external_database_release_id = $dbRlsId
+             and x.sequence_ontology_id = s.sequence_ontology_id
+             and lower(s.term_name) = 'supercontig'";
+
+    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile --outputFile $scaffoldFile --idSQL \"$sql\" --verbose 2>> $logFile";
+
+    $mgr->runCmd($cmd);
+  }
+
+  $mgr->endStep($signal);
+}
 
 sub extractIdsFromBlastResult {
   my ($mgr,$simDir,$idType) = @_;
@@ -544,7 +584,7 @@ sub extractSageTags {
              and a.version = $dbVer
              and a.array_design_id = s.array_design_id";
 
-    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile  --outputFile $sageTagFile --idSQL \"$sql\" --verbo\se\ 2>> $logFile";
+    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile --outputFile $sageTagFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
     $mgr->runCmd($cmd);
   }
