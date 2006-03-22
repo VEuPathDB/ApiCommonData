@@ -1658,7 +1658,7 @@ sub startTranscriptMatrixOnComputeCluster {
   $mgr->exitToCluster($cmdMsg, $logMsg, 0);
 }
 
-
+# copies a 'master' dir
 sub copyFilesFromComputeCluster {
   my ($mgr,$name,$dir) = @_;
   my $propertySet = $mgr->{propertySet};
@@ -1674,6 +1674,20 @@ sub copyFilesFromComputeCluster {
 		       "$serverPath/$mgr->{buildName}/$dir/$name/",
 		       "master",
 		       "$mgr->{pipelineDir}/$dir/$name");
+  $mgr->endStep($signal);
+}
+
+# for copying an arbitrary file or directory
+sub copyFileOrDirFromComputeCluster {
+  my ($mgr, $fromDir, $fromFile, $toDir) = @_;
+    
+  my $signal = "copy${fromDir}/${fromFile}FromCluster";
+  $signal =~ s|/|_|g;
+  my $clusterServer = $mgr->{propertySet}->getProp('clusterServer');
+  return if $mgr->startStep("Copying ${fromDir}/${fromFile} results from $clusterServer",
+			    $signal);
+
+  $mgr->{cluster}->copyFrom($fromDir, $fromFile, $toDir);
   $mgr->endStep($signal);
 }
 
@@ -1949,7 +1963,17 @@ sub loadIprscanResults{
   my $iprdataver = $propertySet->getProp('iprscan.dataversion');
   my $goversions = $propertySet->getProp('iprscan.goversions');
 
-  my $args = "--resultFile=$resultFile --confFile=$conf --queryTable=TranslatedAASequence --extDbName='$extDbName' --extDbRlsVer='$extDbRlsVer' --iprVer=$iprver --iprDataVer=$iprdataver --goVersions=$goversions";
+  my $args = <<"EOF";
+  --resultFile=$resultFile \\
+  --confFile=$conf \\
+  --queryTable=TranslatedAASequence \\
+  --extDbName='$extDbName' \\
+  --extDbRlsVer='$extDbRlsVer' \\
+  --iprVer=$iprver \\
+  --iprDataVer=$iprdataver \\
+  --goVersions=$goversions \\
+  --useSourceId \\
+EOF
 
   $mgr->runPlugin($signal, 
         "ApiCommonData::Load::Plugin::InsertInterproscanResults", 
