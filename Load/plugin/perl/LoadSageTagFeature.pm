@@ -9,6 +9,8 @@ use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SAGETagFeature;
 use GUS::Model::DoTS::NASequence;
 use GUS::Model::Core::Algorithm;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 
 $| = 1;
 
@@ -157,16 +159,31 @@ sub checkFileFormat {
   }
 }
 
-
 sub getExternalDbRelease {
   my ($self) = @_;
 
   my $dbName = "RAD.SAGETag";
   my $dbVersion = "continuous";
 
-  my $dbRlsId = $self->getExtDbRlsId($dbName, $dbVersion);
+  my $externalDatabase = GUS::Model::SRes::ExternalDatabase->new({"name" => $dbName});
+  $externalDatabase->retrieveFromDB();
 
-  $self->{'extDbRls'} = $dbRlsId;
+  if (! $externalDatabase->getExternalDatabaseId()) {
+    $externalDatabase->submit();
+  }
+
+  my $external_db_id = $externalDatabase->getExternalDatabaseId();
+
+  my $externalDatabaseRel = GUS::Model::SRes::ExternalDatabaseRelease->new ({'external_database_id'=>$external_db_id,'version'=>$dbVersion});
+
+  $externalDatabaseRel->retrieveFromDB();
+
+  if (! $externalDatabaseRel->getExternalDatabaseReleaseId()) {
+    $externalDatabaseRel->submit();
+  }
+
+  my $external_db_rel_id = $externalDatabaseRel->getExternalDatabaseReleaseId();
+  $self->{'extDbRls'} = $external_db_rel_id;
 }
 
 sub getPredAlgId {
