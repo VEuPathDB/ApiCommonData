@@ -662,7 +662,7 @@ sub loadSageTagMap {
 sub concatFiles {
    my ($mgr,$files,$catFile,$fileDir) = @_;
 
-   $files =~ s/(\S+)/$mgr->{pipelineDir}\/${fileDir}\/$1/g;
+   $files =~ s/(\S+)/$mgr->{pipelineDir}\/$1/g;
 
    my $signal = "concat$catFile";
 
@@ -904,6 +904,8 @@ sub modifyPlasmoDownloadFile {
 
   my $inFile = "$mgr->{pipelineDir}/seqfiles/$file";
 
+  die "$inFile doesn't exist\n" unless (-e $inFile);
+
   my $outFile = $file;
 
   $outFile =~ s/\.\w+\b//;
@@ -913,7 +915,7 @@ sub modifyPlasmoDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb $extDb -extDbVer $extDbVer -type $type");
+  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type");
 
   $mgr->endStep($signal);
 }
@@ -935,7 +937,7 @@ sub modifyPlasmoGenomeDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyGenomeDefLine -infile $inFile -outfile $outFile -extDb $extDb -extDbVer $extDbVer -type $type");
+  $mgr->runCmd("modifyGenomeDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type");
 
   $mgr->endStep($signal);
 }
