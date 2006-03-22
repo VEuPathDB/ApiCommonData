@@ -244,7 +244,6 @@ sub _setGOTermSynonyms {
     my $sourceId;
     if ($type eq "alt_id") {
 	$sourceId = $text;
-	$text = undef;
     }
 
     my $goSynonym = GUS::Model::SRes::GOSynonym->new({
