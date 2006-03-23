@@ -76,6 +76,15 @@ my $argsDeclaration =
 		   format => 'see ftp://ftp.geneontology.org/pub/go/gene-associations'
 	          }),
 
+	 fileArg ({name => 'skipBadGOTerms',
+		   descr => 'whether to skip unfound/bad GO Terms; provided filename used to store list of bad terms.',
+		   constraintFunc => undef,
+		   reqd => 0,
+		   isList => 0,
+		   mustExist => 0,
+		   format => '',
+	          }),
+
          stringArg({name => 'goExternalDatabaseSpec',
 	    descr => 'Targeted GO Term database release (in "name|version" fomat)',
 	    constraintFunc => undef,
@@ -189,6 +198,8 @@ sub run {
 
 	my $assocId = $self->findAssociationId($rowId,$inputAssoc,$goDbRlsId);
 
+	next unless $assocId;
+
 	$self->addAssociationInstance($assocId, $inputAssoc);
 
 	$self->log("processing $sourceId; processed $count lines")
@@ -267,6 +278,8 @@ sub findAssociationId {
 
   my $goTermId = $self->getGoTermId($goId, $goDbRlsId);
 
+  return undef unless $goTermId;
+
   $self->getPriorAssociations() if (!$self->{assocIds});
 
   my $isNot = $inputAssoc->getIsNot() eq 'NOT'? 1 : 0;
@@ -326,8 +339,16 @@ EOSQL
 
   my $goTermId = $self->{goTermIds}->{$goId};
 
-  $goTermId
-    || $self->userError("Can't find GoTerm in database for GO Id: $goId");
+  unless ($goTermId) {
+    if (my $file = $self->getArg('skipBadGOTerms')) {
+      $self->log("Skipping bad GO term: $goId\n");
+      open(FILE, ">>$file") or die $!;
+      print FILE "$goId\n";
+      close(FILE);
+    } else {
+      $self->userError("Can't find GoTerm in database for GO Id: $goId");
+    }
+  }
 
   return $goTermId;
 }
