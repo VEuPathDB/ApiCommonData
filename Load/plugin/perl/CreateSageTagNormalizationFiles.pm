@@ -5,6 +5,7 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 use GUS::Model::Study::Study;
+use GUS::Model::Study::OntologyEntry;
 use GUS::Model::RAD::SAGETag;
 use GUS::Model::RAD::SAGETagResult;
 use GUS::Model::RAD::Protocol;
@@ -131,15 +132,23 @@ sub run {
 sub getProtocolId {
   my ($self) = @_;
 
-  my $dbh = $self->getQueryHandle(); 
+  my $ontologyEntry = GUS::Model::Study::OntologyEntry->new({
+                           "value" => 'total_intensity_normalization_single',
+			   "category" => 'DataTransformationProtocolType',
+			   });
 
-  my $stmt = $dbh->prepareAndExecute("select ontology_entry_id from Study.OntologyEntry where value = 'total_intensity_normalization_single' and category = 'DataTransformationProtocolType'");
+  if (!$ontologyEntry->retrieveFromDB()){
+    $ontologyEntry->submit();
+    $self->log("Submitted entry for Study.OntologyEntry: value => 'total_intensity_normalization_single', category => 'DataTransformationProtocolType'");
+  }
 
-  my ($ontologyEntryId) = $stmt->fetchrow_array() || $self->error("ontology_entry_id does not exist for total_intensity_normalization_single\n");
+  my $ontologyEntryId = $ontologyEntry->getOntologyEntryId();
 
-  $stmt -> finish();
-
-  my $protocol = GUS::Model::RAD::Protocol->new({'protocol_type_id'=>$ontologyEntryId,'name'=>'Normalization of SAGE tag frequencies to a target total intensity','protocol_description'=>'For each raw frequency in library X, the normalized frequency is computed by TG * raw frequency / total raw frequencies in library X, where TG is the target total intensity.'});
+  my $protocol = GUS::Model::RAD::Protocol->new({
+                      'protocol_type_id'=>$ontologyEntryId,
+		      'name'=>'Normalization of SAGE tag frequencies to a target total intensity',
+                      'protocol_description'=>'For each raw frequency in library X, the normalized frequency is computed by TG * raw frequency / total raw frequencies in library X, where TG is the target total intensity.',
+		      });
 
   if (! $protocol->retrieveFromDB()) {
     $protocol->submit();
@@ -153,15 +162,24 @@ sub getProtocolId {
 sub getProtocolParamId {
   my ($self,$protocolId) = @_;
 
-  my $dbh = $self->getQueryHandle();
+  my $ontologyEntry = GUS::Model::Study::OntologyEntry->new({
+                           "value" => 'positive_float',
+			   "category" => 'DataType',
+			   });
 
-  my $stmt = $dbh->prepareAndExecute("select ontology_entry_id from Study.OntologyEntry where value = 'positive_float' and category = 'DataType'");
+  if (!$ontologyEntry->retrieveFromDB()){
+    $ontologyEntry->submit();
+    $self->log("Submitted entry for Study.OntologyEntry: value => 'positive_float', category => 'DataType'");
+  }
 
-  my ($ontologyEntryId) = $stmt->fetchrow_array() || $self->error("ontology_entry_id does not exist for positive_float\n");
+  my $ontologyEntryId = $ontologyEntry->getOntologyEntryId();
 
-  $stmt -> finish();
 
-  my $protocolParam = GUS::Model::RAD::ProtocolParam->new({'data_type_id'=>$ontologyEntryId,'name'=>'target total intensity','protocol_id'=>$protocolId });
+  my $protocolParam = GUS::Model::RAD::ProtocolParam->new({
+				       'data_type_id'=>$ontologyEntryId,
+				       'name'=>'target total intensity',
+				       'protocol_id'=>$protocolId,
+				       });
 
   if (! $protocolParam->retrieveFromDB()) {
     $protocolParam->submit();
