@@ -60,6 +60,22 @@ sub getAASeqIdFromGeneId {
 }
 
 
+sub getAASeqIdFromCaselessSourceId {
+  my ($plugin, $sourceId) = @_;
+
+    $sourceId = uc($sourceId);
+
+    my $sql = "SELECT aa_sequence_id
+               FROM DoTS.TranslatedAASequence
+               Where upper(source_id) = \'$sourceId\'";
+
+    my $recordSet = $plugin->prepareAndExecute($sql);
+    my($aaSeqId) = $recordSet->fetchrow_array(); 
+                                                                                                                             
+return $aaSeqId;
+}
+
+
 
 1;
 
