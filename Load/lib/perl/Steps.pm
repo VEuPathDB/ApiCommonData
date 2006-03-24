@@ -2,6 +2,7 @@ use strict;
 
 use Bio::SeqIO;
 #use CBIL::Util::GenomeDir;
+chomp(my $pipelineScript = `basename $0`);
 
 sub createPipelineDir {
   my ($mgr,$allSpecies) = @_;
@@ -1601,7 +1602,7 @@ sub assembleTranscripts {
   my $msg =
     "EXITING.... PLEASE DO THE FOLLOWING:
  1. check for errors in assemble.err and sql failures in updateDOTSAssemblies.log
- 2. resume when assembly completes (validly) by re-runnning '" . basename $0 . " $mgr->{propertiesFile}'
+ 2. resume when assembly completes (validly) by re-runnning '$pipelineScript $mgr->{propertiesFile}'
 ";
   print STDERR $msg;
   print $msg;
@@ -1638,7 +1639,7 @@ sub reassembleTranscripts {
   $mgr->endStep($signal);
   my $msg =
     "EXITING.... PLEASE DO THE FOLLOWING:
- 1. resume when reassembly completes (validly) by re-runnning '" . basename $0 . " $mgr->{propertiesFile}'
+ 1. resume when reassembly completes (validly) by re-runnning '$pipelineScript $mgr->{propertiesFile}'
 ";
   print STDERR $msg;
   print $msg;
@@ -1662,7 +1663,7 @@ sub runAssemblePlugin {
   $mgr->runCmd("mkdir -p $assemDir");
   chdir $assemDir || die "Can't chdir to $assemDir";
 
-  my $cmd = "runUpdateAssembliesPlugin --clusterFie $file.$suffix --pluginCmd \"$pluginCmd\" 2>> $logfile";
+  my $cmd = "runUpdateAssembliesPlugin --clusterFile $file.$suffix --pluginCmd \"$pluginCmd\" 2>> $logfile";
   $mgr->runCmdInBackground($cmd);
 }
 
