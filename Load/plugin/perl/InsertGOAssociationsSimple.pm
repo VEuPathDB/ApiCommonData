@@ -329,8 +329,8 @@ sub getGoTermId {
 EOSQL
 
     $stmt = $self->prepareAndExecute($sql);
-    while (my ($go_term_id, $go_id) - $stmt->fetchrow_array()) {
-      $self->{goTermids}->{$go_id} = $go_term_id;
+    while (my ($go_term_id, $go_id) = $stmt->fetchrow_array()) {
+      $self->{goTermIds}->{$go_id} = $go_term_id;
     }
 
   }
@@ -340,9 +340,9 @@ EOSQL
   unless ($goTermId) {
     if (my $file = $self->getArg('skipBadGOTerms')) {
       $self->log("Skipping bad GO term: $goId\n");
-      open(FILE, ">>$file") or die $!;
-      print FILE "$goId\n";
-      close(FILE);
+      open(FILE2, ">>$file") or die $!;
+      print FILE2 "$goId\n";
+      close(FILE2);
     } else {
       $self->userError("Can't find GoTerm in database for GO Id: $goId");
     }
