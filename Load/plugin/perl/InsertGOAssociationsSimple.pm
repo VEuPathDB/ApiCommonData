@@ -198,8 +198,6 @@ sub run {
 
 	my $assocId = $self->findAssociationId($rowId,$inputAssoc,$goDbRlsId);
 
-	next unless $assocId;
-
 	$self->addAssociationInstance($assocId, $inputAssoc);
 
 	$self->log("processing $sourceId; processed $count lines")
@@ -278,7 +276,7 @@ sub findAssociationId {
 
   my $goTermId = $self->getGoTermId($goId, $goDbRlsId);
 
-  return undef unless $goTermId;
+  return unless $goTermId;
 
   $self->getPriorAssociations() if (!$self->{assocIds});
 
@@ -370,6 +368,8 @@ sub addAssociationInstance {
   my ($self, $assocId, $inputAssoc) = @_;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
+
+  return unless $assocId;
 
   my $instance = GUS::Model::DoTS::GOAssociationInstance->new();
   $instance->setGoAssociationId($assocId);
