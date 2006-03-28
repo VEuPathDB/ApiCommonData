@@ -213,6 +213,7 @@ my $count = 0;
       if ($target eq $sourceSeq->getSourceId()) {
 	  # for the case when scaffold does not map to any chromosome in mapping input file
 	  # and we do not create an entry in SequencePiece table
+	$seq = $sourceSeq->getSequence();
       } else {
 	$seqOrder++;
 	my $sourceSeqId = $sourceSeq->getId();
