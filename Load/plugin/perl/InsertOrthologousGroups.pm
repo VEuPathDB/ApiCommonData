@@ -303,9 +303,9 @@ sub _findElementIDs {
 sub undoTables {
   my ($self) = @_;
 
-  return ('DoTS::SequenceSequenceGroup',
-          'DoTS::SequenceGroup',
-          'DoTS::OrthologExperiment',
+  return ('DoTS.SequenceSequenceGroup',
+          'DoTS.SequenceGroup',
+          'DoTS.OrthologExperiment',
 	 );
 }
 
