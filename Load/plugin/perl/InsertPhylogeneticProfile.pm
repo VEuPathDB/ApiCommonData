@@ -321,7 +321,7 @@ sub _makePhylogeneticProfiles {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB::PhylogeneticProfile',
+  return ('ApiDB.PhylogeneticProfile',
 	 );
 }
 
