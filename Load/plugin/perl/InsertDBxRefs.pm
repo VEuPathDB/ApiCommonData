@@ -184,8 +184,8 @@ sub makeDbXRef {
 sub undoTables {
   my ($self) = @_;
 
-  return ('DoTS::DbRefNAFeature',
-          'SRes::DbRef',
+  return ('DoTS.DbRefNAFeature',
+          'SRes.DbRef',
 	 );
 }
 
