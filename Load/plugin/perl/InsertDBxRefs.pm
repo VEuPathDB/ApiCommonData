@@ -7,7 +7,7 @@
 ## $Id$
 ##
 ## HACK: We are loading the map name into
-## SRes.DbRef.lower_case_secondary_identifier until we can fix GUS b/c
+## SRes.DbRef.lowercase_secondary_identifier until we can fix GUS b/c
 ## SRes.DbRef.secondary_identifier is too short
 #######################################################################
  
@@ -32,7 +32,7 @@ PURPOSEBRIEF
 my $purpose = <<PLUGIN_PURPOSE;
 Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
 HACK: We are loading the map name into
-SRes.DbRef.lower_case_secondary_identifier until we can fix GUS b/c
+SRes.DbRef.lowercase_secondary_identifier until we can fix GUS b/c
 SRes.DbRef.secondary_identifier is too short
 PLUGIN_PURPOSE
 
@@ -71,7 +71,7 @@ my $argsDeclaration =
 	  reqd => 1,
 	  isList => 0,
 	  mustExist => 1,
-	  format => 'Four column tab delimited file: feature source_id, dbref primary_identifier, dbref lower_case_secondary_identifier, dbref remark'
+	  format => 'Four column tab delimited file: feature source_id, dbref primary_identifier, dbref lowercase_secondary_identifier, dbref remark'
         }),
    stringArg({name => 'extDbName',
 	      descr => 'the external database name with which to load the DBRefs.',
@@ -161,7 +161,7 @@ sub makeDbXRef {
   my ($self, $locusTag, $primaryId, $secondaryId, $remark, $dbRls) = @_;
 
   my $dbRef = GUS::Model::SRes::DbRef->new({ primary_identifier => $primaryId,
-					     lower_case_secondary_identifier => $secondaryId,
+					     lowercase_secondary_identifier => $secondaryId,
 					     remark => $remark,
 					     external_database_release_id => $dbRls,
 					   });
