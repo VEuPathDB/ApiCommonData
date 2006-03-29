@@ -27,7 +27,7 @@ Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature to represent ne
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes in a tab delimited file of the order gene identifier, external database link identifier, and external database remark, and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
+Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
 PLUGIN_PURPOSE
 
 my $tablesAffected =
@@ -65,7 +65,7 @@ my $argsDeclaration =
 	  reqd => 1,
 	  isList => 0,
 	  mustExist => 1,
-	  format => 'Three column tab delimited file in the order gene_id, DbRef_pk, DbRef_remark'
+	  format => 'Four column tab delimited file: feature source_id, dbref primary_identifier, dbref secondary_identifier, dbref remark'
         }),
    stringArg({name => 'extDbName',
 	      descr => 'the external database name with which to load the DBRefs.',
@@ -123,21 +123,21 @@ sub getMapping {
 
     while (<XREFMAP>) {
 	chomp;
-	my ($locusTag, $dbRef, $remark) = split('\t', $_);
+	my ($locusTag, $primaryId, $secondaryId, $remark) = split('\t', $_);
 
-	if (!$dbRef || !$locusTag){
-	  $self->log("Missing a required field. dbRef: $dbRef, locusTag: $locusTag.");
+	if (!$primaryId || !$locusTag){
+	  $self->log("Missing a required field. primaryId: $primaryId, locusTag: $locusTag.");
 	  next;
 	}
 
 	$locusTag =~ s/\s//g;
-	$dbRef =~ s/\s//g;
+	$primaryId =~ s/\s//g;
 
 	if($lineCt%100 == 0){
 	  $self->log("Processed $lineCt entries.\n");
 	}
 
-	$self->makeDbXRef($locusTag, $dbRef, $remark, $dbRls);
+	$self->makeDbXRef($locusTag, $primaryId, $secondaryId, $remark, $dbRls);
 
 	$self->undefPointerCache();
 
@@ -152,9 +152,10 @@ close (XREFMAP);
 }
 
 sub makeDbXRef {
-  my ($self, $locusTag, $dbRef, $remark, $dbRls) = @_;
+  my ($self, $locusTag, $primaryId, $secondaryId, $remark, $dbRls) = @_;
 
-  my $dbRef = GUS::Model::SRes::DbRef->new({ primary_identifier => $dbRef,
+  my $dbRef = GUS::Model::SRes::DbRef->new({ primary_identifier => $primaryId,
+					     secondary_identifier => $secondaryId,
 					     remark => $remark,
 					     external_database_release_id => $dbRls,
 					   });
@@ -179,5 +180,15 @@ sub makeDbXRef {
   $dbXref->submit() unless $dbXref->retrieveFromDB();
 
 }
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS::DbRefNAFeature',
+          'SRes::DbRef',
+	 );
+}
+
+
 
 1;
