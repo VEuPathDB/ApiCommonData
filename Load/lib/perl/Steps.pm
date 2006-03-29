@@ -861,15 +861,17 @@ sub fixGeneAliases {
 }
 
 sub predictAndPrintTranscriptSequences {
-  my ($mgr,$species,$dbName,$dbRlsVer,$type) = @_;
+  my ($mgr,$species,$dbName,$dbRlsVer,$type, $flag) = @_;
 
   my $cds = $type eq 'cds' ? "--cds" : "";
+
+  my $noReversed = $flag eq 'noReversed' ? "--noReversed" : "";
 
   $type = $type eq 'transcripts' ? ucfirst($type) : uc($type);
 
   my $file = "$mgr->{pipelineDir}/seqfiles/${species}Annotated${type}.fsa";
 
-  my $args = "--extDbName '$dbName' --extDbRlsVer '$dbRlsVer' --sequenceFile $file $cds";
+  my $args = "--extDbName '$dbName' --extDbRlsVer '$dbRlsVer' --sequenceFile $file $cds $noReversed";
 
   $mgr->runPlugin("predict${species}$type",
 		  "GUS::Supported::Plugin::ExtractTranscriptSequences", $args,
