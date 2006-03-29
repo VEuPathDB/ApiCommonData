@@ -501,7 +501,7 @@ sub runBLASTZ {
 }
 
 sub  loadAveragedProfiles {
-  my ($mgr,$dbSpec,$setName) = @_;
+  my ($mgr,$dbSpec,$setName,$loadProfileElement) = @_;
 
   my $signal = "load${dbSpec}Profile";
 
@@ -510,6 +510,8 @@ sub  loadAveragedProfiles {
   $signal =~ s/\|//g;
 
   my $args = "--externalDatabaseSpec '$dbSpec' --profileSetNames '$setName'";
+
+  $args .= " --loadProfileElement" if $loadProfileElement;
 
   $mgr->runPlugin($signal,
                   "PlasmoDBData::Load::Plugin::InsertAveragedProfiles", $args,
