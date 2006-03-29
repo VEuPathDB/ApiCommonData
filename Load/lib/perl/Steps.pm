@@ -507,9 +507,11 @@ sub  loadAveragedProfiles {
 
   $signal =~ s/\s//g;
 
-  $signal =~ s/\|//g;
+  $signal =~ s/\|/\-/g;
 
-  my $args = "--externalDatabaseSpec '$dbSpec' --profileSetNames '$setName'";
+  $signal =~ s/\//\-/g;
+
+  my $args = "--externalDatabaseSpec '$dbSpec' --profileSetNames '$setName' ";
 
   $args .= " --loadProfileElement" if $loadProfileElement;
 
@@ -759,9 +761,11 @@ sub loadProteinBlast {
 }
 
 sub calculateTranslatedProteinSequence {
-  my ($mgr, $dbName,$dbRlsVer,$soCvsVersion,$overwrite) = @_;
+  my ($mgr, $dbName,$dbRlsVer,$soCvsVersion,$overwrite,$genCodeId) = @_;
 
   my $args = "--sqlVerbose --extDbRlsName '$dbName' --extDbRlsVer '$dbRlsVer' --soCvsVersion $soCvsVersion $overwrite";
+
+  $args .= " --ncbiGeneticCodeId $genCodeId" if ($genCodeId);
 
   $dbName =~ s/\s//g;
 
