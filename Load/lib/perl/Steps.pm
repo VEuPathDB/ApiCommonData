@@ -453,6 +453,37 @@ sub findTandemRepeats {
   $mgr->endStep($signal);
 }
 
+sub documentTandemRepeatFinder {
+  my ($mgr, $args) = @_;
+
+  my %descriptions =
+    ( trf400 => "Tandem Repeats Finder is a program to locate and display tandem repeats in DNA sequences"
+    );
+
+  my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
+
+  my $documentation =
+    { name => "trf400",
+      input => "fasta file of DNA sequences",
+      output => "a repeat table file and an alignment file",
+      descrip => $description,
+      tools => [
+		{ name => "trf400",
+		  version => "3.21",
+		  params => $args,
+		  url => "http://tandem.bu.edu/trf/trf.html",
+		  pubmedIds => "9862982",
+		  credits => "G. Benson,
+                              Tandem repeats finder: a program to analyze DNA sequences,
+                              Nucleic Acids Research (1999)
+                              Vol. 27, No. 2, pp. 573-580."
+		},
+	       ]
+    };
+  $mgr->documentStep("trf", $documentation);
+}
+
+
 sub loadTandemRepeats {
   my ($mgr,$file,$args,$dbName,$dbRlsVer) = @_;
 
