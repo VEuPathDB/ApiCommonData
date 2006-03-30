@@ -78,8 +78,8 @@ my $sthExon = $dbh->prepare(<<EOSQL);
 EOSQL
 
 my $sthCDS = $dbh->prepare(<<EOSQL);
-  SELECT LEAST(cds.end5, cds.end3) AS cds_start,
-         GREATEST(cds.end5, cds.end3) AS cds_stop
+  SELECT cds.end5 AS cds_start,
+         cds.end3 AS cds_stop
   FROM   feat_link AS exon_link
          INNER JOIN asm_feature AS cds ON (exon_link.child_feat = cds.feat_name)
   WHERE  exon_link.parent_feat = ?
