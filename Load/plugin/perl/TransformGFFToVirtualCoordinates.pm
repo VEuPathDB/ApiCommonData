@@ -147,12 +147,13 @@ sub run {
 
   while (my $feature = $gffIn->next_feature) {
 
-    my $result = $map->map($feature->location);
+    my $seqId = $feature->location()->seq_id();
+    my $result = $map->map($feature->location());
 
     if ($result) {
 
       # calculate new location in virtual coordinates:
-      my $virtualLocation = $match->match();
+      my $virtualLocation = $result->match();
 
       unless ($virtualLocation) {
 	die <<EODIE;
@@ -169,7 +170,32 @@ EODIE
       $feature->location($virtualLocation);
 
       # also change the feature's reference sequence to the virtual sequence
-      $feature->seq_id($virtualLocation->seq_id);
+      $feature->seq_id($virtualLocation->seq_id());
+
+      # if the feature has CodingStart/CodingEnd attributes, these
+      # also need to be mapped:
+      if ($feature->has_tag('CodingStart')) {
+	my ($codingStart) = $feature->each_tag_value('CodingStart');
+	$result = $map->map(Bio::Location::Simple->new(-seq_id => $seqId,
+						       -start  => $codingStart,
+						       -end    => $codingStart)
+			   );
+	if ($result) {
+	  $feature->remove_tag('CodingStart');
+	  $feature->add_tag_value('CodingStart' => $result->match()->start());
+	}
+      }
+      if ($feature->has_tag('CodingEnd')) {
+	my ($codingEnd) = $feature->each_tag_value('CodingEnd');
+	$result = $map->map(Bio::Location::Simple->new(-seq_id => $seqId,
+						       -start  => $codingEnd,
+						       -end    => $codingEnd)
+			   );
+	if ($result) {
+	  $feature->remove_tag('CodingEnd');
+	  $feature->add_tag_value('CodingEnd' => $result->match()->end());
+	}
+      }
 
       # then alter Target coordinate direction, if present, because
       # new absolute coordinates may not be in the same strand as the
