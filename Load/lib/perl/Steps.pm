@@ -456,10 +456,6 @@ sub findTandemRepeats {
 sub documentTandemRepeatFinder {
   my ($mgr, $args) = @_;
 
-  my %descriptions =
-    ( trf400 => "Tandem Repeats Finder is a program to locate and display tandem repeats in DNA sequences"
-    );
-
   my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
 
   my $documentation =
@@ -477,7 +473,7 @@ sub documentTandemRepeatFinder {
                               Tandem repeats finder: a program to analyze DNA sequences,
                               Nucleic Acids Research (1999)
                               Vol. 27, No. 2, pp. 573-580."
-		},
+		}
 	       ]
     };
   $mgr->documentStep("trf", $documentation);
@@ -839,6 +835,31 @@ sub runExportPred {
   $mgr->endStep($signal);
 }
 
+sub documentExportPred {
+  my ($mgr) = @_;
+
+  my $description = "Program that predicts the exportome of malaria parasites.";
+
+  my $documentation =
+    { name => "exportpred",
+      input => "fasta file of protein sequences",
+      output => "file containing export sequences and scores",
+      descrip => $description,
+      tools => [
+		{ name => "exportpred",
+		  version => "",
+		  params => "",
+		  url => "http://genomebiology.com/2006/7/2/R12",
+		  pubmedIds => "",
+		  credits => "Sargeant et al.
+                              Lineage-specific expansion of proteins exported to erythrocytes in malaria parasites,
+                              Genome Biology (2006)
+                              7:R12 doi:10.1186/gb-2006-7-2-r12"
+		}
+	       ]
+    };
+  $mgr->documentStep("exportpred", $documentation);
+}
 
 sub loadExportPredResults {
   my ($mgr,$species,$sourceIdDb,$genDb) = @_;
