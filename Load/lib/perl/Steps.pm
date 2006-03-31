@@ -838,7 +838,7 @@ sub runExportPred {
 sub documentExportPred {
   my ($mgr) = @_;
 
-  my $description = "Program that predicts the exportome of malaria parasites.";
+  my $description = "Program that predicts the exported proteins of Plasmodium.";
 
   my $documentation =
     { name => "exportpred",
@@ -847,14 +847,14 @@ sub documentExportPred {
       descrip => $description,
       tools => [
 		{ name => "exportpred",
-		  version => "",
-		  params => "",
-		  url => "http://genomebiology.com/2006/7/2/R12",
+		  version => "1.0.1",
+		  params => "default",
+		  url => "http://bioinf.wehi.edu.au/exportpred/",
 		  pubmedIds => "",
 		  credits => "Sargeant et al.
                               Lineage-specific expansion of proteins exported to erythrocytes in malaria parasites,
                               Genome Biology (2006)
-                              7:R12 doi:10.1186/gb-2006-7-2-r12"
+                              http://genomebiology.com/2006/7/2/R12"
 		}
 	       ]
     };
