@@ -459,12 +459,12 @@ sub documentTandemRepeatFinder {
   my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
 
   my $documentation =
-    { name => "trf400",
+    { name => "TRF",
       input => "fasta file of DNA sequences",
       output => "a repeat table file and an alignment file",
       descrip => $description,
       tools => [
-		{ name => "trf400",
+		{ name => "TRF",
 		  version => "3.21",
 		  params => $args,
 		  url => "http://tandem.bu.edu/trf/trf.html",
@@ -841,12 +841,12 @@ sub documentExportPred {
   my $description = "Program that predicts the exported proteins of Plasmodium.";
 
   my $documentation =
-    { name => "exportpred",
+    { name => "ExportPred",
       input => "fasta file of protein sequences",
       output => "file containing export sequences and scores",
       descrip => $description,
       tools => [
-		{ name => "exportpred",
+		{ name => "ExportPred",
 		  version => "1.0.1",
 		  params => "default",
 		  url => "http://bioinf.wehi.edu.au/exportpred/",
