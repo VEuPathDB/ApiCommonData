@@ -31,6 +31,7 @@ PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
 Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
+NOTE: If there are only three columns in the input file, the third column can either be loaded into SRes.DbRef.remark or SRes.DbRef.lowercase_secondary_identifier, depending on whether the loadRemarks flag is set or not.
 HACK: We are loading the map name into
 SRes.DbRef.lowercase_secondary_identifier until we can fix GUS b/c
 SRes.DbRef.secondary_identifier is too short
@@ -71,7 +72,7 @@ my $argsDeclaration =
 	  reqd => 1,
 	  isList => 0,
 	  mustExist => 1,
-	  format => 'Four column tab delimited file: feature source_id, dbref primary_identifier, dbref lowercase_secondary_identifier, dbref remark'
+	  format => 'Three or four column tab delimited file: feature source_id, dbref primary_identifier, dbref lowercase_secondary_identifier (opt.), dbref remark'
         }),
    stringArg({name => 'extDbName',
 	      descr => 'the external database name with which to load the DBRefs.',
@@ -85,6 +86,11 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
+   booleanArg ({name => 'loadRemarks',
+	              descr => 'Set this to load the third column of a three column file into Sres.DbRef.remark instead of Sres.DbRef.lowercase_secondary_identifier.',
+	              reqd => 0,
+                      default =>0
+                     }),
   ];
 
 
@@ -134,6 +140,11 @@ sub getMapping {
 	if (!$primaryId || !$locusTag){
 	  $self->log("Missing a required field. primaryId: $primaryId, locusTag: $locusTag.");
 	  next;
+	}
+
+	if ($self->getArg('loadRemarks')){
+	  $remark = $secondaryId;
+	  $secondaryId = "";
 	}
 
 	$locusTag =~ s/\s//g;
