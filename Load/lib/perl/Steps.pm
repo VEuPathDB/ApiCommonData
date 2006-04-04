@@ -1136,7 +1136,7 @@ sub loadLowComplexitySequences {
   my $signal = "load$file";
 
   $mgr->runPlugin($signal,
-		  "PlasmoDBData::Load::Plugin::InsertLowComplexityFeature", $args,
+		  "ApiCommonData::Load::Plugin::InsertLowComplexityFeature", $args,
 		  "Loading low complexity sequence file $file");
 
 }
