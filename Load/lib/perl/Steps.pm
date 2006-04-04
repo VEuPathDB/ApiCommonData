@@ -811,6 +811,16 @@ sub calculateProteinMolWt {
                   "Calculating $species translated aa sequence MW in $table");
 }
 
+sub calculateACGT {
+  my ($mgr) = @_;
+
+  my $args = "";
+
+  $mgr->runPlugin("calculateACGT",
+                  "PlasmoDBData::Load::Plugin::CalculateACGTContent", $args,
+                  "Calculating ACGT content of na sequences");
+}
+
 sub runExportPred {
   my ($mgr,$species) = @_;
 
