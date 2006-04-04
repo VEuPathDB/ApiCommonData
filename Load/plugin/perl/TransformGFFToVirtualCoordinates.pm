@@ -141,7 +141,7 @@ sub run {
   my $dbh = $self->getQueryHandle(); 
   
   my $map = ApiCommonData::Load::VirtualSequenceMap->new({ extDbRlsId  => $extDbRlsId,
-							   virtDbRlsId => $virtDbRlsId,
+							   virtDbRlsId => $virtualExtDbRlsId,
 							   dbh         => $dbh,
 							 });
 
