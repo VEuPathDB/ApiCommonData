@@ -817,7 +817,7 @@ sub calculateACGT {
   my $args = "";
 
   $mgr->runPlugin("calculateACGT",
-                  "PlasmoDBData::Load::Plugin::CalculateACGTContent", $args,
+                  "ApiCommonData::Load::Plugin::CalculateACGTContent", $args,
                   "Calculating ACGT content of na sequences");
 }
 
