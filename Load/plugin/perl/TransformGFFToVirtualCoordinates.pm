@@ -5,6 +5,7 @@ use base qw(GUS::PluginMgr::Plugin);
 
 use GUS::PluginMgr::Plugin;
 use Bio::Tools::GFF;
+use ApiCommonData::Load::VirtualSequenceMap;
 
 my $argsDeclaration =
   [
