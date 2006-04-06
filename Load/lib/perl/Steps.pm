@@ -190,7 +190,7 @@ sub copyPipelineDirToComputeCluster {
   my ($mgr) = @_;
   my $propertySet = $mgr->{propertySet};
   my $buildName = $mgr->{'buildName'}; 
-  my $release = "release".$propertySet->getProp('release');
+  my $release = "release".$propertySet->getProp('projectRelease');
   my $serverPath = $propertySet->getProp('serverPath');
   my $fromDir =   $propertySet->getProp('buildDir');
   my $signal = "dir2cluster";
@@ -217,7 +217,7 @@ sub moveSeqFile {
 
   my $buildDir = $propertySet->getProp('buildDir');
 
-  my $release = $propertySet->getProp('release');
+  my $release = $propertySet->getProp('projectRelease');
 
   my $seqFile = "$buildDir/$release/$file";
 
@@ -967,7 +967,7 @@ sub modifyPlasmoDownloadFile {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $release = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
 
   my $signal = "modify$file";
 
@@ -996,7 +996,7 @@ sub modifyPlasmoGenomeDownloadFile {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $release = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
 
   my $signal = "modify$file";
 
@@ -1022,7 +1022,7 @@ sub makeGFF {
 
    return if $mgr->startStep("Making gff $file file", $signal);
 
-   my $release = $propertySet->getProp('projectRelease');
+   my $release = $propertySet->getProp('release');
 
    $file .= "_plasmoDB-${release}.gff";
 
