@@ -13,7 +13,7 @@ sub new {
 
   $self->{_mapper} = Bio::Coordinate::Collection->new();
 
-  my ($extDbRlsId, $virtExtDbRlsId, $dbh) = @$args{qw(extDbRlsId virtExtDbRlsId dbh)};
+  my ($extDbRlsId, $virtExtDbRlsId, $dbh) = @$args{qw(extDbRlsId virtDbRlsId dbh)};
 
   my $sth = $dbh->prepare(<<EOSQL);
 
