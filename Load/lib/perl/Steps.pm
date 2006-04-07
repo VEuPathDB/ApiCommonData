@@ -295,6 +295,88 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
+
+sub extractNaSeqAltDefLine {
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$defLine) = @_;
+
+  my $type = ucfirst($seqType);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $signal = "extract${name}$type";
+
+  return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $outFile = "$mgr->{pipelineDir}/seqfiles/${name}${type}.fsa";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  my $sql = my $sql = "select $defLine,sequence
+             from dots.$table
+             where external_database_release_id = $dbRlsId";
+
+  my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub runSpline {
+  my ($mgr,$name,$query,$subject) = @_;
+
+  my $queryType = ucfirst $query;
+
+  my $subjectType = ucfirst $subject;
+
+  my $signal = "run${$name}${queryType}${subjectType}Splign";
+
+  return if $mgr->startStep("Running splign for $name $query vs $subject", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $splignDir = "$mgr->{pipelineDir}/splign/${name}${queryType}$subjectType";
+
+  $mgr->runCmd("mkdir -p $splignDir");
+
+  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/seqfiles/${name}${queryType}.fsa ${splignDir}/$query");
+
+  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/seqfiles/${name}${subjectType}.fsa ${splignDir}/$subject");
+
+  $mgr->runCmd("$propertySet->getProp('splignPath')/splign -mklds $splignDir");
+
+  $mgr->runCmd("$propertySet->getProp('ncbiBlastPath')/formatdb -i ${splignDir}/$subject -p F -o T");
+
+  $mgr->runCmd("$propertySet->getProp('ncbiBlastPath')/megablast -i ${splignDir}/$query -d ${splignDir}/$subject -m 8 | sort -k 2,2 -k 1,1 > test.hit");
+
+  $mgr->("splign -ldsdir $splignDir -hits test.hit > ${splignDir}/${query}${subjectType}.splign");
+
+  $mgr->runCmd("rm -rf ${splignDir}/$query");
+
+  $mgr->runCmd("rm -rf ${splignDir}/$subject");
+
+  $mgr->endStep($signal);
+
+}
+
+sub loadSplignResults {
+  my ($mgr,$name,$query,$subject,$queryExtDbRlsSpec,$subjectExtDbRlsSpec,$queryTable,$subjectTable) = @_;
+
+  my $subjectType = ucfirst $subject;
+
+  my $queryType = ucfirst $query;
+
+  my $signal = "load${name}${queryType}${subjectType}Splign";
+
+  my $splignFile = "$mgr->{pipelineDir}/splign/${name}${queryType}${subjectType}/${query}${subjectType}.splign";
+
+  my $args = "--inputFile $splignFile --estTable '$queryTable' --seqTable '$subjectTable' --estExtDbRlsSpec '$queryExtDbRlsSpec' --seqExtDbRlsSpec '$subjectExtDbRlsSpec'";
+
+  $mgr->runPlugin($signal,
+		  "ApiCommmonData::Load::Plugin::InsertSplignAlignments", $args,
+		  "Load splign results for $name $query vs $subject");
+
+}
+
 sub extractScaffolds {
   my ($mgr,$species) = @_;
   my $propertySet = $mgr->{propertySet};
@@ -352,7 +434,6 @@ sub extractIdsFromBlastResult {
   my $output = "$mgr->{pipelineDir}/similarity/$simDir/blastSimIds.out";
 
   my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
-
   $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $blastFile --outFile $output 2>> $logFile";
 
   $mgr->runCmd($cmd);
