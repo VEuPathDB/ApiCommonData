@@ -1043,8 +1043,8 @@ sub formatBlastFile {
   $mgr->endStep($signal);
 }
 
-sub modifyPlasmoDownloadFile {
-  my ($mgr,$dir,$file,$type,$extDb,$extDbVer) = @_;
+sub modifyDownloadFile {
+  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -1061,7 +1061,7 @@ sub modifyPlasmoDownloadFile {
   my $outFile = $file;
 
   $outFile =~ s/\.\w+\b//;
-  $outFile .= "_plasmoDB-${release}.fasta";
+  $outFile .= "_${database}-${release}.fasta";
 
   my $outFile = "$mgr->{pipelineDir}/downloadSite/$dir/$outFile";
 
@@ -1072,8 +1072,8 @@ sub modifyPlasmoDownloadFile {
   $mgr->endStep($signal);
 }
 
-sub modifyPlasmoGenomeDownloadFile {
-  my ($mgr,$dir,$file,$type,$extDb,$extDbVer) = @_;
+sub modifyGenomeDownloadFile {
+  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -1085,7 +1085,7 @@ sub modifyPlasmoGenomeDownloadFile {
 
   my $inFile = "$mgr->{pipelineDir}/seqfiles/$file";
 
-  my $outFile = "$mgr->{pipelineDir}/downloadSite/$dir/${dir}Genomic_plasmoDB-${release}.fasta";
+  my $outFile = "$mgr->{pipelineDir}/downloadSite/$dir/${dir}Genomic_${database}-${release}.fasta";
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
