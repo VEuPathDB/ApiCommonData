@@ -74,6 +74,19 @@ sub getArgumentsDeclaration{
 	        reqd => 0,
 	        isList => 0
 	    }),
+     stringArg({name => 'ontologyTerm',
+		descr => 'Ontology term describing the type of genetic variant being added to the database',
+		constraintFunc=> undef,
+		reqd  => 1,
+		isList => 0,
+	       }),
+   enumArg({name => 'seqVarType',
+	    descr => 'The type of sequence variation to be loaded.',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0,
+	    enum => "SNP, GeneticMarker",
+	   }),
     ];
   return $argsDeclaration;
 }
@@ -152,8 +165,9 @@ sub processSnpFile{
 
   my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
 
-  my $termName = 'SNP';
+  my $termName = $self->getArg('ontologyTerm');
   $self->{'soId'} = $self->getSoId($termName);
+  die "The term $termName was not found in the Sequence Ontology.\n" unless $self->{'soId'};
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
 
@@ -210,8 +224,14 @@ sub getSeqVars {
   my @data = split (/;/, $line->[8]);
 
   my $sourceId = $data[0];
-  # $sourceId =~ s/SNP\s(\S+)\s/$1/;
-  $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
+
+  if ($sourceId =~ /SNP\s(\S+)_(\d+)_(.*)/){
+    # $sourceId =~ s/SNP\s(\S+)\s/$1/;
+    $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
+  }
+  else { 
+    $sourceId =~ s/GeneticMarker\s\"(\w+)\"/$1/;
+  }
 
   my $organism = $self->getArg('organism');
 
@@ -225,28 +245,52 @@ sub getSeqVars {
 
   my @seqVarRows;
 
-  foreach my $element (@data) {
-    if ($element =~ /Allele\s+(.*)/) {
-      my $data = $1;
-      while ($data =~ m/(\w+):([\w\-]+)/g) {
+  my $varType = $self->getArg('seqVarType');
+  if ($varType eq 'SNP'){
+    foreach my $element (@data) {
+      if ($element =~ /Allele\s+(.*)/) {
+	my $data = $1;
+	while ($data =~ m/(\w+):([\w\-]+)/g) {
 
-	my $strain = $1;
-	my $base = $2;
+	  my $strain = $1;
+	  my $base = $2;
 
-	$standard = $end = $start + 1 ? 'insertion' : 'substitution';
-	$standard = 'reference' if lc($ref) eq lc($strain);
-	$standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
+	  $standard = $end = $start + 1 ? 'insertion' : 'substitution';
+	  $standard = 'reference' if lc($ref) eq lc($strain);
+	  $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
 
-	my $seqvar =  GUS::Model::DoTS::SeqVariation->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId,'name'=>'SNP','standard_name'=>$standard,'sequence_ontology_id'=>$soId,'strain'=>$strain,'allele'=>$base,'organism'=>$organism});
+	  my $seqvar =  GUS::Model::DoTS::SeqVariation->new({
+				   'source_id'=>$sourceId,
+				   'external_database_release_id'=>$extDbRlsId,
+				   'name'=>'SNP','standard_name'=>$standard,
+				   'sequence_ontology_id'=>$soId,
+				   'strain'=>$strain,'allele'=>$base,
+				   'organism'=>$organism
+				   });
 
-	$seqvar->retrieveFromDB();
+	  $seqvar->retrieveFromDB();
 
-	push (@seqVarRows, $seqvar);
+	  push (@seqVarRows, $seqvar);
+	}
       }
     }
   }
+  elsif($varType eq 'GeneticMarker') {
+    my $seqvar =  GUS::Model::DoTS::SeqVariation->new({
+				   'source_id'=>$sourceId,
+				   'external_database_release_id'=>$extDbRlsId,
+				   'name'=>'GeneticMarker',
+				   'sequence_ontology_id'=>$soId,
+				   'organism'=>$organism
+				   });
 
-    return \@seqVarRows;
+    $seqvar->retrieveFromDB();
+
+    push (@seqVarRows, $seqvar);
+
+  }
+
+  return \@seqVarRows;
 
 }
 
@@ -290,8 +334,13 @@ sub getNaLoc {
 
   my $end = $line->[4];
 
-  my $locType = $end == $start + 1 ? 'insertion_site' : 'modified_base_site';
-
+  my $locType;
+  if ($self->getArg('ontologyTerm') eq 'SNP'){
+    $locType = $end == $start + 1 ? 'insertion_site' : 'modified_base_site';
+  }
+  else{
+    $locType = 'genetic_marker_site';
+  }
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'location_type'=>$locType});
 
   return $naLoc;
