@@ -1,0 +1,104 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+
+my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "type=s" => \$type,
+	    "extDb=s" => \$extDb,
+	    "extDbVer=s" => \$extDbVer,
+	    "verbose!" => \$verbose,
+	    "outfile=s" => \$outFile,
+	    "infile=s" => \$inFile);
+
+
+
+print STDERR "Establishing dbi login\n";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+
+my $extDbRls = getDbRlsId();
+
+
+my $sql = "select tn.name from dots.externalnasequence ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.source_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
+
+my $stmt = $dbh->prepare($sql);
+
+open(FILE,$inFile);
+
+open(OUT,">$outFile");
+
+while(<FILE>){
+  if ($_ =~ />(\S+)\s+length/){
+    my $chrSourceId = $1;
+    my ($taxonName) = getTaxonName($chrSourceId);
+    my $dataSource = getDataSource($chrSourceId);
+    print OUT ">$taxonName|$chrSourceId|$extDbVer|ds-DNA|$dataSource\n";
+  }
+  else {
+    print OUT "$_";
+  }
+}
+
+sub getDbRlsId {
+  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+
+  $stmt->execute($extDb,$extDbVer);
+
+  my ($extDbRlsId) = $stmt->fetchrow_array();
+
+  return $extDbRlsId;
+}
+
+
+sub getTaxonName {
+  my ($chromSourceId) = @_;
+
+  $stmt->execute($chromSourceId);
+
+  my ($taxonName) = $stmt->fetchrow_array;
+
+  $stmt->finish();
+
+  $taxonName =~ s/\s/\_/g;
+
+  return $taxonName;
+}
+
+sub getDataSource {
+  my ($chrSourceId) =@_;
+
+  my $source;
+
+  if ($type eq 'Tg'){
+    $source = 'Toxoplasma_gondii_TIGR';
+  }
+  elsif ($type eq 'Pv') {
+    $source = 'Plasmodium_vivax_TIGR';
+  }
+  elsif ($type eq 'Py') {
+    $source = 'Plasmodium_yoelii_TIGR';
+  }
+  else {
+    $chrSourceId =~ s/\s//g;
+    $source = 'Plasmodium_falciparum_TIGR' if ($chrSourceId =~ /MAL2\b|MAL10\b|MAL11\b|MAL14\b/);
+    $source = 'Plasmodium_falciparum_Sanger' if ($chrSourceId =~ /MAL1\b|MAL3\b|MAL4\b|MAL5\b|MAL6\b|MAL7\b|MAL8\b|MAL9\b|MAL13\b/);
+    $source = 'Plasmodium_falciparum_Stanford' if ($chrSourceId =~ /MAL12\b/);
+  }
+
+  return $source;
+}
