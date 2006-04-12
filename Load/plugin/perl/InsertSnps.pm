@@ -207,7 +207,9 @@ sub processSnpFile{
 
     $lineNum++;
 
-    $self->log("processed file line number = $lineNum\n");
+    if ($lineNum%10 == 0){
+      $self->log("processed $lineNum lines from $file.\n");
+    }
   }
 
   return $lineNum;
