@@ -26,4 +26,14 @@ GRANT SELECT ON GeneAlias TO gus_r;
 CREATE INDEX GeneAlias_gene_idx ON GeneAlias (gene);
 CREATE INDEX GeneAlias_alias_idx ON GeneAlias (alias);
 
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW SequenceAlias AS
+SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
+FROM dots.ExternalNaSequence ens;
+
+CREATE INDEX SequenceAlias_idx ON SequenceAlias.lowercase_source_id;
+
+GRANT SELECT ON SequenceAlias TO gus_r;
+
 exit
