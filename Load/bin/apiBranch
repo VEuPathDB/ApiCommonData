@@ -1,37 +1,81 @@
-#!/usr/perl
+#!/usr/bin/perl
 
 use strict;
 
 my $project = $ARGV[0];
 my $tag = $ARGV[1];
+my $projectHome = $ARGV[2];
 
-&usage unless (scalar(@ARGV) == 2 && ($project eq "ApiDB"
-				      || $project eq "CryptoDB"
-				      || $project eq "PlasmoDB"
-				      || $project eq "ToxoDB"));
+&usage unless (scalar(@ARGV) == 3 
+	       && ($project eq "ApiDB"
+		   || $project eq "CryptoDB"
+		   || $project eq "PlasmoDB"
+		   || $project eq "ToxoDB"
+		   || $project eq "Common"));
 
 my $urlRoot = "https://www.cbil.upenn.edu/svn";
 
 my $urlRootProj = "$urlRoot/apidb/$project";
 my $urlRootApiComm = "$urlRoot/apidb/ApiCommon";
 
-foreach my $sub (("Data", "Website", "WebService")) {
-  &cmd("svn copy $urlRootProj$sub/trunk $urlRootProj$sub/branches/$tag");
-  &cmd("svn copy $urlRootApiComm$sub/trunk $urlRootApiComm$sub/branches/$tag");
+-d $projectHome || die "projectHome '$projectHome' is not a directory\n";
+
+if ($project eq 'Common') {
+  foreach my $sub (("ApiCommonData","ApiCommonWebsite","ApiCommonWebService")){
+    &doIt("$urlRoot/apidb/$sub", "branches", $sub);
+  }
+
+  &doIt("$urlRoot/gus/GusAppFramework", "branches/internal", "GUS");
+  &doIt("$urlRoot/gus/CBIL", "branches/internal", "CBIL");
 }
 
-&cmd("svn copy $urlRoot/gus/GusAppFramework/trunk $urlRoot/gus/GusAppFramework/branches/internal/$tag");
+else {
+  foreach my $sub (("Data", "Website", "WebService")) {
+    &doIt("$urlRootProj$sub", "branches", "$project$sub");
+  }
+}
+
+sub doIt {
+  my ($urlRoot, $branchesDir, $targetDir) = @_;
+  die "Can't 'svn co' into $projectHome/$targetDir, it already exists\n"
+    if -e "$projectHome/$targetDir";
+  &cmd("svn copy $urlRoot/trunk $urlRoot/$branchesDir/$tag");
+  &cmd("svn co $urlRoot/branches/$tag $projectHome/$targetDir");
+}
 
 sub cmd {
     my ($cmd) = @_;
 
-    print STDERR "Running '$cmd'\n\n";
+    print STDERR "Running '$cmd'\n\n"; return;
     my $output = `$cmd`;
     my $status = $? >> 8;
     die "\n" if ($status);
 }
 
 sub usage {
-  print STDERR "\nusage:  apiBranch ApiDB|CryptoDB|PlasmoDB|ToxoDB tag\n\n";
+  print STDERR "
+usage:  apiBranch <ApiDB|CryptoDB|PlasmoDB|ToxoDB|Common> <tag> <projectHome> 
+
+Branch either a particular project or the common code, and, check out the
+new branches into the provided projectHome
+
+Particular project branches:
+    -Data
+    -Website
+    -WebService
+
+Common branches:
+    -GUS     (branched into /GusAppFramework/branches/internal/your_tag)
+    -CBIL    (branched into /CBIL/branches/internal/your_tag)
+    -ApiCommonData
+    -ApiCommonWebsite
+    -ApiCommonWebService.
+
+Note: the WDK and WSF must be branched separately.
+
+IMPORTANT: once this operation is complete, be sure to EDIT the build.xml
+files of each project, specifying the version of its dependency
+
+";
   exit(1);
 }
