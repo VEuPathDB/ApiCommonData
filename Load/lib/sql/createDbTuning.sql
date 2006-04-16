@@ -1,7 +1,15 @@
+
+-- indexes to tune GUS
+
 CREATE INDEX dots.NaFeat_SubclassParent_ix
 ON dots.NaFeatureImp (subclass_view, parent_id, na_feature_id);
 
+CREATE INDEX dots.aafeat_subclassparent_ix
+ON dots.aafeatureimp (subclass_view, parent_id, aa_feature_id);
+
 -------------------------------------------------------------------------------
+
+-- materialized views
 
 CREATE MATERIALIZED VIEW GeneAlias AS
 SELECT DISTINCT alias, gene FROM
