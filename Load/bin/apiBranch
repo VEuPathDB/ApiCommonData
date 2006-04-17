@@ -39,7 +39,7 @@ sub doIt {
   my ($urlRoot, $branchesDir, $targetDir) = @_;
   die "Can't 'svn co' into $projectHome/$targetDir, it already exists\n"
     if -e "$projectHome/$targetDir";
-  &cmd("svn copy $urlRoot/trunk $urlRoot/$branchesDir/$tag");
+  &cmd("svn copy $urlRoot/trunk $urlRoot/$branchesDir/$tag -m \"\"");
   &cmd("svn co $urlRoot/$branchesDir/$tag $projectHome/$targetDir");
 }
 
