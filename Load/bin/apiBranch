@@ -21,7 +21,7 @@ my $urlRootApiComm = "$urlRoot/apidb/ApiCommon";
 -d $projectHome || die "projectHome '$projectHome' is not a directory\n";
 
 if ($project eq 'Common') {
-  foreach my $sub (("ApiCommonData","ApiCommonWebsite","ApiCommonWebService")){
+  foreach my $sub (("ApiCommonWebsite","ApiCommonWebService")){
     &doIt("$urlRoot/apidb/$sub", "branches", $sub);
   }
 
