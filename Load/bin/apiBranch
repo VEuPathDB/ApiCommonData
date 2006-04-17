@@ -46,7 +46,7 @@ sub doIt {
 sub cmd {
     my ($cmd) = @_;
 
-    print STDERR "Running '$cmd'\n\n"; return;
+    print STDERR "Running '$cmd'\n\n";
     my $output = `$cmd`;
     my $status = $? >> 8;
     die "\n" if ($status);
