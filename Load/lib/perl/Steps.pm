@@ -321,7 +321,7 @@ sub extractNaSeqAltDefLine {
   $mgr->endStep($signal);
 }
 
-sub runSpline {
+sub runSplign {
   my ($mgr,$name,$query,$subject) = @_;
 
   my $queryType = ucfirst $query;
