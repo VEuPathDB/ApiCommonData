@@ -349,5 +349,12 @@ sub getNaLoc {
 
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.NALocation',
+	  'DoTS.SeqVariation',
+	 );
+}
 
 1;
