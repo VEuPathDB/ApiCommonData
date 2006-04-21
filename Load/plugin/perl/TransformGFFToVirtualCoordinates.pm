@@ -148,7 +148,7 @@ sub run {
 
   while (my $feature = $gffIn->next_feature) {
 
-    my $seqId = $feature->location()->seq_id();
+    my $seqId = $feature->location()->seq_id($feature->{_gsf_seq_id});
     my $result = $map->map($feature->location());
 
     if ($result) {
