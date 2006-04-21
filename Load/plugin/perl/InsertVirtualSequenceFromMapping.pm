@@ -210,11 +210,6 @@ my $count = 0;
     for my $piece (@$seqs) {
       my ($sourceSeq, $orientation, $orderedBy, $orientedBy) = @$piece;
 
-      if ($target eq $sourceSeq->getSourceId()) {
-	  # for the case when scaffold does not map to any chromosome in mapping input file
-	  # and we do not create an entry in SequencePiece table
-	$seq = $sourceSeq->getSequence();
-      } else {
 	$seqOrder++;
 	my $sourceSeqId = $sourceSeq->getId();
 	my $seqPiece = GUS::Model::DoTS::SequencePiece->new({ piece_na_sequence_id   => $sourceSeqId,
@@ -227,6 +222,11 @@ my $count = 0;
 							  });
 	$seqPiece->submit();
 
+      if ($target eq $sourceSeq->getSourceId()) {
+	  # for the case when scaffold does not map to any chromosome in mapping input file
+	  # and we do not create an entry in SequencePiece table
+	$seq = $sourceSeq->getSequence();
+      } else {
 	my $pieceSeq = $sourceSeq->getSequence();
 
 	if ($orientation == -1) {
