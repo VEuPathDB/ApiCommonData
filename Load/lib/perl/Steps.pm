@@ -127,6 +127,43 @@ sub createSimilarityDir {
   $mgr->endStep($signal);
 }
 
+sub createPfamDir {
+  my ($mgr,$queryFile,$subjectFile) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $query = $queryFile;
+
+  my $subject = $subjectFile;
+
+  $query =~ s/\.\w+//g;
+  $subject =~ s/\.\w+//g;
+
+  my $signal = "make$query" . ucfirst($subject) . "SubDir";
+
+  return if $mgr->startStep("Creating ${query}-$subject pfam dir", $signal);
+
+  my $buildName = $mgr->{'buildName'};
+  my $buildDir = $propertySet->getProp('buildDir');
+  my $serverPath = $propertySet->getProp('serverPath');
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $pfamTaskSize = $propertySet->getProp('pfam.taskSize');
+  my $pfamPath = $propertySet->getProp('pfam.path');
+  my $pipelineDir = $mgr->{'pipelineDir'};
+
+  $mgr->runCmd("mkdir -p $pipelineDir/pfam/$query-$subject");
+
+  &makePfamDir($query, $subject, $buildName, $buildDir,
+	       $serverPath, $nodePath, $pfamTaskSize,
+	       $pfamPath,
+	       $queryFile,"$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
+
+  $mgr->runCmd("chmod -R g+w $pipelineDir/pfam");
+
+  $mgr->endStep($signal);
+}
+
 sub createRepeatMaskDir {
   my ($mgr, $species, $file) = @_;
 
@@ -328,11 +365,15 @@ sub runSplign {
 
   my $subjectType = ucfirst $subject;
 
-  my $signal = "run${$name}${queryType}${subjectType}Splign";
+  my $signal = "run${name}${queryType}${subjectType}Splign";
 
   return if $mgr->startStep("Running splign for $name $query vs $subject", $signal);
 
   my $propertySet = $mgr->{propertySet};
+
+  my $splignPath = $propertySet->getProp('splignPath');
+
+  my $ncbiBlastPath = $propertySet->getProp('ncbiBlastPath');
 
   my $splignDir = "$mgr->{pipelineDir}/splign/${name}${queryType}$subjectType";
 
@@ -342,13 +383,13 @@ sub runSplign {
 
   $mgr->runCmd("ln -s  $mgr->{pipelineDir}/seqfiles/${name}${subjectType}.fsa ${splignDir}/$subject");
 
-  $mgr->runCmd("$propertySet->getProp('splignPath')/splign -mklds $splignDir");
+  $mgr->runCmd("${splignPath}/splign -mklds $splignDir");
 
-  $mgr->runCmd("$propertySet->getProp('ncbiBlastPath')/formatdb -i ${splignDir}/$subject -p F -o T");
+  $mgr->runCmd("${ncbiBlastPath}/formatdb -i ${splignDir}/$subject -p F -o T");
 
-  $mgr->runCmd("$propertySet->getProp('ncbiBlastPath')/megablast -i ${splignDir}/$query -d ${splignDir}/$subject -m 8 | sort -k 2,2 -k 1,1 > test.hit");
+  $mgr->runCmd("${ncbiBlastPath}/megablast -i ${splignDir}/$query -d ${splignDir}/$subject -m 8 | sort -k 2,2 -k 1,1 > $splignDir/test.hit");
 
-  $mgr->("splign -ldsdir $splignDir -hits test.hit > ${splignDir}/${query}${subjectType}.splign");
+  $mgr->runCmd("${splignPath}/splign -ldsdir $splignDir -hits $splignDir/test.hit > ${splignDir}/${query}${subjectType}.splign");
 
   $mgr->runCmd("rm -rf ${splignDir}/$query");
 
