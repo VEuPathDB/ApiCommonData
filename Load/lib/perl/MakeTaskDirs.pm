@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir);
 
 use strict;
 use Carp;
@@ -123,6 +123,25 @@ sub makeSimilarityDir {
     close(F);
 }
 
+sub makePfamDir {
+  my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
+      $nodePath, $taskSize, $pfamBinPath,
+      $queryFileName, $fileDir,$subjectFileName,$nodeClass) = @_;
+
+  my $localBase = "$localPath/$pipelineName/pfam/$queryName-$subjectName";
+  my $serverBase = "$serverPath/$pipelineName/pfam/$queryName-$subjectName";
+  my $inputDir = "$localBase/input";
+
+  &runCmd("mkdir -p $inputDir");
+  &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize, 
+			    $nodePath, "DJob::DistribJobTasks::HMMpfamTask", $nodeClass);
+
+  my $subjectFilePath = "${fileDir}/$subjectFileName";
+  my $queryFilePath = "${fileDir}/$queryFileName";
+  &makePfamTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$pfamBinPath);
+}
+
+
 sub makeControllerPropFile {
     my ($inputDir, $baseDir, $slotsPerNode, $taskSize, $nodePath, 
 	$taskClass, $nodeClass) = @_;
@@ -207,6 +226,20 @@ sub makeBMTaskPropFile {
 "blastBinDir=$blastBinDir
 dbFilePath=$dbFileName
 inputFilePath=$seqFilePath
+";
+    close(F);
+}
+
+sub makePfamTaskPropFile {
+  my ($inputDir, $queryFilePath,  $subjectFilePath, $pfamBinPath) = @_;
+
+  open(F, ">$inputDir/task.prop") 
+    || die "Can't open $inputDir/task.prop for writing";
+
+  print F 
+"hmmpfamDir=$pfamBinPath
+dbFilePath=$subjectFilePath
+inputFilePath=$queryFilePath
 ";
     close(F);
 }
