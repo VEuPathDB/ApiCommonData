@@ -1,0 +1,63 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Bio::SeqIO;
+use Getopt::Long qw(GetOptions);
+
+my $proteinFile;
+my $nrFile;
+my $gusConfigFile;
+my $outputFile;
+my $verbose;
+
+GetOptions("verbose!"        => \$verbose,
+           "gusConfigFile=s" => \$gusConfigFile,
+           "proteinFile=s"   => \$proteinFile,
+           "nrFile=s"        => \$nrFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $proteinFile && -e $nrFile) {
+  die "Must supply a valid path to the protein and NRDB files!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --verbose\n";
+}
+
+open(OUT, ">$outputFile")
+  or die "Couldn't open outputFile for writing: $!\n";
+
+my %proteins;
+my $proteins = Bio::SeqIO->new(-file => "$proteinFile",
+			       -format => "fasta");
+
+while (my $protein = $proteins->next_seq()) {
+  my $proteinSeq = $protein->seq();
+print OUT "preprocessed protein: $proteinSeq\n" if $verbose;
+  $proteinSeq =~ s/\*//;
+
+  $proteins{uc($proteinSeq)} = $protein->display_id();
+
+    print OUT "display_id: ".$protein->display_id()." seq: ".$proteinSeq."\n" if $verbose;
+}
+
+my $nr = Bio::SeqIO->new(-file => "$nrFile",
+			 -format => "fasta");
+
+while(my $seq = $nr->next_seq()) {
+print OUT "NR seq: ".$seq->seq()."\n" if $verbose;
+
+  if(my $sourceId = $proteins{uc($seq->seq())}) {
+    my @gi = $seq->display_id() =~ m/gi\|(\d+)/;
+    while (m/\001gi\|(\d+)/g) {
+      push @gi, $1;
+    }
+    for my $gi (@gi) {
+      print OUT "$sourceId\t$gi\n";
+    }
+  }
+
+}
+
+close(OUT);
