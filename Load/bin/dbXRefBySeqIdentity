@@ -13,16 +13,18 @@ my $nrFile;
 my $gusConfigFile;
 my $outputFile;
 my $verbose;
+my $refSeqs;
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
            "proteinFile=s"   => \$proteinFile,
            "nrFile=s"        => \$nrFile,
            "outputFile=s"    => \$outputFile,
+	   "refSeqs!"        => \$refSeqs,
           );
 
 unless (-e $proteinFile && -e $nrFile) {
-  die "Must supply a valid path to the protein and NRDB files!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --verbose\n";
+  die "Must supply a valid path to the protein and NRDB files!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --refSeqs --verbose\n";
 }
 
 open(OUT, ">$outputFile")
@@ -34,28 +36,51 @@ my $proteins = Bio::SeqIO->new(-file => "$proteinFile",
 
 while (my $protein = $proteins->next_seq()) {
   my $proteinSeq = $protein->seq();
-print OUT "preprocessed protein: $proteinSeq\n" if $verbose;
-  $proteinSeq =~ s/\*//;
+  $proteinSeq =~ s/\*//; #proteins in toxo have '*' at end
 
   $proteins{uc($proteinSeq)} = $protein->display_id();
-
-    print OUT "display_id: ".$protein->display_id()." seq: ".$proteinSeq."\n" if $verbose;
 }
 
 my $nr = Bio::SeqIO->new(-file => "$nrFile",
 			 -format => "fasta");
 
 while(my $seq = $nr->next_seq()) {
-print OUT "NR seq: ".$seq->seq()."\n" if $verbose;
 
   if(my $sourceId = $proteins{uc($seq->seq())}) {
-    my @gi = $seq->display_id() =~ m/gi\|(\d+)/;
-    while (m/\001gi\|(\d+)/g) {
-      push @gi, $1;
+    my @data;
+    my $giNumber;
+    my $extDb;
+    my $accession;
+    my $defLine = $seq->display_id();
+
+    $defLine =~ s/\|/,/g; #sub ',' b/c there are probs splitting on '|'
+    my @defLines = split('gi,',$defLine);
+
+    foreach my $def (@defLines){
+      if ($def eq ''){next;}  #ignore leading empty space
+
+      @data = split(',',$def);
+      $extDb = $data[1];
+
+      if ($refSeqs){
+	if ($extDb eq ref){
+	  $giNumber = $data[0];
+	  $accession = $data[2];
+	}else{next;}
+      }else{
+	if ($extDb eq 'dbj' || $extDb eq 'emb' || $extDb eq 'gb'){
+	  $giNumber = $data[0];
+	  $accession = $data[2];
+	}else{next;}
+      }
+
+      print OUT "gi: $giNumber, db: $extDb, accession: $accession\n" if $verbose;
+
+      print OUT "$sourceId\t$giNumber\t$accession\n";
+
+      print OUT "\n" if $verbose;
     }
-    for my $gi (@gi) {
-      print OUT "$sourceId\t$gi\n";
-    }
+
   }
 
 }
