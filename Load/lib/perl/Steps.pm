@@ -861,7 +861,7 @@ sub extractProteinSeqs {
 
 
 sub startProteinBlastOnComputeCluster {
-  my ($mgr,$queryFile,$subjectFile) = @_;
+  my ($mgr,$queryFile,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $serverPath = $propertySet->getProp('serverPath');
@@ -874,11 +874,40 @@ sub startProteinBlastOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runBlastSimilarities $serverPath/$mgr->{buildName} NUMBER_OF_NODES $queryFile $subjectFile";
+  my $clusterCmdMsg = "runBlastSimilarities $serverPath/$mgr->{buildName} NUMBER_OF_NODES $queryFile $subjectFile $queue";
   my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
+
+sub startHMMPfamOnComputerCluster {
+  my ($mgr,$queryFile,$subjectFile,$queue) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $serverPath = $propertySet->getProp('serverPath');
+
+  my $query = $queryFile;
+
+  $query =~ s/\.\w+//g;
+
+  my $subject = $subjectFile;
+
+  $subject =~ s/\.\w+//g;
+
+  my $name = $query . "-" . $subject;
+
+  $name = ucfirst($name);
+  my $signal = "startHMMPfam$name";
+  return if $mgr->startStep("Starting $name hmmpfam on cluster", $signal);
+
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runPfam $serverPath/$mgr->{buildName} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
 
 sub loadProteinBlast {
   my ($mgr, $name, $queryTable, $subjectTable, 
