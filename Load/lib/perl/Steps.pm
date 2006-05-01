@@ -603,7 +603,7 @@ sub documentTandemRepeatFinder {
 
 
 sub loadTandemRepeats {
-  my ($mgr,$file,$args,$dbName,$dbRlsVer) = @_;
+  my ($mgr,$file,$args,$dbName,$dbRlsVer, $seqTable) = @_;
 
   $args =~ s/\s+/\./g;
 
@@ -611,7 +611,7 @@ sub loadTandemRepeats {
 
   my $signal = "load${file}.TRF";
 
-  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
+  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer' --seqTable '$seqTable'";
 
   $mgr->runPlugin($signal,
                   "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args,
