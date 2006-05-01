@@ -12,8 +12,10 @@ my $proteinFile;
 my $nrFile;
 my $gusConfigFile;
 my $outputFile;
-my $verbose;
 my $refSeqs;
+my $sourceIdRegex;
+my $verbose;
+
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
@@ -21,10 +23,11 @@ GetOptions("verbose!"        => \$verbose,
            "nrFile=s"        => \$nrFile,
            "outputFile=s"    => \$outputFile,
 	   "refSeqs!"        => \$refSeqs,
+	   "sourceIdRegex=s" => \$sourceIdRegex,
           );
 
-unless (-e $proteinFile && -e $nrFile) {
-  die "Must supply a valid path to the protein and NRDB files!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --refSeqs --verbose\n";
+unless (-e $proteinFile && -e $nrFile && $sourceIdRegex) {
+  die "Must supply a valid path to the protein and NRDB files and a valid regex for parsing the accession number!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --sourceIdRegex <string> --refSeqs --verbose\n";
 }
 
 open(OUT, ">$outputFile")
@@ -47,32 +50,56 @@ my $nr = Bio::SeqIO->new(-file => "$nrFile",
 while(my $seq = $nr->next_seq()) {
 
   if(my $sourceId = $proteins{uc($seq->seq())}) {
-    my @data;
+#    my @data;
     my $giNumber;
     my $extDb;
     my $accession;
     my $defLine = $seq->display_id();
 
-    $defLine =~ s/\|/,/g; #sub ',' b/c there are probs splitting on '|'
-    my @defLines = split('gi,',$defLine);
-
+my @defLines = split('gi',$defLine);
     foreach my $def (@defLines){
       if ($def eq ''){next;}  #ignore leading empty space
 
-      @data = split(',',$def);
-      $extDb = $data[1];
+      $def =~ s/^\|(\d+)\|//;
+      $giNumber = $1;
 
       if ($refSeqs){
-	if ($extDb eq ref){
-	  $giNumber = $data[0];
-	  $accession = $data[2];
+print OUT "Regex: $sourceIdRegex\n";
+print OUT "Def: $def\n";
+	if ($def =~ /$sourceIdRegex/){
+	  $accession = $1;
 	}else{next;}
       }else{
-	if ($extDb eq 'dbj' || $extDb eq 'emb' || $extDb eq 'gb'){
-	  $giNumber = $data[0];
-	  $accession = $data[2];
-	}else{next;}
+print OUT "Regex: $sourceIdRegex\n";
+print OUT "Def: $def\n";
+	if($def =~ $sourceIdRegex){
+#if ($def =~ m/(gb|emb|dbj)\|(\w+)/){
+print OUT "matched: $&\n";
+if($2){
+  $accession = $2;
+}else{
+	  $accession = $1;
+	  }
+print OUT "accession: $accession\n";
+	}else{
+	  print OUT "NEXT\n";
+	  next;}
       }
+
+#      @data = split(',',$def);
+#      $extDb = $data[1];
+
+#      if ($refSeqs){
+#	if ($extDb eq ref){
+#	  $giNumber = $data[0];
+#	  $accession = $data[2];
+#	}else{next;}
+#      }else{
+#	if ($extDb eq 'dbj' || $extDb eq 'emb' || $extDb eq 'gb'){
+#	  $giNumber = $data[0];
+#	  $accession = $data[2];
+#	}else{next;}
+#      }
 
       print OUT "gi: $giNumber, db: $extDb, accession: $accession\n" if $verbose;
 
