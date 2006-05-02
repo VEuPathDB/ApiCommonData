@@ -332,6 +332,33 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
+sub extractIndividualNaSeq {
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $type = ucfirst($seqType);
+
+  my $signal = "extract${name}$type";
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
+
+  my $ouputDir = "$mgr->{pipelineDir}/seqfiles/${name}$type";
+
+  $mgr->runCmd("mkdir -p $ouputDir");
+
+  my $sql = "select x.$identifier, x.description,
+            'length='||x.length,x.sequence
+             from dots.$table x
+             where x.external_database_release_id = $dbRlsId";
+
+  $mgr->runCmd("gusExtractIndividualSequences --outputDir $ouputDir --idSQL \"$sql\" --verbose 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
 
 sub extractNaSeqAltDefLine {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$defLine) = @_;
