@@ -1,0 +1,96 @@
+#! /usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($verbose, $mView, $owner, $gusConfigFile);
+
+&GetOptions("verbose!"=> \$verbose,
+            "mview=s" => \$mView,
+            "owner=s" => \$owner,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+die "USAGE: $0 --mview <materialized view> --owner <view owner> {--verbose} {--gusConfigFile <file>}\n"
+  if (!$mView || !$owner);
+$| = 1;
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					$gusconfig->getReadOnlyDatabaseLogin(),
+					$gusconfig->getReadOnlyDatabasePassword(),
+					$verbose,0,1,
+					$gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+
+# -----------------------------------
+# Main program
+# -----------------------------------
+
+$| = 1;
+
+my $date = `date`; chomp($date);
+print  "refreshMv.pl($mView) started at $date\n" if $verbose;
+
+# Get the mview's underlying query from Oracle
+
+my $sql = <<SQL;
+SELECT query FROM all_mviews
+WHERE mview_name = upper('$mView')
+  AND owner = upper('$owner')
+SQL
+
+print "query for query:\n\n$sql\n\n" if $verbose;
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+my $query = $sth->fetchrow_array();
+$sth->finish();
+
+die "Couldn't find materialized view ${owner}.${mView}" if ! $query;
+
+# Compare mview contents with query results
+
+$sql = <<SQL;
+SELECT COUNT(*) FROM
+((SELECT * FROM ${owner}.${mView}
+  MINUS $query)
+ UNION
+ ($query
+  MINUS SELECT * FROM ${owner}.${mView}))
+SQL
+
+print "difference query:\n\n$sql\n\n" if $verbose;
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+my $num = $sth->fetchrow_array();
+$sth->finish();
+
+print "difference had $num rows\n" if $verbose;
+
+if ($num > 0) {
+   print "mView has changed -- updating\n";
+#   $sth = $dbh->prepare("EXECUTE DBMS_MVIEW.REFRESH('${owner}.${mView}')");
+   $sth = $dbh->prepare("begin DBMS_MVIEW.REFRESH('${owner}.${mView}'); end;");
+   $sth->execute();
+   $sth->finish();
+}
+
+
+my $date = `date`; chomp($date);
+print  "refreshMv.pl(${owner}.${mView}) finished at $date\n" if $verbose;
+
+
+################################################
+# subroutines
+################################################
+
+$dbh->disconnect();
+1;
