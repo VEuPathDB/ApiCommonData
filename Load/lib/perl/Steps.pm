@@ -908,6 +908,25 @@ sub startHMMPfamOnComputerCluster {
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
 
+sub loadHMMPfamOutput {
+  my ($mgr,$queryFile,$subjectFile,$algName,$algVer,$extDbRlsName,$extDbRlsVer) = @_;
+
+  my $query = $queryFile;
+
+  $query =~ s/\.\w+//g;
+
+  my $subject = $subjectFile;
+
+  $subject =~ s/\.\w+//g;
+
+  my $name = $query . "-" . $subject;
+
+  my $args = "--data_file $mgr->{pipelineDir}/pfam/$name/master/mainresult/hmmpfam.out --algName '$algName' --algVer '$algVer'  --algDesc 'hmmpfam  searches queries against a PFAM domain database' --queryTable  'DoTS.TranslatedAASequence' --extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'";
+
+  $mgr->runPlugin("loadHMMPfamOutput_$name",
+		  "ApiCommonData::Load::Plugin::LoadPfamOutput", $args,
+		  "Loading $name hmmpfam output");
+}
 
 sub loadProteinBlast {
   my ($mgr, $name, $queryTable, $subjectTable, 
