@@ -697,6 +697,29 @@ sub runBLASTZ {
   }
 }
 
+sub loadBLASTZResults {
+  my ($mgr,$targetFile,$queryTable,$subjTable,$queryExtDbRlsSpec,$subjExtDbRlsSpec) = @_;
+
+  opendir(DIR,"$mgr->{pipelineDir}/similarity/blastz_$targetFile");
+
+  my $signal;
+
+  my $args;
+
+  while(my $file = readdir(DIR)) {
+
+    next if ($file !~ /\.laj/);
+
+    $signal = "loadBlastz$file";
+
+    $args = "--inputFile '$mgr->{pipelineDir}/similarity/blastz_${targetFile}/$file' --queryTable '$queryTable' --subjTable '$subjTable' --queryExtDbRlsSpec '$queryExtDbRlsSpec' --subjExtDbRlsSpec '$subjExtDbRlsSpec'";
+
+    $mgr->runPlugin($signal,
+                    "ApiCommonData::Load::Plugin::InsertBlastZAlignments",$args,
+		    "Loading blastz results file $file");
+  }
+}
+
 sub  loadAveragedProfiles {
   my ($mgr,$dbSpec,$setName,$loadProfileElement) = @_;
 
