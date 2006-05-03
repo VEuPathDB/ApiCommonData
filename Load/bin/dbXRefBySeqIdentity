@@ -8,6 +8,8 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Bio::SeqIO;
 use Getopt::Long qw(GetOptions);
 
+use Data::Dumper;
+
 my $proteinFile;
 my $nrFile;
 my $gusConfigFile;
@@ -15,7 +17,6 @@ my $outputFile;
 my $refSeqs;
 my $sourceIdRegex;
 my $verbose;
-
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
@@ -39,77 +40,53 @@ my $proteins = Bio::SeqIO->new(-file => "$proteinFile",
 
 while (my $protein = $proteins->next_seq()) {
   my $proteinSeq = $protein->seq();
-  $proteinSeq =~ s/\*//; #proteins in toxo have '*' at end
+  $proteinSeq =~ s/\*$//; #proteins in toxo have '*' at end
 
+  my $sourceId = $protein->display_id();
   $proteins{uc($proteinSeq)} = $protein->display_id();
 }
 
 my $nr = Bio::SeqIO->new(-file => "$nrFile",
-			 -format => "fasta");
+                         -format => "fasta");
 
 while(my $seq = $nr->next_seq()) {
 
   if(my $sourceId = $proteins{uc($seq->seq())}) {
-#    my @data;
-    my $giNumber;
-    my $extDb;
-    my $accession;
-    my $defLine = $seq->display_id();
+    my ($giNumber, $extDb, $accession);
 
-my @defLines = split('gi',$defLine);
+    # Defline is a concatenation of these...
+    my $defLine = $seq->display_id() . " ". $seq->desc();
+
+    my @defLines = split(/gi/,$defLine);
+
     foreach my $def (@defLines){
-      if ($def eq ''){next;}  #ignore leading empty space
+      next if($def eq '');  #ignore leading empty space
 
       $def =~ s/^\|(\d+)\|//;
       $giNumber = $1;
 
-      if ($refSeqs){
-print OUT "Regex: $sourceIdRegex\n";
-print OUT "Def: $def\n";
-	if ($def =~ /$sourceIdRegex/){
-	  $accession = $1;
-	}else{next;}
-      }else{
-print OUT "Regex: $sourceIdRegex\n";
-print OUT "Def: $def\n";
-	if($def =~ $sourceIdRegex){
-#if ($def =~ m/(gb|emb|dbj)\|(\w+)/){
-print OUT "matched: $&\n";
-if($2){
-  $accession = $2;
-}else{
-	  $accession = $1;
-	  }
-print OUT "accession: $accession\n";
-	}else{
-	  print OUT "NEXT\n";
-	  next;}
+      if($def =~ m/$sourceIdRegex/) {
+        #print STDERR "matched: $&\n";
+
+        unless($accession = $2) {
+          $accession = $1;
+        }
+        print OUT "gi: $giNumber, db: $extDb, accession: $accession\n" if $verbose;
+
+        print OUT "$sourceId\t$giNumber\t$accession\n";
+
+        print OUT "\n" if $verbose;
       }
-
-#      @data = split(',',$def);
-#      $extDb = $data[1];
-
-#      if ($refSeqs){
-#	if ($extDb eq ref){
-#	  $giNumber = $data[0];
-#	  $accession = $data[2];
-#	}else{next;}
-#      }else{
-#	if ($extDb eq 'dbj' || $extDb eq 'emb' || $extDb eq 'gb'){
-#	  $giNumber = $data[0];
-#	  $accession = $data[2];
-#	}else{next;}
-#      }
-
-      print OUT "gi: $giNumber, db: $extDb, accession: $accession\n" if $verbose;
-
-      print OUT "$sourceId\t$giNumber\t$accession\n";
-
-      print OUT "\n" if $verbose;
+      else {
+        print STDERR "Regex did not match defline: $def\n";
+      }
     }
-
   }
-
 }
 
 close(OUT);
+
+1;
+
+
+
