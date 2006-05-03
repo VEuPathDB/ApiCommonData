@@ -164,6 +164,26 @@ sub createPfamDir {
   $mgr->endStep($signal);
 }
 
+sub documentHMMPfam {
+  my ($mgr) = @_;
+  my $description = "Searches HMMs from the PFAM database for significantly similar sequences in the input protein sequence.";
+  my $documentation =    { name => "HMMPfam",
+                           input => "fasta file of protein sequences and PFAM database",
+			   output => "file containing the score and E-value indicating confidence that a query 
+                                      sequence contains one or more domains belonging to a domain family",
+			   descrip => $description,
+			   tools => [{ name => "HMMPfam",
+				       version => "2.3.2",
+				       params => "default",
+				       url => "http://hmmer.wustl.edu",
+				       pubmedIds => "--A 0 --acc --cut_ga ",
+				       credits => "R. Durbin, S. Eddy, A. Krogh, and G. Mitchison,
+                                                  Biological sequence analysis: probabilistic models of proteins and nucleic acids,
+                                                  Cambridge University Press, 1998.
+                                                  http://hmmer.wustl.edu/"}]};
+ $mgr->documentStep("exportpred", $documentation);
+}
+
 sub createRepeatMaskDir {
   my ($mgr, $species, $file) = @_;
 
