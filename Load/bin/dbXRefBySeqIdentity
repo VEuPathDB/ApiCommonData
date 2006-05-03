@@ -14,7 +14,6 @@ my $proteinFile;
 my $nrFile;
 my $gusConfigFile;
 my $outputFile;
-my $refSeqs;
 my $sourceIdRegex;
 my $verbose;
 
@@ -23,12 +22,11 @@ GetOptions("verbose!"        => \$verbose,
            "proteinFile=s"   => \$proteinFile,
            "nrFile=s"        => \$nrFile,
            "outputFile=s"    => \$outputFile,
-	   "refSeqs!"        => \$refSeqs,
 	   "sourceIdRegex=s" => \$sourceIdRegex,
           );
 
 unless (-e $proteinFile && -e $nrFile && $sourceIdRegex) {
-  die "Must supply a valid path to the protein and NRDB files and a valid regex for parsing the accession number!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --sourceIdRegex <string> --refSeqs --verbose\n";
+  die "Must supply a valid path to the protein and NRDB files and a valid regex for parsing the accession number!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --sourceIdRegex <string> --verbose\n";
 }
 
 open(OUT, ">$outputFile")
