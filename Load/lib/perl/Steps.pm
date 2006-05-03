@@ -672,25 +672,26 @@ sub runBLASTZ {
 
   my $blastzPath = $propertySet->getProp('blastzPath');
 
-  opendir(DIR,$mgr->{pipelineDir}/$queryDir);
+  opendir(DIR,"$mgr->{pipelineDir}/$queryDir");
 
   my $signal;
 
   my $outputFile;
 
+  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}");
+
   while(my $file = readdir(DIR)) {
+
+    next if -d $file;
 
     $signal = "blastz${file}_$targetFile";
 
-    $outputFile = $file;
+    $outputFile = "${file}_${targetFile}";
 
     $outputFile =~ s/\.\w+$/\.laj/;
 
     next if $mgr->startStep("Running BLASTZ for $file vs $targetFile", $signal);
-
-    $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/${file}_${targetFile}");
-
-    $mgr->runCmd("${blastzPath}/blastz $mgr->{pipelineDir}/${queryDir}/$file  $targetFile $args > $mgr->{pipelineDir}/similarity/${file}_${targetFile}/$outputFile");
+    $mgr->runCmd("${blastzPath}/blastz $mgr->{pipelineDir}/${queryDir}/$file  $mgr->{pipelineDir}/seqfiles/$targetFile $args > $mgr->{pipelineDir}/similarity/blastz_${targetFile}/$outputFile");
 
     $mgr->endStep($signal);
   }
