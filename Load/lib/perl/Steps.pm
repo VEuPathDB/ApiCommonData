@@ -672,7 +672,7 @@ sub runBLASTZ {
 
   my $blastzPath = $propertySet->getProp('blastzPath');
 
-  opendir(DIR,$queryDir);
+  opendir(DIR,$mgr->{pipelineDir}/$queryDir);
 
   my $signal;
 
@@ -690,7 +690,7 @@ sub runBLASTZ {
 
     $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/${file}_${targetFile}");
 
-    $mgr->runCmd("${blastzPath}/blastz ${queryDir}/$file  $targetFile $args > $mgr->{pipelineDir}/similarity/${file}_${targetFile}/$outputFile");
+    $mgr->runCmd("${blastzPath}/blastz $mgr->{pipelineDir}/${queryDir}/$file  $targetFile $args > $mgr->{pipelineDir}/similarity/${file}_${targetFile}/$outputFile");
 
     $mgr->endStep($signal);
   }
