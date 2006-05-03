@@ -10,23 +10,38 @@ use Getopt::Long qw(GetOptions);
 
 use Data::Dumper;
 
+=pod
+
+=head1 regex_stuff
+
+User must provide 2 reular expressions on the cmd line.  
+One to get the source_id from the defline of the protein.fsa and the other to get the accession from the nr.fsa file.
+
+The regex for the defline of the protein.fsa file ALWAYS makes the source_id = $1
+The regex for the defline of the nr.fsa file, unless($accession = $2) {$accession = $1}
+There is no command line regex for the gi number from the nr.fsa defline... hardcodes as '^\|(\d+)\|'
+
+=cut
+
 my $proteinFile;
 my $nrFile;
 my $gusConfigFile;
 my $outputFile;
 my $sourceIdRegex;
 my $verbose;
+my $protDeflnRegex;
 
-GetOptions("verbose!"        => \$verbose,
-           "gusConfigFile=s" => \$gusConfigFile,
-           "proteinFile=s"   => \$proteinFile,
-           "nrFile=s"        => \$nrFile,
-           "outputFile=s"    => \$outputFile,
-	   "sourceIdRegex=s" => \$sourceIdRegex,
+GetOptions("verbose!"         => \$verbose,
+           "gusConfigFile=s"  => \$gusConfigFile,
+           "proteinFile=s"    => \$proteinFile,
+           "nrFile=s"         => \$nrFile,
+           "outputFile=s"     => \$outputFile,
+	   "sourceIdRegex=s"  => \$sourceIdRegex,
+           "protDeflnRegex=s" => \$protDeflnRegex,
           );
 
-unless (-e $proteinFile && -e $nrFile && $sourceIdRegex) {
-  die "Must supply a valid path to the protein and NRDB files and a valid regex for parsing the accession number!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --sourceIdRegex <string> --verbose\n";
+unless (-e $proteinFile && -e $nrFile && $sourceIdRegex && $protDeflnRegex) {
+  die "Must supply a valid path to the protein and NRDB files and a valid regex for parsing the accession number!\n usage: dbXRefBySeqIdentity --proteinFile <string> --nrFile <string> --outputFile <string> --gusConfigFile [\$GUS_CONFIG_FILE] --sourceIdRegex <string> --protDeflnRegex <string> --verbose\n";
 }
 
 open(OUT, ">$outputFile")
@@ -40,8 +55,10 @@ while (my $protein = $proteins->next_seq()) {
   my $proteinSeq = $protein->seq();
   $proteinSeq =~ s/\*$//; #proteins in toxo have '*' at end
 
-  my $sourceId = $protein->display_id();
-  $proteins{uc($proteinSeq)} = $protein->display_id();
+  my $sourceId = $protein->display_id() . " " . $protein->desc();
+  $sourceId =~ m/$protDeflnRegex/;
+
+  $proteins{uc($proteinSeq)} = $1;
 }
 
 my $nr = Bio::SeqIO->new(-file => "$nrFile",
@@ -53,14 +70,14 @@ while(my $seq = $nr->next_seq()) {
     my ($giNumber, $extDb, $accession);
 
     # Defline is a concatenation of these...
-    my $defLine = $seq->display_id() . " ". $seq->desc();
+    my $defLine = $seq->display_id() . " " . $seq->desc();
 
     my @defLines = split(/gi/,$defLine);
 
     foreach my $def (@defLines){
       next if($def eq '');  #ignore leading empty space
 
-      $def =~ s/^\|(\d+)\|//;
+      $def =~ m/^\|(\d+)\|/;
       $giNumber = $1;
 
       if($def =~ m/$sourceIdRegex/) {
