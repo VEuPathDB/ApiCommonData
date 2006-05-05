@@ -164,6 +164,64 @@ sub createPfamDir {
   $mgr->endStep($signal);
 }
 
+sub createPsipredDirWithFormattedDb {
+  my ($mgr,$dbFile,$dbFileDir) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "$dbFilePsipredDir";
+
+  return if $mgr->startStep("Creating psipred dir with filtered and formatted $dbFile", $signal); 
+
+  $mgr->runCmd("mkdir -p $mgr->{'pipelineDir'}/psipred");
+
+  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/${dbFileDir}/$dbFile  $mgr->{pipelineDir}/psipred/${dbFile}Ln");
+
+  my $ncbiBlastPath = $propertySet->getProp('ncbiBlastPath');
+
+  my $psipredPath = $propertySet->getProp('psipredPath');
+
+  $mgr->runCmd("${psipredPath}/pfilt $mgr->{pipelineDir}/psipred/${dbFile}Ln > $mgr->{pipelineDir}/psipred/${dbFile}Filt");
+
+  $mgr->runCmd("${ncbiBlastPath}/formatdb -i $mgr->{pipelineDir}/psipred/${dbFile}Filt -p T");
+
+  $mgr->runCmd("rm -f $mgr->{pipelineDir}/psipred/${dbFile}Ln");
+
+  $mgr->runCmd("rm -f $mgr->{pipelineDir}/psipred/${dbFile}Filt");
+
+  $mgr->endStep($signal);
+
+}
+
+sub createPsipredSubdir {
+  my ($mgr,$queryFile,$dbFile) = @_;
+
+  my $signal = "make${queryFile}SubDir";
+
+  return if $mgr->startStep("Creating $queryFile subdir in the psipred dir", $signal);
+
+  my $buildName = $mgr->{'buildName'};
+  my $buildDir = $propertySet->getProp('buildDir');
+  my $serverPath = $propertySet->getProp('serverPath');
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $psipredTaskSize = $propertySet->getProp('psipred.taskSize');
+  my $psipredPath = $propertySet->getProp('psipred.clusterpath');
+  my $pipelineDir = $mgr->{'pipelineDir'};
+
+  $mgr->runCmd("mkdir -p $pipelineDir/psipred/$queryFile");
+
+  &makePsipredSubDir($queryFile, $dbFile, $buildName, $buildDir,
+	       $serverPath, $nodePath, $psipredTaskSize,
+	       $psipredPath,
+	       $queryFile,"$serverPath/$buildName/psipred",$dbFile,$nodeClass);
+
+  $mgr->runCmd("chmod -R g+w $pipelineDir/psipred");
+
+  $mgr->endStep($signal);
+}
+
+
 sub documentHMMPfam {
   my ($mgr) = @_;
   my $description = "Searches HMMs from the PFAM database for significantly similar sequences in the input protein sequence.";
@@ -184,7 +242,7 @@ sub documentHMMPfam {
  $mgr->documentStep("exportpred", $documentation);
 }
 
-sub createRepeatMaskDir {
+sub createepeatMaskDir {
   my ($mgr, $species, $file) = @_;
 
   my $propertySet = $mgr->{propertySet};
@@ -1658,6 +1716,18 @@ sub createTmhmmDir {
   my $tmhmmDir = "$mgr->{'pipelineDir'}/tmhmm";
 
   $mgr->runCmd("mkdir $tmhmmDir");
+
+  $mgr->endStep($signal);
+}
+
+sub createDir {
+  my ($mgr,$dir) = @_;
+
+  my $signal = "create${dir}Dir";
+
+  return if $mgr->startStep("Creating Tmhmm dir", $signal);
+
+  $mgr->runCmd("mkdir -p $mgr->{'pipelineDir'}/$dir");
 
   $mgr->endStep($signal);
 }
