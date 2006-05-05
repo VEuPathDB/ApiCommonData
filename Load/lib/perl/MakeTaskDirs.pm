@@ -140,7 +140,27 @@ sub makePfamDir {
   my $queryFilePath = "${fileDir}/$queryFileName";
   &makePfamTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$pfamBinPath);
 }
+sub makePsipredDir {
+  my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath,
+      $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,$subjectFile,$nodeClass) = @_;
 
+  my $localBase = "$localPath/$pipelineName/psipred/$queryName-$subjectName";
+
+  my $serverBase = "$serverPath/$pipelineName/psipred/$queryName-$subjectName";
+
+  my $inputDir = "$localBase/input";
+
+  &runCmd("mkdir -p $inputDir");
+
+  &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,$nodePath, "DJob::DistribJobTasks::PsipredTask", $nodeClass);
+
+  my $subjectFilePath = "$serverPath/$pipelineName/psipred/$subjectFile";
+
+  my $queryFilePath = "${serverBase}/$queryFile";
+
+  &makePsipredTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$psipredPath);
+
+}
 
 sub makeControllerPropFile {
     my ($inputDir, $baseDir, $slotsPerNode, $taskSize, $nodePath, 
@@ -230,14 +250,14 @@ inputFilePath=$seqFilePath
     close(F);
 }
 
-sub makePfamTaskPropFile {
-  my ($inputDir, $queryFilePath,  $subjectFilePath, $pfamBinPath) = @_;
+sub makePsipredTaskPropFile {
+  my ($inputDir, $queryFilePath,  $subjectFilePath, $psipredPath) = @_;
 
   open(F, ">$inputDir/task.prop") 
     || die "Can't open $inputDir/task.prop for writing";
 
   print F 
-"hmmpfamDir=$pfamBinPath
+"psipredDir=$psipredPath
 dbFilePath=$subjectFilePath
 inputFilePath=$queryFilePath
 ";
