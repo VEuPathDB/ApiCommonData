@@ -169,7 +169,7 @@ sub createPsipredDirWithFormattedDb {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "$dbFilePsipredDir";
+  my $signal = "${dbFile}PsipredDir";
 
   return if $mgr->startStep("Creating psipred dir with filtered and formatted $dbFile", $signal); 
 
@@ -195,6 +195,8 @@ sub createPsipredDirWithFormattedDb {
 
 sub createPsipredSubdir {
   my ($mgr,$queryFile,$dbFile) = @_;
+
+  my $propertySet = $mgr->{propertySet};
 
   my $signal = "make${queryFile}SubDir";
 
