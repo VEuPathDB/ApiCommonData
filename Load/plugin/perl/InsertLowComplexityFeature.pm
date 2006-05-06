@@ -61,13 +61,13 @@ my $argsDeclaration =
 	   enum => "dna, protein",
 	   }),
 
- enumArg({ descr => 'Table where the DNA sequence is located: DoTS.ExternalNASequence or DoTS.VirtualSequence.  Required if using --seqType dna.',
-           name  => 'dnaSeqTable',
-           isList    => 0,
-           reqd  => 0,
-           constraintFunc => undef,
-           enum => "DoTS.ExternalNASequence, DoTS.VirtualSequence",
-           }),
+# enumArg({ descr => 'Table where the DNA sequence is located: DoTS.ExternalNASequence or DoTS.VirtualSequence.  Required if using --seqType dna.',
+#           name  => 'dnaSeqTable',
+#           isList    => 0,
+#           reqd  => 0,
+#           constraintFunc => undef,
+#           enum => "DoTS.ExternalNASequence, DoTS.VirtualSequence",
+#           }),
 
  stringArg({ descr => 'Character which masks the low complexity region',
 	     name  => 'maskChar',
@@ -211,14 +211,22 @@ sub _getMatchingSequence {
   my ($self, $accession, $dbReleaseId) = @_;
 
   my $type = $self->getArgs()->{seqType};
-  my $table = $self->getArgs()->{dnaSeqTable};
+  #my $table = $self->getArgs()->{dnaSeqTable};
   my $sql;
 
   if($type eq 'dna') {
-    $sql = "SELECT na_sequence_id, sequence
-            FROM $table
-            WHERE external_database_release_id = $dbReleaseId
-            AND source_id = '$accession'";
+    $sql = "SELECT na_sequence_id, sequence 
+             FROM Dots.NASEQUENCE 
+             WHERE na_sequence_id in
+               (select na_sequence_id 
+                 from Dots.EXTERNALNASEQUENCE 
+                 where source_id = '$accession'
+                  and external_database_release_id = $dbReleaseId)
+             OR na_sequence_id in
+               (select na_sequence_id 
+                 from Dots.VIRTUALSEQUENCE 
+                 where source_id = '$accession'
+                  and external_database_release_id = $dbReleaseId)";
   }
   else {
     $sql = "SELECT aa_sequence_id, sequence
