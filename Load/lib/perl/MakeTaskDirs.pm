@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir);
 
 use strict;
 use Carp;
@@ -156,7 +156,7 @@ sub makePsipredDir {
 
   my $subjectFilePath = "$serverPath/$pipelineName/psipred/$subjectFile";
 
-  my $queryFilePath = "${serverBase}/$queryFile";
+  my $queryFilePath = "$serverPath/$pipelineName/seqfiles/$queryFile";
 
   &makePsipredTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$psipredPath);
 
@@ -251,7 +251,7 @@ inputFilePath=$seqFilePath
 }
 
 sub makePsipredTaskPropFile {
-  my ($inputDir, $queryFilePath,  $subjectFilePath, $psipredPath) = @_;
+  my ($inputDir, $queryFilePath,$subjectFilePath, $psipredPath) = @_;
 
   open(F, ">$inputDir/task.prop") 
     || die "Can't open $inputDir/task.prop for writing";
