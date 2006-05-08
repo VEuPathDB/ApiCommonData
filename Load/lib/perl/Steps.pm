@@ -198,7 +198,9 @@ sub createPsipredSubdir {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "make${queryFile}SubDir";
+  my $signal = "make${queryFile}PsipredSubDir";
+
+  $dbFile = "${dbFile}Filt";
 
   return if $mgr->startStep("Creating $queryFile subdir in the psipred dir", $signal);
 
@@ -211,9 +213,7 @@ sub createPsipredSubdir {
   my $psipredPath = $propertySet->getProp('psipred.clusterpath');
   my $pipelineDir = $mgr->{'pipelineDir'};
 
-  $mgr->runCmd("mkdir -p $pipelineDir/psipred/$queryFile");
-
-  &makePsipredSubDir($queryFile, $dbFile, $buildName, $buildDir,
+  &makePsipredDir($queryFile, $dbFile, $buildName, $buildDir,
 	       $serverPath, $nodePath, $psipredTaskSize,
 	       $psipredPath,
 	       $queryFile,"$serverPath/$buildName/psipred",$dbFile,$nodeClass);
@@ -234,14 +234,36 @@ sub documentHMMPfam {
 			   descrip => $description,
 			   tools => [{ name => "HMMPfam",
 				       version => "2.3.2",
-				       params => "default",
+				       params => "--A 0 --acc --cut_ga",
 				       url => "http://hmmer.wustl.edu",
-				       pubmedIds => "--A 0 --acc --cut_ga ",
+				       pubmedIds => "",
 				       credits => "R. Durbin, S. Eddy, A. Krogh, and G. Mitchison,
                                                   Biological sequence analysis: probabilistic models of proteins and nucleic acids,
                                                   Cambridge University Press, 1998.
                                                   http://hmmer.wustl.edu/"}]};
- $mgr->documentStep("exportpred", $documentation);
+ $mgr->documentStep("HMMPfAM", $documentation);
+}
+
+sub documentPsipred {
+  my ($mgr) = @_;
+
+  my $description = "Psipred predicts secondary structure using a neural network analysis of PSI-BLAST output";
+  my $documentation =    { name => "psipred",
+			   input => "fasta file of protein sequences and a filtered and formatted protein database",
+			   output => "file containing a residue by residue prediction of helix, strand, xand coil accompanied by
+                                     confidence level",
+                           descrip => $description,
+                           tools => [{ name => "psipred",
+                                       version => "2.4",
+                                       params => "default",
+                                       url => "http://bioinf.cs.ucl.ac.uk/psipred/",
+                                       pubmedIds => "",
+                                       credits => "Jones, D.T. (1999)
+                                                  Protein secondary structure prediction based on position-specific 
+                                                  scoring matrices.
+                                                  J. Mol. Biol. 292:195-202.
+                                                  http://bioinf.cs.ucl.ac.uk"}]};
+  $mgr->documentStep("psipred", $documentation);
 }
 
 sub createepeatMaskDir {
