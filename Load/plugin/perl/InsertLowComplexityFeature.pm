@@ -394,13 +394,9 @@ sub _loadAaLcFeature {
 
   my $accession_number = $bioDbSeq->accession_number;
 
-  print STDERR "SEQ_ID=$sequenceId\tACCESSION=$accession_number\n";
-
   foreach(@$startStop) {
     my $start = $_->{start};
     my $stop = $_->{stop};
-
-    print STDERR "\t\t\tSTART=$start\tSTOP=$stop\n";
 
     my $lcFeature = GUS::Model::DoTS::LowComplexityAAFeature->
       new({aa_sequence_id => $sequenceId,
@@ -421,6 +417,10 @@ sub _loadAaLcFeature {
 
     $lcFeature->submit();
     $featuresLoaded++;
+
+    if ($featuresLoaded % 100 == 0){
+      $self->log("Loaded $featuresLoaded features.");
+    }
   }
 $self->undefPointerCache();
 
