@@ -164,6 +164,40 @@ sub createPfamDir {
   $mgr->endStep($signal);
 }
 
+sub createTRNAscanDir {
+  my ($mgr,$subjectFile,$model) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $subject = $subjectFile;
+
+  $subject =~ s/\.\w+\b//;
+
+  my $signal = "make${subject}TRNAscanDir";
+
+  return if $mgr->startStep("Creating $subject tRNAscan subdir", $signal);
+
+  my $buildName = $mgr->{'buildName'};
+  my $buildDir = $propertySet->getProp('buildDir');
+  my $serverPath = $propertySet->getProp('serverPath');
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $trnascanTaskSize = $propertySet->getProp('trnascan.taskSize');
+  my $trnascanPath = $propertySet->getProp('trnascan.clusterpath');
+  my $pipelineDir = $mgr->{'pipelineDir'};
+
+  $mgr->runCmd("mkdir -p $pipelineDir/trnascan/$subject");
+
+  &makeTRNAscanDir($subject, $buildName, $buildDir,
+	       $serverPath, $nodePath, $trnascanTaskSize,
+	       $trnascanPath,$model,
+	       "$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
+
+  $mgr->runCmd("chmod -R g+w $pipelineDir/trnascan");
+
+  $mgr->endStep($signal);
+}
+
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
