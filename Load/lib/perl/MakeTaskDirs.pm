@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir);
 
 use strict;
 use Carp;
@@ -140,6 +140,25 @@ sub makePfamDir {
   my $queryFilePath = "${fileDir}/$queryFileName";
   &makePfamTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$pfamBinPath);
 }
+
+sub makeTRNAscanDir {
+  my ($subject, $pipelineName, $localPath,
+      $serverPath, $nodePath, $taskSize,
+      $trnascanPath, $model,
+      $fileDir,$subjectFileName,$nodeClass) = @_;
+
+  my $localBase = "$localPath/$pipelineName/trnascan/$subject";
+  my $serverBase = "$serverPath/$pipelineName/trnascan/$subject";
+  my $inputDir = "$localBase/input";
+
+  &runCmd("mkdir -p $inputDir");
+  &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+			    $nodePath, "DJob::DistribJobTasks::tRNAscanTask", $nodeClass);
+
+  my $subjectFilePath = "${fileDir}/$subjectFileName";
+  &makeTRNAscanTaskPropFile($inputDir,$subjectFilePath, $trnascanPath, $model );
+}
+
 sub makePsipredDir {
   my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath,
       $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,$subjectFile,$nodeClass) = @_;
@@ -258,6 +277,34 @@ sub makePsipredTaskPropFile {
 
   print F 
 "psipredDir=$psipredPath
+dbFilePath=$subjectFilePath
+inputFilePath=$queryFilePath
+";
+    close(F);
+}
+
+sub makeTRNAscanTaskPropFile {
+  my ($inputDir,$subjectFilePath, $trnascanPath, $model ) = @_;
+
+  open(F, ">$inputDir/task.prop") 
+    || die "Can't open $inputDir/task.prop for writing";
+
+  print F 
+"tRNAscanDir=$trnascanPath
+inputFilePath=$subjectFilePath
+trainingOption=$model
+";
+    close(F);
+}
+
+sub  makePfamTaskPropFile {
+  my ($inputDir, $queryFilePath, $subjectFilePath, $pfamBinPath) = @_;
+
+   open(F, ">$inputDir/task.prop") 
+    || die "Can't open $inputDir/task.prop for writing";
+
+  print F 
+"hmmpfamDir=$pfamBinPath
 dbFilePath=$subjectFilePath
 inputFilePath=$queryFilePath
 ";
