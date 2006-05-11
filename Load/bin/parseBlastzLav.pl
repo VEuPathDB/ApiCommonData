@@ -37,7 +37,7 @@ while(my $fn = readdir(DIR)) {
   $fn = $dirname . "/". $fn;
 
   my $lavList = LavSimilarity::parseFromFile($fn);
-  &_processLav($lavList, \*OUT);
+  &_processLav($fn, $lavList, \*OUT);
 }
 
 close(OUT);
@@ -46,7 +46,10 @@ closedir(DIR);
 # ----------------------------------------------------------------------
 
 sub _processLav {
-  my ($lavList, $out) = @_;
+  my ($fn, $lavList, $out) = @_;
+
+  my ($numSubjects, $querySourceId) = &_getSubjAndSourceId($fn, $lavList);
+  print $out ">".$querySourceId." ($numSubjects subjects)\n";
 
   foreach my $lav (@$lavList) {
 
@@ -63,11 +66,7 @@ sub _processLav {
     }
 
     my $h = $lav->getH();
-    my $querySourceId = $h->{querySourceId};
     my $subjectSourceId = $h->{subjectSourceId};
-
-    my $numSubjects = scalar(@{$lav->getA()});
-    print $out ">".$querySourceId." ($numSubjects subjects)\n";
 
     foreach my $a (@{$lav->getA()}) {
       my @hsps;
@@ -104,6 +103,26 @@ sub _processLav {
       &_writeToFile(\@hsps, $sum, $out);
     }
   }
+}
+
+# ----------------------------------------------------------------------
+
+sub _getSubjAndSourceId {
+  my ($fn, $lavList) = @_;
+
+  my ($numberOfSubjects, $sourceId);
+
+    foreach my $lav (@$lavList) {
+      if($sourceId && $lav->getH()->{querySourceId} ne $sourceId) {
+        die "Cannot Distinguish Unique SourceId for file $fn: $!";
+      } else {
+        $sourceId = $lav->getH()->{querySourceId};
+      }
+      foreach my $a (@{$lav->getA()}) {
+        $numberOfSubjects++;
+      }
+    }
+  return($numberOfSubjects, $sourceId);
 }
 
 # ----------------------------------------------------------------------
