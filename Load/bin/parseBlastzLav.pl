@@ -24,7 +24,7 @@ GetOptions("verbose!"         => \$verbose,
           );
 
 unless (-e $dirname && $outfile) {
-  die "usage:  perl parseBlastzLav.pl --dirname <DIR>";
+  die "usage:  perl parseBlastzLav.pl --dirname <DIR> --outfile <FILE>";
 }
 
 opendir(DIR, $dirname) || die "Cannot open directory $dirname for reading: $!";
