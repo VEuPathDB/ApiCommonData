@@ -1067,6 +1067,24 @@ sub startProteinBlastOnComputeCluster {
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
 
+
+sub startTRNAscanOnComputeCluster {
+  my ($mgr,$subjectFile,$queue) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $serverPath = $propertySet->getProp('serverPath');
+
+  my $signal = "start${subjectFile}TRNAscan";
+  return if $mgr->startStep("Starting tRNAscan of $subjectFile on cluster", $signal);
+
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runTRNAscan $serverPath/$mgr->{buildName} NUMBER_OF_NODES $subjectFile $queue";
+  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
 sub startHMMPfamOnComputerCluster {
   my ($mgr,$queryFile,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
