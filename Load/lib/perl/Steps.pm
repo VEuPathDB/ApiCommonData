@@ -807,11 +807,31 @@ sub runBLASTZ {
     $outputFile =~ s/\.\w+$/\.laj/;
 
     next if $mgr->startStep("Running BLASTZ for $file vs $targetFile", $signal);
+
     $mgr->runCmd("${blastzPath}/blastz $mgr->{pipelineDir}/${queryDir}/$file  $mgr->{pipelineDir}/seqfiles/$targetFile $args > $mgr->{pipelineDir}/similarity/blastz_${targetFile}/$outputFile");
 
     $mgr->endStep($signal);
   }
 }
+
+sub formatBLASTZResults {
+  my ($mgr,$targetFile) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $outputFile = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/reformatted${targetFile}Blastz";
+
+  my $signal = "format${targetFile}Blastz";
+
+  return if $mgr->startStep("Formatting BLASTZ output for $targetFile", $signal);
+
+  my $dir = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}";
+
+  $mgr->runCmd("parseBlastzLav.pl --dirname $dir --outfile $outputFile");
+
+  $mgr->endStep($signal);
+}
+
 
 sub loadBLASTZResults {
   my ($mgr,$targetFile,$queryTable,$subjTable,$queryExtDbRlsSpec,$subjExtDbRlsSpec) = @_;
