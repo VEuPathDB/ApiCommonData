@@ -819,7 +819,11 @@ sub formatBLASTZResults {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $outputFile = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/reformatted${targetFile}Blastz";
+  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}/master") if ! -d "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master";
+
+  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult") if ! -d "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult";
+
+  my $outputFile = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult/blastSimilarity.out";
 
   my $signal = "format${targetFile}Blastz";
 
