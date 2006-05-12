@@ -49,58 +49,61 @@ sub _processLav {
   my ($fn, $lavList, $out) = @_;
 
   my ($numSubjects, $querySourceId) = &_getSubjAndSourceId($fn, $lavList);
-  print $out ">".$querySourceId." ($numSubjects subjects)\n";
 
-  foreach my $lav (@$lavList) {
+  if($querySourceId && $numSubjects) {
+    print $out ">".$querySourceId." ($numSubjects subjects)\n";
 
-    my $s = $lav->getS();
-    my $queryReversed = $s->{queryReversed};
-    my $subjectReversed = $s->{subjectReversed};
+    foreach my $lav (@$lavList) {
 
-    my $isReversed;
-    if($queryReversed == $subjectReversed) {
-      $isReversed = 1;
-    }
-    else {
-      $isReversed = 0;
-    }
+      my $s = $lav->getS();
+      my $queryReversed = $s->{queryReversed};
+      my $subjectReversed = $s->{subjectReversed};
 
-    my $h = $lav->getH();
-    my $subjectSourceId = $h->{subjectSourceId};
-
-    foreach my $a (@{$lav->getA()}) {
-      my @hsps;
-      my $score = $a->{'s'}->[0];
-
-      my $queryStart   = $a->{b}->[0];
-      my $subjectStart = $a->{b}->[1];
-
-      my $queryEnd     = $a->{e}->[0];
-      my $subjectEnd   = $a->{e}->[1];
-
-      my $n = 1;
-      foreach my $l (@{$a->{l}}) {
-        my $queryStart       = $l->[0];
-        my $subjectStart     = $l->[1];
-        my $queryEnd         = $l->[2];
-        my $subjectEnd       = $l->[3];
-        my $percentIdentical = $l->[4] / 100;
-
-        my $matchLength = $queryEnd - $queryStart + 1;
-
-        #These are the same for DNA!!
-        my $numberIdentical = sprintf("%d", $matchLength * $percentIdentical);
-        my $numberPositive  = sprintf("%d", $matchLength * $percentIdentical);
-
-        my $hsp = ["HSP$n", $subjectSourceId, $numberIdentical, $numberPositive, $matchLength, undef, undef,
-                   $subjectStart, $subjectEnd, $queryStart, $queryEnd, $isReversed, undef];
-
-        push(@hsps, $hsp);
-        $n++;
+      my $isReversed;
+      if($queryReversed == $subjectReversed) {
+        $isReversed = 1;
       }
-      my $sum = &_calculateSum(\@hsps, $score, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $isReversed, $subjectSourceId);
+      else {
+        $isReversed = 0;
+      }
 
-      &_writeToFile(\@hsps, $sum, $out);
+      my $h = $lav->getH();
+      my $subjectSourceId = $h->{subjectSourceId};
+
+      foreach my $a (@{$lav->getA()}) {
+        my @hsps;
+        my $score = $a->{'s'}->[0];
+
+        my $queryStart   = $a->{b}->[0];
+        my $subjectStart = $a->{b}->[1];
+
+        my $queryEnd     = $a->{e}->[0];
+        my $subjectEnd   = $a->{e}->[1];
+
+        my $n = 1;
+        foreach my $l (@{$a->{l}}) {
+          my $queryStart       = $l->[0];
+          my $subjectStart     = $l->[1];
+          my $queryEnd         = $l->[2];
+          my $subjectEnd       = $l->[3];
+          my $percentIdentical = $l->[4] / 100;
+
+          my $matchLength = $queryEnd - $queryStart + 1;
+
+          #These are the same for DNA!!
+          my $numberIdentical = sprintf("%d", $matchLength * $percentIdentical);
+          my $numberPositive  = sprintf("%d", $matchLength * $percentIdentical);
+
+          my $hsp = ["HSP$n", $subjectSourceId, $numberIdentical, $numberPositive, $matchLength, undef, undef,
+                     $subjectStart, $subjectEnd, $queryStart, $queryEnd, $isReversed, undef];
+
+          push(@hsps, $hsp);
+          $n++;
+        }
+        my $sum = &_calculateSum(\@hsps, $score, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $isReversed, $subjectSourceId);
+
+        &_writeToFile(\@hsps, $sum, $out);
+      }
     }
   }
 }
@@ -219,6 +222,8 @@ sub parseFromFile {
       print STDERR "WARNING:  Unknown input: $_\n";
     }
   }
+  close(FILE);
+
   return(\@lavList);
 }
 
