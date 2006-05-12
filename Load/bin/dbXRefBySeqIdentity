@@ -59,6 +59,7 @@ while (my $protein = $proteins->next_seq()) {
   $sourceId =~ m/$protDeflnRegex/;
 
   $proteins{uc($proteinSeq)} = $1;
+
 }
 
 my $nr = Bio::SeqIO->new(-file => "$nrFile",
@@ -77,8 +78,9 @@ while(my $seq = $nr->next_seq()) {
     foreach my $def (@defLines){
       next if($def eq '');  #ignore leading empty space
 
-      $def =~ m/^\|(\d+)\|/;
+      $def =~ m/^\|(\d+)\|(\w+)\|/;
       $giNumber = $1;
+      $extDb = $2;
 
       if($def =~ m/$sourceIdRegex/) {
         #print STDERR "matched: $&\n";
