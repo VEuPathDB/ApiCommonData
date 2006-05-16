@@ -145,7 +145,8 @@ sub getMapping {
 
 	$self->log("Processing Pfid: $locusTag, ECNumber: $ecNumber\n");
 
-        my $aaSeq = ApiCommonData::Load::Util::getAASeqIdFromGeneId($locusTag);
+        my $aaSeq = 
+	  ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $locusTag);
         my $ecAssociation = {
                     'ecNumber' => $ecNumber,
                     'evidenceDescription' => $evidenceDescription,

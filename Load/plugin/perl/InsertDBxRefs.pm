@@ -6,9 +6,6 @@
 ## delimited file of the form gene_id, DbRef_pk, DbRef remark
 ## $Id$
 ##
-## HACK: We are loading the map name into
-## SRes.DbRef.lowercase_secondary_identifier until we can fix GUS b/c
-## SRes.DbRef.secondary_identifier is too short
 #######################################################################
  
 package ApiCommonData::Load::Plugin::InsertDBxRefs;

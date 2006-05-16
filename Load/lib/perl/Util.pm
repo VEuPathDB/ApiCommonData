@@ -46,17 +46,12 @@ sub getAASeqIdFromFeatId {
 }
 
 
+# get an aa seq id from a source_id or source_id alias.
 sub getAASeqIdFromGeneId {
-  my $featId = shift;
+  my ($plugin, $geneId) = @_;
 
-  my $gusTAAF = GUS::Model::DoTS::TranslatedAASequence->new( { 'source_id' => $featId, } );
-
-  $gusTAAF->retrieveFromDB() ||
-       die "no translated aa sequence: $featId";
-
-  my $gusAASeq = $gusTAAF->getId();
-
-  return $gusAASeq;
+  my $featId = getGeneFeatureId($plugin, $geneId);
+  return getAASeqIdFromFeatId($featId);
 }
 
 
