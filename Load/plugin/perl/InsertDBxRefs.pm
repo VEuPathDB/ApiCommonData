@@ -28,10 +28,6 @@ PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
 Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
-NOTE: If there are only three columns in the input file, the third column can either be loaded into SRes.DbRef.remark or SRes.DbRef.lowercase_secondary_identifier, depending on whether the loadRemarks flag is set or not.
-HACK: We are loading the map name into
-SRes.DbRef.lowercase_secondary_identifier until we can fix GUS b/c
-SRes.DbRef.secondary_identifier is too short
 PLUGIN_PURPOSE
 
 my $tablesAffected =
@@ -83,11 +79,12 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   booleanArg ({name => 'loadRemarks',
-	              descr => 'Set this to load the third column of a three column file into Sres.DbRef.remark instead of Sres.DbRef.lowercase_secondary_identifier.',
-	              reqd => 0,
-                      default =>0
-                     }),
+   stringArg ({name => 'columnSpec',
+	       descr => 'Comma delimited list specifying the correspondence of the file columns to the columns in sres.dbref starting with the second column of the file.Ex secondary_identifier,primary_identifier,remark for input line = PB402242        68056705        XP_670763.1     hypothetical protein',
+	       reqd => 1,
+               constraintFunc => undef,
+               isList=> 1
+              }),
   ];
 
 
@@ -127,38 +124,46 @@ sub getMapping {
                                      $self->getArg('extDbReleaseNumber'))
       || die "Couldn't retrieve external database!\n";
 
+  my $cols = $self->getArg('columnSpec');
+
+
+
   open (XREFMAP, "$mappingFile") ||
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
-    while (<XREFMAP>) {
-	chomp;
-	my ($locusTag, $primaryId, $secondaryId, $remark) = split('\t', $_);
+  while (<XREFMAP>) {
+    chomp;
 
-	if (!$primaryId || !$locusTag){
-	  $self->log("Missing a required field. primaryId: $primaryId, locusTag: $locusTag.");
-	  next;
-	}
+    my @vals = split(/\t/, $_);
 
-	if ($self->getArg('loadRemarks')){
-	  $remark = $secondaryId;
-	  $secondaryId = "";
-	}
+    if (@{$cols} +1 > @vals) {
+      $self->error("The number of input values for at least one row is not appropriate for the number of columns specified in the columnSpec argument\n");
+    }
 
-	$locusTag =~ s/\s//g;
-	$primaryId =~ s/\s//g;
+    my $naFeat = $vals[0];
 
-	if($lineCt%100 == 0){
-	  $self->log("Processed $lineCt entries.\n");
-	}
+    $naFeat =~ s/\s//g;
 
-	$self->makeDbXRef($locusTag, $primaryId, $secondaryId, $remark, $dbRls);
+    my  %dbRef;
 
-	$self->undefPointerCache();
+    $dbRef{'external_database_release_id'} = $dbRls;
 
-        $lineCt++;
-      }
+    for (my $i=1;$i<@vals;$i++) {
+      $dbRef{$cols->[$i-1]} = $vals[$i];
+    }
 
-close (XREFMAP);
+    if($lineCt%100 == 0){
+      $self->log("Processed $lineCt entries.\n");
+    }
+
+    $self->makeDbXRef($naFeat, \%dbRef);
+
+    $self->undefPointerCache();
+
+    $lineCt++;
+  }
+
+  close (XREFMAP);
 
   my $msg = "Finished processing DbXRef Mapping file, number of lines: $lineCt \n";
 
@@ -166,23 +171,18 @@ close (XREFMAP);
 }
 
 sub makeDbXRef {
-  my ($self, $locusTag, $primaryId, $secondaryId, $remark, $dbRls) = @_;
+  my ($self, $naFeat, $dbRef) = @_;
 
-  my $dbRef = GUS::Model::SRes::DbRef->new({ primary_identifier => $primaryId,
-					     lowercase_secondary_identifier => $secondaryId,
-					     remark => $remark,
-					     external_database_release_id => $dbRls,
-					   });
+  my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
-    $dbRef->submit() unless $dbRef->retrieveFromDB();
+  $newDbRef->submit() unless $newDbRef->retrieveFromDB();
 
+  my $dbRefId = $newDbRef->getId();
 
-  my $dbRefId = $dbRef->getId();
-
-  my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $locusTag);
+  my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $naFeat);
 
   unless($naFeatId){
-    $self->log("Skipping: source_id $locusTag not found in database.");
+    $self->log("Skipping: source_id $naFeat not found in database.");
     next;
   }
 
