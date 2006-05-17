@@ -148,8 +148,8 @@ sub getMapping {
 
     $dbRef{'external_database_release_id'} = $dbRls;
 
-    for (my $i=1;$i<@vals;$i++) {
-      $dbRef{$cols->[$i-1]} = $vals[$i];
+    for (my $i=0;$i<@{$cols};$i++) {
+      $dbRef{$cols->[$i]} = $vals[$i+1];
     }
 
     if($lineCt%100 == 0){
