@@ -442,6 +442,67 @@ sub copy {
   $mgr->endStep($signal);
 }
 
+sub findProteinXRefs {
+  my ($mgr, $proteinFile, $nrFile, $nrRegex, $protRegex) = @_;
+
+  my $signal = $proteinFile;
+  $signal =~ s/\.\w+$//;
+  $signal = "${signal}DbXRefs";
+
+  return if $mgr->startStep("Finding nr cross-refs for $proteinFile", $signal);
+
+  $proteinFile = "$mgr->{pipelineDir}/seqfiles/$proteinFile";
+
+  $nrFile = "$mgr->{pipelineDir}/seqfiles/$nrFile";
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  my $outputFile = "$mgr->{pipelineDir}/misc/${signal}Output";
+
+  my $args = "--proteinFile '$proteinFile' --nrFile '$nrFile' --outputFile '$outputFile' --sourceIdRegex \"$nrRegex\" --protDeflnRegex \"$protRegex\" ";
+
+  $mgr->runCmd("dbXRefBySeqIdentity $args 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
+sub loadDbXRefs {
+  my ($mgr, $proteinFile, $dbList, $NrdbVer) = @_;
+
+  my $outputFile = $proteinFile;
+  $outputFile =~ s/\.\w+$//;
+  $outputFile = "${outputFile}}DbXRefsOutput";
+
+
+  my $signal = "load$outputFile";
+
+  return if $mgr->startStep("Loading $outputFile", $signal);
+
+  $mgr->runCmd("filterDbXRefOutput --file $mgr->{pipelineDir}/misc/$outputFile 2>> $mgr->{pipelineDir}/logs/filter${outputFile}.log");
+
+  my @db = split(/,/, $dbList);
+
+  foreach my $db (@db) {
+    $db = "gb" if $db =~ /gb|emb|dbj/;
+
+    my $dbName = "NRDB_${db}_dbXRefBySeqIdentity";
+
+    &createExtDbAndDbRls($mgr,$dbName,$NrdbVer);
+
+    my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{pipelineDir}/misc/${outputFile}_$db' --columnSpec 'secondary_identifier,primary_identifier'";
+
+    my $subSignal = "load${outputFile}_$db";
+
+    $mgr->runPlugin ($subSignal,
+		     "ApiCommonData::Load::Plugin::InsertDBxRefs", "$args",
+		     "Loading results of dbXRefBySeqIdentity in ${outputFile}_$db");
+
+    $mgr->runCmd("rm -f $mgr->{pipelineDir}/misc/${outputFile}_$db");
+  }
+
+  $mgr->endStep($signal);
+}
+
 sub extractNaSeq {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
 
@@ -2304,6 +2365,24 @@ sub getDbRlsId {
   return  $extDbRlsId;
 }
 
+sub createExtDbAndDbRls {
+  my ($mgr,$extDbName,$extDbRlsVer,$extDbRlsDescrip) = @_;
+
+  my $dbPluginArgs = "--name '$extDbName}' ";
+
+  $mgr->runPlugin("createDb_${extDbName}",
+			  "GUS::Supported::Plugin::InsertExternalDatabase",$dbPluginArgs,
+			  "Inserting/checking external database info for $extDbName");
+
+  my $releasePluginArgs = "--databaseName '${extDbName}' --databaseVersion '${extDbRlsVer}'";
+
+  $releasePluginArgs .= "--description '${extDbRlsDescrip}'" if $extDbRlsDescrip;
+
+  $mgr->runPlugin("createRelease_${extDbName}_$extDbRlsVer",
+		  "GUS::Supported::Plugin::InsertExternalDatabaseRls",$releasePluginArgs,
+		  "Inserting/checking external database release for $extDbName $extDbRlsVer");
+}
+
 sub getTableId {
   my ($mgr,$tableName) = @_;
 
@@ -2313,7 +2392,6 @@ sub getTableId {
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
   my $tableId = $mgr->runCmd($cmd);
-
   return  $tableId;
 }
 
