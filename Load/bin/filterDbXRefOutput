@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use FileHandle;
+
+my ($file,$verbose);
+&GetOptions("file=s" => \$file,
+	    "verbose!" => \$verbose);
+
+
+
+my %db;
+
+my $fh = new FileHandle("$file","<") || die "Can't open $file\n";
+
+while(my $line = $fh->getline){
+  $line =~ s/\s+$//;
+  my @ln = split(/\t/,$line);
+
+  push(@{$db{$ln[3]}},$line);
+}
+
+foreach my $database (keys %db) {
+
+  my $filename = "${file}_$database";
+  my $dbFH = new FileHandle("$filename",">") || die "Can't open $filename for writing\n";
+
+  foreach my $line (@{$db{$database}}) {
+    print $dbFH ("$line\n");
+  }
+}
+
