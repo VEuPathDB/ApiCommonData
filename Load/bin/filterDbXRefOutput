@@ -11,6 +11,11 @@ my ($file,$verbose);
 	    "verbose!" => \$verbose);
 
 
+die "usage:filterDbXRefOutput --file
+     creates subfiles of dbXRefBySeqIdentity output based on source db abreviation
+     must supply the output file from dbXRefBySeqIdentity and the file must
+     contain 4 columns: queryIdentifier nrdb_gi nrdb_accession db_abbreviation\n" if (! -e $file);
+
 
 my %db;
 
