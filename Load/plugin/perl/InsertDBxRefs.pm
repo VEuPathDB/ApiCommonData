@@ -132,6 +132,7 @@ sub getMapping {
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
   while (<XREFMAP>) {
+    $self->undefPointerCache(); #if at bottom, not always hit
     chomp;
 
     my @vals = split(/\t/, $_);
@@ -153,9 +154,15 @@ sub getMapping {
       $self->log("Processed $lineCt entries.\n");
     }
 
-    $self->makeDbXRef($naFeat, \%dbRef);
+    my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $naFeat);
 
-    $self->undefPointerCache();
+    unless($naFeatId){
+      $self->log("Skipping: source_id $naFeat not found in database.");
+      next;
+    }
+
+
+    $self->makeDbXRef($naFeatId, \%dbRef);
 
     $lineCt++;
   }
@@ -168,20 +175,13 @@ sub getMapping {
 }
 
 sub makeDbXRef {
-  my ($self, $naFeat, $dbRef) = @_;
+  my ($self, $naFeatId, $dbRef) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
   $newDbRef->submit() unless $newDbRef->retrieveFromDB();
 
   my $dbRefId = $newDbRef->getId();
-
-  my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $naFeat);
-
-  unless($naFeatId){
-    $self->log("Skipping: source_id $naFeat not found in database.");
-    next;
-  }
 
   my $dbXref = GUS::Model::DoTS::DbRefNAFeature->new({
 						    na_feature_id => $naFeatId,
