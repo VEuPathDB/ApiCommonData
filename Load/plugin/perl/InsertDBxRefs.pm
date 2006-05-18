@@ -136,10 +136,6 @@ sub getMapping {
 
     my @vals = split(/\t/, $_);
 
-    if (@{$cols} +1 > @vals) {
-      $self->error("The number of input values for at least one row is not appropriate for the number of columns specified in the columnSpec argument\n");
-    }
-
     my $naFeat = $vals[0];
 
     $naFeat =~ s/\s//g;
