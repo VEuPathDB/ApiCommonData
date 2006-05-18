@@ -471,7 +471,7 @@ sub loadDbXRefs {
 
   my $outputFile = $proteinFile;
   $outputFile =~ s/\.\w+$//;
-  $outputFile = "${outputFile}}DbXRefsOutput";
+  $outputFile = "${outputFile}DbXRefsOutput";
 
 
   my $signal = "load$outputFile";
@@ -483,13 +483,13 @@ sub loadDbXRefs {
   my @db = split(/,/, $dbList);
 
   foreach my $db (@db) {
-    $db = "gb" if $db =~ /gb|emb|dbj/;
+    my $dbType = $db =~ /gb|emb|dbj/ ? "gb" : $db;
 
-    my $dbName = "NRDB_${db}_dbXRefBySeqIdentity";
+    my $dbName = "NRDB_${dbType}_dbXRefBySeqIdentity";
 
     &createExtDbAndDbRls($mgr,$dbName,$NrdbVer);
 
-    my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{pipelineDir}/misc/${outputFile}_$db' --columnSpec 'secondary_identifier,primary_identifier'";
+    my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{pipelineDir}/misc/${outputFile}_$db' --columnSpec \"secondary_identifier,primary_identifier\"";
 
     my $subSignal = "load${outputFile}_$db";
 
@@ -2368,15 +2368,15 @@ sub getDbRlsId {
 sub createExtDbAndDbRls {
   my ($mgr,$extDbName,$extDbRlsVer,$extDbRlsDescrip) = @_;
 
-  my $dbPluginArgs = "--name '$extDbName}' ";
+  my $dbPluginArgs = "--name '$extDbName' ";
 
   $mgr->runPlugin("createDb_${extDbName}",
 			  "GUS::Supported::Plugin::InsertExternalDatabase",$dbPluginArgs,
 			  "Inserting/checking external database info for $extDbName");
 
-  my $releasePluginArgs = "--databaseName '${extDbName}' --databaseVersion '${extDbRlsVer}'";
+  my $releasePluginArgs = "--databaseName '$extDbName' --databaseVersion '$extDbRlsVer'";
 
-  $releasePluginArgs .= "--description '${extDbRlsDescrip}'" if $extDbRlsDescrip;
+  $releasePluginArgs .= "--description '$extDbRlsDescrip'" if $extDbRlsDescrip;
 
   $mgr->runPlugin("createRelease_${extDbName}_$extDbRlsVer",
 		  "GUS::Supported::Plugin::InsertExternalDatabaseRls",$releasePluginArgs,
