@@ -8,10 +8,11 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
 
-my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$verbose);
+my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "type=s" => \$type,
 	    "extDb=s" => \$extDb,
+            "sequenceTable=s" => \$sequenceTable,
 	    "extDbVer=s" => \$extDbVer,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile,
@@ -34,7 +35,7 @@ my $dbh = $db->getQueryHandle(0);
 my $extDbRls = getDbRlsId();
 
 
-my $sql = "select tn.name from dots.externalnasequence ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.source_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
+my $sql = "select tn.name from dots.$sequenceTable ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.source_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
 
 my $stmt = $dbh->prepare($sql);
 
