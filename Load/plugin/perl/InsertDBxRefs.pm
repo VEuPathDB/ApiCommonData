@@ -146,7 +146,7 @@ sub getMapping {
     $dbRef{'external_database_release_id'} = $dbRls;
 
     for (my $i=0;$i<@{$cols};$i++) {
-      next if (lc($dbRef{$cols->[$i]}) eq 'remark' && ! (defined $vals[$i+1]));
+      next if (! (defined $vals[$i+1]));
       $dbRef{$cols->[$i]} = $vals[$i+1];
     }
 
