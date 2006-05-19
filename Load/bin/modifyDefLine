@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+bg#!/usr/bin/perl
 use strict;
 
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -8,8 +8,9 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
 
-my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$verbose);
+my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "sequenceTable=s" => \$sequenceTable,
 	    "type=s" => \$type,
 	    "extDb=s" => \$extDb,
 	    "extDbVer=s" => \$extDbVer,
@@ -37,7 +38,7 @@ my $sql = "select v.na_sequence_id,s.term_name from dots.transcript v,sres.seque
 
 my $stmt1 = $dbh->prepare($sql);
 
-$sql = "select ns.source_id,tn.name from dots.externalnasequence ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.na_sequence_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
+$sql = "select ns.source_id,tn.name from dots.$sequenceTable ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.na_sequence_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
 
 my $stmt2 = $dbh->prepare($sql);
 
