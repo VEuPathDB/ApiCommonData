@@ -1423,7 +1423,7 @@ sub formatBlastFile {
 }
 
 sub modifyDownloadFile {
-  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database) = @_;
+  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -1446,13 +1446,13 @@ sub modifyDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type");
+  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable");
 
   $mgr->endStep($signal);
 }
 
 sub modifyGenomeDownloadFile {
-  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database) = @_;
+  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -1468,7 +1468,7 @@ sub modifyGenomeDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyGenomeDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type");
+  $mgr->runCmd("modifyGenomeDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable");
 
   $mgr->endStep($signal);
 }
