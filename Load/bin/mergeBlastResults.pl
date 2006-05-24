@@ -36,11 +36,10 @@ my $adjustedFile = &_adjustCoordinates($inputFile);
 sub _adjustCoordinates {
   my ($inputFile) = @_;
 
-  my $offset;
-  my $out = $inputFile . ".tmp";
+  my ($offset, $fh, $prevId);
+  my %seenId;
 
   open (RESULTS, "< $inputFile") or die "Couldn't open $inputFile for reading: $!\n";
-  open (OUT, ">$out") or die "Cannot open $out for writing: $!";
 
   while(<RESULTS>){
     chomp;
@@ -49,7 +48,11 @@ sub _adjustCoordinates {
       my $id = $1;
       $id =~ s/\.(\d+)//;
       $offset = $1 - 1;
-      print OUT ">$id\n";
+
+      $fh = &_getFh($id, $prevId, $fh);
+
+      print $fh "$id\n" unless($seenId{$id});
+      $seenId{$id} = 1;
     }
     if (/Sum/){
       my @sim = split(':', $_);
@@ -58,7 +61,7 @@ sub _adjustCoordinates {
       $sim[7] += $offset;
 
       my $sum = join(':', @sim);
-      print OUT "$sum\n";
+      print $fh "$sum\n";
     }
     if (/HSP/){
       my @hsp = split(':', $_);
@@ -66,13 +69,10 @@ sub _adjustCoordinates {
       $hsp[10] += $offset;
 
       my $hsp = join(':', @hsp);
-      print OUT "$hsp\n";
+      print $fh "$hsp\n";
     }
   }
   close (RESULTS);
-  close (OUT);
-
-  return($out);
 }
 
 
@@ -84,5 +84,20 @@ sub usage {
   exit(0);
 }
 
+sub _getFh {
+  my ($id, $prevId, $fh) = @_;
+
+  if(!$fh) {
+    open(FILE, ">> $id") || die "Cannot open $id file for writing: $!";
+  }
+  elsif($id eq $prevId) {
+    return($fh);
+  }
+  else {
+    close($fh);
+    open(FILE, ">> $id") || die "Cannot open file $id for writing";
+  }
+  return(\*FILE);
+}
 
 1;
