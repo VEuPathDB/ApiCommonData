@@ -49,7 +49,7 @@ sub _adjustCoordinates {
       $id =~ s/\.(\d+)//;
       $offset = $1 - 1;
 
-      $fh = &_getFh($id, $prevId, $fh);
+      $fh = &_getFh($id, $prevId, $fh, $inputFile, \%seenId);
 
       print $fh "$id\n" unless($seenId{$id});
       $seenId{$id} = 1;
@@ -85,17 +85,18 @@ sub usage {
 }
 
 sub _getFh {
-  my ($id, $prevId, $fh) = @_;
+  my ($id, $prevId, $fh, $inputFile, $seen) = @_;
 
-  if(!$fh) {
-    open(FILE, ">> $id") || die "Cannot open $id file for writing: $!";
-  }
-  elsif($id eq $prevId) {
+  $inputFile =~ s/\/[a-zA-Z0-9_\.]+$/\/$id/;
+
+  print STDERR "WARNING: FILE $id already exists\n" if(!$seen->{$id} && -e $inputFile);
+
+  if(defined($prevId) && $id eq $prevId) {
     return($fh);
   }
   else {
-    close($fh);
-    open(FILE, ">> $id") || die "Cannot open file $id for writing";
+    close($fh) unless(!$fh);
+    open(FILE, ">> $inputFile") || die "Cannot open file $id for writing";
   }
   return(\*FILE);
 }
