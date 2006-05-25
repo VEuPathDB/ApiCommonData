@@ -50,12 +50,12 @@ sub getArgumentsDeclaration{
 		isList => 0
 	       }),
      stringArg({name => 'extDbRelSpec',
-              descr => 'the database source for the rows being updated in databse_name|db_rel_ver format',
+              descr => 'the database source for the rows being updated in database_name|db_rel_ver format',
               constraintFunc => undef,
               reqd => 1,
               isList => 0
              }),
-     stringArg({name => 'idSql    ',
+     stringArg({name => 'idSql',
 		descr => 'sql used to get the PKs and lower case source_ids of the rows to be updated, external_database_release_id appended using info from extDbRelSpec',
 		constraintFunc=> undef,
 		reqd  => 1,
@@ -131,17 +131,17 @@ sub run {
 
   my $sourceIds  = $self->processFile();
 
-  #$self->getUpdateIds($sourceIds);
-
-  #my ($processed,$updatedRows) = $self->updateRows($sourceIds,$table);
-
-  #my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table based on input file, $processed input lines processed";
-
-  my $resultDescrip = 'test';
+  $self->getUpdateIds($sourceIds);
 
   foreach my $k (keys %$sourceIds) {
-    print ("$k : $sourceIds->{'taxon'}\n");
+    foreach my $l (@{$sourceIds->{$k}->{'pks'}}) {
+      print "$k  :   $sourceIds->{$k}->{'taxon'}  : $l\n";
+    }
   }
+
+  my $updatedRows = $self->updateRows($sourceIds,$table);
+
+  my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table";
 
   $self->setResultDescr($resultDescrip);
   $self->logData($resultDescrip);
@@ -205,7 +205,6 @@ sub getTaxonId {
 
   if ($line =~ /$regex/ ) {
     $val = lc($1);
-    print "$val\n";
   }
   else {
     $val = $self->getArg('taxonNameRegex') ? 'unknown' : 32644;
@@ -225,11 +224,15 @@ sub getTaxonId {
 sub getIdFromTaxonName {
   my ($self,$name) = @_;
 
-  my $taxonName = GUS::Model::SRes::TaxonName->new({'name' => $name});
+  my $dbh = $self->getQueryHandle();
 
-  $taxonName->retrieveFromDB();
+  my $stmt = $dbh->prepare("select taxon_id from sres.taxonname where lower(name) = ?");
 
-  my $id = $taxonName->getId();
+  $stmt->execute($name);
+
+  my ($id) = $stmt->fetchrow_array();
+
+  $id = $self->getIdFromTaxonName('unknown') if (! $id);
 
   return $id;
 }
@@ -243,29 +246,63 @@ sub getIdfromTaxon {
 
   my $id = $taxon->getId();
 
+  $id = $self->getIdFromTaxonName('unknown') if (! $id);
+
   return $id;
 }
 
 sub updateRows {
   my ($self,$sourceIds,$table) = @_;
 
-  my ($processed,$submitted);
+  my $submitted;
 
   eval ("require $table");
 
-  foreach my $sourceId (keys %{$sourceIds}) {
-    my $row = $table->new({'source_id' => $sourceId});
+  my $tableId = $self->getTableIdFromTableName($table);
 
-    $row->retrieveFromDB();
+  my $pkName = $self->getTablePKFromTableId($tableId);
 
-    $row->setTaxonId($sourceIds->{$sourceId}) unless ($sourceIds->{$sourceId} == $row->getTaxonId());
+  foreach my $source (keys %{$sourceIds}) {
 
-    $submitted += $row->submit();
+    foreach my $pk (@{$sourceIds->{$source}->{'pks'}}) {
 
-    $processed++;
+      my $row = $table->new({"$pkName" => $pk});
+
+      $row->retrieveFromDB();
+
+      $row->setTaxonId($sourceIds->{$source}->{'taxon'}) unless ($sourceIds->{$source}->{'taxon'} == $row->getTaxonId());
+
+      $submitted += $row->submit();
+
+      $self->undefPointerCache();
+
+    }
   }
 
-  return ($processed,$submitted);
+  return $submitted;
+}
+
+sub getUpdateIds {
+  my ($self,$sourceIds) = @_;
+
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
+
+  my $idSql = $self->getArg('idSql');
+
+  if ($idSql =~ /where/) {
+    $idSql = $idSql . " and external_database_release_id = $extDbRlsId";
+  }
+  else {
+    $idSql = $idSql . " where external_database_release_id = $extDbRlsId";
+  }
+
+  my $dbh = $self->getQueryHandle();
+
+  my $stmt = $dbh->prepareAndExecute($idSql);
+
+  while (my ($source_id, $pk) = $stmt->fetchrow_array) {
+    push(@{$sourceIds->{$source_id}->{'pks'}},$pk);
+  }
 }
 
 
