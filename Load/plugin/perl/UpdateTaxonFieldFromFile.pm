@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertUserProjectGroupRows;
+package ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -17,12 +17,13 @@ $| = 1;
 sub getArgumentsDeclaration{
   my $argsDeclaration =
     [
-     fileArg({name => 'file',
+     fileArg({name => 'fileName',
 	      descr => 'input file containing the source_id and either the correspoding ncbi_tax_id or taxon_name',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0,
-	      mustExist => 1
+	      mustExist => 1,
+	      format => 'Text'
 	     }),
      stringArg({name => 'sourceIdRegex',
 		descr => 'regex used to identify the source_id in each line',
@@ -42,8 +43,20 @@ sub getArgumentsDeclaration{
 		reqd => 0,
 		isList => 0
 	       }),
-     stringArg({name => 'table',
+     stringArg({name => 'tableName',
 		descr => 'fully specified table to be updated, e.g. DoTS::ExternalAASequence',
+		constraintFunc=> undef,
+		reqd  => 1,
+		isList => 0
+	       }),
+     stringArg({name => 'extDbRelSpec',
+              descr => 'the database source for the rows being updated in databse_name|db_rel_ver format',
+              constraintFunc => undef,
+              reqd => 1,
+              isList => 0
+             }),
+     stringArg({name => 'idSql    ',
+		descr => 'sql used to get the PKs and lower case source_ids of the rows to be updated, external_database_release_id appended using info from extDbRelSpec',
 		constraintFunc=> undef,
 		reqd  => 1,
 		isList => 0
@@ -110,17 +123,25 @@ sub run {
   $self->logCommit();
   $self->logArgs();
 
-  my $table = $self->getArg('table');
+  my $table = $self->getArg('tableName');
 
   $self->userError("table must be in format GUS::Model::TableSpace::Table or TableSpace::Table") if ($table !~ /[\bGUS::Model::\w+::\w+\b|\b\w+::\w+\b]/);
 
   $table = $table =~ /\bGUS::Model::\w+::\w+\b/ ? $table : "GUS::Model::$table";
 
-  my $sourceIdHsh = $self->processFile();
+  my $sourceIds  = $self->processFile();
 
-  my ($processed,$updatedRows) = $self->updateRows($sourceIdHsh,$table);
+  #$self->getUpdateIds($sourceIds);
 
-  my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table based on input file, $processed input lines processedx";
+  #my ($processed,$updatedRows) = $self->updateRows($sourceIds,$table);
+
+  #my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table based on input file, $processed input lines processed";
+
+  my $resultDescrip = 'test';
+
+  foreach my $k (keys %$sourceIds) {
+    print ("$k : $sourceIds->{'taxon'}\n");
+  }
 
   $self->setResultDescr($resultDescrip);
   $self->logData($resultDescrip);
@@ -130,11 +151,13 @@ sub run {
 sub processFile {
   my ($self) = @_;
 
-  my $file = $self->getArg('file');
+  my $file = $self->getArg('fileName');
 
-  my %taxonIdHsh;
+  my %taxonIds;
 
-  my %sourceIdHsh;
+  my %sourceIds;
+
+  my $unknownTaxonId = $self->getTaxonId(\%taxonIds);
 
   my $sourceRegex = $self->getArg('sourceIdRegex');
 
@@ -147,24 +170,24 @@ sub processFile {
 
     my $source_id;
 
-    if (/$sourceRegex/ && $1) { 
-      $source_id = $1; 
+    if ($line =~ /$sourceRegex/) { 
+      $source_id = lc($1);
     }
     else {
       my $forgotParens = ($sourceRegex !~ /\(/)? "(Forgot parens?)" : "";
       $self->userError("Unable to parse source_id from $line using regex '$sourceRegex' $forgotParens");
     }
 
-    my $taxon_id = $self->getTaxonId($line,\%taxonIdHsh);
+    my $taxon_id = $self->getTaxonId(\%taxonIds,$line);
 
-    $sourceIdHsh{$source_id} = $taxon_id;
+    $sourceIds{$source_id}{'taxon'} = $taxon_id if (! exists $sourceIds{$source_id}{'taxon'} || $sourceIds{$source_id}{'taxon'} == $unknownTaxonId);
   }
 
-  return \%sourceIdHsh;
+  return \%sourceIds;
 }
 
 sub getTaxonId {
-  my ($self,$line,$taxonIdHsh) = @_;
+  my ($self,$taxonIds,$line) = @_;
 
   my ($regex,$id);
 
@@ -178,16 +201,22 @@ sub getTaxonId {
     $self->userError("must supply either ncbiTaxIdRegex or taxonNameRegex");
   }
 
-  if ($line !~ /$regex/ || ! $1) {
-    $self->userError("Unable to parse $line using regex '$regex'");
-  }
+  my $val;
 
-  if ($taxonIdHsh->{$1}> 0) {
-    $id = $taxonIdHsh->{$1};
+  if ($line =~ /$regex/ ) {
+    $val = lc($1);
+    print "$val\n";
   }
   else {
-    $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($1) : $self->getIdFromTaxon($1) ;
-    $taxonIdHsh->{$1} = $id;
+    $val = $self->getArg('taxonNameRegex') ? 'unknown' : 32644;
+  }
+
+  if (defined $taxonIds->{$val}) {
+    $id = $taxonIds->{$val};
+  }
+  else {
+    $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdFromTaxon($val) ;
+    $taxonIds->{$val} = $id;
   }
 
   return $id;
@@ -196,13 +225,9 @@ sub getTaxonId {
 sub getIdFromTaxonName {
   my ($self,$name) = @_;
 
-  if ($name eq "") {
-    $name = 'unknown';
-  }
-
   my $taxonName = GUS::Model::SRes::TaxonName->new({'name' => $name});
 
-  $taxonName->retrievefromDB();
+  $taxonName->retrieveFromDB();
 
   my $id = $taxonName->getId();
 
@@ -212,13 +237,9 @@ sub getIdFromTaxonName {
 sub getIdfromTaxon {
   my ($self,$ncbiTaxId) = @_;
 
-  if (! $ncbiTaxId) {
-    $ncbiTaxId = 32644;
-  }
-
   my $taxon = GUS::Model::SRes::Taxon->new({'ncbi_tax_id' => $ncbiTaxId});
 
-  $taxon->retrievefromDB();
+  $taxon->retrieveFromDB();
 
   my $id = $taxon->getId();
 
@@ -226,18 +247,18 @@ sub getIdfromTaxon {
 }
 
 sub updateRows {
-  my ($self,$sourceIdHsh,$table) = @_;
+  my ($self,$sourceIds,$table) = @_;
 
   my ($processed,$submitted);
 
   eval ("require $table");
 
-  foreach my $sourceId (keys %{$sourceIdHsh}) {
+  foreach my $sourceId (keys %{$sourceIds}) {
     my $row = $table->new({'source_id' => $sourceId});
 
-    $row->retrievefromDB();
+    $row->retrieveFromDB();
 
-    $row->setTaxonId($sourceIdHsh->{$sourceId}) unless ($sourceIdHsh->{$sourceId} == $row->getTaxonId());
+    $row->setTaxonId($sourceIds->{$sourceId}) unless ($sourceIds->{$sourceId} == $row->getTaxonId());
 
     $submitted += $row->submit();
 
