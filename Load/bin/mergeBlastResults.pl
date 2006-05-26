@@ -51,7 +51,7 @@ sub _adjustCoordinates {
 
       $fh = &_getFh($id, $prevId, $fh, $inputFile, \%seenId);
 
-      print $fh "$id\n" unless($seenId{$id});
+      print $fh ">$id\n" unless($seenId{$id});
       $seenId{$id} = 1;
     }
     if (/Sum/){
@@ -73,6 +73,59 @@ sub _adjustCoordinates {
     }
   }
   close (RESULTS);
+}
+
+
+sub _removeDuplicates{
+  my ($file) = @_;
+  my $id;
+  my %seen;
+  my %similarities;
+
+  open (TEMP, "< $file") or die "Couldn't open $file for reading: $!\n";
+
+  while(<TEMP>){
+    chomp;
+
+    if (/^\>(\S+)/){
+      my $id = $1;
+    }
+
+    if (/Sum/){
+      my @sumLine = split(':', $_);
+
+      unless ($similarities{$sumLine[1]}){
+
+	$similarities{$sumLine[1]} = ({'queryStart' => $sumLine[6],
+				       'queryEnd' => $sumLine[7],
+				       'sum' => $_,
+				      });
+
+      }elsif ($similarities{$sumLine[1]}->{queryStart} == $sumLine[6] && $similarities{$sumLine[1]}->{queryEnd} == $sumLine[7]){
+	next;
+      }elsif($similarities{$sumLine[1]}->{queryStart} == $sumLine[6]){
+
+	if ($sumLine[7] > $similarities{$sumLine[1]}->{queryEnd}){
+
+	  $similarities{$sumLine[1]}->{queryEnd} = $sumLine[7];
+
+	}else{next;}
+
+      }elsif($similarities{$sumLine[1]}->{queryEnd} == $sumLine[7]){
+
+	if ($sumLine[6] < $similarities{$sumLine[1]}->{queryStart}){
+
+	  $similarities{$sumLine[1]}->{queryStart} = $sumLine[6];
+	  $similarities{$sumLine[1]}->{sum} = $_;
+
+	}else{next;}
+
+      }
+
+    }
+  }
+
+  close (TEMP);
 }
 
 
@@ -100,5 +153,6 @@ sub _getFh {
   }
   return(\*FILE);
 }
+
 
 1;
