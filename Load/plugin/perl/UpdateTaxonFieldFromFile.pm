@@ -254,11 +254,13 @@ sub updateRows {
 
   my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
 
+  my $tableName = "GUS::Model::$table";
+
   foreach my $source (keys %{$sourceIds}) {
 
     foreach my $pk (@{$sourceIds->{$source}->{'pks'}}) {
 
-      my $row = $table->new({"$pkName" => $pk});
+      my $row = $tableName->new({"$pkName" => $pk});
 
       $row->retrieveFromDB();
 
