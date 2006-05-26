@@ -125,9 +125,7 @@ sub run {
 
   my $table = $self->getArg('tableName');
 
-  $self->userError("table must be in format GUS::Model::TableSpace::Table or TableSpace::Table") if ($table !~ /[\bGUS::Model::\w+::\w+\b|\b\w+::\w+\b]/);
-
-  $table = $table =~ /\bGUS::Model::\w+::\w+\b/ ? $table : "GUS::Model::$table";
+  $self->userError("table must be in format TableSpace::Table") if ($table !~ /^\w+::\w+$/);
 
   my $sourceIds  = $self->processFile();
 
@@ -250,11 +248,11 @@ sub updateRows {
 
   my $submitted;
 
-  eval ("require $table");
+  eval ("require GUS::Model::$table");
 
-  my $tableId = $self->getTableIdFromTableName($table);
+  my $tableId = $self->className2TableId($table);
 
-  my $pkName = $self->getTablePKFromTableId($tableId);
+  $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
 
   foreach my $source (keys %{$sourceIds}) {
 
