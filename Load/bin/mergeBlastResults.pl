@@ -78,51 +78,80 @@ sub _adjustCoordinates {
 
 sub _removeDuplicates{
   my ($file) = @_;
-  my $id;
-  my %seen;
+  my $discard;
   my %similarities;
+  my $id;
+  my $sum;
 
   open (TEMP, "< $file") or die "Couldn't open $file for reading: $!\n";
 
-  while(<TEMP>){
-    chomp;
+  while(my $line = <TEMP>){
+    chomp $line;
 
-    if (/^\>(\S+)/){
+    if($similarities{$line}){
+      while ($line = <TEMP>){
+	last if ($line =~ /Sum/);
+      }
+	chomp $line;
+    }
+
+    if ($line =~ /^\>(\S+)/){
       my $id = $1;
     }
 
-    if (/Sum/){
-      my @sumLine = split(':', $_);
+    if ($line =~ /Sum/){
+      my @sumLine = split(':', $line);
 
-      unless ($similarities{$sumLine[1]}){
+      if($similarities{$line}->{subjectId} == $sumLine[1] && $similarities{$line}->{queryStart} == $sumLine[6]){
 
-	$similarities{$sumLine[1]} = ({'queryStart' => $sumLine[6],
-				       'queryEnd' => $sumLine[7],
-				       'sum' => $_,
-				      });
+	if ($sumLine[7] > $similarities{$line}->{queryEnd}){
 
-      }elsif ($similarities{$sumLine[1]}->{queryStart} == $sumLine[6] && $similarities{$sumLine[1]}->{queryEnd} == $sumLine[7]){
-	next;
-      }elsif($similarities{$sumLine[1]}->{queryStart} == $sumLine[6]){
+	  delete $similarities{$line};
+	  $similarities{$line} = ({'subjectId' => $sumLine[1],
+				   'queryStart' => $sumLine[6],
+				   'queryEnd' => $sumLine[7],
+				  });
 
-	if ($sumLine[7] > $similarities{$sumLine[1]}->{queryEnd}){
+	  $discard = 0;
 
-	  $similarities{$sumLine[1]}->{queryEnd} = $sumLine[7];
-
-	}else{next;}
+	}else{
+	  $discard = 1;
+	  next;
+	}
 
       }elsif($similarities{$sumLine[1]}->{queryEnd} == $sumLine[7]){
 
 	if ($sumLine[6] < $similarities{$sumLine[1]}->{queryStart}){
 
-	  $similarities{$sumLine[1]}->{queryStart} = $sumLine[6];
-	  $similarities{$sumLine[1]}->{sum} = $_;
+#	  print "Start1: $similarities{$sumLine[1]}->{queryStart}\n";
+#	  print "heldSum1: $similarities{$sumLine[1]}->{sum}\n";
 
-	}else{next;}
+	  $similarities{$sumLine[1]}->{queryStart} = $sumLine[6];
+	  $similarities{$sumLine[1]}->{sum} = $line;
+	  $discard = 0;
+#	  print "Start2: $similarities{$sumLine[1]}->{queryStart}\n";
+#	  print "heldSum2: $similarities{$sumLine[1]}->{sum}\n";
+
+	}else{
+#	  print "I will be discarded\n";
+	  $discard = 1;
+	  next;
+	}
+      }else{
+	$similarities{$line} = ({'subjectId' => $sumLine[1],
+				 'queryStart' => $sumLine[6],
+				 'queryEnd' => $sumLine[7],
+				});
+	$discard = 0;
 
       }
-
+#print "LINE: $_\n";
     }
+
+    if ($line =~ /HSP/ && $discard == 0){
+#      print "I will be kept: $_\n";
+    }
+
   }
 
   close (TEMP);
