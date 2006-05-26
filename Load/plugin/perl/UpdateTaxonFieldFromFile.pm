@@ -252,7 +252,7 @@ sub updateRows {
 
   my $tableId = $self->className2TableId($table);
 
-  $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
+  my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
 
   foreach my $source (keys %{$sourceIds}) {
 
