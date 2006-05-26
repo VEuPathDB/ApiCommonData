@@ -133,12 +133,6 @@ sub run {
 
   $self->getUpdateIds($sourceIds);
 
-  foreach my $k (keys %$sourceIds) {
-    foreach my $l (@{$sourceIds->{$k}->{'pks'}}) {
-      print "$k  :   $sourceIds->{$k}->{'taxon'}  : $l\n";
-    }
-  }
-
   my $updatedRows = $self->updateRows($sourceIds,$table);
 
   my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table";
