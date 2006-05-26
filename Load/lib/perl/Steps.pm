@@ -122,7 +122,7 @@ sub createSimilarityDir {
 		     $wuBlastBinPathCluster,
 		     "${subjectFile}.fsa", "$serverPath/$buildName/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir");
+  $mgr->runCmd("chmod -R g+w $pipelineDir/similarity/${queryFile}-${subjectFile}");
 
   $mgr->endStep($signal);
 }
@@ -621,6 +621,26 @@ sub runSplign {
 
   $mgr->endStep($signal);
 
+}
+
+sub updateTaxonIdField {
+  my ($mgr,$file,$sourceRegex,$taxonRegex,$idSql,$extDbRelSpec,$table) =@_;
+
+  $file = "$mgr->{pipelineDir}/misc/$file";
+
+  my $args = "--fileName '$file' --sourceIdRegex  \"$sourceRegex\" $taxonRegex --idSql '$idSql' --extDbRelSpec '$extDbRelSpec'  --tableName '$table'";
+
+  my $signal = "update${extDbRelSpec}TaxonId";
+
+  $signal =~ s/\|//g;
+
+  $signal =~ s/\///g;
+
+  $signal =~ s/\s//g;
+
+  $mgr->runPlugin($signal,
+		  "ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile", $args,
+		  "Updating taxon_id in $table for $extDbRelSpec based on $file file");
 }
 
 sub loadSplignResults {
