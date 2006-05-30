@@ -30,14 +30,52 @@ GetOptions("verbose!"           => \$verbose,
 &usage("Must Specify input and output files") unless ($inputFile && $outputFile);
 &usage("Input file $inputFile does not exist") unless (-e $inputFile);
 
-#&_adjustCoordinates($inputFile);
-#my $dirname = File::Basename::dirname($inputFile);
+if(-e $outputFile) {
+  print STDERR "WARNING:  Appending to an already existing MainResult File: $outputFile";
+}
+open(OUT, ">> $outputFile") || die "Cannot open outputFile $outputFile for writing";
 
+&_adjustCoordinates($inputFile);
+my $dirname = File::Basename::dirname($inputFile);
 
-my $similarities = &_parseFile($inputFile);
-&_removeDuplicates($similarities);
+opendir(DIR, $dirname) || die "Cannot open directory $dirname for reading: $!";
+
+while(my $fn = readdir(DIR)) {
+  next if($fn !~ /\.bbf$/);
+  my ($name) = $fn =~ /(.+)\.bbf$/;
+
+  $fn = "$dirname/$fn";
+  my $similarities = &_parseFile($fn);
+
+  $similarities = &_removeDuplicates($similarities);
+  my $subjectCount = &_getTotalSubjectCount($similarities);
+
+  print OUT ">$name ($subjectCount subjects)\n";
+  foreach my $subjects (keys(%$similarities)) {
+    foreach my $blastResult (@{$similarities->{$subjects}}) {
+      print OUT $blastResult->toString();
+    }
+  }
+  #Clean up temporary files...
+  system("rm $fn");
+}
 
 #---------------------------------------------------------------
+
+=pod
+
+=item C<_adjustCoordinates>
+
+Reads through the inputFile one time and corrects the querystart 
+and queryend coordinate...creates many output files (one per query_id)
+
+B<Parameters:>
+
+$inputFile(string): Complete Dataset
+
+B<Return type:> C<void> 
+
+=cut
 
 sub _adjustCoordinates {
   my ($inputFile) = @_;
@@ -60,7 +98,7 @@ sub _adjustCoordinates {
       print $fh ">$id\n" unless($seenId{$id});
       $seenId{$id} = 1;
     }
-    if (/Sum/){
+    elsif (/Sum/){
       my @sim = split(':', $_);
 
       $sim[6] += $offset;
@@ -69,7 +107,7 @@ sub _adjustCoordinates {
       my $sum = join(':', @sim);
       print $fh "$sum\n";
     }
-    if (/HSP/){
+    elsif (/HSP/){
       my @hsp = split(':', $_);
       $hsp[9] += $offset;
       $hsp[10] += $offset;
@@ -77,9 +115,31 @@ sub _adjustCoordinates {
       my $hsp = join(':', @hsp);
       print $fh "$hsp\n";
     }
+    else {
+      die "Invalid line in input file: $_";
+    }
   }
   close (RESULTS);
 }
+
+#---------------------------------------------------------------
+
+=pod
+
+=item C<_parseFile>
+
+Input one file containing all data for one query.  Will parse into a 
+data structure.
+
+B<Parameters:>
+
+$file(string): Complete Dataset
+
+B<Return type:> C<hashref>
+
+key=subject_id, value=arrayref of BlastResult Objects
+
+=cut
 
 sub _parseFile {
   (my $file) = @_;
@@ -93,6 +153,7 @@ sub _parseFile {
   while(my $line = <TEMP>){
     chomp $line;
 
+    # Remove complete duplicates...
     while($seen{$line}) {
       while ($line = <TEMP>){
         chomp($line);
@@ -132,77 +193,65 @@ sub _parseFile {
   return($similarities);
 }
 
+#---------------------------------------------------------------
+
+=pod
+
+=item C<_removeDuplicates>
+
+Read through data structure and remove those which have the 
+same queryStart or query end but shorter length.
+
+B<Parameters:>
+
+$similarities(hashref): key=subject_id, value=arrayref of BlastResult objects
+
+B<Return type:> C<hashref>
+
+Updated key=subject_id, value=arrayref of BlastResult Objects
+
+=cut
 
 sub _removeDuplicates {
   my ($similarities) = @_;
 
   foreach my $subjects (keys(%$similarities)) {
     next if(scalar(@{$similarities->{$subjects}}) == 1);
+
     my $newBlastResults = [];
 
-    while(my $blatResult = pop(@{$similarities->{$subjects}})) {
+    while(my $blastResult = pop(@{$similarities->{$subjects}})) {
       if(&_isKeeper($blastResult, $similarities->{$subjects})) {
         push(@{$newBlastResults}, $blastResult);
       }
-
-
-
-
-
-
-	  delete $similarities{$line};
-	  $similarities{$line} = ({'subjectId' => $sumLine[1],
-				   'queryStart' => $sumLine[6],
-				   'queryEnd' => $sumLine[7],
-				  });
-
-	  $discard = 0;
-
-	}else{
-	  $discard = 1;
-	  next;
-	}
-
-      }elsif($similarities{$sumLine[1]}->{queryEnd} == $sumLine[7]){
-
-	if ($sumLine[6] < $similarities{$sumLine[1]}->{queryStart}){
-
-#	  print "Start1: $similarities{$sumLine[1]}->{queryStart}\n";
-#	  print "heldSum1: $similarities{$sumLine[1]}->{sum}\n";
-
-	  $similarities{$sumLine[1]}->{queryStart} = $sumLine[6];
-	  $similarities{$sumLine[1]}->{sum} = $line;
-	  $discard = 0;
-#	  print "Start2: $similarities{$sumLine[1]}->{queryStart}\n";
-#	  print "heldSum2: $similarities{$sumLine[1]}->{sum}\n";
-
-	}else{
-#	  print "I will be discarded\n";
-	  $discard = 1;
-	  next;
-	}
-      }else{
-	$similarities{$line} = ({'subjectId' => $sumLine[1],
-				 'queryStart' => $sumLine[6],
-				 'queryEnd' => $sumLine[7],
-				});
-	$discard = 0;
-
-      }
-#print "LINE: $_\n";
     }
-
-    if ($line =~ /HSP/ && $discard == 0){
-#      print "I will be kept: $_\n";
-    }
-
-  close (TEMP);
+    push(@{$similarities->{$subjects}}, @$newBlastResults);
+  }
+  return($similarities);
 }
+
+#---------------------------------------------------------------
+
+=pod
+
+=item C<_isKeeper>
+
+Returns true if the blastresult is preffered over any on the array (sets isExcluded for
+all those it beat out) and returns false otherwise.
+
+B<Parameters:>
+
+$blastResult(BlastResult): The object to be tested
+$ar(arrayRef): An arrayRef containg BlastResult objects to test against
+
+B<Return type:> C<boolean>
+
+=cut
 
 sub _isKeeper {
   my ($blastResult, $ar) = @_;
 
-  my $newAr = [];
+  return(0) if($blastResult->isExcluded());
 
   foreach my $result (@$ar) {
     my $rsQueryEnd = $result->getQueryEnd();
@@ -215,30 +264,28 @@ sub _isKeeper {
     my $brSubjectStart = $blastResult->getSubjectStart();
     my $brSubjectEnd = $blastResult->getSubjectEnd();
 
-    if($brQueryStart == $rsQueryStart && $brSubjectStart == $rsSubjectStart) {
-      if($resultQueryEnd > $brQueryEnd) {
-        return(0);
-      }
-      else {
-        
-      }
+    if($brQueryStart == $rsQueryStart && $rsQueryEnd > $brQueryEnd && $rsSubjectStart == $brSubjectStart) {
+      return(0);
     }
-
-    
+    if($brQueryStart == $rsQueryStart && $rsQueryEnd < $brQueryEnd && $rsSubjectStart == $brSubjectStart) {
+      $result->setExcluded();
+    }
+    if($brQueryEnd == $rsQueryEnd && $rsQueryStart < $brQueryStart && $rsSubjectEnd == $brSubjectEnd) {
+      return(0);
+    }
+    if($brQueryEnd == $rsQueryEnd && $rsQueryStart > $brQueryStart  && $rsSubjectEnd == $brSubjectEnd) {
+      $result->setExcluded();
+    }
+    if($brQueryEnd == $rsQueryEnd && $rsQueryStart == $brQueryStart &&
+          $rsSubjectEnd == $brSubjectEnd  && $rsSubjectStart == $brSubjectStart) {
+      die "Query Start and End are equal... should have been excluded in previous step: $!";
+    }
   }
-  
-
+  return(1);
 }
 
+#---------------------------------------------------------------
 
-
-sub usage {
-  my ($msg) = @_;
-
-  print STDERR "$msg\n" if($msg);
-  print STDERR "usage:  perl mergeBlastResults.pl --inputFile <FILENAME> --outputFile <FILENAME> [--verbose]\n";
-  exit(0);
-}
 
 sub _getFh {
   my ($id, $prevId, $fh, $inputFile, $seen) = @_;
@@ -259,6 +306,32 @@ sub _getFh {
   return(\*FILE);
 }
 
+#---------------------------------------------------------------
+
+sub _getTotalSubjectCount {
+  my ($similarities) = @_;
+
+  my $count;
+
+  foreach my $subjects (keys(%$similarities)) {
+    foreach my $blastResult (@{$similarities->{$subjects}}) {
+      $count++;
+    }
+  }
+  return($count);
+}
+
+#---------------------------------------------------------------
+
+sub usage {
+  my ($msg) = @_;
+
+  print STDERR "$msg\n" if($msg);
+  print STDERR "usage:  perl mergeBlastResults.pl --inputFile <FILENAME> --outputFile <FILENAME> [--verbose]\n";
+  exit(0);
+}
+
+
 #==================================================================
 
 package BlastResult;
@@ -274,6 +347,7 @@ sub new {
                _subj_start => $subjectStart,
                _subj_end => $subjectEnd,
                _sum_line => $sumline,
+               _excluded => '',
                _hsps => [],
                };
 
@@ -282,13 +356,15 @@ sub new {
   return $self;
 }
 
-sub getQueryStart {$_[0]->{_query_start}}
-sub getQueryEnd   {$_[0]->{_query_end}}
-sub getSubjectStart {$_[0]->{_subj_start}}
-sub getSubjectEnd   {$_[0]->{_subj_end}}
-sub getSumLine    {$_[0]->{_sum_line}}
-sub getHsps       {$_[0]->{_hsps}}
+sub getQueryStart      {$_[0]->{_query_start}}
+sub getQueryEnd        {$_[0]->{_query_end}}
+sub getSubjectStart    {$_[0]->{_subj_start}}
+sub getSubjectEnd      {$_[0]->{_subj_end}}
+sub getSumLine         {$_[0]->{_sum_line}}
+sub isExcluded         {$_[0]->{_excluded}}
+sub setExcluded        {$_[0]->{_excluded} = 1}
 
+sub getHsps            {$_[0]->{_hsps}}
 sub addHsp {
   my ($self, $hspLine) = @_;
 
@@ -297,5 +373,17 @@ sub addHsp {
   push(@{$self->getHsps}, $hspLine);
 }
 
+
+
+sub toString {
+  my ($self) = @_;
+
+  my $s = $self->getSumLine() . "\n";
+
+  foreach my $hsp (@{$self->getHsps()}) {
+    $s = $s . $hsp . "\n";
+  }
+  return($s);
+}
 
 1;
