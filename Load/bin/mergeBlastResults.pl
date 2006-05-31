@@ -254,6 +254,8 @@ sub _isKeeper {
   return(0) if($blastResult->isExcluded());
 
   foreach my $result (@$ar) {
+    next if $result->isExcluded();
+
     my $rsQueryEnd = $result->getQueryEnd();
     my $rsQueryStart = $result->getQueryStart();
     my $rsSubjectStart = $result->getSubjectStart();
