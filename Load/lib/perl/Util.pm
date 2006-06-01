@@ -71,6 +71,20 @@ return $aaSeqId;
 }
 
 
+sub getGeneFeatureIdFromSourceId {
+  my $featureId = shift;
+
+  my $gusGF = GUS::Model::DoTS::GeneFeature->new( { 'source_id' => $featureId, } );
+
+  $gusGF->retrieveFromDB() ||
+       die "no translated aa sequence: $featureId";
+
+  my $gusAASeq = $gusGF->getId();
+
+  return $gusAASeq;
+}
+
+
 
 1;
 
