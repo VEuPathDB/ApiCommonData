@@ -24,6 +24,7 @@ sub new {
                                                                                                                              
    $self->_initEvidenceCodes();
    $self->_initGoTermIds($goRelease);
+   $self->_initGoTermNames($goRelease);
    
    return $self;
 }
@@ -35,7 +36,19 @@ sub getGoTermId {
   my $goTermId = $self->{goTermIds}->{$goId};
 
   $goTermId
-    || $self->userError("Can't find GoTerm in database for GO Id: $goId");
+    || print("Can't find GoTerm in database for GO Id: $goId");
+
+  return $goTermId;
+}
+
+sub getGoTermIdFromName {
+  my ($self, $goName) = @_;
+
+  $goName =~ tr/ /_/;
+  my $goTermId = $self->{goTermNames}->{$goName};
+
+  $goTermId
+    || print("Can't find GoTerm in database for GO Id: $goName");
 
   return $goTermId;
 }
@@ -166,5 +179,33 @@ sub _initGoTermIds {
     }
 }
 
+sub _initGoTermNames {
+   my ($self,$goRelease) = @_;
+
+   foreach my $dbRlsId (@$goRelease) {
+
+      my ($dbName,$dbVersion) = split(/\^/,$dbRlsId);
+
+      my $goVersion = $self->{plugin}->getExtDbRlsId($dbName,
+                                                   $dbVersion,)
+              or die "Couldn't retrieve external database!\n";
+
+      my $sql = "SELECT go_term_id, 
+                     name FROM SRes.GOTerm WHERE 
+                     external_database_release_id = $goVersion
+                 UNION
+                 SELECT go_term_id,
+                     text FROM SRes.GOSynonym WHERE
+                     external_database_release_id = $goVersion
+                     AND text is not null";
+
+        my $stmt = $self->{plugin}->prepareAndExecute($sql);
+
+        while (my ($go_term_id, $name) = $stmt->fetchrow_array()) {
+           $name =~ tr/ /_/;
+           $self->{goTermNames}->{$name} = $go_term_id;
+        }
+    }
+}
 1;
 
