@@ -12,7 +12,7 @@ use GUS::Supported::GusConfig;
 
 my $verbose = 0;
 my $gusConfigFile;
-my @taxa;
+my $taxIds;
 my $maxOverlap = 25;
 my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
 my $inputFile;
@@ -20,7 +20,7 @@ my $outputFile;
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
-           "taxon=s"         => \@taxa,
+           "taxon=s"         => \$taxIds,
            "maxOverlap=i"    => \$maxOverlap,
            "gi2taxidFile=s"  => \$gi2taxidFile,
            "inputFile=s"     => \$inputFile,
@@ -36,6 +36,8 @@ if ($gi2taxidFile =~ m/\.gz$/) {
 } else {
   open(GI2TAXID, "<$gi2taxidFile") or die $!;
 }
+
+my @taxa = split(/,/,$taxIds);
 
 unless (-e $inputFile) {
   die "The specified inputFile is not valid!\n";
@@ -92,11 +94,8 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
   my $taxon = $_;
   my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
   SELECT ncbi_tax_id
-  FROM   SRes.Taxon t,
-         SRes.TaxonName tn
-  WHERE  t.taxon_id = tn.taxon_id
-    AND  tn.name_class = 'scientific name'
-    AND  tn.name = ?
+  FROM   SRes.Taxon
+  WHERE  ncbi_tax_id = ?
 EOSQL
 
   unless ($ncbiTaxonId) {
@@ -107,25 +106,45 @@ EOSQL
 } @taxa;
 
 
+my $sql_statement = <<EOSQL;
+ SELECT t.ncbi_tax_id, f.hierarchy
+  FROM   sres.taxon t,
+         ( SELECT e.taxon_id, level AS hierarchy
+           FROM   sres.taxon e
+                  START WITH e.ncbi_tax_id = ?
+                  CONNECT BY PRIOR e.parent_id = e.taxon_id
+         ) f
+  WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
+    AND  t.taxon_id = f.taxon_id
+  ORDER BY f.hierarchy ASC
+EOSQL
+
+print $sql_statement;
+
+my $lookup = $dbh->prepare($sql_statement);
+
 # setup taxon-specific hit location storage tables:
 
 my %insert;
 my %search;
 for my $taxonId ("root", @taxa) {
 
-  $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
+  $dbh->do("DROP TABLE hits_${taxonId}");
   $dbh->do(<<EOSQL);
-  CREATE TEMPORARY TABLE hits_${taxonId} (
+  CREATE TABLE hits_${taxonId} (
     contig_id INTEGER NOT NULL,
-    start INTEGER NOT NULL,
-    stop INTEGER NOT NULL,
-    is_reversed INTEGER NOT NULL,
-    INDEX (contig_id, is_reversed, start, stop)
+    hit_start INTEGER NOT NULL,
+    hit_stop INTEGER NOT NULL,
+    is_reversed INTEGER NOT NULL
   )
 EOSQL
 
+  $dbh->do(<<EOSQL);
+  CREATE INDEX hits_${taxonId}_ix ON hits_${taxonId} (contig_id, is_reversed, hit_start, hit_stop)
+EOSQL
+
   $insert{$taxonId} = $dbh->prepare(<<EOSQL);
-  INSERT INTO hits_${taxonId} (contig_id, is_reversed, start, stop)
+  INSERT INTO hits_${taxonId} (contig_id, is_reversed, hit_start, hit_stop)
             VALUES (        ?,      ?,     ?,    ?)
 EOSQL
 
@@ -134,8 +153,8 @@ EOSQL
   FROM   hits_${taxonId}
   WHERE  contig_id = ?
     AND  is_reversed = ?
-    AND  ? <= stop
-    AND  ? >= start
+    AND  ? <= hit_stop
+    AND  ? >= hit_start
 EOSQL
 
 }
@@ -185,7 +204,7 @@ rename($filename, $outputFile)
 
 # clean up temporary tables:
 for my $taxonId ("root", @taxa) {
-  $dbh->do("DROP TABLE IF EXISTS hits_${taxonId}");
+  $dbh->do("DROP TABLE hits_${taxonId}");
 }
 
 exit();
@@ -201,8 +220,8 @@ sub process {
       $reversed, $frame,
      ) = split(":", $data, 13);
 
-  my $ncbiTaxonId = $gi2ncbiTaxonId{$gi}
-    or die "Couldn't find NCBI taxon identifier for: $gi\n";
+  my $ncbiTaxonId = $gi2ncbiTaxonId{$gi};
+  die "Couldn't find NCBI taxon identifier for: $gi\n" unless $ncbiTaxonId > 0;
 
   my $taxonId = calcTaxonId($ncbiTaxonId);
   $taxonId = "root" unless defined $taxonId;
@@ -220,20 +239,35 @@ sub process {
 }
 
 my %ncbiTaxonIdMap;
-my $lookup = $dbh->prepare(<<EOSQL);
+# my $sql_statement = <<EOSQL;
+#  SELECT t.ncbi_tax_id, f.hierarchy
+#   FROM   sres.taxon t,
+#          ( SELECT e.taxon_id, level AS hierarchy
+#            FROM   sres.taxon e
+#                   START WITH e.ncbi_tax_id = ?
+#                   CONNECT BY PRIOR e.parent_id = e.taxon_id
+#          ) f
+#   WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
+#     AND  t.taxon_id = f.taxon_id
+#   ORDER BY f.hierarchy ASC
+# EOSQL
 
-  SELECT t.ncbi_tax_id, f.hierarchy
-  FROM   sres.taxon t,
-         ( SELECT e.taxon_id, level AS hierarchy
-           FROM   sres.taxon e
-                  START WITH e.ncbi_tax_id = ?
-                  CONNECT BY PRIOR e.parent_id = e.taxon_id
-         ) f
-  WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
-    AND  t.taxon_id = f.taxon_id
-  ORDER BY f.hierarchy ASC
+# print $sql_statement;
 
-EOSQL
+# exit;
+# my $lookup = $dbh->prepare($sql_statement);
+
+#   SELECT t.ncbi_tax_id, f.hierarchy
+#   FROM   sres.taxon t,
+#          ( SELECT e.taxon_id, level AS hierarchy
+#            FROM   sres.taxon e
+#                   START WITH e.ncbi_tax_id = ?
+#                   CONNECT BY PRIOR e.parent_id = e.taxon_id
+#          ) f
+#   WHERE  t.ncbi_tax_id IN (join(", ", grep { $_ ne "root"} @taxa))
+#     AND  t.taxon_id = f.taxon_id
+#   ORDER BY f.hierarchy ASC
+# EOSQL
 
 sub calcTaxonId {
 
@@ -241,6 +275,7 @@ sub calcTaxonId {
 
   return $ncbiTaxonIdMap{$ncbiTaxonId} ||= do {
     my $taxonId = "root";
+
     if (@taxa) {
       $lookup->execute($ncbiTaxonId);
       if (my $row = $lookup->fetchrow_arrayref()) {
