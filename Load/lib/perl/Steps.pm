@@ -2478,9 +2478,9 @@ sub transformSimilarityCoordinates {
 
   my $signal = "transformSimilarityToVirtualCoordinates";
 
-  my $args = "--extDbRlsSpec $extDbRlsSpec --virtExtDbRlsSpec $virtExtDbRlsSpec --commit";
+  my $args = "--extDbRlsSpec '$extDbRlsSpec' --virtExtDbRlsSpec '$virtExtDbRlsSpec'";
 
-  $mgr->runPlugin($signal, "ToxoDBData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from $extDbRlsSpec to $virtExtDbRlsSpec");
+  $mgr->runPlugin($signal, "ToxoDBData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from '$extDbRlsSpec' to '$virtExtDbRlsSpec'");
 
 }
 
