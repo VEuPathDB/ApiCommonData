@@ -2472,6 +2472,18 @@ sub makeUserProjectGroup {
 }
 
 
+sub transformSimilarityCoordinates {
+  my ($mgr, $extDbRlsSpec, $virtExtDbRlsSpec) = @_;
+
+
+  my $signal = "transformSimilarityToVirtualCoordinates";
+
+  my $args = "--extDbRlsSpec $extDbRlsSpec --virtExtDbRlsSpec $virtExtDbRlsSpec --commit";
+
+  $mgr->runPlugin($signal, "ToxoDBData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from $extDbRlsSpec to $virtExtDbRlsSpec");
+
+}
+
 # $seqFile from earlier extractNaSeq() step, outputs gff file to sseqfiles
 sub makeOrfFile {
   my ($mgr, $seqFile, $minPepLength) = @_;
