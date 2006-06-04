@@ -257,12 +257,47 @@ sub createPsipredSubdir {
   $mgr->endStep($signal);
 }
 
+sub startPsipredOnComputeCluster {
+  my ($mgr,$query,$subject,$queue) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $serverPath = $propertySet->getProp('serverPath');
+
+  $subject = "${subject}Filt";
+
+  my $signal = "start" . uc($query) . uc($subject);
+
+  return if $mgr->startStep("Starting psipred of $query vs $subject on cluster", $signal);
+
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runPsipred $serverPath/$mgr->{buildName} NUMBER_OF_NODES $query $subject $queue";
+  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+sub loadSecondaryStructures {
+  my ($mgr, $dir, $predAlg) = @_;
+
+  $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
+
+  my $args = "--predAlgInvocationId $predAlg --directory $dirPath";
+
+
+  $mgr->runPlugin("load${dir}SecondaryStructures",
+		  "GUS::Supported::Plugin::InsertSecondaryStructure",$args,
+                  "Inserting $dir secondary structures from psipred");
+
+}
+
 
 sub documentHMMPfam {
   my ($mgr) = @_;
   my $description = "Searches HMMs from the PFAM database for significantly similar sequences in the input protein sequence.";
   my $documentation =    { name => "HMMPfam",
-                           input => "fasta file of protein sequences and PFAM database",
+                         input => "fasta file of protein sequences and PFAM database",
 			   output => "file containing the score and E-value indicating confidence that a query 
                                       sequence contains one or more domains belonging to a domain family",
 			   descrip => $description,
