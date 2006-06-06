@@ -2508,12 +2508,12 @@ sub makeUserProjectGroup {
 
 
 sub transformSimilarityCoordinates {
-  my ($mgr, $extDbRlsSpec, $virtExtDbRlsSpec) = @_;
+  my ($mgr, $extDbRlsSpec, $virtExtDbRlsSpec, $seqRole) = @_;
 
 
   my $signal = "transformSimilarityToVirtualCoordinates";
 
-  my $args = "--extDbRlsSpec '$extDbRlsSpec' --virtExtDbRlsSpec '$virtExtDbRlsSpec'";
+  my $args = "--extDbRlsSpec '$extDbRlsSpec' --virtExtDbRlsSpec '$virtExtDbRlsSpec' --sequenceRole $seqRole";
 
   $mgr->runPlugin($signal, "ToxoDBData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from '$extDbRlsSpec' to '$virtExtDbRlsSpec'");
 
