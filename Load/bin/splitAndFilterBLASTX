@@ -10,9 +10,11 @@ use Getopt::Long qw(GetOptions);
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 
+use File::Temp qw(tempfile);;
+
 my $verbose = 0;
 my $gusConfigFile;
-my $taxIds;
+my @taxa;
 my $maxOverlap = 25;
 my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
 my $inputFile;
@@ -20,7 +22,7 @@ my $outputFile;
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
-           "taxon=s"         => \$taxIds,
+           "taxon=s"         => \@taxa,
            "maxOverlap=i"    => \$maxOverlap,
            "gi2taxidFile=s"  => \$gi2taxidFile,
            "inputFile=s"     => \$inputFile,
@@ -33,11 +35,10 @@ unless (-e $gi2taxidFile) {
 
 if ($gi2taxidFile =~ m/\.gz$/) {
   open(GI2TAXID, "gunzip -c $gi2taxidFile |") or die $!;
-} else {
+}
+else {
   open(GI2TAXID, "<$gi2taxidFile") or die $!;
 }
-
-my @taxa = split(/,/,$taxIds);
 
 unless (-e $inputFile) {
   die "The specified inputFile is not valid!\n";
@@ -45,7 +46,8 @@ unless (-e $inputFile) {
 
 if ($inputFile =~ m/\.gz$/) {
   open(INPUT, "gunzip -c $inputFile |") or die $!;
-} else {
+} 
+else {
   open(INPUT, "<$inputFile") or die $!;
 }
 
@@ -75,7 +77,8 @@ close(GI2TAXID);
 # reopen for actual parsing:
 if ($inputFile =~ m/\.gz$/) {
   open(INPUT, "gunzip -c $inputFile |") or die $!;
-} else {
+}
+else {
   open(INPUT, "<$inputFile") or die $!;
 }
 
@@ -94,8 +97,11 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
   my $taxon = $_;
   my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
   SELECT ncbi_tax_id
-  FROM   SRes.Taxon
-  WHERE  ncbi_tax_id = ?
+  FROM   SRes.Taxon t,
+         SRes.TaxonName tn
+  WHERE  t.taxon_id = tn.taxon_id
+    AND  tn.name_class = 'scientific name'
+    AND  tn.name = ?
 EOSQL
 
   unless ($ncbiTaxonId) {
@@ -118,8 +124,6 @@ my $sql_statement = <<EOSQL;
     AND  t.taxon_id = f.taxon_id
   ORDER BY f.hierarchy ASC
 EOSQL
-
-print $sql_statement;
 
 my $lookup = $dbh->prepare($sql_statement);
 
@@ -156,7 +160,6 @@ EOSQL
     AND  ? <= hit_stop
     AND  ? >= hit_start
 EOSQL
-
 }
 
 my %contigs;
@@ -166,19 +169,24 @@ my $idLine;
 my $sum;
 my @hsps;
 my %seen;
+my $numProc;
+my %gis;
 
 while (<INPUT>) {
   if (m/^\s*HSP\d+:\s*(\S+)/) {
     push @hsps, $_;
-  } else {
-
+  }
+  else {
     process() if @hsps;
     undef @hsps;
 
     if (m/^>(\S+)/) {
       $queryId = $1;
       $idLine = $_;
-    } elsif (m/^\s*Sum:/) {
+      $numProc++;
+      print STDERR "Number of query similarities being processed : $numProc\n" if ($numProc % 100 == 0);
+    }
+    elsif (m/^\s*Sum:/) {
       $sum = $_;
     }
   }
@@ -193,7 +201,8 @@ open(OLD, "<$outputFile") or die "Couldn't reopen outputFile: $!\n";
 while (<OLD>) {
   if (m/^>(\S+)/) {
     print $fh ">$1 (@[{$seen{$1} || 0}] subjects)\n";
-  } else {
+  }
+  else {
     print $fh $_;
   }
 }
@@ -211,6 +220,7 @@ exit();
 
 sub process {
   my ($data) = $sum =~ m/Sum:\s+(\S+)/;
+
   my ($gi,
       $score, $pvalue,
       $sstart, $sstop,
@@ -220,8 +230,18 @@ sub process {
       $reversed, $frame,
      ) = split(":", $data, 13);
 
+  $gis{$gi}=1;
+  my $n = scalar (keys %gis);
+  print STDERR "Number of gi numbers : $n\n" if ($n % 1000 == 0);
+
   my $ncbiTaxonId = $gi2ncbiTaxonId{$gi};
-  die "Couldn't find NCBI taxon identifier for: $gi\n" unless $ncbiTaxonId > 0;
+  #die "Couldn't find NCBI taxon identifier for: $gi\n" unless $ncbiTaxonId > 0;
+
+  if (! $ncbiTaxonId){
+    print STDERR ("Couldn't find NCBI taxon identifier for: $gi\n");
+    return;
+  }
+
 
   my $taxonId = calcTaxonId($ncbiTaxonId);
   $taxonId = "root" unless defined $taxonId;
@@ -239,35 +259,6 @@ sub process {
 }
 
 my %ncbiTaxonIdMap;
-# my $sql_statement = <<EOSQL;
-#  SELECT t.ncbi_tax_id, f.hierarchy
-#   FROM   sres.taxon t,
-#          ( SELECT e.taxon_id, level AS hierarchy
-#            FROM   sres.taxon e
-#                   START WITH e.ncbi_tax_id = ?
-#                   CONNECT BY PRIOR e.parent_id = e.taxon_id
-#          ) f
-#   WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
-#     AND  t.taxon_id = f.taxon_id
-#   ORDER BY f.hierarchy ASC
-# EOSQL
-
-# print $sql_statement;
-
-# exit;
-# my $lookup = $dbh->prepare($sql_statement);
-
-#   SELECT t.ncbi_tax_id, f.hierarchy
-#   FROM   sres.taxon t,
-#          ( SELECT e.taxon_id, level AS hierarchy
-#            FROM   sres.taxon e
-#                   START WITH e.ncbi_tax_id = ?
-#                   CONNECT BY PRIOR e.parent_id = e.taxon_id
-#          ) f
-#   WHERE  t.ncbi_tax_id IN (join(", ", grep { $_ ne "root"} @taxa))
-#     AND  t.taxon_id = f.taxon_id
-#   ORDER BY f.hierarchy ASC
-# EOSQL
 
 sub calcTaxonId {
 
