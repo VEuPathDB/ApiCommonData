@@ -281,7 +281,7 @@ sub startPsipredOnComputeCluster {
 sub loadSecondaryStructures {
   my ($mgr, $dir, $predAlg) = @_;
 
-  $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
+  my $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
 
   my $args = "--predAlgInvocationId $predAlg --directory $dirPath";
 
@@ -2511,7 +2511,7 @@ sub transformSimilarityCoordinates {
   my ($mgr, $extDbRlsSpec, $virtExtDbRlsSpec, $seqRole) = @_;
 
 
-  my $signal = "transformSimilarityToVirtualCoordinates";
+  my $signal = "transform${seqRole}SimilarityToVirtualCoordinates";
 
   my $args = "--extDbRlsSpec '$extDbRlsSpec' --virtExtDbRlsSpec '$virtExtDbRlsSpec' --sequenceRole $seqRole";
 
