@@ -1,5 +1,13 @@
 #!/usr/bin/perl
 
+# filter blastx results
+# separate hits into the taxonomic categories.  the categories are specified on the command line plus one called "root" for all remaining taxa.
+# (I believe the taxa provided on the command line must be in a parent-child
+# hierarchy??.  eg: root, eukaryota, apicomplexa, toxoplasma)
+# in areas of physical overlap, only keep maxOverlap number of hits from
+# each category (the best hits)
+
+
 use strict;
 use warnings;
 
@@ -92,7 +100,8 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
                                         )->getQueryHandle();
 
 # confirm that we have all valid taxa, and convert names to NCBI taxon
-# identifiers:
+# identifiers
+# result: an array of NCBI TaxIds for the taxon names provided on command line
 @taxa = map {
   my $taxon = $_;
   my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
@@ -111,6 +120,10 @@ EOSQL
   $ncbiTaxonId;
 } @taxa;
 
+# an sql run on each subject
+# input: subject's tax_id
+# output: presence or absence in each of the command line taxa (or none)
+#         ordered by their hierarchy level(?)
 
 my $sql_statement = <<EOSQL;
  SELECT t.ncbi_tax_id, f.hierarchy
@@ -127,7 +140,11 @@ EOSQL
 
 my $lookup = $dbh->prepare($sql_statement);
 
-# setup taxon-specific hit location storage tables:
+# setup taxon-specific hit location storage tables
+# ie, make a table for each taxon provided on the command line
+# to hold the hits that belong to those taxa
+# note: because the input file has hits ordered by e-value within a subject
+# these tables are effectively ordered by (subject,e-value)
 
 my %insert;
 my %search;
