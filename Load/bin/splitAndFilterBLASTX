@@ -200,7 +200,7 @@ my ($fh, $filename) = tempfile();
 open(OLD, "<$outputFile") or die "Couldn't reopen outputFile: $!\n";
 while (<OLD>) {
   if (m/^>(\S+)/) {
-    print $fh ">$1 (@[{$seen{$1} || 0}] subjects)\n";
+    print $fh ">$1 (@{[$seen{$1} || 0]} subjects)\n";
   }
   else {
     print $fh $_;
@@ -208,8 +208,10 @@ while (<OLD>) {
 }
 close(OLD);
 
-rename($filename, $outputFile)
-  or die "Couldn't replace outputFile with $filename: $!\n";
+#rename($filename, $outputFile)
+#  or die "Couldn't replace outputFile with $filename: $!\n";
+
+system("mv $filename $outputFile");
 
 # clean up temporary tables:
 for my $taxonId ("root", @taxa) {
