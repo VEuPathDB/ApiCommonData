@@ -48,4 +48,42 @@ CREATE INDEX SequenceAlias_idx ON SequenceAlias.lowercase_source_id;
 
 GRANT SELECT ON SequenceAlias TO gus_r;
 
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW GoTermSummary AS
+SELECT gf.source_id, 
+       decode(ga.is_not, 0, '', 1, 'not', ga.is_not) as is_not,
+                 gt.go_id, o.ontology, gt.name AS go_term_name,
+                  gail.name AS source, gec.name as evidence_code
+FROM dots.GeneFeature gf, dots.Transcript t,
+     dots.TranslatedAaFeature taf, dots.GoAssociation ga,
+     sres.GoTerm gt, dots.GoAssociationInstance gai,
+     dots.GoAssociationInstanceLoe gail,
+     dots.GoAssocInstEvidCode gaiec, sres.GoEvidenceCode gec,
+     (SELECT gr.child_term_id AS go_term_id,
+             DECODE(gp.name, 'biological_process', 'P',
+                     'molecular_function', 'F', 'cellular_component', 'C')
+             AS ontology
+      FROM sres.GoRelationship gr, sres.GoTerm gp
+      WHERE gr.parent_term_id = gp.go_term_id
+        AND gp.go_id in ('GO:0008150','GO:0003674','GO:0005575')) o
+WHERE gf.na_feature_id = t.parent_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = ga.row_id
+  AND ga.table_id = (SELECT table_id
+                     FROM core.TableInfo
+                     WHERE name = 'TranslatedAASequence')
+  AND ga.go_term_id = gt.go_term_id
+  AND ga.go_association_id = gai.go_association_id
+  AND gai.go_assoc_inst_loe_id = gail.go_assoc_inst_loe_id
+  AND gai.go_association_instance_id
+      = gaiec.go_association_instance_id
+  AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
+  AND gt.go_term_id = o.go_term_id(+)
+ORDER BY o.ontology, gt.go_id;
+
+CREATE INDEX GoTermSum_sourceId_idx ON GoTermSummary (source_id);
+
+GRANT SELECT ON GoTermSummary TO gus_r;
+
 exit
