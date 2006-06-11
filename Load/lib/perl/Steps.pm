@@ -278,12 +278,27 @@ sub startPsipredOnComputeCluster {
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
 
+sub makeAlgInv {
+  my ($mgr,$algName,$algDesc,$algImpVer,$algInvStart,$algInvEnd,$algResult,$signal) = @_;
+
+  $algName =~ s/\s//g;
+  $algName =~ s/\///g;
+
+  my $signal = "$algName${signal}";
+
+  my $args = "--AlgorithmName $algName --AlgorithmDescription $algDesc --AlgImpVersion $algImpVer  --AlgInvocStart $algInvStart --AlgInvocEnd $algInvEnd --AlgInvocResult $algResult";
+
+  $mgr->runPlugin($signal,
+		  "GUS::Community::Plugin::InsertMinimalAlgorithmInvocation",$args,
+		  "Inserting minimal alg_inv_id for $signal $algName ");
+}
+
 sub loadSecondaryStructures {
-  my ($mgr, $dir, $predAlg) = @_;
+  my ($mgr, $algName,$algImpVer,$algInvStart,$dir) = @_;
 
   my $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
 
-  my $args = "--predAlgInvocationId $predAlg --directory $dirPath";
+  my $args = "--predAlgName $algName --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --directory $dirPath";
 
 
   $mgr->runPlugin("load${dir}SecondaryStructures",
@@ -301,7 +316,7 @@ sub documentHMMPfam {
 			   output => "file containing the score and E-value indicating confidence that a query 
                                       sequence contains one or more domains belonging to a domain family",
 			   descrip => $description,
-			   tools => [{ name => "HMMPfam",
+                           tools => [{ name => "HMMPfam",
 				       version => "2.3.2",
 				       params => "--A 0 --acc --cut_ga",
 				       url => "http://hmmer.wustl.edu",
