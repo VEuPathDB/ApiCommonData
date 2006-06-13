@@ -206,7 +206,7 @@ sub getTaxonId {
     $id = $taxonIds->{$val};
   }
   else {
-    $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdFromTaxon($val) ;
+    $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdfromTaxon($val) ;
     $taxonIds->{$val} = $id;
   }
 
@@ -226,6 +226,8 @@ sub getIdFromTaxonName {
 
   $id = $self->getIdFromTaxonName('unknown') if (! $id);
 
+  $self->undefPointerCache();
+
   return $id;
 }
 
@@ -239,6 +241,8 @@ sub getIdfromTaxon {
   my $id = $taxon->getId();
 
   $id = $self->getIdFromTaxonName('unknown') if (! $id);
+
+  $self->undefPointerCache();
 
   return $id;
 }
