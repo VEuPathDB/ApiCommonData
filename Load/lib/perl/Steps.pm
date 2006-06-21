@@ -198,6 +198,22 @@ sub createTRNAscanDir {
   $mgr->endStep($signal);
 }
 
+sub rnaScanToGff2 {
+  my ($mgr,$dir) = @_;
+
+  my $signal = "tRNA${dir}GFF";
+
+  return if $mgr->startStep("Creating $dir tRNAscan gff2 file", $signal);
+
+  my $inFile = "$mgr->{'pipelineDir'}/trnascan/${dir}/master/mainresult/trnascan.out";
+
+  my $outFile = "$mgr->{'pipelineDir'}/trnascan/${dir}/master/mainresult/trnascan.gff2";
+
+  $mgr->runCmd("makeGFF2File -infile $inFile -outfile $outFile");
+
+  $mgr->endStep($signal);
+}
+
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
@@ -285,6 +301,8 @@ sub makeAlgInv {
   $algName =~ s/\///g;
 
   my $signal = "$algName${signal}";
+
+  $algResult =~ s/\s/_/g;
 
   my $args = "--AlgorithmName $algName --AlgorithmDescription $algDesc --AlgImpVersion $algImpVer  --AlgInvocStart $algInvStart --AlgInvocEnd $algInvEnd --AlgInvocResult $algResult";
 
@@ -707,7 +725,7 @@ sub loadSplignResults {
   my $args = "--inputFile $splignFile --estTable '$queryTable' --seqTable '$subjectTable' --estExtDbRlsSpec '$queryExtDbRlsSpec' --seqExtDbRlsSpec '$subjectExtDbRlsSpec'";
 
   $mgr->runPlugin($signal,
-		  "ApiCommmonData::Load::Plugin::InsertSplignAlignments", $args,
+		  "ApiCommonData::Load::Plugin::InsertSplignAlignments", $args,
 		  "Load splign results for $name $query vs $subject");
 
 }
@@ -2452,6 +2470,7 @@ sub createExtDbAndDbRls {
 		  "GUS::Supported::Plugin::InsertExternalDatabaseRls",$releasePluginArgs,
 		  "Inserting/checking external database release for $extDbName $extDbRlsVer");
 }
+
 
 sub getTableId {
   my ($mgr,$tableName) = @_;
