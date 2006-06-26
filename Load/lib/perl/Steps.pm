@@ -214,6 +214,20 @@ sub rnaScanToGff2 {
   $mgr->endStep($signal);
 }
 
+sub loadTRNAscan {
+  my ($mgr,$scanDbName,$scanDbVer,$genomeDbName,$genomeDbVer,$soVer,$name) = @_;
+
+  my $signal = "tRNAScan$name";
+
+  my $dataFile = "$mgr->{'pipelineDir'}/trnascan/$name/master/mainresult/trnascan.out";
+
+  my $args = "--data_file $dataFile --scanDbName '$scanDbName' --scanDbVer '$scanDbVer' --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer' --soVersion '$soVer'";
+
+  $mgr->runPlugin($signal,
+		  "ApiCommonData::Load::Plugin::LoadTRNAScan", $args,
+		  "Loading tRNAscan results for $name");
+}
+
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
