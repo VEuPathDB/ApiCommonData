@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Getopt::Long qw(GetOptions);
+
+my ($inFile, $outFile, $regex);
+
+GetOptions("inFile:s" => \$inFile,
+	   "outFile:s" => \$outFile,
+	   "regex:s" => \$regex,
+	  );
+
+unless ($inFile && $outFile && $regex) {
+  die "USAGE: formatGFF --inFile <FILENAME> --outFile <FILENAME> --regex <STRING>";
+}
+
+open (IN,"<$inFile");
+open (OUT,">$outFile");
+
+while (<IN>){
+  chomp;
+
+  my @F = split("\t", $_, 9);
+
+  $F[8] =~ s/(.*?)\s+;\s+(${regex}\s+\S+)(.*)/$2 ; $1$3/;
+  $F[8] =~ s/\s* ; \s*/ ; /g;
+
+  print OUT join("\t", @F);
+  print OUT "\n";
+
+}
+
+close (IN);
+close (OUT);
+
+1;
+
