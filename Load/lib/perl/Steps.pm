@@ -326,12 +326,13 @@ sub makeAlgInv {
 }
 
 sub loadSecondaryStructures {
-  my ($mgr, $algName,$algImpVer,$algInvStart,$dir) = @_;
+  my ($mgr, $algName,$algImpVer,$algInvStart,$dir,$setPercent) = @_;
 
   my $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
 
   my $args = "--predAlgName $algName --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --directory $dirPath";
 
+  $args .= " --setPercentages" if ($setPercent);
 
   $mgr->runPlugin("load${dir}SecondaryStructures",
 		  "GUS::Supported::Plugin::InsertSecondaryStructure",$args,
@@ -927,6 +928,31 @@ sub documentTandemRepeatFinder {
   $mgr->documentStep("trf", $documentation);
 }
 
+sub documentSplign {
+  my ($mgr, $args) = @_;
+
+  my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
+
+  my $documentation =
+    { name => "TRF",
+      input => "fasta file of DNA sequences",
+      output => "a repeat table file and an alignment file",
+      descrip => $description,
+      tools => [
+		{ name => "TRF",
+		  version => "3.21",
+		  params => $args,
+		  url => "http://tandem.bu.edu/trf/trf.html",
+		  pubmedIds => "9862982",
+		  credits => "G. Benson,
+                              Tandem repeats finder: a program to analyze DNA sequences,
+                              Nucleic Acids Research (1999)
+                              Vol. 27, No. 2, pp. 573-580."
+		}
+	       ]
+    };
+  $mgr->documentStep("trf", $documentation);
+}
 
 sub loadTandemRepeats {
   my ($mgr,$file,$args,$dbName,$dbRlsVer) = @_;
