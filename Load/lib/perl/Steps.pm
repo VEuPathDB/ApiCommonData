@@ -923,7 +923,7 @@ sub documentTandemRepeatFinder {
                               Nucleic Acids Research (1999)
                               Vol. 27, No. 2, pp. 573-580."
 		}
-	       ]g
+	       ]
     };
   $mgr->documentStep("trf", $documentation);
 }
