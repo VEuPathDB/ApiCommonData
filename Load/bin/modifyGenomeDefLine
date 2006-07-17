@@ -7,10 +7,11 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-
-my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
+#only use --strain if there is no strain info associated with the taxon name
+my ($gusConfigFile,$inFile,$type,$strain,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "type=s" => \$type,
+	    "strain:s" => \$strain,
 	    "extDb=s" => \$extDb,
             "sequenceTable=s" => \$sequenceTable,
 	    "extDbVer=s" => \$extDbVer,
@@ -48,6 +49,11 @@ while(<FILE>){
     my $chrSourceId = $1;
     my ($taxonName) = getTaxonName($chrSourceId);
     my $dataSource = getDataSource($chrSourceId);
+
+    if ($strain){
+      $taxonName .= "_$strain";
+    }
+
     print OUT ">$taxonName|$chrSourceId|$extDbVer|ds-DNA|$dataSource\n";
   }
   else {
