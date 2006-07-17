@@ -1,4 +1,4 @@
-bg#!/usr/bin/perl
+#!/usr/bin/perl
 use strict;
 
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -7,11 +7,12 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-
-my ($gusConfigFile,$inFile,$type,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
+#only use --strain if there is no strain info associated with the taxon name
+my ($gusConfigFile,$inFile,$type,$strain,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "sequenceTable=s" => \$sequenceTable,
 	    "type=s" => \$type,
+	    "strain:s" => \$strain,
 	    "extDb=s" => \$extDb,
 	    "extDbVer=s" => \$extDbVer,
 	    "verbose!" => \$verbose,
@@ -51,6 +52,11 @@ while(<FILE>){
     my ($naSeqId,$soTerm) = getIdAndSOTerm($1);
     my ($chrSourceId,$taxonName) = getChrAndTaxonName($naSeqId);
     my $dataSource = getDataSource($chrSourceId);
+
+    if ($strain){
+      $taxonName .= "_$strain";
+    }
+
     print OUT ">$taxonName|$chrSourceId|$1|$type Annotation|$dataSource|(protein coding) $2\n";
   }
   else {
