@@ -342,7 +342,7 @@ sub loadSecondaryStructures {
 
 
 sub documentHMMPfam {
-  my ($mgr) = @_;
+  my ($mgr,$version) = @_;
   my $description = "Searches HMMs from the PFAM database for significantly similar sequences in the input protein sequence.";
   my $documentation =    { name => "HMMPfam",
                          input => "fasta file of protein sequences and PFAM database",
@@ -350,7 +350,7 @@ sub documentHMMPfam {
                                       sequence contains one or more domains belonging to a domain family",
 			   descrip => $description,
                            tools => [{ name => "HMMPfam",
-				       version => "2.3.2",
+				       version => $version,
 				       params => "--A 0 --acc --cut_ga",
 				       url => "http://hmmer.wustl.edu",
 				       pubmedIds => "",
@@ -362,7 +362,7 @@ sub documentHMMPfam {
 }
 
 sub documentPsipred {
-  my ($mgr) = @_;
+  my ($mgr,$version) = @_;
 
   my $description = "Psipred predicts secondary structure using a neural network analysis of PSI-BLAST output";
   my $documentation =    { name => "psipred",
@@ -371,7 +371,7 @@ sub documentPsipred {
                                      confidence level",
                            descrip => $description,
                            tools => [{ name => "psipred",
-                                       version => "2.4",
+                                       version => $version,
                                        params => "default",
                                        url => "http://bioinf.cs.ucl.ac.uk/psipred/",
                                        pubmedIds => "",
@@ -903,7 +903,7 @@ sub findTandemRepeats {
 }
 
 sub documentTandemRepeatFinder {
-  my ($mgr, $args) = @_;
+  my ($mgr, $version,$args) = @_;
 
   my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
 
@@ -914,7 +914,7 @@ sub documentTandemRepeatFinder {
       descrip => $description,
       tools => [
 		{ name => "TRF",
-		  version => "3.21",
+		  version => $version,
 		  params => $args,
 		  url => "http://tandem.bu.edu/trf/trf.html",
 		  pubmedIds => "9862982",
@@ -923,7 +923,7 @@ sub documentTandemRepeatFinder {
                               Nucleic Acids Research (1999)
                               Vol. 27, No. 2, pp. 573-580."
 		}
-	       ]
+	       ]g
     };
   $mgr->documentStep("trf", $documentation);
 }
@@ -931,27 +931,24 @@ sub documentTandemRepeatFinder {
 sub documentSplign {
   my ($mgr, $args) = @_;
 
-  my $description = "The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences";
+  my $description = "Splign uses transcript to genomic sequence BLAST hit output to generate information about exon-intron boundaries, splice-junctions, potential frameshifts, and alternative models when there is more than one possibility";
 
   my $documentation =
-    { name => "TRF",
-      input => "fasta file of DNA sequences",
-      output => "a repeat table file and an alignment file",
+    { name => "splign",
+      input => "output of megablast analysis of a fasta formatted transcript file with a genomic sequence database formatted using formatdb ",
+      output => "a tab-delimited text with every line representing a separate segment on the query sequence.",
       descrip => $description,
       tools => [
-		{ name => "TRF",
-		  version => "3.21",
+		{ name => "splign",
 		  params => $args,
-		  url => "http://tandem.bu.edu/trf/trf.html",
-		  pubmedIds => "9862982",
-		  credits => "G. Benson,
-                              Tandem repeats finder: a program to analyze DNA sequences,
-                              Nucleic Acids Research (1999)
-                              Vol. 27, No. 2, pp. 573-580."
+		  url => "http://www.ncbi.nlm.nih.gov/sutils/splign/",
+		  credits => "Yu.Kapustin, A.Souvorov, T.Tatusova. 
+                             Splign - a Hybrid Approach To Spliced Alignments.
+                             RECOMB 2004 - Currents in Computational Molecular Biology. p.741."
 		}
 	       ]
     };
-  $mgr->documentStep("trf", $documentation);
+  $mgr->documentStep("splign", $documentation);
 }
 
 sub loadTandemRepeats {
@@ -963,7 +960,7 @@ sub loadTandemRepeats {
 
   my $signal = "load${file}.TRF";
 
-  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
+my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
 
   $mgr->runPlugin($signal,
                   "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args,
@@ -1281,6 +1278,31 @@ sub startProteinBlastOnComputeCluster {
 }
 
 
+sub documentTRNAScan {
+  my ($mgr, $version, $options) = @_;
+
+  my $documentation =
+    { name => "tRNAScan-SE",
+      input => "Transcript or genomic sequence file in fasta format",
+      output => "tab delimited file with the type of tRNA, anticodon, score, and locations on the sequences analyzed",
+      descrip => "tRNAscan-SE identifies transfer RNA genes in genomic DNA or RNA sequences.",
+      tools => [
+                { name => "tRNAScan-SE",
+                  version => $version,
+                  params => $options,
+                  url => "http://selab.wustl.edu/cgi-bin/selab.pl?mode=software#trnascan",
+                  pubmedIds => "9023104",
+                  credits => "Lowe, T.M. & Eddy, S.R. (1997),
+                              tRNAscan-SE: a program for improved detection of transfer RNA genes in genomic sequence'', 
+                              Nucl. Acids Res., 25, 955-964"
+                }
+               ]
+    };
+
+  $mgr->documentStep("signalP", $documentation); 
+
+}
+
 sub startTRNAscanOnComputeCluster {
   my ($mgr,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
@@ -1434,7 +1456,7 @@ sub runExportPred {
 }
 
 sub documentExportPred {
-  my ($mgr) = @_;
+  my ($mgr,$version) = @_;
 
   my $description = "Program that predicts the exported proteins of Plasmodium.";
 
@@ -1445,7 +1467,7 @@ sub documentExportPred {
       descrip => $description,
       tools => [
 		{ name => "ExportPred",
-		  version => "1.0.1",
+		  version => $version,
 		  params => "default",
 		  url => "http://bioinf.wehi.edu.au/exportpred/",
 		  pubmedIds => "",
@@ -1933,7 +1955,7 @@ sub createSignalPDir {
 }
 
 sub documentSignalP {
-  my ($mgr, $options) = @_;
+  my ($mgr, $version,$options) = @_;
 
   my $documentation =
     { name => "SignalP",
@@ -1942,7 +1964,7 @@ sub documentSignalP {
       descrip => "SignalP is used to identify signal peptides and their likely cleavage sites.",
       tools => [
 		{ name => "SignalP",
-		  version => "3.0",
+		  version => $version,
 		  params => $options,
 		  url => "http://www.cbs.dtu.dk/services/SignalP/",
 		  pubmedIds => "15223320",
@@ -2022,7 +2044,7 @@ sub createDir {
 }
 
 sub documentTMHMM {
-  my ($mgr) = @_; 
+  my ($mgr,$version) = @_; 
 
   my $documentation =
     { name => "Predict transmembrane domains",
@@ -2031,7 +2053,7 @@ sub documentTMHMM {
       descrip => "TMHMM is used to predict transmembrane domain presence and topology",
       tools => [
 		{ name => "tmhmm",
-		  version => "2.0a",
+		  version => $version,
 		  params => "",
 		  url => "",
 		  pubmedIds => "11152613",
