@@ -33,29 +33,22 @@ my $argsDeclaration =
 	      isList => 0
 	     }),
 
-   stringArg({name => 'extDbRlsNameA',
-	      descr => 'where do we find source_id\'s from sequence A',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 0
-	     }),
- 
-   stringArg({name => 'extDbRlsVerA',
+   stringArg({name => 'extDbRlsSpecA',
 	      descr => 'where do we find source_id\'s from sequence A',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0
 	     }),
 
-   stringArg({name => 'extDbRlsNameB',
+   stringArg({name => 'extDbRlsSpecB',
 	      descr => 'where do we find source_id\'s from sequence A',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0
 	     }),
- 
-   stringArg({name => 'extDbRlsVerB',
-	      descr => 'where do we find source_id\'s from sequence A',
+
+   stringArg({name => 'syntenyDbRlsSpec',
+	      descr => 'what is the external database release info for the synteny data being loaded',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0
@@ -116,22 +109,22 @@ sub run {
 
   my $file = $self->getArg('inputFile');
 
-  my $extDbRlsIdA = $self->getExtDbRlsId($self->getArg('extDbRlsNameA'),
-					 $self->getArg('extDbRlsVerA'));
+  my $extDbRlsIdA = $self->getExtDbRlsId($self->getArg('extDbRlsSpecA'));
 
-  my $extDbRlsIdB = $self->getExtDbRlsId($self->getArg('extDbRlsNameB'),
-					 $self->getArg('extDbRlsVerB'));
+  my $extDbRlsIdB = $self->getExtDbRlsId($self->getArg('extDbRlsSpecB'));
+
+  my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
   open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
   while (<IN>) {
     chomp;
-    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB);
+    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
   }
   close(IN);
 }
 
 sub _handleSyntenySpan {
-  my ($self, $line, $extDbRlsIdA, $extDbRlsIdB) = @_;
+  my ($self, $line, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId) = @_;
 
   my ($a_id, $b_id,
       $a_start, $a_len,
@@ -155,12 +148,13 @@ EOSQL
   $self->error("Couldn't find primary key for $b_id\n") unless $b_pk;
   
   my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $a_pk,
-						     b_na_sequence_id => $b_pk,
-						     a_start => $a_start,
-						     b_start => $b_start,
-						     a_end   => $a_start + $a_len - 1,
-						     b_end   => $b_start + $b_len - 1,
-						     is_reversed => $strand eq "-",
+						  b_na_sequence_id => $b_pk,
+						  a_start => $a_start,
+						  b_start => $b_start,
+						  a_end   => $a_start + $a_len - 1,
+						  b_end   => $b_start + $b_len - 1,
+						  is_reversed => $strand eq "-",
+						  external_database_release_id => $synDbRlsId,
 						   });
   $synteny->submit();
   $self->undefPointerCache();
