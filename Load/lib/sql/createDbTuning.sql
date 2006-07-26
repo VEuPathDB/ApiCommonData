@@ -15,7 +15,45 @@ ON dots.AaSequenceImp (external_database_release_id, subclass_view,
 
 -- materialized views
 
-CREATE MATERIALIZED VIEW GeneAlias AS
+
+-- first, needed privileges
+
+GRANT CREATE TABLE TO apidb;
+GRANT CREATE MATERIALIZED VIEW TO apidb;
+
+GRANT REFERENCES ON dots.ExternalNaSequence TO apidb;
+GRANT REFERENCES ON dots.GeneFeature TO apidb;
+GRANT REFERENCES ON dots.Transcript TO apidb;
+GRANT REFERENCES ON dots.TranslatedAaFeature TO apidb;
+GRANT REFERENCES ON dots.GoAssociation TO apidb;
+GRANT REFERENCES ON dots.GoAssociationInstance TO apidb;
+GRANT REFERENCES ON dots.GoAssociationInstanceLoe TO apidb;
+GRANT REFERENCES ON dots.GoAssocInstEvidCode TO apidb;
+GRANT REFERENCES ON sres.GoTerm TO apidb;
+GRANT REFERENCES ON sres.GoEvidenceCode TO apidb;
+GRANT REFERENCES ON sres.GoRelationship TO apidb;
+GRANT REFERENCES ON core.TableInfo TO apidb;
+GRANT REFERENCES ON dots.NaFeatureNaGene TO apidb;
+GRANT REFERENCES ON dots.NaGene TO apidb;
+
+GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.Transcript TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.GoAssociation TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.GoAssociationInstance TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.GoAssociationInstanceLoe TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.GoAssocInstEvidCode TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.GoTerm TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.GoEvidenceCode TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.GoRelationship TO apidb WITH GRANT OPTION;
+GRANT SELECT ON core.TableInfo TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.NaFeatureNaGene TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.NaGene TO apidb WITH GRANT OPTION;
+
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW apidb.GeneAlias AS
 SELECT DISTINCT alias, gene FROM
 (SELECT ng.name AS alias, gf.source_id AS gene
  FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
@@ -33,24 +71,24 @@ SELECT DISTINCT alias, gene FROM
  SELECT lower(source_id) AS alias, source_id AS gene
  FROM dots.GeneFeature);
 
-GRANT SELECT ON GeneAlias TO gus_r;
+GRANT SELECT ON apidb.GeneAlias TO gus_r;
 
-CREATE INDEX GeneAlias_gene_idx ON GeneAlias (gene);
-CREATE INDEX GeneAlias_alias_idx ON GeneAlias (alias);
+CREATE INDEX apidb.GeneAlias_gene_idx ON apidb.GeneAlias (gene);
+CREATE INDEX apidb.GeneAlias_alias_idx ON apidb.GeneAlias (alias);
 
 -------------------------------------------------------------------------------
 
-CREATE MATERIALIZED VIEW SequenceAlias AS
+CREATE MATERIALIZED VIEW apidb.SequenceAlias AS
 SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
 FROM dots.ExternalNaSequence ens;
 
-CREATE INDEX SequenceAlias_idx ON SequenceAlias.lowercase_source_id;
+CREATE INDEX apidb.SequenceAlias_idx ON apidb.SequenceAlias(lowercase_source_id);
 
-GRANT SELECT ON SequenceAlias TO gus_r;
+GRANT SELECT ON apidb.SequenceAlias TO gus_r;
 
 -------------------------------------------------------------------------------
 
-CREATE MATERIALIZED VIEW GoTermSummary AS
+CREATE MATERIALIZED VIEW apidb.GoTermSummary AS
 SELECT gf.source_id, 
        decode(ga.is_not, 0, '', 1, 'not', ga.is_not) as is_not,
                  gt.go_id, o.ontology, gt.name AS go_term_name,
@@ -82,8 +120,8 @@ WHERE gf.na_feature_id = t.parent_id
   AND gt.go_term_id = o.go_term_id(+)
 ORDER BY o.ontology, gt.go_id;
 
-CREATE INDEX GoTermSum_sourceId_idx ON GoTermSummary (source_id);
+CREATE INDEX apidb.GoTermSum_sourceId_idx ON apidb.GoTermSummary (source_id);
 
-GRANT SELECT ON GoTermSummary TO gus_r;
+GRANT SELECT ON apidb.GoTermSummary TO gus_r;
 
 exit
