@@ -127,7 +127,11 @@ sub run {
 
   my $result = $self->insertAnticodon($genomeReleaseId,$tRNAs);
 
-  return "$result anticodons added to dots.RNAType";
+  my $msg = "$result anticodons added to dots.RNAType";
+
+  $self->log("$msg \n");
+
+  return $msg;
 }
 
 sub parseFile {
@@ -166,7 +170,7 @@ sub  insertAnticodon {
 
     next if (!$transcript);
 
-    my $rnaType = $self->getTranscript($tRNAs->{$transcriptSourceId});
+    my $rnaType = $self->getRNAType($tRNAs->{$transcriptSourceId});
 
     $transcript->addChild($rnaType);
 
