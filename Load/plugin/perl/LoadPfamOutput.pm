@@ -205,9 +205,12 @@ sub run {
 			      -format => "hmmer");
 
   my $seqsProc = 0;
+
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRlsName'),$self->getArg('extDbRlsVer'));
+
   while (my $result = $io->next_result()) {
 
-    my $seqid = $self->_lookupSeqId($result->query_name());
+    my $seqid = $self->_lookupSeqId($result->query_name(),$extDbRlsId);
 
     while (my $hit = $result->next_hit()) {
 
@@ -221,7 +224,7 @@ sub run {
 
       my $n = $hit->num_hsps();
 
-      my $hitFeature = $self->buildGusFeature($seqid, $model, $score, $evalue, $n);
+      my $hitFeature = $self->buildGusFeature($seqid, $model, $score, $evalue, $n,$extDbRlsId);
       my $hitLocation = $self->buildGusLocation($start, $stop);
       $hitFeature->addChild($hitLocation);
 
@@ -232,7 +235,7 @@ sub run {
 	my $domainStart  = $hsp->start("query");
 	my $domainStop   = $hsp->end("query");
 
-	my $hspFeature = $self->buildGusFeature($seqid, $model, $domainScore, $domainEvalue, 1);
+	my $hspFeature = $self->buildGusFeature($seqid, $model, $domainScore, $domainEvalue, 1,$extDbRlsId);
 	my $hspLocation = $self->buildGusLocation($domainStart, $domainStop);
 	$hspFeature->addChild($hspLocation);
 
@@ -251,9 +254,6 @@ sub run {
 
 sub _lookupSeqId {
   my ($self, $source_id) = @_;
-
-  my $extDbRlsId = $self->{_extDbRlsId} ||= $self->getExtDbRlsId($self->getArg('extDbRlsName'),
-								 $self->getArg('extDbRlsVer'));
 
   my $sth = $self->{_getSeqIdBySourceId} ||= $self->getQueryHandle()->prepare(<<EOSQL);
   SELECT aa_sequence_id
@@ -281,7 +281,7 @@ EOSQL
 # ----------------------------------------------------------
 
 sub buildGusFeature {
-  my ($self, $seqId, $model, $score, $evalue, $numDomains) = @_;
+  my ($self, $seqId, $model, $score, $evalue, $numDomains,$extDbRlsId) = @_;
 
   my $pfamId = GUS::Model::DoTS::PfamEntry->new();
   $pfamId->setAccession($model);
@@ -298,6 +298,7 @@ sub buildGusFeature {
   $gusFeature->setPfamEntryId($gusId);
   $gusFeature->setNumberOfDomains($numDomains);
   $gusFeature->setIsPredicted(1);
+  $gusFeature->setExternalDatabaseReleaseId($extDbRlsId);
 
   return $gusFeature;
 }
