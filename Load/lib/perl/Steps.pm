@@ -2629,7 +2629,7 @@ sub makeOrfFile {
   return if $mgr->startStep("makeOrfFile from $seqFile", $signal);
 
   my $cmd = <<"EOF";
-orfFinder --dataset seqfiles/$seqFile \\
+orfFinder --dataset $mgr->{pipelineDir}/seqfiles/$seqFile \\
 --minPepLength $minPepLength \\
 --outFile $outFile
 EOF
