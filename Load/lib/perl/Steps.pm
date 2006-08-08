@@ -228,6 +228,24 @@ sub loadTRNAscan {
 		  "Loading tRNAscan results for $name");
 }
 
+sub loadAnticodons {
+  my ($mgr,$genomeDbName,$genomeDbVer,$file) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "${file}Anticodons";
+
+  my $buildDir = $propertySet->getProp('buildDir');
+
+  $file = "${buildDir}/manualDelivery/anticodons/$file";
+
+  my $args = "--data_file $dataFile --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer'";
+
+  $mgr->runPlugin($signal,
+		  "ApiCommonData::Load::Plugin::InsertAntiCodon", $args,
+		  "Loading anticodons into dots.RNAType");
+}
+
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
