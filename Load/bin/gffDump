@@ -8,11 +8,11 @@ my $annotXmlFile = $outputFile . '.annotation.xml';
 my $seqXmlFile = $outputFile . '.sequence.xml';
 my $cmd;
 
-$cmd = "wdkSummary -model $wdkModel -question $annotQuestion -toXml $annotXmlFile -params organism $organism";
+$cmd = "wdkSummary -model $wdkModel -question $annotQuestion -toXml $annotXmlFile -params organism '$organism'";
 print "running $cmd ...\n";
 system("$cmd"); # or die "could not dump annotation data via wdkSummary";
 
-$cmd = "wdkSummary -model $wdkModel -question $seqQuestion -toXml $seqXmlFile -params organism $organism";
+$cmd = "wdkSummary -model $wdkModel -question $seqQuestion -toXml $seqXmlFile -params organism '$organism'";
 print "running $cmd ...\n";
 system("$cmd"); # or die "cound not dump sequence data via wdkSummary";
 
