@@ -214,7 +214,7 @@ sub createAALocation{
 sub getAaSeqId{
   my($self, $sourceId) = @_;
   my $aaSeqId;
-  my $extDbRls = $self->getArg('seqExtDbRelSpec');
+  my $extDbRls = $self->getExtDbRlsId($self->getArg('seqExtDbRelSpec'));
 
   my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({source_id => $sourceId,
 							   external_database_release_id => $extDbRls,
