@@ -1,4 +1,5 @@
 #$Id$
+#TODO: Test restart method
 package ApiCommonData::Load::Plugin::InsertMotif;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -25,7 +26,7 @@ my $tablesAffected = [['DoTS::PredictedAAFeature','The links to the AA sequence 
 my $tablesDependedOn = ['DoTS::TranslatedAASequence','The sequence that the motif is found in must be in this table.'];
 
 my $howToRestart = <<PLUGIN_RESTART;
-There is no restart method.
+Provide the restart flag with the algInvocation number of the run that failed.
 PLUGIN_RESTART
 
 my $failureCases = <<PLUGIN_FAILURE_CASES;
@@ -79,12 +80,34 @@ my $argsDeclaration =
 	    isList => 0
 	   }),
 
+ stringArg({name => 'category',
+	    descr => 'category into which the sequences containing the motif fall, ex: secretome, proteome, etc.',
+	    constraintFunc => undef,
+	    reqd => 0,
+	    isList => 0
+	   }),
+
  stringArg({name => 'extDbRelSpec',
-	    descr => 'The external database specifications for this data in the form "name|version"',
+	    descr => 'The external database specifications for the motif data in the form "name|version"',
 	    constraintFunc => undef,
 	    reqd => 1,
 	    isList => 0
-	   })
+	   }),
+
+ stringArg({name => 'seqExtDbRelSpec',
+	    descr => 'The external database specifications for the aa sequences in which the motif is found, in the form "name|version"',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0
+	   }),
+
+ stringArg({name => 'restart',
+	    descr => 'a list of algInvocation numbers for runs that failed',
+	    constraintFunc => undef,
+	    reqd => 0,
+	    isList => 1
+	   }),
+
 
  ];
 
@@ -106,6 +129,7 @@ sub new {
 
 sub run{
   my($self) = @_;
+  my %done;
 
   my $motif = $self->getArg('motif');
   my $length = length($motif);
@@ -113,7 +137,17 @@ sub run{
   my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRelSpec'))
       || die "Couldn't retrieve external database!\n";
 
+
   my $motifId = $self->insertMotif($extDbRls, $motif, $length);
+
+
+  my $restart = $self->getArg('restart');
+
+  if($restart){
+    my $restartIds = join(",",@$restart);
+    %done = $self->restart($restartIds);
+    $self->log("Restarting with algorithm invocation IDs: $restartIds");
+  }
 
   my $file = $self->getArg('inputFile');
   open (FILE, "<$file") or $self->error("Couldn't open file '$file': $!\n");
@@ -123,20 +157,22 @@ sub run{
 
     my ($sourceId, $start) = split(/\t/, $_);
 
+    unless(%done->{$sourceId}){
 
-    my $aaSeqId = $self->getAaSeqId($sourceId);
+      my $aaSeqId = $self->getAaSeqId($sourceId);
 
-    if($aaSeqId){
+      if($aaSeqId){
 
-      my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId);
+	my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId);
 
-      my $newAALoc = $self->createAALocation($start, $length);
+	my $newAALoc = $self->createAALocation($start, $length);
 
-      $$newPredAAFeat->addChild($$newAALoc);
-      $$newPredAAFeat->submit();
+	$$newPredAAFeat->addChild($$newAALoc);
+	$$newPredAAFeat->submit();
 
-    }else{
-      next;
+      }else{
+	next;
+      }
     }
   }
 
@@ -147,10 +183,12 @@ sub run{
 sub createPredictedAAFeature{
   my ($self, $extDbRls, $sourceId, $aaSeqId) = @_;
 
+  my $category = $self->getArg('category');
+
   my $aaFeature = GUS::Model::DoTS::PredictedAAFeature->new({external_database_release_id => $extDbRls,
 							     aa_sequence_id => $aaSeqId,
 							     source_id => $sourceId,
-							     name=> "secretome",
+							     name=> $category,
 							     is_predicted => 1,
 							     subclass_view => "PredictedAAFeature",
 							    });
@@ -176,7 +214,10 @@ sub createAALocation{
 sub getAaSeqId{
   my($self, $sourceId) = @_;
   my $aaSeqId;
+  my $extDbRls = $self->getArg('seqExtDbRelSpec');
+
   my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({source_id => $sourceId,
+							   external_database_release_id => $extDbRls,
 							  });
 
   if($aaSeq->retrieveFromDB()){
@@ -203,12 +244,42 @@ sub insertMotif{
 
   unless($aaMotif->retrieveFromDB()){
     $aaMotif->setSequence($motif);
+    $self->log("Inserting motif '$motif'.");
     $aaMotif->submit();
   }
 
   my $motifId = $aaMotif->getId();
 
   return $motifId;
+}
+
+
+sub restart{
+  my ($self, $restartIds) = @_;
+  my %done;
+
+  my $sql = "SELECT source_id FROM DoTS.PredictedAAFeature WHERE row_alg_invocation_id IN ($restartIds)";
+
+  my $qh = $self->getQueryHandle();
+  my $sth = $qh->prepareAndExecute($sql);
+
+    while(my ($id) = $sth->fetchrow_array()){
+	$done{$id}=1;
+    }
+    $sth->finish();
+
+  return %done;
+}
+
+# ----------------------------------------------------------------------
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.AALocation',
+	  'DoTS.PredictedAAFeature',
+	  'DoTS.MotifAASequence',
+	 );
 }
 
 1;
