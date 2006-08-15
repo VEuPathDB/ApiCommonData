@@ -163,7 +163,7 @@ sub run{
 
       if($aaSeqId){
 
-	my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId);
+	my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId, $motifId);
 
 	my $newAALoc = $self->createAALocation($start, $length);
 
@@ -181,12 +181,13 @@ sub run{
 }
 
 sub createPredictedAAFeature{
-  my ($self, $extDbRls, $sourceId, $aaSeqId) = @_;
+  my ($self, $extDbRls, $sourceId, $aaSeqId, $motifId) = @_;
 
   my $category = $self->getArg('category');
 
   my $aaFeature = GUS::Model::DoTS::PredictedAAFeature->new({external_database_release_id => $extDbRls,
 							     aa_sequence_id => $aaSeqId,
+							     motif_aa_sequence_id => $motifId,
 							     source_id => $sourceId,
 							     name=> $category,
 							     is_predicted => 1,
