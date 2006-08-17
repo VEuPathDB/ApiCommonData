@@ -14,11 +14,11 @@ use GUS::PluginMgr::Plugin;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Inserts motif data from a tab delimited file.
+Inserts motif data from a 2-column tab delimited file containing the sequence ID and the start location of the motif.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Inserts motif data from a 2-column tab delimited file containing the sequence ID and the start location of the motif.
+Takes a motif and a 2-column tab delimited file containing the source ids of multiple proteins that contain the motif and the start site of the motif within the sequence.  This data is entered into the predictedAAFeature and AALocation tables to provide a mapping of the motif on the proteins.
 PLUGIN_PURPOSE
 
 my $tablesAffected = [['DoTS::PredictedAAFeature','The links to the AA sequence and the motif are made here.'],['DoTS::AALocation','The start and end location of the motif on the given sequence is located here.'],['DoTS::MotifAASequence','The motif is stored here.']];
@@ -129,6 +129,8 @@ sub new {
 
 sub run{
   my($self) = @_;
+  my $added = 0;
+  my $skipped = 0;
   my %done;
 
   my $motif = $self->getArg('motif');
@@ -169,14 +171,18 @@ sub run{
 
 	$$newPredAAFeat->addChild($$newAALoc);
 	$$newPredAAFeat->submit();
+	$added++;
 
       }else{
+	$skipped++;
+	$self->undefPointerCache();
 	next;
       }
     }
+    $self->undefPointerCache();
   }
 
-  my $msg = 'end';
+  my $msg = "Added $added new features.  Skipped $skipped features because source ID was not found.";
   return $msg;
 }
 
