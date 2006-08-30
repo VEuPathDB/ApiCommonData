@@ -239,7 +239,7 @@ sub loadAnticodons {
 
   $file = "${buildDir}/manualDelivery/anticodons/$file";
 
-  my $args = "--data_file $dataFile --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer'";
+  my $args = "--data_file $file --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer'";
 
   $mgr->runPlugin($signal,
 		  "ApiCommonData::Load::Plugin::InsertAntiCodon", $args,
@@ -1233,7 +1233,13 @@ sub concatFiles {
 
    $files =~ s/(\S+)/$mgr->{pipelineDir}\/$1/g;
 
+   my $propertySet = $mgr->{propertySet};
+
+   my $projRel = $propertySet->getProp('projectRelease');
+
    my $signal = "concat$catFile";
+
+   $signal =~ s/-$projRel//g;
 
    my $cmd = "cat $files > $mgr->{pipelineDir}/$fileDir/$catFile";
 
@@ -1573,7 +1579,13 @@ sub formatBlastFile {
 
   my $propertySet = $mgr->{propertySet};
 
+  my $propertySet = $mgr->{propertySet};
+
+  my $projRel = $propertySet->getProp('projectRelease');
+
   my $signal = "format$file";
+
+  $signal =~ s/-$projRel//g;
 
   return if $mgr->startStep("Formatting $file for blast", $signal);
 
@@ -1642,19 +1654,27 @@ sub modifyGenomeDownloadFile {
 }
 
 sub makeGFF {
-   my ($mgr,$model,$questions,$speciesName,$file) = @_;
+   my ($mgr,$model,$questions,$speciesName,$file,$dir) = @_;
 
    my $propertySet = $mgr->{propertySet};
 
-   my $signal = gff$file;
+   my $signal = "gff$file";
+
+   my $log = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+   my $db = $model;
+
+   $db =~ s/bModel/B/;
+
+   $file = "$mgr->{pipelineDir}/downloadSite/${dir}/$file";
 
    return if $mgr->startStep("Making gff $file file", $signal);
 
    my $release = $propertySet->getProp('release');
 
-   $file .= "_plasmoDB-${release}.gff";
+   $file .= "_${db}-${release}.gff";
 
-   $mgr->runCmd("gffDump $model $questions '$speciesName' $file");
+   $mgr->runCmd("gffDump $model $questions \'$speciesName\' $file 2>> $log");
 
    $mgr->endStep($signal);
 }
