@@ -1957,6 +1957,95 @@ sub clusterByContigAlign {
 
 }
 
+sub snpTabToFasta {
+  my ($mgr,$tabFile,$trim) = @_;
+
+  my $outFile = $tabFile;
+
+  $outFile =~ s/\.\S+\b/\.fasta/;
+
+  my $signal = "convert${tabFile}ToFasta";
+
+  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Converting $tabFile to a fasta formatted file", $signal);
+
+  my $cmd = "snpTabFastaMUMmerGff --tab_file $mgr->{pipelineDir}/snp/$tabFile --trim $trim --output_file $mgr->{pipelineDir}/snp/$outFile --make_fasta_file_only 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub runMummer {
+  my ($mgr,$targetFile,$tabFile,$queryDir,$args) = @_;
+
+  my $queryFile = $tabFile;
+
+  $queryFile =~ s/\.\S+\b/\.fasta/;
+
+  my $outFile = $tabFile;
+
+  $outFile =~ s/\.\S+\b/Mummer\.out/;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "run${queryFile}_${targetFile}Mummer";
+
+  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Running mummer of $queryFile vs $targetFile", $signal);
+
+  my $mummerPath = $propertySet->getProp('mummerDir');
+
+  my $cmd = "$mummerPath/mummer $args $mgr->{pipeline}/seqfiles/$targetFile $mgr->{pipeline}/$queryDir/$queryFile $outFile 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub snpMummerToGFF {
+  my ($mgr,$tabFile,$leeway,$provider) = @_;
+
+  my $mumFile = $tabFile;
+
+  $mumFile =~ s/\.\S+\b/Mummer\.out/;
+
+  my $outFile = $mumFile;
+
+  $outFile =~ s/\.out/\.gff/;
+
+  my $signal = "convert${mumFile}ToGff";
+
+  my $logfile = "${signal}.log";
+
+  return if $mgr->startStep("Converting $mumFile to a gff formatted file", $signal);
+
+  my $cmd = "snpTabFastaMUMmerGff --tab_file $mgr->{pipelineDir}/snp/$tabFile --mummer_file $mgr->{pipelineDir}/snp/$mumFile --output_file $mgr->{pipelineDir}/snp/$outFile --sequence_leeway $leeway --error_log $logfile --provider $provider";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub loadMummerSnpResults {
+  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$tabFile) = @_;
+
+  my $gffFile = $tabFile;
+
+  $gffFile =~ s/\.\S+\b/Mummer\.gff/;
+
+  my $args = "--reference $refOrg --organism $org --snpExternalDatabaseName $snpDbName --snpExternalDatabaseVersion $snpDbRlsVer --naExternalDatabaseName $targetDbName --naExternalDatabaseVersion $targetDbRlsVer --seqTable $targetTable --snpFile $mgr->{pipeline}/snp/$gffFile";
+
+  ga ApiCommonData::Load::Plugin::InsertSnps \
+
+    $mgr->runPlugin("load$gffFile",
+		    "ApiCommonData::Load::Plugin::InsertSnps",
+		    $args, "Loading mummer results for $tabFile vs $targetDbName");
+}
+
+
 sub createSageTagNormFiles {
   my ($mgr,$name,$paramValue) = @_;
   my $propertySet = $mgr->{propertySet};
