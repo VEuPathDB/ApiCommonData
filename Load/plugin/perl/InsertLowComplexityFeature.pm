@@ -426,5 +426,16 @@ $self->undefPointerCache();
 
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.NALocation',
+	  'DoTS.AALocation',
+	  'DoTS.LowComplexityNAFeature',
+	  'DoTS.LowComplexityAAFeature'
+	 );
+}
+
+
 
 1;
