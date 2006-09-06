@@ -7,6 +7,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
+use GUS::Model::DoTS::SnpFeature;
 
 
 $| = 1;
@@ -156,8 +157,6 @@ sub run {
   my $file = $self->getArg('snpFile');
 
   return "$linesProcessed lines of SNP file $file processed\n";
-
-
 }
 
 sub processSnpFile{
@@ -200,8 +199,9 @@ sub processSnpFile{
 
       $seqVar->addChild($naLoc);
 
-      $seqVar->submit();
     }
+
+    $seqVarRows->[0]->submit();
 
     $self->undefPointerCache();
 
@@ -227,14 +227,6 @@ sub getSeqVars {
 
   my $sourceId = $data[0];
 
-  if ($sourceId =~ /SNP\s(\S+)_(\d+)_(.*)/){
-    # $sourceId =~ s/SNP\s(\S+)\s/$1/;
-    $sourceId =~ s/SNP\s(\S+)_(\d+)_(.*)/$1_$2/;
-  }
-  else { 
-    $sourceId =~ s/GeneticMarker\s\"(\w+)\"/$1/;
-  }
-
   my $organism = $self->getArg('organism');
 
   my $start = $line->[3];
@@ -245,54 +237,72 @@ sub getSeqVars {
 
   my $standard = ($end == $start + 1) ? 'insertion' : 'substitution';
 
-  my @seqVarRows;
+  my @featureRows;
 
   my $varType = $self->getArg('seqVarType');
   if ($varType eq 'SNP'){
-    foreach my $element (@data) {
-      if ($element =~ /Allele\s+(.*)/) {
-	my $data = $1;
-	while ($data =~ m/(\w+):([\w\-]+)/g) {
 
-	  my $strain = $1;
-	  my $base = $2;
+    my $snpFeature = GUS::Model::DoTS::SnpFeature->
+      new({NA_SEQUENCE_ID => '',	
+           NAME => $varType,
+           SEQUENCE_ONTOLOGY_ID => $soId,
+           PARENT_ID => '',	
+           EXTERNAL_DATABASE_RELEASE_ID => $extDbRlsId,
+           SOURCE_ID => $sourceId,
+           REFERENCE_STRAIN => $ref,
+           ORGANISM => $organism,
+           IS_CODING => '',
+           POSITION_IN_CDS => '',
+           });
 
-	  $standard = ($end == $start + 1) ? 'insertion' : 'substitution';
-	  $standard = 'reference' if lc($ref) eq lc($strain);
-	  $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
+    $snpFeature->retrieveFromDB();
+    push (@featureRows, $seqvar);
 
-	  my $seqvar =  GUS::Model::DoTS::SeqVariation->new({
-				   'source_id'=>$sourceId,
-				   'external_database_release_id'=>$extDbRlsId,
-				   'name'=>'SNP','standard_name'=>$standard,
-				   'sequence_ontology_id'=>$soId,
-				   'strain'=>$strain,'allele'=>$base,
-				   'organism'=>$organism
-				   });
+    while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
+      my $strain = $1;
+      my $base = $2;
 
-	  $seqvar->retrieveFromDB();
+      if(lc($ref) eq lc($strain)) {
+        $snpFeature->setReferenceCharacter($base);
+      }
+      else {
+        $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
 
-	  push (@seqVarRows, $seqvar);
-	}
+        my $seqvar =  GUS::Model::DoTS::SeqVariation->
+          new({'source_id' => $sourceId,
+               'external_database_release_id' => $extDbRlsId,
+               'name' => 'SNP',
+               'standard_name' => $standard,
+               'sequence_ontology_id' => $soId,
+               'strain' => $strain,
+               'allele' => $base,
+               'organism' => $organism
+              });
+
+        $seqvar->retrieveFromDB();
+        $seqvar->setParent($snpFeature);
+
+        push (@featureRows, $seqvar);
       }
     }
   }
-  elsif($varType eq 'GeneticMarker') {
-    my $seqvar =  GUS::Model::DoTS::SeqVariation->new({
-				   'source_id'=>$sourceId,
-				   'external_database_release_id'=>$extDbRlsId,
-				   'name'=>'GeneticMarker',
-				   'sequence_ontology_id'=>$soId,
-				   'organism'=>$organism
-				   });
+
+  if($varType eq 'GeneticMarker') {
+    my $seqvar =  GUS::Model::DoTS::SeqVariation->
+      new({'source_id' => $sourceId,
+           'external_database_release_id' => $extDbRlsId,
+           'name' => 'GeneticMarker',
+           'sequence_ontology_id' => $soId,
+           'organism' => $organism
+          });
 
     $seqvar->retrieveFromDB();
 
-    push (@seqVarRows, $seqvar);
+    push (@featureRows, $seqvar);
 
   }
 
-  return \@seqVarRows;
+  return \@featureRows;
 
 }
 
