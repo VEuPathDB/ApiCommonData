@@ -243,7 +243,7 @@ sub getSeqVars {
 
   my $ref = $self->getArg('reference');
 
-  my $standard = $end = $start + 1 ? 'insertion' : 'substitution';
+  my $standard = ($end == $start + 1) ? 'insertion' : 'substitution';
 
   my @seqVarRows;
 
@@ -257,7 +257,7 @@ sub getSeqVars {
 	  my $strain = $1;
 	  my $base = $2;
 
-	  $standard = $end = $start + 1 ? 'insertion' : 'substitution';
+	  $standard = ($end == $start + 1) ? 'insertion' : 'substitution';
 	  $standard = 'reference' if lc($ref) eq lc($strain);
 	  $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
 
