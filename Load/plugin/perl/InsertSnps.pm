@@ -1,6 +1,7 @@
 package ApiCommonData::Load::Plugin::InsertSnps;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
+
 use strict;
 
 use GUS::PluginMgr::Plugin;
@@ -8,6 +9,7 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
+use GUS::Model::DoTS::Transcript;
 
 use Bio::Seq;
 
@@ -160,7 +162,9 @@ sub processSnpFile{
   my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
 
   my $termName = $self->getArg('ontologyTerm');
+
   $self->{'soId'} = $self->getSoId($termName);
+
   die "The term $termName was not found in the Sequence Ontology.\n" unless $self->{'soId'};
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
@@ -182,47 +186,44 @@ sub processSnpFile{
 
     my @line = split(/\t/,$_);
 
-    my $featureRows = $self->getSeqVars(\@line);
-    my $snpFeature = $featureRows->[0];
+    my $snpFeature = $self->createSnpFeature(\@line);
 
-    my ($codingSequence, $isCoding, $transcript, $geneFeatureId);
+    my $naLoc = $snpFeature->getChild('GUS::Model::DoTS::NALocation');
 
-    foreach my $feature (@$featureRows) {
-      my $isSynonymous;
+    my $snpStart = $naLoc->getStartMin();
+    my $snpEnd = $naLoc->getEndMax();
 
-      my $naSeq = $self->getNaSeq(\@line);
+    my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
 
-      $feature->setParent($naSeq);
+    my ($codingSequence, $isCoding, $transcript) = $self->_isCoding($naSeqId, $snpStart, $snpEnd);
 
-      my $naLoc = $self->getNaLoc(\@line);
-      my $snpStart = $naLoc->getStartMin();
-      my $snpEnd = $naLoc->getEndMax();
+    my $geneFeatureId;
 
-      $feature->addChild($naLoc);
+    $snpFeature->setIsCoding($isCoding);
 
-      unless($codingSequence) {
-        ($codingSequence, $isCoding, $transcript) = $self->_isCoding($feature, $snpStart, $snpEnd);
-
-        $feature->setIsCoding($isCoding);
-
-        if($transcript) {
-          $geneFeatureId = $transcript->getParentId();
-          $feature->setParentId($geneFeatureId);
-        }
-      }
-
-      if($isCoding && $codingSequence) {
-        my $base = $feature->getAllele();
-
-        my ($newCodingSequence) = $self->_getCodingSequence($transcript, $base, $snpStart, $snpEnd);
-        $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
-
-        $feature->setIsSynonymous($isSynonymous);
-        $featureRows->[0]->setIsSynonymous(0) if($isSynonymous == 0 && $featureRows->[0]->getIsSynonymous() == 1);
-      }
+    if($transcript) {
+      $geneFeatureId = $transcript->get('parent_id');
+      $snpFeature->set('parent_id',$geneFeatureId);
     }
 
-    $featureRows->[0]->submit();
+    my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+
+
+    foreach my $seqVar (@seqVars) {
+      my $isSynonymous;
+
+      my $base = $seqVar ->getAllele();
+
+      my ($newCodingSequence) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd,$base);
+      $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+
+      my $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
+
+      $seqVar->setPhenotype($phenotype);
+      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
+    }
+
+    $snpFeature->submit();
 
     $self->undefPointerCache();
 
@@ -236,7 +237,7 @@ sub processSnpFile{
   return $lineNum;
 }
 
-sub getSeqVars {
+sub createSnpFeature {
   my ($self,$line) = @_;
 
   my $name = 'SNP';
@@ -259,7 +260,7 @@ sub getSeqVars {
 
   my $standard = ($end > $start) ? 'insertion' : 'substitution';
 
-  my @featureRows;
+
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
     new({NAME => $name,
@@ -273,7 +274,15 @@ sub getSeqVars {
         });
 
   $snpFeature->retrieveFromDB();
-  push (@featureRows, $snpFeature);
+
+  my $naSeq = $self->getNaSeq($line);
+
+  $naSeq->setChild($snpFeature);
+
+  my $naLoc = $self->getNaLoc($line);
+
+  $snpFeature->addChild($naLoc);
+
 
   while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
     my $strain = $1;
@@ -286,7 +295,7 @@ sub getSeqVars {
       $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
       $soId = $self->getSoId($standard);
 
-      my $seqvar =  GUS::Model::DoTS::SeqVariation->
+      my $seqVar =  GUS::Model::DoTS::SeqVariation->
         new({'source_id' => $sourceId,
              'external_database_release_id' => $extDbRlsId,
              'name' => $name,
@@ -296,14 +305,18 @@ sub getSeqVars {
              'organism' => $organism
             });
 
-      $seqvar->retrieveFromDB();
-      $seqvar->setParent($snpFeature);
+      $seqVar->retrieveFromDB();
+      $seqVar->setParent($snpFeature);
+      $seqVar->setParent($naSeq);
 
-      push (@featureRows, $seqvar);
+      $naLoc = $self->getNaLoc($line);
+
+      $seqVar->addChild($naLoc);
+
     }
   }
 
-  return \@featureRows;
+  return $snpFeature;
 }
 
 sub getSoId {
@@ -360,13 +373,12 @@ sub getNaLoc {
 }
 
 sub _isCoding {
-  my ($self, $snpFeature, $snpStart, $snpEnd) = @_;
+  my ($self, $naSeqId, $snpStart, $snpEnd) = @_;
 
-  my $naSeqId = $snpFeature->getNaSequenceId();
   my $isCoding = 0;
   my ($codingSequence, $newCodingSequence, $transcript);
 
-  my $sql = "SELECT tf.na_sequence_id,tf.na_feature_id, tf.source_id, nl.start_min, nl.end_max
+  my $sql = "SELECT tf.na_feature_id
              FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
              WHERE tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id 
@@ -381,12 +393,7 @@ sub _isCoding {
       $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
     }
 
-    ($codingSequence) = $self->_getCodingSequence($transcript);
-    ($newCodingSequence, $isCoding) = $self->_getCodingSequence($transcript, $snpStart, $snpEnd);
-
-    if($codingSequence ne $newCodingSequence) {
-      $self->error("Error in regenerating the refernece coding nucleotide sequence");
-    }
+    ($codingSequence,$isCoding) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd);
   }
   return($codingSequence, $isCoding, $transcript);
 }
