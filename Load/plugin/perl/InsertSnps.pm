@@ -9,6 +9,8 @@ use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
 
+use Bio::Seq;
+
 
 $| = 1;
 
@@ -81,13 +83,6 @@ sub getArgumentsDeclaration{
 		reqd  => 1,
 		isList => 0,
 	       }),
-   enumArg({name => 'seqVarType',
-	    descr => 'The type of sequence variation to be loaded.',
-	    constraintFunc => undef,
-	    reqd => 1,
-	    isList => 0,
-	    enum => "SNP, GeneticMarker",
-	   }),
     ];
   return $argsDeclaration;
 }
@@ -187,21 +182,47 @@ sub processSnpFile{
 
     my @line = split(/\t/,$_);
 
-    my $seqVarRows = $self->getSeqVars(\@line);
+    my $featureRows = $self->getSeqVars(\@line);
+    my $snpFeature = $featureRows->[0];
 
-    foreach my $seqVar (@$seqVarRows) {
+    my ($codingSequence, $isCoding, $transcript, $geneFeatureId);
+
+    foreach my $feature (@$featureRows) {
+      my $isSynonymous;
 
       my $naSeq = $self->getNaSeq(\@line);
 
-      $seqVar->setParent($naSeq);
+      $feature->setParent($naSeq);
 
       my $naLoc = $self->getNaLoc(\@line);
+      my $snpStart = $naLoc->getStartMin();
+      my $snpEnd = $naLoc->getEndMax();
 
-      $seqVar->addChild($naLoc);
+      $feature->addChild($naLoc);
 
+      unless($codingSequence) {
+        ($codingSequence, $isCoding, $transcript) = $self->_isCoding($feature, $snpStart, $snpEnd);
+
+        $feature->setIsCoding($isCoding);
+
+        if($transcript) {
+          $geneFeatureId = $transcript->getParentId();
+          $feature->setParentId($geneFeatureId);
+        }
+      }
+
+      if($isCoding && $codingSequence) {
+        my $base = $feature->getAllele();
+
+        my ($newCodingSequence) = $self->_getCodingSequence($transcript, $base, $snpStart, $snpEnd);
+        $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+
+        $feature->setIsSynonymous($isSynonymous);
+        $featureRows->[0]->setIsSynonymous(0) if($isSynonymous == 0 && $featureRows->[0]->getIsSynonymous() == 1);
+      }
     }
 
-    $seqVarRows->[0]->submit();
+    $featureRows->[0]->submit();
 
     $self->undefPointerCache();
 
@@ -213,11 +234,12 @@ sub processSnpFile{
   }
 
   return $lineNum;
-
 }
 
 sub getSeqVars {
   my ($self,$line) = @_;
+
+  my $name = 'SNP';
 
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
 
@@ -235,75 +257,53 @@ sub getSeqVars {
 
   my $ref = $self->getArg('reference');
 
-  my $standard = ($end == $start + 1) ? 'insertion' : 'substitution';
+  my $standard = ($end > $start) ? 'insertion' : 'substitution';
 
   my @featureRows;
 
-  my $varType = $self->getArg('seqVarType');
-  if ($varType eq 'SNP'){
+  my $snpFeature = GUS::Model::DoTS::SnpFeature->
+    new({NAME => $name,
+         SEQUENCE_ONTOLOGY_ID => $soId,
+         EXTERNAL_DATABASE_RELEASE_ID => $extDbRlsId,
+         SOURCE_ID => $sourceId,
+         REFERENCE_STRAIN => $ref,
+         ORGANISM => $organism,
+         POSITION_IN_CDS => '',
+         IS_SYNONYMOUS => 1,
+        });
 
-    my $snpFeature = GUS::Model::DoTS::SnpFeature->
-      new({NA_SEQUENCE_ID => '',	
-           NAME => $varType,
-           SEQUENCE_ONTOLOGY_ID => $soId,
-           PARENT_ID => '',	
-           EXTERNAL_DATABASE_RELEASE_ID => $extDbRlsId,
-           SOURCE_ID => $sourceId,
-           REFERENCE_STRAIN => $ref,
-           ORGANISM => $organism,
-           IS_CODING => '',
-           POSITION_IN_CDS => '',
-           });
+  $snpFeature->retrieveFromDB();
+  push (@featureRows, $snpFeature);
 
-    $snpFeature->retrieveFromDB();
-    push (@featureRows, $seqvar);
+  while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
+    my $strain = $1;
+    my $base = $2;
 
-    while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
-      my $strain = $1;
-      my $base = $2;
+    if(lc($ref) eq lc($strain)) {
+      $snpFeature->setReferenceCharacter($base);
+    }
+    else {
+      $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
+      $soId = $self->getSoId($standard);
 
-      if(lc($ref) eq lc($strain)) {
-        $snpFeature->setReferenceCharacter($base);
-      }
-      else {
-        $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
+      my $seqvar =  GUS::Model::DoTS::SeqVariation->
+        new({'source_id' => $sourceId,
+             'external_database_release_id' => $extDbRlsId,
+             'name' => $name,
+             'sequence_ontology_id' => $soId,
+             'strain' => $strain,
+             'allele' => $base,
+             'organism' => $organism
+            });
 
-        my $seqvar =  GUS::Model::DoTS::SeqVariation->
-          new({'source_id' => $sourceId,
-               'external_database_release_id' => $extDbRlsId,
-               'name' => 'SNP',
-               'standard_name' => $standard,
-               'sequence_ontology_id' => $soId,
-               'strain' => $strain,
-               'allele' => $base,
-               'organism' => $organism
-              });
+      $seqvar->retrieveFromDB();
+      $seqvar->setParent($snpFeature);
 
-        $seqvar->retrieveFromDB();
-        $seqvar->setParent($snpFeature);
-
-        push (@featureRows, $seqvar);
-      }
+      push (@featureRows, $seqvar);
     }
   }
 
-  if($varType eq 'GeneticMarker') {
-    my $seqvar =  GUS::Model::DoTS::SeqVariation->
-      new({'source_id' => $sourceId,
-           'external_database_release_id' => $extDbRlsId,
-           'name' => 'GeneticMarker',
-           'sequence_ontology_id' => $soId,
-           'organism' => $organism
-          });
-
-    $seqvar->retrieveFromDB();
-
-    push (@featureRows, $seqvar);
-
-  }
-
   return \@featureRows;
-
 }
 
 sub getSoId {
@@ -348,7 +348,7 @@ sub getNaLoc {
 
   my $locType;
   if ($self->getArg('ontologyTerm') eq 'SNP'){
-    $locType = $end == $start + 1 ? 'insertion_site' : 'modified_base_site';
+    $locType = $end > $start ? 'insertion_site' : 'modified_base_site';
   }
   else{
     $locType = 'genetic_marker_site';
@@ -359,11 +359,142 @@ sub getNaLoc {
 
 }
 
+sub _isCoding {
+  my ($self, $snpFeature, $snpStart, $snpEnd) = @_;
+
+  my $naSeqId = $snpFeature->getNaSequenceId();
+  my $isCoding = 0;
+  my ($codingSequence, $newCodingSequence, $transcript);
+
+  my $sql = "SELECT tf.na_sequence_id,tf.na_feature_id, tf.source_id, nl.start_min, nl.end_max
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
+             WHERE tf.na_feature_id = nl.na_feature_id
+              AND tf.na_sequence_id = ens.na_sequence_id 
+              and nl.start_min <= $snpStart
+              and nl.end_max >= $snpEnd
+              and tf.na_sequence_id = $naSeqId";
+
+  if(my ($transcriptFeatureId) = $self->sqlAsArray( Sql => $sql )) {
+    $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $transcriptFeatureId });
+
+    unless ($transcript->retrieveFromDB()) {
+      $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
+    }
+
+    ($codingSequence) = $self->_getCodingSequence($transcript);
+    ($newCodingSequence, $isCoding) = $self->_getCodingSequence($transcript, $snpStart, $snpEnd);
+
+    if($codingSequence ne $newCodingSequence) {
+      $self->error("Error in regenerating the refernece coding nucleotide sequence");
+    }
+  }
+  return($codingSequence, $isCoding, $transcript);
+}
+
+
+
+
+sub _getCodingSequence {
+  my ($self, $transcript, $snpStart, $snpEnd, $base) = @_;
+
+  my $isCoding = 0;
+
+  my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
+
+  unless (@exons) {
+    my $id = $transcript->getId();
+    self->error ("Transcript with na_feature_id = $id had no exons\n");
+  }
+
+  # this code gets the feature locations of the exons and puts them in order
+  @exons = map { $_->[0] }
+    sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+      map { [ $_, $_->getFeatureLocation ]}
+	@exons;
+
+  my $transcriptSequence;
+
+  for my $exon (@exons) {
+    my $chunk = $exon->getFeatureSequence();
+
+    my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
+    my $codingStart = $exon->getCodingStart();
+    my $codingEnd = $exon->getCodingEnd();
+    next unless ($codingStart && $codingEnd);
+
+    if($codingStart <= $snpStart && $codingEnd >= $snpEnd) {
+      $isCoding = 1;
+    }
+
+    if($base) {
+      $chunk = $self->_swapBase($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base);
+    }
+
+    my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
+    substr($chunk, 0, $trim5, "") if $trim5 > 0;
+    my $trim3 = $exonIsReversed ? $codingEnd - $exonStart : $exonEnd - $codingEnd;
+    substr($chunk, -$trim3, $trim3, "") if $trim3 > 0;
+
+    $transcriptSequence .= $chunk;
+  }
+  return($transcriptSequence, $isCoding);
+}
+
+sub _swapBase {
+  my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base) = @_;
+
+  $snpStart = $snpStart - $exonStart;
+  $snpEnd = $snpEnd - $exonStart;
+  $exonEnd = $exonEnd - $exonStart;
+
+  my ($fivePrimeFlank, $threePrimeFlank, $newSeq);
+
+  if($snpStart < $snpEnd && $base !~ /-/) {
+    $fivePrimeFlank = substr($seq, 0,  ($snpStart + 1));
+    $threePrimeFlank = substr($seq, ($snpStart + 1));
+    $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
+
+    unless($newSeq =~ /^($fivePrimeFlank)[actgACTG]+($threePrimeFlank)$/) {
+      $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
+    }
+  }
+  else {
+    $fivePrimeFlank = substr($seq, 0, $snpStart);
+    $threePrimeFlank = substr($seq, ($snpEnd  + 1));
+
+    $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
+    $newSeq =~ s/\-//g;
+
+    unless($newSeq =~ /^($fivePrimeFlank)[actgACTG]?/) {
+      $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
+    }
+  }
+  return($newSeq);
+}
+
+
+sub _isSynonymous {
+  my ($self, $codingSequence, $newCodingSequence) = @_;
+
+  my $cds = Bio::Seq->new( -seq => $codingSequence );
+  my $newCds = Bio::Seq->new( -seq => $newCodingSequence );
+
+  my $translatedCds = $cds->translate();
+  my $translatedNewCds = $newCds->translate();
+
+  if($translatedCds->seq() eq $translatedNewCds->seq()) {
+    return(1);
+  }
+  return(0);
+}
+
+
 sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.NALocation',
 	  'DoTS.SeqVariation',
+          'DoTS.SnpFeature',
 	 );
 }
 
