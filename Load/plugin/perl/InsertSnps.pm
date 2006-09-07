@@ -387,6 +387,7 @@ sub _isCoding {
               and tf.na_sequence_id = $naSeqId";
 
   if(my ($transcriptFeatureId) = $self->sqlAsArray( Sql => $sql )) {
+
     $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $transcriptFeatureId });
 
     unless ($transcript->retrieveFromDB()) {
@@ -429,7 +430,11 @@ sub _getCodingSequence {
     my $codingEnd = $exon->getCodingEnd();
     next unless ($codingStart && $codingEnd);
 
-    if($codingStart <= $snpStart && $codingEnd >= $snpEnd) {
+    if($codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed ) {
+      $isCoding = 1;
+    }
+
+    if($codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed ) {
       $isCoding = 1;
     }
 
