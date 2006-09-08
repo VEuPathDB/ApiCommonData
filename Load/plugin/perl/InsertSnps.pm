@@ -12,6 +12,7 @@ use GUS::Model::DoTS::SnpFeature;
 use GUS::Model::DoTS::Transcript;
 
 use Bio::Seq;
+use CBIL::Bio::SequenceUtils;
 
 
 $| = 1;
@@ -208,23 +209,22 @@ sub processSnpFile{
 
     my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
-
     foreach my $seqVar (@seqVars) {
-      my ($isSynonymous, $phenotype);
+      my ($phenotype);
 
       if($isCoding) {
         my $base = $seqVar ->getAllele();
         my ($newCodingSequence) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd,$base);
 
-        $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+        my $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
         $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
+        $snpFeature->setHasNonSynonymousAllele(1) if($isSynonymous == 0);
       }
       else {
-        $phenotype = 'non-synonymous';
+        $phenotype = 'non-coding';
       }
-      $seqVar->setPhenotype($phenotype);
-      #      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
 
+      $seqVar->setPhenotype($phenotype);
     }
 
     $snpFeature->submit();
@@ -237,7 +237,6 @@ sub processSnpFile{
       $self->log("processed $lineNum lines from $file.\n");
     }
   }
-
   return $lineNum;
 }
 
@@ -259,6 +258,9 @@ sub createSnpFeature {
   my $start = $line->[3];
 
   my $end = $line->[4];
+
+  my $isReversed = $line->[6];
+  $isReversed = $isReversed eq '-' ? 1 : 0;
 
   my $ref = $self->getArg('reference');
 
@@ -291,6 +293,10 @@ sub createSnpFeature {
 
     if(lc($ref) eq lc($strain)) {
       $snpFeature->setReferenceCharacter($base);
+
+      unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $isReversed)) {
+        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected");
+      }
     }
     else {
       $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
@@ -378,15 +384,22 @@ sub _isCoding {
   my $isCoding = 0;
   my ($codingSequence, $newCodingSequence, $transcript);
 
-  my $sql = "SELECT tf.na_feature_id
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
-             WHERE tf.na_feature_id = nl.na_feature_id
-              AND tf.na_sequence_id = ens.na_sequence_id 
-              and nl.start_min <= $snpStart
-              and nl.end_max >= $snpEnd
-              and tf.na_sequence_id = $naSeqId";
+  if (!$self->{na_feature_sql_handle}) {
+    my $sql = "SELECT tf.na_feature_id
+               FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
+               WHERE tf.na_feature_id = nl.na_feature_id
+                AND tf.na_sequence_id = ens.na_sequence_id 
+                and nl.start_min <= ?
+                and nl.end_max >= ?
+                and tf.na_sequence_id = ?";
 
-  if(my ($transcriptFeatureId) = $self->sqlAsArray( Sql => $sql )) {
+    $self->{na_feature_sql_handle} = $self->getQueryHandle()->prepare($sql);
+  }
+
+  my $sh = $self->{na_feature_sql_handle};
+  my $bindValues = [$snpStart, $snpEnd, $naSeqId];
+
+  if(my ($transcriptFeatureId) = $self->sqlAsArray( Handle => $sh, Bind => $bindValues )) {
 
     $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $transcriptFeatureId });
 
@@ -400,7 +413,27 @@ sub _isCoding {
 }
 
 
+=pod
 
+=head2 Subroutines
+
+=over 4
+
+=item C<_getCodingSequence >
+
+This method gets the exons for a transcript, orders them, and creates the coding sequence.  
+If base is provided, it will be substituted in the cds
+
+B<Parameters:>
+
+$transcript(GUS::Model::Transcript): The transcript object.
+$snpStart(scalar): Location of snp start on the genome
+$snpEnd(scalar):  Location of snp end on the genome
+$base(scalar): null, base, bases, or "-" (deletion) which will be substituted in cds
+
+=back
+
+=cut
 
 sub _getCodingSequence {
   my ($self, $transcript, $snpStart, $snpEnd, $base) = @_;
@@ -498,6 +531,27 @@ sub _isSynonymous {
   my $translatedNewCds = $newCds->translate();
 
   if($translatedCds->seq() eq $translatedNewCds->seq()) {
+    return(1);
+  }
+  return(0);
+}
+
+
+sub _isSnpPositionOk {
+  my ($self, $naSeq, $base, $naLoc, $isReverse) = @_;
+
+  my $snpStart = $naLoc->getStartMin();
+  my $snpEnd = $naLoc->getEndMax();
+
+  my $lengthOfSnp = $snpEnd - $snpStart + 1;
+
+  my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
+
+  if($isReverse) {
+    $referenceBase = CBIL::Bio::SequenceUtils::reverseComplementSequence($referenceBase);
+  }
+
+  if($referenceBase eq $base) {
     return(1);
   }
   return(0);
