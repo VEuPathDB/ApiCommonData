@@ -210,17 +210,21 @@ sub processSnpFile{
 
 
     foreach my $seqVar (@seqVars) {
-      my $isSynonymous;
+      my ($isSynonymous, $phenotype);
 
-      my $base = $seqVar ->getAllele();
+      if($isCoding) {
+        my $base = $seqVar ->getAllele();
+        my ($newCodingSequence) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd,$base);
 
-      my ($newCodingSequence) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd,$base);
-      $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
-
-      my $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
-
+        $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+        $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
+      }
+      else {
+        $phenotype = 'non-synonymous';
+      }
       $seqVar->setPhenotype($phenotype);
-#      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
+      #      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
+
     }
 
     $snpFeature->submit();
@@ -259,8 +263,6 @@ sub createSnpFeature {
   my $ref = $self->getArg('reference');
 
   my $standard = ($end > $start) ? 'insertion' : 'substitution';
-
-
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
     new({NAME => $name,
@@ -314,7 +316,6 @@ sub createSnpFeature {
 
     }
   }
-
   return $snpFeature;
 }
 
@@ -425,20 +426,20 @@ sub _getCodingSequence {
     my $chunk = $exon->getFeatureSequence();
 
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
+
     my $codingStart = $exon->getCodingStart();
     my $codingEnd = $exon->getCodingEnd();
     next unless ($codingStart && $codingEnd);
 
-    if($codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed ) {
+    my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
+    my $isReverseCoding = $codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed;
+
+    if($isForwardCoding || $isReverseCoding) {
       $isCoding = 1;
     }
 
-    if($codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed ) {
-      $isCoding = 1;
-    }
-
-    if($base) {
-      $chunk = $self->_swapBase($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base);
+    if($base && ($isForwardCoding || $isReverseCoding)) {
+      $chunk = $self->_swapBase($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
     }
 
     my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
@@ -452,7 +453,7 @@ sub _getCodingSequence {
 }
 
 sub _swapBase {
-  my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base) = @_;
+  my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
 
   $snpStart = $snpStart - $exonStart;
   $snpEnd = $snpEnd - $exonStart;
