@@ -394,7 +394,7 @@ sub _isCoding {
       $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
     }
 
-    ($codingSequence,$isCoding) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd);
+    ($codingSequence,$isCoding) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd, '');
   }
   return($codingSequence, $isCoding, $transcript);
 }
