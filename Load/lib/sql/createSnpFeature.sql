@@ -7,7 +7,7 @@ SELECT na_feature_id, na_sequence_id, subclass_view, name,
        string1 AS description, string2 AS reference_character,
        string3 AS reference_strain, string4 AS organism,
        number1 AS is_coding, number2 AS position_in_cds,
-       number3 AS has_synonymous_allele, modification_date, user_read,
+       number3 AS has_nonsynonymous_allele, modification_date, user_read,
        user_write, group_read, group_write, other_read, other_write,
        row_user_id, row_group_id, row_project_id, row_alg_invocation_id
 FROM dots.NaFeatureImp
