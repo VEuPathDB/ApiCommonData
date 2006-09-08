@@ -220,7 +220,7 @@ sub processSnpFile{
       my $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
 
       $seqVar->setPhenotype($phenotype);
-      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
+#      $snpFeature->setIsSynonymous(0) if($isSynonymous == 0 && $snpFeature->getIsSynonymous() == 1);
     }
 
     $snpFeature->submit();
@@ -270,8 +270,7 @@ sub createSnpFeature {
          REFERENCE_STRAIN => $ref,
          ORGANISM => $organism,
          POSITION_IN_CDS => '',
-         IS_SYNONYMOUS => 1,
-        });
+	});
 
   $snpFeature->retrieveFromDB();
 
@@ -460,6 +459,9 @@ sub _swapBase {
   $exonEnd = $exonEnd - $exonStart;
 
   my ($fivePrimeFlank, $threePrimeFlank, $newSeq);
+
+  #insertions: snpStart will be less than snpEnd and the base will not be a -
+  #otherwise treat substitutions and deletions identically
 
   if($snpStart < $snpEnd && $base !~ /-/) {
     $fivePrimeFlank = substr($seq, 0,  ($snpStart + 1));
