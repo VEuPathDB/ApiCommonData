@@ -150,33 +150,29 @@ sub run {
   $dbh = $self->getQueryHandle();
   $dbh->{'LongReadLen'} = 10_000_000;
 
-  my ($linesProcessed) = $self->processSnpFile();
-
-  my $file = $self->getArg('snpFile');
-
-  return "$linesProcessed lines of SNP file $file processed\n";
-}
-
-sub processSnpFile{
-  my ($self) = @_;
-
-  my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
-
   my $termName = $self->getArg('ontologyTerm');
-
   $self->{'soId'} = $self->getSoId($termName);
 
   die "The term $termName was not found in the Sequence Ontology.\n" unless $self->{'soId'};
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
-
   $self->{'naExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('naExternalDatabaseName'),$self->getArg('naExternalDatabaseVersion'));
 
   my $file = $self->getArg('snpFile');
 
+  my ($linesProcessed) = $self->processSnpFile($file);
+
+  return "$linesProcessed lines of SNP file $file processed\n";
+}
+
+sub processSnpFile{
+  my ($self, $file) = @_;
+
+  my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
+
   my $num = 0;
 
-  open (SNP, $file);
+  open (SNP, $file) || die "Cannot open file $file for reading: $!";
 
   while(<SNP>){
     chomp;
@@ -196,36 +192,24 @@ sub processSnpFile{
 
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
 
-    my ($codingSequence, $isCoding, $transcript) = $self->_isCoding($naSeqId, $snpStart, $snpEnd);
+    my $transcript = $self->_getTranscript($naSeqId, $snpStart, $snpEnd);
 
-    my $geneFeatureId;
+    my $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd);
+    my $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
 
-    $snpFeature->setIsCoding($isCoding);
+    my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
+
+    $snpFeature->setPositionInCds($codingSnpStart) if($codingSnpStart == $codingSnpEnd);
+    if($codingSequence) {
+      $snpFeature->setIsCoding(1);
+    }
 
     if($transcript) {
-      $geneFeatureId = $transcript->get('parent_id');
-      $snpFeature->set('parent_id',$geneFeatureId);
+      my $geneFeatureId = $transcript->get('parent_id');
+      $snpFeature->set('parent_id', $geneFeatureId);
     }
 
-    my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
-
-    foreach my $seqVar (@seqVars) {
-      my ($phenotype);
-
-      if($isCoding) {
-        my $base = $seqVar ->getAllele();
-        my ($newCodingSequence) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd,$base);
-
-        my $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
-        $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
-        $snpFeature->setHasNonSynonymousAllele(1) if($isSynonymous == 0);
-      }
-      else {
-        $phenotype = 'non-coding';
-      }
-
-      $seqVar->setPhenotype($phenotype);
-    }
+    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $codingSequence);
 
     $snpFeature->submit();
 
@@ -238,6 +222,31 @@ sub processSnpFile{
     }
   }
   return $lineNum;
+}
+
+sub _updateSequenceVars {
+  my  ($self, $snpFeature, $cds, $start, $end, $codingSequence) = @_;
+
+  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+
+  foreach my $seqVar (@seqVars) {
+    my ($phenotype);
+
+    if($cds) {
+      my $base = $seqVar ->getAllele();
+      my $newCodingSequence = $self->_swapBaseInSequence($cds, 0, 0, $start, $end, $base, '');
+
+      my $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+
+      $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
+      $snpFeature->setHasNonSynonymousAllele(1) if($isSynonymous == 0);
+    }
+    else {
+      $phenotype = 'non-coding';
+    }
+
+    $seqVar->setPhenotype($phenotype);
+  }
 }
 
 sub createSnpFeature {
@@ -259,8 +268,10 @@ sub createSnpFeature {
 
   my $end = $line->[4];
 
-  my $isReversed = $line->[6];
-  $isReversed = $isReversed eq '-' ? 1 : 0;
+  my $strand = $line->[6];
+
+  my $isReversed = $strand eq '-' ? 1 : 0;
+  $isReversed = "NA" if($strand eq '.');
 
   my $ref = $self->getArg('reference');
 
@@ -378,11 +389,10 @@ sub getNaLoc {
 
 }
 
-sub _isCoding {
+sub _getTranscript {
   my ($self, $naSeqId, $snpStart, $snpEnd) = @_;
 
-  my $isCoding = 0;
-  my ($codingSequence, $newCodingSequence, $transcript);
+  my $transcript;
 
   if (!$self->{na_feature_sql_handle}) {
     my $sql = "SELECT tf.na_feature_id
@@ -406,12 +416,9 @@ sub _isCoding {
     unless ($transcript->retrieveFromDB()) {
       $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
     }
-
-    ($codingSequence,$isCoding) = $self->_getCodingSequence($transcript,$snpStart, $snpEnd, '');
   }
-  return($codingSequence, $isCoding, $transcript);
+  return($transcript);
 }
-
 
 =pod
 
@@ -438,7 +445,7 @@ $base(scalar): null, base, bases, or "-" (deletion) which will be substituted in
 sub _getCodingSequence {
   my ($self, $transcript, $snpStart, $snpEnd, $base) = @_;
 
-  my $isCoding = 0;
+  return unless($transcript);
 
   my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
 
@@ -467,12 +474,8 @@ sub _getCodingSequence {
     my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
     my $isReverseCoding = $codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed;
 
-    if($isForwardCoding || $isReverseCoding) {
-      $isCoding = 1;
-    }
-
     if($base && ($isForwardCoding || $isReverseCoding)) {
-      $chunk = $self->_swapBase($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
+      $chunk = $self->_swapBaseInSequence($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
     }
 
     my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
@@ -482,44 +485,45 @@ sub _getCodingSequence {
 
     $transcriptSequence .= $chunk;
   }
-  return($transcriptSequence, $isCoding);
+  return($transcriptSequence);
 }
 
-sub _swapBase {
+sub getCodingSubstitutionPositions {
+  my ($self, $codingSequence, $mockCodingSequence) = @_;
+
+  my @cdsArray = split("", $codingSequence);
+  my @mockCdsArray = split("", $mockCodingSequence);
+
+  my @results;
+
+  for(my $i = 0; $i < scalar(@cdsArray); $i++) {
+    push(@results, $i) if($cdsArray[$i] ne $mockCdsArray[$i]);
+  }
+  my $snpStart = $results[0];
+  my $snpEnd = $results[scalar(@results) - 1];
+
+  return($snpStart, $snpEnd);
+}
+
+sub _swapBaseInSequence {
   my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
 
-  $snpStart = $snpStart - $exonStart;
-  $snpEnd = $snpEnd - $exonStart;
-  $exonEnd = $exonEnd - $exonStart;
+  my $normSnpStart = $isReversed ? $exonEnd - $snpStart : $snpStart - $exonStart;
+  my $normSnpEnd = $isReversed ? $exonEnd - $snpEnd  : $snpEnd - $exonStart;
 
   my ($fivePrimeFlank, $threePrimeFlank, $newSeq);
 
-  #insertions: snpStart will be less than snpEnd and the base will not be a -
-  #otherwise treat substitutions and deletions identically
+  my $fivePrimeFlank = substr($seq, 0, $normSnpStart);
+  my $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
 
-  if($snpStart < $snpEnd && $base !~ /-/) {
-    $fivePrimeFlank = substr($seq, 0,  ($snpStart + 1));
-    $threePrimeFlank = substr($seq, ($snpStart + 1));
-    $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
+  my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
+  $newSeq =~ s/\-//g;
 
-    unless($newSeq =~ /^($fivePrimeFlank)[actgACTG]+($threePrimeFlank)$/) {
-      $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
-    }
-  }
-  else {
-    $fivePrimeFlank = substr($seq, 0, $snpStart);
-    $threePrimeFlank = substr($seq, ($snpEnd  + 1));
-
-    $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
-    $newSeq =~ s/\-//g;
-
-    unless($newSeq =~ /^($fivePrimeFlank)[actgACTG]?/) {
-      $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
-    }
+  unless($newSeq =~ /$fivePrimeFlank/) {
+    $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
   }
   return($newSeq);
 }
-
 
 sub _isSynonymous {
   my ($self, $codingSequence, $newCodingSequence) = @_;
@@ -530,15 +534,14 @@ sub _isSynonymous {
   my $translatedCds = $cds->translate();
   my $translatedNewCds = $newCds->translate();
 
-  if($translatedCds->seq() eq $translatedNewCds->seq()) {
-    return(1);
-  }
-  return(0);
+  return($translatedCds->seq() eq $translatedNewCds->seq());
 }
 
 
 sub _isSnpPositionOk {
   my ($self, $naSeq, $base, $naLoc, $isReverse) = @_;
+
+  return(1) if($isReverse eq "NA");
 
   my $snpStart = $naLoc->getStartMin();
   my $snpEnd = $naLoc->getEndMax();
@@ -551,12 +554,8 @@ sub _isSnpPositionOk {
     $referenceBase = CBIL::Bio::SequenceUtils::reverseComplementSequence($referenceBase);
   }
 
-  if($referenceBase eq $base) {
-    return(1);
-  }
-  return(0);
+  return($referenceBase eq $base);
 }
-
 
 sub undoTables {
   my ($self) = @_;
