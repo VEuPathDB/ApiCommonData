@@ -203,9 +203,9 @@ sub processSnpFile{
       $snpFeature->set('parent_id', $geneFeatureId);
     }
 
-    if($codingSequence) {
+    if(my $isCoding = $codingSequence ne $mockCodingSequence) {
       $snpFeature->setIsCoding(1);
-      $snpFeature->setPositionInCds($codingSnpStart) if($codingSnpStart == $codingSnpEnd);
+      $snpFeature->setPositionInCds($codingSnpStart);
 
       my $startPositionInProtein = int($codingSnpStart / 3);
       my $endPositionInProtein = int($codingSnpEnd / 3);
@@ -215,9 +215,12 @@ sub processSnpFile{
 
       my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
       $snpFeature->setReferenceAa($refAaSequence);
-    }
 
-    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd);
+      $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding);
+    }
+    else {
+      $snpFeature->setIsCoding(0);
+    }
 
     $snpFeature->submit();
     $self->undefPointerCache();
@@ -232,14 +235,14 @@ sub processSnpFile{
 # ----------------------------------------------------------------------
 
 sub _updateSequenceVars {
-  my  ($self, $snpFeature, $cds, $start, $end) = @_;
+  my  ($self, $snpFeature, $cds, $start, $end, $isCoding) = @_;
 
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
   foreach my $seqVar (@seqVars) {
     my ($phenotype);
 
-    if($cds) {
+    if($isCoding) {
       my $base = $seqVar ->getAllele();
       my $newCodingSequence = $self->_swapBaseInSequence($cds, 0, 0, $start, $end, $base, '');
 
@@ -249,9 +252,10 @@ sub _updateSequenceVars {
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $start, $end);
+      $seqVar->setProduct($snpAaSequence);
     }
     else {
-      $phenotype = 'non-coding';
+      $phenotype = 'is_non_coding';
     }
 
     $seqVar->setPhenotype($phenotype);
@@ -293,7 +297,6 @@ sub createSnpFeature {
          SOURCE_ID => $sourceId,
          REFERENCE_STRAIN => $ref,
          ORGANISM => $organism,
-         POSITION_IN_CDS => '',
 	});
 
   $snpFeature->retrieveFromDB();
@@ -500,6 +503,7 @@ sub _getCodingSequence {
 
     $transcriptSequence .= $chunk;
   }
+
   return($transcriptSequence);
 }
 
@@ -541,6 +545,7 @@ sub _swapBaseInSequence {
     $fivePrimeFlank = substr($seq, 0, $normSnpStart);
     $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
   }
+
 
   my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
   $newSeq =~ s/\-//g;
