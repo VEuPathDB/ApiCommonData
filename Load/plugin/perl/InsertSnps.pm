@@ -223,6 +223,7 @@ sub processSnpFile{
     }
 
     $snpFeature->submit();
+    exit();
     $self->undefPointerCache();
 
     $lineNum++;
@@ -251,7 +252,10 @@ sub _updateSequenceVars {
       $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
-      my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $start, $end);
+      my $startPositionInProtein = int($start / 3);
+      my $endPositionInProtein = int($end / 3);
+
+      my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $startPositionInProtein, $endPositionInProtein);
       $seqVar->setProduct($snpAaSequence);
     }
     else {
@@ -600,9 +604,9 @@ sub _getAminoAcidSequenceOfSnp {
   my $cds = Bio::Seq->new( -seq => $codingSequence );
   my $translated = $cds->translate();
 
-  my $lengthOfSnp = $end - $start;
+  my $lengthOfSnp = $end - $start + 1;
 
-  return substr($translated->seq(), $start, $lengthOfSnp);
+  return(substr($translated->seq(), $start, $lengthOfSnp));
 }
 
 # ----------------------------------------------------------------------
