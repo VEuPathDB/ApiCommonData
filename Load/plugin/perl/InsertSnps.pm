@@ -195,6 +195,7 @@ sub processSnpFile{
 
     my $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
     my $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
+    my $isCoding = $codingSequence ne $mockCodingSequence;
 
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
 
@@ -203,7 +204,7 @@ sub processSnpFile{
       $snpFeature->set('parent_id', $geneFeatureId);
     }
 
-    if(my $isCoding = $codingSequence ne $mockCodingSequence) {
+    if($isCoding) {
       $snpFeature->setIsCoding(1);
       $snpFeature->setPositionInCds($codingSnpStart);
 
@@ -215,12 +216,12 @@ sub processSnpFile{
 
       my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
       $snpFeature->setReferenceAa($refAaSequence);
-
-      $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding);
     }
     else {
       $snpFeature->setIsCoding(0);
     }
+
+    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding);
 
     $snpFeature->submit();
     $self->undefPointerCache();
@@ -318,7 +319,7 @@ sub createSnpFeature {
       $snpFeature->setReferenceNa($base);
 
       unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $isReversed)) {
-        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected");
+        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected: $!");
       }
     }
     else {
@@ -521,7 +522,7 @@ sub getCodingSubstitutionPositions {
   my @results;
 
   for(my $i = 0; $i < scalar(@cdsArray); $i++) {
-    push(@results, $i) if($cdsArray[$i] ne $mockCdsArray[$i]);
+    push(@results, ($i +1)) if($cdsArray[$i] ne $mockCdsArray[$i]);
   }
   my $snpStart = $results[0];
   my $snpEnd = $results[scalar(@results) - 1];
