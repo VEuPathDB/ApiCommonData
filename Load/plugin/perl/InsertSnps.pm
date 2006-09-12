@@ -165,6 +165,8 @@ sub run {
   return "$linesProcessed lines of SNP file $file processed\n";
 }
 
+# ----------------------------------------------------------------------
+
 sub processSnpFile{
   my ($self, $file) = @_;
 
@@ -176,7 +178,6 @@ sub processSnpFile{
 
   while(<SNP>){
     chomp;
-
     $num++;
 
     next if ($self->getArg('restart') && $num <= $lineNum);
@@ -184,48 +185,54 @@ sub processSnpFile{
     my @line = split(/\t/,$_);
 
     my $snpFeature = $self->createSnpFeature(\@line);
-
     my $naLoc = $snpFeature->getChild('GUS::Model::DoTS::NALocation');
 
     my $snpStart = $naLoc->getStartMin();
     my $snpEnd = $naLoc->getEndMax();
 
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
-
     my $transcript = $self->_getTranscript($naSeqId, $snpStart, $snpEnd);
 
-    my $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd);
+    my $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
     my $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
 
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
-
-    $snpFeature->setPositionInCds($codingSnpStart) if($codingSnpStart == $codingSnpEnd);
-    if($codingSequence) {
-      $snpFeature->setIsCoding(1);
-    }
 
     if($transcript) {
       my $geneFeatureId = $transcript->get('parent_id');
       $snpFeature->set('parent_id', $geneFeatureId);
     }
 
-    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $codingSequence);
+    if($codingSequence) {
+      $snpFeature->setIsCoding(1);
+      $snpFeature->setPositionInCds($codingSnpStart) if($codingSnpStart == $codingSnpEnd);
+
+      my $startPositionInProtein = int($codingSnpStart / 3);
+      my $endPositionInProtein = int($codingSnpEnd / 3);
+
+      ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
+      $snpFeature->setPositionInProtein($startPositionInProtein);
+
+      my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
+      $snpFeature->setReferenceAa($refAaSequence);
+    }
+
+    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd);
 
     $snpFeature->submit();
-
     $self->undefPointerCache();
 
     $lineNum++;
 
-    if ($lineNum%10 == 0){
-      $self->log("processed $lineNum lines from $file.\n");
-    }
+    $self->log("processed $lineNum lines from $file.\n") if($lineNum % 10 == 0);
   }
   return $lineNum;
 }
 
+# ----------------------------------------------------------------------
+
 sub _updateSequenceVars {
-  my  ($self, $snpFeature, $cds, $start, $end, $codingSequence) = @_;
+  my  ($self, $snpFeature, $cds, $start, $end) = @_;
 
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
@@ -236,10 +243,12 @@ sub _updateSequenceVars {
       my $base = $seqVar ->getAllele();
       my $newCodingSequence = $self->_swapBaseInSequence($cds, 0, 0, $start, $end, $base, '');
 
-      my $isSynonymous = $self->_isSynonymous($codingSequence, $newCodingSequence);
+      my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
       $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
       $snpFeature->setHasNonSynonymousAllele(1) if($isSynonymous == 0);
+
+      my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $start, $end);
     }
     else {
       $phenotype = 'non-coding';
@@ -249,24 +258,24 @@ sub _updateSequenceVars {
   }
 }
 
+# ----------------------------------------------------------------------
+
 sub createSnpFeature {
   my ($self,$line) = @_;
 
   my $name = 'SNP';
-
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
-
   my $soId = $self->{'soId'};
 
   my @data = split (/;/, $line->[8]);
 
   my $sourceId = $data[0];
-
   my $organism = $self->getArg('organism');
 
   my $start = $line->[3];
-
   my $end = $line->[4];
+
+  $self->userError("Snp end is less than snp start in file: $!") if($end < $start);
 
   my $strand = $line->[6];
 
@@ -290,13 +299,10 @@ sub createSnpFeature {
   $snpFeature->retrieveFromDB();
 
   my $naSeq = $self->getNaSeq($line);
-
-  $naSeq->setChild($snpFeature);
-
   my $naLoc = $self->getNaLoc($line);
 
+  $naSeq->setChild($snpFeature);
   $snpFeature->addChild($naLoc);
-
 
   while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
     my $strain = $1;
@@ -336,6 +342,8 @@ sub createSnpFeature {
   return $snpFeature;
 }
 
+# ----------------------------------------------------------------------
+
 sub getSoId {
   my ($self, $termName) = @_;
 
@@ -350,6 +358,8 @@ sub getSoId {
   return $soId;
 
 }
+
+# ----------------------------------------------------------------------
 
 sub getNaSeq {
   my ($self,$line) = @_;
@@ -369,6 +379,8 @@ sub getNaSeq {
   return $naSeq;
 }
 
+# ----------------------------------------------------------------------
+
 sub getNaLoc {
   my ($self,$line) = @_;
 
@@ -386,8 +398,9 @@ sub getNaLoc {
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'location_type'=>$locType});
 
   return $naLoc;
-
 }
+
+# ----------------------------------------------------------------------
 
 sub _getTranscript {
   my ($self, $naSeqId, $snpStart, $snpEnd) = @_;
@@ -419,6 +432,8 @@ sub _getTranscript {
   }
   return($transcript);
 }
+
+# ----------------------------------------------------------------------
 
 =pod
 
@@ -488,6 +503,8 @@ sub _getCodingSequence {
   return($transcriptSequence);
 }
 
+# ----------------------------------------------------------------------
+
 sub getCodingSubstitutionPositions {
   my ($self, $codingSequence, $mockCodingSequence) = @_;
 
@@ -513,8 +530,17 @@ sub _swapBaseInSequence {
 
   my ($fivePrimeFlank, $threePrimeFlank, $newSeq);
 
-  my $fivePrimeFlank = substr($seq, 0, $normSnpStart);
-  my $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
+  # An insertion is when the snpStart is one base less than the snpEnd
+  # deletion have a base of '-' and are treated identically to substitutions
+
+  if($normSnpStart < $normSnpEnd && $base !~ /-/) {
+    $fivePrimeFlank = substr($seq, 0,  ($normSnpStart + 1));
+    $threePrimeFlank = substr($seq, ($normSnpStart + 1));
+  }
+  else {
+    $fivePrimeFlank = substr($seq, 0, $normSnpStart);
+    $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
+  }
 
   my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
   $newSeq =~ s/\-//g;
@@ -522,8 +548,11 @@ sub _swapBaseInSequence {
   unless($newSeq =~ /$fivePrimeFlank/) {
     $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
   }
+
   return($newSeq);
 }
+
+# ----------------------------------------------------------------------
 
 sub _isSynonymous {
   my ($self, $codingSequence, $newCodingSequence) = @_;
@@ -537,6 +566,7 @@ sub _isSynonymous {
   return($translatedCds->seq() eq $translatedNewCds->seq());
 }
 
+# ----------------------------------------------------------------------
 
 sub _isSnpPositionOk {
   my ($self, $naSeq, $base, $naLoc, $isReverse) = @_;
@@ -556,6 +586,21 @@ sub _isSnpPositionOk {
 
   return($referenceBase eq $base);
 }
+
+# ----------------------------------------------------------------------
+
+sub _getAminoAcidSequenceOfSnp {
+  my ($codingSequence, $start, $end) = @_;
+
+  my $cds = Bio::Seq->new( -seq => $codingSequence );
+  my $translated = $cds->translate();
+
+  my $lengthOfSnp = $end - $start;
+
+  return substr($translated->seq(), $start, $lengthOfSnp);
+}
+
+# ----------------------------------------------------------------------
 
 sub undoTables {
   my ($self) = @_;
