@@ -223,7 +223,6 @@ sub processSnpFile{
     }
 
     $snpFeature->submit();
-    exit();
     $self->undefPointerCache();
 
     $lineNum++;
