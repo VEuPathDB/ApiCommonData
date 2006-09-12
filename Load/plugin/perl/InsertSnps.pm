@@ -553,7 +553,7 @@ sub _swapBaseInSequence {
   my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
   $newSeq =~ s/\-//g;
 
-  unless($newSeq =~ /$fivePrimeFlank/) {
+  unless($newSeq =~ /$fivePrimeFlank/ || $newSeq =~ /$threePrimeFlank/) {
     $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
   }
 
