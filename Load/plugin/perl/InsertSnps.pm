@@ -246,7 +246,7 @@ sub _updateSequenceVars {
       my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
       $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
-      $snpFeature->setHasNonSynonymousAllele(1) if($isSynonymous == 0);
+      $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $start, $end);
     }
@@ -309,7 +309,7 @@ sub createSnpFeature {
     my $base = $2;
 
     if(lc($ref) eq lc($strain)) {
-      $snpFeature->setReferenceCharacter($base);
+      $snpFeature->setReferenceNa($base);
 
       unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $isReversed)) {
         $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected");
@@ -590,7 +590,7 @@ sub _isSnpPositionOk {
 # ----------------------------------------------------------------------
 
 sub _getAminoAcidSequenceOfSnp {
-  my ($codingSequence, $start, $end) = @_;
+  my ($self, $codingSequence, $start, $end) = @_;
 
   my $cds = Bio::Seq->new( -seq => $codingSequence );
   my $translated = $cds->translate();
