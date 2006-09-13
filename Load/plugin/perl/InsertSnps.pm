@@ -208,8 +208,8 @@ sub processSnpFile{
       $snpFeature->setIsCoding(1);
       $snpFeature->setPositionInCds($codingSnpStart);
 
-      my $startPositionInProtein = int($codingSnpStart / 3);
-      my $endPositionInProtein = int($codingSnpEnd / 3);
+      my $startPositionInProtein = ($codingSnpStart % 3 == 0) ? int($codingSnpStart / 3) : int($codingSnpStart / 3) + 1;
+      my $endPositionInProtein = ($codingSnpEnd % 3 == 0) ? int($codingSnpEnd / 3) : int($codingSnpEnd / 3) + 1;
 
       ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
       $snpFeature->setPositionInProtein($startPositionInProtein);
@@ -245,15 +245,15 @@ sub _updateSequenceVars {
 
     if($isCoding) {
       my $base = $seqVar ->getAllele();
-      my $newCodingSequence = $self->_swapBaseInSequence($cds, 0, 0, $start, $end, $base, '');
+      my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $base, '');
 
       my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
       $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
-      my $startPositionInProtein = int($start / 3);
-      my $endPositionInProtein = int($end / 3);
+      my $startPositionInProtein = ($start % 3 == 0) ? int($start / 3) : int($start / 3) + 1;
+      my $endPositionInProtein = ($end % 3 == 0) ? int($end / 3) : int($end / 3) + 1;
 
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $startPositionInProtein, $endPositionInProtein);
       $seqVar->setProduct($snpAaSequence);
@@ -530,6 +530,8 @@ sub getCodingSubstitutionPositions {
   return($snpStart, $snpEnd);
 }
 
+# ----------------------------------------------------------------------
+
 sub _swapBaseInSequence {
   my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
 
@@ -549,7 +551,6 @@ sub _swapBaseInSequence {
     $fivePrimeFlank = substr($seq, 0, $normSnpStart);
     $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
   }
-
 
   my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
   $newSeq =~ s/\-//g;
@@ -601,12 +602,15 @@ sub _isSnpPositionOk {
 sub _getAminoAcidSequenceOfSnp {
   my ($self, $codingSequence, $start, $end) = @_;
 
+  my $normStart = $start - 1;
+  my $normEnd = $end - 1;
+
   my $cds = Bio::Seq->new( -seq => $codingSequence );
   my $translated = $cds->translate();
 
-  my $lengthOfSnp = $end - $start + 1;
+  my $lengthOfSnp = $normEnd - $normStart + 1;
 
-  return(substr($translated->seq(), $start, $lengthOfSnp));
+  return(substr($translated->seq(), $normStart, $lengthOfSnp));
 }
 
 # ----------------------------------------------------------------------
