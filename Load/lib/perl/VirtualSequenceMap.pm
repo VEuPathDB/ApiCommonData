@@ -44,6 +44,10 @@ EOSQL
   while (my ($virtualSequenceId, $sequenceId,
 	     $length, $distanceFromLeft, $orientation) = $sth->fetchrow_array()) {
 
+    if ($orientation eq '0'){
+      $orientation = '+1';
+    }
+
     if (defined($lastVirtualSequenceId) && $lastVirtualSequenceId ne $virtualSequenceId) {
       $offset = 0;
     }
