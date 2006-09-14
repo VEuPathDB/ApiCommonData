@@ -59,17 +59,6 @@ integerArg({name  => 'testnumber',
 			constraintFunc=> undef,
 			isList=> 0,
 			}),
-			
-fileArg({name => 'dataDir',
-         descr => 'Absolute path to the directory where InterPro data resides ' 
-					. '(such as /files/cbil/data/cbil/PlasmoDB/interp',
-         constraintFunc=> undef,
-         reqd  => 1,
-         mustExist => 0,
-         isList => 0,
-         format=>'Text'
-        }),
-
 ];
 
 return $argsDeclaration;
@@ -140,7 +129,7 @@ sub run {
     my $dbCount = 0;
 
      foreach my $db (@$dbs) {
-        my $file = $self->getArgs()->{'dataDir'} . "/" . $self->{$db}->{'file'};
+        my $file = $self->{$db}->{'file'};
         
         my $rls = $self->{$db}->{'ver'};
         if ($file eq '') { $self->log("Warning: No file for $db: skipping");
@@ -177,7 +166,7 @@ $file not found.
 Check the filename attribute for '$name' in '@{[$self->getArgs()->{'confFile'}]}'.
 The filename value should be a path relative to --inPath ('@{[$self->getArgs()->{'inPath'}]}').
 EOF
-   while (<STDRD> && $eCount < $testNum) {
+   while (<STDRD> && ($testNum  && ($eCount < $testNum))) {
       if (/\/\//) {
          my $gusHash = $self->mapStandardDataValues($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -214,7 +203,7 @@ sub loadPrints{
    my $eCount = 0;
    my $dataHash = {};
    open PRINTS, "<$file";
-   while (<PRINTS> && $eCount < $testNum) {
+   while (<PRINTS> && ($testNum  && ($eCount < $testNum))) {
       if (/gm\;/) {
          my $gusHash = $self->mapPrintsData($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -249,7 +238,7 @@ sub loadGene3DCathFiles{
    my $dataHash = {};
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> && $eCount < $testNum) {
+   while (<DFILE> && ($testNum  && ($eCount < $testNum))) {
       if (/\/\//) {
          my $gusHash = $self->mapCathFileData($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -286,7 +275,7 @@ sub loadProDom {
 #>Q9XYH6_CRYPV#PD000006#561#605 | 45 | pd_PD000006;sp_Q9XYH6_CRYPV_Q9XYH6; | (8753)  ATP-BINDING COMPLETE PROTEOME ABC TRANSPORTER TRANSPORTER COMPONENT ATPASE MEMBRANE SYSTEM
    open DFILE, "<$file";
    my $eCount = 0;
-   while (<DFILE> && $eCount < $testNum) {
+   while (<DFILE> && ($testNum  && ($eCount < $testNum))) {
       my @dataAry = split(/\|/);
       my ($primId, $pdName) = split(/\;/,$dataAry[2]);
       my $gusHash = { 'external_primary_identifier' => substr($primId,4),
@@ -312,7 +301,7 @@ sub loadPanther {
 #PTHR11871       PROTEIN PHOSPHATASE PP2A REGULATORY SUBUNIT B   IPR000009       Protein phosphatase 2A regulatory subunit PR55
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> && $eCount < $testNum) {
+   while (<DFILE> && ($testNum  && ($eCount < $testNum))) {
       my @dataAry = split(/\t/);
       my $gusHash = { 'external_primary_identifier' => "$dataAry[0]",
  		      'external_secondary_identifier' => $dataAry[2],
@@ -333,7 +322,7 @@ sub loadSuperfamily {
 #0024654 52540   c.37.1  d3adk__ P-loop containing nucleoside triphosphate hydrolases
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE> && $eCount < $testNum) {
+   while (<DFILE> && ($testNum  && ($eCount < $testNum))) {
       my @dataAry = split(/\t/);
       my $gusHash = { 'external_primary_identifier' => "SSF$dataAry[1]",
  		      'external_secondary_identifier' => $dataAry[0],
@@ -362,7 +351,7 @@ sub loadPirsf {
    my @dataAry = undef;
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> & $eCount < $testNum) {
+   while (<DFILE> & ($testNum  && ($eCount < $testNum))) {
       if (/^>(PIRSF[0-9]+)/) {
            if ($dataAry[1]) {
                my $gusHash = { 'external_primary_identifier' => $dataAry[1],
@@ -393,7 +382,7 @@ sub loadSmart {
 
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE> && $eCount < $testNum) {
+   while (<DFILE> && ($testNum  && ($eCount < $testNum))) {
       unless (/^\s\w/) {next;}
          chomp;
          s/\s+/ /g;
