@@ -319,7 +319,7 @@ sub createSnpFeature {
       $snpFeature->setReferenceNa($base);
 
       unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $isReversed)) {
-        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected: $!");
+        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected for sourceId $sourceId");
       }
     }
     else {
