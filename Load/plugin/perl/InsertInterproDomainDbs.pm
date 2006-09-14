@@ -11,7 +11,6 @@ use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::SRes::ExternalDatabaseEntry;
-use GUS::Model::DoTS::ExternalAASequence;
 
 
 sub getArgsDeclaration {
@@ -19,7 +18,8 @@ my $argsDeclaration  =
 [
 
 fileArg({name => 'confFile',
-         descr => 'File containing the domain database',
+         descr => 'Absolute path to the file containing the domain database. NOTE: This plugin does NOT valid the XML. '
+         			. 'Must validate the XML outside this plugin, before running',
          constraintFunc=> undef,
          reqd  => 1,
          mustExist => 0,
@@ -52,7 +52,23 @@ fileArg({name => 'restartFile',
          isList => 0,
          format=>'Text'
         }),
-
+        
+integerArg({name  => 'testnumber',
+			descr => 'Number of query sequences to process for testing',
+			reqd  => 0,
+			constraintFunc=> undef,
+			isList=> 0,
+			}),
+			
+fileArg({name => 'dataDir',
+         descr => 'Absolute path to the directory where InterPro data resides ' 
+					. '(such as /files/cbil/data/cbil/PlasmoDB/interp',
+         constraintFunc=> undef,
+         reqd  => 1,
+         mustExist => 0,
+         isList => 0,
+         format=>'Text'
+        }),
 
 ];
 
@@ -124,7 +140,8 @@ sub run {
     my $dbCount = 0;
 
      foreach my $db (@$dbs) {
-        my $file = $self->{$db}->{'file'};
+        my $file = $self->getArgs()->{'dataDir'} . "/" . $self->{$db}->{'file'};
+        
         my $rls = $self->{$db}->{'ver'};
         if ($file eq '') { $self->log("Warning: No file for $db: skipping");
                            next;
@@ -151,7 +168,8 @@ sub run {
 
 sub loadStandardFile { #prosite, uniprot, tigrfams, pfam
    my ($self, $name, $file) = @_;
-
+   
+   my $testNum = $self->getArgs()->{'testnumber'};
    my $dataHash = {};
    my $eCount = 0;
    open STDRD, "$file" or die <<"EOF";
@@ -159,7 +177,7 @@ $file not found.
 Check the filename attribute for '$name' in '@{[$self->getArgs()->{'confFile'}]}'.
 The filename value should be a path relative to --inPath ('@{[$self->getArgs()->{'inPath'}]}').
 EOF
-   while (<STDRD>) {
+   while (<STDRD> && $eCount < $testNum) {
       if (/\/\//) {
          my $gusHash = $self->mapStandardDataValues($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -191,11 +209,12 @@ return $gusHash;
 
 sub loadPrints{
    my ($self, $name, $file) = @_;
-
+   
+   my $testNum = $self->getArgs()->{'testnumber'};
    my $eCount = 0;
    my $dataHash = {};
    open PRINTS, "<$file";
-   while (<PRINTS>) {
+   while (<PRINTS> && $eCount < $testNum) {
       if (/gm\;/) {
          my $gusHash = $self->mapPrintsData($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -225,11 +244,12 @@ return $gusHash;
 
 sub loadGene3DCathFiles{
    my ($self, $name, $file) = @_;
-
+   my $testNum = $self->getArgs()->{'testnumber'};
+   
    my $dataHash = {};
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE>) {
+   while (<DFILE> && $eCount < $testNum) {
       if (/\/\//) {
          my $gusHash = $self->mapCathFileData($dataHash, $name);
          $self->submitGusEntry($gusHash);
@@ -261,11 +281,12 @@ return $gusHash;
 
 sub loadProDom {
    my ($self, $name, $file) = @_;
-
+   my $testNum = $self->getArgs()->{'testnumber'};
+   
 #>Q9XYH6_CRYPV#PD000006#561#605 | 45 | pd_PD000006;sp_Q9XYH6_CRYPV_Q9XYH6; | (8753)  ATP-BINDING COMPLETE PROTEOME ABC TRANSPORTER TRANSPORTER COMPONENT ATPASE MEMBRANE SYSTEM
    open DFILE, "<$file";
    my $eCount = 0;
-   while (<DFILE>) {
+   while (<DFILE> && $eCount < $testNum) {
       my @dataAry = split(/\|/);
       my ($primId, $pdName) = split(/\;/,$dataAry[2]);
       my $gusHash = { 'external_primary_identifier' => substr($primId,4),
@@ -286,11 +307,12 @@ return $eCount;
 
 sub loadPanther {
    my ($self, $name, $file) = @_;
-
+   my $testNum = $self->getArgs()->{'testnumber'};
+   
 #PTHR11871       PROTEIN PHOSPHATASE PP2A REGULATORY SUBUNIT B   IPR000009       Protein phosphatase 2A regulatory subunit PR55
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE>) {
+   while (<DFILE> && $eCount < $testNum) {
       my @dataAry = split(/\t/);
       my $gusHash = { 'external_primary_identifier' => "$dataAry[0]",
  		      'external_secondary_identifier' => $dataAry[2],
@@ -307,11 +329,11 @@ return $eCount;
 
 sub loadSuperfamily {
    my ($self, $name, $file) = @_;
-
+   my $testNum = $self->getArgs()->{'testnumber'};
 #0024654 52540   c.37.1  d3adk__ P-loop containing nucleoside triphosphate hydrolases
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE>) {
+   while (<DFILE> && $eCount < $testNum) {
       my @dataAry = split(/\t/);
       my $gusHash = { 'external_primary_identifier' => "SSF$dataAry[1]",
  		      'external_secondary_identifier' => $dataAry[0],
@@ -330,6 +352,8 @@ return $eCount;
 sub loadPirsf {
    my ($self, $name, $file) = @_;
 
+   my $testNum = $self->getArgs()->{'testnumber'};
+   
 #   >PIRSF000002
 #   Cytochrome c552
 #   140.857142857143 12.7857807925909 18 260.571428571429 163.159285304124
@@ -338,7 +362,7 @@ sub loadPirsf {
    my @dataAry = undef;
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE>) {
+   while (<DFILE> & $eCount < $testNum) {
       if (/^>(PIRSF[0-9]+)/) {
            if ($dataAry[1]) {
                my $gusHash = { 'external_primary_identifier' => $dataAry[1],
@@ -365,9 +389,11 @@ return $eCount;
 sub loadSmart {
    my ($self, $name, $file) = @_;
 
+   my $testNum = $self->getArgs()->{'testnumber'};
+
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE>) {
+   while (<DFILE> && $eCount < $testNum) {
       unless (/^\s\w/) {next;}
          chomp;
          s/\s+/ /g;
@@ -535,6 +561,18 @@ sub parseSimple{
 
 return $tree;
 }
+
+sub undoTables {
+  my ($self) = @_;
+
+  return (
+		'SRes.ExternalDatabaseEntry',
+  		'SRes.ExternalDatabaseRelease',
+		'SRes.ExternalDatabase',
+		'Core.Algorithm'
+     );
+}
+
 
 1;
 
