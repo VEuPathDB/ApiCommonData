@@ -12,6 +12,48 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::SRes::ExternalDatabaseEntry;
 
+# Notes:
+#	1. confFile is NOT validated for XML. If there is an error in the XML file, the program simply quits, 
+#		without any warning or failure messages.
+#	2. Supports testnumber command-line argument, which is applied to each database defined in the confFile. 
+#		Use it for testing, as the processing could take a long time.
+#	3. The statusCountsByDb is used in reporting the status for every n items processed. 
+
+# The numbers in %statusCountByDb are based on the total number of items in each database, as of 12.1:
+# PRODOM: 122254
+# PIR: 1347
+# TIGRFAMs: 2621
+# PROFILE: 659
+# PANTHER: ?
+# PRINTS: 1900
+# PROSITE: ?
+# UNIPROT: ?
+# PFAM: 16366
+# SIGNALP: ?
+# TMHMM: ?
+# SMART: ?
+# GENE3D: 4021
+# SUPERFAMILY: 8559 
+           	
+my %statusCountByDb = (
+					'PRODOM' => 10000,
+                  	'PIR' => 100,
+                  	'TIGRFAMs' => 500,
+                  	'PROFILE' => 100, 
+                  	'PANTHER' => 0,
+                  	'PRINTS' => 200,
+                  	'PROSITE' => 0,
+                  	'UNIPROT' => 0,
+                  	'PFAM' => 10000,
+                  	'SIGNALP' => 0,
+                  	'TMHMM' => 0,
+                  	'SMART' => 0,
+                  	'GENE3D' => 500,
+                  	'SUPERFAMILY' => 1000,
+                  	'default' => 1000
+                  	);
+
+
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -159,6 +201,8 @@ sub loadStandardFile { #prosite, uniprot, tigrfams, pfam
    my ($self, $name, $file) = @_;
    
    my $testNum = $self->getArgs()->{'testnumber'};
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
+   
    my $dataHash = {};
    my $eCount = 0;
    open STDRD, "$file" or die <<"EOF";
@@ -166,16 +210,22 @@ $file not found.
 Check the filename attribute for '$name' in '@{[$self->getArgs()->{'confFile'}]}'.
 The filename value should be a path relative to --inPath ('@{[$self->getArgs()->{'inPath'}]}').
 EOF
-   while (<STDRD> && (!$testNum  || ($eCount < $testNum))) {
+   while (<STDRD>) {
       if (/\/\//) {
          my $gusHash = $self->mapStandardDataValues($dataHash, $name);
          $self->submitGusEntry($gusHash);
          $self->undefPointerCache();
          $eCount++;
+                         
+         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
       }
       elsif (/^([A-Z]+\s+)(.+)/) { 
         $dataHash->{substr($1,0,2)} = $2; 
-     } 
+     }
+     
+     ($testNum && $eCount >= $testNum)
+       and last;
    }
 return $eCount;
 }
@@ -200,18 +250,27 @@ sub loadPrints{
    my ($self, $name, $file) = @_;
    
    my $testNum = $self->getArgs()->{'testnumber'};
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
+   
    my $eCount = 0;
    my $dataHash = {};
    open PRINTS, "<$file";
-   while (<PRINTS> && (!$testNum  || ($eCount < $testNum))) {
+   while (<PRINTS>) {
       if (/gm\;/) {
          my $gusHash = $self->mapPrintsData($dataHash, $name);
          $self->submitGusEntry($gusHash);
          $self->undefPointerCache();
          $eCount++;
+                
+         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
       }
       my @dataAry = split(/\;/);
       $dataHash->{$dataAry[0]} = $dataAry[1];
+
+     ($testNum && $eCount >= $testNum)
+       and last;
+
    }
 return $eCount;
 }
@@ -234,20 +293,28 @@ return $gusHash;
 sub loadGene3DCathFiles{
    my ($self, $name, $file) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
    
    my $dataHash = {};
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> && (!$testNum  || ($eCount < $testNum))) {
+   while (<DFILE>) {
       if (/\/\//) {
          my $gusHash = $self->mapCathFileData($dataHash, $name);
          $self->submitGusEntry($gusHash);
          $dataHash = undef;
          $self->undefPointerCache();
          $eCount++;
+         
+         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
       }
          my @dataAry = split(/\t/);
          $dataHash->{@dataAry[0]} = $dataHash->{@dataAry[0]} . $dataAry[1];
+         
+     ($testNum && $eCount >= $testNum)
+       and last;
+
    }
 return $eCount;
 }
@@ -271,11 +338,11 @@ return $gusHash;
 sub loadProDom {
    my ($self, $name, $file) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
-   
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
 #>Q9XYH6_CRYPV#PD000006#561#605 | 45 | pd_PD000006;sp_Q9XYH6_CRYPV_Q9XYH6; | (8753)  ATP-BINDING COMPLETE PROTEOME ABC TRANSPORTER TRANSPORTER COMPONENT ATPASE MEMBRANE SYSTEM
    open DFILE, "<$file";
    my $eCount = 0;
-   while (<DFILE> && (!$testNum || ($eCount < $testNum))) {
+   while (<DFILE>) {
       my @dataAry = split(/\|/);
       my ($primId, $pdName) = split(/\;/,$dataAry[2]);
       my $gusHash = { 'external_primary_identifier' => substr($primId,4),
@@ -287,7 +354,14 @@ sub loadProDom {
           $self->submitGusEntry($gusHash);
           $self->undefPointerCache();
           $eCount++;
+     	  	
+          ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	    and print "[" . localtime() . "] $name: Processed $eCount entries\n";
       }
+
+	  ($testNum && $eCount >= $testNum)
+	  	and last;
+
    }
 return $eCount;
 }
@@ -297,11 +371,12 @@ return $eCount;
 sub loadPanther {
    my ($self, $name, $file) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
    
 #PTHR11871       PROTEIN PHOSPHATASE PP2A REGULATORY SUBUNIT B   IPR000009       Protein phosphatase 2A regulatory subunit PR55
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> && (!$testNum  || ($eCount < $testNum))) {
+   while (<DFILE>) {
       my @dataAry = split(/\t/);
       my $gusHash = { 'external_primary_identifier' => "$dataAry[0]",
  		      'external_secondary_identifier' => $dataAry[2],
@@ -311,6 +386,11 @@ sub loadPanther {
       $self->submitGusEntry($gusHash);
       $self->undefPointerCache();
       $eCount++;
+      ($testNum && $eCount >= $testNum)
+        and last;
+        
+      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
    }
 return $eCount;
 }
@@ -319,21 +399,28 @@ return $eCount;
 sub loadSuperfamily {
    my ($self, $name, $file) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
+   
 #0024654 52540   c.37.1  d3adk__ P-loop containing nucleoside triphosphate hydrolases
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE> && (!$testNum  || ($eCount < $testNum))) {
+   while (<DFILE>) {
       my @dataAry = split(/\t/);
+
       my $gusHash = { 'external_primary_identifier' => "SSF" . $dataAry[1],
  		      'external_secondary_identifier' => $dataAry[0],
                       'external_database_release_id' => $self->{$name}->{'ver'},
  		      'name' => $dataAry[2],
  		      'description' => $dataAry[4], };
- 	  foreach my $k (keys %{$gusHash}) {
- 	  }
+
       $self->submitGusEntry($gusHash);
       $self->undefPointerCache();
       $eCount++;
+      ($testNum && $eCount >= $testNum)
+        and last;
+        
+      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
    }
 return $eCount;
 }
@@ -344,7 +431,8 @@ sub loadPirsf {
    my ($self, $name, $file) = @_;
 
    my $testNum = $self->getArgs()->{'testnumber'};
-   
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
+      
 #   >PIRSF000002
 #   Cytochrome c552
 #   140.857142857143 12.7857807925909 18 260.571428571429 163.159285304124
@@ -353,7 +441,7 @@ sub loadPirsf {
    my @dataAry = undef;
    my $eCount = 0;
    open DFILE, "<$file";
-   while (<DFILE> && (!$testNum  || ($eCount < $testNum))) {
+   while (<DFILE>) {
       if (/^>(PIRSF[0-9]+)/) {
            if ($dataAry[1]) {
                my $gusHash = { 'external_primary_identifier' => $dataAry[1],
@@ -365,6 +453,9 @@ sub loadPirsf {
                $self->submitGusEntry($gusHash);
                $self->undefPointerCache();
                $eCount++;
+               
+               ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	         and print "[" . localtime() . "] $name: Processed $eCount entries\n";
            }
            @dataAry = undef;
            push @dataAry, $1;
@@ -372,6 +463,9 @@ sub loadPirsf {
       else {
            push @dataAry;
       }
+      
+      ($testNum && $eCount >= $testNum)
+        and last;
    }
 return $eCount;
 }
@@ -381,10 +475,11 @@ sub loadSmart {
    my ($self, $name, $file) = @_;
 
    my $testNum = $self->getArgs()->{'testnumber'};
-
+   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
+   
    my $eCount = 0; 
    open DFILE, "<$file";
-   while (<DFILE> && (!$testNum  || ($eCount < $testNum))) {
+   while (<DFILE>) {
       unless (/^\s\w/) {next;}
          chomp;
          s/\s+/ /g;
@@ -397,6 +492,11 @@ sub loadSmart {
       $self->submitGusEntry($gusHash);
       $self->undefPointerCache();
       $eCount++;
+      ($testNum && $eCount >= $testNum)
+      	and last;
+      	      
+      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
+     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
    }
 return $eCount;
 }
