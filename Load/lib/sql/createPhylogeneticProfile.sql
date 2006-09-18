@@ -22,7 +22,6 @@ CREATE SEQUENCE ApiDB.PhylogeneticProfile_sq;
 GRANT insert, select, update, delete ON ApiDB.PhylogeneticProfile TO gus_w;
 GRANT select ON ApiDB.PhylogeneticProfile TO gus_r;
 GRANT select ON ApiDB.PhylogeneticProfile_sq TO gus_w;
-------------------------------------------------------------------------------
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -31,7 +30,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'PhylogeneticProfile',
-       'Standard', 'synteny_id',
+       'Standard', 'phylo_profile_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
