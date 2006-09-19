@@ -99,8 +99,10 @@ FROM dots.GeneFeature gf, dots.Transcript t,
      dots.GoAssociationInstanceLoe gail,
      dots.GoAssocInstEvidCode gaiec, sres.GoEvidenceCode gec,
      (SELECT gr.child_term_id AS go_term_id,
-             DECODE(gp.name, 'biological_process', 'P',
-                     'molecular_function', 'F', 'cellular_component', 'C')
+             DECODE(gp.name, 'biological_process', 'Biological Process',
+                             'molecular_function', 'Molecular Function',
+                             'cellular_component', 'Cellular Component',
+                              gp.name)
              AS ontology
       FROM sres.GoRelationship gr, sres.GoTerm gp
       WHERE gr.parent_term_id = gp.go_term_id
