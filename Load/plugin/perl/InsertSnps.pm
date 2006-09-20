@@ -12,6 +12,7 @@ use GUS::Model::DoTS::SnpFeature;
 use GUS::Model::DoTS::Transcript;
 
 use Bio::Seq;
+use Bio::Tools::GFF;
 use CBIL::Bio::SequenceUtils;
 
 
@@ -84,6 +85,13 @@ sub getArgumentsDeclaration{
 		descr => 'Ontology term describing the type of genetic variant being added to the database',
 		constraintFunc=> undef,
 		reqd  => 1,
+		isList => 0,
+	       }),
+     stringArg({name => 'gffFormat',
+		descr => 'Which gff format is the gff file in',
+		constraintFunc=> undef,
+		reqd  => 0,
+                default => 'gff2',
 		isList => 0,
 	       }),
     ];
@@ -160,7 +168,11 @@ sub run {
 
   my $file = $self->getArg('snpFile');
 
-  my ($linesProcessed) = $self->processSnpFile($file);
+  my $gffIO = Bio::Tools::GFF->new(-file => $file,
+                                   -gff_format => $self->getArg('gffFormat'),
+                                  );
+
+  my ($linesProcessed) = $self->processSnpFile($gffIO);
 
   return "$linesProcessed lines of SNP file $file processed\n";
 }
@@ -168,27 +180,20 @@ sub run {
 # ----------------------------------------------------------------------
 
 sub processSnpFile{
-  my ($self, $file) = @_;
+  my ($self, $gffIO) = @_;
 
   my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
-
   my $num = 0;
 
-  open (SNP, $file) || die "Cannot open file $file for reading: $!";
-
-  while(<SNP>){
-    chomp;
+  while (my $feature = $gffIO->next_feature()) {
     $num++;
 
     next if ($self->getArg('restart') && $num <= $lineNum);
 
-    my @line = split(/\t/,$_);
+    my $snpFeature = $self->createSnpFeature($feature);
 
-    my $snpFeature = $self->createSnpFeature(\@line);
-    my $naLoc = $snpFeature->getChild('GUS::Model::DoTS::NALocation');
-
-    my $snpStart = $naLoc->getStartMin();
-    my $snpEnd = $naLoc->getEndMax();
+    my $snpStart = $feature->location()->start();
+    my $snpEnd = $feature->location()->end();
 
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
     my $transcript = $self->_getTranscript($naSeqId, $snpStart, $snpEnd);
@@ -228,7 +233,7 @@ sub processSnpFile{
 
     $lineNum++;
 
-    $self->log("processed $lineNum lines from $file.\n") if($lineNum % 10 == 0);
+    $self->log("processed $lineNum lines from gff file.\n") if($lineNum % 10 == 0);
   }
   return $lineNum;
 }
@@ -269,23 +274,21 @@ sub _updateSequenceVars {
 # ----------------------------------------------------------------------
 
 sub createSnpFeature {
-  my ($self,$line) = @_;
+  my ($self,$feature) = @_;
 
-  my $name = 'SNP';
+  my $name = $feature->primary_tag();
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
   my $soId = $self->{'soId'};
 
-  my @data = split (/;/, $line->[8]);
-
-  my $sourceId = $data[0];
+  my $sourceId = $feature->get_tag_values('ID');
   my $organism = $self->getArg('organism');
 
-  my $start = $line->[3];
-  my $end = $line->[4];
+  my $start = $feature->location()->start();
+  my $end = $feature->location()->end();
 
   $self->userError("Snp end is less than snp start in file: $!") if($end < $start);
 
-  my $strand = $line->[6];
+  my $strand = $feature->location()->strand();
 
   my $isReversed = $strand eq '-' ? 1 : 0;
   $isReversed = "NA" if($strand eq '.');
@@ -305,15 +308,14 @@ sub createSnpFeature {
 
   $snpFeature->retrieveFromDB();
 
-  my $naSeq = $self->getNaSeq($line);
-  my $naLoc = $self->getNaLoc($line);
+  my $naSeq = $self->getNaSeq($feature->seq_id());
+  my $naLoc = $self->getNaLoc($start, $end);
 
   $naSeq->setChild($snpFeature);
   $snpFeature->addChild($naLoc);
 
-  while ($data[1] =~ m/(\w+):([\w\-]+)/g) {
-    my $strain = $1;
-    my $base = $2;
+  foreach ($feature->get_tag_values('Allele')) {
+    my ($strain, $base) = split(':', $_);
 
     if(lc($ref) eq lc($strain)) {
       $snpFeature->setReferenceNa($base);
@@ -340,8 +342,7 @@ sub createSnpFeature {
       $seqVar->setParent($snpFeature);
       $seqVar->setParent($naSeq);
 
-      $naLoc = $self->getNaLoc($line);
-
+      $naLoc = $self->getNaLoc($start, $end);
       $seqVar->addChild($naLoc);
 
     }
@@ -369,9 +370,7 @@ sub getSoId {
 # ----------------------------------------------------------------------
 
 sub getNaSeq {
-  my ($self,$line) = @_;
-
-  my $sourceId = $line->[0];
+  my ($self, $sourceId) = @_;
 
   my $extDbRlsId = $self->{'naExtDbRlsId'};
 
@@ -389,11 +388,7 @@ sub getNaSeq {
 # ----------------------------------------------------------------------
 
 sub getNaLoc {
-  my ($self,$line) = @_;
-
-  my $start = $line->[3];
-
-  my $end = $line->[4];
+  my ($self, $start, $end) = @_;
 
   my $locType;
   if ($self->getArg('ontologyTerm') eq 'SNP'){
