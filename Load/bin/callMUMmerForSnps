@@ -29,9 +29,13 @@ while(my $seq = $seqIO->next_seq()) {
 }
 
 my $max = CBIL::Util::V::max(@lengths);
-my $arbitraryMinMatchLength = int($max * 0.95);
+my $min = CBIL::Util::V::min(@lengths);
 
-system("/files/cbil/software/MUMmer/mummer -maxmatch -l $arbitraryMinMatchLength -b $queryFile $snpFile >$out");
+
+my $arbitraryMinMatchLength = $min == $max ? $min :int($max * 0.95);
+
+print STDERR $arbitraryMinMatchLength."\n";
+#system("/files/cbil/software/MUMmer/mummer -maxmatch -l $arbitraryMinMatchLength -b $queryFile $snpFile >$out");
 
 
 sub usage {
