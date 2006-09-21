@@ -35,7 +35,7 @@ Currently the only failures reported are
 
 =cut
 
-my ($fn, $verbose, $help, $gffFormat, $log, $gffFn, $makeFastaFile, $out, $referenceStrain);
+my ($fn, $verbose, $help, $gffFormat, $log, $gffFn, $makeFastaFile, $out, $referenceStrain, $skipMultipleMatches);
 
 &GetOptions('gff_file=s' => \$gffFn,
             'mummer_file=s' => \$fn,
@@ -46,6 +46,7 @@ my ($fn, $verbose, $help, $gffFormat, $log, $gffFn, $makeFastaFile, $out, $refer
             'output_file=s' => \$out,
             'reference_strain=s' => \$referenceStrain,
             'gff_format=s' => \$gffFormat,
+            'skip_multiple_matches' => \$skipMultipleMatches,
            );
 
 &usage() if($help);
@@ -70,6 +71,7 @@ if($makeFastaFile && $referenceStrain) {
 my ($uniqueId, $strand, $count);
 open(FILE, $fn) || die "Cannot open file $fn for reading: $!";
 
+# READ The Mummer output file
 while(<FILE>) {
   chomp;
   $count++;
@@ -90,12 +92,13 @@ while(<FILE>) {
     my ($empty, $mumChrom, $mumPos, $startMatch, $endMatch) = split(/ +/, $_);
     my $newStart = $mumPos + length($fivePrimeFlank) - $startMatch + 1;
 
-    next if($mumChrom ne $feature->seq_id());
+    next unless($mumChrom);
 
-    if($featureHash->{new_start} && $featureHash->{is_within_chromosome}) {
-      print STDERR "WARNING:  Multiple Matches with perfect identity within the same chromosome:  $uniqueId\n" if($verbose);
+    if($featureHash->{new_start}) {
+      print STDERR "WARNING:  Multiple MUMmer Hits:  $uniqueId\n" if($verbose);
       $featureHash->{multiple_matches} = 1;
     }
+
     unless($featureHash->{exact_match}) {
       $featureHash->{is_within_chromosome} = 1;
       $featureHash->{exact_match} = $newStart == $featureHash->{new_start} ? 1 : 0;
@@ -200,6 +203,9 @@ sub _printErrorReport {
     if($featureHash->{multiple_matches} && !$featureHash->{is_exact_match}) {
       $message = "Multiple_MUMer_Hit_CorrectChromosome_NoneMatchedExpected";
     }
+    if($featureHash->{multiple_matches} && $skipMultipleMatches) {
+      $message = "SkippingMultipleMatches";
+    }
     if(!$featureHash->{is_within_chromosome}) {
       $message = "MUMmer_Failure";
     }
@@ -234,6 +240,7 @@ sub _printGff {
 
     next if(!$featureHash->{is_within_chromosome});
     next if ($featureHash->{multiple_matches} && !$featureHash->{is_exact_match});
+    next if($featureHash->{multiple_matches} && $skipMultipleMatches);
 
     my $newStart = $featureHash->{new_start};
     my $feature = $featureHash->{feature};
@@ -272,6 +279,7 @@ sub usage {
 --verbose <boolean-a little extra STDERR out> \\
 --reference_strain <s-Must be contained in the Allele List> \\
 --gff_format <s-gff2 or gff3> \\
+--skip_multiple_matches <boolean-if true will skip any Mummer result with multiple matches> \\
 --help|h
 ";
   print STDERR $usage;
