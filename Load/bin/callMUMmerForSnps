@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+use Bio::SeqIO;
+
+use CBIL::Util::V;
+
+my ($verbose, $help, $referenceStrain, $queryFile, $snpFile, $out);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'query_file=s' => \$queryFile,
+            'snp_file=s' => \$snpFile,
+            'output_file=s' => \$out,
+           );
+
+&usage() if($help);
+&usage("Missing Argument") unless(-e $queryFile && -e $snpFile && $out );
+
+my $seqIO = Bio::SeqIO->new( -file => $snpFile, -format => 'fasta');
+
+my @lengths;
+
+while(my $seq = $seqIO->next_seq()) {
+  push(@lengths, $seq->length());
+}
+
+my $max = CBIL::Util::V::max(@lengths);
+my $arbitraryMinMatchLength = int($max * 0.95);
+
+system("/files/cbil/software/MUMmer/mummer -maxmatch -l $arbitraryMinMatchLength -b $queryFile $snpFile >$out");
+
+
+sub usage {
+  my $m = shift;
+
+  print STDERR "$m\n" if($m);
+  print STDERR "usage: perl callMUMmerForSnps --snp_file <s-<FILE> --query_file <s-FILE> --output_file <OUT>\n";
+  exit();
+}
