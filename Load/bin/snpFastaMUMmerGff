@@ -1,0 +1,284 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+use Bio::Tools::GFF;
+
+=pod
+
+=head1 Purpose
+
+This script will convert a specialized gff file (snp in Allele attribute and Flanking sequence in ThreePrimeFlank and FivePrimeFlank attributes) into a fasta file to be run with mummer.  The script will also read the mummer output along with this gff file and create a new gff file.  The new gff file will be identical except that the start and stop positions may be different based on the mummer results.  
+
+The flanking sequence should be in 5-prime to 3-prime orientation regardless of strand.  (**the code uses the length of the 5 prime flanking sequence and the mummer "hit position" to find the start position of the snp.  (***The Exception to this rule is for the Su dataset.  In this case we don't know the strand and they present there data sometimes 3-prime to 5-prime and sometimes 5-prime to 3-prime.  For this special case... trim the input flanking sequences so they are of equal length.))
+
+=over 4
+
+=item *
+
+Convert a gff file containing snp data into fasta format for running mummer.  The gff file contains looks like :
+
+MAL10   Su      SNP     234310  234310  .       +       .       Allele "3D7:G"  "7G8:G"  "DD2:G"  "D10:A"  "HB3:G"  ; FivePrimeFlank AGGGGATATAAAATCAAAAAAGAAAAGAAAGAAGGAGAAGAAGAAGAAAG ; ID "PF10_0055-3"  ; ThreePrimeFlank AAAAATGAAGAAACATATATCAGAAAAGTAAAGGATAATATAATAAAACG
+
+=item *
+
+Convet mummer results into a gff file and an error log for the failures.  All MUMmer hits are considered identical and treated the same.
+
+Currently the only failures reported are 
+
+1.  MUMmer_Failure:  Did not match anywhere on the predicted Chromosome.
+2.  Multiple_MUMer_Hit_CorrectChromosome_NoneMatchedExpected:  Matched multiple times on the same chromosome...none being the predicted.  
+
+=back
+
+=cut
+
+my ($fn, $verbose, $help, $gffFormat, $log, $gffFn, $makeFastaFile, $out, $referenceStrain);
+
+&GetOptions('gff_file=s' => \$gffFn,
+            'mummer_file=s' => \$fn,
+            'error_log=s' => \$log,
+            'verbose' => \$verbose,
+            'help|h' => \$help,
+            'make_fasta_file_only' => \$makeFastaFile,
+            'output_file=s' => \$out,
+            'reference_strain=s' => \$referenceStrain,
+            'gff_format=s' => \$gffFormat,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(-e $gffFn && $referenceStrain && 
+                                             ((-e $fn && $log && $out) || $makeFastaFile));
+
+
+my $gffIO = Bio::Tools::GFF->new(-file => $gffFn,
+                                 -gff_format => $gffFormat,
+                                );
+
+my $geneFeatures = &_parseGff($gffIO);
+
+if($makeFastaFile && $referenceStrain) {
+  $out =  $gffFn . ".fasta" unless($out);
+  open(OUT, "> $out") || die "Cannot open file $out for writing: $!";
+
+  &_makeFastaFile($geneFeatures, $referenceStrain, $makeFastaFile, \*OUT);
+  exit();
+}
+
+my ($uniqueId, $strand, $count);
+open(FILE, $fn) || die "Cannot open file $fn for reading: $!";
+
+while(<FILE>) {
+  chomp;
+  $count++;
+
+  if($_ =~ s/^> //) {
+    my ($id, $oldStart, $oldEnd, $expChrom, $reverse) = split(/\|/, $_);
+
+    $uniqueId = $id;
+    $strand = $reverse =~ /Reverse/ ? '-' : '+';
+  }
+
+  else {
+    my $featureHash = $geneFeatures->{$uniqueId};
+    my $feature = $featureHash->{feature};
+
+    my ($fivePrimeFlank) = $feature->get_tag_values('FivePrimeFlank');
+
+    my ($empty, $mumChrom, $mumPos, $startMatch, $endMatch) = split(/ +/, $_);
+    my $newStart = $mumPos + length($fivePrimeFlank) - $startMatch + 1;
+
+    next if($mumChrom ne $feature->seq_id());
+
+    if($featureHash->{new_start} && $featureHash->{is_within_chromosome}) {
+      print STDERR "WARNING:  Multiple Matches with perfect identity within the same chromosome:  $uniqueId\n" if($verbose);
+      $featureHash->{multiple_matches} = 1;
+    }
+    unless($featureHash->{exact_match}) {
+      $featureHash->{is_within_chromosome} = 1;
+      $featureHash->{exact_match} = $newStart == $featureHash->{new_start} ? 1 : 0;
+      $featureHash->{new_start} = $newStart;
+      $featureHash->{strand} = $strand;
+    }
+  }
+  print STDERR "Processed $count lines of mummer file\n" if($count % 1000 == 0 && $verbose);
+}
+
+&_printGff($geneFeatures, $out);
+&_printErrorReport($geneFeatures, $log);
+
+
+#-------------------------------------------------------------------------------
+#     Subroutines
+#-------------------------------------------------------------------------------
+
+sub _parseGff {
+  my ($gffIO) = @_;
+
+  my %features;
+
+  my $count;
+  while (my $feature = $gffIO->next_feature()) {
+    $count++;
+
+    my ($id) = $feature->get_tag_values('ID');
+
+    $features{$id} = {feature => $feature,
+                       is_within_chromosome => 0,
+                       exact_match => '',
+                       multiple_matches => '',
+                       new_start => '',
+                       strand => '',
+                     }; 
+  }
+
+  print STDERR "Processed $count lines of gff file\n" if($verbose);
+
+  return(\%features);
+}
+
+#-------------------------------------------------------------------------------
+
+sub _makeFastaFile {
+  my ($gff, $referenceStrain, $makeFasta, $out) = @_;
+
+  my $count;
+
+  foreach my $key (keys %$gff) {
+    my $feature = $gff->{$key}->{feature};
+    $count++;
+
+    my ($id) = $feature->get_tag_values('ID');
+
+    my ($threePrimeFlank) = $feature->get_tag_values('ThreePrimeFlank');
+    my ($fivePrimeFlank) = $feature->get_tag_values('FivePrimeFlank');
+
+    my $chrom = $feature->seq_id();
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+
+    my @alleleList = $feature->get_tag_values('Allele');
+    my $allele = &_findReferenceAllele(\@alleleList, $referenceStrain, $count);
+    my $fullSeq = $fivePrimeFlank . $allele . $threePrimeFlank;
+
+   print  $out ">$id|$start|$end|$chrom|\n$fullSeq\n";
+  }
+
+  close($out);
+}
+
+#-------------------------------------------------------------------------------
+
+sub _findReferenceAllele {
+  my ($alleleList, $ref, $count) = @_;
+
+  foreach my $a (@$alleleList) {
+    my ($strain, $allele) = split(':', $a);
+    return($allele) if($strain eq $ref);
+  }
+  die "Reference Strain $ref not found in List of Alleles on line $count";
+}
+
+#-------------------------------------------------------------------------------
+
+sub _printErrorReport {
+  my ($geneFeatures, $log) = @_;
+
+  open(LOG, "> $log") || die "Cannot open file $log for writing: $!";
+
+  print LOG "External_Identifier\tAllele\tChromosome\texpected_start\texpeced_end\tsequence\tmessage\n";
+
+  foreach my $id (keys %$geneFeatures) {
+    my $message;
+    my $featureHash = $geneFeatures->{$id};
+    my $feature = $featureHash->{feature};
+
+    if($featureHash->{multiple_matches} && !$featureHash->{is_exact_match}) {
+      $message = "Multiple_MUMer_Hit_CorrectChromosome_NoneMatchedExpected";
+    }
+    if(!$featureHash->{is_within_chromosome}) {
+      $message = "MUMmer_Failure";
+    }
+
+    my @alleleList = $feature->get_tag_values('Allele');
+    my $allele = &_findReferenceAllele(\@alleleList, $referenceStrain);
+
+    my $chrom = $feature->seq_id();
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+
+    my ($fivePrimeFlank) = $feature->get_tag_values('FivePrimeFlank');
+    my ($threePrimeFlank) = $feature->get_tag_values('ThreePrimeFlank');
+    my $seq = $fivePrimeFlank.$allele.$threePrimeFlank;
+
+    print LOG "$id\t$allele\t$chrom\t$start\t$end\t$seq\t$message\n" if($message);
+  }
+  close(LOG);
+}
+
+#-------------------------------------------------------------------------------
+
+sub _printGff {
+  my ($geneFeatures, $out) = @_;
+
+  open(GFF, "> $out") || die "Cannot open file $out for writing: $!";
+
+  foreach my $id (keys %$geneFeatures) {
+    my $featureHash = $geneFeatures->{$id};
+
+    next if(!$featureHash->{is_within_chromosome});
+    next if ($featureHash->{multiple_matches} && !$featureHash->{is_exact_match});
+
+    my $newStart = $featureHash->{new_start};
+    my $feature = $featureHash->{feature};
+    my $location = $feature->location();
+
+    my $strand = $featureHash->{strand};
+    $location->strand($strand);
+
+    my $originalStart = $location->start();
+    my $originalEnd = $location->end();
+
+    my $snpLength = $originalEnd - $originalStart;
+    my $newEnd = $newStart + $snpLength;
+
+    $location->start($newStart);
+    $location->end($newEnd);
+
+    print GFF $feature->gff_string."\n";
+  }
+
+  close(GFF);
+}
+
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl snpTabFastaMUMmerGff \\
+--gff_file <s-gff file> \\
+--mummer_file <s-input file which is the result of a mummer run> \\
+--error_log <s-Output file for errors> \\
+--make_fasta_file_only <boolean-will create the mummer input file then exit> \\
+--output_file <depending on context...either fasta file or gff file> \\
+--verbose <boolean-a little extra STDERR out> \\
+--reference_strain <s-Must be contained in the Allele List> \\
+--gff_format <s-gff2 or gff3> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
+
+1;
