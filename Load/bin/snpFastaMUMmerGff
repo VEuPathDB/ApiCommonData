@@ -61,10 +61,7 @@ my $gffIO = Bio::Tools::GFF->new(-file => $gffFn,
 my $geneFeatures = &_parseGff($gffIO);
 
 if($makeFastaFile && $referenceStrain) {
-  $out =  $gffFn . ".fasta" unless($out);
-  open(OUT, "> $out") || die "Cannot open file $out for writing: $!";
-
-  &_makeFastaFile($geneFeatures, $referenceStrain, $makeFastaFile, \*OUT);
+  &_makeFastaFile($geneFeatures, $referenceStrain, $makeFastaFile, $out);
   exit();
 }
 
@@ -147,11 +144,11 @@ sub _parseGff {
 sub _makeFastaFile {
   my ($gff, $referenceStrain, $makeFasta, $out) = @_;
 
-  my $count;
+  my %fileHandles;
+  my $FH;
 
   foreach my $key (keys %$gff) {
     my $feature = $gff->{$key}->{feature};
-    $count++;
 
     my ($id) = $feature->get_tag_values('ID');
 
@@ -168,10 +165,21 @@ sub _makeFastaFile {
     my $allele = &_findReferenceAllele(\@alleleList, $referenceStrain, $count);
     my $fullSeq = $fivePrimeFlank . $allele . $threePrimeFlank;
 
-   print  $out ">$id|$start|$end|$chrom|\n$fullSeq\n";
+    my $fullSeqLength = length($fullSeq);
+
+    my $fhName = $fullSeqLength."_".$out;
+
+    unless($FH = $fileHandles{$fhName}) {
+      open($FH, "> $fhName") || die "Cannot open file $fhName for writing: $!";
+      $fileHandles{$fhName} = $FH;
+    }
+
+    print  $FH ">$id|$start|$end|$chrom|\n$fullSeq\n";
   }
 
-  close($out);
+  foreach(keys %fileHandles) {
+    close($fileHandles{$_});
+  }
 }
 
 #-------------------------------------------------------------------------------
