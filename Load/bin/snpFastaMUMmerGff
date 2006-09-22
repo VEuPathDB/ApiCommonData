@@ -4,6 +4,8 @@ use strict;
 
 use Getopt::Long;
 
+use File::Basename;
+
 use Bio::Tools::GFF;
 
 =pod
@@ -147,6 +149,9 @@ sub _makeFastaFile {
   my %fileHandles;
   my $FH;
 
+  my $base = basename($out);
+  my $dir = dirname($out);
+
   foreach my $key (keys %$gff) {
     my $feature = $gff->{$key}->{feature};
 
@@ -167,7 +172,7 @@ sub _makeFastaFile {
 
     my $fullSeqLength = length($fullSeq);
 
-    my $fhName = $fullSeqLength."_".$out;
+    my $fhName = $dir."/".$fullSeqLength."_".$base;
 
     unless($FH = $fileHandles{$fhName}) {
       open($FH, "> $fhName") || die "Cannot open file $fhName for writing: $!";
