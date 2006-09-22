@@ -8,17 +8,18 @@ use Bio::SeqIO;
 
 use CBIL::Util::V;
 
-my ($verbose, $help, $referenceStrain, $queryFile, $snpFile, $out);
+my ($verbose, $help, $referenceStrain, $queryFile, $snpFile, $out, $mummerDir);
 
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
             'query_file=s' => \$queryFile,
             'snp_file=s' => \$snpFile,
             'output_file=s' => \$out,
+	    'mummerDir=s' => \$mummerDir
            );
 
 &usage() if($help);
-&usage("Missing Argument") unless(-e $queryFile && -e $snpFile && $out );
+&usage("Missing Argument") unless(-e $queryFile && -e $snpFile && $out $mummerDir);
 
 my $seqIO = Bio::SeqIO->new( -file => $snpFile, -format => 'fasta');
 
@@ -36,13 +37,13 @@ unless($min == $max) {
   die "FASTA file contains mixed sequence lengths:  Max sequence length $max should equal the min sequence length $min";
 }
 
-system("/files/cbil/software/MUMmer/mummer -maxmatch -l $max -b $queryFile $snpFile >$out");
+system("$mummerDir/mummer -maxmatch -l $max -b $queryFile $snpFile >$out");
 
 
 sub usage {
   my $m = shift;
 
   print STDERR "$m\n" if($m);
-  print STDERR "usage: perl callMUMmerForSnps --snp_file <s-<FILE> --query_file <s-FILE> --output_file <OUT>\n";
+  print STDERR "usage: perl callMUMmerForSnps --snp_file <s-<FILE> --query_file <s-FILE> --output_file <OUT> --mummerDir\n";
   exit();
 }
