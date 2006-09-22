@@ -65,6 +65,14 @@ stringArg({name => 'virtualSeqSOTerm',
        default => "chromosome",
       }),
 
+stringArg({name => 'table',
+       descr => 'the table the virtual sequences should be placed into. Ex: DoTS::VirtualSequence',
+       constraintFunc=> undef,
+       reqd  => 0,
+       isList => 0,
+       default => "DoTS::VirtualSequence",
+      }),
+
 ];
 
 return $argsDeclaration;
@@ -81,15 +89,24 @@ my $description = <<NOTES;
 NOTES
 
 my $purpose = <<PURPOSE;
+To load virtual sequences from a mapping file into the database.
 PURPOSE
 
 my $purposeBrief = <<PURPOSEBRIEF;
+The plugin takes a mapping file which describes how sequences map into larger sequences.  It then loads these larger virtual sequence into the database.
 PURPOSEBRIEF
 
 my $syntax = <<SYNTAX;
 SYNTAX
 
 my $notes = <<NOTES;
+The default table for this plugin to load into is DoTS.VirtualSequence.  If any other table is specified it must contain the following columns:
+
+external_database_release_id
+sequence_version
+sequence_ontology_id
+taxon_id
+source_id
 NOTES
 
 my $tablesAffected = <<AFFECT;
@@ -191,13 +208,14 @@ sub run {
   close(FILE);
 
 my $count = 0;
+my $table = "GUS::Model::".$self->getArg('table');
 
   while (my ($target, $seqs) = each %virtuals) {
-    my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({ external_database_release_id => $extDbRlsId,
-							      sequence_version             => 1,
-							      sequence_ontology_id         => $SOTermId,
-							      taxon_id => $taxonId,
-							      source_id => $target,
+    my $virtualSeq = $table->new({ external_database_release_id => $extDbRlsId,
+				   sequence_version             => 1,
+				   sequence_ontology_id         => $SOTermId,
+				   taxon_id => $taxonId,
+				   source_id => $target,
 							    });
     $virtualSeq->submit();
 
