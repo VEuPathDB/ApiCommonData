@@ -32,10 +32,11 @@ my $max = CBIL::Util::V::max(@lengths);
 my $min = CBIL::Util::V::min(@lengths);
 
 
-my $arbitraryMinMatchLength = $min == $max ? $min :int($max * 0.95);
+unless($min == $max) {
+  die "FASTA file contains mixed sequence lengths:  Max sequence length $max should equal the min sequence length $min";
+}
 
-print STDERR $arbitraryMinMatchLength."\n";
-#system("/files/cbil/software/MUMmer/mummer -maxmatch -l $arbitraryMinMatchLength -b $queryFile $snpFile >$out");
+system("/files/cbil/software/MUMmer/mummer -maxmatch -l $max -b $queryFile $snpFile >$out");
 
 
 sub usage {
