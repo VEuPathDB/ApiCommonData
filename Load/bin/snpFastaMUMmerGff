@@ -204,7 +204,7 @@ sub _findReferenceAllele {
 sub _printErrorReport {
   my ($geneFeatures, $log) = @_;
 
-  open(LOG, "> $log") || die "Cannot open file $log for writing: $!";
+  open(LOG, ">> $log") || die "Cannot open file $log for writing: $!";
 
   print LOG "External_Identifier\tAllele\tChromosome\texpected_start\texpeced_end\tsequence\tmessage\n";
 
@@ -246,7 +246,7 @@ sub _printErrorReport {
 sub _printGff {
   my ($geneFeatures, $out) = @_;
 
-  open(GFF, "> $out") || die "Cannot open file $out for writing: $!";
+  open(GFF, ">> $out") || die "Cannot open file $out for writing: $!";
 
   foreach my $id (keys %$geneFeatures) {
     my $featureHash = $geneFeatures->{$id};
