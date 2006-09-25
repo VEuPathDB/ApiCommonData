@@ -22,8 +22,8 @@ sub getArgsDeclaration {
 my $argsDeclaration  =
 [
 
-fileArg({name => 'resultFile',
-         descr => 'XML file of interpro results',
+fileArg({name => 'resultFileDir',
+         descr => 'Directory where multiple XML files of interpro results reside',
          constraintFunc=> undef,
          reqd  => 1,
          isList => 0,
@@ -199,26 +199,39 @@ sub new {
 
 
 sub run {
-    my $self = shift;
+    my ($self, @params) = @_;
 
     $self->loadConfig();
+    my $resultFileDir = $self->getArgs()->{'resultFileDir'};
 
-    my $file = $self->getArgs()->{'resultFile'} || die "No Such Input File";
+    opendir (RESULTSDIR, $resultFileDir)
+    	or die "Failed opening results directory: $!\n";
+    
+    my @files = grep { /\.xml$/ } readdir RESULTSDIR;
+    closedir RESULTSDIR;
+
+	($self->getArgs()->{'verbose'}) 
+		and print "Processing " . scalar(@files) . " Interproscan XML result files\n";
 
     #print $self->getArg('goVersions');
     my @goDbRlsIds = split(/\:/,$self->getArg('goVersions'));
     my $GOAnnotater = ApiCommonData::Load::Utility::GOAnnotater->new($self,\@goDbRlsIds);
-
-    my $twig = XML::Twig->new( twig_roots => {
-                               protein => processTwig($self,$GOAnnotater), 
+	
+	foreach my $file (@files) {
+	    my $twig = XML::Twig->new( twig_roots => {
+	                               protein => processTwig($self,$GOAnnotater), 
                                              } );
-    $twig->parsefile($file);
-    $twig->purge;
+	    $twig->parsefile($resultFileDir . "/" . $file);
+	    $twig->purge;
+	}
 
     #Create ExternalDatabaseLinks  (SRes.ExternalDatabaseLink)
 
     my $logCnt = $self->{'protCount'};
     $self->log("Total Seqs Processed: $logCnt\n");
+    $self->log("Total Interpro Hits: " . $self->{'interproCount'} . "\n");
+    $self->log("Total GO Terms: " . $self->{'GOCount'} . "\n");
+    $self->log("Total Matches: " . $self->{'matchCount'} . "\n");
     $self->log("Added DBs:", @{$self->{'NewDBs'}} );
     $self->log("Added Algs:", @{$self->{'NewAlgs'}} );
 
@@ -266,13 +279,16 @@ sub processProteinResults {
             unless ($interpro->att('id') eq 'noIPR') {
                 my $ipr = $self->buildInterproMatch($mTree,$aaId);
                 $ipr = $self->submitObjToGus($ipr);
+				$self->{'interproCount'}++;
             }
         }
         if ($interpro->tag() eq 'classification') {
             my $classId = $interpro->att('id');
-            $self->buildClassification($aaId,$classId,$GOAnnotater);
+            $self->buildClassification($aaId,$classId,$GOAnnotater)
+				and $self->{'GOCount'}++;
         }
         if ($interpro->tag() eq 'match') {
+			$self->{'matchCount'}++;
            if ($interpro->att('id') =~ /tmhmm/ or $interpro->att('id') =~ /signalp/) {
              #ignoring, use algorithems directly
            }
@@ -335,6 +351,11 @@ sub buildSubDomain {
     my $id = $match->att('id');
     my $name = $match->att('name');
     my $score = $location->att('score');
+
+	#happens only with the seg "application", which we don't use.
+	if ($score eq 'NA') {
+		$score = 'NULL';
+	}
     my $algName = $location->att('evidence');
     my $algId = $self->{'algorithms'}->{$algName};
 
@@ -430,8 +451,13 @@ sub buildClassification {
     my ($self, $aaId, $classId, $annotater) = @_;
 
      if ($classId =~ /^GO:\d+/) {
-        my $goId = 
+        my $goTermId = 
            $annotater->getGoTermId($classId);
+		
+		if (! $goTermId) {
+			$self->log ("$aaId: No go_term_id found for GO Id \'$classId\'\n");
+			return 0;
+		}
 
         my $evidence = 
            $annotater->getEvidenceCode('IEA');
@@ -442,7 +468,7 @@ sub buildClassification {
         my $goAssociation = {
                            'tableId' => $self->{'RefTableId'},
                            'rowId' => $aaId,
-                           'goId' => $goId,
+                           'goTermId' => $goTermId,
                            'isNot' => 0,
                            'isDefining' => 1,
                             };
@@ -462,7 +488,7 @@ sub buildClassification {
 
      }
      else {
-        print "Not a GO Id";
+        $self->error ("Execting GO classification, but got \'$classId\'");
      }
 
 return 1;
@@ -478,6 +504,11 @@ sub loadConfig{
   my ($self) = @_;
   
     $self->{'protCount'} = 0;
+
+    $self->{'interproCount'} = 0;
+    $self->{'GOCount'} = 0;
+    $self->{'matchCount'} = 0;
+
     $self->{'NewDBs'} = [];
     $self->{'NewAlgs'} = [];
     my $cFile = $self->getArgs()->{'confFile'} || die "No Conf File";
@@ -507,7 +538,7 @@ sub loadConfig{
         $self->{$db} = $iprDbs->{$db};
      }
     
-     $self->validateInterproConfig(); #make sure all InterPro dbs are in config
+     #$self->validateInterproConfig(); #make sure all InterPro dbs are in config
 
      my $algs = $conf->{'alg'};
      $self->validateAlgs($algs);
@@ -708,8 +739,17 @@ sub retSeqIdFromSrcId {
   return $seqId;
 }
 
+sub undoTables {
+  my ($self) = @_;
 
-    
+  return (
+		'DoTS.DomainFeature',
+		'DoTS.AALocation',
+		'Core.Algorithm',
+		ApiCommonData::Load::Utility::GOAnnotater->undoTables()
+     );
+}
+
     
 1;
 
