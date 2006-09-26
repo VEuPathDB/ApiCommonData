@@ -2793,15 +2793,34 @@ EOF
 
 ###########IPRSCAN#####################
 sub createIprscanDir{
-  my ($mgr, $app) = @_;
+  my ($mgr, $subjectFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
-  my $signal = "createIprscanDir-$app";
-  return if $mgr->startStep("Creating iprscan $app dir", $signal);
+  my $subject = $subjectFile;
+  my $signal = "make" . $subject . "Dir";
+  
+  
+  my $buildName = $mgr->{'buildName'};
+  my $pipelineDir = $mgr->{'pipeline'};
+  my $nodePath = propertySet->getProp ('nodePath');
+  my $serverPath = propertySet->getPath ('serverPath');
+  my $taskSize = propertySet->getProp ('iprscan.taskSize');
+  
+  my $appl = propertySet->getProp('iprscan.appl'); 
+  my $email = propertySet->getProp ('iprscan.email') 
+  					? $propertySet->getProp('iprscan.email') 
+  					: $ENV{USER} . "\@pcbi.upenn.edu";
 
-  my $iprscanDir = "$mgr->{'pipelineDir'}/iprscan/$app";
-
-  $mgr->runCmd("mkdir $iprscanDir");
+  return if $mgr->startStep("Creating iprscan dir", $signal);
+  $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
+  
+  #Disable this to allow InterPro DBs to be upgrated independent of the 
+  #Inteproscan release, just in case. 
+  my $doCrc = "false";
+  
+  &makeIprscanDir ($subject, $buildName, $localPath, 
+  					$serverPath, $nodePath, $taskSize, 
+  					"$serverPath/$buildName/seqfiles", $subjectFile, $appl, $doCrc, $email);
 
   $mgr->endStep($signal);
 }
