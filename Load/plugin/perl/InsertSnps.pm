@@ -245,8 +245,14 @@ sub _updateSequenceVars {
 
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
+  my $referenceAllele = $snpFeature->getReferenceNa();
+
   foreach my $seqVar (@seqVars) {
     my ($phenotype);
+
+    my $variationAllele = $seqVar->getAllele();
+    my $matchesReference = $variationAllele == $referenceAllele ? 1 : 0;
+    $seqVar->setMatchesReference($matchesReference);
 
     if($isCoding) {
       my $base = $seqVar ->getAllele();
