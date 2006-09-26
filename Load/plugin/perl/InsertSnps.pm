@@ -286,7 +286,7 @@ sub createSnpFeature {
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
   my $soId = $self->{'soId'};
 
-  my $sourceId = $feature->get_tag_values('ID');
+  my ($sourceId) = $feature->get_tag_values('ID');
   my $organism = $self->getArg('organism');
 
   my $start = $feature->location()->start();
