@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir makeIprscanDir);
 
 use strict;
 use Carp;
@@ -181,6 +181,29 @@ sub makePsipredDir {
 
 }
 
+sub makeIprscanDir {
+	  my ($pipelineName, $localPath,
+      		$serverPath, $nodePath, 
+      		$taskSize, $nodeClass,
+      		$fileDir, $subjectFileName, $seqtype,
+      		$appl, $crc, $email) = @_;
+
+	my $subject = $subjectFileName;
+	      
+	my $localBase = "$localPath/$pipelineName/iprscan/$subject";
+	my $serverBase = "$serverPath/$pipelineName/iprscan/$subject";
+	my $inputDir = "$localBase/input";
+	
+	&runCmd ("mkdir -p $inputDir");
+	
+	my $numSlotsPerNode = 2;
+	&makeControllerPropFile ($inputDir, $serverbase, $numSlotsPerNode, $taskSize,
+								$nodePath, "DJob::DistribJobTasks::IprscanTask", $nodeClass);
+
+	my $seqfile = "$fileDir/$subjectFileName";
+	&makeIprscanPropFile ($inputDir, $seqfile, $seqtype, $appl, $crc, $email);								
+}
+
 sub makeControllerPropFile {
     my ($inputDir, $baseDir, $slotsPerNode, $taskSize, $nodePath, 
 	$taskClass, $nodeClass) = @_;
@@ -329,3 +352,20 @@ blastParamsFile=$blastParamsFile
 ";
     close(F);
 }
+
+sub makeIprscanTaskPropFile {
+	my ($inputDir, $seqfile, $outputfile, 
+			$seqtype, $appls, $crc, $email) = @_;
+			
+	open (TASKPROP, "> $inputDir/task.prop")
+		or die "Can't open $inputDir/task.prop for writing: $!\n";
+	
+	print TASKPROP "seqfile=$seqfile\n"
+					. "output_file=$outputfile\n"
+					. "seqtype=$seqtype\n"
+					. "appl=$appls\n"
+					. "email=$email\n";
+	$crc and print TASKPROP "crc=$crc\n";					
+	close TASKPROP;
+}
+
