@@ -296,9 +296,6 @@ sub createSnpFeature {
 
   my $strand = $feature->location()->strand();
 
-  my $isReversed = $strand eq '-' ? 1 : 0;
-  $isReversed = "NA" if($strand eq '.');
-
   my $ref = $self->getArg('reference');
 
   my $standard = ($end > $start) ? 'insertion' : 'substitution';
@@ -326,7 +323,7 @@ sub createSnpFeature {
     if(lc($ref) eq lc($strain)) {
       $snpFeature->setReferenceNa($base);
 
-      unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $isReversed)) {
+      unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $strand)) {
         $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected for sourceId $sourceId");
       }
     }
@@ -580,9 +577,9 @@ sub _isSynonymous {
 # ----------------------------------------------------------------------
 
 sub _isSnpPositionOk {
-  my ($self, $naSeq, $base, $naLoc, $isReverse) = @_;
+  my ($self, $naSeq, $base, $naLoc, $strand) = @_;
 
-  return(1) if($isReverse eq "NA");
+  return(1) if($strand == 0);
 
   my $snpStart = $naLoc->getStartMin();
   my $snpEnd = $naLoc->getEndMax();
@@ -591,7 +588,7 @@ sub _isSnpPositionOk {
 
   my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
 
-  if($isReverse) {
+  if($strand == -1) {
     $referenceBase = CBIL::Bio::SequenceUtils::reverseComplementSequence($referenceBase);
   }
 
