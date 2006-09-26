@@ -251,7 +251,7 @@ sub _updateSequenceVars {
     my ($phenotype);
 
     my $variationAllele = $seqVar->getAllele();
-    my $matchesReference = $variationAllele == $referenceAllele ? 1 : 0;
+    my $matchesReference = $variationAllele eq $referenceAllele ? 1 : 0;
     $seqVar->setMatchesReference($matchesReference);
 
     if($isCoding) {
