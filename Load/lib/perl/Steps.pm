@@ -531,12 +531,19 @@ sub renameFile {
 }
 
 sub copy {
-  my ($mgr, $from, $to) = @_;
+  my ($mgr, $from, $to, $dir) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "copy_${from}_${to}";
-  $signal =~ s|/|:|g;
+  $to =~ s/\/$//;
+  $to =~ /([\w|\.]+)$/;
+
+  my $signal = $1;
+  $signal = "copy_${from}_To_$signal";
+  $signal =~ s/\//:/g; 
+
   return if $mgr->startStep("Copying $from to $to", $signal);
+
+  $mgr->runCmd("mkdir -p $dir") if $dir;
   unless (-e $from) { die "$from doesn't exist\n";};
 
   $mgr->runCmd("cp -a  $from $to");
@@ -1957,20 +1964,24 @@ sub clusterByContigAlign {
 
 }
 
-sub snpTabToFasta {
-  my ($mgr,$tabFile,$trim) = @_;
+sub snpGffToFasta {
+  my ($mgr,$gffFile,$refStrain,$gffFormat) = @_;
 
-  my $outFile = $tabFile;
-
-  $outFile =~ s/\.\S+\b/\.fasta/;
-
-  my $signal = "convert${tabFile}ToFasta";
+  my $signal = "convert${gffFile}ToFasta";
 
   my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
-  return if $mgr->startStep("Converting $tabFile to a fasta formatted file", $signal);
+  return if $mgr->startStep("Converting $gffFile to a fasta formatted file", $signal);
 
-  my $cmd = "snpTabFastaMUMmerGff --tab_file $mgr->{pipelineDir}/snp/$tabFile --trim $trim --output_file $mgr->{pipelineDir}/snp/$outFile --make_fasta_file_only 2>> $logfile";
+  my $subdir = $gffFile;
+
+  $subdir =~ s/\.gff//;
+
+  $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/snp/$subdir");
+
+  my $outFile = "${subdir}.fasta";
+
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --reference_strain $refStrain --output_file $mgr->{pipelineDir}/snp/$subdir/$outFile --make_fasta_file_only > --gff_format $gffFormat 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
@@ -1978,51 +1989,49 @@ sub snpTabToFasta {
 }
 
 sub runMummer {
-  my ($mgr,$targetFile,$tabFile,$queryDir,$args) = @_;
+  my ($mgr,$queryFile,$snpDir) = @_;
 
-  my $queryFile = $tabFile;
+  my $outFile = $queryFile;
 
-  $queryFile =~ s/\.\S+\b/\.fasta/;
+  $outFile =~ s/\.\S+\b//;
 
-  my $outFile = $tabFile;
+  $outFile = "${outFile}_${snpDir}Mummer";
 
-  $outFile =~ s/\.\S+\b/Mummer\.out/;
+  my $signal = "run$outFile";
+
+  return if $mgr->startStep("Running mummer on $queryFile with files in $snpDir", $signal);
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "run${queryFile}_${targetFile}Mummer";
-
   my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
-
-  return if $mgr->startStep("Running mummer of $queryFile vs $targetFile", $signal);
 
   my $mummerPath = $propertySet->getProp('mummerDir');
 
-  my $cmd = "$mummerPath/mummer $args $mgr->{pipeline}/seqfiles/$targetFile $mgr->{pipeline}/$queryDir/$queryFile $outFile 2>> $logfile";
+  opendir (SNPDIR,"$mgr->{pipelineDir}/snp/$snpDir") || die "Unable to open $mgr->{pipelineDir}/snp/$snpDir\n";
 
-  $mgr->runCmd($cmd);
+  while(my $snpFile = readdir(SNPDIR)) {
+    my $cmd = "callMUMmerForSnps --mummerDir $mummerPath --query_file $mgr->{pipelineDir}/seqfiles/$queryFile --output_file $mgr->{pipelineDir}/snp/$outFile --snp_file $mgr->{pipelineDir}/snp/$snpDir/$snpFile 2>> $logfile"; 
+
+    $mgr->runCmd($cmd);
+  }
+
+  closedir(SNPDIR);
 
   $mgr->endStep($signal);
 }
 
 sub snpMummerToGFF {
-  my ($mgr,$tabFile,$leeway,$provider) = @_;
+  my ($mgr,$mummerFile,$gffFile,$refStrain,$gffFormat) = @_;
 
-  my $mumFile = $tabFile;
+  my $signal = "convert${mummerFile}ToGff";
 
-  $mumFile =~ s/\.\S+\b/Mummer\.out/;
+  my $logfile = "${mummerFile}Errors.log";
 
-  my $outFile = $mumFile;
+  my $output = "${mummerFile}.gff";
 
-  $outFile =~ s/\.out/\.gff/;
+  return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $signal = "convert${mumFile}ToGff";
-
-  my $logfile = "${signal}.log";
-
-  return if $mgr->startStep("Converting $mumFile to a gff formatted file", $signal);
-
-  my $cmd = "snpTabFastaMUMmerGff --tab_file $mgr->{pipelineDir}/snp/$tabFile --mummer_file $mgr->{pipelineDir}/snp/$mumFile --output_file $mgr->{pipelineDir}/snp/$outFile --sequence_leeway $leeway --error_log $logfile --provider $provider";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $logfile --gff_format $gffFormat";
 
   $mgr->runCmd($cmd);
 
@@ -2036,9 +2045,7 @@ sub loadMummerSnpResults {
 
   $gffFile =~ s/\.\S+\b/Mummer\.gff/;
 
-  my $args = "--reference $refOrg --organism $org --snpExternalDatabaseName $snpDbName --snpExternalDatabaseVersion $snpDbRlsVer --naExternalDatabaseName $targetDbName --naExternalDatabaseVersion $targetDbRlsVer --seqTable $targetTable --snpFile $mgr->{pipeline}/snp/$gffFile";
-
-  ga ApiCommonData::Load::Plugin::InsertSnps \
+  my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{pipelineDir}/snp/$gffFile";
 
     $mgr->runPlugin("load$gffFile",
 		    "ApiCommonData::Load::Plugin::InsertSnps",
