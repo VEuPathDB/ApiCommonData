@@ -103,6 +103,7 @@ while(<FILE>) {
       $featureHash->{exact_match} = $newStart == $featureHash->{new_start} ? 1 : 0;
       $featureHash->{new_start} = $newStart;
       $featureHash->{strand} = $strand;
+      $featureHash->{chromosome} = $mumChrom;
     }
   }
   print STDERR "Processed $count lines of mummer file\n" if($count % 1000 == 0 && $verbose);
@@ -133,6 +134,7 @@ sub _parseGff {
                        multiple_matches => '',
                        new_start => '',
                        strand => '',
+                       chromosome => '',
                      }; 
   }
 
@@ -258,6 +260,9 @@ sub _printGff {
     my $newStart = $featureHash->{new_start};
     my $feature = $featureHash->{feature};
     my $location = $feature->location();
+
+    my $chromosome = $featureHash->{chromosome};
+    $feature->seq_id($chromosome);
 
     my $strand = $featureHash->{strand};
     $location->strand($strand);
