@@ -87,6 +87,7 @@ while(<FILE>) {
     my $feature = $featureHash->{feature};
 
     my ($fivePrimeFlank) = $feature->get_tag_values('FivePrimeFlank');
+    my $expectedStart = $feature->location()->start();
 
     my ($empty, $mumChrom, $mumPos, $startMatch, $endMatch) = split(/ +/, $_);
     my $newStart = $mumPos + length($fivePrimeFlank) - $startMatch + 1;
@@ -98,9 +99,9 @@ while(<FILE>) {
       $featureHash->{multiple_matches} = 1;
     }
 
-    unless($featureHash->{exact_match}) {
+    unless($featureHash->{is_exact_match}) {
       $featureHash->{is_within_chromosome} = 1;
-      $featureHash->{exact_match} = $newStart == $featureHash->{new_start} ? 1 : 0;
+      $featureHash->{is_exact_match} = $newStart == $expectedStart ? 1 : 0;
       $featureHash->{new_start} = $newStart;
       $featureHash->{strand} = $strand;
       $featureHash->{chromosome} = $mumChrom;
@@ -130,7 +131,7 @@ sub _parseGff {
 
     $features{$id} = {feature => $feature,
                        is_within_chromosome => 0,
-                       exact_match => '',
+                       is_exact_match => '',
                        multiple_matches => '',
                        new_start => '',
                        strand => '',
