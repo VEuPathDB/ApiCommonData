@@ -2031,7 +2031,7 @@ sub snpMummerToGFF {
 
   return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $logfile --gff_format $gffFormat";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $logfile --gff_format $gffFormat --skip_multiple_matches";
 
   $mgr->runCmd($cmd);
 
