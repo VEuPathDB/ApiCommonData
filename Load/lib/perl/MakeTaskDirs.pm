@@ -359,17 +359,16 @@ blastParamsFile=$blastParamsFile
 sub makeIprscanTaskPropFile {
 	my ($inputDir, $seqfile, $outputfile, 
 			$seqtype, $appls, $crc, $email) = @_;
-	
-	print "writing task prop at $inputDir/task.prop\n";
+
 	open (TASKPROP, "> $inputDir/task.prop")
 		or die "Can't open $inputDir/task.prop for writing: $!\n";
-	
+
 	print TASKPROP "seqfile=$seqfile\n"
 					. "output_file=$outputfile\n"
 					. "seqtype=$seqtype\n"
 					. "appl=$appls\n"
 					. "email=$email\n";
-	$crc and print TASKPROP "crc=$crc\n";					
+	$crc and print TASKPROP "crc=$crc\n";
 	close TASKPROP;
 }
 
