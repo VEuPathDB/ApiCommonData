@@ -2770,7 +2770,6 @@ EOF
 
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
-    
 }
 
 sub loadOrfFile {
@@ -2806,64 +2805,32 @@ sub createIprscanDir{
   my $subject = $subjectFile;
   my $signal = "make" . $subject . "Dir";
   
-  
   my $buildName = $mgr->{'buildName'};
-  my $pipelineDir = $mgr->{'pipeline'};
-  my $nodePath = propertySet->getProp ('nodePath');
-  my $serverPath = propertySet->getPath ('serverPath');
-  my $taskSize = propertySet->getProp ('iprscan.taskSize');
+  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $nodePath = $propertySet->getProp ('nodePath');
+  my $serverPath = $propertySet->getProp ('serverPath');
+  my $taskSize = $propertySet->getProp ('iprscan.taskSize');
+  my $nodeClass = $propertySet->getProp ('nodeClass');
   
-  my $appl = propertySet->getProp('iprscan.appl'); 
-  my $email = propertySet->getProp ('iprscan.email') 
+  my $appl = $propertySet->getProp('iprscan.appl'); 
+  my $email = $propertySet->getProp ('iprscan.email') 
   					? $propertySet->getProp('iprscan.email') 
   					: $ENV{USER} . "\@pcbi.upenn.edu";
 
   return if $mgr->startStep("Creating iprscan dir", $signal);
-  $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
+  # $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
   
   #Disable this to allow InterPro DBs to be upgrated independent of the 
   #Inteproscan release, just in case. 
   my $doCrc = "false";
-  
-  &makeIprscanDir ($subject, $buildName, $localPath, 
+
+  &makeIprscanDir ($subject, $buildName, $pipelineDir, 
   					$serverPath, $nodePath, $taskSize, 
-  					"$serverPath/$buildName/seqfiles", $subjectFile, $appl, $doCrc, $email);
+					$nodeClass, "$serverPath/$buildName/seqfiles", 
+					$subjectFile, "p", $appl, $doCrc, $email);
 
   $mgr->endStep($signal);
 }
-
-                                                                                                                            
-#Run Iprscan Job
-sub runIprscanJob {
-  my ($mgr,$species,$app) = @_;
-
-  my $propertySet = $mgr->{propertySet};
-  my $serverPath = $propertySet->getProp('serverPath');
-
-  my $outFile = "${species}.$app";
-  my $outDir = "$serverPath/$mgr->{buildName}/iprscan/$app/";
-
-  my $signal = "$app.${species}";
-  return if $mgr->startStep("Starting iprscan job $signal", $signal);
-                                                                                                                             
-  my $iprscanDir = $propertySet->getProp('iprscan.path');
-                                                                                                                             
-  my $logFile = "$serverPath/$mgr->{buildName}/logs/${app}_${species}.log";  #Do we want this to be the wrapper log too?
-                                                                                                                             
-  my $input = "$mgr->{pipelineDir}/seqfiles/${species}AnnotatedProteins.fsa";
- 
-  #$mgr->runCmd("iprJobWrapper $app $input $outDir/$app $outfile $iprscanDir");
-  #iprJobWrapper hmmpfam /scratch/chkuo/api3/gus.files/api3.8/tg.GUS.fasta /scratch/erobinso /usr/local/iprscan42/bin
-                                                                                                                             
-  $mgr->endStep($signal);
-
-  my $clusterCmdMsg = "Please Run: \'iprJobWrapper $app $input $outDir $outFile $iprscanDir\'";
-  my $clusterLogMsg = "monitor $logFile";
-                                                                                                                             
-  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
-}
-
-
 
 #LoadIprscanResults.
 sub loadIprscanResults{
@@ -2880,6 +2847,9 @@ sub loadIprscanResults{
   my $iprver = $propertySet->getProp('iprscan.version');
   my $iprdataver = $propertySet->getProp('iprscan.dataversion');
   my $goversions = $propertySet->getProp('iprscan.goversions');
+
+  my $args = "--resultFileDir $resultFileDir";
+
 
   my $args = <<"EOF";
   --resultFile=$resultFile \\
