@@ -91,7 +91,7 @@ sub getOrCreateGOAssociation {
      my $gusGOA = GUS::Model::DoTS::GOAssociation->new( {
                    'table_id' => $goAssc->{'tableId'},
                    'row_id' => $goAssc->{'rowId'},
-                   'go_term_id' => $goAssc->{'goId'},
+                   'go_term_id' => $goAssc->{'goTermId'},
                    'is_not' => $goAssc->{'isNot'},
                    'is_deprecated' => 0,
                    'defining' => $goAssc->{'isDefining'},
@@ -207,5 +207,18 @@ sub _initGoTermNames {
         }
     }
 }
+
+sub undoTables {
+  my ($self) = @_;
+  return (
+		'DoTS.GOAssociationInstanceLOE',
+		'DoTS.GOAssociation',
+		'DoTS.GOAssociationInstance',
+		'DoTS.GOAssocInstEvidCode'
+     );
+}
+
+
+
 1;
 
