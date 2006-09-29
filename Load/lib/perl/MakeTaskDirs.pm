@@ -364,7 +364,7 @@ sub makeIprscanTaskPropFile {
 		or die "Can't open $inputDir/task.prop for writing: $!\n";
 
 	print TASKPROP "seqfile=$seqfile\n"
-					. "output_file=$outputfile\n"
+					. "outputfile=$outputfile\n"
 					. "seqtype=$seqtype\n"
 					. "appl=$appls\n"
 					. "email=$email\n";
