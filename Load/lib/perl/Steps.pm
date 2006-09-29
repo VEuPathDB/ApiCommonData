@@ -2039,17 +2039,13 @@ sub snpMummerToGFF {
 }
 
 sub loadMummerSnpResults {
-  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$tabFile) = @_;
-
-  my $gffFile = $tabFile;
-
-  $gffFile =~ s/\.\S+\b/Mummer\.gff/;
+  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$gffFile) = @_;
 
   my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{pipelineDir}/snp/$gffFile";
 
     $mgr->runPlugin("load$gffFile",
 		    "ApiCommonData::Load::Plugin::InsertSnps",
-		    $args, "Loading mummer results for $tabFile vs $targetDbName");
+		    $args, "Loading mummer results from $gffFile");
 }
 
 
@@ -2868,6 +2864,5 @@ EOF
         $args,
         "Loading ${species} Iprscan $app output");
 }
-
 
 1;
