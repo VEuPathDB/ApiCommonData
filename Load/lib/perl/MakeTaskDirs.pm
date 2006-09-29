@@ -182,31 +182,34 @@ sub makePsipredDir {
 }
 
 sub makeIprscanDir {
-	  my ($pipelineName, $localPath,
+	  my ($subject, $pipelineName, $localPath,
       		$serverPath, $nodePath, 
       		$taskSize, $nodeClass,
       		$fileDir, $subjectFileName, $seqtype,
       		$appl, $crc, $email) = @_;
+	
+	# my $subject = $subjectFileName;
 
-	my $subject = $subjectFileName;
-	      
-	my $localBase = "$localPath/$pipelineName/iprscan/$subject";
+	my $localBase = "$localPath/iprscan/$subject";
 	my $serverBase = "$serverPath/$pipelineName/iprscan/$subject";
 	my $inputDir = "$localBase/input";
+
+	print "$localBase\n";
 	
 	&runCmd ("mkdir -p $inputDir");
 	
 	my $numSlotsPerNode = 2;
-	&makeControllerPropFile ($inputDir, $serverbase, $numSlotsPerNode, $taskSize,
+	&makeControllerPropFile ($inputDir, $serverBase, $numSlotsPerNode, $taskSize,
 								$nodePath, "DJob::DistribJobTasks::IprscanTask", $nodeClass);
 
 	my $seqfile = "$fileDir/$subjectFileName";
-	&makeIprscanPropFile ($inputDir, $seqfile, $seqtype, $appl, $crc, $email);								
+	my $output_file = $subject . "_iprscan_out.xml";
+	&makeIprscanTaskPropFile ($inputDir, $seqfile, $output_file, $seqtype, $appl, $crc, $email);								
 }
 
 sub makeControllerPropFile {
-    my ($inputDir, $baseDir, $slotsPerNode, $taskSize, $nodePath, 
-	$taskClass, $nodeClass) = @_;
+    my ($inputDir, $baseDir, $slotsPerNode, 
+			$taskSize, $nodePath, $taskClass, $nodeClass) = @_;
     
     $nodeClass = 'DJob::DistribJob::BprocNode' unless $nodeClass;
     
@@ -356,7 +359,8 @@ blastParamsFile=$blastParamsFile
 sub makeIprscanTaskPropFile {
 	my ($inputDir, $seqfile, $outputfile, 
 			$seqtype, $appls, $crc, $email) = @_;
-			
+	
+	print "writing task prop at $inputDir/task.prop\n";
 	open (TASKPROP, "> $inputDir/task.prop")
 		or die "Can't open $inputDir/task.prop for writing: $!\n";
 	
