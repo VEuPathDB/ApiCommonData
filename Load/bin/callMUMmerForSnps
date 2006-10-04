@@ -19,7 +19,7 @@ my ($verbose, $help, $referenceStrain, $queryFile, $snpFile, $out, $mummerDir);
            );
 
 &usage() if($help);
-&usage("Missing Argument") unless(-e $queryFile && -e $snpFile && $out $mummerDir);
+&usage("Missing Argument") unless(-e $queryFile && -e $snpFile && $out && $mummerDir);
 
 my $seqIO = Bio::SeqIO->new( -file => $snpFile, -format => 'fasta');
 
@@ -37,7 +37,7 @@ unless($min == $max) {
   die "FASTA file contains mixed sequence lengths:  Max sequence length $max should equal the min sequence length $min";
 }
 
-system("$mummerDir/mummer -maxmatch -l $max -b $queryFile $snpFile >$out");
+system("$mummerDir/mummer -maxmatch -l $max -b $queryFile $snpFile >>$out");
 
 
 sub usage {
