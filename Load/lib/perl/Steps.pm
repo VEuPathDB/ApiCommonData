@@ -21,7 +21,6 @@ sub createPipelineDir {
   $mgr->runCmd("mkdir -p $pipelineDir/sage") unless (-e "$pipelineDir/sage");
   $mgr->runCmd("mkdir -p $pipelineDir/analysis") unless (-e "$pipelineDir/analysis");
   $mgr->runCmd("mkdir -p $pipelineDir/similarity") unless (-e "$pipelineDir/similarity");
-  $mgr->runCmd("mkdir -p $pipelineDir/iprscan") unless (-e "$pipelineDir/iprscan");
 
   my @Species = split(/,/,$allSpecies);
 
@@ -2800,22 +2799,21 @@ sub createIprscanDir{
   my $propertySet = $mgr->{propertySet};
   my $subject = $subjectFile;
   my $signal = "make" . $subject . "Dir";
-  
+
   my $buildName = $mgr->{'buildName'};
   my $pipelineDir = $mgr->{'pipelineDir'};
   my $nodePath = $propertySet->getProp ('nodePath');
   my $serverPath = $propertySet->getProp ('serverPath');
   my $taskSize = $propertySet->getProp ('iprscan.taskSize');
   my $nodeClass = $propertySet->getProp ('nodeClass');
-  
+
   my $appl = $propertySet->getProp('iprscan.appl'); 
   my $email = $propertySet->getProp ('iprscan.email') 
   					? $propertySet->getProp('iprscan.email') 
   					: $ENV{USER} . "\@pcbi.upenn.edu";
 
   return if $mgr->startStep("Creating iprscan dir", $signal);
-  # $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
-  
+  $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
   #Disable this to allow InterPro DBs to be upgrated independent of the 
   #Inteproscan release, just in case. 
   my $doCrc = "false";
@@ -2828,41 +2826,58 @@ sub createIprscanDir{
   $mgr->endStep($signal);
 }
 
-#LoadIprscanResults.
-sub loadIprscanResults{
-  my ($mgr,$species,$app,$extDbName,$extDbRlsVer) = @_;
+sub startIprScanOnComputeCluster {
+  my ($mgr,$dir,$queue) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  my $resultFile = "$mgr->{pipelineDir}/iprscan/$app/${species}.$app";
+  my $serverPath = $propertySet->getProp('serverPath');
 
-  my $signal = "$app.${species}.load";
-  return if $mgr->startStep("Starting Data Load $signal", $signal);
+  my $signal = "start" . uc($dir) . "IprScan";
 
-  my $conf = $propertySet->getProp('iprscan.conf');
-  my $iprver = $propertySet->getProp('iprscan.version');
-  my $iprdataver = $propertySet->getProp('iprscan.dataversion');
-  my $goversions = $propertySet->getProp('iprscan.goversions');
+  return if $mgr->startStep("Starting iprscan of $dir on cluster", $signal);
 
-  my $args = "--resultFileDir $resultFileDir";
+  $mgr->endStep($signal);
 
+  my $clusterCmdMsg = "runIprScan $serverPath/$mgr->{buildName} NUMBER_OF_NODES $dir $queue";
+  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/${dir}_Iprscan.log";
 
-  my $args = <<"EOF";
-  --resultFile=$resultFile \\
-  --confFile=$conf \\
-  --queryTable=TranslatedAASequence \\
-  --extDbName='$extDbName' \\
-  --extDbRlsVer='$extDbRlsVer' \\
-  --iprVer=$iprver \\
-  --iprDataVer=$iprdataver \\
-  --goVersions=$goversions \\
-  --useSourceId \\
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+ #LoadIprscanResults.
+ sub loadIprscanResults{
+   my ($mgr,$dir,$extDbName,$extDbRlsVer) = @_;
+
+   my $propertySet = $mgr->{propertySet};
+
+   my $resultFileDir = "$mgr->{pipelineDir}/iprscan/$dir/master/mainresult/";
+
+   my $signal = "load${dir}Iprscan";
+   return if $mgr->startStep("Starting Data Load $signal", $signal);
+
+   my $iprver = $propertySet->getProp('iprscan.version');
+   my $iprdataver = $propertySet->getProp('iprscan.dataversion');
+   my $goversions = $propertySet->getProp('iprscan.goversions');
+
+   my $conf = "$ENV{GUS_HOME}/config/interpro-config-plasmodb.xml";
+
+   my $args = <<"EOF";
+--resultFileDir=$resultFileDir \\
+--confFile=$conf \\
+--queryTable=TranslatedAASequence \\
+--extDbName='$extDbName' \\
+--extDbRlsVer='$extDbRlsVer' \\
+--iprVer=$iprver \\
+--iprDataVer=\'$iprdataver\' \\
+--goVersions=\'$goversions\' \\
+--useSourceId \\
 EOF
 
-  $mgr->runPlugin($signal, 
-        "ApiCommonData::Load::Plugin::InsertInterproscanResults", 
-        $args,
-        "Loading ${species} Iprscan $app output");
-}
+   $mgr->runPlugin($signal, 
+         "ApiCommonData::Load::Plugin::InsertInterproscanResults", 
+         $args,
+         "Loading $dir Iprscan output");
+ }
 
 1;
