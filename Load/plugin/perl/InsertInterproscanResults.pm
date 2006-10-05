@@ -595,7 +595,9 @@ sub validateBootstrapping {
         my $dbVer = $dbs->{$db}->{'ver'};
         my $gusDbs = $self->sql_get_as_array("select b.external_database_release_id
                                         from sres.externaldatabase a, sres.externaldatabaserelease b
-                                        where a.name=\'$dbName\' and b.version=\'$dbVer\'");
+                                        where a.name=\'$dbName\' and b.version=\'$dbVer\'
+                                          and a.external_database_id
+                                              = b.external_database_id");
         my $relId = $gusDbs->[0];
         if ($relId eq '') { $relId = $self->handleNewDb($db,$dbVer) };
         $iprDbs->{$db} = $relId;
