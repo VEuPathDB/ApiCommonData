@@ -245,6 +245,37 @@ sub loadAnticodons {
 		  "Loading anticodons into dots.RNAType");
 }
 
+
+
+sub parsedbEST {
+  my ($mgr,$ncbiTaxId,$soVer,$restart) = @_;
+
+  my @taxArr = split (/,/,$ncbiTaxId);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $connect = $propertySet->getProp('dbestConnect');
+
+  my $login = $propertySet->getProp('dbestLogin');
+
+  my $pswd = $propertySet->getProp('dbestPswd');
+
+  my $restart = $restart ? "--restart_number $restart" : "";
+
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId); #get taxon_id with taxId
+
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,1); #get entire taxon_id tree
+
+  my $args = "--extDbName dbEST --extDbRlsVer continuous --span 500 --taxon_id_list '$taxonIdList' --soVer $soVer --dbestConnect '$connect' --dbestLogin '$login' --dbestPswd '$pswd'  $restart";
+
+  $mgr->runPlugin("loadDbEst", "GUS::Supported::Plugin::dbEST", $args,
+		  "Loading dbEST files into GUS");
+}
+
+
+
+
+
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
@@ -1797,7 +1828,7 @@ sub loadLowComplexitySequences {
 
 
 sub makeTranscriptSeqs {
-  my ($mgr, $species) = @_;
+  my ($mgr, $species,$taxonHierarchy) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $file = $propertySet->getProp('fileOfRepeats');
@@ -1809,7 +1840,7 @@ sub makeTranscriptSeqs {
   my $taxonHsh = $mgr->{taxonHsh};
 
   my $taxonId =  $taxonHsh->{$species};
-  my $taxonIdList = &getTaxonIdList($mgr,$taxonId );
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $repeatFile --phrapDir $phrapDir";
 
@@ -2590,12 +2621,24 @@ sub getTaxonIdFromTaxId {
   return  \%taxHsh;
 }
 
+sub getTaxonId {
+  my ($mgr,$taxId) = @_;
+
+  my $sql = "select taxon_id from sres.taxon where ncbi_tax_id = $taxId";
+
+  my $cmd = "getValueFromTable --idSQL \"$sql\"";
+
+  my $taxonId = $mgr->runCmd($cmd);
+
+  return $taxonId;
+}
+
 sub getTaxonIdList {
-  my ($mgr,$taxonId) = @_;
+  my ($mgr,$taxonId,$hierarchy) = @_;
   my $propertySet = $mgr->{propertySet};
   my $returnValue;
 
-  if ($propertySet->getProp('includeSubspecies') eq "yes") {
+  if ($hierarchy) {
     $returnValue = $mgr->runCmd("getSubTaxa --taxon_id $taxonId");
     chomp $returnValue;
   } else {
