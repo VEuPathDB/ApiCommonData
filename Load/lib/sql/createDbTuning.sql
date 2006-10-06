@@ -126,4 +126,10 @@ CREATE INDEX apidb.GoTermSum_sourceId_idx ON apidb.GoTermSummary (source_id);
 
 GRANT SELECT ON apidb.GoTermSummary TO gus_r;
 
+-------------------------------------------------------------------------------
+
+-- GUS table shortcoming
+
+ALTER TABLE core.AlgorithmParam MODIFY (string_value VARCHAR2(2000));
+
 exit
