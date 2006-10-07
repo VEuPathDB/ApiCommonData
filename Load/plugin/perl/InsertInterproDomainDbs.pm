@@ -10,7 +10,8 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
-use GUS::Model::SRes::ExternalDatabaseEntry;
+use GUS::Model::SRes::DbRef;
+use Data::Dumper;
 
 # Notes:
 #	1. confFile is NOT validated for XML. If there is an error in the XML file, the program simply quits, 
@@ -19,39 +20,6 @@ use GUS::Model::SRes::ExternalDatabaseEntry;
 #		Use it for testing, as the processing could take a long time.
 #	3. The statusCountsByDb is used in reporting the status for every n items processed. 
 
-# The numbers in %statusCountByDb are based on the total number of items in each database, as of 12.1:
-# PRODOM: 122254
-# PIR: 1347
-# TIGRFAMs: 2621
-# PROFILE: 659
-# PANTHER: ?
-# PRINTS: 1900
-# PROSITE: ?
-# UNIPROT: ?
-# PFAM: 16366
-# SIGNALP: ?
-# TMHMM: ?
-# SMART: ?
-# GENE3D: 4021
-# SUPERFAMILY: 8559 
-           	
-my %statusCountByDb = (
-					'PRODOM' => 10000,
-                  	'PIR' => 100,
-                  	'TIGRFAMs' => 500,
-                  	'PROFILE' => 100, 
-                  	'PANTHER' => 0,
-                  	'PRINTS' => 200,
-                  	'PROSITE' => 0,
-                  	'UNIPROT' => 0,
-                  	'PFAM' => 10000,
-                  	'SIGNALP' => 0,
-                  	'TMHMM' => 0,
-                  	'SMART' => 0,
-                  	'GENE3D' => 500,
-                  	'SUPERFAMILY' => 1000,
-                  	'default' => 1000
-                  	);
 
 
 
@@ -59,48 +27,21 @@ sub getArgsDeclaration {
 my $argsDeclaration  =
 [
 
-fileArg({name => 'confFile',
-         descr => 'Absolute path to the file containing the domain database. NOTE: This plugin does NOT valid the XML. '
-         			. 'Must validate the XML outside this plugin, before running',
-         constraintFunc=> undef,
-         reqd  => 1,
-         mustExist => 0,
-         isList => 0,
-         format=>'Text'
-        }),
-
-stringArg({name => 'iproVersion',
-         descr => 'A valid version number',
-         constraintFunc=> undef,
-         reqd  => 1,
-         isList => 0,
-         format=>'Text'
-        }),
-
 fileArg({name => 'inPath',
-         descr => 'user specified path to the directory containing all of the iprscan consitutent dbs.',
+         descr => 'user specified path to the directory containing all of the iprscan consitutent dbs and the config file for this plugin (named insertInterpro-config.xml',
          constraintFunc=> undef,
-         reqd  => 0,
+         reqd  => 1,
          mustExist => 0,
          isList => 0,
          format=>'Text'
         }),
 
-fileArg({name => 'restartFile',
-         descr => 'log file containing/for storing entries from last run/this run',
-         constraintFunc=> undef,
-         reqd  => 0,
-         mustExist => 0,
-         isList => 0,
-         format=>'Text'
-        }),
-        
-integerArg({name  => 'testnumber',
-			descr => 'Number of query sequences to process for testing',
-			reqd  => 0,
-			constraintFunc=> undef,
-			isList=> 0,
-			}),
+ integerArg({name  => 'testnumber',
+	     descr => 'Number of query sequences to process for testing',
+	     reqd  => 0,
+	     constraintFunc=> undef,
+	     isList=> 0,
+	    }),
 ];
 
 return $argsDeclaration;
@@ -109,525 +50,383 @@ return $argsDeclaration;
 
 sub getDocumentation {
 
-my $description = <<NOTES;
+  my $description = <<NOTES;
 NOTES
 
-my $purpose = <<PURPOSE;
+  my $purpose = <<PURPOSE;
 PURPOSE
 
-my $purposeBrief = <<PURPOSEBRIEF;
+  my $purposeBrief = <<PURPOSEBRIEF;
 PURPOSEBRIEF
 
-my $syntax = <<SYNTAX;
+  my $syntax = <<SYNTAX;
 SYNTAX
 
-my $notes = <<NOTES;
+  my $notes = <<NOTES;
+The config file is in the data directory and is call insertInterpro-config.xml.
+It looks like this:
+<configuration>
+	<!-- Refers to Interpro 12.1. Change as necessary -->
+   <db name="PRODOM" release="4.2" filename="prodom.ipr" ver="2004.1" format="PRODOM" logFreq="1000"/>
+    etc...
+
+   <alg name="HMMPfam" ver="ipr4.2"/>
+   etc...
+
+</configuration>
+
+the <db> tags describe the member databases. the attributes are:
+  name:     the name of the resource (goes into ExternalDatabase.name)
+  release:  the interpro release
+  filename: the basename of the file that contains the member database
+  ver:      the version of the member database (goes into ExternalDatabaseRelease.version)
+  format:   the file format.  see the code for supported formats (or add one if you need to)
+  logFreq:  how often to log progress, ie, after processing how many motifs.
+
+
+the <alg> tags describe the scanning algorithms used.
 NOTES
 
-my $tablesAffected = <<AFFECT;
+  my $tablesAffected = <<AFFECT;
 AFFECT
 
-my $tablesDependedOn = <<TABD;
+  my $tablesDependedOn = <<TABD;
 TABD
 
-my $howToRestart = <<RESTART;
+  my $howToRestart = <<RESTART;
 RESTART
 
-my $failureCases = <<FAIL;
+  my $failureCases = <<FAIL;
 FAIL
 
-my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
+  my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
 
-return ($documentation);
-
+  return ($documentation);
 }
 
 
 
 sub new {
-   my $class = shift;
-   my $self = {};
-   bless($self, $class);
+  my $class = shift;
+  my $self = {};
+  bless($self, $class);
 
-      my $documentation = &getDocumentation();
+  my $documentation = &getDocumentation();
 
-      my $args = &getArgsDeclaration();
+  my $args = &getArgsDeclaration();
 
-      $self->initialize({requiredDbVersion => 3.5,
-                     cvsRevision => '$Revision$',
-                     name => ref($self),
-                     argsDeclaration   => $args,
-                     documentation     => $documentation
-                    });
-   return $self;
+  $self->initialize({requiredDbVersion => 3.5,
+		     cvsRevision => '$Revision$',
+		      name => ref($self),
+		     argsDeclaration   => $args,
+		     documentation     => $documentation
+		    });
+  return $self;
 }
 
-
+my $SUPPORTED_FORMATS =
+  {
+   'HMM' => 'loadHMMFormat',
+   'PRODOM' => 'loadProdomFormat',
+   'PIR' => 'loadPirsfFormat',
+   'PRF' => 'loadPRFFormat',
+   'PRINTS' => 'loadPrintsFormat',
+   'PROSITE' => 'loadPrositeFormat',
+   'INTERPRO' => 'loadInterproFormat',
+  } ;
 
 sub run {
-    my $self = shift;
+  my $self = shift;
 
-    my $dbs = $self->loadConfig();
-    my $dbCount = 0;
+  my $dbCount = 0;
+  my $dbs = $self->loadConfig();
 
-     foreach my $db (@$dbs) {
-        my $file = $self->{$db}->{'file'};
-        
-        my $rls = $self->{$db}->{'ver'};
-        if ($file eq '') { $self->log("Warning: No file for $db: skipping");
-                           next;
-                         }
-
-        my $subR = $self->{'SupportedDbs'}->{$db}; 
-
-        if ($subR eq 'skip') {
-            $self->log("Warning: NO CONFIGURATION FOR $db");
-            next;
-        }
-        else {
-           $self->log("Loading $db via $subR");
-           my $eCount = $self->$subR($db,$file);
-           $self->undefPointerCache();
-           $self->log("$db:$eCount entries processed");
-           $dbCount++; 
-        }
-     }
-   return "Completed loading $dbCount databases.";
+  foreach my $db (@$dbs) {
+    my $subR = $SUPPORTED_FORMATS->{$self->{$db}->{format}};
+    $self->log("Loading $db ($self->{$db}->{format} format)");
+    my $eCount = $self->$subR($db, $self->{$db}->{filename},
+			      $self->{$db}->{logFreq});
+    $self->{stats}->{$db} = $eCount;
+    $self->log("  $db: $eCount");
+    $dbCount++;
+  }
+  foreach my $db (@$dbs) {
+    $self->log("Summary", "$db: $self->{stats}->{$db}");
+  }
+  return "Completed loading $dbCount databases.";
 }
 
 
+sub loadHMMFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
+   $self->loadHMMFormat_aux($dbName, $file, $logFreq, 'NA');
+}
 
-sub loadStandardFile { #prosite, uniprot, tigrfams, pfam
-   my ($self, $name, $file) = @_;
-   
+sub loadPRFFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
+   $self->loadHMMFormat_aux($dbName, $file, $logFreq, 'ID');
+}
+
+
+#HMMER2.0
+#ACC   SM00101
+#NAME  14_3_3
+#DESC  ADP-LIKE TRANSPORTER
+#LENG  249
+#...
+#//
+sub loadHMMFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
    my $dataHash = {};
    my $eCount = 0;
-   open STDRD, "$file" or die <<"EOF";
-$file not found. 
-Check the filename attribute for '$name' in '@{[$self->getArgs()->{'confFile'}]}'.
-The filename value should be a path relative to --inPath ('@{[$self->getArgs()->{'inPath'}]}').
-EOF
-   while (<STDRD>) {
-      if (/\/\//) {
-         my $gusHash = $self->mapStandardDataValues($dataHash, $name);
-         $self->submitGusEntry($gusHash);
-         $self->undefPointerCache();
-         $eCount++;
-                         
-         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-      }
-      elsif (/^([A-Z]+\s+)(.+)/) { 
-        $dataHash->{substr($1,0,2)} = $2; 
+   open (DFILE, $file);
+   while (<DFILE>) {
+     chomp;
+     if (/\/\//) {
+       $self->submitDbRef($dbName, $dataHash->{ACC}, $dataHash->{NAME},
+			  $dataHash->{DESC}, $logFreq, ++$eCount);
      }
-     
-     ($testNum && $eCount >= $testNum)
-       and last;
+     elsif (/^(ACC|NAME|DESC)\s+(.+)/) {
+       my $key = $1;
+       my $val = $2;
+       my @a = split(/\./, $val);  # lose any version info (eg, PF00032.1.fs)
+       $dataHash->{$key} = $a[0];
+     }
+
+     last if ($testNum && $eCount >= $testNum);
    }
-return $eCount;
+   close(DFILE);
+   return $eCount;
 }
+#ID   HSP20; MATRIX.
+#AC   PS01031;
+#DT   JUN-1994 (CREATED); DEC-2001 (DATA UPDATE); SEP-2005 (INFO UPDATE).
+#DE   Heat shock hsp20 proteins family profile.
+#MA   /GENERAL_SPEC: ALPHABET='ABCDEFGHIKLMNPQRSTVWYZ'; LENGTH=88;
 
-
-
-sub mapStandardDataValues {
-   my ($self, $dataHash, $name) = @_;
-
-   if ($name eq 'PFAM' or $name eq 'TIGRFAMs') { $dataHash->{'ID'} = $dataHash->{'NA'}; }
-      my $gusHash = { 'external_primary_identifier' => $dataHash->{'AC'},
- 		      'external_secondary_identifier' => '',
-                      'external_database_release_id' => $self->{$name}->{'ver'},
- 		      'name' => $dataHash->{'ID'},
- 		      'description' => $dataHash->{'DE'}, };
-
-return $gusHash;
-}
-
-
-sub loadPrints{
-   my ($self, $name, $file) = @_;
-   
+sub loadPRFFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
+   my $dataHash = {};
+   my $eCount = 0;
+   open (DFILE, $file);
+   while (<DFILE>) {
+     chomp;  # trailing newline
+     if (/\/\//) {
+       $self->submitDbRef($dbName, $dataHash->{AC}, $dataHash->{ID},
+			  $dataHash->{DE}, $logFreq, ++$eCount);
+     }
+     elsif (/^(AC|ID|DE)\s+(.+)/) {
+       $dataHash->{$1} = $2;
+       chop $dataHash->{$1};   # trailing punctuation
+       $dataHash->{$1} =~ s/\; MATRIX// if ($1 eq 'ID');
+     }
+
+     last if ($testNum && $eCount >= $testNum);
+   }
+   close(DFILE);
+   return $eCount;
+}
+
+# PS00010 C.[DN]....[FY].C.C ASX_HYDROXYL ??E??
+sub loadPrositeFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
+   my $testNum = $self->getArgs()->{'testnumber'};
+
+   open DFILE, "<$file";
+   my $eCount = 0;
+
+   while (<DFILE>) {
+     my @dataAry = split(/\s+/);
+     $self->submitDbRef($dbName, $dataAry[0], $dataAry[2], undef, $logFreq, ++$eCount);
+     last if ($testNum && $eCount >= $testNum);
+   }
+   close(DFILE);
+
+   return $eCount;
+}
+
+#gc; 11SGLOBULIN
+#gx; PR00439
+#gn; 7
+#gi; 11-S seed storage protein family signature
+#gm; 74
+sub loadPrintsFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
+
+   my $testNum = $self->getArgs()->{'testnumber'};
+
    my $eCount = 0;
    my $dataHash = {};
    open PRINTS, "<$file";
    while (<PRINTS>) {
-      if (/gm\;/) {
-         my $gusHash = $self->mapPrintsData($dataHash, $name);
-         $self->submitGusEntry($gusHash);
-         $self->undefPointerCache();
-         $eCount++;
-                
-         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-      }
-      my @dataAry = split(/\;/);
-      $dataHash->{$dataAry[0]} = $dataAry[1];
-
-     ($testNum && $eCount >= $testNum)
-       and last;
-
+     chomp;
+     if (/^gm/) {
+       $self->submitDbRef($dbName, $dataHash->{gx}, $dataHash->{gc}, $dataHash->{gi}, $logFreq, ++$eCount);
+     }
+     elsif (/^(gc|gx|gi)\;\s+(.+)/) {
+       $dataHash->{$1} = $2;
+     }
+     last if ($testNum && $eCount >= $testNum);
    }
-return $eCount;
+   close(PRINTS);
+   return $eCount;
 }
 
-
-sub mapPrintsData {
-   my ($self, $dataHash, $name) = @_;
-
-      my $gusHash = { 'external_primary_identifier' => $dataHash->{'gc'},
- 		      'external_secondary_identifier' => $dataHash->{'gx'},
-                      'external_database_release_id' => $self->{$name}->{'ver'},
- 		      'name' => $dataHash->{'gc'},
- 		      'description' => $dataHash->{'gi'}, };
-
-return $gusHash;
-}
-
-
-
-sub loadGene3DCathFiles{
-   my ($self, $name, $file) = @_;
-   my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
-   my $dataHash = {};
-   my $eCount = 0;
-   open DFILE, "<$file";
-   while (<DFILE>) {
-      if (/\/\//) {
-         my $gusHash = $self->mapCathFileData($dataHash, $name);
-         $self->submitGusEntry($gusHash);
-         $dataHash = undef;
-         $self->undefPointerCache();
-         $eCount++;
-         
-         ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	   and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-      }
-         my @dataAry = split(/\t/);
-         $dataHash->{@dataAry[0]} = $dataHash->{@dataAry[0]} . $dataAry[1];
-         
-     ($testNum && $eCount >= $testNum)
-       and last;
-
-   }
-return $eCount;
-}
-
- 
-
-sub mapCathFileData {
-   my ($self, $dataHash, $name) = @_;
-
-      my $gusHash = { 'external_primary_identifier' => $dataHash->{'CATHCODE'},
- 		     'external_secondary_identifier' => $dataHash->{'DOMAIN'},
-                    'external_database_release_id' => $self->{$name}->{'ver'},
- 		     'name' => $dataHash->{'TOPOL'} . $dataHash->{'HOMOL'},
- 		     'description' => $dataHash->{'NAME'}, };
-
-return $gusHash;
-}
-
-
-
-sub loadProDom {
-   my ($self, $name, $file) = @_;
-   my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
 #>Q9XYH6_CRYPV#PD000006#561#605 | 45 | pd_PD000006;sp_Q9XYH6_CRYPV_Q9XYH6; | (8753)  ATP-BINDING COMPLETE PROTEOME ABC TRANSPORTER TRANSPORTER COMPONENT ATPASE MEMBRANE SYSTEM
+sub loadProdomFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
+   my $testNum = $self->getArgs()->{'testnumber'};
    open DFILE, "<$file";
    my $eCount = 0;
    while (<DFILE>) {
-      my @dataAry = split(/\|/);
-      my ($primId, $pdName) = split(/\;/,$dataAry[2]);
-      my $gusHash = { 'external_primary_identifier' => substr($primId,4),
-		      'external_secondary_identifier' => '',
-                      'external_database_release_id' => $self->{$name}->{'ver'},
- 		      'name' => substr($pdName,3),
- 		      'description' => $dataAry[3], };
-      if (/^>/) {
-          $self->submitGusEntry($gusHash);
-          $self->undefPointerCache();
-          $eCount++;
-     	  	
-          ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	    and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-      }
-
-	  ($testNum && $eCount >= $testNum)
-	  	and last;
-
+     chomp;
+     my @dataAry = split(/\|/);
+     my ($junk, $primId, $junk2) = split(/\#/, $dataAry[0]);
+     my ($junk3, $desc) = split(/\)\s+/, $dataAry[3]);
+     $desc =~ s/\s+$//;   # lose trailing white space
+     $self->submitDbRef($dbName, $primId, undef, $desc, $logFreq, ++$eCount);
+     last if ($testNum && $eCount >= $testNum);
    }
-return $eCount;
+
+   close(DFILE);
+   return $eCount;
 }
 
 
+#>PIRSF000002
+#Cytochrome c552     (note:  this field gets quite long, eg > 100)
+#140.857142857143 12.7857807925909 18 260.571428571429 163.159285304124
+#BLAST: Yes
+sub loadPirsfFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
 
-sub loadPanther {
-   my ($self, $name, $file) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
-#PTHR11871       PROTEIN PHOSPHATASE PP2A REGULATORY SUBUNIT B   IPR000009       Protein phosphatase 2A regulatory subunit PR55
    my $eCount = 0;
    open DFILE, "<$file";
+   my $id;
+   my $getDescNext;
+   my $desc;
    while (<DFILE>) {
-      my @dataAry = split(/\t/);
-      my $gusHash = { 'external_primary_identifier' => "$dataAry[0]",
- 		      'external_secondary_identifier' => $dataAry[2],
-                      'external_database_release_id' => $self->{$name}->{'ver'},
- 		      'name' => $dataAry[1],
- 		      'description' => $dataAry[3], };
-      $self->submitGusEntry($gusHash);
-      $self->undefPointerCache();
-      $eCount++;
-      ($testNum && $eCount >= $testNum)
-        and last;
-        
-      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
+     chomp;
+     if (/^>(\w+)/) {
+       $id = $1;
+       $getDescNext = 1;
+     } elsif ($getDescNext) {
+       $getDescNext = 0;
+       $desc = $_;
+       $eCount++;
+       $self->submitDbRef($dbName, $id, undef, $desc, $logFreq, ++$eCount);
+       last if ($testNum && $eCount >= $testNum)
+     }
    }
-return $eCount;
+   close(DFILE);
+   return $eCount;
 }
 
 
-sub loadSuperfamily {
-   my ($self, $name, $file) = @_;
-   my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
-#0024654 52540   c.37.1  d3adk__ P-loop containing nucleoside triphosphate hydrolases
-   my $eCount = 0; 
-   open DFILE, "<$file";
-   while (<DFILE>) {
-      my @dataAry = split(/\t/);
-
-      my $gusHash = { 'external_primary_identifier' => "SSF" . $dataAry[1],
- 		      'external_secondary_identifier' => $dataAry[0],
-                      'external_database_release_id' => $self->{$name}->{'ver'},
- 		      'name' => $dataAry[2],
- 		      'description' => $dataAry[4], };
-
-      $self->submitGusEntry($gusHash);
-      $self->undefPointerCache();
-      $eCount++;
-      ($testNum && $eCount >= $testNum)
-        and last;
-        
-      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-   }
-return $eCount;
-}
-
-
-
-sub loadPirsf {
-   my ($self, $name, $file) = @_;
+#<interpro id="IPR000001" type="Domain" short_name="Kringle" protein_count="303">
+#    <name>Kringle</name>
+sub loadInterproFormat {
+   my ($self, $dbName, $file, $logFreq) = @_;
 
    my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-      
-#   >PIRSF000002
-#   Cytochrome c552
-#   140.857142857143 12.7857807925909 18 260.571428571429 163.159285304124
-#   BLAST: Yes
-   my $gusHash = {};
-   my @dataAry = undef;
    my $eCount = 0;
-   open DFILE, "<$file";
+   open(DFILE,$file);
+   my $id;
+   my $name;
+   my $desc;
    while (<DFILE>) {
-      if (/^>(PIRSF[0-9]+)/) {
-           if ($dataAry[1]) {
-               my $gusHash = { 'external_primary_identifier' => $dataAry[1],
-                             'external_secondary_identifier' => '',
-                             'external_database_release_id' => $self->{$name}->{'ver'},
-		             'name' => $dataAry[1],
-    		             'description' => $dataAry[2], 
-                             };
-               $self->submitGusEntry($gusHash);
-               $self->undefPointerCache();
-               $eCount++;
-               
-               ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	         and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-           }
-           @dataAry = undef;
-           push @dataAry, $1;
-      } 
-      else {
-           push @dataAry;
-      }
-      
-      ($testNum && $eCount >= $testNum)
-        and last;
+     if (/^\<interpro id="(\w+)".+short_name="(\w+)"/) {
+       $id = $1;
+       $name = $2
+     } elsif (/\<name\>(.*)\</) {
+       $desc = $1;
+       $self->submitDbRef($dbName, $id, $name, undef, $logFreq, ++$eCount);
+       last if ($testNum && $eCount >= $testNum)
+     }
    }
-return $eCount;
+   close(DFILE);
+   return $eCount;
 }
 
 
-sub loadSmart {
-   my ($self, $name, $file) = @_;
+sub submitDbRef{
+   my ($self, $dbName, $id, $name, $descr, $logFreq, $eCount) = @_;
 
-   my $testNum = $self->getArgs()->{'testnumber'};
-   my $statusCount = $statusCountByDb{$name} ? $statusCountByDb{$name} : $statusCountByDb{default};
-   
-   my $eCount = 0; 
-   open DFILE, "<$file";
-   while (<DFILE>) {
-      unless (/^\s\w/) {next;}
-         chomp;
-         s/\s+/ /g;
-         my @dataAry = split(/\|/);  #name, def, desc
-         my $gusHash = { 'external_primary_identifier' => $dataAry[0],
-                         'external_secondary_identifier' => $dataAry[1],
-                         'external_database_release_id' => $self->{$name}->{'ver'},
- 		         'name' => $dataAry[0],
- 		         'description' => $dataAry[2], };
-      $self->submitGusEntry($gusHash);
-      $self->undefPointerCache();
-      $eCount++;
-      ($testNum && $eCount >= $testNum)
-      	and last;
-      	      
-      ($self->getArgs()->{'verbose'} && ($eCount % $statusCount) == 0)
-     	and print "[" . localtime() . "] $name: Processed $eCount entries\n";
-   }
-return $eCount;
-}
+   my $gusHash = { 'primary_identifier' => $id,
+		   'lowercase_secondary_identifier' => $name,
+		   'external_database_release_id' => $self->{$dbName}->{extDbRlsId},
+		   'remark' => $descr };
 
-
-
-sub submitGusEntry{
-   my ($self, $gusHash) = @_;
-
-   my $gusObj= GUS::Model::SRes::ExternalDatabaseEntry->new( $gusHash );
-   unless ($gusObj->retrieveFromDB()) {
-      $gusObj->submit();
-   }
-
-return 1;
+   my $gusObj= GUS::Model::SRes::DbRef->new( $gusHash );
+   $gusObj->submit();
+   $self->undefPointerCache() if $eCount % 1000 == 0;
+   $self->log("   $eCount") if $eCount % $logFreq == 0;
 }
 
 
 sub loadConfig{
   my ($self) = @_;
 
-     my $dbLst = [];
-     my $cFile = $self->getArgs()->{'confFile'} || die "No Conf File";
-     my $inPath = $self->getArgs()->{'inPath'};
-     my $conf = $self->parseSimple($cFile);
+  my $inPath = $self->getArg('inPath');
+  my $cFile = "$inPath/insertInterpro-config.xml";
+  $self->error("Can't open config file '$cFile'")
+    unless (-r $cFile && -f $cFile);
 
-     #List of DBs supported by this plugin
-     $self->{'SupportedDbs'} = {
-                  'PRODOM' => 'loadProDom',
-                  'PIR' => 'loadPirsf',
-                  'TIGRFAMs' => 'loadStandardFile',
-                  'PROFILE' => 'loadStandardFile', 
-                  'PANTHER' => 'loadPanther',
-                  'PRINTS' => 'loadPrints',
-                  'PROSITE' => 'loadStandardFile',
-                  'UNIPROT' => 'loadStandardFile',
-                  'PFAM' => 'loadStandardFile',
-                  'SIGNALP' => 'skip',
-                  'TMHMM' => 'skip',
-                  'SMART' => 'loadSmart',
-                  'GENE3D' => 'loadGene3DCathFiles',
-                  'SUPERFAMILY' => 'loadSuperfamily',
-                  } ;
+  my $conf = $self->parseSimple($cFile);
 
-     #InterPro Version Information
-     my $iprVer = $self->getArgs()->{'iproVersion'};
-     my $iprDbRls = $self->getOrLoadIprVer($iprVer);
-     $self->log("Interpro $iprVer: $iprDbRls");
-     
-     #Configuration of DBs listed in Config File.
-     my $dbs = $conf->{'db'};  
-     foreach my $db (keys %$dbs) {
-        my $rel = $dbs->{$db}->{'release'};
-        my $ver = $dbs->{$db}->{'ver'};
-        my $file = $dbs->{$db}->{'filename'};
-        if ($inPath) {
-          $file = "$inPath/$file";
-        }
-           if ($iprVer ne $rel) {
-              die "$db - $ver: Database release inconsistent with declared interpro version";
-           }
-           
-        $self->log("Checking entry for external Db: $db $ver");
-
-        my $gusDbRel = $self->getOrLoadDbs($db,$ver);
-
-           if ($self->{'SupportedDbs'}->{$db} eq '') {
-              die "$db: Not in plugins list of supported Dbs";
-           }
-           
-        $self->{$db}->{'ver'} = $gusDbRel;
-        $self->{$db}->{'file'} = $file;
-        push @$dbLst, $db;
-     }
-     
-     #Configuration of Algorithms listed in Config file.
-     my $algs = $conf->{'alg'};
-     foreach my $alg (keys %$algs) {
-        my $iprAlgs = $self->getOrLoadAlgs($alg);
-        $self->{$alg} = $iprAlgs;
-     }
-
-     $self->{'iprRls'} = $iprDbRls;
-
-return $dbLst;
-}
-
-sub getOrLoadIprVer {
-    my ($self, $iprVer) = @_;
-
-    my $gusIpr = GUS::Model::SRes::ExternalDatabase->new( { 'name' => 'INTERPRO' } );
-    unless ($gusIpr->retrieveFromDB() ) {
-      $gusIpr->submit();
-   }
-    
-    my $iprDb = $gusIpr->getId();
-    my $gusIprVer = GUS::Model::SRes::ExternalDatabaseRelease->new( {
-                                                             'external_database_id' => $iprDb,
-                                                             'version' => $iprVer,
-                                                               } );
-    unless ($gusIprVer->retrieveFromDB() ) {
-      $gusIprVer->submit();
+  #Configuration of DBs listed in Config File.
+  my $dbs = $conf->{'db'};
+  my @dbNames;
+  foreach my $db (keys %$dbs) {
+    $self->{$db} = $dbs->{$db};
+    my $ver = $self->{$db}->{ver};
+    my $file = $self->{$db}->{filename} = "$inPath/$self->{$db}->{filename}";
+    my $format = $self->{$db}->{format};
+    my $logFreq = $self->{$db}->{logFreq};
+    if (!$SUPPORTED_FORMATS->{$format}) {
+      die "Format '$format' (used by db: '$db') is not supported";
     }
-    my $iprDbVer = $gusIprVer->getId();
 
-return $iprDbVer; 
+    $self->error("input file '$file' for database '$db' cannot be opened")
+      unless (-r $file && -f $file);
+
+    $self->log("Checking entry for external Db: $db $ver");
+
+    $self->{$db}->{extDbRlsId} = $self->getOrLoadDbs($db, $ver);
+
+    push(@dbNames, $db);
+  }
+
+  #Configuration of Algorithms listed in Config file.
+  my $algs = $conf->{'alg'};
+  foreach my $alg (keys %$algs) {
+    $self->{$alg}= $self->getOrLoadAlgs($alg);
+  }
+
+  return \@dbNames;
 }
-
 
 sub getOrLoadDbs {
-   my ($self, $name, $ver) = @_;
+  my ($self, $dbName, $ver) = @_;
 
-   my $relId;
-   my $gusName = "$name (ipro)";
-   my $gusDb = GUS::Model::SRes::ExternalDatabase->new({ 'name' => $gusName, });
-   unless ($gusDb->retrieveFromDB()) {
-      $gusDb->submit();
-   }
-   my $gusDbId = $gusDb->getId();
-   my $iprVer = $self->getArgs()->{'iproVersion'};
-   my $gusDesc = "$name version $ver data release from data/ for InterPro release number $iprVer";
-   my $gusDbRel = GUS::Model::SRes::ExternalDatabaseRelease->new({ 'version' => $ver,
-                                                     'description' => $gusDesc, 
-                                                     'external_database_id' => $gusDbId, });
-   unless ($gusDbRel->retrieveFromDB()) {
-      $gusDbRel->submit();
-   }
+  my $gusDb = GUS::Model::SRes::ExternalDatabase->new({ 'name' => $dbName, });
+  unless ($gusDb->retrieveFromDB()) {
+    $gusDb->submit();
+  }
 
-   $relId = $gusDbRel->getId();
-	
-return $relId;
+  my $gusDbRel = 
+    GUS::Model::SRes::ExternalDatabaseRelease->
+	new({ 'version' => $ver,
+	      'external_database_id' => $gusDb->getId() });
+
+  unless ($gusDbRel->retrieveFromDB()) {
+    $gusDbRel->submit();
+  }
+
+  return $gusDbRel->getId();
 }
 
 
@@ -640,7 +439,7 @@ sub getOrLoadAlgs {
    }
    my $algId = $gusDb->getId();
 
-return $algId;
+   return $algId;
 }
 
 
@@ -649,15 +448,15 @@ sub parseSimple{
 
   my $simple = XML::Simple->new();
   my $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
-
-return $tree;
+  
+  return $tree;
 }
 
 sub undoTables {
   my ($self) = @_;
 
   return (
-		'SRes.ExternalDatabaseEntry',
+		'SRes.DbRef',
   		'SRes.ExternalDatabaseRelease',
 		'SRes.ExternalDatabase',
 		'Core.Algorithm'
