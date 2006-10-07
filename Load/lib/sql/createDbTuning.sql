@@ -128,8 +128,10 @@ GRANT SELECT ON apidb.GoTermSummary TO gus_r;
 
 -------------------------------------------------------------------------------
 
--- GUS table shortcoming
+-- GUS table shortcomings
 
 ALTER TABLE core.AlgorithmParam MODIFY (string_value VARCHAR2(2000));
+
+ALTER TABLE sres.DbRef MODIFY (secondary_identifier varchar2(100));
 
 exit
