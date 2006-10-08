@@ -7,7 +7,6 @@ use DBI;
 use Data::Dumper;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::SRes::DbRef;
@@ -70,9 +69,6 @@ It looks like this:
    <db name="PRODOM" release="4.2" filename="prodom.ipr" ver="2004.1" format="PRODOM" logFreq="1000"/>
     etc...
 
-   <alg name="HMMPfam" ver="ipr4.2"/>
-   etc...
-
 </configuration>
 
 the <db> tags describe the member databases. the attributes are:
@@ -83,8 +79,6 @@ the <db> tags describe the member databases. the attributes are:
   format:   the file format.  see the code for supported formats (or add one if you need to)
   logFreq:  how often to log progress, ie, after processing how many motifs.
 
-
-the <alg> tags describe the scanning algorithms used.
 NOTES
 
   my $tablesAffected = <<AFFECT;
@@ -380,33 +374,37 @@ sub loadConfig{
   #Configuration of DBs listed in Config File.
   my $dbs = $conf->{'db'};
   my @dbNames;
-  foreach my $db (keys %$dbs) {
-    $self->{$db} = $dbs->{$db};
-    my $ver = $self->{$db}->{ver};
-    my $file = $self->{$db}->{filename} = "$inPath/$self->{$db}->{filename}";
-    my $format = $self->{$db}->{format};
-    my $logFreq = $self->{$db}->{logFreq};
+  foreach my $dbName (keys %$dbs) {
+    $self->{$dbName} = $dbs->{$dbName};
+    my $ver = $self->{$dbName}->{ver};
+    my $file = $self->{$dbName}->{filename} = 
+      "$inPath/$self->{$dbName}->{filename}";
+    my $format = $self->{$dbName}->{format};
+    my $logFreq = $self->{$dbName}->{logFreq};
     if (!$SUPPORTED_FORMATS->{$format}) {
-      die "Format '$format' (used by db: '$db') is not supported";
+      die "Format '$format' (used by db: '$dbName') is not supported";
     }
 
-    $self->error("input file '$file' for database '$db' cannot be opened")
+    $self->error("input file '$file' for database '$dbName' cannot be opened")
       unless (-r $file && -f $file);
 
-    $self->log("Checking entry for external Db: $db $ver");
+    $self->log("Checking entry for external Db: $dbName $ver");
 
-    $self->{$db}->{extDbRlsId} = $self->getOrLoadDbs($db, $ver);
+    $self->{$dbName}->{extDbRlsId} = $self->getOrLoadDbs($dbName, $ver);
 
-    push(@dbNames, $db);
-  }
-
-  #Configuration of Algorithms listed in Config file.
-  my $algs = $conf->{'alg'};
-  foreach my $alg (keys %$algs) {
-    $self->{$alg}= $self->getOrLoadAlgs($alg);
+    push(@dbNames, $dbName);
   }
 
   return \@dbNames;
+}
+
+sub parseSimple{
+  my ($self,$file) = @_;
+
+  my $simple = XML::Simple->new();
+  my $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
+
+  return $tree;
 }
 
 sub getOrLoadDbs {
@@ -429,37 +427,13 @@ sub getOrLoadDbs {
   return $gusDbRel->getId();
 }
 
-
-sub getOrLoadAlgs {
-   my ($self, $name) = @_;
-
-   my $gusDb = GUS::Model::Core::Algorithm->new({ 'name' => $name, });
-   unless ($gusDb->retrieveFromDB()) {
-      $gusDb->submit();
-   }
-   my $algId = $gusDb->getId();
-
-   return $algId;
-}
-
-
-sub parseSimple{
-  my ($self,$file) = @_;
-
-  my $simple = XML::Simple->new();
-  my $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
-  
-  return $tree;
-}
-
 sub undoTables {
   my ($self) = @_;
 
   return (
 		'SRes.DbRef',
   		'SRes.ExternalDatabaseRelease',
-		'SRes.ExternalDatabase',
-		'Core.Algorithm'
+		'SRes.ExternalDatabase'
      );
 }
 
