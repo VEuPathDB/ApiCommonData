@@ -8,13 +8,9 @@ use XML::Twig;
 use XML::Simple;
 use ApiCommonData::Load::Utility::GOAnnotater;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
-use GUS::Model::SRes::ExternalDatabaseEntry;
-use GUS::Model::DoTS::PredictedAAFeature;
 use GUS::Model::DoTS::DomainFeature;
-use GUS::Model::DoTS::ExternalAASequence;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::AALocation;
 
@@ -40,84 +36,34 @@ sub getArgsDeclaration {
 	      format=>'Text'
 	     }),
 
-     booleanArg({name => 'bootData',
-		 descr => 'Strict (not flagged, must have all databases bootstrapped) Loose (flagged - automatic loading of missing dbs)',
-		 constraintFunc=> undef,
-		 reqd  => 0,
-		 isList => 0,
-		 format=>'boolean'
-		}),
-
-     stringArg({name => 'queryTable',
-		descr => 'Table source of AA sequences in InterporAnalysis',
-		constraintFunc=> undef,
-		reqd  => 1,
-		mustExist => 0,
-		isList => 0,
-		format=>'Text'
-	       }),
-
      stringArg({name => 'extDbName',
-		descr => 'External database of source sequences (if you are using source_ids rather than gus_ids)',
+		descr => 'External database for the data inserted',
 		constraintFunc=> undef,
 		reqd  => 0,
 		isList => 0
 	       }),
 
      stringArg({name => 'extDbRlsVer',
-		descr => 'Version of external database of source sequences',
+		descr => 'Version of external database for the data inserted',
 		constraintFunc=> undef,
 		reqd  => 0,
 		isList => 0
 	       }),
 
-     stringArg({name => 'iprVer',
-		descr => 'Version of iprscan algorithm you are running',
+     stringArg({name => 'goVersion',
+		descr => 'The version of GO to use for GO associations',
 		constraintFunc=> undef,
 		reqd  => 1,
 		isList => 0
 	       }),
 
-     stringArg({name => 'iprDataVer',
-		descr => 'version of interpro database release you are using',
-		constraintFunc=> undef,
-		reqd  => 1,
-		isList => 0
-	       }),
-
-     stringArg({name => 'goVersions',
-		descr => 'A delimited string in name^version:name^version format of the component GO databases.',
-		constraintFunc=> undef,
-		reqd  => 1,
-		isList => 0
-	       }),
-
-     fileArg({name => 'restartFile',
-	      descr => 'log file containing/for storing entries from last run/this run',
+     enumArg({name => 'aaSeqTable',
+	      descr => 'Where to find AA sequences used in Interproscan',
 	      constraintFunc=> undef,
-	      reqd  => 0,
-	      mustExist => 0,
+	      reqd  => 1,
 	      isList => 0,
-	      format=>'Text'
+	      enum => "ExternalAASequence, TranslatedAASequence",
 	     }),
-
-     booleanArg({name => 'useSourceId',
-		 descr => 'Use source_id to link back to AASequence view',
-		 constraintFunc=> undef,
-		 reqd  => 0,
-		 isList => 0,
-		 default => 0,
-		}),
-
-     fileArg({name => 'versionFile',
-	      descr => 'xml file containing version information for the prediction algorithms.',
-	      constraintFunc=> undef,
-	      reqd  => 0,
-	      mustExist => 0,
-	      isList => 0,
-	      format=>'Text'
-	     }),
-
     ];
 
   return $argsDeclaration;
@@ -127,11 +73,11 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<NOTES;
-An application for loading the results output by InterproScan.  This application will load the hits for the specific database matches (e.g. Pfam, Prints, ProDom, Smart) as well as the GO classifications encountered.  The applications takes as input interpro XML.  Hits on databases are loaded into DoTS.DomainFeature.  GO Terms are loaded into DoTS.GOAssociation.  The interpro scan analysys needs to be run on ouput from gus where the sequence ids are aa_sequence_ids from either DoTS.ExternalAASequence or DoTS.TranslatedAASequence.
+Load the results output by InterproScan.  This application will load the hits for the specific database matches (e.g. Pfam, Prints, ProDom, Smart) as well as the GO classifications encountered.  The applications takes as input interpro XML.  Hits on databases are loaded into DoTS.DomainFeature.  GO Terms are loaded into DoTS.GOAssociation.  InsertInterproDomainDbs plugin must be run firt to load the domains into SRes.DbRef. 
 NOTES
 
   my $purpose = <<PURPOSE;
-Create DomainFeatures for various domain databases such as Pfam and Smart in GUS, and GOAssociatinos with GUS aa_sequences from InterproScan output.OB
+Create DomainFeatures for various domain databases such as Pfam and Smart in GUS, and GOAssociations
 PURPOSE
 
   my $purposeBrief = <<PURPOSEBRIEF;
@@ -143,7 +89,7 @@ Standard Plugin Syntax.
 SYNTAX
 
   my $notes = <<NOTES;
-We are not presently loading the InterproDB hits.  We are only loading the matches with the associated Databases and the GO classifications.  Also note that there is a bootstrapping plugin which runs off of the same configuration file as this plugin.The bootstrapping plugin InsertDomainDbs will read the file and pre-load the DatabaseEntries in SRes.ExternalDatabaseEntry.  You can then link from DoTS.DomainFeature to a specific SRes.ExternalDataseEntry via external_database_release_id and source_id to get the full name and description of the database entry for that hit.  Note that the external_databsae_release_ids are for the individual databases included in interpro.  Only the actual interpro hits themselves will use the release id for interpro itself.  A Pfam hit in interpro release 11.0 will point to Pfam 14.0, not interpro 11.0.  Also note, if you do not bootstrap, you can use the --bootData flag to create empty external_database_releases for all of the databases.  This will allow you to load your interpro results.  However, they will not point to anything in SRes.ExternalDatabaseEntry.OB
+This plugin assumes that the AA sequences being analyzed are in TranslatedAASequence or ExternalAASequence, and, further, that the sourceIds in that table are unique. (To change this, add plugin args to get the ExtDb namd and release for the seqs, and add that to the query that gets the sequences).
 NOTES
 
   my $tablesAffected = <<AFFECT;
@@ -175,9 +121,7 @@ FAIL
   my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief,tablesAffected=>$tablesAffected,tablesDependedOn=>$tablesDependedOn,howToRestart=>$howToRestart,failureCases=>$failureCases,notes=>$notes};
 
   return ($documentation);
-
 }
-
 
 sub new {
   my $class = shift;
@@ -201,352 +145,198 @@ sub new {
 sub run {
   my ($self, @params) = @_;
 
-  $self->loadConfig();
-  my $resultFileDir = $self->getArgs()->{'resultFileDir'};
+  my $resultDir = $self->getArgs('resultFileDir');
 
-  opendir (RESULTSDIR, $resultFileDir)
-    or die "Failed opening results directory: $!\n";
-    
-  my @files = grep { /\.xml$/ } readdir RESULTSDIR;
+  opendir (RESULTSDIR, $resultDir) or die "Could not open dir '$resultDir'\n";
+  my @resultFiles = grep { /\.xml$/ } readdir RESULTSDIR;
   closedir RESULTSDIR;
 
-  ($self->getArgs()->{'verbose'}) 
-    and print "Processing " . scalar(@files) . " Interproscan XML result files\n";
+  $self->loadConfig(\@resultFiles);
 
-  #print $self->getArg('goVersions');
-  my @goDbRlsIds = split(/\:/,$self->getArg('goVersions'));
-  my $GOAnnotater = ApiCommonData::Load::Utility::GOAnnotater->new($self,\@goDbRlsIds);
-	
-  foreach my $file (@files) {
-    my $twig = XML::Twig->new( twig_roots => {
-					      protein => processTwig($self,$GOAnnotater), 
-                                             } );
-    $twig->parsefile($resultFileDir . "/" . $file);
+  my @goDbRlsIds = ($self->getArg('goVersions'));
+  my $self->{GOAnnotater} =
+    ApiCommonData::Load::Utility::GOAnnotater->new($self, \@goDbRlsIds);
+
+  $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('extDbName'),
+					     $self->getArg('extDbRlsVer'));
+
+  print "Processing ".scalar(@resultFiles)." Interproscan XML result files\n";
+
+  foreach my $file (@resultFiles) {
+    my $twig = XML::Twig->
+      new( twig_roots => { protein => processTwig($self) } );
+    $twig->parsefile($resultDir . "/" . $file);
     $twig->purge;
   }
 
-  #Create ExternalDatabaseLinks  (SRes.ExternalDatabaseLink)
-
   my $logCnt = $self->{'protCount'};
-  $self->log("Total Seqs Processed: $logCnt\n");
-  $self->log("Total Interpro Hits: " . $self->{'interproCount'} . "\n");
-  $self->log("Total GO Terms: " . $self->{'GOCount'} . "\n");
-  $self->log("Total Matches: " . $self->{'matchCount'} . "\n");
-  $self->log("Added DBs:", @{$self->{'NewDBs'}} );
-  $self->log("Added Algs:", @{$self->{'NewAlgs'}} );
-
+  $self->log("Total Seqs Processed: $self->{aaCount}\n");
+  $self->log("Total Interpro Hits: $self->{interproCount} \n");
+  $self->log("Total GO Terms: $self->{GOCount} \n");
+  $self->log("Total Matches: $self->{matchCount} \n");
 }
-
 
 sub processTwig {
   my $self = shift;
-  my $GOannotater = shift;
 
-  return sub { 
-    my $twig = shift; 
+  return sub {
+    my $twig = shift;
 
-    my $gusObj = $self->processProteinResults($twig, $GOannotater);
-    ($self->{'protCount'})++;
-    $self->undefPointerCache();
-
-    $twig->purge(); 
+    $self->processProteinResults($twig);
   }
 }
-
 
 sub processProteinResults {
-  my ($self, $twig, $GOAnnotater) = @_;
+  my ($self, $twig) = @_;
 
-  my $elt = $twig->root;
-  my $protein = $elt->next_elt();
-  my $aaId = $protein->att('id');
-    
-  my $tableName = $self->getArgs()->{'queryTable'};
+  my $tableName = $self->getArg('queryTable');
   my $queryTable = "GUS::Model::DoTS::$tableName";
 
-  if ($self->getArg('useSourceId')) {
-    $aaId = $self->retSeqIdFromSrcId($aaId);
-  }
+  my $root = $twig->root();
 
-  my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
-  $gusAASeq->retrieveFromDB() || die "no such AA sequence";
+  while (my $protein = $root->next_elt()) {
+    my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
 
-  my $eltn = 1;
-  while (my $interpro = $elt->next_n_elt($eltn)) {
-    my $match = $interpro->copy();
-    my $mTree = $match->root;
-    if ($interpro->tag() eq 'interpro') {
-      unless ($interpro->att('id') eq 'noIPR') {
-	my $ipr = $self->buildInterproMatch($mTree,$aaId);
-	$ipr = $self->submitObjToGus($ipr);
-	$self->{'interproCount'}++;
+    my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
+    $gusAASeq->retrieveFromDB() || die "no such AA sequence";
+
+    while (my $element = $protein->next_elt()) {
+      my $parentDomain;
+      my $id = $element->att('id');
+      if ($element->tag() eq 'interpro') {
+	unless ($id eq 'noIPR') {
+	  $parentDomain =
+	    $self->buildDomainFeature($id, $aaId, $self->{INTERPRO}, undef);
+	  $self->{'interproCount'}++;
+	}
+      }
+      if ($element->tag() eq 'classification') {
+	$self->buildGOAssociation($aaId, $id) && $self->{'GOCount'}++;
+      }
+      if ($element->tag() eq 'match') {
+	my $dbname = $element->att('dbname');
+	$self->{'matchCount'}++;
+	my $childDomain =
+	  $self->buildDomainFeature($id, $aaId, $self->{$dbname}, $parentDomain);
+	while (my $locationElement = $element->next_elt()) {
+	  if ($locationElement->tag() eq 'location') {
+	    $self->addLocation($locationElement, $childDomain);
+	  }
+	}
       }
     }
-    if ($interpro->tag() eq 'classification') {
-      my $classId = $interpro->att('id');
-      $self->buildClassification($aaId,$classId,$GOAnnotater)
-	and $self->{'GOCount'}++;
-    }
-    if ($interpro->tag() eq 'match') {
-      $self->{'matchCount'}++;
-      if ($interpro->att('id') =~ /tmhmm/ or $interpro->att('id') =~ /signalp/) {
-	#ignoring, use algorithems directly
-      } else {
-	my $gusDom = $self->buildParentDomain($mTree,$aaId); 
-	$gusDom = $self->submitObjToGus($gusDom);
-      }
-    }
-    $eltn++;
+    $protein->purge();
+    $self->{'protCount'}++;
+    $self->undefPointerCache();
   }
-  return 1;
 }
 
+sub buildDomainFeature {
+  my ($self, $domainSourceId, $aaId, $db, $parentId) = @_;
 
-sub buildParentDomain {
-  my ($self,$match,$aaId) = @_;
+  my $domainFeat = GUS::Model::DoTS::DomainFeature->
+    new({ source_id => $domainSourceId,
+	  external_database_release_id => $self->{extDbRlsId},
+	  aa_sequence_id => $aaId,
+	  parent_id => $parentId
+	});
 
-  my $id = $match->att('id');
-  my $name = $match->att('name');
-  my $dbName = $match->att('dbname');
-  my $dbRel = $self->{$dbName};
-  my ($algName, $score);
+  $domainFeat->submit();
 
-  my $parentDomain = GUS::Model::DoTS::DomainFeature->new( { 'name' => $name,
-                                                             'source_id' => $id,
-                                                             'external_database_release_id' => $dbRel,
-                                                             'is_predicted' => 1 });
-  my $parentLoc = { 'start_min' => 100000,
-		    'start_max' => 100000,
-		    'end_min' => 0,
-		    'end_max' => 0 };
+  my $dbRefId = $self->{$db}->{dbRefIds}->{$domainSourceId};
+  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAaFeature->
+    new({ dbref_id => $dbRefId,
+	  aa_feature_id => $domainFeat->getId()
+	});
+  $dbRefAaFeat->submit();
 
-  my $numDoms = 1;
-
-  my $eltn = 1;
-  while (my $location = $match->next_n_elt($eltn)) {
-    if ($location->tag() eq 'location') {
-      $parentDomain->setNumberOfDomains( $numDoms++ );
-      my $childDomain = $self->buildSubDomain( $match,$location );
-      $childDomain->setAaSequenceId($aaId);
-      $childDomain->setExternalDatabaseReleaseId($dbRel);
-      my ($gusLoc, $parentLoc) = $self->buildLocation($location,$parentLoc);
-      $childDomain->addChild($gusLoc);
-      $parentDomain->addChild($childDomain);
-    }
-    $eltn++;
-  }
-
-  my $parentLocation = GUS::Model::DoTS::AALocation->new($parentLoc);
-  $parentDomain->addChild($parentLocation);
-  $parentDomain->setAaSequenceId($aaId);
-
-  return $parentDomain;
+  return $domainFeat;
 }
-
-
-sub buildSubDomain {
-  my ($self, $match, $location) = @_;
-
-  my $id = $match->att('id');
-  my $name = $match->att('name');
-  my $score = $location->att('score');
-
-  #happens only with the seg "application", which we don't use.
-  if ($score eq 'NA') {
-    $score = 'NULL';
-  }
-  my $algName = $location->att('evidence');
-  my $algId = $self->{'algorithms'}->{$algName};
-
-  my $gusDom = GUS::Model::DoTS::DomainFeature->new({ 'name' => $name,
-						      'source_id' => $id,
-						      'is_predicted' => 1,
-						      'algorithm_name' => $algName,
-						      'prediction_algorithm_id' => $algId,
-						      'score' => $score, });
-  return $gusDom;
-}
-
 
 sub buildLocation {
-  my ($self, $location, $parentLoc) = @_;
+  my ($self, $locationElement, $domainFeature) = @_;
 
-  my $start = $location->att('start');
-  my $end = $location->att('end');
+  my $start = $locationElement->att('start');
+  my $end = $locationElement->att('end');
 
-  if ($parentLoc) {
-    $parentLoc = $self->updateParentLoc($parentLoc,$start,$end);
-  }
-
-  my $gusLoc = GUS::Model::DoTS::AALocation->new({ 'start_min' => $start,
-                                                   'start_max' => $start,
-                                                   'end_min' => $end, 
-                                                   'end_max' => $end, });
-  return ($gusLoc, $parentLoc);
+  my $gusLoc = GUS::Model::DoTS::AALocation->
+    new({ start_min => $start,
+	  start_max => $start,
+	  end_min => $end,
+	  end_max => $end,
+	  aa_feature_id => $domainFeature->getId()
+	});
 }
 
+sub buildGOAssocation {
+  my ($self, $aaId, $classId) = @_;
 
-
-sub updateParentLoc {
-  my ($self, $parentLoc, $start, $end) = @_;
-
-  if ($start < $parentLoc->{'start_min'}) {
-    $parentLoc->{'start_min'} = $start;
-    $parentLoc->{'start_max'} = $start;
+  if ($classId !~ /^GO:\d+/) {
+    $self->error ("Expecting GO classification, but got \'$classId\'");
   }
 
-  if ($end > $parentLoc->{'end_max'}) {
-    $parentLoc->{'end_min'} = $end;
-    $parentLoc->{'end_max'} = $end;
+  my $goTermId = $self->{GOAnnotater}->getGoTermId($classId);
+
+  if (! $goTermId) {
+    $self->log ("$aaId: No go_term_id found for GO Id \'$classId\'\n");
+    return 0;
   }
 
-  return $parentLoc;
-}
+  my $evidence = $self->{GOAnnotater}->getEvidenceCode('IEA');
 
+  my $loe = $self->{GOAnnotater}->getLoeId('Interpro');
 
+  my $goAssociation = {
+		       'tableId' => $self->{'RefTableId'},
+		       'rowId' => $aaId,
+		       'goTermId' => $goTermId,
+		       'isNot' => 0,
+		       'isDefining' => 1,
+		      };
 
-sub buildPredictedAAFeature{
-  my ($self,$match,$gusAASeq) = @_;
+  my $assoc = $self->{GOAnnotater}->getOrCreateGOAssociation($goAssociation);
 
-  return 1;
-}
+  my $goInstance = {
+		    'goAssociation' => $assoc,
+		    'evidenceCode' => $evidence,
+		    'lineOfEvidence' => $loe,
+		    'isPrimary' => '1',
+		   };
 
-
-sub buildInterproMatch {
-  my ($self,$match,$aaId) = @_;
-
-  my $id = $match->att('id');
-  my $name = $match->att('name');
-  my $type = $match->att('type');
-  my $iprVer = $self->{'iprDataVer'};
-
-  my $gusDom = GUS::Model::DoTS::DomainFeature->new({ 'name' => $name,
-						      'source_id' => $id,
-						      'is_predicted' => 1,
-						      'external_database_release_id' => $iprVer,
-						      'aa_sequence_id' => $aaId,
-						      'description' => $type, });
-  my $parentLoc = { 'start_min' => 100000,
-		    'start_max' => 100000,
-		    'end_min' => 0,
-		    'end_max' => 0 };
-
-  my $eltn = 1;
-  while (my $location = $match->next_n_elt($eltn)) {
-    if ($location->tag() eq 'location') {
-      my $start = $location->att('start');
-      my $end = $location->att('end');
-      $parentLoc = $self->updateParentLoc($parentLoc,$start,$end); 
-    }
-    $eltn++;
-  }
-
-  my $loc = GUS::Model::DoTS::AALocation->new($parentLoc);
-  $gusDom->addChild($loc);
- 
-  return $gusDom;
-}
-
-
-sub buildClassification {
-  my ($self, $aaId, $classId, $annotater) = @_;
-
-  if ($classId =~ /^GO:\d+/) {
-    my $goTermId = 
-      $annotater->getGoTermId($classId);
-		
-    if (! $goTermId) {
-      $self->log ("$aaId: No go_term_id found for GO Id \'$classId\'\n");
-      return 0;
-    }
-
-    my $evidence = 
-      $annotater->getEvidenceCode('IEA');
-
-    my $loe = 
-      $annotater->getLoeId('interpro results');
-
-    my $goAssociation = {
-			 'tableId' => $self->{'RefTableId'},
-			 'rowId' => $aaId,
-			 'goTermId' => $goTermId,
-			 'isNot' => 0,
-			 'isDefining' => 1,
-			};
-
-    my $association =
-      $annotater->getOrCreateGOAssociation($goAssociation);
-
-    my $goInstance = {
-		      'goAssociation' => $association,
-		      'evidenceCode' => $evidence,
-		      'lineOfEvidence' => $loe,
-		      'isPrimary' => '1',
-		     };
-
-    my $goInstance = 
-      $annotater->getOrCreateGOInstance($goInstance);
-
-  } else {
-    $self->error ("Execting GO classification, but got \'$classId\'");
-  }
+  my $goInstance = $self->{GOAnnotater}->getOrCreateGOInstance($goInstance);
 
   return 1;
 
 }
 
-
-
-#############################################################################################
-#Configuration and gus environment stuff
-#############################################################################################
 sub loadConfig{
-  my ($self) = @_;
-  
-  $self->{'protCount'} = 0;
+  my ($self, $resultFiles) = @_;
 
-  $self->{'interproCount'} = 0;
-  $self->{'GOCount'} = 0;
-  $self->{'matchCount'} = 0;
-
-  $self->{'NewDBs'} = [];
-  $self->{'NewAlgs'} = [];
-  my $cFile = $self->getArgs()->{'confFile'} || die "No Conf File";
- 
-  $self->setIproVersions();
-
-  my $queryTable = $self->getArgs()->{'queryTable'};
-  
-  unless ($queryTable eq 'ExternalAASequence' || 'TranslatedAASequence') {
-    die "Not a valid query table";
-  }
-
-  my $gusRefTable = GUS::Model::Core::TableInfo->new({ 'name' => $queryTable });
-  $gusRefTable->retrieveFromDB();
-  $self->{'RefTableId'} = $gusRefTable->getId();
-
-  $self->{'Predictions'}->{'transmembrane_regions'} = 'GUS::Model::DoTS::PredictedAAFeature';
-  $self->{'Predictions'}->{'signal-peptide'} = 'GUS::Model::DoTS::SignalPeptideFeature';
+  my $cFile = $self->getArg('confFile');
 
   my $conf = $self->parseSimple($cFile);
 
   my $dbs = $conf->{'db'};	#list of Db names and versions
 
-  my $iprDbs = $self->validateBootstrapping($dbs); #make sure all dbs are in GUS
-
-  foreach my $db (keys %$iprDbs) {
-    $self->{$db} = $iprDbs->{$db};
+  foreach my $dbName (keys %$dbs) {
+    $self->{$dbName}->{dbRefIds} =
+      $self->getDbRefIds($dbName, $dbs->{$dbName}->{ver});
   }
-    
-  #$self->validateInterproConfig(); #make sure all InterPro dbs are in config
 
-  my $algs = $conf->{'alg'};
-  $self->validateAlgs($algs);
+  my %dbsInResult;
+  foreach my $resultFile (@$resultFiles) {
+    $self->findDbsInResult($resultFile, \%dbsInResult);
+  }
 
-  return 1;
+  my @uncoolDbs;
+  foreach my $dbInResult (keys %dbsInResult) {
+    push(@uncoolDbs, $dbInResult) unless ($self->{$dbInResult});
+  }
+  if (scalar(@uncoolDbs) != 0) {
+    self->error("Result contains matches to databases that are not loaded into GUS: " . join(", ", @uncoolDbs));
+  }
 }
 
-    
 sub parseSimple{
   my ($self,$file) = @_;
 
@@ -556,206 +346,58 @@ sub parseSimple{
   return $tree;
 }
 
+# return a hash of domain sourceId to DbRef ID
+sub getDbRefIds {
+  my ($self, $dbName, $version) = @_;
 
-
-sub setIproVersions {
-  my $self = shift;
-
-  my $iprAlg = $self->getArgs()->{'iprVer'};
-  my $iprData = $self->getArgs()->{'iprDataVer'};
-
-  my $gusAlg = GUS::Model::Core::Algorithm->new({ 'name' => 'iprscan',
-						  'description' => "irpscan ver. $iprAlg" });
-  unless ($gusAlg->retrieveFromDB()) {
-    $gusAlg->submit();
+  my %sourceId2dbRefId;
+  my $sql = "
+SELECT dbr.source_id, dbr.dbref_id
+FROM SRes.DbRef dbr, SRes.ExternalDatabase ed, SRes.ExternalDatabasRelease edr
+WHERE ed.name = '$dbName'
+AND edr.version = '$version'
+AND edr.external_database_id = ed.external_database_id
+AND dbr.external_database_release_id = edr.external_database_release_id
+";
+  my $stmt = $self->prepareAndExecute($sql);
+  while ( my($sourceId, $dbrefId) = $stmt->fetchrow_array()) {
+    $sourceId2dbRefId{$sourceId} = $dbrefId;
   }
-  my $gusAlgId = $gusAlg->getId();
-
-  $self->{'iprVer'} = $gusAlgId;
-
-  my $gusDb = GUS::Model::SRes::ExternalDatabase->new( { 'name' => 'Interpro', } );
-  unless ($gusDb->retrieveFromDB()) {
-    $gusDb->submit();
-  }
-  my $gusDbId = $gusDb->getId();
-
-  my $gusDbRls = GUS::Model::SRes::ExternalDatabaseRelease->new( { 'external_database_id' => $gusDbId,
-								   'version' => $iprData, } );
-  unless ($gusDbRls->retrieveFromDB()) {
-    $gusDbRls->submit();
-  }
-  my $gusDbRlsId = $gusDbRls->getId();
-
-  $self->{'iprDataVer'} = $gusDbRlsId;
-
-  return 1;
+  return \%sourceId2dbRefId;
 }
 
+sub findDbsInResult {
+  my ($resultFile, $dbsInResult) = @_;
 
-sub validateBootstrapping {
-  my ($self,$dbs) = @_;
-
-  my $iprDbs = {};
-  foreach my $db (keys %$dbs) {
-    my $dbName = "$db (ipro)";
-    my $dbVer = $dbs->{$db}->{'ver'};
-    my $gusDbs = $self->sql_get_as_array("select b.external_database_release_id
-                                        from sres.externaldatabase a, sres.externaldatabaserelease b
-                                        where a.name=\'$dbName\' and b.version=\'$dbVer\'
-                                          and a.external_database_id
-                                              = b.external_database_id");
-    my $relId = $gusDbs->[0];
-    if ($relId eq '') {
-      $relId = $self->handleNewDb($db,$dbVer);
-    }
-    ;
-    $iprDbs->{$db} = $relId;
-  }
-
-  return $iprDbs;
+  open(FILE, $resultFile) || die "couldn't open result file '$resultFile'\n";
+  while (FILE) {
+   $dbsInResult->{$1} = 1 if /dbname=\"(\w+)\"/;
+ }
 }
 
+# this could (should) be improved to take the ext db info of the aa's.
+# as is, it assumes the source_ids are unique in the table, and that the
+# table isn't huge.
+sub sourceId2aaSeqId {
+  my ($self, $sourceId) = @_;
 
-sub validateInterproConfig {
-  my ($self,$dbs,$iprDbs) = @_;
+  my $aaSeqTable = $self->getArg('aaSeqTable');
 
-  my $twig = XML::Twig->new( twig_roots => {
-					    Header => validateHeaderDbs($self,$iprDbs),
-					   } );
-  my $file = $self->getArgs()->{'resultFile'};
-  $twig->parsefile($file);
-  $twig->purge;
-  return 1;
-}
+  unless ($self->{sourceId2aaSeqId}) {
 
+    $self->{sourceId2aaSeqId} = {};
 
-sub validateHeaderDbs {
-  my $self = shift;
-
-  return sub {
-    my $twig = shift;
-
-    my $root = $twig->root();
-    my $eltn = 1;
-    while (my $elt = $root->next_n_elt($eltn, 'database')) {
-      my $name = $elt->att('name');
-      my $dbRls = $self->{$name};
-      unless ($dbRls) { 
-	die "$name : Database not in your configuration file.";
-      }
-      $eltn++;
-    }
-    $twig->purge();
-  }
-}
-
-
-
-sub validateAlgs {
-  my ($self, $algs) = @_;
-  foreach my $alg (keys %$algs) {
-    my $gusAlg = $self->sql_get_as_array ("select algorithm_id from core.algorithm
-                                                   where name=\'$alg\'");
-    my $algRelId = $gusAlg->[0];
-    unless ($algRelId) {
-      $algRelId = $self->handleNewAlg($alg,undef);
-    }
-    $self->{'Algorithms'}->{$alg} = $algRelId;
-  }
-  return 1;
-}
-
-
-sub handleNewAlg {
-  my ($self,$alg,$ver) = @_;
-
-  unless ($self->getArgs()->{'bootData'}) {
-    die "missing algorithm confiuration $alg: check sres.algorithm";
-  }
-
-  my $gusDb = GUS::Model::Core::Algorithm->new({ 'name' => $alg, });
-  unless ($gusDb->retrieveFromDB()) {
-    $gusDb->submit();
-  }
-  my $gusDbId = $gusDb->getId();
-
-  $self->{'Algorithms'}->{$alg} = $gusDbId;
-
-  push @{$self->{'NewAlgs'}}, $alg;
-
-  return $gusDbId;
-}
-
-
-sub handleNewDb {
-  my ($self, $name, $ver) = @_;
-
-  unless ($self->getArgs()->{'bootData'}) {
-    die "missing database configuration $name: check sres.externaldatabase and config file";
-  }
-
-  my $gusDb = GUS::Model::SRes::ExternalDatabase->new({ 'name' => $name, });
-  unless ($gusDb->retrieveFromDB()) {
-    $gusDb->submit();
-  }
-  my $gusDbId = $gusDb->getId();
-
-  unless ($ver) {
-    $ver = '0.0';
-  }   
-  my $gusDbRel = GUS::Model::SRes::ExternalDatabaseRelease->new({ 'version' => $ver,
-								  'external_database_id' => $gusDbId, });
-  unless ($gusDbRel->retrieveFromDB()) {
-    $gusDbRel->submit();
-  }
-  my $relId = $gusDbRel->getId();
-  $self->{$name} = $relId;
-
-  push @{$self->{'NewDBs'}}, $name;
-
-  return $relId;
-}
-
-
-sub handleNewDbEntry {
-  #need to write this when we do ExtDbEntries
-}
-
-
-sub submitObjToGus {
-  my ($self, $gusObj) = @_;
-
-  unless ($gusObj->retrieveFromDB()) {
-    eval { $gusObj->submit(); };
-    if ($@) {
-      $self->handleFailure($gusObj, $@);
-      next;
+    my $sql = "
+SELECT source_id, aa_sequence_id
+FROM Dots.$aaSeqTable
+";
+    my $stmt = $self->prepareAndExecute($sql);
+    while ( my($sourceId, $aa_sequence_id) = $stmt->fetchrow_array()) {
+      $self->{sourceId2aaSeqId}->{$sourceId} = $aa_sequence_id;
     }
   }
-  return $gusObj;
-}
 
-
-sub handleFailure {
-  my ($self, $A, $B);
-    
-  die "$B";
-}
-
-    
-sub retSeqIdFromSrcId {
-  my ($self,$featId) = @_;
-
-  my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbRlsVer'));
-  my $gusTabl = GUS::Model::DoTS::TranslatedAASequence->new( { #BIG ASSUMPTION - all seqs from TranslatedAASequence
-							      'source_id' => $featId,
-							      'external_database_release_id' => $dbRlsId,
-							     } );
-
-  $gusTabl->retrieveFromDB() || die ("Source Id $featId not found in TranslatedAASequence");
-  my $seqId = $gusTabl->getId();
-
-  return $seqId;
+  return $self->{sourcdId2aaSeqId}->{$sourceId};
 }
 
 sub undoTables {
@@ -769,6 +411,5 @@ sub undoTables {
 	 );
 }
 
-    
 1;
 
