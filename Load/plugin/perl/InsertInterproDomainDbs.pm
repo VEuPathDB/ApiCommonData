@@ -350,7 +350,7 @@ sub submitDbRef{
    my ($self, $dbName, $id, $name, $descr, $logFreq, $eCount) = @_;
 
    my $gusHash = { 'primary_identifier' => $id,
-		   'lowercase_secondary_identifier' => $name,
+		   'secondary_identifier' => $name,
 		   'external_database_release_id' => $self->{$dbName}->{extDbRlsId},
 		   'remark' => $descr };
 
