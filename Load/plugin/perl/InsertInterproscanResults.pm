@@ -12,7 +12,9 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::DomainFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
+use GUS::Model::DoTS::ExternalAASequence;
 use GUS::Model::DoTS::AALocation;
+#use GUS::Model::DoTS::DbRefAAFeature;
 
 sub getArgsDeclaration {
   my $argsDeclaration  =
@@ -51,7 +53,7 @@ sub getArgsDeclaration {
 	       }),
 
      stringArg({name => 'goVersion',
-		descr => 'The version of GO to use for GO associations',
+		descr => 'The name and version (caret delimited) of GO to use for GO associations, for example "Gene Ontology^3.125',
 		constraintFunc=> undef,
 		reqd  => 1,
 		isList => 0
@@ -90,6 +92,8 @@ SYNTAX
 
   my $notes = <<NOTES;
 This plugin assumes that the AA sequences being analyzed are in TranslatedAASequence or ExternalAASequence, and, further, that the sourceIds in that table are unique. (To change this, add plugin args to get the ExtDb namd and release for the seqs, and add that to the query that gets the sequences).
+
+Also, the plugin doesn't handle huge interproscan result XML files.  It assumes that the result is broken into a number of files, each not-to-big
 NOTES
 
   my $tablesAffected = <<AFFECT;
@@ -145,90 +149,115 @@ sub new {
 sub run {
   my ($self, @params) = @_;
 
-  my $resultDir = $self->getArgs('resultFileDir');
+  my $resultDir = $self->getArg('resultFileDir');
 
   opendir (RESULTSDIR, $resultDir) or die "Could not open dir '$resultDir'\n";
   my @resultFiles = grep { /\.xml$/ } readdir RESULTSDIR;
   closedir RESULTSDIR;
 
-  $self->loadConfig(\@resultFiles);
+  $self->loadConfig(\@resultFiles, $resultDir);
 
-  my @goDbRlsIds = ($self->getArg('goVersions'));
-  my $self->{GOAnnotater} =
+  my @goDbRlsIds = ($self->getArg('goVersion'));
+  $self->{GOAnnotater} =
     ApiCommonData::Load::Utility::GOAnnotater->new($self, \@goDbRlsIds);
 
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('extDbName'),
 					     $self->getArg('extDbRlsVer'));
 
-  print "Processing ".scalar(@resultFiles)." Interproscan XML result files\n";
+  $self->log("Processing ".scalar(@resultFiles)." Interproscan XML result files");
 
   foreach my $file (@resultFiles) {
-    my $twig = XML::Twig->
-      new( twig_roots => { protein => processTwig($self) } );
+    $self->log("Processing $file");
+    
+    my $twig = XML::Twig->new();
     $twig->parsefile($resultDir . "/" . $file);
-    $twig->purge;
+    my @proteins = $twig->root()->children('protein');
+    foreach my $protein (@proteins) {
+      $self->processProteinResults($protein);
+    }
   }
 
-  my $logCnt = $self->{'protCount'};
-  $self->log("Total Seqs Processed: $self->{aaCount}\n");
-  $self->log("Total Interpro Hits: $self->{interproCount} \n");
-  $self->log("Total GO Terms: $self->{GOCount} \n");
-  $self->log("Total Matches: $self->{matchCount} \n");
-}
-
-sub processTwig {
-  my $self = shift;
-
-  return sub {
-    my $twig = shift;
-
-    $self->processProteinResults($twig);
-  }
+  my $totalIprCount = $self->{interproCount} + $self->{noIPR}->{interproCount};
+  my $totalGOCount = $self->{GOCount} + $self->{noIPR}->{GOCount} +
+    $self->{unfoundGOCount};
+  my $totalMatchCount = $self->{matchCount} + $self->{noIPR}->{matchCount};
+  my $totalLocationCount = $self->{locationCount} + $self->{noIPR}->{locationCount};
+  $self->log("Proteins: $self->{protCount}");
+  $self->log("Interpro Hits loaded: $self->{interproCount}");
+  $self->log("Interpro Hits ignored (noIPR): $self->{noIPR}->{interproCount}");
+  $self->log("Interpro Hits total: $totalIprCount");
+  $self->log("GO Associations loaded: $self->{GOCount}");
+  $self->log("GO Associations ignored (noIPR): $self->{noIPR}->{GOCount}");
+  $self->log("GO Associations unfound: $self->{unfoundGOCount}");
+  $self->log("GO Associations total: $totalGOCount");
+  $self->log("Matches loaded: $self->{matchCount}");
+  $self->log("Matches ignored (noIPR): $self->{noIPR}->{matchCount}");
+  $self->log("Matches total: $totalMatchCount");
+  $self->log("Locations loaded: $self->{locationCount}");
+  $self->log("Locations ignored (noIPR): $self->{noIPR}->{locationCount}");
+  $self->log("Locations total: $totalLocationCount");
 }
 
 sub processProteinResults {
-  my ($self, $twig) = @_;
+  my ($self, $protein) = @_;
 
-  my $tableName = $self->getArg('queryTable');
+  my $tableName = $self->getArg('aaSeqTable');
   my $queryTable = "GUS::Model::DoTS::$tableName";
 
-  my $root = $twig->root();
+  my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
+  my @interproKids = $protein->children('interpro');
+  print STDERR "$aaId\n";
 
-  while (my $protein = $root->next_elt()) {
-    my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
+  my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
+  $gusAASeq->retrieveFromDB()
+    || die "Can't find AA sequence with aa_sequence_id '$aaId'";
 
-    my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
-    $gusAASeq->retrieveFromDB() || die "no such AA sequence";
+  foreach my $interpro (@interproKids) {
+    my $parentDomain;
+    my $isNoIPR = ($interpro->att('id') eq 'noIPR');
+    if ($isNoIPR) {
+      $self->{noIPR}->{interproCount}++;
+    } else {
+      $parentDomain = 
+	$self->buildDomainFeature($interpro->att('id'), $aaId,
+				$self->{INTERPRO}, undef);
+      $self->{'interproCount'}++;
+    }
 
-    while (my $element = $protein->next_elt()) {
-      my $parentDomain;
-      my $id = $element->att('id');
-      if ($element->tag() eq 'interpro') {
-	unless ($id eq 'noIPR') {
-	  $parentDomain =
-	    $self->buildDomainFeature($id, $aaId, $self->{INTERPRO}, undef);
-	  $self->{'interproCount'}++;
-	}
+    my @classificationKids = $interpro->children('classification');
+    foreach my $classification (@classificationKids) {
+      if ($isNoIPR) {
+	$self->{noIPR}->{GOCount}++;
+      } else {
+	$self->buildGOAssociation($aaId, $classification->id());
       }
-      if ($element->tag() eq 'classification') {
-	$self->buildGOAssociation($aaId, $id) && $self->{'GOCount'}++;
-      }
-      if ($element->tag() eq 'match') {
-	my $dbname = $element->att('dbname');
+    }
+
+    my @matchKids = $interpro->children('match');
+    foreach my $match (@matchKids) {
+      my $childDomain;
+      if ($isNoIPR) {
+	$self->{noIPR}->{matchCount}++;
+      } else {
+	my $dbname = $match->att('dbname');
 	$self->{'matchCount'}++;
-	my $childDomain =
-	  $self->buildDomainFeature($id, $aaId, $self->{$dbname}, $parentDomain);
-	while (my $locationElement = $element->next_elt()) {
-	  if ($locationElement->tag() eq 'location') {
-	    $self->addLocation($locationElement, $childDomain);
-	  }
+	$childDomain =
+	  $self->buildDomainFeature($match->id(), $aaId, $self->{$dbname},
+				    $parentDomain->getId());
+      }
+      my @locationKids = $match->children('location');
+      foreach my $location (@locationKids) {
+	if ($isNoIPR) {
+	  $self->{noIPR}->{locationCount}++;
+	} else {
+	  $self->buildLocation($location, $childDomain);
+	  $self->{locationCount}++;
 	}
       }
     }
-    $protein->purge();
-    $self->{'protCount'}++;
-    $self->undefPointerCache();
   }
+  $self->undefPointerCache();
+  $self->{'protCount'}++;
 }
 
 sub buildDomainFeature {
@@ -238,17 +267,19 @@ sub buildDomainFeature {
     new({ source_id => $domainSourceId,
 	  external_database_release_id => $self->{extDbRlsId},
 	  aa_sequence_id => $aaId,
+          is_predicted => 1,
 	  parent_id => $parentId
 	});
 
   $domainFeat->submit();
 
   my $dbRefId = $self->{$db}->{dbRefIds}->{$domainSourceId};
-  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAaFeature->
-    new({ dbref_id => $dbRefId,
-	  aa_feature_id => $domainFeat->getId()
-	});
-  $dbRefAaFeat->submit();
+
+#  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAaFeature->
+#    new({ dbref_id => $dbRefId,
+#	  aa_feature_id => $domainFeat->getId()
+#	});
+#  $dbRefAaFeat->submit();
 
   return $domainFeat;
 }
@@ -259,16 +290,17 @@ sub buildLocation {
   my $start = $locationElement->att('start');
   my $end = $locationElement->att('end');
 
-  my $gusLoc = GUS::Model::DoTS::AALocation->
+  my $loc = GUS::Model::DoTS::AALocation->
     new({ start_min => $start,
 	  start_max => $start,
 	  end_min => $end,
 	  end_max => $end,
 	  aa_feature_id => $domainFeature->getId()
 	});
+  $loc->submit();
 }
 
-sub buildGOAssocation {
+sub buildGOAssociation {
   my ($self, $aaId, $classId) = @_;
 
   if ($classId !~ /^GO:\d+/) {
@@ -278,16 +310,22 @@ sub buildGOAssocation {
   my $goTermId = $self->{GOAnnotater}->getGoTermId($classId);
 
   if (! $goTermId) {
-    $self->log ("$aaId: No go_term_id found for GO Id \'$classId\'\n");
-    return 0;
+    $self->log ("$aaId: No go_term_id found for GO Id \'$classId\'");
+    $self->{unfoundGOCount}++;
+    return;
   }
-
+  $self->{'GOCount'}++;
   my $evidence = $self->{GOAnnotater}->getEvidenceCode('IEA');
 
   my $loe = $self->{GOAnnotater}->getLoeId('Interpro');
 
+  if (!$self->{aaTableId}) {
+    $self->{aaTableId} = 
+      $self->className2TableId("DoTS::" . $self->getArg('aaSeqTable'));
+  }
+
   my $goAssociation = {
-		       'tableId' => $self->{'RefTableId'},
+		       'tableId' => $self->{'aaTableId'},
 		       'rowId' => $aaId,
 		       'goTermId' => $goTermId,
 		       'isNot' => 0,
@@ -310,7 +348,7 @@ sub buildGOAssocation {
 }
 
 sub loadConfig{
-  my ($self, $resultFiles) = @_;
+  my ($self, $resultFiles, $resultDir) = @_;
 
   my $cFile = $self->getArg('confFile');
 
@@ -319,16 +357,19 @@ sub loadConfig{
   my $dbs = $conf->{'db'};	#list of Db names and versions
 
   foreach my $dbName (keys %$dbs) {
+    $self->log("Getting dbRefIds for $dbName");
     $self->{$dbName}->{dbRefIds} =
       $self->getDbRefIds($dbName, $dbs->{$dbName}->{ver});
   }
 
   my %dbsInResult;
+  $self->log("Scanning result files to find DBs that we matched against");
   foreach my $resultFile (@$resultFiles) {
-    $self->findDbsInResult($resultFile, \%dbsInResult);
+    $self->findDbsInResult("$resultDir/$resultFile", \%dbsInResult);
   }
 
   my @uncoolDbs;
+  $self->log("Checking that all matched DBs are loaded in GUS");
   foreach my $dbInResult (keys %dbsInResult) {
     push(@uncoolDbs, $dbInResult) unless ($self->{$dbInResult});
   }
@@ -352,8 +393,8 @@ sub getDbRefIds {
 
   my %sourceId2dbRefId;
   my $sql = "
-SELECT dbr.source_id, dbr.dbref_id
-FROM SRes.DbRef dbr, SRes.ExternalDatabase ed, SRes.ExternalDatabasRelease edr
+SELECT dbr.primary_identifier, dbr.db_ref_id
+FROM SRes.DbRef dbr, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr
 WHERE ed.name = '$dbName'
 AND edr.version = '$version'
 AND edr.external_database_id = ed.external_database_id
@@ -367,10 +408,10 @@ AND dbr.external_database_release_id = edr.external_database_release_id
 }
 
 sub findDbsInResult {
-  my ($resultFile, $dbsInResult) = @_;
+  my ($self, $resultFile, $dbsInResult) = @_;
 
   open(FILE, $resultFile) || die "couldn't open result file '$resultFile'\n";
-  while (FILE) {
+  while (<FILE>) {
    $dbsInResult->{$1} = 1 if /dbname=\"(\w+)\"/;
  }
 }
@@ -397,7 +438,10 @@ FROM Dots.$aaSeqTable
     }
   }
 
-  return $self->{sourcdId2aaSeqId}->{$sourceId};
+  $self->error("Can't find AA seq w/ source_id '$sourceId' in $aaSeqTable") 
+    unless $self->{sourceId2aaSeqId}->{$sourceId};
+
+  return $self->{sourceId2aaSeqId}->{$sourceId};
 }
 
 sub undoTables {
