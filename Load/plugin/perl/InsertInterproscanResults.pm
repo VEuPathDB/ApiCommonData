@@ -181,8 +181,8 @@ sub run {
     my @proteins = $twig->root()->children('protein');
     foreach my $protein (@proteins) {
       $self->processProteinResults($protein);
-      last if ($self->{interproCount}
-	       +$self->{noIPR}->{interproCount} >= $self->getArg('testNumber'));
+      last if ($self->getArg('testnumber') && $self->{interproCount}
+	       +$self->{noIPR}->{interproCount} >= $self->getArg('testnumber'));
     }
   }
 
@@ -203,6 +203,8 @@ sub run {
   $self->log("Locations loaded: $self->{locationCount}");
   $self->log("Locations loaded (noIPR): $self->{noIPR}->{locationCount}");
   $self->log("Locations total: $totalLocationCount");
+  $self->log("testnumber = " . $self->getArg('testnumber'))
+    if $self->getArg('testnumber');
 }
 
 sub processProteinResults {
@@ -259,8 +261,8 @@ sub processProteinResults {
 	$self->buildLocation($location, $childDomain);
       }
     }
-    last if ($self->{interproCount}
-	     + $self->{noIPR}->{interproCount} >= $self->getArg('testNumber'));
+    last if ($self->getArg('testnumber') && $self->{interproCount}
+	     + $self->{noIPR}->{interproCount} >= $self->getArg('testnumber'));
   }
   $self->undefPointerCache();
   $self->{'protCount'}++;
@@ -380,7 +382,7 @@ sub loadConfig{
     push(@uncoolDbs, $dbInResult) unless ($self->{$dbInResult});
   }
   if (scalar(@uncoolDbs) != 0) {
-    self->error("Result contains matches to databases that are not loaded into GUS: " . join(", ", @uncoolDbs));
+    $self->error("Result contains matches to databases that are not loaded into GUS: " . join(", ", @uncoolDbs));
   }
 }
 
