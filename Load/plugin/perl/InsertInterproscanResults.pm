@@ -66,6 +66,13 @@ sub getArgsDeclaration {
 	      isList => 0,
 	      enum => "ExternalAASequence, TranslatedAASequence",
 	     }),
+
+     integerArg({name  => 'testnumber',
+		 descr => 'Number of query sequences to process for testing',
+		 reqd  => 0,
+		 constraintFunc=> undef,
+		 isList=> 0,
+		}),
     ];
 
   return $argsDeclaration;
@@ -174,27 +181,27 @@ sub run {
     my @proteins = $twig->root()->children('protein');
     foreach my $protein (@proteins) {
       $self->processProteinResults($protein);
+      last if ($self->{interproCount}
+	       +$self->{noIPR}->{interproCount} >= $self->getArg('testNumber'));
     }
   }
 
   my $totalIprCount = $self->{interproCount} + $self->{noIPR}->{interproCount};
-  my $totalGOCount = $self->{GOCount} + $self->{noIPR}->{GOCount} +
-    $self->{unfoundGOCount};
+  my $totalGOCount = $self->{GOCount} + $self->{unfoundGOCount};
   my $totalMatchCount = $self->{matchCount} + $self->{noIPR}->{matchCount};
   my $totalLocationCount = $self->{locationCount} + $self->{noIPR}->{locationCount};
   $self->log("Proteins: $self->{protCount}");
   $self->log("Interpro Hits loaded: $self->{interproCount}");
-  $self->log("Interpro Hits ignored (noIPR): $self->{noIPR}->{interproCount}");
+  $self->log("Interpro Hits loaded (noIPR): $self->{noIPR}->{interproCount}");
   $self->log("Interpro Hits total: $totalIprCount");
   $self->log("GO Associations loaded: $self->{GOCount}");
-  $self->log("GO Associations ignored (noIPR): $self->{noIPR}->{GOCount}");
   $self->log("GO Associations unfound: $self->{unfoundGOCount}");
   $self->log("GO Associations total: $totalGOCount");
   $self->log("Matches loaded: $self->{matchCount}");
-  $self->log("Matches ignored (noIPR): $self->{noIPR}->{matchCount}");
+  $self->log("Matches loaded (noIPR): $self->{noIPR}->{matchCount}");
   $self->log("Matches total: $totalMatchCount");
   $self->log("Locations loaded: $self->{locationCount}");
-  $self->log("Locations ignored (noIPR): $self->{noIPR}->{locationCount}");
+  $self->log("Locations loaded (noIPR): $self->{noIPR}->{locationCount}");
   $self->log("Locations total: $totalLocationCount");
 }
 
@@ -206,31 +213,27 @@ sub processProteinResults {
 
   my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
   my @interproKids = $protein->children('interpro');
-  print STDERR "$aaId\n";
 
   my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
   $gusAASeq->retrieveFromDB()
     || die "Can't find AA sequence with aa_sequence_id '$aaId'";
 
   foreach my $interpro (@interproKids) {
-    my $parentDomain;
+    my $parentId;
     my $isNoIPR = ($interpro->att('id') eq 'noIPR');
     if ($isNoIPR) {
       $self->{noIPR}->{interproCount}++;
     } else {
-      $parentDomain = 
+      my $parentDomain = 
 	$self->buildDomainFeature($interpro->att('id'), $aaId,
 				$self->{INTERPRO}, undef);
+      $parentId = $parentDomain->getId();
       $self->{'interproCount'}++;
     }
 
     my @classificationKids = $interpro->children('classification');
     foreach my $classification (@classificationKids) {
-      if ($isNoIPR) {
-	$self->{noIPR}->{GOCount}++;
-      } else {
-	$self->buildGOAssociation($aaId, $classification->id());
-      }
+      $self->buildGOAssociation($aaId, $classification->id());
     }
 
     my @matchKids = $interpro->children('match');
@@ -239,22 +242,25 @@ sub processProteinResults {
       if ($isNoIPR) {
 	$self->{noIPR}->{matchCount}++;
       } else {
-	my $dbname = $match->att('dbname');
 	$self->{'matchCount'}++;
-	$childDomain =
-	  $self->buildDomainFeature($match->id(), $aaId, $self->{$dbname},
-				    $parentDomain->getId());
       }
+      my $dbname = $match->att('dbname');
+      $childDomain =
+	$self->buildDomainFeature($match->id(), $aaId, $self->{$dbname},
+				  $parentId);
+
       my @locationKids = $match->children('location');
       foreach my $location (@locationKids) {
 	if ($isNoIPR) {
 	  $self->{noIPR}->{locationCount}++;
 	} else {
-	  $self->buildLocation($location, $childDomain);
 	  $self->{locationCount}++;
 	}
+	$self->buildLocation($location, $childDomain);
       }
     }
+    last if ($self->{interproCount}
+	     + $self->{noIPR}->{interproCount} >= $self->getArg('testNumber'));
   }
   $self->undefPointerCache();
   $self->{'protCount'}++;
