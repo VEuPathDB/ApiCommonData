@@ -20,10 +20,10 @@ ADD CONSTRAINT draf_fk2 FOREIGN KEY (db_ref_id)
 REFERENCES sres.DbRef (db_ref_id);
 
 CREATE INDEX dots.draf_ind1
-ON dots.DbRefNaFeature (db_ref_id, db_ref_na_feature_id);
+ON dots.DbRefAaFeature (db_ref_id, db_ref_aa_feature_id);
 
 CREATE INDEX dots.draf_ind2
-ON dots.DbRefNaFeature (na_feature_id, db_ref_id);
+ON dots.DbRefAaFeature (aa_feature_id, db_ref_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON dots.DbRefAaFeature TO gus_w;
 GRANT SELECT ON dots.DbRefAaFeature TO gus_r;
