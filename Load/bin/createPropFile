@@ -1,0 +1,28 @@
+#!@perl@ 
+
+## Given a comma delimited list of property:value pairs, create a property file 
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+
+
+my ($propList,$file);
+&GetOptions("propList=s" => \$propList,
+	    "file=s" => \$file);
+
+my $usage = "usage: createPropFile --propList --file";
+die $usage unless $propList && $file;
+
+my @props = split (/,/,$propList);
+
+open (FILE,">$file") or die "Can't open $file for writing\n";
+
+foreach my $propPair (@props) {
+  print STDERR ("property list is not in the correct comma delimited, prop:value pairs format\n") if ($propPair !~ /\:/);
+  my ($prop,$value) = split (/:/,$propPair);
+  print FILE ("${prop}=$value\n");
+}
+
+close FILE;
