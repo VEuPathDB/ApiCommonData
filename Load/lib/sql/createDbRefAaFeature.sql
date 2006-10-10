@@ -8,6 +8,22 @@ SELECT db_ref_na_feature_id AS db_ref_aa_feature_id,
 FROM dots.DbRefNaFeature
 WHERE 1 = 0;
 
+ALTER TABLE dots.DbRefAaFeature
+ADD CONSTRAINT draf_pk PRIMARY KEY (db_ref_aa_feature_id);
+
+ALTER TABLE dots.DbRefAaFeature
+ADD CONSTRAINT draf_fk1 FOREIGN KEY (aa_feature_id)
+REFERENCES dots.AaFeatureImp (aa_feature_id);
+
+ALTER TABLE dots.DbRefAaFeature
+ADD CONSTRAINT draf_fk2 FOREIGN KEY (db_ref_id)
+REFERENCES sres.DbRef (db_ref_id);
+
+CREATE INDEX dots.draf_ind1
+ON dots.DbRefNaFeature (db_ref_id, db_ref_na_feature_id);
+
+CREATE INDEX dots.draf_ind2
+ON dots.DbRefNaFeature (na_feature_id, db_ref_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON dots.DbRefAaFeature TO gus_w;
 GRANT SELECT ON dots.DbRefAaFeature TO gus_r;
