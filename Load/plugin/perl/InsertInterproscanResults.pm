@@ -456,8 +456,8 @@ sub undoTables {
   my ($self) = @_;
 
   return (
-	  'DoTS.DomainFeature',
 	  'DoTS.AALocation',
+	  'DoTS.DomainFeature',
 	  'Core.Algorithm',
 	  ApiCommonData::Load::Utility::GOAnnotater->undoTables()
 	 );
