@@ -211,10 +211,10 @@ sub _initGoTermNames {
 sub undoTables {
   my ($self) = @_;
   return (
-		'DoTS.GOAssociationInstanceLOE',
-		'DoTS.GOAssociation',
+		'DoTS.GOAssocInstEvidCode',
 		'DoTS.GOAssociationInstance',
-		'DoTS.GOAssocInstEvidCode'
+		'DoTS.GOAssociationInstanceLOE',
+		'DoTS.GOAssociation'
      );
 }
 
