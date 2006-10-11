@@ -873,8 +873,6 @@ sub filterBLASTResults{
 
   $gi2taxidFile = "$mgr->{pipelineDir}/misc/$gi2taxidFile";
 
-  my $configFile = "$mgr->{gusConfigFile}";
-
   my $signal = "filtering${blastDir}BlastResults";
 
   my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
@@ -883,7 +881,7 @@ sub filterBLASTResults{
 
   return if $mgr->startStep("Filtering blast results for $blastDir", $signal);
 
-  my $cmd = "splitAndFilterBLASTX --gusConfigFile $configFile --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $blastFile --outputFile $outFile 2>> $logFile";
+  my $cmd = "splitAndFilterBLASTX --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $blastFile --outputFile $outFile 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
