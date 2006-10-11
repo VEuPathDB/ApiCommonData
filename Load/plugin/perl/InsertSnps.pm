@@ -130,7 +130,8 @@ sub getDocumentation {
 
 sub new {
   my ($class) = @_;
-  my $self = {};
+  my $self = {na_sequences => []
+             };
   bless($self,$class);
 
   my $documentation = &getDocumentation();
@@ -240,7 +241,7 @@ sub processSnpFile{
 
     $lineNum++;
 
-    $self->log("processed $lineNum lines from gff file.\n") if($lineNum % 10 == 0);
+    $self->log("processed $lineNum lines from gff file.") if($lineNum % 100 == 0);
   }
   return $lineNum;
 }
@@ -288,8 +289,6 @@ sub _updateSequenceVars {
 
 sub createSnpFeature {
   my ($self,$feature) = @_;
-
-  my $startTime = new Benchmark;
 
   my $name = $feature->primary_tag();
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
@@ -359,7 +358,6 @@ sub createSnpFeature {
 
     }
   }
-  $self->reportTimeAndCpu($startTime, 'createSnpFeature');
   return $snpFeature;
 }
 
@@ -385,19 +383,19 @@ sub getSoId {
 sub getNaSeq {
   my ($self, $sourceId) = @_;
 
-  my $startTime = new Benchmark;
-
   my $extDbRlsId = $self->{'naExtDbRlsId'};
 
   my ($seqTable) = $self->getArg("seqTable");
   $seqTable = "GUS::Model::$seqTable";
   eval "require $seqTable";
 
-  my $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
+  my $naSeq;
+  unless($naSeq = $self->findFromNaSequences($sourceId, $extDbRlsId)) {
+    $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
+    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
 
-  $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
-
-  $self->reportTimeAndCpu($startTime, 'getNaSeq');
+    $self->addToNaSequences($naSeq);
+  }
 
   return $naSeq;
 }
@@ -695,6 +693,33 @@ sub reportTimeAndCpu {
   my $timeDiff = timediff($endTime, $start);
   print STDERR timestr($timeDiff), "\t", $method, "\n";
 }
+
+# ----------------------------------------------------------------------
+
+sub findFromNaSequences {
+  my ($self, $querySourceId, $queryExternalDbRlsId) = @_;
+
+  my $naSequences = $self->{na_sequences};
+
+  foreach my $naSeq (@$naSequences) {
+    my $extDbRlsId = $naSeq->getExternalDatabaseReleaseId();
+    my $sourceId = $naSeq->getSourceId();
+
+    if($queryExternalDbRlsId == $extDbRlsId && $querySourceId eq $sourceId) {
+      return($naSeq);
+    }
+  }
+  return(undef);
+}
+
+# ----------------------------------------------------------------------
+
+sub addToNaSequences { 
+  my ($self, $naSeq) = @_;
+
+  push(@{$self->{na_sequences}}, $naSeq);
+}
+
 
 # ----------------------------------------------------------------------
 
