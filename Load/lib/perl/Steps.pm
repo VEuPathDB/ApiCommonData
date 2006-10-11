@@ -864,6 +864,32 @@ sub extractIdsFromBlastResult {
   $mgr->endStep($signal);
 }
 
+sub filterBLASTResults{
+  my ($mgr, $taxonList, $gi2taxidFile, $blastDir) = @_;
+
+  my $blastFile =  "$mgr->{pipelineDir}/similarity/$blastDir/master/mainresult/blastSimilarity.unfiltered.out";
+
+  my $outFile = "$mgr->{pipelineDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
+
+  $gi2taxidFile = "$mgr->{pipelineDir}/misc/$gi2taxidFile";
+
+  my $configFile = "$mgr->{gusConfigFile}";
+
+  my $signal = "filtering${blastDir}BlastResults";
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  $taxonList =~ s/"//g;
+
+  return if $mgr->startStep("Filtering blast results for $blastDir", $signal);
+
+  my $cmd = "splitAndFilterBLASTX --gusConfigFile $configFile --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $blastFile --outputFile $outFile 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
 sub loadNRDBSubset {
   my ($mgr,$idDir,$idFile,$extDbName,$extDbRlsVer) = @_;
 
@@ -2061,7 +2087,7 @@ sub snpMummerToGFF {
 
   return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $logfile --gff_format $gffFormat --skip_multiple_matches";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{pipelineDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
 
   $mgr->runCmd($cmd);
 
@@ -2575,7 +2601,7 @@ sub copyFilesFromComputeCluster {
 # for copying an arbitrary file or directory
 sub copyFileOrDirFromComputeCluster {
   my ($mgr, $fromDir, $fromFile, $toDir) = @_;
-    
+
   my $signal = "copy${fromDir}/${fromFile}FromCluster";
   $signal =~ s|/|_|g;
   my $clusterServer = $mgr->{propertySet}->getProp('clusterServer');
