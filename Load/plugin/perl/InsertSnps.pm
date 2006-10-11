@@ -15,6 +15,8 @@ use Bio::Seq;
 use Bio::Tools::GFF;
 use CBIL::Bio::SequenceUtils;
 
+use Benchmark;
+
 
 $| = 1;
 
@@ -172,7 +174,9 @@ sub run {
                                    -gff_format => $self->getArg('gffFormat'),
                                   );
 
-  my ($linesProcessed) = $self->processSnpFile($gffIO);
+  my $naSeqToLocationsHashRef =  $self->getAllTranscriptLocations ();
+
+  my ($linesProcessed) = $self->processSnpFile($gffIO, $naSeqToLocationsHashRef);
 
   return "$linesProcessed lines of SNP file $file processed\n";
 }
@@ -180,10 +184,12 @@ sub run {
 # ----------------------------------------------------------------------
 
 sub processSnpFile{
-  my ($self, $gffIO) = @_;
+  my ($self, $gffIO, $naSeqToLocationsHashRef) = @_;
 
   my $lineNum = $self->getArg('restart') ? $self->getArg('restart') : 0;
   my $num = 0;
+
+  my $transcripts = {};
 
   while (my $feature = $gffIO->next_feature()) {
     $num++;
@@ -196,10 +202,11 @@ sub processSnpFile{
     my $snpEnd = $feature->location()->end();
 
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
-    my $transcript = $self->_getTranscript($naSeqId, $snpStart, $snpEnd);
 
-    my $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
-    my $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
+    my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+
+    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+
     my $isCoding = $codingSequence ne $mockCodingSequence;
 
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
@@ -282,6 +289,8 @@ sub _updateSequenceVars {
 sub createSnpFeature {
   my ($self,$feature) = @_;
 
+  my $startTime = new Benchmark;
+
   my $name = $feature->primary_tag();
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
   my $soId = $self->{'soId'};
@@ -350,6 +359,7 @@ sub createSnpFeature {
 
     }
   }
+  $self->reportTimeAndCpu($startTime, 'createSnpFeature');
   return $snpFeature;
 }
 
@@ -375,6 +385,8 @@ sub getSoId {
 sub getNaSeq {
   my ($self, $sourceId) = @_;
 
+  my $startTime = new Benchmark;
+
   my $extDbRlsId = $self->{'naExtDbRlsId'};
 
   my ($seqTable) = $self->getArg("seqTable");
@@ -384,6 +396,8 @@ sub getNaSeq {
   my $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
 
   $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
+
+  $self->reportTimeAndCpu($startTime, 'getNaSeq');
 
   return $naSeq;
 }
@@ -403,39 +417,6 @@ sub getNaLoc {
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'location_type'=>$locType});
 
   return $naLoc;
-}
-
-# ----------------------------------------------------------------------
-
-sub _getTranscript {
-  my ($self, $naSeqId, $snpStart, $snpEnd) = @_;
-
-  my $transcript;
-
-  if (!$self->{na_feature_sql_handle}) {
-    my $sql = "SELECT tf.na_feature_id
-               FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
-               WHERE tf.na_feature_id = nl.na_feature_id
-                AND tf.na_sequence_id = ens.na_sequence_id 
-                and nl.start_min <= ?
-                and nl.end_max >= ?
-                and tf.na_sequence_id = ?";
-
-    $self->{na_feature_sql_handle} = $self->getQueryHandle()->prepare($sql);
-  }
-
-  my $sh = $self->{na_feature_sql_handle};
-  my $bindValues = [$snpStart, $snpEnd, $naSeqId];
-
-  if(my ($transcriptFeatureId) = $self->sqlAsArray( Handle => $sh, Bind => $bindValues )) {
-
-    $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $transcriptFeatureId });
-
-    unless ($transcript->retrieveFromDB()) {
-      $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
-    }
-  }
-  return($transcript);
 }
 
 # ----------------------------------------------------------------------
@@ -536,7 +517,7 @@ sub _swapBaseInSequence {
   my $normSnpStart = $isReversed ? $exonEnd - $snpStart : $snpStart - $exonStart;
   my $normSnpEnd = $isReversed ? $exonEnd - $snpEnd  : $snpEnd - $exonStart;
 
-  my ($fivePrimeFlank, $threePrimeFlank, $newSeq);
+  my ($fivePrimeFlank, $threePrimeFlank);
 
   # An insertion is when the snpStart is one base less than the snpEnd
   # deletion have a base of '-' and are treated identically to substitutions
@@ -556,7 +537,6 @@ sub _swapBaseInSequence {
   unless($newSeq =~ /$fivePrimeFlank/ || $newSeq =~ /$threePrimeFlank/) {
     $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
   }
-
   return($newSeq);
 }
 
@@ -609,6 +589,111 @@ sub _getAminoAcidSequenceOfSnp {
   my $lengthOfSnp = $normEnd - $normStart + 1;
 
   return(substr($translated->seq(), $normStart, $lengthOfSnp));
+}
+
+# ----------------------------------------------------------------------
+
+sub getAllTranscriptLocations {
+  my ($self) = @_;
+
+  my %data;
+
+  my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
+             WHERE tf.na_feature_id = nl.na_feature_id
+              AND tf.na_sequence_id = ens.na_sequence_id
+            ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
+
+  my $sh = $self->getQueryHandle()->prepare($sql);
+  $sh->execute();
+
+  while(my ($naSeqId, $naFeatureId, $start, $end) = $sh->fetchrow_array()) {
+
+    my $location = { na_feature_id => $naFeatureId,
+                     end => $end,
+                     start => $start,
+                   };
+    push(@{$data{$naSeqId}}, $location);
+
+  }
+  return(\%data);
+}
+
+# ----------------------------------------------------------------------
+
+sub getTranscript {
+  my ($self, $naSeqId, $snpStart, $snpEnd, $transcriptToLocMap) = @_;
+
+  my @transcripts = @{$transcriptToLocMap->{$naSeqId}};
+  my $startCursor = 0;
+  my $endCursor = scalar(@transcripts) - 1;
+  my $midpoint;
+
+  return(undef) if($snpStart < $transcripts[$startCursor]->{start} || $snpEnd > $transcripts[$endCursor]->{end});
+
+  while ($startCursor < $endCursor) {
+    $midpoint = int(($endCursor + $startCursor) / 2);
+
+    my $location = $transcripts[$midpoint];
+
+    if ($snpStart > $location->{start}) {
+      $startCursor = ($midpoint == $startCursor) ? $endCursor : $midpoint;
+    } 
+    elsif ($snpStart < $location->{start}) {
+      $endCursor = $midpoint - 1;
+    }
+    else {
+      # The below test will determine the outcome 
+      # if the snpStart is an exact match to the transcript Start location
+      $startCursor = $endCursor 
+    }
+
+    if($snpStart >= $location->{start} && $snpEnd <= $location->{end}) {
+
+      my $transcriptFeatureId = $location->{na_feature_id};
+      my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $transcriptFeatureId });
+
+      unless ($transcript->retrieveFromDB()) {
+        $self->error("No Transcript row was fetched with na_feature_id = $transcriptFeatureId");
+      }
+      return($transcript);
+    }
+  }
+  return(undef);
+}
+
+# ----------------------------------------------------------------------
+
+sub getCodingAndMockSequencesForTranscript {
+  my ($self, $transcript, $snpStart, $snpEnd, $transcripts) = @_;
+
+  my ($codingSequence, $mockCodingSequence);
+  return($codingSequence, $mockCodingSequence) unless($transcript);
+
+  my $transcriptId = $transcript->getId();
+
+  if($transcripts->{$transcriptId}) {
+    $codingSequence = $transcripts->{$transcriptId}->{coding_sequence};
+    $mockCodingSequence = $transcripts->{$transcriptId}->{mock_coding_sequence};
+  }
+  else {
+    $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
+    $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
+
+    $transcripts->{$transcriptId}->{coding_sequence} = $codingSequence;
+    $transcripts->{$transcriptId}->{mock_coding_sequence} = $mockCodingSequence;
+  }
+
+  return($codingSequence, $mockCodingSequence);
+}
+
+
+sub reportTimeAndCpu {
+  my ($self, $start, $method) = @_;
+
+  my $endTime = new Benchmark;
+  my $timeDiff = timediff($endTime, $start);
+  print STDERR timestr($timeDiff), "\t", $method, "\n";
 }
 
 # ----------------------------------------------------------------------
