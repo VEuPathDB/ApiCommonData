@@ -262,9 +262,10 @@ sub _updateSequenceVars {
     my $matchesReference = $variationAllele eq $referenceAllele ? 1 : 0;
     $seqVar->setMatchesReference($matchesReference);
 
+    next unless($variationAllele);
+
     if($isCoding) {
-      my $base = $seqVar ->getAllele();
-      my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $base, '');
+      my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $variationAllele, '');
 
       my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
