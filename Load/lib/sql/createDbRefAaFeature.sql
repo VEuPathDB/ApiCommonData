@@ -19,6 +19,10 @@ ALTER TABLE dots.DbRefAaFeature
 ADD CONSTRAINT draf_fk2 FOREIGN KEY (db_ref_id)
 REFERENCES sres.DbRef (db_ref_id);
 
+CREATE SEQUENCE dots.DbRefAaFeature_sq;
+
+GRANT SELECT ON dots.DbRefAaFeature_sq TO gus_w;
+
 CREATE INDEX dots.draf_ind1
 ON dots.DbRefAaFeature (db_ref_id, db_ref_aa_feature_id);
 
