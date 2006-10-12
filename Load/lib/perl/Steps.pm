@@ -4,8 +4,8 @@ use Bio::SeqIO;
 #use CBIL::Util::GenomeDir;
 chomp(my $pipelineScript = `basename $0`);
 
-sub createPipelineDir {
-  my ($mgr,$allSpecies) = @_;
+sub createDataDir {
+  my ($mgr,$allSpecies, $dataDir) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "createDir";
@@ -14,28 +14,29 @@ sub createPipelineDir {
 
   my $pipelineDir = $mgr->{'pipelineDir'};    # buildDir/release/speciesNickname
   print STDERR "$pipelineDir = pipeline dir\n";
-  $mgr->runCmd("mkdir -p $pipelineDir/seqfiles") unless (-e "$pipelineDir/seqfiles");
-  $mgr->runCmd("mkdir -p $pipelineDir/misc") unless (-e "$pipelineDir/misc");
-  $mgr->runCmd("mkdir -p $pipelineDir/downloadSite") unless (-e "$pipelineDir/downloadSite");
-  $mgr->runCmd("mkdir -p $pipelineDir/blastSite") unless (-e "$pipelineDir/blastSite");
-  $mgr->runCmd("mkdir -p $pipelineDir/sage") unless (-e "$pipelineDir/sage");
-  $mgr->runCmd("mkdir -p $pipelineDir/analysis") unless (-e "$pipelineDir/analysis");
-  $mgr->runCmd("mkdir -p $pipelineDir/similarity") unless (-e "$pipelineDir/similarity");
+  $mgr->runCmd("mkdir -p $dataDir") unless (-e "$dataDir");
+  $mgr->runCmd("mkdir -p $dataDir/seqfiles") unless (-e "$dataDir/seqfiles");
+  $mgr->runCmd("mkdir -p $dataDir/misc") unless (-e "$dataDir/misc");
+  $mgr->runCmd("mkdir -p $dataDir/downloadSite") unless (-e "$dataDir/downloadSite");
+  $mgr->runCmd("mkdir -p $dataDir/blastSite") unless (-e "$dataDir/blastSite");
+  $mgr->runCmd("mkdir -p $dataDir/sage") unless (-e "$dataDir/sage");
+  $mgr->runCmd("mkdir -p $dataDir/analysis") unless (-e "$dataDir/analysis");
+  $mgr->runCmd("mkdir -p $dataDir/similarity") unless (-e "$dataDir/similarity");
 
   my @Species = split(/,/,$allSpecies);
 
   foreach my $species (@Species) {
-    $mgr->runCmd("mkdir -p $pipelineDir/cluster/${species}Initial") unless (-e "$pipelineDir/cluster/${species}initial");
-    $mgr->runCmd("mkdir -p $pipelineDir/cluster/${species}Intermed") unless (-e "$pipelineDir/cluster/${species}intermed");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Initial/big") unless (-e "$pipelineDir/assembly/${species}initial/big");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Initial/small") unless (-e "$pipelineDir/assembly/${species}initial/small");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Initial/reassemble") unless (-e "$pipelineDir/assembly/${species}initial/reassemble");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Intermed/big") unless (-e "$pipelineDir/assembly/${species}intermed/big");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Intermed/small") unless (-e "$pipelineDir/assembly/${species}intermed/small");
-    $mgr->runCmd("mkdir -p $pipelineDir/assembly/${species}Intermed/reassemble") unless (-e "$pipelineDir/assembly/${species}intermed/reassemble");
+    $mgr->runCmd("mkdir -p $dataDir/cluster/${species}Initial") unless (-e "$dataDir/cluster/${species}initial");
+    $mgr->runCmd("mkdir -p $dataDir/cluster/${species}Intermed") unless (-e "$dataDir/cluster/${species}intermed");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/big") unless (-e "$dataDir/assembly/${species}initial/big");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/small") unless (-e "$dataDir/assembly/${species}initial/small");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/reassemble") unless (-e "$dataDir/assembly/${species}initial/reassemble");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/big") unless (-e "$dataDir/assembly/${species}intermed/big");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/small") unless (-e "$dataDir/assembly/${species}intermed/small");
+    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/reassemble") unless (-e "$dataDir/assembly/${species}intermed/reassemble");
   }
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir");
+  $mgr->runCmd("chmod -R g+w $dataDir");
 
   $mgr->endStep($signal);
 }
@@ -55,13 +56,13 @@ sub createBlastMatrixDir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bmTaskSize = $propertySet->getProp('blastmatrix.taskSize');
   my $wuBlastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
   my $speciesFile = $species . $queryFile;
   &makeMatrixDir($speciesFile, $species.$subjectFile, $buildName, $buildDir,
        $serverPath, $nodePath, $bmTaskSize, $wuBlastBinPathCluster, $nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir");
+  $mgr->runCmd("chmod -R g+w $dataDir");
 
   $mgr->endStep($signal);
 }
@@ -114,14 +115,14 @@ sub createSimilarityDir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bsTaskSize = $propertySet->getProp('blastsimilarity.taskSize');
   my $wuBlastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
   &makeSimilarityDir($queryFile, $subjectFile, $buildName, $buildDir,
 		     $serverPath, $nodePath, $bsTaskSize,
 		     $wuBlastBinPathCluster,
 		     "${subjectFile}.fsa", "$serverPath/$buildName/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir/similarity/${queryFile}-${subjectFile}");
+  $mgr->runCmd("chmod -R g+w $dataDir/similarity/${queryFile}-${subjectFile}");
 
   $mgr->endStep($signal);
 }
@@ -149,16 +150,16 @@ sub createPfamDir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $pfamTaskSize = $propertySet->getProp('pfam.taskSize');
   my $pfamPath = $propertySet->getProp('pfam.path');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
-  $mgr->runCmd("mkdir -p $pipelineDir/pfam/$query-$subject");
+  $mgr->runCmd("mkdir -p $dataDir/pfam/$query-$subject");
 
   &makePfamDir($query, $subject, $buildName, $buildDir,
 	       $serverPath, $nodePath, $pfamTaskSize,
 	       $pfamPath,
 	       $queryFile,"$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir/pfam");
+  $mgr->runCmd("chmod -R g+w $dataDir/pfam");
 
   $mgr->endStep($signal);
 }
@@ -183,16 +184,16 @@ sub createTRNAscanDir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $trnascanTaskSize = $propertySet->getProp('trnascan.taskSize');
   my $trnascanPath = $propertySet->getProp('trnascan.clusterpath');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
-  $mgr->runCmd("mkdir -p $pipelineDir/trnascan/$subject");
+  $mgr->runCmd("mkdir -p $dataDir/trnascan/$subject");
 
   &makeTRNAscanDir($subject, $buildName, $buildDir,
 	       $serverPath, $nodePath, $trnascanTaskSize,
 	       $trnascanPath,$model,
 	       "$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir/trnascan");
+  $mgr->runCmd("chmod -R g+w $dataDir/trnascan");
 
   $mgr->endStep($signal);
 }
@@ -204,9 +205,9 @@ sub rnaScanToGff2 {
 
   return if $mgr->startStep("Creating $dir tRNAscan gff2 file", $signal);
 
-  my $inFile = "$mgr->{'pipelineDir'}/trnascan/${dir}/master/mainresult/trnascan.out";
+  my $inFile = "$mgr->{'dataDir'}/trnascan/${dir}/master/mainresult/trnascan.out";
 
-  my $outFile = "$mgr->{'pipelineDir'}/trnascan/${dir}/master/mainresult/trnascan.gff2";
+  my $outFile = "$mgr->{'dataDir'}/trnascan/${dir}/master/mainresult/trnascan.gff2";
 
   $mgr->runCmd("makeGFF2File -infile $inFile -outfile $outFile");
 
@@ -218,7 +219,7 @@ sub loadTRNAscan {
 
   my $signal = "tRNAScan$name";
 
-  my $dataFile = "$mgr->{'pipelineDir'}/trnascan/$name/master/mainresult/trnascan.out";
+  my $dataFile = "$mgr->{'dataDir'}/trnascan/$name/master/mainresult/trnascan.out";
 
   my $args = "--data_file $dataFile --scanDbName '$scanDbName' --scanDbVer '$scanDbVer' --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer' --soVersion '$soVer'";
 
@@ -285,21 +286,21 @@ sub createPsipredDirWithFormattedDb {
 
   return if $mgr->startStep("Creating psipred dir with filtered and formatted $dbFile", $signal); 
 
-  $mgr->runCmd("mkdir -p $mgr->{'pipelineDir'}/psipred");
+  $mgr->runCmd("mkdir -p $mgr->{'dataDir'}/psipred");
 
-  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/${dbFileDir}/$dbFile  $mgr->{pipelineDir}/psipred/${dbFile}Ln");
+  $mgr->runCmd("ln -s  $mgr->{dataDir}/${dbFileDir}/$dbFile  $mgr->{dataDir}/psipred/${dbFile}Ln");
 
   my $ncbiBlastPath = $propertySet->getProp('ncbiBlastPath');
 
   my $psipredPath = $propertySet->getProp('psipredPath');
 
-  $mgr->runCmd("${psipredPath}/pfilt $mgr->{pipelineDir}/psipred/${dbFile}Ln > $mgr->{pipelineDir}/psipred/${dbFile}Filt");
+  $mgr->runCmd("${psipredPath}/pfilt $mgr->{dataDir}/psipred/${dbFile}Ln > $mgr->{dataDir}/psipred/${dbFile}Filt");
 
-  $mgr->runCmd("${ncbiBlastPath}/formatdb -i $mgr->{pipelineDir}/psipred/${dbFile}Filt -p T");
+  $mgr->runCmd("${ncbiBlastPath}/formatdb -i $mgr->{dataDir}/psipred/${dbFile}Filt -p T");
 
-  $mgr->runCmd("rm -f $mgr->{pipelineDir}/psipred/${dbFile}Ln");
+  $mgr->runCmd("rm -f $mgr->{dataDir}/psipred/${dbFile}Ln");
 
-  $mgr->runCmd("rm -f $mgr->{pipelineDir}/psipred/${dbFile}Filt");
+  $mgr->runCmd("rm -f $mgr->{dataDir}/psipred/${dbFile}Filt");
 
   $mgr->endStep($signal);
 
@@ -323,14 +324,14 @@ sub createPsipredSubdir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $psipredTaskSize = $propertySet->getProp('psipred.taskSize');
   my $psipredPath = $propertySet->getProp('psipred.clusterpath');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
   &makePsipredDir($queryFile, $dbFile, $buildName, $buildDir,
 	       $serverPath, $nodePath, $psipredTaskSize,
 	       $psipredPath,
 	       $queryFile,"$serverPath/$buildName/psipred",$dbFile,$nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir/psipred");
+  $mgr->runCmd("chmod -R g+w $dataDir/psipred");
 
   $mgr->endStep($signal);
 }
@@ -376,7 +377,7 @@ sub makeAlgInv {
 sub loadSecondaryStructures {
   my ($mgr, $algName,$algImpVer,$algInvStart,$dir,$setPercent) = @_;
 
-  my $dirPath = "$mgr->{pipelineDir}/psipred/${dir}/master/mainresult";
+  my $dirPath = "$mgr->{dataDir}/psipred/${dir}/master/mainresult";
 
   my $args = "--predAlgName $algName --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --directory $dirPath";
 
@@ -448,13 +449,13 @@ sub createepeatMaskDir {
   my $rmPath = $propertySet->getProp('repeatmask.path');
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
   my $speciesFile = $species . $file;
   &makeRMDir($speciesFile, $buildName, $buildDir,
        $serverPath, $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $pipelineDir");
+  $mgr->runCmd("chmod -R g+w $dataDir");
 
   $mgr->endStep($signal);
 }
@@ -535,7 +536,7 @@ sub moveSeqFile {
 
   $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/$dir");
 
-  $mgr->runCmd("mv $seqFile $mgr->{pipelineDir}/$dir");
+  $mgr->runCmd("mv $seqFile $mgr->{dataDir}/$dir");
 
   $mgr->endStep($signal);
 }
@@ -553,9 +554,9 @@ sub renameFile {
 
   return if $mgr->startStep("Renaming $fileName to $newName in $dir", $signal);
 
-  if (! -e "$mgr->{pipelineDir}/$dir/$fileName") { die "$fileName doesn't exist\n";};
+  if (! -e "$mgr->{dataDir}/$dir/$fileName") { die "$fileName doesn't exist\n";};
 
-  $mgr->runCmd("mv  $mgr->{pipelineDir}/$dir/$fileName $mgr->{pipelineDir}/$dir/$newName");
+  $mgr->runCmd("mv  $mgr->{dataDir}/$dir/$fileName $mgr->{dataDir}/$dir/$newName");
 
   $mgr->endStep($signal);
 }
@@ -589,13 +590,13 @@ sub findProteinXRefs {
 
   return if $mgr->startStep("Finding nr cross-refs for $proteinFile", $signal);
 
-  $proteinFile = "$mgr->{pipelineDir}/seqfiles/$proteinFile";
+  $proteinFile = "$mgr->{dataDir}/seqfiles/$proteinFile";
 
-  $nrFile = "$mgr->{pipelineDir}/seqfiles/$nrFile";
+  $nrFile = "$mgr->{dataDir}/seqfiles/$nrFile";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
-  my $outputFile = "$mgr->{pipelineDir}/misc/${signal}Output";
+  my $outputFile = "$mgr->{dataDir}/misc/${signal}Output";
 
   my $args = "--proteinFile '$proteinFile' --nrFile '$nrFile' --outputFile '$outputFile' --sourceIdRegex \"$nrRegex\" --protDeflnRegex \"$protRegex\" ";
 
@@ -616,7 +617,7 @@ sub loadDbXRefs {
 
   return if $mgr->startStep("Loading $outputFile", $signal);
 
-  $mgr->runCmd("filterDbXRefOutput --file $mgr->{pipelineDir}/misc/$outputFile 2>> $mgr->{pipelineDir}/logs/filter${outputFile}.log");
+  $mgr->runCmd("filterDbXRefOutput --file $mgr->{dataDir}/misc/$outputFile 2>> $mgr->{dataDir}/logs/filter${outputFile}.log");
 
   my @db = split(/,/, $dbList);
 
@@ -627,7 +628,7 @@ sub loadDbXRefs {
 
     &createExtDbAndDbRls($mgr,$dbName,$NrdbVer);
 
-    my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{pipelineDir}/misc/${outputFile}_$db' --columnSpec \"secondary_identifier,primary_identifier\"";
+    my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{dataDir}/misc/${outputFile}_$db' --columnSpec \"secondary_identifier,primary_identifier\"";
 
     my $subSignal = "load${outputFile}_$db";
 
@@ -635,7 +636,7 @@ sub loadDbXRefs {
 		     "ApiCommonData::Load::Plugin::InsertDBxRefs", "$args",
 		     "Loading results of dbXRefBySeqIdentity in ${outputFile}_$db");
 
-    $mgr->runCmd("rm -f $mgr->{pipelineDir}/misc/${outputFile}_$db");
+    $mgr->runCmd("rm -f $mgr->{dataDir}/misc/${outputFile}_$db");
   }
 
   $mgr->endStep($signal);
@@ -652,8 +653,8 @@ sub extractNaSeq {
 
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
-  my $outFile = "$mgr->{pipelineDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
@@ -676,11 +677,11 @@ sub extractIndividualNaSeq {
 
   my $signal = "extract${name}$type";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
 
-  my $ouputDir = "$mgr->{pipelineDir}/seqfiles/${name}$type";
+  my $ouputDir = "$mgr->{dataDir}/seqfiles/${name}$type";
 
   $mgr->runCmd("mkdir -p $ouputDir");
 
@@ -706,8 +707,8 @@ sub extractNaSeqAltDefLine {
 
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
-  my $outFile = "$mgr->{pipelineDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select $defLine,sequence
              from dots.$table
@@ -737,13 +738,13 @@ sub runSplign {
 
   my $ncbiBlastPath = $propertySet->getProp('ncbiBlastPath');
 
-  my $splignDir = "$mgr->{pipelineDir}/splign/${name}${queryType}$subjectType";
+  my $splignDir = "$mgr->{dataDir}/splign/${name}${queryType}$subjectType";
 
   $mgr->runCmd("mkdir -p $splignDir");
 
-  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/seqfiles/${name}${queryType}.fsa ${splignDir}/$query");
+  $mgr->runCmd("ln -s  $mgr->{dataDir}/seqfiles/${name}${queryType}.fsa ${splignDir}/$query");
 
-  $mgr->runCmd("ln -s  $mgr->{pipelineDir}/seqfiles/${name}${subjectType}.fsa ${splignDir}/$subject");
+  $mgr->runCmd("ln -s  $mgr->{dataDir}/seqfiles/${name}${subjectType}.fsa ${splignDir}/$subject");
 
   $mgr->runCmd("${splignPath}/splign -mklds $splignDir");
 
@@ -764,7 +765,7 @@ sub runSplign {
 sub updateTaxonIdField {
   my ($mgr,$file,$sourceRegex,$taxonRegex,$idSql,$extDbRelSpec,$table) =@_;
 
-  $file = "$mgr->{pipelineDir}/misc/$file";
+  $file = "$mgr->{dataDir}/misc/$file";
 
   my $args = "--fileName '$file' --sourceIdRegex  \"$sourceRegex\" $taxonRegex --idSql '$idSql' --extDbRelSpec '$extDbRelSpec'  --tableName '$table'";
 
@@ -790,7 +791,7 @@ sub loadSplignResults {
 
   my $signal = "load${name}${queryType}${subjectType}Splign";
 
-  my $splignFile = "$mgr->{pipelineDir}/splign/${name}${queryType}${subjectType}/${query}${subjectType}.splign";
+  my $splignFile = "$mgr->{dataDir}/splign/${name}${queryType}${subjectType}/${query}${subjectType}.splign";
 
   my $args = "--inputFile $splignFile --estTable '$queryTable' --seqTable '$subjectTable' --estExtDbRlsSpec '$queryExtDbRlsSpec' --seqExtDbRlsSpec '$subjectExtDbRlsSpec'";
 
@@ -821,9 +822,9 @@ sub extractScaffolds {
 
     my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbVer);
 
-    my $scaffoldFile = "$mgr->{pipelineDir}/seqfiles/${name}Scaffolds.fsa";
+    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}Scaffolds.fsa";
 
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
+    my $logFile = "$mgr->{dataDir}/logs/$signal.log";
 
     my $sql = "select x.na_sequence_id, x.description,
             'length='||x.length,x.sequence
@@ -844,7 +845,7 @@ sub extractScaffolds {
 sub extractIdsFromBlastResult {
   my ($mgr,$simDir,$idType) = @_;
 
-  my $blastFile = "$mgr->{pipelineDir}/similarity/$simDir/master/mainresult/blastSimilarity.out";
+  my $blastFile = "$mgr->{dataDir}/similarity/$simDir/master/mainresult/blastSimilarity.out";
 
   my $signal = "ext${simDir}BlastIds";
 
@@ -854,9 +855,9 @@ sub extractIdsFromBlastResult {
 
   $mgr->runCmd($cmd) if $cmd;
 
-  my $output = "$mgr->{pipelineDir}/similarity/$simDir/blastSimIds.out";
+  my $output = "$mgr->{dataDir}/similarity/$simDir/blastSimIds.out";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
   $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $blastFile --outFile $output 2>> $logFile";
 
   $mgr->runCmd($cmd);
@@ -893,9 +894,9 @@ sub loadNRDBSubset {
 
   my $signal = "${idDir}NrIdsLoaded";
 
-  my $nrdbFile = "$mgr->{pipelineDir}/seqfiles/nr.fsa";
+  my $nrdbFile = "$mgr->{dataDir}/seqfiles/nr.fsa";
 
-  my $sourceIdsFile = "$mgr->{pipelineDir}/similarity/$idDir/$idFile";
+  my $sourceIdsFile = "$mgr->{dataDir}/similarity/$idDir/$idFile";
 
   my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $nrdbFile --sourceIdsFile  $sourceIdsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
 
@@ -908,7 +909,7 @@ sub loadNRDBSubset {
 sub loadFastaSequences {
   my ($mgr,$file,$table,$extDbName,$extDbRlsVer,$soTermName,$regexSourceId,$check,$taxId) = @_;
 
-  my $inputFile = "$mgr->{pipelineDir}/seqfiles/$file";
+  my $inputFile = "$mgr->{dataDir}/seqfiles/$file";
 
   my $signal = "load$file";
 
@@ -953,9 +954,9 @@ sub findTandemRepeats {
 
   return if $mgr->startStep("Finding tandem repeats in $file", $signal);
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
-  my $trfDir = "$mgr->{pipelineDir}/trf";
+  my $trfDir = "$mgr->{dataDir}/trf";
 
   $mgr->runCmd("mkdir -p $trfDir");
 
@@ -963,7 +964,7 @@ sub findTandemRepeats {
 
   if ($file =~ /\.gz/) {
 
-    $mgr->runCmd("gunzip $mgr->{pipelineDir}/${fileDir}/$file");
+    $mgr->runCmd("gunzip $mgr->{dataDir}/${fileDir}/$file");
 
     $file =~ s/\.gz//;
   }
@@ -972,11 +973,11 @@ sub findTandemRepeats {
 
   chdir $trfDir || die "Can't chdir to $trfDir";
 
-  my $cmd = "${trfPath}/trf400 $mgr->{pipelineDir}/$fileDir/$file $args -d > $logFile";
+  my $cmd = "${trfPath}/trf400 $mgr->{dataDir}/$fileDir/$file $args -d > $logFile";
 
   $mgr->runCmd($cmd);
 
-  chdir $mgr->{pipelineDir} || die "Can't chdir to $mgr->{pipelineDir}";
+  chdir $mgr->{dataDir} || die "Can't chdir to $mgr->{dataDir}";
 
   $mgr->endStep($signal);
 }
@@ -1035,7 +1036,7 @@ sub loadTandemRepeats {
 
   $args =~ s/\s+/\./g;
 
-  my $tandemRepFile = "$mgr->{pipelineDir}/trf/${file}.${args}.dat";
+  my $tandemRepFile = "$mgr->{dataDir}/trf/${file}.${args}.dat";
 
   my $signal = "load${file}.TRF";
 
@@ -1053,13 +1054,13 @@ sub runBLASTZ {
 
   my $blastzPath = $propertySet->getProp('blastzPath');
 
-  opendir(DIR,"$mgr->{pipelineDir}/$queryDir");
+  opendir(DIR,"$mgr->{dataDir}/$queryDir");
 
   my $signal;
 
   my $outputFile;
 
-  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}");
+  $mgr->runCmd("mkdir $mgr->{dataDir}/similarity/blastz_${targetFile}");
 
   while(my $file = readdir(DIR)) {
 
@@ -1073,7 +1074,7 @@ sub runBLASTZ {
 
     next if $mgr->startStep("Running BLASTZ for $file vs $targetFile", $signal);
 
-    $mgr->runCmd("${blastzPath}/blastz $mgr->{pipelineDir}/${queryDir}/$file  $mgr->{pipelineDir}/seqfiles/$targetFile $args > $mgr->{pipelineDir}/similarity/blastz_${targetFile}/$outputFile");
+    $mgr->runCmd("${blastzPath}/blastz $mgr->{dataDir}/${queryDir}/$file  $mgr->{dataDir}/seqfiles/$targetFile $args > $mgr->{dataDir}/similarity/blastz_${targetFile}/$outputFile");
 
     $mgr->endStep($signal);
   }
@@ -1084,17 +1085,17 @@ sub formatBLASTZResults {
 
   my $propertySet = $mgr->{propertySet};
 
-  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}/master") if ! -d "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master";
+  $mgr->runCmd("mkdir $mgr->{dataDir}/similarity/blastz_${targetFile}/master") if ! -d "$mgr->{dataDir}/similarity/blastz_${targetFile}/master";
 
-  $mgr->runCmd("mkdir $mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult") if ! -d "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult";
+  $mgr->runCmd("mkdir $mgr->{dataDir}/similarity/blastz_${targetFile}/master/mainresult") if ! -d "$mgr->{dataDir}/similarity/blastz_${targetFile}/master/mainresult";
 
-  my $outputFile = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}/master/mainresult/blastSimilarity.out";
+  my $outputFile = "$mgr->{dataDir}/similarity/blastz_${targetFile}/master/mainresult/blastSimilarity.out";
 
   my $signal = "format${targetFile}Blastz";
 
   return if $mgr->startStep("Formatting BLASTZ output for $targetFile", $signal);
 
-  my $dir = "$mgr->{pipelineDir}/similarity/blastz_${targetFile}";
+  my $dir = "$mgr->{dataDir}/similarity/blastz_${targetFile}";
 
   $mgr->runCmd("parseBlastzLav.pl --dirname $dir --outfile $outputFile");
 
@@ -1105,7 +1106,7 @@ sub formatBLASTZResults {
 sub loadBLASTZResults {
   my ($mgr,$targetFile,$queryTable,$subjTable,$queryExtDbRlsSpec,$subjExtDbRlsSpec) = @_;
 
-  opendir(DIR,"$mgr->{pipelineDir}/similarity/blastz_$targetFile");
+  opendir(DIR,"$mgr->{dataDir}/similarity/blastz_$targetFile");
 
   my $signal;
 
@@ -1117,7 +1118,7 @@ sub loadBLASTZResults {
 
     $signal = "loadBlastz$file";
 
-    $args = "--inputFile '$mgr->{pipelineDir}/similarity/blastz_${targetFile}/$file' --queryTable '$queryTable' --subjTable '$subjTable' --queryExtDbRlsSpec '$queryExtDbRlsSpec' --subjExtDbRlsSpec '$subjExtDbRlsSpec'";
+    $args = "--inputFile '$mgr->{dataDir}/similarity/blastz_${targetFile}/$file' --queryTable '$queryTable' --subjTable '$subjTable' --queryExtDbRlsSpec '$queryExtDbRlsSpec' --subjExtDbRlsSpec '$subjExtDbRlsSpec'";
 
     $mgr->runPlugin($signal,
                     "ApiCommonData::Load::Plugin::InsertBlastZAlignments",$args,
@@ -1204,9 +1205,9 @@ sub extractSageTags {
     my $name = $dbName;
     $name =~ s/\s/_/g;
 
-    my $sageTagFile = "$mgr->{pipelineDir}/seqfiles/${name}SageTags.fsa";
+    my $sageTagFile = "$mgr->{dataDir}/seqfiles/${name}SageTags.fsa";
 
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal${species}.log";
+    my $logFile = "$mgr->{dataDir}/logs/$signal${species}.log";
 
     my $sql = "select s.composite_element_id,s.tag
              from rad.sagetag s,rad.arraydesign a
@@ -1237,7 +1238,7 @@ sub mapSageTagsToScaffolds {
     my $scafName = $dbName;
     $scafName =~ s/\s/\_/g;
 
-    my $scaffoldFile = "$mgr->{pipelineDir}/seqfiles/${scafName}Scaffolds.fsa";
+    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${scafName}Scaffolds.fsa";
 
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
@@ -1245,9 +1246,9 @@ sub mapSageTagsToScaffolds {
       my $tagName = $dbName;
       $tagName =~ s/\s/_/g;
 
-      my $sageTagFile = "$mgr->{pipelineDir}/seqfiles/${tagName}SageTags.fsa";
+      my $sageTagFile = "$mgr->{dataDir}/seqfiles/${tagName}SageTags.fsa";
 
-      my $output = "$mgr->{pipelineDir}/sage/${tagName}To${scafName}";
+      my $output = "$mgr->{dataDir}/sage/${tagName}To${scafName}";
 
       my $cmd = "tagToSeq.pl $scaffoldFile $sageTagFile 2>> $output";
 
@@ -1275,7 +1276,7 @@ sub loadSageTagMap {
       my $dbName =  $sageArray->{name};
       my $tagName = $dbName;
       $tagName =~ s/\s/_/g;
-      my $inputFile = "$mgr->{pipelineDir}/sage/${tagName}To${scafName}";
+      my $inputFile = "$mgr->{dataDir}/sage/${tagName}To${scafName}";
 
       my $args = "--tagToSeqFile $inputFile";
 
@@ -1292,7 +1293,7 @@ sub loadSageTagMap {
 sub concatFiles {
    my ($mgr,$files,$catFile,$fileDir) = @_;
 
-   $files =~ s/(\S+)/$mgr->{pipelineDir}\/$1/g;
+   $files =~ s/(\S+)/$mgr->{dataDir}\/$1/g;
 
    my $propertySet = $mgr->{propertySet};
 
@@ -1302,7 +1303,7 @@ sub concatFiles {
 
    $signal =~ s/-$projRel//g;
 
-   my $cmd = "cat $files > $mgr->{pipelineDir}/$fileDir/$catFile";
+   my $cmd = "cat $files > $mgr->{dataDir}/$fileDir/$catFile";
 
    $mgr->runCmd($cmd);
 
@@ -1331,8 +1332,8 @@ sub extractProteinSeqs {
 
   return if $mgr->startStep("Extracting $name protein sequences from GUS", $signal);
 
-  my $seqFile = "$mgr->{pipelineDir}/seqfiles/${name}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${name}Extract.log";
+  my $seqFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
+  my $logFile = "$mgr->{dataDir}/logs/${name}Extract.log";
 
   my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
@@ -1446,7 +1447,7 @@ sub loadHMMPfamOutput {
 
   my $name = $query . "-" . $subject;
 
-  my $args = "--data_file $mgr->{pipelineDir}/pfam/$name/master/mainresult/hmmpfam.out --algName '$algName' --algVer '$algVer'  --algDesc 'hmmpfam  searches queries against a PFAM domain database' --queryTable  'DoTS.TranslatedAASequence' --extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'";
+  my $args = "--data_file $mgr->{dataDir}/pfam/$name/master/mainresult/hmmpfam.out --algName '$algName' --algVer '$algVer'  --algDesc 'hmmpfam  searches queries against a PFAM domain database' --queryTable  'DoTS.TranslatedAASequence' --extDbRlsName '$extDbRlsName' --extDbRlsVer '$extDbRlsVer'";
 
   $mgr->runPlugin("loadHMMPfamOutput_$name",
 		  "ApiCommonData::Load::Plugin::LoadPfamOutput", $args,
@@ -1462,7 +1463,7 @@ sub loadProteinBlast {
       
   my $propertySet = $mgr->{propertySet};
 
-  my $file = (-e "$mgr->{pipelineDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz") ? "$mgr->{pipelineDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz" : "$mgr->{pipelineDir}/similarity/$name/master/mainresult/blastSimilarity.out";
+  my $file = (-e "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz") ? "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz" : "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out";
   
   my $restartAlgInvs = "--restartAlgInvs $restart" if $restart;
 
@@ -1533,7 +1534,7 @@ sub runExportPred {
 
   $outputFile =~ s/\.\w+$/\.exptprd/;
 
-  my $cmd = "${exportpredPath}/exportpred --input=$mgr->{pipelineDir}/seqfiles/$name --output=$mgr->{pipelineDir}/misc/$outputFile";
+  my $cmd = "${exportpredPath}/exportpred --input=$mgr->{dataDir}/seqfiles/$name --output=$mgr->{dataDir}/misc/$outputFile";
 
   $mgr->runCmd($cmd);
 
@@ -1575,7 +1576,7 @@ sub loadExportPredResults {
 
   my $signal = "loadExportPred$species";
 
-  my $inputFile = "$mgr->{pipelineDir}/misc/$name";
+  my $inputFile = "$mgr->{dataDir}/misc/$name";
 
   my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec '$sourceIdDb' --extDbRlsSpec '$genDb'";
 
@@ -1604,7 +1605,7 @@ sub documentGeneAliases {
 sub fixGeneAliases {
   my ($mgr,$files) = @_;
 
-  my $path = "$mgr->{pipelineDir}/misc/";
+  my $path = "$mgr->{dataDir}/misc/";
 
   $files =~ s/(\w|\.)+/${path}$&/g;
 
@@ -1626,7 +1627,7 @@ sub predictAndPrintTranscriptSequences {
 
   $type = $type eq 'transcripts' ? ucfirst($type) : uc($type);
 
-  my $file = "$mgr->{pipelineDir}/seqfiles/${species}Annotated${type}.fsa";
+  my $file = "$mgr->{dataDir}/seqfiles/${species}Annotated${type}.fsa";
 
   my $args = "--extDbName '$dbName' --extDbRlsVer '$dbRlsVer' --sequenceFile $file $cds $noReversed";
 
@@ -1652,9 +1653,9 @@ sub formatBlastFile {
 
   my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
 
-  my $outputFile1  = "$mgr->{pipelineDir}/$fileDir/$file";
+  my $outputFile1  = "$mgr->{dataDir}/$fileDir/$file";
 
-  my $fastalink1 = "$mgr->{pipelineDir}/blastSite/$link";
+  my $fastalink1 = "$mgr->{dataDir}/blastSite/$link";
 
   $mgr->runCmd("ln -s $outputFile1 $fastalink1");
   $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
@@ -1674,7 +1675,7 @@ sub modifyDownloadFile {
 
   return if $mgr->startStep("Modifying $file for download", $signal);
 
-  my $inFile = "$mgr->{pipelineDir}/seqfiles/$file";
+  my $inFile = "$mgr->{dataDir}/seqfiles/$file";
 
   die "$inFile doesn't exist\n" unless (-e $inFile);
 
@@ -1683,9 +1684,9 @@ sub modifyDownloadFile {
   $outFile =~ s/\.\w+\b//;
   $outFile .= "_${database}-${release}.fasta";
 
-  my $outFile = "$mgr->{pipelineDir}/downloadSite/$dir/$outFile";
+  my $outFile = "$mgr->{dataDir}/downloadSite/$dir/$outFile";
 
-  $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/downloadSite/$dir");
 
   $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable");
 
@@ -1703,11 +1704,11 @@ sub modifyGenomeDownloadFile {
 
   return if $mgr->startStep("Modifying $file for download", $signal);
 
-  my $inFile = "$mgr->{pipelineDir}/seqfiles/$file";
+  my $inFile = "$mgr->{dataDir}/seqfiles/$file";
 
-  my $outFile = "$mgr->{pipelineDir}/downloadSite/$dir/${dir}Genomic_${database}-${release}.fasta";
+  my $outFile = "$mgr->{dataDir}/downloadSite/$dir/${dir}Genomic_${database}-${release}.fasta";
 
-  $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/downloadSite/$dir");
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/downloadSite/$dir");
 
   $mgr->runCmd("modifyGenomeDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable");
 
@@ -1721,13 +1722,13 @@ sub makeGFF {
 
    my $signal = "gff$file";
 
-   my $log = "$mgr->{pipelineDir}/logs/${signal}.log";
+   my $log = "$mgr->{dataDir}/logs/${signal}.log";
 
    my $db = $model;
 
    $db =~ s/bModel/B/;
 
-   $file = "$mgr->{pipelineDir}/downloadSite/${dir}/$file";
+   $file = "$mgr->{dataDir}/downloadSite/${dir}/$file";
 
    return if $mgr->startStep("Making gff $file file", $signal);
 
@@ -1747,7 +1748,7 @@ sub removeFile {
 
   return if $mgr->startStep("removing $file from $fileDir", $signal);
 
-  $mgr->runCmd("rm -f $mgr->{pipelineDir}/${fileDir}/$file");
+  $mgr->runCmd("rm -f $mgr->{dataDir}/${fileDir}/$file");
 
   $mgr->endStep($signal);
 }
@@ -1805,11 +1806,11 @@ sub filterSequences {
 
   my $filter = "$blastDir/$filterDir/$filterType";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${seqFile}.$filterType.log";
+  my $logFile = "$mgr->{dataDir}/logs/${seqFile}.$filterType.log";
 
-  my $input = "$mgr->{pipelineDir}/seqfiles/$seqFile";
+  my $input = "$mgr->{dataDir}/seqfiles/$seqFile";
 
-  my $output = "$mgr->{pipelineDir}/seqfiles/${seqFile}.$filterType";
+  my $output = "$mgr->{dataDir}/seqfiles/${seqFile}.$filterType";
 
   $mgr->runCmd("$filter $input $opt > $output 2>> $logFile");
 
@@ -1838,7 +1839,7 @@ sub loadLowComplexitySequences {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $input = "$mgr->{pipelineDir}/seqfiles/$file";
+  my $input = "$mgr->{dataDir}/seqfiles/$file";
 
   my $args = "--seqFile $input --fileFormat 'fasta' --extDbName '$extdbName' --extDbVersion '$extDbRlsVer' --seqType $type --maskChar $mask $opt";
 
@@ -1880,7 +1881,7 @@ sub extractTranscriptSeqs {
 
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
-  my $outputFile = "$mgr->{pipelineDir}/seqfiles/${species}${name}.fsa";
+  my $outputFile = "$mgr->{dataDir}/seqfiles/${species}${name}.fsa";
   my $args = "--taxon_id_list '$taxonId' --outputfile $outputFile --extractonly";
 
     $mgr->runPlugin("${species}_${name}_ExtractUnalignedAssemSeqs",
@@ -1897,8 +1898,8 @@ sub extractAssemblies {
 
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
-  my $seqFile = "$mgr->{pipelineDir}/seqfiles/${species}$name.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${species}${name}Extract.log";
+  my $seqFile = "$mgr->{dataDir}/seqfiles/${species}$name.fsa";
+  my $logFile = "$mgr->{dataDir}/logs/${species}${name}Extract.log";
 
   my $sql = "select na_sequence_id,'[$species]',description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
   my $cmd = "gusExtractSequences --outputFile $seqFile --verbose --idSQL \"$sql\" 2>>  $logFile";
@@ -1933,16 +1934,16 @@ sub loadContigAlignments {
   my $taxonHsh = $mgr->{taxonHsh};
   my $contigDbRlsHsh =  $mgr->{contigDbRlsHsh};
 
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
 
   my $signal = "Load${species}${queryName}BLATAlignments";
   return if $mgr->startStep("Loading ${species}${queryName} BLAT Alignments", $signal);
   my $genomeId = $contigDbRlsHsh->{$species}->[2];
   my $taxonId = $taxonHsh->{$species};
 
-  my $pslDir = "$pipelineDir/genome/${species}${queryName}-${targetName}/master/mainresult/per-seq";
+  my $pslDir = "$dataDir/genome/${species}${queryName}-${targetName}/master/mainresult/per-seq";
 
-  my $qFile = "$pipelineDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
+  my $qFile = "$dataDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
   my $tmpFile;
   my $qDir = "/tmp/" . $species;
 
@@ -1950,7 +1951,7 @@ sub loadContigAlignments {
         &getTableId($mgr, "Assembly") :
         &getTableId($mgr, "AssemblySequence");
 
-    $qFile = "$pipelineDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
+    $qFile = "$dataDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
     $tmpFile = $qDir . "/blocked.seq";
 
 # copy qFile to /tmp directory to work around a bug in the
@@ -1992,7 +1993,7 @@ sub clusterByContigAlign {
     my ($mgr, $species, $name, $extDbName, $extDbRlsVer) = @_;
     my $propertySet = $mgr->{propertySet};
 
-    my $pipelineDir = $mgr->{'pipelineDir'};
+    my $dataDir = $mgr->{'dataDir'};
     #my $taxonId = $mgr->{taxonId};
     
     my $taxonId = $mgr->{taxonHsh}->{$species};
@@ -2005,8 +2006,8 @@ sub clusterByContigAlign {
     $mgr->{genbankDbRlsId} =  &getDbRlsId($mgr,$extDbNameGB,$extDbRlsVerGB) unless $mgr->{genbankDbRlsId};
     my $gb_db_rel_id = $mgr->{genbankDbRlsId};
 
-    my $outputFile = "$pipelineDir/cluster/$species$name/cluster.out";
-    my $logFile = "$pipelineDir/logs/${name}Cluster.log";
+    my $outputFile = "$dataDir/cluster/$species$name/cluster.out";
+    my $logFile = "$dataDir/logs/${name}Cluster.log";
 
     my $args = "--stage $name --taxon_id $taxonId --query_db_rel_id $gb_db_rel_id --target_table_name ExternalNASequence "
 	. "--target_db_rel_id $extDbRelId --out $outputFile --sort 1";
@@ -2023,7 +2024,7 @@ sub snpGffToFasta {
 
   my $signal = "convert${gffFile}ToFasta";
 
-  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{dataDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Converting $gffFile to a fasta formatted file", $signal);
 
@@ -2031,11 +2032,11 @@ sub snpGffToFasta {
 
   $subdir =~ s/\.gff//;
 
-  $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/snp/$subdir");
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/snp/$subdir");
 
   my $outFile = "${subdir}.fasta";
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --reference_strain $refStrain --output_file $mgr->{pipelineDir}/snp/$subdir/$outFile --make_fasta_file_only > --gff_format $gffFormat 2>> $logfile";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --reference_strain $refStrain --output_file $mgr->{dataDir}/snp/$subdir/$outFile --make_fasta_file_only > --gff_format $gffFormat 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
@@ -2057,14 +2058,14 @@ sub runMummer {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{dataDir}/logs/${signal}.log";
 
   my $mummerPath = $propertySet->getProp('mummerDir');
 
-  opendir (SNPDIR,"$mgr->{pipelineDir}/snp/$snpDir") || die "Unable to open $mgr->{pipelineDir}/snp/$snpDir\n";
+  opendir (SNPDIR,"$mgr->{dataDir}/snp/$snpDir") || die "Unable to open $mgr->{dataDir}/snp/$snpDir\n";
 
   while(my $snpFile = readdir(SNPDIR)) {
-    my $cmd = "callMUMmerForSnps --mummerDir $mummerPath --query_file $mgr->{pipelineDir}/seqfiles/$queryFile --output_file $mgr->{pipelineDir}/snp/$outFile --snp_file $mgr->{pipelineDir}/snp/$snpDir/$snpFile 2>> $logfile"; 
+    my $cmd = "callMUMmerForSnps --mummerDir $mummerPath --query_file $mgr->{dataDir}/seqfiles/$queryFile --output_file $mgr->{dataDir}/snp/$outFile --snp_file $mgr->{dataDir}/snp/$snpDir/$snpFile 2>> $logfile"; 
 
     $mgr->runCmd($cmd);
   }
@@ -2085,7 +2086,7 @@ sub snpMummerToGFF {
 
   return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{pipelineDir}/snp/$gffFile --mummer_file $mgr->{pipelineDir}/snp/$mummerFile --output_file $mgr->{pipelineDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{pipelineDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --mummer_file $mgr->{dataDir}/snp/$mummerFile --output_file $mgr->{dataDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{dataDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
 
   $mgr->runCmd($cmd);
 
@@ -2095,7 +2096,7 @@ sub snpMummerToGFF {
 sub loadMummerSnpResults {
   my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$gffFile) = @_;
 
-  my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{pipelineDir}/snp/$gffFile";
+  my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{dataDir}/snp/$gffFile";
 
     $mgr->runPlugin("load$gffFile",
 		    "ApiCommonData::Load::Plugin::InsertSnps",
@@ -2107,7 +2108,7 @@ sub createSageTagNormFiles {
   my ($mgr,$name,$paramValue) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $fileDir = "$mgr->{pipelineDir}/sage";
+  my $fileDir = "$mgr->{dataDir}/sage";
 
   my $signal = "Create_${name}_NormFiles";
 
@@ -2131,7 +2132,7 @@ sub createSignalPDir {
 
   return if $mgr->startStep("Creating SignalP dir", $signal);
 
-  my $signalpDir = "$mgr->{'pipelineDir'}/signalp";
+  my $signalpDir = "$mgr->{'dataDir'}/signalp";
 
   $mgr->runCmd("mkdir $signalpDir");
 
@@ -2169,11 +2170,11 @@ sub runSignalP {
   
   my $propertySet = $mgr->{propertySet};
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${species}SignalP.log";
+  my $logFile = "$mgr->{dataDir}/logs/${species}SignalP.log";
 
-  my $inFilePath = "$mgr->{pipelineDir}/seqfiles/${species}AnnotatedProteins.fsa";
+  my $inFilePath = "$mgr->{dataDir}/seqfiles/${species}AnnotatedProteins.fsa";
 
-  my $outFilePath = "$mgr->{pipelineDir}/signalp/${species}SignalP.out";
+  my $outFilePath = "$mgr->{dataDir}/signalp/${species}SignalP.out";
   
   my $binPath = $propertySet->getProp('signalP.path');
   
@@ -2188,7 +2189,7 @@ sub loadSignalPData{
   my ($mgr, $species,$extDbName,$extDbRlsVer) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $resultFile = "$mgr->{pipelineDir}/signalp/${species}SignalP.out";
+  my $resultFile = "$mgr->{dataDir}/signalp/${species}SignalP.out";
 
   my $version = $propertySet->getProp('signalP.version');
 
@@ -2208,7 +2209,7 @@ sub createTmhmmDir {
   my $signal = "createTmhmmDir";
   return if $mgr->startStep("Creating Tmhmm dir", $signal);
 
-  my $tmhmmDir = "$mgr->{'pipelineDir'}/tmhmm";
+  my $tmhmmDir = "$mgr->{'dataDir'}/tmhmm";
 
   $mgr->runCmd("mkdir $tmhmmDir");
 
@@ -2222,7 +2223,7 @@ sub createDir {
 
   return if $mgr->startStep("Creating Tmhmm dir", $signal);
 
-  $mgr->runCmd("mkdir -p $mgr->{'pipelineDir'}/$dir");
+  $mgr->runCmd("mkdir -p $mgr->{'dataDir'}/$dir");
 
   $mgr->endStep($signal);
 }
@@ -2259,11 +2260,11 @@ sub runTMHmm{
 
   my $binPath = $propertySet->getProp('tmhmm.path');
 
-  my $seqFile = "$mgr->{pipelineDir}/seqfiles/${species}AnnotatedProteins.fsa";
+  my $seqFile = "$mgr->{dataDir}/seqfiles/${species}AnnotatedProteins.fsa";
 
-  my $outFile = "$mgr->{'pipelineDir'}/tmhmm/${species}Tmhmm.out";
+  my $outFile = "$mgr->{'dataDir'}/tmhmm/${species}Tmhmm.out";
 
-  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{pipelineDir}/logs/${species}Tmhmm.log";
+  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{dataDir}/logs/${species}Tmhmm.log";
 
   $mgr->runCmd($cmd);
 
@@ -2275,7 +2276,7 @@ sub loadTMHmmData{
   my ($mgr, $species,$extDbName,$extDbRlsVer) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $resultFile = "$mgr->{pipelineDir}/tmhmm/${species}Tmhmm.out";
+  my $resultFile = "$mgr->{dataDir}/tmhmm/${species}Tmhmm.out";
 
   my $version = $propertySet->getProp('tmhmm.version');
 
@@ -2373,7 +2374,7 @@ sub insertNormSageTagFreqs {
 
   return if $mgr->startStep("Loading normalized $name", $signal);
 
-  my $fileDir = "$mgr->{pipelineDir}/sage/$name";
+  my $fileDir = "$mgr->{dataDir}/sage/$name";
 
   opendir (DIR,$fileDir);
 
@@ -2405,7 +2406,7 @@ sub copyFilesToComputeCluster {
   my $signal = "${file}ToCluster";
   return if $mgr->startStep("Copying $file to $serverPath/$mgr->{buildName}/$file on $clusterServer", $signal);
 
-  my $fileDir = "$mgr->{pipelineDir}/$dir";
+  my $fileDir = "$mgr->{dataDir}/$dir";
 
   $mgr->{cluster}->copyTo($fileDir, $file, "$serverPath/$mgr->{buildName}/$dir");
 
@@ -2430,14 +2431,14 @@ sub clusterByBlastSim {
   my @matrixFileArray;
   foreach my $matrix (@matrices) {
     push(@matrixFileArray,
-	 "$mgr->{pipelineDir}/matrix/$matrix/master/mainresult/blastMatrix.out.gz");
+	 "$mgr->{dataDir}/matrix/$matrix/master/mainresult/blastMatrix.out.gz");
   }
   my $matrixFiles = join(",", @matrixFileArray);
 
   my $ceflag = ($consistentEnds eq "yes")? "--consistentEnds" : "";
 
-  my $outputFile = "$mgr->{pipelineDir}/cluster/$species$name/cluster.out";
-  my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
+  my $outputFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
+  my $logFile = "$mgr->{dataDir}/logs/$signal.log";
 
   my $cmd = "buildBlastClusters.pl --lengthCutoff $length --percentCutoff $percent --verbose --files '$matrixFiles' --logBase $logbase --iterateCliqueSizeArray $cliqueSzArray $ceflag --iterateLogBaseArray $logbaseArray --sort > $outputFile 2>> $logFile";
 
@@ -2455,7 +2456,7 @@ sub splitCluster {
 
   return if $mgr->startStep("SplitCluster $name", $signal);
 
-  my $clusterFile = "$mgr->{pipelineDir}/cluster/$species$name/cluster.out";
+  my $clusterFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
   my $splitCmd = "splitClusterFile $clusterFile";
 
   $mgr->runCmd($splitCmd);
@@ -2470,7 +2471,7 @@ sub assembleTranscripts {
 
   return if $mgr->startStep("Assemble $name", $signal);
 
-  my $clusterFile = "$mgr->{pipelineDir}/cluster/$species$name/cluster.out";
+  my $clusterFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
 
   &runAssemblePlugin($clusterFile, "big", $species, $name, $old, $reassemble, $mgr);
   &runAssemblePlugin($clusterFile, "small", $species, $name, $old, $reassemble, $mgr);
@@ -2498,7 +2499,7 @@ sub reassembleTranscripts {
   my $sql = "select na_sequence_id from dots.assembly where taxon_id = $taxonId  and (assembly_consistency < 90 or length < 50 or length is null or description = 'ERROR: Needs to be reassembled')";
 
   print $sql . "\n"; # DEBUG
-  my $clusterFile = "$mgr->{pipelineDir}/cluster/$species$name/cluster.out";
+  my $clusterFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
 
   my $suffix = "reassemble";
 
@@ -2533,9 +2534,9 @@ sub runAssemblePlugin {
   my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --comment '$args'";
 
   print "running $pluginCmd\n";
-  my $logfile = "$mgr->{pipelineDir}/logs/${species}${name}Assemble.$suffix.log";
+  my $logfile = "$mgr->{dataDir}/logs/${species}${name}Assemble.$suffix.log";
 
-  my $assemDir = "$mgr->{pipelineDir}/assembly/$species$name/$suffix";
+  my $assemDir = "$mgr->{dataDir}/assembly/$species$name/$suffix";
   $mgr->runCmd("mkdir -p $assemDir");
   chdir $assemDir || die "Can't chdir to $assemDir";
 
@@ -2592,7 +2593,7 @@ sub copyFilesFromComputeCluster {
   $mgr->{cluster}->copyFrom(
 		       "$serverPath/$mgr->{buildName}/$dir/$name/",
 		       "master",
-		       "$mgr->{pipelineDir}/$dir/$name");
+		       "$mgr->{dataDir}/$dir/$name");
   $mgr->endStep($signal);
 }
 
@@ -2748,8 +2749,8 @@ sub runPFamHmm{
 
   my $propertySet = $mgr->{propertySet};
   my $signal = $name;
-  my $seqfilesDir = "$mgr->{pipelineDir}/seqfiles/";
-  my $outfilesDir = "$mgr->{pipelineDir}/analysis/";
+  my $seqfilesDir = "$mgr->{dataDir}/seqfiles/";
+  my $outfilesDir = "$mgr->{dataDir}/analysis/";
   my $fi = "${name}.fsa";
   my $fo = "${name}.out";
 
@@ -2768,7 +2769,7 @@ sub loadPfamData{
   my $alg = "hmmpfam";
   my $ver = $propertySet->getProp('hmmpfamVer');
   my $desc = "$alg $ver";
-  my $outfilesDir = "$mgr->{pipelineDir}/analysis/";
+  my $outfilesDir = "$mgr->{dataDir}/analysis/";
   my $f = "${name}.out";
   my $file = "$outfilesDir$f";
   my $extDbName = $propertySet->getProp('contigDbName');
@@ -2819,13 +2820,13 @@ sub makeOrfFile {
   my $outFile = $seqFile;
   $outFile =~ s/\.\w+\b//;
   $outFile = "${outFile}_orf${minPepLength}.gff";
-  $outFile = "$mgr->{pipelineDir}/seqfiles/$outFile";
+  $outFile = "$mgr->{dataDir}/seqfiles/$outFile";
   
   my $signal = "makeOrfFileFrom_${seqFile}";
   return if $mgr->startStep("makeOrfFile from $seqFile", $signal);
 
   my $cmd = <<"EOF";
-orfFinder --dataset $mgr->{pipelineDir}/seqfiles/$seqFile \\
+orfFinder --dataset $mgr->{dataDir}/seqfiles/$seqFile \\
 --minPepLength $minPepLength \\
 --outFile $outFile
 EOF
@@ -2843,7 +2844,7 @@ sub loadOrfFile {
 --extDbName '$extDbName'  \\
 --extDbRlsVer '$extDbRlsVer' \\
 --mapFile $mapFile \\
---inputFileOrDir $mgr->{pipelineDir}/seqfiles/$orfFile \\
+--inputFileOrDir $mgr->{dataDir}/seqfiles/$orfFile \\
 --fileFormat gff3   \\
 --seqSoTerm ORF  \\
 --soCvsVersion $soCvsVersion \\
@@ -2868,7 +2869,7 @@ sub createIprscanDir{
   my $signal = "make" . $subject . "Dir";
 
   my $buildName = $mgr->{'buildName'};
-  my $pipelineDir = $mgr->{'pipelineDir'};
+  my $dataDir = $mgr->{'dataDir'};
   my $nodePath = $propertySet->getProp ('nodePath');
   my $serverPath = $propertySet->getProp ('serverPath');
   my $taskSize = $propertySet->getProp ('iprscan.taskSize');
@@ -2880,12 +2881,12 @@ sub createIprscanDir{
   					: $ENV{USER} . "\@pcbi.upenn.edu";
 
   return if $mgr->startStep("Creating iprscan dir", $signal);
-  $mgr->runCmd("mkdir -p $pipelineDir/iprscan");
+  $mgr->runCmd("mkdir -p $dataDir/iprscan");
   #Disable this to allow InterPro DBs to be upgrated independent of the 
   #Inteproscan release, just in case. 
   my $doCrc = "false";
 
-  &makeIprscanDir ($subject, $buildName, $pipelineDir, 
+  &makeIprscanDir ($subject, $buildName, $dataDir, 
   					$serverPath, $nodePath, $taskSize, 
 					$nodeClass, "$serverPath/$buildName/seqfiles", 
 					$subjectFile, "p", $appl, $doCrc, $email);
@@ -2918,7 +2919,7 @@ sub startIprScanOnComputeCluster {
 
    my $propertySet = $mgr->{propertySet};
 
-   my $resultFileDir = "$mgr->{pipelineDir}/iprscan/$dir/master/mainresult/";
+   my $resultFileDir = "$mgr->{dataDir}/iprscan/$dir/master/mainresult/";
 
    my $signal = "load${dir}Iprscan";
    return if $mgr->startStep("Starting Data Load $signal", $signal);
