@@ -127,6 +127,7 @@ my $SUPPORTED_FORMATS =
    'PRINTS' => 'loadPrintsFormat',
    'PROSITE' => 'loadPrositeFormat',
    'INTERPRO' => 'loadInterproFormat',
+   'SUPERFAMILY' => 'loadSuperfamilyFormat'
   } ;
 
 sub run {
@@ -345,6 +346,35 @@ sub loadInterproFormat {
    return $eCount;
 }
 
+#0016282 SSF54076        d.5.1   d11bga_ RNase A-like
+#
+# The superfamily.tab file bundled with the Interproscan data does not have the
+# "SSF" prefix seen above. This change is needed to ensure consistency between superfamily ids, 
+# and interproscan results.
+# 
+# The script to make this change is in the <unpack> section of plasmoResources.xml: 
+# <unpack>cat @downloadDir@/InterproscanData/12.1/iprscan/data/superfamily.tab | tr "\t" ":" | awk -F: '{ ssfid = sprintf ("SSF%s", $2); printf "%s\t%s\t%s\t%s\t%s\n", $1, ssfid, $3, $4, $5}' > @downloadDir@/InterproscanData/12.1/iprscan/data/superfamily-fixed.tab</unpack>
+# 
+
+sub loadSuperfamilyFormat {
+	my ($self, $dbName, $file, $logFreq) = @_;
+
+	my $testNum = $self->getArgs()->{'testnumber'};
+	my $eCount = 0;
+	open (DFILE, "< $file");
+	my $line;
+	while ($line = <DFILE>) {
+		$line =~ s/\s+$//;
+		my ($acc, $id, $scopclass, $junk, $desc) = split (/\t/, $line);
+		$self->submitDbRef ($dbName, $id, $acc, $desc, $logFreq, ++$eCount);
+
+		last if ($testNum && $eCount >= $testNum);
+	}
+
+	close DFILE;
+	return $eCount;
+}
+
 
 sub submitDbRef{
    my ($self, $dbName, $id, $name, $descr, $logFreq, $eCount) = @_;
@@ -436,7 +466,6 @@ sub undoTables {
 		'SRes.ExternalDatabase'
      );
 }
-
 
 1;
 
