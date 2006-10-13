@@ -597,8 +597,11 @@ sub getAllTranscriptLocations {
 
   my %data;
 
+  my $seqTable = $self->getArg('seqTable');
+  $seqTable ~ s/::/./;
+
   my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,dots.ExternalNaSequence ens
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,$seqTable ens
              WHERE tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id
             ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
