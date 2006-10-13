@@ -1,0 +1,172 @@
+#!@perl@
+
+## unloads flat files for keyword search to grep through
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use CBIL::Bio::SequenceUtils;
+use GUS::Supported::GusConfig;
+
+my ($outDir, $justComments, $gusConfigFile, $debug, $verbose);
+&GetOptions("outputDir=s" => \$outDir,
+            "justComments!" => \$justComments,
+            "verbose!"=> \$verbose,
+            "debug!" => \$debug,
+            "gusConfigFile=s" => \$gusConfigFile);
+            
+
+if (!$outDir){
+	die "usage: $0 --outputDir <outputDirectory> --verbose --debug --gusConfigFile [\$GUS_HOME/config/gus.config]\n";
+}
+
+print STDERR "Establishing dbi login\n" if $verbose;
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					$gusconfig->getReadOnlyDatabaseLogin(),
+					$gusconfig->getReadOnlyDatabasePassword,
+					$verbose,0,1,
+					$gusconfig->getCoreSchemaName,
+					$gusconfig->getOracleDefaultRollbackSegment());
+
+my $dbh = $db->getQueryHandle();
+
+$dbh->{LongReadLen} = 8192 * 1024;
+my $sql;
+
+# metabolic pathways
+$sql = <<SQL;
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+                AS pathway_name
+FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NaSequence ns, sres.TaxonName tn     
+WHERE gf.na_feature_id = drnf.na_feature_id
+  AND drnf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'Links to Pathway Maps'
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+         gf.source_id,
+         nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+SQL
+
+&extractFile($dbh, $outDir . "/metpaths.txt", $sql);
+
+# comments
+$sql = <<SQL;
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id, regexp_replace(c.content, '[[:space:]]', ' ')
+FROM logins.users u, comments.comments c, dots.GeneFeature gf,
+     dots.NaSequence ns, sres.TaxonName tn
+WHERE u.email = c.email
+  AND c.comment_target_id='gene'
+  AND c.stable_id = gf.source_id
+  AND c.review_status_id != 'rejected'
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id,
+         regexp_replace(c.content, '[[:space:]]', ' ')
+SQL
+
+&extractFile($dbh, $outDir . "/comments.txt", $sql);
+
+exit if $justComments;
+
+# notes
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       nf.source_id, regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1), '[[:space:]]', ' ')
+FROM dots.naFeatureComment nfc, dots.NaFeature nf, dots.NaSequence ns, sres.TaxonName tn
+WHERE nf.na_feature_id = nfc.na_feature_id
+  AND nf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY tn.name, nf.source_id, regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1), '[[:space:]]', ' ')
+SQL
+
+&extractFile($dbh, $outDir . "/notes.txt", $sql);
+
+# EC description
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), aas.source_id, ec.description
+FROM dots.aaSequence aas, dots.aaSequenceEnzymeClass asec,
+     sres.enzymeClass ec, sres.TaxonName tn
+WHERE aas.aa_sequence_id = asec.aa_sequence_id
+  AND asec.enzyme_class_id = ec.enzyme_class_id
+  AND aas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY tn.name, aas.source_id, ec.description
+SQL
+
+&extractFile($dbh, $outDir . "/ec.txt", $sql);
+
+# gene product
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id, regexp_replace(gf.product, '[[:space:]]', ' ')
+FROM dots.GeneFeature gf, dots.NaSequence ns,
+     sres.TaxonName tn
+WHERE gf.source_id IS NOT NULL
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY tn.name, gf.source_id, gf.product
+SQL
+
+&extractFile($dbh, $outDir . "/product.txt", $sql);
+
+
+# BLAST files
+$sql = <<SQL;
+
+SELECT s.pvalue_exp, substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       tas.source_id, regexp_replace(eas.description, '[[:space:]]', ' ')
+FROM core.tableInfo subject, dots.similarity s, core.tableInfo query,
+     dots.ExternalAaSequence eas, dots.TranslatedAaSequence tas,
+     sres.TaxonName tn
+WHERE s.query_table_id = query.table_id
+  AND s.subject_table_id = subject.table_id
+  AND subject.name = 'ExternalAASequence'
+  AND s.subject_id = eas.aa_sequence_id
+  AND eas.description is not null
+  AND query.name = 'TranslatedAASequence'
+  AND s.query_id = tas.aa_sequence_id
+  AND tas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY pvalue_exp, tn.name, tas.source_id, eas.description
+SQL
+
+&extractFile($dbh, $outDir . "/blast.txt", $sql);
+
+sub extractFile {
+  my ($dbh, $outFile, $sql) = @_;
+
+  print STDERR "SQL: $sql\n" if $verbose;
+
+  my $count = 0;
+  my $statement = $dbh->prepare($sql);
+  $statement->execute();
+  my @ids;
+
+  print "outFile: $outFile\n" if $verbose;
+  open(OUT,">$outFile");
+
+  while(my @row = $statement->fetchrow_array()){
+    $count++;
+    print STDERR "Processing record $count\n" if $verbose && $count % 10000 == 0;
+    print OUT join("\t", @row), "\n";
+  }
+
+  close(OUT);
+  $statement->finish();
+}
+ 
