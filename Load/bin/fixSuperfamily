@@ -1,0 +1,7 @@
+#!/bin/sh
+# Purpose: Prepend the superfamily ids (called "sunids" on supfam.org) with SSF to make it compatible with the Interproscan
+# Usage: fixSuperfamily <dataDir>
+#			dataDir: Directory with the interproscan data files reside (specifically, superfamily.tab)
+# Also see: InsertInterproDomainDbs.pm, insertInterpro-config.xml, plasmoResources.xml
+# 
+cat $1/superfamily.tab | tr "\t" ":" | awk -F: '{ ssfid = sprintf ("SSF%s", $2); printf "%s\t%s\t%s\t%s\t%s\n", $1, ssfid, $3, $4, $5}' > $1/superfamily-fixed.tab
