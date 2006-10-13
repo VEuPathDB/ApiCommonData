@@ -496,10 +496,12 @@ sub copyPipelineDirToComputeCluster {
   my $propertySet = $mgr->{propertySet};
   my $buildName = $mgr->{'buildName'}; 
   my $release = "release".$propertySet->getProp('projectRelease');
+  my $myPipelineName = $propertySet->getProp('myPipelineName');
   my $serverPath = $propertySet->getProp('serverPath');
+  my $clusterPath = "$serverPath/$myPipelineName";
   my $fromDir =   $propertySet->getProp('buildDir');
   my $signal = "dir2cluster";
-  return if $mgr->startStep("Copying $buildName in $fromDir to $serverPath on clusterServer", $signal);
+  return if $mgr->startStep("Copying $buildName in $fromDir to $clusterPath on clusterServer", $signal);
 
   $mgr->{cluster}->copyTo($fromDir, $buildName, "$serverPath");
 
