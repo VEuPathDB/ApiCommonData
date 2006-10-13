@@ -12,8 +12,6 @@ sub createDataDir {
 
   return if $mgr->startStep("Creating dir structure", $signal);
 
-  my $pipelineDir = $mgr->{'pipelineDir'};    # buildDir/release/speciesNickname
-  print STDERR "$pipelineDir = pipeline dir\n";
   $mgr->runCmd("mkdir -p $dataDir") unless (-e "$dataDir");
   $mgr->runCmd("mkdir -p $dataDir/seqfiles") unless (-e "$dataDir/seqfiles");
   $mgr->runCmd("mkdir -p $dataDir/misc") unless (-e "$dataDir/misc");
@@ -536,7 +534,7 @@ sub moveSeqFile {
     $seqFile =~ s/\.gz//;
   }
 
-  $mgr->runCmd("mkdir -p $mgr->{pipelineDir}/$dir");
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/$dir");
 
   $mgr->runCmd("mv $seqFile $mgr->{dataDir}/$dir");
 
@@ -870,15 +868,15 @@ sub extractIdsFromBlastResult {
 sub filterBLASTResults{
   my ($mgr, $taxonList, $gi2taxidFile, $blastDir) = @_;
 
-  my $blastFile =  "$mgr->{pipelineDir}/similarity/$blastDir/master/mainresult/blastSimilarity.unfiltered.out";
+  my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.unfiltered.out";
 
-  my $outFile = "$mgr->{pipelineDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
+  my $outFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
 
-  $gi2taxidFile = "$mgr->{pipelineDir}/misc/$gi2taxidFile";
+  $gi2taxidFile = "$mgr->{dataDir}/misc/$gi2taxidFile";
 
   my $signal = "filtering${blastDir}BlastResults";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
 
   $taxonList =~ s/"//g;
 
