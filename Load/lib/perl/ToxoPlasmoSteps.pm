@@ -7,51 +7,40 @@ use GUS::Pipeline::Manager;
 
 use strict;
 
-sub initPlasmoAnalysis {
+## NOTE: at the bottom of this file are the old "steps specific property
+## declarations.  we intend to incorporate them into the steps that need them
+
+sub initToxoAnalysis {
   my ($propertyFile, $printXML, $pipelineName) = @_;
 
-  my @plasmoProps = (
-    # step specific properties
-     ["blastsimilarity.taskSize", "", "number of query sequences per blast similarity done on cluster"],
-     ["exportpredPath", "", "full path to exportpred software"],
-     ["genome.taskSize", "" ,"fill in"],
-     ["genome.path", "" ,"fill in"],
-     ["genome.options", "" ,"fill in"],
-     ["genome.version", "" ,"fill in"],
-     ["phrapDir", "", "fill in"],
-     ["fileOfRepeats", "", "fill in"],
-     ["wuBlastBinPathCluster", "", "path to find wu BLAST on cluster"],
-     ["signalP.version", "", "version number for the signalP package"],
-     ["signalP.path", "","full path of signalP executable"],
-     ["tmhmm.path", "","full path of tmhmm executable"],
-     ["tmhmm.version", "","version number for the TMHMM package"],
-     ["trfPath", "","path of directory that contains trf400"],
-     ["ncbiBlastPath", "", "path to find ncbi blast dir on server"],
-     ["psipredPath", "", "path to find the psipred executables"],
-     ["psipred.taskSize", "","number of seqs per subtask to be done on compute cluster"],
-     ["psipred.clusterpath", "","path to dir containing psipred script on cluster"],
-     ["trnascan.taskSize", "", "number of seqs per subtask to be done on compute cluster"],
-     ["trnascan.clusterpath", "", "path to dir containing tRNAscan script on cluster"]
- );
+  my $allSpecies = 'Tgondii';
 
-  my $allSpecies = 'Pfalciparum,Pyoelii,Pvivax,Pberghei,Pchabaudi';
+  my $taxId = ["Tgondii:5811"];
 
   my ($mgr, $buildDir, $release)
     = &initToxoPlasmoAnalysis(\@plasmoProps, $propertyFile, $printXML,
-			      $allSpecies);
+			      $allSpecies, $taxId);
+
+  return ($mgr, $buildDir, $release, $allSpecies);
+}
+
+sub initPlasmoAnalysis {
+  my ($propertyFile, $printXML, $pipelineName) = @_;
+
+  my $allSpecies = 'Pfalciparum,Pyoelii,Pvivax,Pberghei,Pchabaudi';
 
   my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5821","Pchabaudi:5825"];
 
-  my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
-
-  $mgr->{taxonHsh} = $taxonHsh;
+  my ($mgr, $buildDir, $release)
+    = &initToxoPlasmoAnalysis(\@plasmoProps, $propertyFile, $printXML,
+			      $allSpecies, $taxId);
 
   return ($mgr, $buildDir, $release, $allSpecies);
 }
 
 
 sub initToxoPlasmoAnalysis {
-  my ($projProps, $propertiesFile, $printXML, $allSpecies) = @_;
+  my ($projProps, $propertiesFile, $printXML, $allSpecies, $taxId) = @_;
 
   $| = 1;
   umask 002;
@@ -85,8 +74,6 @@ sub initToxoPlasmoAnalysis {
   my $buildName = "$release/analysis_pipeline/$myPipelineName";
   my $pipelineDir = "$buildDir/$buildName";
 
-print STDERR "pd: $pipelineDir\n";
-
   my $cluster;
   if ($propertySet->getProp('clusterServer') ne "none") {
     $cluster = GUS::Pipeline::SshCluster->new($propertySet->getProp('clusterServer'),
@@ -100,10 +87,6 @@ print STDERR "pd: $pipelineDir\n";
 					$propertySet->getProp('testNextPlugin'),
 					$printXML);
 
-  $mgr->addCleanupCommand("updateMaterializedView --mview GeneAlias --owner apidb");
-
-  $mgr->addCleanupCommand("updateMaterializedView --mview SequenceAlias --owner apidb");
-
   $mgr->{buildName} = $buildName;
 
   $mgr->{dataDir} = $dataDir;
@@ -116,7 +99,50 @@ print STDERR "pd: $pipelineDir\n";
 
 #  &copyPipelineDirToComputeCluster($mgr);
 
+  my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
+
+  $mgr->{taxonHsh} = $taxonHsh;
+
   return ($mgr, $buildDir, $release);
 }
+
+  my @plasmoProps = (
+    # step specific properties
+     ["blastsimilarity.taskSize", "", "number of query sequences per blast similarity done on cluster"],
+     ["exportpredPath", "", "full path to exportpred software"],
+     ["genome.taskSize", "" ,"fill in"],
+     ["genome.path", "" ,"fill in"],
+     ["genome.options", "" ,"fill in"],
+     ["genome.version", "" ,"fill in"],
+     ["phrapDir", "", "fill in"],
+     ["fileOfRepeats", "", "fill in"],
+     ["wuBlastBinPathCluster", "", "path to find wu BLAST on cluster"],
+     ["signalP.version", "", "version number for the signalP package"],
+     ["signalP.path", "","full path of signalP executable"],
+     ["tmhmm.path", "","full path of tmhmm executable"],
+     ["tmhmm.version", "","version number for the TMHMM package"],
+     ["trfPath", "","path of directory that contains trf400"],
+     ["ncbiBlastPath", "", "path to find ncbi blast dir on server"],
+     ["psipredPath", "", "path to find the psipred executables"],
+     ["psipred.taskSize", "","number of seqs per subtask to be done on compute cluster"],
+     ["psipred.clusterpath", "","path to dir containing psipred script on cluster"],
+     ["trnascan.taskSize", "", "number of seqs per subtask to be done on compute cluster"],
+     ["trnascan.clusterpath", "", "path to dir containing tRNAscan script on cluster"]
+ );
+
+my @toxoProps = 
+(
+ ["wuBlastBinPathCluster", "", "path to find wu BLAST on cluster"],
+ ["wuBlastPath", "", "path to find wu BLAST locally"],
+ ["blastzPath", "", "path to find BLASTZ locally"],
+ ["signalP.version", "", "version number for the signalP package"],
+ ["signalP.path", "","full path of signalP executable"],
+ ["projectName", "", " project name from projectinfo.name"],
+ ["tmhmm.path", "","full path of tmhmm executable"],
+ ["tmhmm.version", "","version number for the TMHMM package"],
+ ["ncbiBlastPath", "", "path to find ncbi blast dir on server"],
+ ["trfPath","","path to find the trf software"]
+);
+
 
 1;
