@@ -18,7 +18,7 @@ sub initToxoAnalysis {
   my $taxId = ["Tgondii:5811"];
 
   my ($mgr, $buildDir, $release)
-    = &initToxoPlasmoAnalysis(\@plasmoProps, $propertyFile, $printXML,
+    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
 			      $allSpecies, $taxId);
 
   return ($mgr, $buildDir, $release, $allSpecies);
@@ -32,7 +32,7 @@ sub initPlasmoAnalysis {
   my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5821","Pchabaudi:5825"];
 
   my ($mgr, $buildDir, $release)
-    = &initToxoPlasmoAnalysis(\@plasmoProps, $propertyFile, $printXML,
+    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
 			      $allSpecies, $taxId);
 
   return ($mgr, $buildDir, $release, $allSpecies);
@@ -40,7 +40,7 @@ sub initPlasmoAnalysis {
 
 
 sub initToxoPlasmoAnalysis {
-  my ($projProps, $propertiesFile, $printXML, $allSpecies, $taxId) = @_;
+  my ($propertiesFile, $printXML, $allSpecies, $taxId) = @_;
 
   $| = 1;
   umask 002;
@@ -63,7 +63,6 @@ sub initToxoPlasmoAnalysis {
      ["commit", "", "fill in"],
      ["testNextPlugin", "", "fill in"],
      ["projectName", "", " project name from projectinfo.name"],
-     @$projProps
     );
 
   my $propertySet  = CBIL::Util::PropertySet->new($propertiesFile, \@properties, 1);
@@ -93,7 +92,7 @@ sub initToxoPlasmoAnalysis {
 
   $mgr->{propertiesFile} = $propertiesFile;
 
-  &createPipelineDir($mgr,$allSpecies);
+  &createDataDir($mgr,$allSpecies);
 
   &makeUserProjectGroup($mgr);
 
