@@ -211,6 +211,11 @@ sub processSnpFile{
     my $isCoding = $codingSequence ne $mockCodingSequence;
 
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
+    print STDERR "CODINGSEQ=$codingSequence\n";
+    print STDERR "MOCKCGSEQ=$mockCodingSequence\n";
+
+    print STDERR "CodingSTART=$codingSnpStart\n";
+    print STDERR "CodingEND=$codingSnpEnd\n";
 
     if($transcript) {
       my $geneFeatureId = $transcript->get('parent_id');
@@ -224,10 +229,17 @@ sub processSnpFile{
       my $startPositionInProtein = $self->calculateAminoAcidPosition($codingSnpStart);
       my $endPositionInProtein = $self->calculateAminoAcidPosition($codingSnpEnd);
 
+      print STDERR "STARTINPROTEIN=$startPositionInProtein\n";
+      print STDERR "ENDINPROTEIN=$endPositionInProtein\n";
+
+
       ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
       $snpFeature->setPositionInProtein($startPositionInProtein);
 
       my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
+
+      print STDERR "REFERENCEAASEQ=$refAaSequence\n";
+      exit();
       $snpFeature->setReferenceAa($refAaSequence);
     }
     else {
@@ -676,8 +688,9 @@ sub getCodingAndMockSequencesForTranscript {
     $mockCodingSequence = $transcripts->{$transcriptId}->{mock_coding_sequence};
   }
   else {
+    my $mockSequence = $self->createMockSequence($snpStart, $snpEnd);
     $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
-    $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '*');
+    $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, $mockSequence);
 
     $transcripts->{$transcriptId}->{coding_sequence} = $codingSequence;
     $transcripts->{$transcriptId}->{mock_coding_sequence} = $mockCodingSequence;
@@ -744,6 +757,22 @@ sub getSeqVarSoTerm {
 
   return('deletion');
 }
+
+# ----------------------------------------------------------------------
+
+sub createMockSequence {
+  my ($self, $snpStart, $snpEnd) = @_;
+
+  my $length = $snpEnd - $snpStart + 1;
+  my $mockString;
+
+  foreach(1..$length) {
+    $mockString = $mockString."*";
+  }
+  return($mockString);
+}
+
+# ----------------------------------------------------------------------
 
 sub undoTables {
   my ($self) = @_;
