@@ -221,8 +221,8 @@ sub processSnpFile{
       $snpFeature->setIsCoding(1);
       $snpFeature->setPositionInCds($codingSnpStart);
 
-      my $startPositionInProtein = ($codingSnpStart % 3 == 0) ? int($codingSnpStart / 3) : int($codingSnpStart / 3) + 1;
-      my $endPositionInProtein = ($codingSnpEnd % 3 == 0) ? int($codingSnpEnd / 3) : int($codingSnpEnd / 3) + 1;
+      my $startPositionInProtein = $self->calculateAminoAcidPosition($codingSnpStart);
+      my $endPositionInProtein = $self->calculateAminoAcidPosition($codingSnpEnd);
 
       ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
       $snpFeature->setPositionInProtein($startPositionInProtein);
@@ -272,8 +272,8 @@ sub _updateSequenceVars {
       $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
-      my $startPositionInProtein = ($start % 3 == 0) ? int($start / 3) : int($start / 3) + 1;
-      my $endPositionInProtein = ($end % 3 == 0) ? int($end / 3) : int($end / 3) + 1;
+      my $startPositionInProtein = $self->calculateAminoAcidPosition($start);
+      my $endPositionInProtein = $self->calculateAminoAcidPosition($end);
 
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $startPositionInProtein, $endPositionInProtein);
       $seqVar->setProduct($snpAaSequence);
@@ -307,8 +307,6 @@ sub createSnpFeature {
 
   my $ref = $self->getArg('reference');
 
-  my $standard = ($end > $start) ? 'insertion' : 'substitution';
-
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
     new({NAME => $name,
          SEQUENCE_ONTOLOGY_ID => $soId,
@@ -337,8 +335,8 @@ sub createSnpFeature {
       }
     }
     else {
-      $standard = 'deletion' if ($standard eq 'substitution' && $base =~ /-/);
-      $soId = $self->getSoId($standard);
+      my $seqVarSoTerm = $self->getSeqVarSoTerm($start, $end, $base);
+      $soId = $self->getSoId($seqVarSoTerm);
 
       my $seqVar =  GUS::Model::DoTS::SeqVariation->
         new({'source_id' => $sourceId,
@@ -404,14 +402,17 @@ sub getNaSeq {
 # ----------------------------------------------------------------------
 
 sub getNaLoc {
-  my ($self, $start, $end) = @_;
+  my ($self, $start, $end, $subseq) = @_;
+
+  my $refLength = $end - $start + 1;
+  my $varLength = length($subseq);
 
   my $locType;
   if ($self->getArg('ontologyTerm') eq 'SNP'){
-    $locType = $end > $start ? 'insertion_site' : 'modified_base_site';
+    $locType = $refLength < $varLength ? 'insertion_site' : 'modified_base_site';
   }
-  else{
-    $locType = 'genetic_marker_site';
+  else {
+    $locType = $refLength < $varLength ? 'insertion_site' : 'genetic_marker_site';
   }
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'location_type'=>$locType});
 
@@ -451,7 +452,7 @@ sub _getCodingSequence {
 
   unless (@exons) {
     my $id = $transcript->getId();
-    self->error ("Transcript with na_feature_id = $id had no exons\n");
+    $self->error ("Transcript with na_feature_id = $id had no exons\n");
   }
 
   # this code gets the feature locations of the exons and puts them in order
@@ -471,6 +472,7 @@ sub _getCodingSequence {
     my $codingEnd = $exon->getCodingEnd();
     next unless ($codingStart && $codingEnd);
 
+    # For a Snp to be considered coding...it must be totally included in the coding sequence
     my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
     my $isReverseCoding = $codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed;
 
@@ -500,7 +502,7 @@ sub getCodingSubstitutionPositions {
   my @results;
 
   for(my $i = 0; $i < scalar(@cdsArray); $i++) {
-    push(@results, ($i +1)) if($cdsArray[$i] ne $mockCdsArray[$i]);
+    push(@results, ($i + 1)) if($cdsArray[$i] ne $mockCdsArray[$i]);
   }
   my $snpStart = $results[0];
   my $snpEnd = $results[scalar(@results) - 1];
@@ -521,14 +523,8 @@ sub _swapBaseInSequence {
   # An insertion is when the snpStart is one base less than the snpEnd
   # deletion have a base of '-' and are treated identically to substitutions
 
-  if($normSnpStart < $normSnpEnd && $base !~ /-/) {
-    $fivePrimeFlank = substr($seq, 0,  ($normSnpStart + 1));
-    $threePrimeFlank = substr($seq, ($normSnpStart + 1));
-  }
-  else {
-    $fivePrimeFlank = substr($seq, 0, $normSnpStart);
-    $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
-  }
+  $fivePrimeFlank = substr($seq, 0, $normSnpStart);
+  $threePrimeFlank = substr($seq, ($normSnpEnd  + 1));
 
   my $newSeq =  $fivePrimeFlank. $base .$threePrimeFlank;
   $newSeq =~ s/\-//g;
@@ -604,6 +600,7 @@ sub getAllTranscriptLocations {
              FROM dots.TRANSCRIPT tf, dots.NaLocation nl,$seqTable ens
              WHERE tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id
+              AND regexp_like(ens.source_id, 'MAL\\d+') 
             ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
@@ -633,7 +630,7 @@ sub getTranscript {
 
   return(undef) if($snpStart < $transcripts[$startCursor]->{start} || $snpEnd > $transcripts[$endCursor]->{end});
 
-  while ($startCursor < $endCursor) {
+  while ($startCursor <= $endCursor) {
     $midpoint = int(($endCursor + $startCursor) / 2);
 
     my $location = $transcripts[$midpoint];
@@ -689,15 +686,6 @@ sub getCodingAndMockSequencesForTranscript {
   return($codingSequence, $mockCodingSequence);
 }
 
-
-sub reportTimeAndCpu {
-  my ($self, $start, $method) = @_;
-
-  my $endTime = new Benchmark;
-  my $timeDiff = timediff($endTime, $start);
-  print STDERR timestr($timeDiff), "\t", $method, "\n";
-}
-
 # ----------------------------------------------------------------------
 
 sub findFromNaSequences {
@@ -724,8 +712,38 @@ sub addToNaSequences {
   push(@{$self->{na_sequences}}, $naSeq);
 }
 
+# ----------------------------------------------------------------------
+
+sub calculateAminoAcidPosition {
+  my ($self, $codingPosition) = @_;
+
+  my $aaPos = ($codingPosition % 3 == 0) ? int($codingPosition / 3) : int($codingPosition / 3) + 1;
+
+  return($aaPos);
+}
 
 # ----------------------------------------------------------------------
+
+sub getSeqVarSoTerm {
+  my ($self, $start, $end, $base) = @_;
+
+  my $length = length($base);
+  my $refLength = $end - $start + 1;
+
+  if($end < $start) {
+    $self->userError("The Reference Position End must be Greater than the start:  start=$start, end=$end");
+  }
+
+  if($length > $refLength) {
+    return('insertion');
+  }
+
+  if($length == $refLength && $base !~ /-/) {
+    return('substitution');
+  }
+
+  return('deletion');
+}
 
 sub undoTables {
   my ($self) = @_;
