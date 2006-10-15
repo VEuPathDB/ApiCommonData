@@ -211,11 +211,6 @@ sub processSnpFile{
     my $isCoding = $codingSequence ne $mockCodingSequence;
 
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
-    print STDERR "CODINGSEQ=$codingSequence\n";
-    print STDERR "MOCKCGSEQ=$mockCodingSequence\n";
-
-    print STDERR "CodingSTART=$codingSnpStart\n";
-    print STDERR "CodingEND=$codingSnpEnd\n";
 
     if($transcript) {
       my $geneFeatureId = $transcript->get('parent_id');
@@ -229,17 +224,10 @@ sub processSnpFile{
       my $startPositionInProtein = $self->calculateAminoAcidPosition($codingSnpStart);
       my $endPositionInProtein = $self->calculateAminoAcidPosition($codingSnpEnd);
 
-      print STDERR "STARTINPROTEIN=$startPositionInProtein\n";
-      print STDERR "ENDINPROTEIN=$endPositionInProtein\n";
-
-
       ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
       $snpFeature->setPositionInProtein($startPositionInProtein);
 
       my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
-
-      print STDERR "REFERENCEAASEQ=$refAaSequence\n";
-      exit();
       $snpFeature->setReferenceAa($refAaSequence);
     }
     else {
