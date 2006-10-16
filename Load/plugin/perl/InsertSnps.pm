@@ -502,7 +502,7 @@ sub getCodingSubstitutionPositions {
   my @results;
 
   for(my $i = 0; $i < scalar(@cdsArray); $i++) {
-    push(@results, ($i + 1)) if($cdsArray[$i] ne $mockCdsArray[$i]);
+    push(@results, ($i + 1)) if($cdsArray[$i] ne $mockCdsArray[$i] && $mockCdsArray[$i] eq '*');
   }
   my $snpStart = $results[0];
   my $snpEnd = $results[scalar(@results) - 1];
