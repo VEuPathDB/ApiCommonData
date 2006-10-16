@@ -333,7 +333,7 @@ sub loadInterproFormat {
    my $name;
    my $desc;
    while (<DFILE>) {
-     if (/^\<interpro id="(\w+)".+short_name="(\w+)"/) {
+     if (/^\<interpro id="(\w+)".+short_name="(.*)" protein_count/) {
        $id = $1;
        $name = $2
      } elsif (/\<name\>(.*)\</) {
