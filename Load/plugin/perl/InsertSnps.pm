@@ -515,8 +515,8 @@ sub getCodingSubstitutionPositions {
 sub _swapBaseInSequence {
   my ($self, $seq, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $isReversed) = @_;
 
-  my $normSnpStart = $isReversed ? $exonEnd - $snpStart : $snpStart - $exonStart;
-  my $normSnpEnd = $isReversed ? $exonEnd - $snpEnd  : $snpEnd - $exonStart;
+  my $normSnpStart = $isReversed ? $exonEnd - $snpEnd : $snpStart - $exonStart;
+  my $normSnpEnd = $isReversed ? $exonEnd - $snpStart  : $snpEnd - $exonStart;
 
   my ($fivePrimeFlank, $threePrimeFlank);
 
@@ -532,6 +532,7 @@ sub _swapBaseInSequence {
   unless($newSeq =~ /$fivePrimeFlank/ || $newSeq =~ /$threePrimeFlank/) {
     $self->error("Error in creating new Seq: \nnew=$newSeq\nold=$seq");
   }
+
   return($newSeq);
 }
 
@@ -636,16 +637,12 @@ sub getTranscript {
     my $location = $transcripts[$midpoint];
 
     if ($snpStart > $location->{start}) {
-      $startCursor = ($midpoint == $startCursor) ? $endCursor : $midpoint;
+      $startCursor = $midpoint + 1;
     } 
     elsif ($snpStart < $location->{start}) {
       $endCursor = $midpoint - 1;
     }
-    else {
-      # The below test will determine the outcome 
-      # if the snpStart is an exact match to the transcript Start location
-      $startCursor = $endCursor 
-    }
+    else {  }
 
     if($snpStart >= $location->{start} && $snpEnd <= $location->{end}) {
 
