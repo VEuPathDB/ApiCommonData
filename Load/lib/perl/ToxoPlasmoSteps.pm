@@ -88,6 +88,8 @@ sub initToxoPlasmoAnalysis {
 
   $mgr->{buildName} = $buildName;
 
+  $mgr->{pipelineDir} = $pipelineDir;
+
   $mgr->{dataDir} = $dataDir;
 
   $mgr->{propertiesFile} = $propertiesFile;
