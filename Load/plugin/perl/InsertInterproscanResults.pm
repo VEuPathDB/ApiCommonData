@@ -14,7 +14,7 @@ use GUS::Model::DoTS::DomainFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::ExternalAASequence;
 use GUS::Model::DoTS::AALocation;
-#use GUS::Model::DoTS::DbRefAAFeature;
+use GUS::Model::DoTS::DbRefAAFeature;
 
 sub getArgsDeclaration {
   my $argsDeclaration  =
@@ -228,7 +228,7 @@ sub processProteinResults {
     } else {
       my $parentDomain = 
 	$self->buildDomainFeature($interpro->att('id'), $aaId,
-				$self->{INTERPRO}, undef);
+				"INTERPRO", undef);
       $parentId = $parentDomain->getId();
       $self->{'interproCount'}++;
     }
@@ -248,7 +248,7 @@ sub processProteinResults {
       }
       my $dbname = $match->att('dbname');
       $childDomain =
-	$self->buildDomainFeature($match->id(), $aaId, $self->{$dbname},
+	$self->buildDomainFeature($match->id(), $aaId, $dbname,
 				  $parentId);
 
       my @locationKids = $match->children('location');
@@ -269,7 +269,7 @@ sub processProteinResults {
 }
 
 sub buildDomainFeature {
-  my ($self, $domainSourceId, $aaId, $db, $parentId) = @_;
+  my ($self, $domainSourceId, $aaId, $dbName, $parentId) = @_;
 
   my $domainFeat = GUS::Model::DoTS::DomainFeature->
     new({ source_id => $domainSourceId,
@@ -280,14 +280,15 @@ sub buildDomainFeature {
 	});
 
   $domainFeat->submit();
+	
+  my $dbRefId = $self->{$dbName}->{dbRefIds}->{$domainSourceId};
 
-  my $dbRefId = $self->{$db}->{dbRefIds}->{$domainSourceId};
+  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAAFeature->
+    new({ db_ref_id => $dbRefId,
+	  aa_feature_id => $domainFeat->getId()
+	});
 
-#  my $dbRefAaFeat = GUS::Model::DoTS::DbRefAaFeature->
-#    new({ dbref_id => $dbRefId,
-#	  aa_feature_id => $domainFeat->getId()
-#	});
-#  $dbRefAaFeat->submit();
+  $dbRefAaFeat->submit();
 
   return $domainFeat;
 }
@@ -457,6 +458,7 @@ sub undoTables {
 
   return (
 	  'DoTS.AALocation',
+	  'DoTS.DbRefAAFeature',
 	  'DoTS.DomainFeature',
 	  'Core.Algorithm',
 	  ApiCommonData::Load::Utility::GOAnnotater->undoTables()
