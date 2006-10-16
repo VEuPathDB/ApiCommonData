@@ -594,7 +594,7 @@ sub findProteinXRefs {
 
   $nrFile = "$mgr->{dataDir}/seqfiles/$nrFile";
 
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   my $outputFile = "$mgr->{dataDir}/misc/${signal}Output";
 
@@ -617,7 +617,7 @@ sub loadDbXRefs {
 
   return if $mgr->startStep("Loading $outputFile", $signal);
 
-  $mgr->runCmd("filterDbXRefOutput --file $mgr->{dataDir}/misc/$outputFile 2>> $mgr->{dataDir}/logs/filter${outputFile}.log");
+  $mgr->runCmd("filterDbXRefOutput --file $mgr->{dataDir}/misc/$outputFile 2>> $mgr->{pipelineDir}/logs/filter${outputFile}.log");
 
   my @db = split(/,/, $dbList);
 
@@ -654,7 +654,7 @@ sub extractNaSeq {
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
@@ -677,7 +677,7 @@ sub extractIndividualNaSeq {
 
   my $signal = "extract${name}$type";
 
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
 
@@ -708,7 +708,7 @@ sub extractNaSeqAltDefLine {
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select $defLine,sequence
              from dots.$table
@@ -824,7 +824,7 @@ sub extractScaffolds {
 
     my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}Scaffolds.fsa";
 
-    my $logFile = "$mgr->{dataDir}/logs/$signal.log";
+    my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
 
     my $sql = "select x.na_sequence_id, x.description,
             'length='||x.length,x.sequence
@@ -857,7 +857,7 @@ sub extractIdsFromBlastResult {
 
   my $output = "$mgr->{dataDir}/similarity/$simDir/blastSimIds.out";
 
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
   $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $blastFile --outFile $output 2>> $logFile";
 
   $mgr->runCmd($cmd);
@@ -876,7 +876,7 @@ sub filterBLASTResults{
 
   my $signal = "filtering${blastDir}BlastResults";
 
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   $taxonList =~ s/"//g;
 
@@ -954,7 +954,7 @@ sub findTandemRepeats {
 
   return if $mgr->startStep("Finding tandem repeats in $file", $signal);
 
-  my $logFile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   my $trfDir = "$mgr->{dataDir}/trf";
 
@@ -1207,7 +1207,7 @@ sub extractSageTags {
 
     my $sageTagFile = "$mgr->{dataDir}/seqfiles/${name}SageTags.fsa";
 
-    my $logFile = "$mgr->{dataDir}/logs/$signal${species}.log";
+    my $logFile = "$mgr->{pipelineDir}/logs/$signal${species}.log";
 
     my $sql = "select s.composite_element_id,s.tag
              from rad.sagetag s,rad.arraydesign a
@@ -1333,7 +1333,7 @@ sub extractProteinSeqs {
   return if $mgr->startStep("Extracting $name protein sequences from GUS", $signal);
 
   my $seqFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
-  my $logFile = "$mgr->{dataDir}/logs/${name}Extract.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${name}Extract.log";
 
   my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
@@ -1722,7 +1722,7 @@ sub makeGFF {
 
    my $signal = "gff$file";
 
-   my $log = "$mgr->{dataDir}/logs/${signal}.log";
+   my $log = "$mgr->{pipelineDir}/logs/${signal}.log";
 
    my $db = $model;
 
@@ -1806,7 +1806,7 @@ sub filterSequences {
 
   my $filter = "$blastDir/$filterDir/$filterType";
 
-  my $logFile = "$mgr->{dataDir}/logs/${seqFile}.$filterType.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${seqFile}.$filterType.log";
 
   my $input = "$mgr->{dataDir}/seqfiles/$seqFile";
 
@@ -1899,7 +1899,7 @@ sub extractAssemblies {
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
   my $seqFile = "$mgr->{dataDir}/seqfiles/${species}$name.fsa";
-  my $logFile = "$mgr->{dataDir}/logs/${species}${name}Extract.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${species}${name}Extract.log";
 
   my $sql = "select na_sequence_id,'[$species]',description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
   my $cmd = "gusExtractSequences --outputFile $seqFile --verbose --idSQL \"$sql\" 2>>  $logFile";
@@ -2024,7 +2024,7 @@ sub snpGffToFasta {
 
   my $signal = "convert${gffFile}ToFasta";
 
-  my $logfile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Converting $gffFile to a fasta formatted file", $signal);
 
@@ -2058,7 +2058,7 @@ sub runMummer {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $logfile = "$mgr->{dataDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
   my $mummerPath = $propertySet->getProp('mummerDir');
 
@@ -2086,7 +2086,7 @@ sub snpMummerToGFF {
 
   return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --mummer_file $mgr->{dataDir}/snp/$mummerFile --output_file $mgr->{dataDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{dataDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --mummer_file $mgr->{dataDir}/snp/$mummerFile --output_file $mgr->{dataDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{pipelineDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
 
   $mgr->runCmd($cmd);
 
@@ -2170,7 +2170,7 @@ sub runSignalP {
   
   my $propertySet = $mgr->{propertySet};
 
-  my $logFile = "$mgr->{dataDir}/logs/${species}SignalP.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/${species}SignalP.log";
 
   my $inFilePath = "$mgr->{dataDir}/seqfiles/${species}AnnotatedProteins.fsa";
 
@@ -2264,7 +2264,7 @@ sub runTMHmm{
 
   my $outFile = "$mgr->{'dataDir'}/tmhmm/${species}Tmhmm.out";
 
-  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{dataDir}/logs/${species}Tmhmm.log";
+  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{pipelineDir}/logs/${species}Tmhmm.log";
 
   $mgr->runCmd($cmd);
 
@@ -2438,7 +2438,7 @@ sub clusterByBlastSim {
   my $ceflag = ($consistentEnds eq "yes")? "--consistentEnds" : "";
 
   my $outputFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
-  my $logFile = "$mgr->{dataDir}/logs/$signal.log";
+  my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
 
   my $cmd = "buildBlastClusters.pl --lengthCutoff $length --percentCutoff $percent --verbose --files '$matrixFiles' --logBase $logbase --iterateCliqueSizeArray $cliqueSzArray $ceflag --iterateLogBaseArray $logbaseArray --sort > $outputFile 2>> $logFile";
 
@@ -2534,7 +2534,7 @@ sub runAssemblePlugin {
   my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --comment '$args'";
 
   print "running $pluginCmd\n";
-  my $logfile = "$mgr->{dataDir}/logs/${species}${name}Assemble.$suffix.log";
+  my $logfile = "$mgr->{pipelineDir}/logs/${species}${name}Assemble.$suffix.log";
 
   my $assemDir = "$mgr->{dataDir}/assembly/$species$name/$suffix";
   $mgr->runCmd("mkdir -p $assemDir");
