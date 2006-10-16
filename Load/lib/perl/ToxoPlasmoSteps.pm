@@ -94,7 +94,7 @@ sub initToxoPlasmoAnalysis {
 
   $mgr->{propertiesFile} = $propertiesFile;
 
-  &createDataDir($mgr,$allSpecies);
+  &createDataDir($mgr,$allSpecies,$dataDir);
 
   &makeUserProjectGroup($mgr);
 
