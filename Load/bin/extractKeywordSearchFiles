@@ -47,7 +47,7 @@ WHERE taf.aa_feature_id = drnf.aa_feature_id
   AND drnf.db_ref_id = dr.db_ref_id
   AND dr.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name = 'InterPro'
+/*  AND ed.name = 'INTERPRO'  Domains are linked to individual DBs */
   AND taf.aa_sequence_id = ns.aa_sequence_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
@@ -55,7 +55,7 @@ ORDER BY taf.source_id,
          dr.lowercase_primary_identifier || ' ' || dr.secondary_identifier
 SQL
 
-&extractFile($dbh, $outDir . "/interpro.txt", $sql);
+&extractFile($dbh, $outDir, "/interpro.txt", $sql);
 
 
 # GO terms and definitions
@@ -73,7 +73,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
                 gts.go_id || ' ' ||  gts.go_term_name
 SQL
 
-&extractFile($dbh, $outDir . "/go.txt", $sql);
+&extractFile($dbh, $outDir, "/go.txt", $sql);
 
 
 # metabolic pathways
@@ -98,7 +98,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
          nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
 SQL
 
-&extractFile($dbh, $outDir . "/metpaths.txt", $sql);
+&extractFile($dbh, $outDir, "/metpaths.txt", $sql);
 
 # comments
 $sql = <<SQL;
@@ -117,7 +117,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id,
          regexp_replace(c.content, '[[:space:]]', ' ')
 SQL
 
-&extractFile($dbh, $outDir . "/comments.txt", $sql);
+&extractFile($dbh, $outDir, "/comments.txt", $sql);
 
 exit if $justComments;
 
@@ -133,7 +133,7 @@ WHERE nf.na_feature_id = nfc.na_feature_id
 ORDER BY tn.name, nf.source_id, regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1), '[[:space:]]', ' ')
 SQL
 
-&extractFile($dbh, $outDir . "/notes.txt", $sql);
+&extractFile($dbh, $outDir, "/notes.txt", $sql);
 
 # EC description
 $sql = <<SQL;
@@ -147,7 +147,7 @@ WHERE aas.aa_sequence_id = asec.aa_sequence_id
 ORDER BY tn.name, aas.source_id, ec.description
 SQL
 
-&extractFile($dbh, $outDir . "/ec.txt", $sql);
+&extractFile($dbh, $outDir, "/ec.txt", $sql);
 
 # gene product
 $sql = <<SQL;
@@ -162,7 +162,7 @@ WHERE gf.source_id IS NOT NULL
 ORDER BY tn.name, gf.source_id, gf.product
 SQL
 
-&extractFile($dbh, $outDir . "/product.txt", $sql);
+&extractFile($dbh, $outDir, "/product.txt", $sql);
 
 
 # BLAST files
@@ -185,10 +185,10 @@ WHERE s.query_table_id = query.table_id
 ORDER BY pvalue_exp, tn.name, tas.source_id, eas.description
 SQL
 
-&extractFile($dbh, $outDir . "/blast.txt", $sql);
+&extractFile($dbh, $outDir, "/blast.txt", $sql);
 
 sub extractFile {
-  my ($dbh, $outFile, $sql) = @_;
+  my ($dbh, $outDir, $outFile, $sql) = @_;
 
   print STDERR "SQL: $sql\n" if $verbose;
 
@@ -197,16 +197,22 @@ sub extractFile {
   $statement->execute();
   my @ids;
 
-  print "outFile: $outFile\n" if $verbose;
-  open(OUT,">$outFile");
+  my $tempfile = "${outDir}/keywordQueryFlatfile.$$";
+
+  print "tempfile: $tempfile\n" if $verbose;
+  open(OUT,">$tempfile");
 
   while(my @row = $statement->fetchrow_array()){
     $count++;
     print STDERR "Processing record $count\n" if $verbose && $count % 10000 == 0;
-    print OUT join("\t", @row), "\n";
+    print OUT join("\t", @row), " \n";
   }
 
-  close(OUT);
   $statement->finish();
+
+  close(OUT);
+  my $datafile = "${outDir}/${outFile}";
+  print "renaming $tempfile to $datafile\n" if $verbose;
+  rename($tempfile, $datafile);
 }
  
