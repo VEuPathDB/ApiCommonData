@@ -1853,38 +1853,37 @@ sub loadLowComplexitySequences {
 
 
 sub makeTranscriptSeqs {
-  my ($mgr, $species,$taxonHierarchy) = @_;
+  my ($mgr, $name, $taxId,$taxonHierarchy) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $file = $propertySet->getProp('fileOfRepeats');
-  my $externalDbDir = $propertySet->getProp('externalDbDir');
-  my $repeatFile = "$externalDbDir/repeat/$file";
+  my $file = $propertySet->getProp('vectorFile');
 
   my $phrapDir = $propertySet->getProp('phrapDir');
 
-  my $taxonHsh = $mgr->{taxonHsh};
+  my $taxonId =  &getTaxonId($mgr,$taxId);
 
-  my $taxonId =  $taxonHsh->{$species};
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
-  my $args = "--taxon_id_list '$taxonIdList' --repeatFile $repeatFile --phrapDir $phrapDir";
+  my $args = "--taxon_id_list '$taxonIdList' --repeatFile $file --phrapDir $phrapDir";
 
-  $mgr->runPlugin("make${species}AssemSeqs",
+  $mgr->runPlugin("make${name}AssemSeqs",
           "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args,
           "Making assembly table sequences");
 }
 
 
 sub extractTranscriptSeqs {
-  my ($mgr, $species, $name) = @_;
-  my $propertySet = $mgr->{propertySet};
+  my ($mgr,$name,$taxId,$taxonHierarchy) = @_;
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
+  my $taxonId = &getTaxonId($mgr,$taxId);
 
-  my $outputFile = "$mgr->{dataDir}/seqfiles/${species}${name}.fsa";
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
+
+  my $outputFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
+
   my $args = "--taxon_id_list '$taxonId' --outputfile $outputFile --extractonly";
 
-    $mgr->runPlugin("${species}_${name}_ExtractUnalignedAssemSeqs",
+    $mgr->runPlugin("${name}_ExtractUnalignedAssemSeqs",
 		    "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences",
 		    $args, "Extracting unaligned assembly sequences");
 }
@@ -2094,13 +2093,15 @@ sub snpMummerToGFF {
 }
 
 sub loadMummerSnpResults {
-  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$gffFile) = @_;
+  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$gffFile,$restart) = @_;
 
   my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{dataDir}/snp/$gffFile";
 
-    $mgr->runPlugin("load$gffFile",
-		    "ApiCommonData::Load::Plugin::InsertSnps",
-		    $args, "Loading mummer results from $gffFile");
+  $args .= " --restart $restart" if $restart;
+
+  $mgr->runPlugin("load$gffFile",
+		  "ApiCommonData::Load::Plugin::InsertSnps",
+		  $args, "Loading mummer results from $gffFile");
 }
 
 
@@ -2664,7 +2665,7 @@ sub getTaxonIdList {
   my $returnValue;
 
   if ($hierarchy) {
-    $returnValue = $mgr->runCmd("getSubTaxa --taxon_id $taxonId");
+    $returnValue = $mgr->runCmd("getSubTaxaList --taxon_id $taxonId");
     chomp $returnValue;
   } else {
     $returnValue = $taxonId;
