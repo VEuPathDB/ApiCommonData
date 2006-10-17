@@ -597,11 +597,22 @@ sub getAllTranscriptLocations {
   my $seqTable = $self->getArg('seqTable');
   $seqTable =~ s/::/./;
 
+  my $regex;
+  if($seqTable =~ /External/) {
+    $regex = "MAL\\d+";
+  }
+  elsif($seqTable =~ /Virtual/) {
+    $regex = "^([I,X,V])|(TG).+";
+  }
+  else {
+    $self->userError("Only ExternalNaSequence or VirtualNaSequence are supported for retrieving Transcripts");
+  }
+
   my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl,$seqTable ens
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, $seqTable ens
              WHERE tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id
-              AND regexp_like(ens.source_id, 'MAL\\d+') 
+              AND regexp_like(ens.source_id, '$regex')
             ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
@@ -614,7 +625,6 @@ sub getAllTranscriptLocations {
                      start => $start,
                    };
     push(@{$data{$naSeqId}}, $location);
-
   }
   return(\%data);
 }
