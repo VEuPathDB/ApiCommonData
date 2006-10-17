@@ -1458,6 +1458,7 @@ sub loadHMMPfamOutput {
 		  "Loading $name hmmpfam output");
 }
 
+## for use from the cluster ...takes in a name where the master/mainresult/blastSimilarity.out is found
 sub loadProteinBlast {
   my ($mgr, $name, $queryTable, $subjectTable, 
       $queryTableSrcIdCol,$subjectTableSrcIdCol, # optional, use '' to bypass
@@ -1465,9 +1466,21 @@ sub loadProteinBlast {
       $subjectDbName, $subjectDbRlsVer, # optional if no subjectTableSrcIdCol
       $addedArgs,$restart) = @_;
       
-  my $propertySet = $mgr->{propertySet};
-
   my $file = (-e "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz") ? "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz" : "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out";
+  
+
+  &loadBlastSimilarities($mgr, $name, $file, $queryTable, $subjectTable, $queryTableSrcIdCol,$subjectTableSrcIdCol, $queryDbName, $queryDbRlsVer, $subjectDbName, $subjectDbRlsVer, $addedArgs,$restart);
+
+}
+
+##takes in a file name
+sub loadBlastSimilarities {
+  my ($mgr, $name, $file, $queryTable, $subjectTable,  # $name is the name of the signal
+      $queryTableSrcIdCol,$subjectTableSrcIdCol, # optional, use '' to bypass
+      $queryDbName, $queryDbRlsVer,  # optional if no queryTableSrcIdCol
+      $subjectDbName, $subjectDbRlsVer, # optional if no subjectTableSrcIdCol
+      $addedArgs,$restart) = @_;
+      
   
   my $restartAlgInvs = "--restartAlgInvs $restart" if $restart;
 
