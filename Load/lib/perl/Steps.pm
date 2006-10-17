@@ -12,31 +12,35 @@ sub createDataDir {
 
   return if $mgr->startStep("Creating dir structure", $signal);
 
-  $mgr->runCmd("mkdir -p $dataDir") unless (-e "$dataDir");
-  $mgr->runCmd("mkdir -p $dataDir/seqfiles") unless (-e "$dataDir/seqfiles");
-  $mgr->runCmd("mkdir -p $dataDir/misc") unless (-e "$dataDir/misc");
-  $mgr->runCmd("mkdir -p $dataDir/downloadSite") unless (-e "$dataDir/downloadSite");
-  $mgr->runCmd("mkdir -p $dataDir/blastSite") unless (-e "$dataDir/blastSite");
-  $mgr->runCmd("mkdir -p $dataDir/sage") unless (-e "$dataDir/sage");
-  $mgr->runCmd("mkdir -p $dataDir/analysis") unless (-e "$dataDir/analysis");
-  $mgr->runCmd("mkdir -p $dataDir/similarity") unless (-e "$dataDir/similarity");
+  &_createDir($dataDir);
+
+  my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
+		     'sage', 'analysis', 'similarity');
+
+  foreach my $subDir (@dataSubDirs) {
+    &_createDir("$dataDir/$subDir");
+  }
 
   my @Species = split(/,/,$allSpecies);
 
+  my @assemblySubDirs = ('Initial', 'Intermed', 'Initial/big', 'Initial/small',
+			 'Initial/reassemble', 'Intermed/big',
+			 'Intermed/small', 'Intermed/reassemble');
+
   foreach my $species (@Species) {
-    $mgr->runCmd("mkdir -p $dataDir/cluster/${species}Initial") unless (-e "$dataDir/cluster/${species}initial");
-    $mgr->runCmd("mkdir -p $dataDir/cluster/${species}Intermed") unless (-e "$dataDir/cluster/${species}intermed");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/big") unless (-e "$dataDir/assembly/${species}initial/big");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/small") unless (-e "$dataDir/assembly/${species}initial/small");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Initial/reassemble") unless (-e "$dataDir/assembly/${species}initial/reassemble");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/big") unless (-e "$dataDir/assembly/${species}intermed/big");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/small") unless (-e "$dataDir/assembly/${species}intermed/small");
-    $mgr->runCmd("mkdir -p $dataDir/assembly/${species}Intermed/reassemble") unless (-e "$dataDir/assembly/${species}intermed/reassemble");
+    foreach my $subDir (@assemblySubDirs) {
+      &_createDir("$dataDir/assembly/${species}/$subDir");
+    }
   }
 
-  $mgr->runCmd("chmod -R g+w $dataDir");
-
   $mgr->endStep($signal);
+}
+
+sub _createDir {
+  my ($dir) = @_;
+  next if (-e $dir);
+  $mgr->runCmd("mkdir -p $dir");
+  $mgr->runCmd("chmod -R g+w $dir");
 }
 
 sub createBlastMatrixDir {
