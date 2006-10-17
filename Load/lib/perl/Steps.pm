@@ -12,13 +12,13 @@ sub createDataDir {
 
   return if $mgr->startStep("Creating dir structure", $signal);
 
-  &_createDir($dataDir);
+  &_createDir($mgr, $dataDir);
 
   my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
 		     'sage', 'analysis', 'similarity');
 
   foreach my $subDir (@dataSubDirs) {
-    &_createDir("$dataDir/$subDir");
+    &_createDir($mgr, "$dataDir/$subDir");
   }
 
   my @Species = split(/,/,$allSpecies);
@@ -29,7 +29,7 @@ sub createDataDir {
 
   foreach my $species (@Species) {
     foreach my $subDir (@assemblySubDirs) {
-      &_createDir("$dataDir/assembly/${species}/$subDir");
+      &_createDir($mgr, "$dataDir/assembly/${species}/$subDir");
     }
   }
 
@@ -37,7 +37,7 @@ sub createDataDir {
 }
 
 sub _createDir {
-  my ($dir) = @_;
+  my ($mgr, $dir) = @_;
   next if (-e $dir);
   $mgr->runCmd("mkdir -p $dir");
   $mgr->runCmd("chmod -R g+w $dir");
