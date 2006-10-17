@@ -190,7 +190,7 @@ sub makeIprscanDir {
 	
 	# my $subject = $subjectFileName;
 
-	my $localBase = "$localPath/iprscan/$subject";
+	my $localBase = "$localPath/primary/data/iprscan/$subject";
 	my $serverBase = "$serverPath/$pipelineName/iprscan/$subject";
 	my $inputDir = "$localBase/input";
 
