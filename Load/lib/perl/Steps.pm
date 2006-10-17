@@ -38,7 +38,7 @@ sub createDataDir {
 
 sub _createDir {
   my ($mgr, $dir) = @_;
-  next if (-e $dir);
+  return if (-e $dir);
   $mgr->runCmd("mkdir -p $dir");
   $mgr->runCmd("chmod -R g+w $dir");
 }
