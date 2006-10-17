@@ -1885,7 +1885,7 @@ sub extractTranscriptSeqs {
 
   my $outputFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
 
-  my $args = "--taxon_id_list '$taxonId' --outputfile $outputFile --extractonly";
+  my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
 
     $mgr->runPlugin("${name}_ExtractUnalignedAssemSeqs",
 		    "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences",
