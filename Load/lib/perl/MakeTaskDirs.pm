@@ -35,7 +35,7 @@ sub makeRMDir {
     my ($datasetName, $pipelineName, $localPath, $serverPath, $nodePath, 
 	$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass) = @_;
     
-    my $localBase = "$localPath/$pipelineName/repeatmask/$datasetName";
+    my $localBase = "$localPath/$pipelineName/primary/data/repeatmask/$datasetName";
     my $serverBase = "$serverPath/$pipelineName/repeatmask/$datasetName"; 
     my $inputDir = "$localBase/input";
     &runCmd("mkdir -p $inputDir");
@@ -49,7 +49,7 @@ sub makeRMDir {
 sub makeGenomeDir {
     my ($queryName, $targetName, $pipelineName, $localPath, $serverPath,
 	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass) = @_;
-    my $localBase = "$localPath/$pipelineName/genome/$queryName-$targetName";
+    my $localBase = "$localPath/$pipelineName/primary/data/genome/$queryName-$targetName";
     my $serverBase = "$serverPath/$pipelineName/genome/$queryName-$targetName";
     my $inputDir = "$localBase/input";
     my @targetFiles;
@@ -88,7 +88,7 @@ sub makeMatrixDir {
     my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
 	$nodePath, $taskSize, $blastBinPath, $nodeClass) = @_;
     
-    my $localBase = "$localPath/$pipelineName/matrix/$queryName-$subjectName";
+    my $localBase = "$localPath/$pipelineName/primary/data/matrix/$queryName-$subjectName";
     my $serverBase = "$serverPath/$pipelineName/matrix/$queryName-$subjectName"; 
     my $inputDir = "$localBase/input";
     &runCmd("mkdir -p $inputDir");
@@ -104,8 +104,8 @@ sub makeSimilarityDir {
     my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
 	$nodePath, $taskSize, $blastBinPath,
 	$dbName, $dbPath, $queryFileName, $regex, $blast, $blastParams, $nodeClass,$dbType) = @_;
-    
-    my $localBase = "$localPath/$pipelineName/similarity/$queryName-$subjectName";
+
+    my $localBase = "$localPath/$pipelineName/primary/data/similarity/$queryName-$subjectName";
     my $serverBase = "$serverPath/$pipelineName/similarity/$queryName-$subjectName";
     my $inputDir = "$localBase/input";
     my $blastParamsFile = "$inputDir/blastParams";
@@ -128,7 +128,7 @@ sub makePfamDir {
       $nodePath, $taskSize, $pfamBinPath,
       $queryFileName, $fileDir,$subjectFileName,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/pfam/$queryName-$subjectName";
+  my $localBase = "$localPath/$pipelineName/primary/data/pfam/$queryName-$subjectName";
   my $serverBase = "$serverPath/$pipelineName/pfam/$queryName-$subjectName";
   my $inputDir = "$localBase/input";
 
@@ -147,7 +147,7 @@ sub makeTRNAscanDir {
       $trnascanPath, $model,
       $fileDir,$subjectFileName,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/trnascan/$subject";
+  my $localBase = "$localPath/$pipelineName/primary/data/trnascan/$subject";
   my $serverBase = "$serverPath/$pipelineName/trnascan/$subject";
   my $inputDir = "$localBase/input";
 
@@ -163,7 +163,7 @@ sub makePsipredDir {
   my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath,
       $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,$subjectFile,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/psipred/$queryName-$subjectName";
+  my $localBase = "$localPath/$pipelineName/primary/data/psipred/$queryName-$subjectName";
 
   my $serverBase = "$serverPath/$pipelineName/psipred/$queryName-$subjectName";
 
