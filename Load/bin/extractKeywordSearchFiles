@@ -17,18 +17,20 @@ my ($outDir, $justComments, $gusConfigFile, $debug, $verbose);
             "gusConfigFile=s" => \$gusConfigFile);            
 
 if (!$outDir){
-	die "usage: $0 --outputDir <outputDirectory> --verbose --debug --gusConfigFile [\$GUS_HOME/config/gus.config]\n";
+	die "usage: $0 --outputDir <outputDirectory> --verbose --debug "
+            . "--gusConfigFile [\$GUS_HOME/config/gus.config]\n";
 }
 
 print STDERR "Establishing dbi login\n" if $verbose;
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
-					$gusconfig->getReadOnlyDatabaseLogin(),
-					$gusconfig->getReadOnlyDatabasePassword,
-					$verbose,0,1,
-					$gusconfig->getCoreSchemaName,
-					$gusconfig->getOracleDefaultRollbackSegment());
+my $db = GUS::ObjRelP::DbiDatabase
+           ->new($gusconfig->getDbiDsn(),
+		 $gusconfig->getReadOnlyDatabaseLogin(),
+		 $gusconfig->getReadOnlyDatabasePassword,
+		 $verbose,0,1,
+		 $gusconfig->getCoreSchemaName,
+		 $gusconfig->getOracleDefaultRollbackSegment());
 
 my $dbh = $db->getQueryHandle();
 
@@ -38,20 +40,26 @@ my $sql;
 # InterPro domains
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-                taf.source_id,
-                dr.lowercase_primary_identifier || ' ' || dr.secondary_identifier
-FROM dots.TranslatedAaFeature taf, dots.DbRefAaFeature drnf, sres.DbRef dr,
+                tas.source_id,
+                dr.lowercase_primary_identifier || ' '
+                || dr.secondary_identifier
+FROM dots.TranslatedAaSequence tas, dots.DomainFeature df,
+     dots.DbRefAaFeature draf, sres.DbRef dr,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-     dots.AaSequence ns, sres.TaxonName tn     
-WHERE taf.aa_feature_id = drnf.aa_feature_id
-  AND drnf.db_ref_id = dr.db_ref_id
+     sres.TaxonName tn, core.AlgorithmInvocation ainv,
+     core.AlgorithmImplementation aimp
+WHERE tas.aa_sequence_id = df.aa_sequence_id
+  AND df.aa_feature_id = draf.aa_feature_id
+  AND draf.db_ref_id = dr.db_ref_id
   AND dr.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-/*  AND ed.name = 'INTERPRO'  Domains are linked to individual DBs */
-  AND taf.aa_sequence_id = ns.aa_sequence_id
-  AND ns.taxon_id = tn.taxon_id
+  AND df.row_alg_invocation_id = ainv.algorithm_invocation_id
+  AND ainv.algorithm_implementation_id = aimp.algorithm_implementation_id
+  AND aimp.executable
+      = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
+  AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
-ORDER BY taf.source_id,
+ORDER BY tas.source_id,
          dr.lowercase_primary_identifier || ' ' || dr.secondary_identifier
 SQL
 
