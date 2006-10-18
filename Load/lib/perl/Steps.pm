@@ -649,6 +649,39 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
+sub extractESTs {
+  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy) = @_;
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $signal = "extract${genus}${species}${dbName}ESTs";
+
+  return if $mgr->startStep("Extracting $genus $species $dbName ESTs from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  my $name =~ "${genus}_$species";
+
+  my $sql = my $sql = "select '$name|'source_id'|$date|EST|dbEST|',sequence
+             from dots.externalnasequence
+             where x.external_database_release_id = $dbRlsId and taxon_id in ($taxonIdList)";
+
+  $genus =~ s/^(\w)\w+/$1/;
+
+  my $outFile = "$mgr->{dataDir}/seqfiles/${genus}${species}ESTs.fsa";
+
+  my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
 sub extractIndividualNaSeq {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
 
