@@ -98,8 +98,10 @@ sub initToxoPlasmoAnalysis {
   &createDataDir($mgr,$allSpecies,$mgr->{dataDir});
 
   &makeUserProjectGroup($mgr);
-
-  &copyPipelineDirToComputeCluster($mgr);
+	
+  if ($mgr->{myPipelineDir} eq "primary") {
+  	&copyPipelineDirToComputeCluster($mgr);
+  }
 
   my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
 

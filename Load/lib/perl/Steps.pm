@@ -473,7 +473,7 @@ sub copyPipelineDirToComputeCluster {
   my $propertySet = $mgr->{propertySet};
 
   my $projectDir = $propertySet->getProp('projectDir');
-  my $release = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
   my $clusterProjectDir = $propertySet->getProp('clusterProjectDir');
   my $clusterReleaseDir = "$clusterProjectDir/$release";
   my $releaseDir = "$projectDir/$release";
@@ -503,7 +503,7 @@ sub moveSeqFile {
 
   my $projectDir = $propertySet->getProp('projectDir');
 
-  my $release = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
 
   my $seqFile = "$projectDir/$release/$file";
 
@@ -1311,7 +1311,7 @@ sub concatFiles {
 
    my $propertySet = $mgr->{propertySet};
 
-   my $projRel = $propertySet->getProp('projectRelease');
+   my $projRel = $propertySet->getProp('release');
 
    my $signal = "concat$catFile";
 
@@ -1664,7 +1664,7 @@ sub formatBlastFile {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $projRel = $propertySet->getProp('projectRelease');
+  my $projRel = $propertySet->getProp('release');
 
   my $signal = "format$file";
 
@@ -2804,13 +2804,13 @@ sub makeUserProjectGroup {
 
   my $lastName = $propertySet->getProp('lastName');
 
-  my $projectRelease = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
 
   my $signal = "${lastName}UserProjectGroup";
 
   return if $mgr->startStep("Inserting userinfo,groupinfo,projectinfo for $lastName gus config file", $signal);
 
-  $mgr->runCmd ("insertUserProjectGroup --firstName $firstName --lastName $lastName --projectRelease $projectRelease --commit");
+  $mgr->runCmd ("insertUserProjectGroup --firstName $firstName --lastName $lastName --projectRelease $release --commit");
 
   $mgr->endStep($signal);
 }
