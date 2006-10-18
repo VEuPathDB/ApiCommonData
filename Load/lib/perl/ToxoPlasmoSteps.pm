@@ -52,13 +52,13 @@ sub initToxoPlasmoAnalysis {
   my @properties = 
     (
      # universal analysis pipeline properties
-     ["buildDir",   "",  "root of the build's directory tree"],
+     ["release",   "",  "release number (eg 5.2)"],
+     ["projectDir",   "",  "path to the project's directory tree"],
      ["clusterServer", "",  "full name of cluster server"],
      ["gusConfigFile",  "",  "gus configuration file"],
      ["nodePath",             "",  "full path of scratch dir on cluster node"],
      ["nodeClass", "","cluster management protocol"],
-     ["externalDbDir", "", "fill in"],
-     ["serverPath", "",  "full path of update dir on cluster server"],
+     ["clusterProjectDir", "",  "path to the project's dir tree on cluster"],
      ["stopBefore",   "none",  "the step to stop before.  uses the signal name"],
      ["commit", "", "fill in"],
      ["testNextPlugin", "", "fill in"],
