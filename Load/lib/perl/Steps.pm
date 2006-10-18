@@ -39,7 +39,7 @@ sub createDataDir {
 sub _createDir {
   my ($mgr, $dir) = @_;
   return if (-e $dir);
-  $mgr->runCmd("mkdir -p $dir");
+  $mgr->runCmd("mkdir $dir");
   $mgr->runCmd("chmod -R g+w $dir");
 }
 
@@ -51,20 +51,16 @@ sub createBlastMatrixDir {
 
   return if $mgr->startStep("Creating ${queryFile}-${subjectFile} dir", $signal);
 
-  my $buildName = $mgr->{'buildName'};        # release/speciesNickname
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{dataDir};
+  my $clusterDataDir = $mgr->{clusterDataDir};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bmTaskSize = $propertySet->getProp('blastmatrix.taskSize');
   my $wuBlastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
-  my $dataDir = $mgr->{'dataDir'};
 
   my $speciesFile = $species . $queryFile;
-  &makeMatrixDir($speciesFile, $species.$subjectFile, $buildName, $buildDir,
-       $serverPath, $nodePath, $bmTaskSize, $wuBlastBinPathCluster, $nodeClass);
-
-  $mgr->runCmd("chmod -R g+w $dataDir");
+  &makeMatrixDir($speciesFile, $species.$subjectFile, $dataDir,$clusterDataDir,
+		 $nodePath, $bmTaskSize, $wuBlastBinPathCluster, $nodeClass);
 
   $mgr->endStep($signal);
 }
@@ -110,19 +106,17 @@ sub createSimilarityDir {
 
   return if $mgr->startStep("Creating ${queryFile}-${subjectFile} similarity dir", $signal);
 
-  my $buildName = $mgr->{'buildName'};        # release/speciesNickname
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{dataDir};
+  my $clusterDataDir = $mgr->{clusterDataDir};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bsTaskSize = $propertySet->getProp('blastsimilarity.taskSize');
   my $wuBlastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
-  my $dataDir = $mgr->{'dataDir'};
 
-  &makeSimilarityDir($queryFile, $subjectFile, $buildName, $buildDir,
-		     $serverPath, $nodePath, $bsTaskSize,
+  &makeSimilarityDir($queryFile, $subjectFile, $dataDir, $clusterDataDir,
+		     $nodePath, $bsTaskSize,
 		     $wuBlastBinPathCluster,
-		     "${subjectFile}.fsa", "$serverPath/$buildName/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
+		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
 
   $mgr->runCmd("chmod -R g+w $dataDir/similarity/${queryFile}-${subjectFile}");
 
@@ -145,21 +139,19 @@ sub createPfamDir {
 
   return if $mgr->startStep("Creating ${query}-$subject pfam dir", $signal);
 
-  my $buildName = $mgr->{'buildName'};
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $pfamTaskSize = $propertySet->getProp('pfam.taskSize');
   my $pfamPath = $propertySet->getProp('pfam.path');
-  my $dataDir = $mgr->{'dataDir'};
 
   $mgr->runCmd("mkdir -p $dataDir/pfam/$query-$subject");
 
-  &makePfamDir($query, $subject, $buildName, $buildDir,
-	       $serverPath, $nodePath, $pfamTaskSize,
+  &makePfamDir($query, $subject, $dataDir, $clusterDataDir,
+	       $nodePath, $pfamTaskSize,
 	       $pfamPath,
-	       $queryFile,"$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
+	       $queryFile,"$clusterDataDir/seqfiles",$subjectFile,$nodeClass);
 
   $mgr->runCmd("chmod -R g+w $dataDir/pfam");
 
@@ -179,21 +171,19 @@ sub createTRNAscanDir {
 
   return if $mgr->startStep("Creating $subject tRNAscan subdir", $signal);
 
-  my $buildName = $mgr->{'buildName'};
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $trnascanTaskSize = $propertySet->getProp('trnascan.taskSize');
   my $trnascanPath = $propertySet->getProp('trnascan.clusterpath');
-  my $dataDir = $mgr->{'dataDir'};
 
   $mgr->runCmd("mkdir -p $dataDir/trnascan/$subject");
 
-  &makeTRNAscanDir($subject, $buildName, $buildDir,
-	       $serverPath, $nodePath, $trnascanTaskSize,
-	       $trnascanPath,$model,
-	       "$serverPath/$buildName/seqfiles",$subjectFile,$nodeClass);
+  &makeTRNAscanDir($subject, $dataDir, $clusterDataDir,
+		   $nodePath, $trnascanTaskSize,
+		   $trnascanPath,$model,
+		   "$clusterDataDir/seqfiles",$subjectFile,$nodeClass);
 
   $mgr->runCmd("chmod -R g+w $dataDir/trnascan");
 
@@ -237,9 +227,9 @@ sub loadAnticodons {
 
   my $signal = "${file}Anticodons";
 
-  my $buildDir = $propertySet->getProp('buildDir');
+  my $projectDir = $propertySet->getProp('projectDir');
 
-  $file = "${buildDir}/manualDelivery/anticodons/$file";
+  $file = "${projectDir}/manualDelivery/anticodons/$file";
 
   my $args = "--data_file $file --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer'";
 
@@ -319,19 +309,17 @@ sub createPsipredSubdir {
 
   return if $mgr->startStep("Creating $queryFile subdir in the psipred dir", $signal);
 
-  my $buildName = $mgr->{'buildName'};
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $psipredTaskSize = $propertySet->getProp('psipred.taskSize');
   my $psipredPath = $propertySet->getProp('psipred.clusterpath');
-  my $dataDir = $mgr->{'dataDir'};
 
-  &makePsipredDir($queryFile, $dbFile, $buildName, $buildDir,
-	       $serverPath, $nodePath, $psipredTaskSize,
-	       $psipredPath,
-	       $queryFile,"$serverPath/$buildName/psipred",$dbFile,$nodeClass);
+  &makePsipredDir($queryFile, $dbFile, $dataDir, $clusterDataDir,
+		  $nodePath, $psipredTaskSize,
+		  $psipredPath,
+		  $queryFile,"$clusterDataDir/psipred",$dbFile,$nodeClass);
 
   $mgr->runCmd("chmod -R g+w $dataDir/psipred");
 
@@ -343,8 +331,6 @@ sub startPsipredOnComputeCluster {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-
   $subject = "${subject}Filt";
 
   my $signal = "start" . uc($query) . uc($subject);
@@ -353,8 +339,8 @@ sub startPsipredOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runPsipred $serverPath/$mgr->{buildName} NUMBER_OF_NODES $query $subject $queue";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runPsipred $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $query $subject $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -434,7 +420,7 @@ sub documentPsipred {
   $mgr->documentStep("psipred", $documentation);
 }
 
-sub createepeatMaskDir {
+sub createRepeatMaskDir {
   my ($mgr, $species, $file) = @_;
 
   my $propertySet = $mgr->{propertySet};
@@ -442,20 +428,19 @@ sub createepeatMaskDir {
 
   return if $mgr->startStep("Creating $file repeatmask dir", $signal);
 
-  my $buildName = $mgr->{'buildName'};        # release/speciesNickname
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $rmTaskSize = $propertySet->getProp('repeatmask.taskSize');
   my $rmPath = $propertySet->getProp('repeatmask.path');
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
-  my $dataDir = $mgr->{'dataDir'};
 
   my $speciesFile = $species . $file;
-  &makeRMDir($speciesFile, $buildName, $buildDir,
-       $serverPath, $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
+  &makeRMDir($speciesFile, $dataDir, $clusterDataDir,
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, 
+	     $nodeClass);
 
   $mgr->runCmd("chmod -R g+w $dataDir");
 
@@ -468,9 +453,9 @@ sub createGenomeDir {
   return if $mgr->startStep("Creating ${query}-${genome} genome dir", $signal);
 
   my $propertySet = $mgr->{propertySet};
-  my $buildName = $mgr->{buildName}; # release/nickName : release3.0/crypto
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $serverPath = $propertySet->getProp('serverPath');
+
+  my $dataDir = $mgr->{dataDir};
+  my $clusterDataDir = $mgr->{clusterDataDir};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $gaTaskSize = $propertySet->getProp('genome.taskSize');
@@ -486,7 +471,7 @@ sub createGenomeDir {
   $srvGDir .= "/$genus/$species";
   my $speciesQuery = $species . $query;
   my $genomeFile = $species . $genome;
-  &makeGenomeDir($speciesQuery, $genome, $buildName, $buildDir, $serverPath,
+  &makeGenomeDir($speciesQuery, $genome, $dataDir, $clusterDataDir,
     $nodePath, $gaTaskSize, $gaOptions, $gaPath, $genomeFile, $nodeClass);
 
   $mgr->runCmd("chmod -R g+w $buildDir/$buildName/");
@@ -495,17 +480,18 @@ sub createGenomeDir {
 
 sub copyPipelineDirToComputeCluster {
   my ($mgr) = @_;
-  my $propertySet = $mgr->{propertySet};
-  my $buildName = $mgr->{'buildName'}; 
-  my $release = "release".$propertySet->getProp('projectRelease');
-  my $myPipelineName = $propertySet->getProp('myPipelineName');
-  my $serverPath = $propertySet->getProp('serverPath');
-  my $clusterPath = "$serverPath/$myPipelineName";
-  my $fromDir =   $propertySet->getProp('buildDir');
-  my $signal = "dir2cluster";
-  return if $mgr->startStep("Copying $buildName in $fromDir to $clusterPath on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo($fromDir, $buildName, "$serverPath");
+  my $propertySet = $mgr->{propertySet};
+
+  my $projectDir = $propertySet->getProp('projectDir');
+  my $release = $propertySet->getProp('projectRelease');
+  my $clusterProjectDir = $propertySet->getProp('clusterProjectDir');
+  my $clusterReleaseDir = "$clusterProjectDir/$release";
+  my $signal = "dir2cluster";
+
+  return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
+
+  $mgr->{cluster}->copyTo($projectDir, 'analysis_pipeline',$clusterProjectDir);
 
   $mgr->endStep($signal);
 }
@@ -524,11 +510,11 @@ sub moveSeqFile {
 
   return if $mgr->startStep("Moving $file to $dir", $signal);
 
-  my $buildDir = $propertySet->getProp('buildDir');
+  my $projectDir = $propertySet->getProp('projectDir');
 
   my $release = $propertySet->getProp('projectRelease');
 
-  my $seqFile = "$buildDir/$release/$file";
+  my $seqFile = "$projectDir/$release/$file";
 
   if (! -e $seqFile) { die "$seqFile doesn't exist\n";}
 
@@ -598,7 +584,7 @@ sub findProteinXRefs {
 
   $nrFile = "$mgr->{dataDir}/seqfiles/$nrFile";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $outputFile = "$mgr->{dataDir}/misc/${signal}Output";
 
@@ -621,7 +607,7 @@ sub loadDbXRefs {
 
   return if $mgr->startStep("Loading $outputFile", $signal);
 
-  $mgr->runCmd("filterDbXRefOutput --file $mgr->{dataDir}/misc/$outputFile 2>> $mgr->{pipelineDir}/logs/filter${outputFile}.log");
+  $mgr->runCmd("filterDbXRefOutput --file $mgr->{dataDir}/misc/$outputFile 2>> $mgr->{myPipelineDir}/logs/filter${outputFile}.log");
 
   my @db = split(/,/, $dbList);
 
@@ -658,7 +644,7 @@ sub extractNaSeq {
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
@@ -681,7 +667,7 @@ sub extractIndividualNaSeq {
 
   my $signal = "extract${name}$type";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
 
@@ -712,7 +698,7 @@ sub extractNaSeqAltDefLine {
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $sql = my $sql = "select $defLine,sequence
              from dots.$table
@@ -828,7 +814,7 @@ sub extractScaffolds {
 
     my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}Scaffolds.fsa";
 
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
+    my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
     my $sql = "select x.na_sequence_id, x.description,
             'length='||x.length,x.sequence
@@ -861,7 +847,7 @@ sub extractIdsFromBlastResult {
 
   my $output = "$mgr->{dataDir}/similarity/$simDir/blastSimIds.out";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
   $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $blastFile --outFile $output 2>> $logFile";
 
   $mgr->runCmd($cmd);
@@ -880,7 +866,7 @@ sub filterBLASTResults{
 
   my $signal = "filtering${blastDir}BlastResults";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   $taxonList =~ s/"//g;
 
@@ -958,7 +944,7 @@ sub findTandemRepeats {
 
   return if $mgr->startStep("Finding tandem repeats in $file", $signal);
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $trfDir = "$mgr->{dataDir}/trf";
 
@@ -1180,9 +1166,9 @@ sub calculateExpressionStats {
 
   $signal =~ s/\s//g;
 
-  my $buildDir = $propertySet->getProp('buildDir');
+  my $projectDir = $propertySet->getProp('projectDir');
 
-  my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --timePointsMappingFile '$buildDir/$mappingFile' --percentProfileSet '$percentsAveraged'";
+  my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --timePointsMappingFile '$projectDir/$mappingFile' --percentProfileSet '$percentsAveraged'";
 
   $mgr->runPlugin($signal,
                   "PlasmoDBData::Load::Plugin::CalculateProfileSummaryStats", $args,
@@ -1211,7 +1197,7 @@ sub extractSageTags {
 
     my $sageTagFile = "$mgr->{dataDir}/seqfiles/${name}SageTags.fsa";
 
-    my $logFile = "$mgr->{pipelineDir}/logs/$signal${species}.log";
+    my $logFile = "$mgr->{myPipelineDir}/logs/$signal${species}.log";
 
     my $sql = "select s.composite_element_id,s.tag
              from rad.sagetag s,rad.arraydesign a
@@ -1337,7 +1323,7 @@ sub extractProteinSeqs {
   return if $mgr->startStep("Extracting $name protein sequences from GUS", $signal);
 
   my $seqFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${name}Extract.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${name}Extract.log";
 
   my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
@@ -1351,8 +1337,6 @@ sub startProteinBlastOnComputeCluster {
   my ($mgr,$queryFile,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-
   my $name = $queryFile . "-" . $subjectFile;
 
   $name = ucfirst($name);
@@ -1361,8 +1345,8 @@ sub startProteinBlastOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runBlastSimilarities $serverPath/$mgr->{buildName} NUMBER_OF_NODES $queryFile $subjectFile $queue";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1397,15 +1381,13 @@ sub startTRNAscanOnComputeCluster {
   my ($mgr,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-
   my $signal = "start${subjectFile}TRNAscan";
   return if $mgr->startStep("Starting tRNAscan of $subjectFile on cluster", $signal);
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runTRNAscan $serverPath/$mgr->{buildName} NUMBER_OF_NODES $subjectFile $queue";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runTRNAscan $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1413,8 +1395,6 @@ sub startTRNAscanOnComputeCluster {
 sub startHMMPfamOnComputerCluster {
   my ($mgr,$queryFile,$subjectFile,$queue) = @_;
   my $propertySet = $mgr->{propertySet};
-
-  my $serverPath = $propertySet->getProp('serverPath');
 
   my $query = $queryFile;
 
@@ -1432,8 +1412,8 @@ sub startHMMPfamOnComputerCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runPfam $serverPath/$mgr->{buildName} NUMBER_OF_NODES $queryFile $subjectFile $queue";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runPfam $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1739,7 +1719,7 @@ sub makeGFF {
 
    my $signal = "gff$file";
 
-   my $log = "$mgr->{pipelineDir}/logs/${signal}.log";
+   my $log = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
    my $db = $model;
 
@@ -1823,7 +1803,7 @@ sub filterSequences {
 
   my $filter = "$blastDir/$filterDir/$filterType";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${seqFile}.$filterType.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${seqFile}.$filterType.log";
 
   my $input = "$mgr->{dataDir}/seqfiles/$seqFile";
 
@@ -1915,7 +1895,7 @@ sub extractAssemblies {
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
   my $seqFile = "$mgr->{dataDir}/seqfiles/${species}$name.fsa";
-  my $logFile = "$mgr->{pipelineDir}/logs/${species}${name}Extract.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${species}${name}Extract.log";
 
   my $sql = "select na_sequence_id,'[$species]',description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
   my $cmd = "gusExtractSequences --outputFile $seqFile --verbose --idSQL \"$sql\" 2>>  $logFile";
@@ -1929,16 +1909,13 @@ sub startTranscriptAlignToContigs {
   my ($mgr, $species, $name) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-  my $clusterServer = $propertySet->getProp('clusterServer');
-
   my $signal = "${species}${name}AlignToContigs";
   return if $mgr->startStep("Aligning $species $name to contigs on $clusterServer", $signal);
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runContigAlign $serverPath/$mgr->{buildName} NUMBER_OF_NODES";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runContigAlign $mgr->{clusterAnalysisDir} NUMBER_OF_NODES";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -2040,7 +2017,7 @@ sub snpGffToFasta {
 
   my $signal = "convert${gffFile}ToFasta";
 
-  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Converting $gffFile to a fasta formatted file", $signal);
 
@@ -2074,7 +2051,7 @@ sub runMummer {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $logfile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logfile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $mummerPath = $propertySet->getProp('mummerDir');
 
@@ -2102,7 +2079,7 @@ sub snpMummerToGFF {
 
   return if $mgr->startStep("Converting $mummerFile to a gff formatted file", $signal);
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --mummer_file $mgr->{dataDir}/snp/$mummerFile --output_file $mgr->{dataDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{pipelineDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
+  my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --mummer_file $mgr->{dataDir}/snp/$mummerFile --output_file $mgr->{dataDir}/snp/$output --reference_strain $refStrain --error_log $mgr->{myPipelineDir}/logs/$logfile --gff_format $gffFormat --skip_multiple_matches";
 
   $mgr->runCmd($cmd);
 
@@ -2188,7 +2165,7 @@ sub runSignalP {
   
   my $propertySet = $mgr->{propertySet};
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${species}SignalP.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${species}SignalP.log";
 
   my $inFilePath = "$mgr->{dataDir}/seqfiles/${species}AnnotatedProteins.fsa";
 
@@ -2282,7 +2259,7 @@ sub runTMHmm{
 
   my $outFile = "$mgr->{'dataDir'}/tmhmm/${species}Tmhmm.out";
 
-  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{pipelineDir}/logs/${species}Tmhmm.log";
+  my $cmd = "runTMHMM -binPath $binPath -short  -seqFile $seqFile -outFile $outFile 2>> $mgr->{myPipelineDir}/logs/${species}Tmhmm.log";
 
   $mgr->runCmd($cmd);
 
@@ -2418,15 +2395,14 @@ sub copyFilesToComputeCluster {
   my ($mgr,$file,$dir) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
   my $clusterServer = $propertySet->getProp('clusterServer');
 
   my $signal = "${file}ToCluster";
-  return if $mgr->startStep("Copying $file to $serverPath/$mgr->{buildName}/$file on $clusterServer", $signal);
+  return if $mgr->startStep("Copying $file to $mgr->{clusterAnalysisDir}/$file on $clusterServer", $signal);
 
   my $fileDir = "$mgr->{dataDir}/$dir";
 
-  $mgr->{cluster}->copyTo($fileDir, $file, "$serverPath/$mgr->{buildName}/$dir");
+  $mgr->{cluster}->copyTo($fileDir, $file, "$mgr->{clusterAnalysisDir}/$dir");
 
   $mgr->endStep($signal);
 }
@@ -2456,7 +2432,7 @@ sub clusterByBlastSim {
   my $ceflag = ($consistentEnds eq "yes")? "--consistentEnds" : "";
 
   my $outputFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
-  my $logFile = "$mgr->{pipelineDir}/logs/$signal.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
   my $cmd = "buildBlastClusters.pl --lengthCutoff $length --percentCutoff $percent --verbose --files '$matrixFiles' --logBase $logbase --iterateCliqueSizeArray $cliqueSzArray $ceflag --iterateLogBaseArray $logbaseArray --sort > $outputFile 2>> $logFile";
 
@@ -2552,7 +2528,7 @@ sub runAssemblePlugin {
   my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --comment '$args'";
 
   print "running $pluginCmd\n";
-  my $logfile = "$mgr->{pipelineDir}/logs/${species}${name}Assemble.$suffix.log";
+  my $logfile = "$mgr->{myPipelineDir}/logs/${species}${name}Assemble.$suffix.log";
 
   my $assemDir = "$mgr->{dataDir}/assembly/$species$name/$suffix";
   $mgr->runCmd("mkdir -p $assemDir");
@@ -2579,8 +2555,6 @@ sub startTranscriptMatrixOnComputeCluster {
   my ($mgr, $species, $name) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-
   my $signal = "${species}${name}TranscriptMatrix";
   return if $mgr->startStep("Starting ${species}${name}Transcript matrix", $signal);
 
@@ -2588,8 +2562,8 @@ sub startTranscriptMatrixOnComputeCluster {
 
   my $cmd = "run" . ucfirst($signal);
 
-  my $cmdMsg = "submitPipelineJob $cmd $serverPath/$mgr->{buildName} NUMBER_OF_NODES";
-  my $logMsg = "monitor $serverPath/$mgr->{buildName}/logs/*.log and xxxxx.xxxx.stdout";
+  my $cmdMsg = "submitPipelineJob $cmd $mgr->{clusterAnalysisDir} NUMBER_OF_NODES";
+  my $logMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   print $cmdMsg . "\n" . $logMsg . "\n";
 
@@ -2601,7 +2575,6 @@ sub copyFilesFromComputeCluster {
   my ($mgr,$name,$dir) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
   my $clusterServer = $propertySet->getProp('clusterServer');
 
   my $signal = "copy${name}ResultsFromCluster";
@@ -2609,7 +2582,7 @@ sub copyFilesFromComputeCluster {
 			    $signal);
 
   $mgr->{cluster}->copyFrom(
-		       "$serverPath/$mgr->{buildName}/$dir/$name/",
+		       "$mgr->{clusterAnalysisDir}/$dir/$name/",
 		       "master",
 		       "$mgr->{dataDir}/$dir/$name");
   $mgr->endStep($signal);
@@ -2886,10 +2859,9 @@ sub createIprscanDir{
   my $subject = $subjectFile;
   my $signal = "make" . $subject . "Dir";
 
-  my $buildName = $mgr->{'buildName'};
   my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp ('nodePath');
-  my $serverPath = $propertySet->getProp ('serverPath');
   my $taskSize = $propertySet->getProp ('iprscan.taskSize');
   my $nodeClass = $propertySet->getProp ('nodeClass');
 
@@ -2904,10 +2876,10 @@ sub createIprscanDir{
   #Inteproscan release, just in case. 
   my $doCrc = "false";
 
-  &makeIprscanDir ($subject, $buildName, $dataDir, 
-  					$serverPath, $nodePath, $taskSize, 
-					$nodeClass, "$serverPath/$buildName/seqfiles", 
-					$subjectFile, "p", $appl, $doCrc, $email);
+  &makeIprscanDir ($subject, $dataDir, $clusterDataDir,
+		   $nodePath, $taskSize, 
+		   $nodeClass, "$clusterDataDir/seqfiles",
+		   $subjectFile, "p", $appl, $doCrc, $email);
 
   $mgr->endStep($signal);
 }
@@ -2917,16 +2889,14 @@ sub startIprScanOnComputeCluster {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $serverPath = $propertySet->getProp('serverPath');
-
   my $signal = "start" . uc($dir) . "IprScan";
 
   return if $mgr->startStep("Starting iprscan of $dir on cluster", $signal);
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runIprScan $serverPath/$mgr->{buildName} NUMBER_OF_NODES $dir $queue";
-  my $clusterLogMsg = "monitor $serverPath/$mgr->{buildName}/logs/${dir}_Iprscan.log";
+  my $clusterCmdMsg = "runIprScan $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $dir $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/${dir}_Iprscan.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }

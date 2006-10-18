@@ -31,41 +31,54 @@ use strict;
 use Carp;
 use CBIL::Util::Utils;
 
+sub _createDir {
+  my ($dir) = @_;
+  return if (-e $dir);
+  &runCmd("mkdir $dir");
+  &runCmd("chmod -R g+w $dir");
+}
+
 sub makeRMDir {
-    my ($datasetName, $pipelineName, $localPath, $serverPath, $nodePath, 
-	$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass) = @_;
-    
-    my $localBase = "$localPath/$pipelineName/primary/data/repeatmask/$datasetName";
-    my $serverBase = "$serverPath/$pipelineName/repeatmask/$datasetName"; 
-    my $inputDir = "$localBase/input";
+    my ($datasetName, $localDataDir, $clusterDataDir,
+	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass) = @_;
+
+    &_createDir("$localDataDir/repeatmask");
+    my $inputDir = "$localDataDir/repeatmask/$datasetName/input";
+    my $serverBase = "$clusterDataDir/repeatmask/$datasetName";
     &runCmd("mkdir -p $inputDir");
-    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize, 
-			    $nodePath, 
-			    "DJob::DistribJobTasks::RepeatMaskerTask", $nodeClass);
-    my $seqFileName = "$serverPath/$pipelineName/seqfiles/$datasetName.fsa"; 
+    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+			    $nodePath,
+			    "DJob::DistribJobTasks::RepeatMaskerTask",
+			    $nodeClass);
+    my $seqFileName = "$clusterDataDir/seqfiles/$datasetName.fsa"; 
     &makeRMTaskPropFile($inputDir, $seqFileName, $rmOptions, $rmPath,$dangleMax);
+    &runCmd("chmod -R g+w $localDataDir/repeatmask/$datasetName");
 }
 
 sub makeGenomeDir {
-    my ($queryName, $targetName, $pipelineName, $localPath, $serverPath,
+    my ($queryName, $targetName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass) = @_;
-    my $localBase = "$localPath/$pipelineName/primary/data/genome/$queryName-$targetName";
-    my $serverBase = "$serverPath/$pipelineName/genome/$queryName-$targetName";
-    my $inputDir = "$localBase/input";
+    my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
+    my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
+    &_createDir("$localDataDir/genome");
+
     my @targetFiles;
     &runCmd("mkdir -p $inputDir");
-    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize, 
-			    $nodePath, 
+    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+			    $nodePath,
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
-    my $seqFileName = "$serverPath/$pipelineName/repeatmask/$queryName/master/mainresult/blocked.seq";
+    my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
-    &makeGenomeTaskPropFile($inputDir, $serverInputDir, $seqFileName, $gaOptions, $gaBinPath);
+    &makeGenomeTaskPropFile($inputDir, $serverInputDir, $seqFileName,
+			    $gaOptions, $gaBinPath);
     
     my $oocFile; # = $serverGDir . '/11.ooc';
     &makeGenomeParamsPropFile($inputDir . '/params.prop', $oocFile);
     
-    push @targetFiles, "$serverPath/$pipelineName/seqfiles/$genomeFile.fsa";
+    push @targetFiles, "$clusterDataDir/seqfiles/$genomeFile.fsa";
     &makeGenomeTargetListFile($inputDir . '/target.lst', @targetFiles);
+
+    &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
 }
 
 sub makeGenomeReleaseXml {
@@ -85,53 +98,56 @@ sub makeGenomeReleaseXml {
 }
 
 sub makeMatrixDir {
-    my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
+    my ($queryName, $subjectName, $localDataDir, $clusterDataDir
 	$nodePath, $taskSize, $blastBinPath, $nodeClass) = @_;
     
-    my $localBase = "$localPath/$pipelineName/primary/data/matrix/$queryName-$subjectName";
-    my $serverBase = "$serverPath/$pipelineName/matrix/$queryName-$subjectName"; 
-    my $inputDir = "$localBase/input";
+    my $inputDir = "$localDataDir/matrix/$queryName-$subjectName/input";
+    my $serverBase = "$clusterDataDir/matrix/$queryName-$subjectName"; 
+
+    &_createDir("$localDataDir/matrix");
     &runCmd("mkdir -p $inputDir");
     &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize, 
 			    $nodePath, 
 			    "DJob::DistribJobTasks::BlastMatrixTask", $nodeClass);
-    my $dbFileName = "$serverPath/$pipelineName/repeatmask/$subjectName/master/mainresult/blocked.seq"; 
-    my $seqFileName = "$serverPath/$pipelineName/repeatmask/$queryName/master/mainresult/blocked.seq"; 
+    my $dbFileName = "$clusterDataDir/repeatmask/$subjectName/master/mainresult/blocked.seq"; 
+    my $seqFileName = "$clusterDataDir/repeatmask/$queryName/master/mainresult/blocked.seq"; 
     &makeBMTaskPropFile($inputDir, $blastBinPath, $seqFileName, $dbFileName);
+    &runCmd("chmod -R g+w $localDataDir/matrix/$queryName-$subjectName");
 }
 
 sub makeSimilarityDir {
-    my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
-	$nodePath, $taskSize, $blastBinPath,
-	$dbName, $dbPath, $queryFileName, $regex, $blast, $blastParams, $nodeClass,$dbType) = @_;
+    my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
+	$nodePath, $taskSize, $blastBinPath, $dbName, $dbPath, $queryFileName,
+	$regex, $blast, $blastParams, $nodeClass,$dbType) = @_;
 
-    my $localBase = "$localPath/$pipelineName/primary/data/similarity/$queryName-$subjectName";
-    my $serverBase = "$serverPath/$pipelineName/similarity/$queryName-$subjectName";
-    my $inputDir = "$localBase/input";
+    my $inputDir = "$localDataDir/similarity/$queryName-$subjectName/input";
+    my $serverBase = "$clusterDataDir/similarity/$queryName-$subjectName";
+    &_createDir("$localDataDir/similarity");
     my $blastParamsFile = "$inputDir/blastParams";
 
     &runCmd("mkdir -p $inputDir");
     &makeControllerPropFile($inputDir, $serverBase, 1, $taskSize, 
 			    $nodePath, "DJob::DistribJobTasks::BlastSimilarityTask", $nodeClass);
     my $dbFileName = "$dbPath/$dbName"; 
-    my $seqFileName = "$serverPath/$pipelineName/seqfiles/$queryFileName";
-    &makeBSTaskPropFile($inputDir, $blastBinPath, $seqFileName, $dbFileName, 
+    my $seqFileName = "$clusterDataDir/seqfiles/$queryFileName";
+    &makeBSTaskPropFile($inputDir, $blastBinPath, $seqFileName, $dbFileName,
 			$regex, $blast, "blastParams",$dbType);
 
     open(F, ">$blastParamsFile");
     print F "$blastParams\n";
     close(F);
+    &runCmd("chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }
 
 sub makePfamDir {
-  my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath, 
+  my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
       $nodePath, $taskSize, $pfamBinPath,
-      $queryFileName, $fileDir,$subjectFileName,$nodeClass) = @_;
+      $queryFileName, $fileDir, $subjectFileName,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/primary/data/pfam/$queryName-$subjectName";
-  my $serverBase = "$serverPath/$pipelineName/pfam/$queryName-$subjectName";
-  my $inputDir = "$localBase/input";
+  my $inputDir = "$localDataDir/pfam/$queryName-$subjectName/input";
+  my $serverBase = "$clusterDataDir/pfam/$queryName-$subjectName";
 
+  &_createDir("$localDataDir/pfam");
   &runCmd("mkdir -p $inputDir");
   &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize, 
 			    $nodePath, "DJob::DistribJobTasks::HMMpfamTask", $nodeClass);
@@ -139,72 +155,75 @@ sub makePfamDir {
   my $subjectFilePath = "${fileDir}/$subjectFileName";
   my $queryFilePath = "${fileDir}/$queryFileName";
   &makePfamTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$pfamBinPath);
+    &runCmd("chmod -R g+w $localDataDir/pfam/$queryName-$subjectName");
 }
 
 sub makeTRNAscanDir {
-  my ($subject, $pipelineName, $localPath,
-      $serverPath, $nodePath, $taskSize,
+  my ($subject, $localDataDir, $clusterDataDir,
+      $nodePath, $taskSize,
       $trnascanPath, $model,
       $fileDir,$subjectFileName,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/primary/data/trnascan/$subject";
-  my $serverBase = "$serverPath/$pipelineName/trnascan/$subject";
-  my $inputDir = "$localBase/input";
+  my $inputDir = "$localDataDir/trnascan/$subject/input";
+  my $serverBase = "$clusterDataDir/trnascan/$subject";
 
+  &_createDir("$localDataDir/trnascan");
   &runCmd("mkdir -p $inputDir");
   &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
-			    $nodePath, "DJob::DistribJobTasks::tRNAscanTask", $nodeClass);
+			  $nodePath, "DJob::DistribJobTasks::tRNAscanTask", $nodeClass);
 
   my $subjectFilePath = "${fileDir}/$subjectFileName";
   &makeTRNAscanTaskPropFile($inputDir,$subjectFilePath, $trnascanPath, $model );
+    &runCmd("chmod -R g+w $localDataDir/trnascan/$subject");
 }
 
 sub makePsipredDir {
-  my ($queryName, $subjectName, $pipelineName, $localPath, $serverPath,
-      $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,$subjectFile,$nodeClass) = @_;
+  my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
+      $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,
+      $subjectFile,$nodeClass) = @_;
 
-  my $localBase = "$localPath/$pipelineName/primary/data/psipred/$queryName-$subjectName";
+  my $inputDir = "$localDataDir/psipred/$queryName-$subjectName/input";
 
-  my $serverBase = "$serverPath/$pipelineName/psipred/$queryName-$subjectName";
+  my $serverBase = "$clusterDataDir/psipred/$queryName-$subjectName";
 
-  my $inputDir = "$localBase/input";
-
+  &_createDir("$localDataDir/psipred");
   &runCmd("mkdir -p $inputDir");
 
   &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,$nodePath, "DJob::DistribJobTasks::PsipredTask", $nodeClass);
 
-  my $subjectFilePath = "$serverPath/$pipelineName/psipred/$subjectFile";
+  my $subjectFilePath = "$clusterDataDir/psipred/$subjectFile";
 
-  my $queryFilePath = "$serverPath/$pipelineName/seqfiles/$queryFile";
+  my $queryFilePath = "$clusterDataDir/seqfiles/$queryFile";
 
   &makePsipredTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$psipredPath);
 
+  &runCmd("chmod -R g+w $localDataDir/psipred/$queryName-$subjectName");
 }
 
 sub makeIprscanDir {
-	  my ($subject, $pipelineName, $localPath,
-      		$serverPath, $nodePath, 
-      		$taskSize, $nodeClass,
-      		$fileDir, $subjectFileName, $seqtype,
-      		$appl, $crc, $email) = @_;
-	
-	# my $subject = $subjectFileName;
+  my ($subject, $localDataDir, $clusterDataDir,
+      $nodePath,  $taskSize, $nodeClass,
+      $fileDir, $subjectFileName, $seqtype,
+      $appl, $crc, $email) = @_;
 
-	my $localBase = "$localPath/primary/data/iprscan/$subject";
-	my $serverBase = "$serverPath/$pipelineName/iprscan/$subject";
-	my $inputDir = "$localBase/input";
+  # my $subject = $subjectFileName;
 
-	print "$localBase\n";
-	
-	&runCmd ("mkdir -p $inputDir");
-	
-	my $numSlotsPerNode = 2;
-	&makeControllerPropFile ($inputDir, $serverBase, $numSlotsPerNode, $taskSize,
-								$nodePath, "DJob::DistribJobTasks::IprscanTask", $nodeClass);
+  my $inputDir = "$localDataDir/iprscan/$subject/input";
+  my $serverBase = "$clusterDataDir/iprscan/$subject";
 
-	my $seqfile = "$fileDir/$subjectFileName";
-	my $output_file = $subject . "_iprscan_out.xml";
-	&makeIprscanTaskPropFile ($inputDir, $seqfile, $output_file, $seqtype, $appl, $crc, $email);								
+  &_createDir("$localDataDir/iprscan");
+  &runCmd ("mkdir -p $inputDir");
+
+  my $numSlotsPerNode = 2;
+  &makeControllerPropFile ($inputDir, $serverBase, $numSlotsPerNode, 
+			   $taskSize, $nodePath, 
+			   "DJob::DistribJobTasks::IprscanTask", $nodeClass);
+
+  my $seqfile = "$fileDir/$subjectFileName";
+  my $output_file = $subject . "_iprscan_out.xml";
+  &makeIprscanTaskPropFile ($inputDir, $seqfile, $output_file, $seqtype, $appl, $crc, $email);
+  &runCmd("chmod -R g+w $localDataDir/iprscan/$subject");
+
 }
 
 sub makeControllerPropFile {

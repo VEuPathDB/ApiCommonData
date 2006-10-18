@@ -65,13 +65,22 @@ sub initToxoPlasmoAnalysis {
      ["projectName", "", " project name from projectinfo.name"],
     );
 
+  # get necessary properties
   my $propertySet  = CBIL::Util::PropertySet->new($propertiesFile, \@properties, 1);
   my $myPipelineName = $propertySet->getProp('myPipelineName');
-  my $buildDir = $propertySet->getProp('buildDir');
-  my $release = $propertySet->getProp('projectRelease');
-  my $dataDir = "$buildDir/$release/analysis_pipeline/primary/data";
-  my $buildName = "$release/analysis_pipeline/$myPipelineName";
-  my $pipelineDir = "$buildDir/$buildName";
+  my $projectDir = $propertySet->getProp('projectDir');
+  my $clusterProjectDir = $propertySet->getProp('clusterProjectDir');
+  my $release = $propertySet->getProp('release');
+
+  my $analysisPipelineDir = "$projectDir/$release/analysis_pipeline/";
+  my $myPipelineDir = "$analysisPipelineDir/$myPipelineName";
+
+  # set up global variables
+  $mgr->{propertiesFile} = $propertiesFile;
+  $mgr->{myPipelineDir} = $myPipelineDir;
+  $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
+  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline";
+  $mgr->{clusterAnalysisDir} = $mgr->{clusterDataDir};
 
   my $cluster;
   if ($propertySet->getProp('clusterServer') ne "none") {
@@ -81,24 +90,16 @@ sub initToxoPlasmoAnalysis {
     $cluster = GUS::Pipeline::NfsCluster->new();
   }
 
-  my $mgr = GUS::Pipeline::Manager->new($pipelineDir, $propertySet,
+  my $mgr = GUS::Pipeline::Manager->new($myPipelineDir, $propertySet,
 					$propertiesFile, $cluster,
 					$propertySet->getProp('testNextPlugin'),
 					$printXML);
-
-  $mgr->{buildName} = $buildName;
-
-  $mgr->{pipelineDir} = $pipelineDir;
-
-  $mgr->{dataDir} = $dataDir;
-
-  $mgr->{propertiesFile} = $propertiesFile;
 
   &createDataDir($mgr,$allSpecies,$dataDir);
 
   &makeUserProjectGroup($mgr);
 
-#  &copyPipelineDirToComputeCluster($mgr);
+  &copyPipelineDirToComputeCluster($mgr);
 
   my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
 
