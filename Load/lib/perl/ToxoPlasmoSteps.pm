@@ -17,11 +17,11 @@ sub initToxoAnalysis {
 
   my $taxId = ["Tgondii:5811"];
 
-  my ($mgr, $buildDir, $release)
+  my ($mgr, $projectDir, $release)
     = &initToxoPlasmoAnalysis($propertyFile, $printXML,
 			      $allSpecies, $taxId);
 
-  return ($mgr, $buildDir, $release, $allSpecies);
+  return ($mgr, $projectDir, $release, $allSpecies);
 }
 
 sub initPlasmoAnalysis {
@@ -31,11 +31,11 @@ sub initPlasmoAnalysis {
 
   my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5821","Pchabaudi:5825"];
 
-  my ($mgr, $buildDir, $release)
+  my ($mgr, $projectDir, $release)
     = &initToxoPlasmoAnalysis($propertyFile, $printXML,
 			      $allSpecies, $taxId);
 
-  return ($mgr, $buildDir, $release, $allSpecies);
+  return ($mgr, $projectDir, $release, $allSpecies);
 }
 
 
@@ -75,13 +75,6 @@ sub initToxoPlasmoAnalysis {
   my $analysisPipelineDir = "$projectDir/$release/analysis_pipeline/";
   my $myPipelineDir = "$analysisPipelineDir/$myPipelineName";
 
-  # set up global variables
-  $mgr->{propertiesFile} = $propertiesFile;
-  $mgr->{myPipelineDir} = $myPipelineDir;
-  $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
-  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline";
-  $mgr->{clusterAnalysisDir} = $mgr->{clusterDataDir};
-
   my $cluster;
   if ($propertySet->getProp('clusterServer') ne "none") {
     $cluster = GUS::Pipeline::SshCluster->new($propertySet->getProp('clusterServer'),
@@ -95,7 +88,14 @@ sub initToxoPlasmoAnalysis {
 					$propertySet->getProp('testNextPlugin'),
 					$printXML);
 
-  &createDataDir($mgr,$allSpecies,$dataDir);
+  # set up global variables
+  $mgr->{propertiesFile} = $propertiesFile;
+  $mgr->{myPipelineDir} = $myPipelineDir;
+  $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
+  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline";
+  $mgr->{clusterAnalysisDir} = $mgr->{clusterDataDir};
+
+  &createDataDir($mgr,$allSpecies,$mgr->{dataDir});
 
   &makeUserProjectGroup($mgr);
 
@@ -105,7 +105,7 @@ sub initToxoPlasmoAnalysis {
 
   $mgr->{taxonHsh} = $taxonHsh;
 
-  return ($mgr, $buildDir, $release);
+  return ($mgr, $projectDir, $release);
 }
 
   my @plasmoProps = (

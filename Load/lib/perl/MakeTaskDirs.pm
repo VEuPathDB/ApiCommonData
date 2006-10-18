@@ -98,7 +98,7 @@ sub makeGenomeReleaseXml {
 }
 
 sub makeMatrixDir {
-    my ($queryName, $subjectName, $localDataDir, $clusterDataDir
+    my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $blastBinPath, $nodeClass) = @_;
     
     my $inputDir = "$localDataDir/matrix/$queryName-$subjectName/input";

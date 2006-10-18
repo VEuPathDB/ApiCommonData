@@ -118,8 +118,6 @@ sub createSimilarityDir {
 		     $wuBlastBinPathCluster,
 		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
 
-  $mgr->runCmd("chmod -R g+w $dataDir/similarity/${queryFile}-${subjectFile}");
-
   $mgr->endStep($signal);
 }
 
@@ -153,8 +151,6 @@ sub createPfamDir {
 	       $pfamPath,
 	       $queryFile,"$clusterDataDir/seqfiles",$subjectFile,$nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $dataDir/pfam");
-
   $mgr->endStep($signal);
 }
 
@@ -184,8 +180,6 @@ sub createTRNAscanDir {
 		   $nodePath, $trnascanTaskSize,
 		   $trnascanPath,$model,
 		   "$clusterDataDir/seqfiles",$subjectFile,$nodeClass);
-
-  $mgr->runCmd("chmod -R g+w $dataDir/trnascan");
 
   $mgr->endStep($signal);
 }
@@ -321,8 +315,6 @@ sub createPsipredSubdir {
 		  $psipredPath,
 		  $queryFile,"$clusterDataDir/psipred",$dbFile,$nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $dataDir/psipred");
-
   $mgr->endStep($signal);
 }
 
@@ -442,8 +434,6 @@ sub createRepeatMaskDir {
 	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, 
 	     $nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $dataDir");
-
   $mgr->endStep($signal);
 }
 
@@ -474,7 +464,6 @@ sub createGenomeDir {
   &makeGenomeDir($speciesQuery, $genome, $dataDir, $clusterDataDir,
     $nodePath, $gaTaskSize, $gaOptions, $gaPath, $genomeFile, $nodeClass);
 
-  $mgr->runCmd("chmod -R g+w $buildDir/$buildName/");
   $mgr->endStep($signal);
 }
 
@@ -487,11 +476,13 @@ sub copyPipelineDirToComputeCluster {
   my $release = $propertySet->getProp('projectRelease');
   my $clusterProjectDir = $propertySet->getProp('clusterProjectDir');
   my $clusterReleaseDir = "$clusterProjectDir/$release";
+  my $releaseDir = "$projectDir/$release";
   my $signal = "dir2cluster";
 
   return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo($projectDir, 'analysis_pipeline',$clusterProjectDir);
+  $mgr->{cluster}->copyTo("$releaseDir", 'analysis_pipeline',
+			  "$clusterReleaseDir");
 
   $mgr->endStep($signal);
 }
@@ -1910,6 +1901,7 @@ sub startTranscriptAlignToContigs {
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${species}${name}AlignToContigs";
+  my $clusterServer = $propertySet->getProp('clusterServer');
   return if $mgr->startStep("Aligning $species $name to contigs on $clusterServer", $signal);
 
   $mgr->endStep($signal);
