@@ -663,11 +663,11 @@ sub extractESTs {
 
   my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
 
-  my $name =~ "${genus}_$species";
+  my $name = "${genus}_$species";
 
-  my $sql = my $sql = "select '$name|'source_id'|$date|EST|dbEST|',sequence
+  my $sql = "select '${name}|'||source_id||'|${date}|EST|dbEST',sequence
              from dots.externalnasequence
-             where x.external_database_release_id = $dbRlsId and taxon_id in ($taxonIdList)";
+             where external_database_release_id = $dbRlsId and taxon_id in ($taxonIdList)";
 
   $genus =~ s/^(\w)\w+/$1/;
 
