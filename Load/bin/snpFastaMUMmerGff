@@ -207,7 +207,7 @@ sub _findReferenceAllele {
 sub _printErrorReport {
   my ($geneFeatures, $log) = @_;
 
-  open(LOG, ">> $log") || die "Cannot open file $log for writing: $!";
+  open(LOG, "> $log") || die "Cannot open file $log for writing: $!";
 
   print LOG "External_Identifier\tAllele\tChromosome\texpected_start\texpeced_end\tsequence\tmessage\n";
 
