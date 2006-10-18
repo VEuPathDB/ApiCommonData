@@ -260,9 +260,6 @@ sub parsedbEST {
 }
 
 
-
-
-
 sub createPsipredDirWithFormattedDb {
   my ($mgr,$dbFile,$dbFileDir) = @_;
 
@@ -331,8 +328,8 @@ sub startPsipredOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runPsipred $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $query $subject $queue";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runPsipred $mgr->{clusterDataDir} NUMBER_OF_NODES $query $subject $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -481,8 +478,10 @@ sub copyPipelineDirToComputeCluster {
 
   return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo("$releaseDir", 'analysis_pipeline',
-			  "$clusterReleaseDir");
+  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipline/primary",
+			  "$clusterProjectDir");
+
+  $mgr->{cluster}->runCmdOnCluster("ln -s $clusterProjectDir/$release/primary/logs $clusterProjectDir/$release/primary/data");
 
   $mgr->endStep($signal);
 }
@@ -1369,8 +1368,8 @@ sub startProteinBlastOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1410,8 +1409,8 @@ sub startTRNAscanOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runTRNAscan $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $subjectFile $queue";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runTRNAscan $mgr->{clusterDataDir} NUMBER_OF_NODES $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1436,8 +1435,8 @@ sub startHMMPfamOnComputerCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runPfam $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runPfam $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -1939,8 +1938,8 @@ sub startTranscriptAlignToContigs {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runContigAlign $mgr->{clusterAnalysisDir} NUMBER_OF_NODES";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
+  my $clusterCmdMsg = "runContigAlign $mgr->{clusterDataDir} NUMBER_OF_NODES";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
@@ -2423,11 +2422,11 @@ sub copyFilesToComputeCluster {
   my $clusterServer = $propertySet->getProp('clusterServer');
 
   my $signal = "${file}ToCluster";
-  return if $mgr->startStep("Copying $file to $mgr->{clusterAnalysisDir}/$file on $clusterServer", $signal);
+  return if $mgr->startStep("Copying $file to $mgr->{clusterDataDir}/$file on $clusterServer", $signal);
 
   my $fileDir = "$mgr->{dataDir}/$dir";
 
-  $mgr->{cluster}->copyTo($fileDir, $file, "$mgr->{clusterAnalysisDir}/$dir");
+  $mgr->{cluster}->copyTo($fileDir, $file, "$mgr->{clusterDataDir}/$dir");
 
   $mgr->endStep($signal);
 }
@@ -2587,8 +2586,8 @@ sub startTranscriptMatrixOnComputeCluster {
 
   my $cmd = "run" . ucfirst($signal);
 
-  my $cmdMsg = "submitPipelineJob $cmd $mgr->{clusterAnalysisDir} NUMBER_OF_NODES";
-  my $logMsg = "monitor $mgr->{clusterAnalysisDir}/logs/*.log and xxxxx.xxxx.stdout";
+  my $cmdMsg = "submitPipelineJob $cmd $mgr->{clusterDataDir} NUMBER_OF_NODES";
+  my $logMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   print $cmdMsg . "\n" . $logMsg . "\n";
 
@@ -2607,7 +2606,7 @@ sub copyFilesFromComputeCluster {
 			    $signal);
 
   $mgr->{cluster}->copyFrom(
-		       "$mgr->{clusterAnalysisDir}/$dir/$name/",
+		       "$mgr->{clusterDataDir}/$dir/$name/",
 		       "master",
 		       "$mgr->{dataDir}/$dir/$name");
   $mgr->endStep($signal);
@@ -2920,8 +2919,8 @@ sub startIprScanOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runIprScan $mgr->{clusterAnalysisDir} NUMBER_OF_NODES $dir $queue";
-  my $clusterLogMsg = "monitor $mgr->{clusterAnalysisDir}/logs/${dir}_Iprscan.log";
+  my $clusterCmdMsg = "runIprScan $mgr->{clusterDataDir} NUMBER_OF_NODES $dir $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/${dir}_Iprscan.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }

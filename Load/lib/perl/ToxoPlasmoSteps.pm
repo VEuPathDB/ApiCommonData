@@ -92,8 +92,7 @@ sub initToxoPlasmoAnalysis {
   $mgr->{propertiesFile} = $propertiesFile;
   $mgr->{myPipelineDir} = $myPipelineDir;
   $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
-  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline";
-  $mgr->{clusterAnalysisDir} = $mgr->{clusterDataDir};
+  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline/primary/data";
 
   &createDataDir($mgr,$allSpecies,$mgr->{dataDir});
 
