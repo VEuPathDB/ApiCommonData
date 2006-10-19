@@ -205,6 +205,8 @@ sub run {
   $self->log("Locations total: $totalLocationCount");
   $self->log("testnumber = " . $self->getArg('testnumber'))
     if $self->getArg('testnumber');
+	
+	return "Done inserting Interpro scan results\n";
 }
 
 sub processProteinResults {
