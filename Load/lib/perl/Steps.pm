@@ -2938,17 +2938,17 @@ sub startIprScanOnComputeCluster {
 
    my $iprver = $propertySet->getProp('iprscan.version');
    my $iprdataver = $propertySet->getProp('iprscan.dataversion');
-   my $goversions = $propertySet->getProp('iprscan.goversions');
+   my $goversion = $propertySet->getProp('iprscan.goversion');
 
    # my $conf = "$ENV{GUS_HOME}/config/interpro-config-plasmodb.xml";
 
    my $args = <<"EOF";
 --resultFileDir=$resultFileDir \\
 --confFile=$conf \\
---queryTable=TranslatedAASequence \\
+--aaSeqTable=TranslatedAASequence \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
---goVersions=\'$goversions\' \\
+--goVersion=\'$goversion\' \\
 EOF
 
    $mgr->runPlugin($signal, 
