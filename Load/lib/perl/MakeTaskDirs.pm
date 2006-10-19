@@ -57,26 +57,22 @@ sub makeRMDir {
 
 sub makeGenomeDir {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
-	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass) = @_;
+	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass, $nodePort) = @_;
     my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
     my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
+    my $targetDirPath = "$clusterDataDir/seqfiles/$targetName/nib";
     &_createDir("$localDataDir/genome");
 
-    my @targetFiles;
     &runCmd("mkdir -p $inputDir");
     &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
 			    $nodePath,
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
-    &makeGenomeTaskPropFile($inputDir, $serverInputDir, $seqFileName,
+    &makeGenomeTaskPropFile($inputDir, $targetDirPath,$nodePort, $queryPath,
 			    $gaOptions, $gaBinPath);
-    
-    my $oocFile; # = $serverGDir . '/11.ooc';
-    &makeGenomeParamsPropFile($inputDir . '/params.prop', $oocFile);
-    
-    push @targetFiles, "$clusterDataDir/seqfiles/$genomeFile.fsa";
-    &makeGenomeTargetListFile($inputDir . '/target.lst', @targetFiles);
+
+    &makeGenomeTargetListFile($inputDir . '/target.lst', "$localDataDir/seqfiles/$genomeDir");
 
     &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
 }
@@ -265,27 +261,29 @@ dangleMax=$dangleMax
 }
 
 sub makeGenomeTaskPropFile {
-    my ($inputDir, $serverInputDir, $seqFileName, $gaOptions, $gaBinPath) = @_;
-
-    my $targetListFile = "$inputDir/target.lst";
-    my $serverTargetListFile = "$serverInputDir/target.lst";
+    my ($inputDir, $targetDirPath, $nodePort, $queryPath, $gaOptions, $gaBinPath) = @_;
 
     open(F, ">$inputDir/task.prop")
 	|| die "Can't open $inputDir/task.prop for writing";
     print F
 "gaBinPath=$gaBinPath
-targetListPath=$serverTargetListFile
-queryPath=$seqFileName
+targetDirPath=$targetDirPath
+queryPath=$queryPath
+nodePort=$nodePort
 ";
     close(F);
 }
 
 sub makeGenomeTargetListFile {
-    my ($targetListFile, @targetFiles) = @_;
+    my ($targetListFile, $genomeDir) = @_;
 
     open(F, ">$targetListFile") || die "Can't open $targetListFile for writing";
 
-    foreach (@targetFiles) { print F $_ . "\n"; }
+    opendir(D,$genomeDir) || die "Can't open directory, $genomeDir";
+
+    while(my $file = readdir(D)) { print F "$file\n"; }
+
+    closedir(D);
     close(F);
 }
 
