@@ -2909,7 +2909,7 @@ sub createIprscanDir{
 }
 
 sub startIprScanOnComputeCluster {
-  my ($mgr,$dir,$queue) = @_;
+  my ($mgr,$dir,$queue, $returnImmediately) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -2922,12 +2922,12 @@ sub startIprScanOnComputeCluster {
   my $clusterCmdMsg = "runIprScan $mgr->{clusterDataDir} NUMBER_OF_NODES $dir $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/${dir}_Iprscan.log";
 
-  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, $returnImmediately);
 }
 
  #LoadIprscanResults.
  sub loadIprscanResults{
-   my ($mgr,$dir,$extDbName,$extDbRlsVer) = @_;
+   my ($mgr, $dir, $extDbName, $extDbRlsVer, $conf) = @_;
 
    my $propertySet = $mgr->{propertySet};
 
@@ -2940,7 +2940,7 @@ sub startIprScanOnComputeCluster {
    my $iprdataver = $propertySet->getProp('iprscan.dataversion');
    my $goversions = $propertySet->getProp('iprscan.goversions');
 
-   my $conf = "$ENV{GUS_HOME}/config/interpro-config-plasmodb.xml";
+   # my $conf = "$ENV{GUS_HOME}/config/interpro-config-plasmodb.xml";
 
    my $args = <<"EOF";
 --resultFileDir=$resultFileDir \\
@@ -2948,10 +2948,7 @@ sub startIprScanOnComputeCluster {
 --queryTable=TranslatedAASequence \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
---iprVer=$iprver \\
---iprDataVer=\'$iprdataver\' \\
 --goVersions=\'$goversions\' \\
---useSourceId \\
 EOF
 
    $mgr->runPlugin($signal, 
