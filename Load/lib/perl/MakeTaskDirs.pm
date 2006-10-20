@@ -57,7 +57,7 @@ sub makeRMDir {
 
 sub makeGenomeDir {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
-	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass, $nodePort) = @_;
+	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort) = @_;
     my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
     my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
     my $targetDirPath = "$clusterDataDir/seqfiles/$targetName/nib";
@@ -69,10 +69,10 @@ sub makeGenomeDir {
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
-    &makeGenomeTaskPropFile($inputDir, $targetDirPath,$nodePort, $queryPath,
-			    $gaOptions, $gaBinPath);
+    &makeGenomeTaskPropFile($inputDir, $targetDirPath,$nodePort, $queryName,
+			    $maxIntron, $gaBinPath);
 
-    &makeGenomeTargetListFile($inputDir . '/target.lst', "$localDataDir/seqfiles/$genomeDir");
+    &makeGenomeTargetListFile($inputDir . '/target.lst', "$localDataDir/seqfiles/$targetName");
 
     &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
 }
@@ -261,7 +261,7 @@ dangleMax=$dangleMax
 }
 
 sub makeGenomeTaskPropFile {
-    my ($inputDir, $targetDirPath, $nodePort, $queryPath, $gaOptions, $gaBinPath) = @_;
+    my ($inputDir, $targetDirPath, $nodePort, $queryPath, $maxIntron, $gaBinPath) = @_;
 
     open(F, ">$inputDir/task.prop")
 	|| die "Can't open $inputDir/task.prop for writing";
@@ -270,6 +270,7 @@ sub makeGenomeTaskPropFile {
 targetDirPath=$targetDirPath
 queryPath=$queryPath
 nodePort=$nodePort
+maxIntron=$maxIntron
 ";
     close(F);
 }
@@ -281,7 +282,7 @@ sub makeGenomeTargetListFile {
 
     opendir(D,$genomeDir) || die "Can't open directory, $genomeDir";
 
-    while(my $file = readdir(D)) { print F "$file\n"; }
+    while(my $file = readdir(D)) { next() if ($file =~ /^\./);print F "$file\n"; }
 
     closedir(D);
     close(F);
