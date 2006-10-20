@@ -410,10 +410,10 @@ sub documentPsipred {
 }
 
 sub createRepeatMaskDir {
-  my ($mgr, $species, $file) = @_;
+  my ($mgr, $file) = @_;
 
   my $propertySet = $mgr->{propertySet};
-  my $signal = "make$species" . ucfirst($file) . "SubDir";
+  my $signal = "make" . ucfirst($file) . "RMDir";
 
   return if $mgr->startStep("Creating $file repeatmask dir", $signal);
 
@@ -426,10 +426,8 @@ sub createRepeatMaskDir {
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
 
-  my $speciesFile = $species . $file;
-  &makeRMDir($speciesFile, $dataDir, $clusterDataDir,
-	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, 
-	     $nodeClass);
+  &makeRMDir($file, $dataDir, $clusterDataDir,
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
 
   $mgr->endStep($signal);
 }
@@ -1308,6 +1306,8 @@ sub concatFiles {
 
    $signal =~ s/-$projRel//g;
 
+   return if $mgr->startStep("Creating concatenated file, $catFile", $signal);
+
    my $cmd = "cat $files > $mgr->{dataDir}/$fileDir/$catFile";
 
    $mgr->runCmd($cmd);
@@ -1362,6 +1362,24 @@ sub startProteinBlastOnComputeCluster {
 
   my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+sub startGenomeAlignOnComputeCluster {
+  my ($mgr,$queryFile,$targetDir,$queue) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $name = $queryFile . "-" . $targetDir;
+
+  $name = ucfirst($name);
+  my $signal = "startAlign$name";
+  return if $mgr->startStep("Starting $name alignment on cluster", $signal);
+
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runGenomeAlign --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
