@@ -70,9 +70,9 @@ sub makeGenomeDir {
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
     &makeGenomeTaskPropFile($inputDir, $targetDirPath,$nodePort, $queryName,
-			    $maxIntron, $gaBinPath);
+			    $maxIntron, $gaBinPath, $clusterDataDir);
 
-    &makeGenomeTargetListFile($inputDir . '/target.lst', "$localDataDir/seqfiles/$targetName");
+    &makeGenomeTargetListFile($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
 
     &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
 }
@@ -261,14 +261,14 @@ dangleMax=$dangleMax
 }
 
 sub makeGenomeTaskPropFile {
-    my ($inputDir, $targetDirPath, $nodePort, $queryPath, $maxIntron, $gaBinPath) = @_;
+    my ($inputDir, $targetDirPath, $nodePort, $query, $maxIntron, $gaBinPath, $clusterDataDir) = @_;
 
     open(F, ">$inputDir/task.prop")
 	|| die "Can't open $inputDir/task.prop for writing";
     print F
 "gaBinPath=$gaBinPath
 targetDirPath=$targetDirPath
-queryPath=$queryPath
+queryPath="$clusterDataDir/repeatmask/$queryPath/master/mainresult/blocked.seq"
 nodePort=$nodePort
 maxIntron=$maxIntron
 ";
@@ -276,17 +276,22 @@ maxIntron=$maxIntron
 }
 
 sub makeGenomeTargetListFile {
-    my ($targetListFile, $genomeDir) = @_;
+    my ($targetListFile, $localDataDir, $targetName,$clusterDataDir) = @_; 
 
     open(F, ">$targetListFile") || die "Can't open $targetListFile for writing";
 
+    my $genomeDir = "$localDataDir/seqfiles/$targetName";
+
     opendir(D,$genomeDir) || die "Can't open directory, $genomeDir";
 
-    while(my $file = readdir(D)) { next() if ($file =~ /^\./);print F "$file\n"; }
+    while(my $file = readdir(D)) { next() if ($file =~ /^\./);print F "$clusterDataDir/seqfiles/$targetName/$file\n"; }
 
     closedir(D);
     close(F);
 }
+
+
+($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
 
 sub makeGenomeParamsPropFile {
     my ($paramsPath, $oocFile) = @_;
