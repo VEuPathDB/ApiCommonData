@@ -52,7 +52,7 @@ sub run {
     my $inputFile = $self->getArg('inputFile');    
     my $summary = {};
     
-#    my $extDbRlsId = $self->getExtDbRlsId($self->getArg("externalDatabaseSpec"));
+    $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
     open(F, $inputFile) or die "Could not open $inputFile: $!\n";
     while (<F>) {
@@ -60,7 +60,7 @@ sub run {
         if (m/^# /) {
             chomp(my $ln = <F>);
             unless ($self->addMassSpecSummary($ln, $summary)) {
-                warn "Protein match from '$summary->{sourcefile}' not found in DoTS.Transcript, skipping\n";
+                warn "'$summary->{proteinId}' or '$summary->{description}' from '$summary->{sourcefile}' not found in DoTS.Transcript, skipping\n";
                 $self->{summariesSkipped}++;
                 $self->nextRecord(*F);
             }
@@ -80,6 +80,8 @@ EOF
 
 sub addMassSpecSummary {
     my ($self, $ln, $h) = @_;
+    
+    $self->undefPointerCache();
 
     ( $h->{proteinId},
       $h->{description},
@@ -111,7 +113,7 @@ sub addMassSpecSummary {
     $h->{naFeatureId}  = $transcript->getId();
     $h->{sourceId}     = $transcript->getSourceId();
     $h->{seqLength}    = $aaSeq->getLength();
-    $h->{devStage}     = 'DEBUG';
+    $h->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
 
     my $mss = GUS::Model::DoTS::MassSpecSummary->new({
        'aa_sequence_id'          => $h->{aaSequenceId},
@@ -239,7 +241,7 @@ sub addNALocation {
     my $naFeature = GUS::Model::DoTS::NAFeature->new({
         na_sequence_id => $h->{naSequenceId},
         name                            => 'located_sequence_feature',
-#        external_database_release_id    =>,
+        external_database_release_id    => $self->{extDbRlsId},
         source_id                       => $h->{sourceId},
         prediction_algorithm_id         => $self->getPredictionAlgId,
     });
@@ -271,7 +273,6 @@ sub getExons {
     my ($self, $id) = @_;
     my @exons; my $exonCoords = [];
 
-# todo: add ext db rls id
     my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $id });
     unless ($transcript->retrieveFromDB()) {
       $self->logVerbose("No Transcript row was fetched with source_id = $id\n");
@@ -334,7 +335,6 @@ sub getPredictionAlgId {
     $self->{predictionAlgId} = $pid->getId;
 }
 
-
 sub nextRecord {
     my ($self, $fileptr) = @_;
     my $pos;
@@ -370,23 +370,14 @@ sub declareArgs {
       isList          =>  0
     }),
 
-  fileArg({
-      name            =>  'lookUpFile',
-      descr           =>  'lookup file to map old to new identifiers',
-      constraintFunc  =>  undef,
-      reqd            =>  0,
-      isList          =>  0,
-      mustExist       =>  1,
-      format          =>  'Text'
-    }),
-
   stringArg({
-      name            =>  'restart',
-      descr           =>  'For restarting script...takes list of row_alg_invocation_ids to exclude',
+      name            =>  'developmentalStage',
+      descr           =>  'organism developmental stage analyzed',
       constraintFunc  =>  undef,
       reqd            =>  0,
       isList          =>  0
     }),
+
   ];
 
 }
