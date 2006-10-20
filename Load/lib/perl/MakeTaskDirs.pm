@@ -268,7 +268,7 @@ sub makeGenomeTaskPropFile {
     print F
 "gaBinPath=$gaBinPath
 targetDirPath=$targetDirPath
-queryPath="$clusterDataDir/repeatmask/$queryPath/master/mainresult/blocked.seq"
+queryPath=$clusterDataDir/repeatmask/$query/master/mainresult/blocked.seq
 nodePort=$nodePort
 maxIntron=$maxIntron
 ";
@@ -289,9 +289,6 @@ sub makeGenomeTargetListFile {
     closedir(D);
     close(F);
 }
-
-
-($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
 
 sub makeGenomeParamsPropFile {
     my ($paramsPath, $oocFile) = @_;
