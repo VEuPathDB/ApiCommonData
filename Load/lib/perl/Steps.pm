@@ -435,32 +435,24 @@ sub createRepeatMaskDir {
 }
 
 sub createGenomeDir {
-  my ($mgr, $species, $query, $genome) = @_;
-  my $signal = "create$species" . ucfirst($query) . "-" . ucfirst($genome) . "GenomeDir";
-  return if $mgr->startStep("Creating ${query}-${genome} genome dir", $signal);
+  my ($mgr, $query, $genomeDir,$maxIntron) = @_;
+
+  my $signal = "create" . ucfirst($query) . "-" . ucfirst($genomeDir) . "GenomeDir";
+  return if $mgr->startStep("Creating ${query}-${genomeDir} genome dir", $signal);
 
   my $propertySet = $mgr->{propertySet};
-
   my $dataDir = $mgr->{dataDir};
   my $clusterDataDir = $mgr->{clusterDataDir};
+
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $gaTaskSize = $propertySet->getProp('genome.taskSize');
   my $gaPath = $propertySet->getProp('genome.path');
-  my $gaOptions = $propertySet->getProp('genome.options');
-  my $genomeVer = $propertySet->getProp('genome.version');
   my $clusterServer = $propertySet->getProp('clusterServer');
-  my $extGDir = $propertySet->getProp('externalDbDir') . '/' . $genomeVer;
-  my $srvGDir = $propertySet->getProp('serverExternalDbDir');
-  my $genus = $propertySet->getProp('genusNickname');
-  
-  $extGDir .= "/$genus/$species";
-  $srvGDir .= "/$genus/$species";
-  my $speciesQuery = $species . $query;
-  my $genomeFile = $species . $genome;
-  &makeGenomeDir($speciesQuery, $genome, $dataDir, $clusterDataDir,
-    $nodePath, $gaTaskSize, $gaOptions, $gaPath, $genomeFile, $nodeClass);
+  my $nodePort = $propertySet->getProp('nodePort');
 
+  &makeGenomeDir($query, $genomeDir, $dataDir, $clusterDataDir,
+    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort);
   $mgr->endStep($signal);
 }
 
@@ -1658,8 +1650,6 @@ sub predictAndPrintTranscriptSequences {
 
 sub formatBlastFile {
   my ($mgr,$file,$fileDir,$link,$arg) = @_;
-
-  my $propertySet = $mgr->{propertySet};
 
   my $propertySet = $mgr->{propertySet};
 
