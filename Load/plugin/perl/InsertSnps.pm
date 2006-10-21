@@ -117,7 +117,7 @@ sub getDocumentation {
 
   my $failureCases = "";
 
-  my $notes = "";
+  my $notes = "The gff file contains snp data on either + or - strand ALWAYS in the 5 prime to 3 prime orientation.  The reference_NA in SnpFeature and the allele in seqvariation will be reverse complimented if the gff file strand is reverse.  The plugin will die if no strand is provided in the gff file.  The coding sequence and amino acid sequence is generated and stored in whatever orientation the gene is.  THE RESULT IS:  For SnpFeature, the reference_NA is always for the + strand and the refernece_AA is dependent on the orientation of the coding gene (the amino acid is only reported for coding genes).  The same goes for allele and product in the seqvariation table.";
 
   my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief, tablesAffected=>$tablesAffected, tablesDependedOn=>$tablesDependedOn, howToRestart=>$howToRestart, failureCases=>$failureCases,notes=>$notes};
 
@@ -205,6 +205,7 @@ sub processSnpFile{
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
 
     my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+    my $transcriptId;
 
     my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
 
@@ -213,6 +214,8 @@ sub processSnpFile{
     my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
 
     if($transcript) {
+      $transcriptId = $transcript->getId();
+
       my $geneFeatureId = $transcript->get('parent_id');
       $snpFeature->set('parent_id', $geneFeatureId);
     }
@@ -234,14 +237,14 @@ sub processSnpFile{
       $snpFeature->setIsCoding(0);
     }
 
-    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding);
+    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
 
     $snpFeature->submit();
     $self->undefPointerCache();
 
     $lineNum++;
 
-    $self->log("processed $lineNum lines from gff file.") if($lineNum % 100 == 0);
+    $self->log("processed $lineNum lines from gff file.") if($lineNum % 500 == 0);
   }
   return $lineNum;
 }
@@ -249,7 +252,7 @@ sub processSnpFile{
 # ----------------------------------------------------------------------
 
 sub _updateSequenceVars {
-  my  ($self, $snpFeature, $cds, $start, $end, $isCoding) = @_;
+  my  ($self, $snpFeature, $cds, $start, $end, $isCoding, $transcriptId) = @_;
 
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
 
@@ -265,11 +268,15 @@ sub _updateSequenceVars {
     next unless($variationAllele);
 
     if($isCoding) {
-      my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $variationAllele, '');
 
+      #If the transcript is on the reverse strand we must reverse compliment!!
+      if($self->{reverse_coding_transcripts}->{$transcriptId}) {
+        $variationAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($variationAllele);
+      }
+
+      my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $variationAllele, '');
       my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
-      $phenotype = $isSynonymous == 1 ? 'synonymous' : 'non-synonymous';
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
       my $startPositionInProtein = $self->calculateAminoAcidPosition($start);
@@ -277,14 +284,36 @@ sub _updateSequenceVars {
 
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $startPositionInProtein, $endPositionInProtein);
       $seqVar->setProduct($snpAaSequence);
-    }
-    else {
-      $phenotype = 'is_non_coding';
-    }
 
-    $seqVar->setPhenotype($phenotype);
+      my $phenotype = $self->calculatePhenotype($matchesReference, $isCoding, $isSynonymous);
+      $seqVar->setPhenotype($phenotype);
+    }
   }
 }
+
+# ----------------------------------------------------------------------
+
+sub calculatePhenotype {
+  my ($self, $matchesReference, $isCoding, $isSynonymous) = @_;
+
+  my $phenotype;
+
+  if($matchesReference) {
+    $phenotype = 'wild_type';
+  }
+  elsif($isCoding && $isSynonymous) {
+    $phenotype = 'synonymous';
+  }
+  elsif($isCoding && !$isSynonymous) {
+    $phenotype = 'non-synonymous';
+  }
+  else {
+    $phenotype = 'non_coding';
+  }
+
+  return($phenotype);
+}
+
 
 # ----------------------------------------------------------------------
 
@@ -301,6 +330,7 @@ sub createSnpFeature {
   my $start = $feature->location()->start();
   my $end = $feature->location()->end();
 
+  # Start and Stop are absolute genomic coordinates !!
   $self->userError("Snp end is less than snp start in file: $!") if($end < $start);
 
   my $strand = $feature->location()->strand();
@@ -327,12 +357,19 @@ sub createSnpFeature {
   foreach ($feature->get_tag_values('Allele')) {
     my ($strain, $base) = split(':', $_);
 
+    # Reverse Compliment if it is on the Reverse Strand
+    if($strand == -1) {
+      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
+    }
+
+    if($strand == 0) {
+      $self->userError("Unknown strand for sourceId $sourceId");
+    }
+
     if(lc($ref) eq lc($strain)) {
       $snpFeature->setReferenceNa($base);
 
-      unless($self->_isSnpPositionOk($naSeq, $base, $naLoc, $strand)) {
-        $self->userError("The snp base: $base for the Reference Strain: $ref doesn't match expected for sourceId $sourceId");
-      }
+      $self->_isSnpPositionOk($naSeq, $base, $naLoc, $sourceId);
     }
     else {
       my $seqVarSoTerm = $self->getSeqVarSoTerm($start, $end, $base);
@@ -449,10 +486,10 @@ sub _getCodingSequence {
   return unless($transcript);
 
   my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
+  my $transcriptId = $transcript->getId();
 
   unless (@exons) {
-    my $id = $transcript->getId();
-    $self->error ("Transcript with na_feature_id = $id had no exons\n");
+    $self->error ("Transcript with na_feature_id = $transcriptId had no exons\n");
   }
 
   # this code gets the feature locations of the exons and puts them in order
@@ -475,6 +512,11 @@ sub _getCodingSequence {
     # For a Snp to be considered coding...it must be totally included in the coding sequence
     my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
     my $isReverseCoding = $codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed;
+
+    if($isReverseCoding) {
+      $self->{reverse_coding_transcripts}->{$transcriptId} = 1;
+      print STDERR "$transcriptId is reverseCoding\n";
+    }
 
     if($base && ($isForwardCoding || $isReverseCoding)) {
       $chunk = $self->_swapBaseInSequence($chunk, $exonStart, $exonEnd, $snpStart, $snpEnd, $base, $exonIsReversed);
@@ -553,9 +595,7 @@ sub _isSynonymous {
 # ----------------------------------------------------------------------
 
 sub _isSnpPositionOk {
-  my ($self, $naSeq, $base, $naLoc, $strand) = @_;
-
-  return(1) if($strand == 0);
+  my ($self, $naSeq, $base, $naLoc, $sourceId) = @_;
 
   my $snpStart = $naLoc->getStartMin();
   my $snpEnd = $naLoc->getEndMax();
@@ -564,11 +604,10 @@ sub _isSnpPositionOk {
 
   my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
 
-  if($strand == -1) {
-    $referenceBase = CBIL::Bio::SequenceUtils::reverseComplementSequence($referenceBase);
+  if($referenceBase ne $base) {
+    $self->userError("The snp base: $base doesn't match expected base $referenceBase for sourceId $sourceId");
   }
-
-  return($referenceBase eq $base);
+  return(1);
 }
 
 # ----------------------------------------------------------------------
