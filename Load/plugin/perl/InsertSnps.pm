@@ -267,6 +267,7 @@ sub _updateSequenceVars {
 
     next unless($variationAllele);
 
+    my $isSynonymous;
     if($isCoding) {
 
       #If the transcript is on the reverse strand we must reverse compliment!!
@@ -275,7 +276,7 @@ sub _updateSequenceVars {
       }
 
       my $newCodingSequence = $self->_swapBaseInSequence($cds, 1, 1, $start, $end, $variationAllele, '');
-      my $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
+      $isSynonymous = $self->_isSynonymous($cds, $newCodingSequence);
 
       $snpFeature->setHasNonsynonymousAllele(1) if($isSynonymous == 0);
 
@@ -285,9 +286,9 @@ sub _updateSequenceVars {
       my $snpAaSequence = $self->_getAminoAcidSequenceOfSnp($newCodingSequence, $startPositionInProtein, $endPositionInProtein);
       $seqVar->setProduct($snpAaSequence);
 
-      my $phenotype = $self->calculatePhenotype($matchesReference, $isCoding, $isSynonymous);
-      $seqVar->setPhenotype($phenotype);
     }
+    my $phenotype = $self->calculatePhenotype($matchesReference, $isCoding, $isSynonymous);
+    $seqVar->setPhenotype($phenotype);
   }
 }
 
