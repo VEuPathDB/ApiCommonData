@@ -515,7 +515,6 @@ sub _getCodingSequence {
 
     if($isReverseCoding) {
       $self->{reverse_coding_transcripts}->{$transcriptId} = 1;
-      print STDERR "$transcriptId is reverseCoding\n";
     }
 
     if($base && ($isForwardCoding || $isReverseCoding)) {
@@ -719,16 +718,14 @@ sub getCodingAndMockSequencesForTranscript {
 
   if($transcripts->{$transcriptId}) {
     $codingSequence = $transcripts->{$transcriptId}->{coding_sequence};
-    $mockCodingSequence = $transcripts->{$transcriptId}->{mock_coding_sequence};
   }
   else {
-    my $mockSequence = $self->createMockSequence($snpStart, $snpEnd);
     $codingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, '');
-    $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, $mockSequence);
-
     $transcripts->{$transcriptId}->{coding_sequence} = $codingSequence;
-    $transcripts->{$transcriptId}->{mock_coding_sequence} = $mockCodingSequence;
   }
+
+  my $mockSequence = $self->createMockSequence($snpStart, $snpEnd);
+  $mockCodingSequence = $self->_getCodingSequence($transcript, $snpStart, $snpEnd, $mockSequence);
 
   return($codingSequence, $mockCodingSequence);
 }
