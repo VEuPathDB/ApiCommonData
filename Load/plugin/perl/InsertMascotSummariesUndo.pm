@@ -87,6 +87,8 @@ sub run{
   if ($self->getArg('undoAll')) {
     $self->{'algInvocationIds'} = $self->_getAllAlgInvIds($self->{'dbh'});
   }
+  
+  return "nothing to do\n" if (scalar @{$self->{'algInvocationIds'}} == 0);
 
   $self->undoFeatures();
 
@@ -107,7 +109,7 @@ sub run{
 
 sub undoFeatures{
    my ($self) = @_;
-
+      
    $self->_deleteFromTable('DoTS.AALocation');
    $self->_deleteFromTable('DoTS.MassSpecFeature');
    $self->_deleteFromTable('DoTS.MassSpecSummary');
