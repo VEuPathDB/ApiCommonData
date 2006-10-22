@@ -70,7 +70,7 @@ sub run {
         }
     }
     
-    $self->setResultDescr(<<"EOF")
+    $self->setResultDescr(<<"EOF");
 
 Added $self->{featuresAdded} features and $self->{summariesAdded} summaries.
 $self->{summariesSkipped} summaries skipped.
@@ -94,12 +94,25 @@ sub addMassSpecSummary {
       $h->{sourcefile},
     ) = split "\t", $ln;
 
-    my $transcript = GUS::Model::DoTS::Transcript->new({source_id=>$h->{proteinId}});
-    unless ($transcript->retrieveFromDB()) {
-        $self->logVerbose("$h->{proteinId} not found, looking for $h->{description}\n");
-        $transcript = GUS::Model::DoTS::Transcript->new({source_id=>$h->{description}});
-        $transcript->retrieveFromDB() or return undef;
-    }
+    # in a hetergeneous data set (old Wastling data for example)
+    # we need to fish for the correct record, if any.
+    my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
+        select  t.na_feature_id
+        from dots.transcript t
+        where t.source_id  = ?
+           or t.source_id  = ?
+           or t.protein_id = ?
+           or t.protein_id = ?
+EOSQL
+    
+    $sth->execute($h->{proteinId},$h->{description},$h->{proteinId},$h->{description});
+    
+    my @ids = map {$_->[0]} @{$sth->fetchall_arrayref([0])};
+    
+    return undef if (scalar @ids != 1);
+
+    my $transcript = GUS::Model::DoTS::Transcript->new({na_feature_id => $ids[0]});
+    $transcript->retrieveFromDB();
 
     my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
 
