@@ -168,10 +168,10 @@ sub addMassSpecFeature {
     ) = split "\t", $ln;
 
     my $description = <<"EOF";
+match: $h->{sourceId}
 ions score: $pep->{ions_score}
 modification: $pep->{modification}
-match: $h->{sourceId}
-summary: '$h->{sourcefile}'
+report: '$h->{sourcefile}'
 EOF
     my $translatedAAFeature = GUS::Model::DoTS::TranslatedAAFeature->new({
         'na_feature_id' => $h->{naFeatureId}
