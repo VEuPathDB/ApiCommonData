@@ -1953,67 +1953,47 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $species, $queryName, $targetName) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex) = @_;
   my $propertySet = $mgr->{propertySet};
-
-  my $taxonHsh = $mgr->{taxonHsh};
-  my $contigDbRlsHsh =  $mgr->{contigDbRlsHsh};
-
   my $dataDir = $mgr->{'dataDir'};
-
-  my $signal = "Load${species}${queryName}BLATAlignments";
-  return if $mgr->startStep("Loading ${species}${queryName} BLAT Alignments", $signal);
-  my $genomeId = $contigDbRlsHsh->{$species}->[2];
-  my $taxonId = $taxonHsh->{$species};
-
-  my $pslDir = "$dataDir/genome/${species}${queryName}-${targetName}/master/mainresult/per-seq";
-
-  my $qFile = "$dataDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
+  my $signal = "Load${queryName}${targetName}BLATAlignments";
+  return if $mgr->startStep("Loading $queryName to $targetName BLAT Alignments", $signal);
+  my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
+  my $queryDbRlsId = &getDbRlsId($mgr,$qDbName,$qDbRlsVer) if ($qDbName && $qDbRlsVer);
+  my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
+  my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
+  my $qFile = "$dataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
   my $tmpFile;
-  my $qDir = "/tmp/" . $species;
-
-    my $qTabId = ($queryName =~ /FinalTranscript/i) ? 
-        &getTableId($mgr, "Assembly") :
-        &getTableId($mgr, "AssemblySequence");
-
-    $qFile = "$dataDir/repeatmask/${species}${queryName}/master/mainresult/blocked.seq";
-    $tmpFile = $qDir . "/blocked.seq";
+  my $qDir = "/tmp/" . $queryName;
+  my $qTabId = ($queryName =~ /FinalTranscript/i) ? 
+    &getTableId($mgr, "Assembly") :
+      &getTableId($mgr, "AssemblySequence");
+  $tmpFile = $qDir . "/blocked.seq";
 
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
   $mgr->runCmd("cp $qFile $tmpFile");
 
-  my $tTabId = ($targetName =~ /contigs/i) ?
-        &getTableId($mgr, "ExternalNASequence") :
-        &getTableId($mgr, "VirtualSequence");
-     
-# 56  Assembly
-# 57  AssemblySequence
-# 89  ExternalNASequence
-# 245 VirtualSequence
+  my $tTabId = &getTableId($mgr, $targetTable);
 
-  my $args = "--blat_dir $pslDir --query_file $tmpFile --keep_best 2 "
-    . "--query_table_id $qTabId --query_taxon_id $taxonId "
-  . "--target_table_id  $tTabId --target_db_rel_id $genomeId --target_taxon_id $taxonId "
-    . "--max_query_gap 5 --min_pct_id 95 max_end_mismatch 10 "
-      . "--end_gap_factor 10 --min_gap_pct 90 "
-        . "--ok_internal_gap 15 --ok_end_gap 50 --min_query_pct 10 ";
+  my $args = "--blat_files '$pslFile' --query_file $tmpFile --action 'load' --queryRegex '$regex'"
+    . " --query_table_id $qTabId --query_taxon_id $taxonId"
+  . " --target_table_id  $tTabId --target_db_rel_id $genomeDbRlsId --target_taxon_id $taxonId"
+    . " --max_query_gap 5 --min_pct_id 95 --max_end_mismatch 10"
+      . " --end_gap_factor 10 --min_gap_pct 90 "
+        . " --ok_internal_gap 15 --ok_end_gap 50 --min_query_pct 10";
 
- if ($queryName =~ /NewTranscripts/i) {
-   my $extDbName = $propertySet->getProp('genbankDbName');
-  my $extDbRlsVer = $propertySet->getProp('genbankDbRlsVer');
-   $mgr->{genbankDbRlsId} =  &getDbRlsId($mgr,$extDbName,$extDbRlsVer) unless $mgr->{genbankDbRlsId};
-   my $gb_db_rel_id = $mgr->{genbankDbRlsId};
-   $args .= " --query_db_rel_id $gb_db_rel_id";
- }
-  
- $mgr->runPlugin("Load${species}${queryName}BLATAlignments", 
+  $args .= " --query_db_rel_id $queryDbRlsId" if $queryDbRlsId;
+
+  $mgr->runPlugin("Load${queryName}${targetName}BLATAlignments", 
             "GUS::Community::Plugin::LoadBLATAlignments",
-            $args, "loading genomic alignments of ${species}${queryName} vs $targetName");
+            $args, "loading genomic alignments of ${queryName} vs $targetName");
 
-    $mgr->runCmd("rm -rf $qDir") if -d $qDir;
+  $mgr->runCmd("rm -rf $qDir") if -d $qDir;
 }
+
+
 sub clusterByContigAlign {
     my ($mgr, $species, $name, $extDbName, $extDbRlsVer) = @_;
     my $propertySet = $mgr->{propertySet};
