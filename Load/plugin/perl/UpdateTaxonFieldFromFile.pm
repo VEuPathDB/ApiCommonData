@@ -274,6 +274,8 @@ sub updateRows {
 
       $self->undefPointerCache();
 
+      $self->log("Updated $submitted rows.") if $submitted % 1000 == 0;
+
     }
   }
 
@@ -301,6 +303,8 @@ sub getUpdateIds {
   while (my ($source_id, $pk) = $stmt->fetchrow_array) {
     push(@{$sourceIds->{$source_id}->{'pks'}},$pk);
   }
+  $self->undefPointerCache();
+
 }
 
 
