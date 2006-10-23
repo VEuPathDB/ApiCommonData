@@ -512,7 +512,7 @@ sub _getCodingSequence {
 
     # For a Snp to be considered coding...it must be totally included in the coding sequence
     my $isForwardCoding = $codingStart <= $snpStart && $codingEnd >= $snpEnd && !$exonIsReversed;
-    my $isReverseCoding = $codingStart >= $snpStart && $codingEnd <= $snpEnd && $exonIsReversed;
+    my $isReverseCoding = $snpStart >= $codingEnd && $snpEnd <= $codingStart && $exonIsReversed;
 
     if($isReverseCoding) {
       $self->{reverse_coding_transcripts}->{$transcriptId} = 1;
