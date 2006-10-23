@@ -347,7 +347,7 @@ sub createSnpFeature {
          ORGANISM => $organism,
 	});
 
-  $snpFeature->retrieveFromDB() if $self-getArg('restart');
+  $snpFeature->retrieveFromDB() if $self->getArg('restart');
 
   my $naSeq = $self->getNaSeq($feature->seq_id());
   my $naLoc = $self->getNaLoc($start, $end);
@@ -386,7 +386,7 @@ sub createSnpFeature {
              'organism' => $organism
             });
 
-      $seqVar->retrieveFromDB() if $self-getArg('restart');
+      $seqVar->retrieveFromDB() if $self->getArg('restart');
       $seqVar->setParent($snpFeature);
       $seqVar->setParent($naSeq);
 
