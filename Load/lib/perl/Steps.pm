@@ -1953,11 +1953,9 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action) = @_;
   my $propertySet = $mgr->{propertySet};
   my $dataDir = $mgr->{'dataDir'};
-  my $signal = "Load${queryName}${targetName}BLATAlignments";
-  return if $mgr->startStep("Loading $queryName to $targetName BLAT Alignments", $signal);
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
   my $queryDbRlsId = &getDbRlsId($mgr,$qDbName,$qDbRlsVer) if ($qDbName && $qDbRlsVer);
   my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
@@ -1973,11 +1971,11 @@ sub loadContigAlignments {
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
-  $mgr->runCmd("cp $qFile $tmpFile");
+  $mgr->runCmd("cp $qFile $tmpFile")if ! -e $tmpFile;
 
   my $tTabId = &getTableId($mgr, $targetTable);
 
-  my $args = "--blat_files '$pslFile' --query_file $tmpFile --action 'load' --queryRegex '$regex'"
+  my $args = "--blat_files '$pslFile' --query_file $tmpFile --action '$action' --queryRegex '$regex'"
     . " --query_table_id $qTabId --query_taxon_id $taxonId"
   . " --target_table_id  $tTabId --target_db_rel_id $genomeDbRlsId --target_taxon_id $taxonId"
     . " --max_query_gap 5 --min_pct_id 95 --max_end_mismatch 10"
@@ -1986,9 +1984,11 @@ sub loadContigAlignments {
 
   $args .= " --query_db_rel_id $queryDbRlsId" if $queryDbRlsId;
 
-  $mgr->runPlugin("Load${queryName}${targetName}BLATAlignments", 
+  $action = ucfirst($action);
+
+  $mgr->runPlugin("${action}${queryName}${targetName}BLATAlignments", 
             "GUS::Community::Plugin::LoadBLATAlignments",
-            $args, "loading genomic alignments of ${queryName} vs $targetName");
+            $args, "$action genomic alignments of ${queryName} vs $targetName");
 
   $mgr->runCmd("rm -rf $qDir") if -d $qDir;
 }
