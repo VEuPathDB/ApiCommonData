@@ -127,11 +127,15 @@ sub run {
 
   $self->userError("table must be in format TableSpace::Table") if ($table !~ /^\w+::\w+$/);
 
+  eval ("require GUS::Model::$table");
+
+  my $tableId = $self->className2TableId($table);
+
+  my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
+
   my $sourceIds  = $self->processFile();
 
-  $self->getUpdateIds($sourceIds);
-
-  my $updatedRows = $self->updateRows($sourceIds,$table);
+  my $updatedRows = $self->getUpdateIds($sourceIds,$table,$pkName);
 
   my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table";
 
@@ -248,42 +252,31 @@ sub getIdfromTaxon {
 }
 
 sub updateRows {
-  my ($self,$sourceIds,$table) = @_;
+  my ($self,$sourceIds,$table,$source,$pk,$table,$pkName) = @_;
 
   my $submitted;
 
-  eval ("require GUS::Model::$table");
-
-  my $tableId = $self->className2TableId($table);
-
-  my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
-
   my $tableName = "GUS::Model::$table";
 
-  foreach my $source (keys %{$sourceIds}) {
+  my $row = $tableName->new({"$pkName" => $pk});
 
-    foreach my $pk (@{$sourceIds->{$source}->{'pks'}}) {
+  $row->retrieveFromDB();
 
-      my $row = $tableName->new({"$pkName" => $pk});
+  $row->setTaxonId($sourceIds->{$source}->{'taxon'}) unless ($sourceIds->{$source}->{'taxon'} == $row->getTaxonId());
 
-      $row->retrieveFromDB();
+  $submitted += $row->submit();
 
-      $row->setTaxonId($sourceIds->{$source}->{'taxon'}) unless ($sourceIds->{$source}->{'taxon'} == $row->getTaxonId());
+  $self->undefPointerCache();
 
-      $submitted += $row->submit();
+  $self->log("Updated $submitted rows.") if $submitted % 1000 == 0;
 
-      $self->undefPointerCache();
-
-      $self->log("Updated $submitted rows.") if $submitted % 1000 == 0;
-
-    }
-  }
 
   return $submitted;
 }
 
 sub getUpdateIds {
-  my ($self,$sourceIds) = @_;
+  my ($self,$sourceIds,$table,$pkName) = @_;
+  my $updatedRows;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
 
@@ -301,10 +294,12 @@ sub getUpdateIds {
   my $stmt = $dbh->prepareAndExecute($idSql);
 
   while (my ($source_id, $pk) = $stmt->fetchrow_array) {
-    push(@{$sourceIds->{$source_id}->{'pks'}},$pk);
+    $updatedRows = $self->updateRows($sourceIds,$table,$source_id,$pk,$table,$pkName);
   }
+
   $self->undefPointerCache();
 
+  return $updatedRows;
 }
 
 
