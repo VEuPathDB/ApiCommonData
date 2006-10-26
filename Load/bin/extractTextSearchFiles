@@ -9,16 +9,23 @@ use GUS::ObjRelP::DbiDatabase;
 use CBIL::Bio::SequenceUtils;
 use GUS::Supported::GusConfig;
 
-my ($outDir, $justComments, $gusConfigFile, $debug, $verbose);
+my ($outDir, $prefix, $commentSchema, $commentDblink, $justComments,
+    $gusConfigFile, $debug, $verbose);
 &GetOptions("outputDir=s" => \$outDir,
+            "outputPrefix=s" => \$prefix,
+            "commentSchema=s" => \$commentSchema,
+            "commentDblink=s" => \$commentDblink,
             "justComments!" => \$justComments,
             "verbose!"=> \$verbose,
             "debug!" => \$debug,
-            "gusConfigFile=s" => \$gusConfigFile);            
+            "gusConfigFile=s" => \$gusConfigFile);
 
-if (!$outDir){
-	die "usage: $0 --outputDir <outputDirectory> --verbose --debug "
-            . "--gusConfigFile [\$GUS_HOME/config/gus.config]\n";
+if (!$outDir || !$commentSchema){
+	die "usage: $0 --outputDir <outputDirectory> [--prefix <file-prefix>]"
+            . " --commentSchema <commentSchema>"
+            . " [--commentDblink <dbLink (with \"@\")>]"
+            . " [--verbose] [--debug]"
+            . " [--gusConfigFile  <config default=\$GUS_HOME/config/gus.config]\n";
 }
 
 print STDERR "Establishing dbi login\n" if $verbose;
@@ -41,7 +48,8 @@ my $sql;
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
        gf.source_id, regexp_replace(c.content, '[[:space:]]', ' ')
-FROM logins.users u, comments.comments c, dots.GeneFeature gf,
+FROM logins.users${commentDblink} u,
+     ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
      dots.NaSequence ns, sres.TaxonName tn
 WHERE u.email = c.email
   AND c.comment_target_id='gene'
@@ -54,7 +62,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id,
          regexp_replace(c.content, '[[:space:]]', ' ')
 SQL
 
-&extractFile($dbh, $outDir, "/comments.txt", $sql);
+&extractFile($dbh, $outDir, "comments.txt", $sql);
 
 exit if $justComments;
 
@@ -84,7 +92,7 @@ ORDER BY tas.source_id,
          dr.primary_identifier || ' ' || dr.secondary_identifier
 SQL
 
-&extractFile($dbh, $outDir, "/interpro.txt", $sql);
+&extractFile($dbh, $outDir, "interpro.txt", $sql);
 
 
 # GO terms and definitions
@@ -102,7 +110,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
                 gts.go_id || ' ' ||  gts.go_term_name
 SQL
 
-&extractFile($dbh, $outDir, "/go.txt", $sql);
+&extractFile($dbh, $outDir, "go.txt", $sql);
 
 
 # metabolic pathways
@@ -127,7 +135,7 @@ ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
          nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
 SQL
 
-&extractFile($dbh, $outDir, "/metpaths.txt", $sql);
+&extractFile($dbh, $outDir, "metpaths.txt", $sql);
 
 # notes
 $sql = <<SQL;
@@ -146,7 +154,7 @@ ORDER BY tn.name, gf.source_id,
                         '[[:space:]]', ' ')
 SQL
 
-&extractFile($dbh, $outDir, "/notes.txt", $sql);
+&extractFile($dbh, $outDir, "notes.txt", $sql);
 
 # EC description
 $sql = <<SQL;
@@ -155,12 +163,12 @@ FROM dots.aaSequence aas, dots.aaSequenceEnzymeClass asec,
      sres.enzymeClass ec, sres.TaxonName tn
 WHERE aas.aa_sequence_id = asec.aa_sequence_id
   AND asec.enzyme_class_id = ec.enzyme_class_id
-  AND aas.taxon_id = tn.taxon_id
-  AND tn.name_class = 'scientific name'
+  AND aas.taxon_id = tn.taxon_id(+)
+  AND tn.name_class(+) = 'scientific name'
 ORDER BY tn.name, aas.source_id, ec.description
 SQL
 
-&extractFile($dbh, $outDir, "/ec.txt", $sql);
+&extractFile($dbh, $outDir, "ec.txt", $sql);
 
 # gene product
 $sql = <<SQL;
@@ -175,7 +183,7 @@ WHERE gf.source_id IS NOT NULL
 ORDER BY tn.name, gf.source_id, gf.product
 SQL
 
-&extractFile($dbh, $outDir, "/product.txt", $sql);
+&extractFile($dbh, $outDir, "product.txt", $sql);
 
 
 # BLAST files
@@ -198,7 +206,7 @@ WHERE s.query_table_id = query.table_id
 ORDER BY pvalue_exp, tn.name, tas.source_id, eas.description
 SQL
 
-&extractFile($dbh, $outDir, "/blast.txt", $sql);
+&extractFile($dbh, $outDir, "blast.txt", $sql);
 
 sub extractFile {
   my ($dbh, $outDir, $outFile, $sql) = @_;
@@ -224,7 +232,7 @@ sub extractFile {
   $statement->finish();
 
   close(OUT);
-  my $datafile = "${outDir}/${outFile}";
+  my $datafile = "${outDir}/${prefix}${outFile}";
   print "renaming $tempfile to $datafile\n" if $verbose;
   rename($tempfile, $datafile);
 }

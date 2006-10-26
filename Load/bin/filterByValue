@@ -32,7 +32,7 @@ if ($filter_type eq '-n') {
 	while (my $line = <STDIN>) {
 		chomp $line;
 		my @fields = split /\t/, $line, 2;
-	        next if ($fields[0] && !($value =~ m/$fields[0]/));
+	        next if ($value && $fields[0] && !($value =~ m/$fields[0]/));
         	print "$fields[1]\n";
 	}
 } else {
