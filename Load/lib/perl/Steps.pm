@@ -2862,6 +2862,29 @@ EOF
 
 }
 
+sub modifyOrfFileForDownload {
+  my ($mgr,$genus,$species,$dbName,$file) = @_;
+
+  my $signal = "${genus}${species}OrfDownload";
+
+  return if $mgr->startStep("Modifying $file for fasta formatted download file", $signal);
+
+  my $dataDir = $mgr->{'dataDir'};
+
+  $genus =~ /\b(\w)/;
+
+  my $dir = $1;
+
+  $dir = "${dir}$species";
+
+  $mgr->runCmd("mkdir -p $dataDir/downloadSite/$dir");
+
+  my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/${genus}${species}Orfs.fasta --inFile $dataDir/seqfiles/$file --genus $genus --species $species --dbName $dbName";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
 
 ###########IPRSCAN#####################
 sub createIprscanDir{
