@@ -29,12 +29,16 @@ GRANT REFERENCES ON dots.GoAssociation TO apidb;
 GRANT REFERENCES ON dots.GoAssociationInstance TO apidb;
 GRANT REFERENCES ON dots.GoAssociationInstanceLoe TO apidb;
 GRANT REFERENCES ON dots.GoAssocInstEvidCode TO apidb;
-GRANT REFERENCES ON sres.GoTerm TO apidb;
-GRANT REFERENCES ON sres.GoEvidenceCode TO apidb;
-GRANT REFERENCES ON sres.GoRelationship TO apidb;
 GRANT REFERENCES ON core.TableInfo TO apidb;
 GRANT REFERENCES ON dots.NaFeatureNaGene TO apidb;
 GRANT REFERENCES ON dots.NaGene TO apidb;
+GRANT REFERENCES ON dots.SeqVariation TO apidb;
+GRANT REFERENCES ON dots.SnpFeature TO apidb;
+GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
+GRANT REFERENCES ON sres.ExternalDatabaseRelease TO apidb;
+GRANT REFERENCES ON sres.GoTerm TO apidb;
+GRANT REFERENCES ON sres.GoEvidenceCode TO apidb;
+GRANT REFERENCES ON sres.GoRelationship TO apidb;
 
 GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
@@ -44,6 +48,10 @@ GRANT SELECT ON dots.GoAssociation TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GoAssociationInstance TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GoAssociationInstanceLoe TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GoAssocInstEvidCode TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.SeqVariation TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.SnpFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.ExternalDatabaseRelease TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.ExternalDatabase TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoTerm TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoEvidenceCode TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoRelationship TO apidb WITH GRANT OPTION;
@@ -125,6 +133,47 @@ ORDER BY o.ontology, gt.go_id;
 CREATE INDEX apidb.GoTermSum_sourceId_idx ON apidb.GoTermSummary (source_id);
 
 GRANT SELECT ON apidb.GoTermSummary TO gus_r;
+
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW apidb.SnpSummary AS
+SELECT gf.na_feature_id, gf.source_id, edr.external_database_release_id,
+       sv.strain, count(nc) AS non_coding, count(ns) AS non_synonymous,
+       count(s) AS synonymous, count(stop) AS stop, count(*) AS total
+FROM dots.genefeature gf, dots.snpfeature sf, sres.ExternalDatabase ed,
+     sres.ExternalDatabaseRelease edr, dots.seqvariation sv,
+     (SELECT parent_id, strain, 1 AS ns
+      FROM dots.seqVariation
+      WHERE phenotype = 'non-synonymous') ns,
+     (SELECT parent_id, strain, 1 AS s
+      FROM dots.seqVariation
+      WHERE phenotype = 'synonymous') s,
+     (SELECT parent_id, strain, 1 AS nc
+      FROM dots.seqVariation
+      WHERE phenotype = 'non_coding') nc,
+     (SELECT parent_id, strain, 1 AS stop
+      FROM dots.seqVariation
+      WHERE product = '*') stop
+WHERE ed.name != 'Winzeler Array - Plasmodium Genetic Variation'
+  AND edr.external_database_id = ed.external_database_id
+  AND sf.external_database_release_id = edr.external_database_release_id
+  AND sf.parent_id = gf.na_feature_id
+  AND sv.parent_id = sf.na_feature_id
+  AND sv.parent_id = ns.parent_id(+)
+  AND sv.strain = ns.strain(+)
+  AND sv.parent_id = nc.parent_id(+)
+  AND sv.strain = nc.strain(+)
+  AND sv.parent_id = s.parent_id(+)
+  AND sv.strain = s.strain(+)
+  AND sv.parent_id = stop.parent_id(+)
+  AND sv.strain = stop.strain(+)
+GROUP BY gf.na_feature_id, gf.source_id, edr.external_database_release_id,
+         sv.strain;
+
+
+CREATE INDEX apidb.SnpSummary_idx ON apidb.SnpSummary(na_feature_id, source_id);
+
+GRANT SELECT ON apidb.SnpSummary TO gus_r;
 
 -------------------------------------------------------------------------------
 
