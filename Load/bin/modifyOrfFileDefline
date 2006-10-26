@@ -1,0 +1,44 @@
+#!@perl@
+
+##modify defline of orffinder output
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use CBIL::Bio::SequenceUtils;
+
+my ($verbose,$outFile,$inFile,$genus,$species,$dbName);
+&GetOptions("verbose!"=> \$verbose,
+            "outFile=s" => \$outFile,"inFile=s" => \$inFile, 
+            "genus=s" => \$genus,"species=s" => \$species,
+            "dbName=s" => \$dbName);
+
+if(!$inFile || !$outFile || !$genus || !$species || !$dbName){
+	die "usage: modifyOrfFileDefline --outFile --inFile --genus --species --verbose  --dbName \n";
+}
+
+open(IN, $inFile);
+
+open(OUT,">$outFile");
+
+while(<IN>) {
+  chomp;
+  my @arr = split(/\t/,$_);
+  my($name,$seq);
+  if($arr[8] =~/locus_tag\s"(\S+)"/){$name = $1;}
+  if($arr[8]=~ /translation\s(\S+)$/){$seq = $1;}
+  &printSequence(\@arr);
+}
+
+sub printSequence{
+  my ($arr) = @_;
+  my($name,$seq);
+  if($arr->[8] =~/locus_tag\s"(\S+)"/){$name = $1;}
+  if($arr->[8]=~ /translation\s(\S+)$/){$seq = $1;}
+  my $len = length($seq);
+
+  my $defline = ">${genus}_${species}|$arr->[0]|${name}|computed|${dbName}|length=$len\n";
+
+  print OUT $defline . CBIL::Bio::SequenceUtils::breakSequence($seq,60);
+}
+
