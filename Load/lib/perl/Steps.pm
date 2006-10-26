@@ -2875,11 +2875,13 @@ sub modifyOrfFileForDownload {
 
   my $dir = $1;
 
+  my $output = ${dir}${species}Orfs.fasta;
+
   $dir = "${dir}$species";
 
   $mgr->runCmd("mkdir -p $dataDir/downloadSite/$dir");
 
-  my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/${genus}${species}Orfs.fasta --inFile $dataDir/seqfiles/$file --genus $genus --species $species --dbName $dbName";
+  my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/$output --inFile $dataDir/seqfiles/$file --genus $genus --species $species --dbName $dbName";
 
   $mgr->runCmd($cmd);
 
