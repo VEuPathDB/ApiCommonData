@@ -2,6 +2,9 @@ use strict;
 
 use Bio::SeqIO;
 #use CBIL::Util::GenomeDir;
+use GUS::Pipeline::NfsCluster;
+use GUS::Pipeline::SshCluster;
+
 chomp(my $pipelineScript = `basename $0`);
 
 sub createDataDir {
@@ -639,11 +642,15 @@ sub extractNaSeq {
 }
 
 sub extractESTs {
-  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database) = @_;
 
   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $signal = "extract${genus}${species}${dbName}ESTs";
+
+  $signal =~ s/\s//g;
+
+  $signal =~ s/\//_/g;
 
   return if $mgr->startStep("Extracting $genus $species $dbName ESTs from GUS", $signal);
 
@@ -661,7 +668,11 @@ sub extractESTs {
 
   $genus =~ s/^(\w)\w+/$1/;
 
-  my $outFile = "$mgr->{dataDir}/seqfiles/${genus}${species}ESTs.fsa";
+  my $propertySet = $mgr->{propertySet};
+
+  my $release = $propertySet->getProp('release');
+
+  my $outFile = "$mgr->{dataDir}/seqfiles/${genus}${species}ESTs_${database}-${release}.fasta";
 
   my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
@@ -2869,13 +2880,20 @@ sub modifyOrfFileForDownload {
 
   return if $mgr->startStep("Modifying $file for fasta formatted download file", $signal);
 
+  my $propertySet = $mgr->{propertySet};
+
+  my $release = $propertySet->getProp('release');
+
   my $dataDir = $mgr->{'dataDir'};
 
   $genus =~ /\b(\w)/;
 
   my $dir = $1;
 
-  my $output = "${dir}${species}Orfs.fasta";
+  my $database = lcfirst($dbName);
+
+  my $output = "${dir}${species}Orfs";
+  $output .= "_${database}-${release}.fasta";
 
   $dir = "${dir}$species";
 
@@ -2884,6 +2902,34 @@ sub modifyOrfFileForDownload {
   my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/$output --inFile $dataDir/seqfiles/$file --genus $genus --species $species --dbName $dbName";
 
   $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub copyToDownloadSiteWithSsh {
+  my ($mgr,$serverDir) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $server = $propertySet->getProp('downloadServer');
+
+  my $user = $propertySet->getProp('downloadUser');
+
+  my $signal = "copyDownloadDirTo$server";
+
+  return if $mgr->startStep("Copying download directory files to $server using ssh", $signal);
+
+  my $release = $propertySet->getProp('release');
+
+  my $dataDir = $mgr->{'dataDir'};
+
+  $mgr->runCmd("mv $dataDir/downloadSite $dataDir/release-$release");
+
+  my $ssh = GUS::Pipeline::SshCluster->new($server,$user);
+
+  $ssh->copyTo($dataDir, "release-$release", $serverDir);
+
+  $mgr->runCmd("mv $dataDir/release-$release $dataDir/downloadSite");
 
   $mgr->endStep($signal);
 }
