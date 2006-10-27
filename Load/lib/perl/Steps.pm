@@ -2875,7 +2875,7 @@ sub modifyOrfFileForDownload {
 
   my $dir = $1;
 
-  my $output = ${dir}${species}Orfs.fasta;
+  my $output = "${dir}${species}Orfs.fasta";
 
   $dir = "${dir}$species";
 
