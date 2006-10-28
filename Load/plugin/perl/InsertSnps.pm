@@ -649,7 +649,8 @@ sub getAllTranscriptLocations {
 
   my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
              FROM dots.TRANSCRIPT tf, dots.NaLocation nl, $seqTable ens
-             WHERE tf.na_feature_id = nl.na_feature_id
+             WHERE tf.sequence_ontology_id = 121
+              AND tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id
               AND regexp_like(ens.source_id, '$regex')
             ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
