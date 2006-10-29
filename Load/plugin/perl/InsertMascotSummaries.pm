@@ -50,7 +50,9 @@ sub run {
     $self->{featuresAdded} = $self->{summariesAdded} = $self->{summariesSkipped} = 0;
     
     my $inputFile = $self->getArg('inputFile');    
-    my $summary = {};
+    my $record = {};
+    my $recordSet = [];
+    my $mss;
     
     $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
@@ -59,45 +61,62 @@ sub run {
         chomp;
         if (m/^# /) {
             chomp(my $ln = <F>);
-            unless ($self->addMassSpecSummary($ln, $summary)) {
-                warn "'$summary->{proteinId}' or '$summary->{description}' from '$summary->{sourcefile}' not found in DoTS.Transcript, skipping\n";
+            undef $record;
+            $record = $self->initRecord($ln);
+            if ( ! $record->{naFeatureId}) {
+                warn "'$record->{proteinId}' or '$record->{description}' from '$record->{sourcefile}' not found in DoTS.Transcript, skipping\n" if  $self->getArg('veryVerbose');
                 $self->{summariesSkipped}++;
                 $self->nextRecord(*F);
+                next;
             }
+            push @{$recordSet}, $record;
         } else {
             m/^## / and next;
-            $self->addMassSpecFeature($_, $summary);
+            $self->addMassSpecFeatureToRecord($_, $record);
         }
     }
-    
+
+    $self->convertOrfRecordsToGenes($recordSet);
+
+    $self->insertRecordsIntoDb($recordSet);    
+
     $self->setResultDescr(<<"EOF");
-
-Added $self->{featuresAdded} features and $self->{summariesAdded} summaries.
-$self->{summariesSkipped} summaries skipped.
+    
+Added $self->{featuresAdded} @{[ ($self->{featuresAdded} == 1) ? 'feature':'features' ]} and $self->{summariesAdded} @{[ ($self->{summariesAdded} == 1) ? 'summary':'summaries' ]}.
+Skipped $self->{summariesSkipped} @{[ ($self->{summariesSkipped} == 1) ? 'summary':'summaries' ]}.
 EOF
-
 }
 
-sub addMassSpecSummary {
-    my ($self, $ln, $h) = @_;
+sub initRecord {
+    my ($self, $ln, $record) = @_;
     
-    $self->undefPointerCache();
-
-    ( $h->{proteinId},
-      $h->{description},
-      $h->{seqMolWt},
-      $h->{seqPI},
-      $h->{score},
-      $h->{percentCoverage},
-      $h->{spanCount},
-      $h->{spectrumCount},
-      $h->{sourcefile},
+    ( $record->{proteinId},
+      $record->{description},
+      $record->{seqMolWt},
+      $record->{seqPI},
+      $record->{score},
+      $record->{percentCoverage},
+      $record->{spanCount},
+      $record->{spectrumCount},
+      $record->{sourcefile},
     ) = split "\t", $ln;
+    # Try looking up a proper source_id and na_sequence_id. Mascot datasets
+    # may contain matches to proteins for which we don't have records (and
+    # therefore no na_feature_id) - we skip those.
+    ($record->{sourceId}, $record->{naFeatureId}) = 
+        $self->getSourceIdAndNaFeatureId($record->{proteinId}, 
+                                         $record->{description});
 
+    return $record;
+}
+
+sub getSourceIdAndNaFeatureId {
+    my ($self, @candidate_ids) = @_;
+    
     # in a hetergeneous data set (old Wastling data for example)
     # we need to fish for the correct record, if any.
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select  t.na_feature_id
+        select  t.source_id, t.na_feature_id
         from dots.transcript t
         where t.source_id  = ?
            or t.source_id  = ?
@@ -105,53 +124,115 @@ sub addMassSpecSummary {
            or t.protein_id = ?
 EOSQL
     
-    $sth->execute($h->{proteinId},$h->{description},$h->{proteinId},$h->{description});
+    $sth->execute($candidate_ids[0], $candidate_ids[1], $candidate_ids[0], $candidate_ids[1]);
     
-    my @ids = map {$_->[0]} @{$sth->fetchall_arrayref([0])};
+    my $res = $sth->fetchall_arrayref();
     
-    return undef if (scalar @ids != 1);
-
-    my $transcript = GUS::Model::DoTS::Transcript->new({na_feature_id => $ids[0]});
-    $transcript->retrieveFromDB();
-
-    my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
-
-    my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
-        aa_sequence_id => $translatedAAFeature->getAaSequenceId()
-    });
-    $aaSeq->retrieveFromDB;
-
-    $h->{aaSequenceId} = $aaSeq->getId();
-    $h->{naSequenceId} = $transcript->getNaSequenceId();
-    $h->{naFeatureId}  = $transcript->getId();
-    $h->{sourceId}     = $transcript->getSourceId();
-    $h->{seqLength}    = $aaSeq->getLength();
-    $h->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
-
-    my $mss = GUS::Model::DoTS::MassSpecSummary->new({
-       'aa_sequence_id'          => $h->{aaSequenceId},
-       'is_expressed'            => 1,
-       'developmental_stage'     => $h->{devStage},
-       'number_of_spans'         => $h->{spanCount},
-       'prediction_algorithm_id' => $self->getPredictionAlgId,
-       'spectrum_count'          => $h->{spectrumCount},
-       'aa_seq_length'           => $h->{seqLength},
-       'aa_seq_molecular_weight' => $h->{seqMolWt},
-       'aa_seq_pi'               => $h->{seqPI},
-       'sequence_count'          => 1,
-       'aa_seq_percent_covered'  => $h->{percentCoverage},
-    });
-
-    unless ($mss->retrieveFromDB()) {
-        $mss->submit();
-        $self->{summariesAdded}++;
-    }
+    return undef if (scalar @{$res} != 1);
     
-    return $mss;
+    return ($res->[0]->[0], $res->[0]->[1]);
 }
 
-sub addMassSpecFeature {
-    my ($self, $ln, $h) = @_;
+sub convertOrfRecordsToGenes { # if possible, otherwise leave as is.
+    my ($self, $recordSet) = @_;
+    for my $record (@{$recordSet}) {
+        $self->mapOrfToGene($record) if (isOrf($record->{naFeatureId}));
+    }
+}
+
+sub mapOrfToGene {
+    my ($self, $record) = @_;
+    # Given an Orf, find gene it belongs to:
+    #    Find gene whose coordinates overlap with orf.
+    #    Declare match if all peptide seqs are substrings of protein seq.
+    #       Strictly, an ORF may not wholly belong to the gene model, but if
+    #       all the peptides match then we have the gene we are really after.
+    # If an ORF partially belongs to a gene model and there's a peptide
+    # that isn't spanned by the gene then we leave the ORF record as is.
+
+    my $recNaFeatureId = $record->{naFeatureId};
+    
+    my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
+        select gt.source_id, gt.na_feature_id, taas.sequence
+        from
+        dots.transcript orf,
+        dots.transcript gt,
+        dots.nalocation gtnal,
+        dots.nalocation orfnal,
+        dots.translatedaafeature taaf,
+        dots.translatedaasequence taas,
+        sres.sequenceontology so
+        where
+        orf.na_feature_id = ?
+        and gt.na_feature_id = gtnal.na_feature_id
+        and orf.na_feature_id = orfnal.na_feature_id
+        and orf.na_sequence_id = gt.na_sequence_id
+        and gtnal.start_max < orfnal.end_min
+        and gtnal.end_min > orfnal.start_max
+        and gt.na_feature_id = taaf.na_feature_id
+        and taaf.aa_sequence_id = taas.aa_sequence_id
+        and gt.sequence_ontology_id = so.sequence_ontology_id
+        and so.term_name != 'ORF'
+            -- orf and gene must be same strand and frame --
+        and orfnal.is_reversed = gtnal.is_reversed
+        and mod(gtnal.start_max, 3) = mod(orfnal.start_max, 3)
+EOSQL
+
+    my %row;
+    $sth->execute($recNaFeatureId);
+    $sth->bind_columns( \( @row{ @{$sth->{NAME_lc} } } ));
+    
+    my $res = $sth->fetchall_arrayref();
+    if (scalar @{$res} == 0) {
+        warn "ORF $record->{sourceId} not mapped to a gene\n" if $self->getArg('verbose');
+        return;
+    }
+    if (scalar @{$res}  > 1) {
+        $self->error("dots.transcript.na_feature_id '$recNaFeatureId' corresponds to more than one gene. This is not supported.");
+    }
+    
+    
+    my $proteinSeq = $row{sequence};
+    
+    my @newCoords;
+    
+    for my $pep (@{$record->{peptides}}) {
+        my $start = index($proteinSeq, $pep->{sequence}) +1;
+        if ($start == 0) {
+            warn "Peptide set on ORF $record->{sourceId} not fully mapped to a gene\n" if $self->getArg('verbose');
+            return;
+        }
+        my $end   = length($pep->{sequence}) + $start -1;
+        push @newCoords, ($start, $end);
+    }
+
+    # Have successful mapping of ORF to gene. Change source_id/na_feature_id 
+    # and update peptide coordinates relative to new protein coord.
+    $record->{sourceId} = $row{source_id};
+    $record->{naFeatureId} = $row{na_feature_id};
+    for my $pep (@{$record->{peptides}}) {
+        $pep->{start} = shift @newCoords;
+        $pep->{end}   = shift @newCoords;
+    }
+
+}
+
+sub isOrf {
+    my ($naFeatureId) = @_;
+    
+    my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
+    $naFeature->retrieveFromDB() || die "Failed to retrieve na_feature_id '$naFeatureId'";;
+
+    my $so = GUS::Model::SRes::SequenceOntology->new({'term_name' => 'ORF'});
+    $so->retrieveFromDB() || die "Failed to retrieve SO Id for ORF";
+    
+    return ($naFeature->getSequenceOntologyId == $so->getId());
+
+}
+
+sub addMassSpecFeatureToRecord {
+    my ($self, $ln, $record) = @_;
+    
     my $pep = {};
     ( $pep->{start},
       $pep->{end},
@@ -167,95 +248,124 @@ sub addMassSpecFeature {
       $pep->{ions_score}
     ) = split "\t", $ln;
 
-    my $description = <<"EOF";
-match: $h->{sourceId}
+    $pep->{description} = <<"EOF";
+match: $record->{sourceId}
 ions score: $pep->{ions_score}
 modification: $pep->{modification}
-report: '$h->{sourcefile}'
+report: '$record->{sourcefile}'
 EOF
-    my $translatedAAFeature = GUS::Model::DoTS::TranslatedAAFeature->new({
-        'na_feature_id' => $h->{naFeatureId}
-    });
-    $translatedAAFeature->retrieveFromDB();
-    
-    my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
-        'aa_sequence_id'          => $h->{aaSequenceId},
-        'prediction_algorithm_id' => $self->getPredictionAlgId,
-        #           'external_database_release_id' => $self->getArg->('extDbRelId'), #DEBUG
-        'developmental_stage'     => $h->{devStage},
-        'description'             => $description,
-        'is_predicted'            => 1,
-    });
 
-    #$msFeature->retrieveFromDB();
-    
-    my $aaLoc = GUS::Model::DoTS::AALocation->new({
-                     'start_min' => $pep->{start},
-                     'start_max' => $pep->{start},
-                     'end_min'   => $pep->{end},
-                     'end_max'   => $pep->{end},
-                 });
-
-    my $naLoc = $self->addNALocation($h, $pep);
-
-     $msFeature->setParent($naLoc);
-     $msFeature->addChild($aaLoc);
-    #$msFeature->submit();# unless $aaLoc->retrieveFromDB(); #unless $msFeature->retrieveFromDB();
-    
-    $translatedAAFeature->addChild($msFeature);
-    
-    $translatedAAFeature->submit();
-    
-    $self->{featuresAdded}++;
-
+    push @{$record->{peptides}}, $pep;
 }
 
-sub mapToNASequence {
-    my ($self, $naFeatureId, $pepStart, $pepEnd) = @_;
+sub insertRecordsIntoDb {
+    my ($self, $recordSet) = @_;
+    for my $record (@{$recordSet}) {
+        my $mss = $self->insertMassSpecSummary($record);
+        $self->insertMassSpecFeatures($record, $mss);
+    }
+}
 
-    my $naLocations = [];
 
-    # CDS in chromosome coordinates
-    my $cds = new Bio::Location::Split;
-    foreach (@{$self->getExons($naFeatureId)}) {
-        $cds->add_sub_Location(new Bio::Location::Simple(
-            -start  =>  @$_[0],
-            -end    =>  @$_[1],
-            -strand =>  @$_[2]
-        ));
+sub insertMassSpecSummary {
+    my ($self, $record) = @_;
+    
+    my $transcript = GUS::Model::DoTS::Transcript->new(
+        {na_feature_id => $record->{naFeatureId}});
+
+    $transcript->retrieveFromDB() 
+        or $self->error("No Transcript with na_feature_id = '$record->{naFeatureId}'");
+
+    my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
+
+    my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
+        aa_sequence_id => $translatedAAFeature->getAaSequenceId()
+    });
+    $aaSeq->retrieveFromDB;
+
+    $record->{aaSequenceId} = $aaSeq->getId();
+    $record->{naSequenceId} = $transcript->getNaSequenceId();
+    $record->{naFeatureId}  = $transcript->getId();
+    $record->{sourceId}     = $transcript->getSourceId();
+    $record->{seqLength}    = $aaSeq->getLength();
+    $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
+
+    my $mss = GUS::Model::DoTS::MassSpecSummary->new({
+       'aa_sequence_id'          => $record->{aaSequenceId},
+       'is_expressed'            => 1,
+       'developmental_stage'     => $record->{devStage},
+       'number_of_spans'         => $record->{spanCount},
+       'prediction_algorithm_id' => $self->getPredictionAlgId,
+       'spectrum_count'          => $record->{spectrumCount},
+       'aa_seq_length'           => $record->{seqLength},
+       'aa_seq_molecular_weight' => $record->{seqMolWt},
+       'aa_seq_pi'               => $record->{seqPI},
+       'sequence_count'          => 1,
+       'aa_seq_percent_covered'  => $record->{percentCoverage},
+    });
+
+    $mss->submit();
+    $self->{summariesAdded}++;
+    
+    return $mss;
+}
+
+sub insertMassSpecFeatures {
+    my ($self, $record, $mss) = @_;
+    
+    for my $pep (@{$record->{peptides}}) {
+        my $translatedAAFeature = GUS::Model::DoTS::TranslatedAAFeature->new({
+            'na_feature_id' => $record->{naFeatureId}
+        });
+        $translatedAAFeature->retrieveFromDB();
+        
+        my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
+            'aa_sequence_id'          => $record->{aaSequenceId},
+            'prediction_algorithm_id' => $self->getPredictionAlgId,
+            #           'external_database_release_id' => $self->getArg->('extDbRelId'), #DEBUG
+            'developmental_stage'     => $record->{devStage},
+            'description'             => $pep->{description},
+            'source_id'               => $mss->getMassSpecSummaryId,
+            'is_predicted'            => 1,
+        });
+        
+        my $aaLoc = GUS::Model::DoTS::AALocation->new({
+                         'start_min' => $pep->{start},
+                         'start_max' => $pep->{start},
+                         'end_min'   => $pep->{end},
+                         'end_max'   => $pep->{end},
+                     });
+    
+        my $naLoc = $self->addNALocation(
+                        $record->{sourceId}, 
+                        $record->{naFeatureId},
+                        $record->{naSequenceId},
+                        $pep
+                      );
+    
+        $msFeature->setParent($naLoc);
+        $msFeature->addChild($aaLoc);    
+        $translatedAAFeature->addChild($msFeature);
+        
+        $translatedAAFeature->submit();
+        
+        $self->{featuresAdded}++;
     }
 
-    my $gene = Bio::Coordinate::GeneMapper->new(
-        -in    => 'peptide',
-        -out   => 'chr',
-        -exons => [$cds->sub_Location],
-    );
-
-    my $peptideCoords = Bio::Location::Simple->new (
-        -start => $pepStart,
-        -end   => $pepEnd,
-    );
-
-    my $map = $gene->map($peptideCoords);
-
-    foreach (sort { $a->start <=> $b->start } $map->each_Location ) {
-        push @$naLocations, [$_->start, $_->end, $_->strand];
-    }
-
-    return $naLocations;
+    $self->undefPointerCache();
 }
 
 sub addNALocation {
-    my ($self, $h, $pep) = @_;
+    my ($self, $sourceId, $naFeatureId, $naSequenceId, $pep) = @_;
     my $naLocations = $self->mapToNASequence(
-        $h->{naFeatureId}, $pep->{start}, $pep->{end}
+        $naFeatureId, $pep->{start}, $pep->{end}
     );
 
     my $naFeature = GUS::Model::DoTS::NAFeature->new({
-        na_sequence_id => $h->{naSequenceId},
+        na_sequence_id                  => $naSequenceId,
         name                            => 'located_sequence_feature',
         external_database_release_id    => $self->{extDbRlsId},
-        source_id                       => $h->{sourceId},
+        source_id                       => $sourceId,
         prediction_algorithm_id         => $self->getPredictionAlgId,
     });
 
@@ -274,6 +384,43 @@ sub addNALocation {
     }
     $naFeature->submit();
     return $naFeature;
+}
+
+sub mapToNASequence {
+    my ($self, $naFeatureId, $pepStart, $pepEnd) = @_;
+    my $naLocations = [];
+
+    my $exons = $self->getExons($naFeatureId) or $self->error("no exons for na_feature_id '$naFeatureId'\n");
+
+    # CDS in chromosome coordinates
+    my $cds = new Bio::Location::Split;
+    foreach (@{$exons}) {
+        $cds->add_sub_Location(new Bio::Location::Simple(
+            -start  =>  @$_[0],
+            -end    =>  @$_[1],
+            -strand =>  @$_[2]
+        ));
+    }
+
+    my $gene = Bio::Coordinate::GeneMapper->new(
+        -in    => 'peptide',
+        -out   => 'chr',
+        -exons => [$cds->sub_Location],
+    );
+
+
+    my $peptideCoords = Bio::Location::Simple->new (
+        -start => $pepStart,
+        -end   => $pepEnd,
+    );
+
+    my $map = $gene->map($peptideCoords);
+
+    foreach (sort { $a->start <=> $b->start } $map->each_Location ) {
+        push @$naLocations, [$_->start, $_->end, $_->strand];
+    }
+
+    return $naLocations;
 }
 
 # Return AoA ref of exon coordinates for the encoding NA seq. An ORF has one 'exon'.
@@ -413,6 +560,9 @@ One MassSpecFeature is created for each peptide entry in the file. Even when
 two peptides have the same sequence and map to the same location they are 
 treated as two features because they were derived from different analyses.
 
+Open reading frame reports are converted to genes when possible 
+and the orf-associated peptide coordinates are adjusted.
+
 Sample tab-delimited input:
 # source_id	description	seqMolWt	seqPI	score	percentCoverage	spanCount	spectrumCount	sourcefile
 Liv008927	AAEL01000002-1-20221-21813	60509	4.82	117	3	2	2	CrypProt LTQ spot k2 Protein View.htm
@@ -509,16 +659,29 @@ my $documentation = {
 
 __END__
 
-select aa_location_id, start_min, end_max, aal.aa_feature_id
+select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
 from dots.massspecsummary mss,
 dots.massspecfeature msf,
 dots.aalocation aal,
 dots.translatedaasequence taas
-where mss.AA_SEQUENCE_ID = msf.AA_SEQUENCE_ID
-and msf.AA_FEATURE_ID = aal.AA_FEATURE_ID
+where mss.mass_spec_summary_id = msf.source_id
+and msf.aa_feature_id = aal.aa_feature_id
 and mss.aa_sequence_id = taas.aa_sequence_id
 and taas.source_id = 'AAEL01000400-5-3912-3475'
 
+select na_location_id, start_min, end_max
+from dots.massspecsummary mss,
+dots.massspecfeature msf,
+dots.nalocation nal,
+dots.translatedaasequence taas,
+dots.translatedaafeature taaf,
+dots.transcript t
+where mss.mass_spec_summary_id = msf.source_id
+and msf.nA_FEATURE_ID = nal.nA_FEATURE_ID
+and mss.aa_sequence_id = taas.aa_sequence_id
+and taas.aa_sequence_id = taaf.aa_sequence_id
+and taaf.na_feature_id = t.na_feature_id
+and t.source_id = 'AAEL01000400-5-3912-3475'
 
 
 
