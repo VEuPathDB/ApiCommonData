@@ -48,8 +48,10 @@ open(FILE,$inFile);
 open(OUT,">$outFile");
 
 while(<FILE>){
-  if ($_ =~ />(\S+)\s+(.+)\s+length/){
+  if ($_ =~ />(\S+)/){
+    my $sourceId = $1;
     my ($naSeqId,$soTerm) = getIdAndSOTerm($1);
+    my $desc = getDesc($soTerm);
     my ($chrSourceId,$taxonName) = getChrAndTaxonName($naSeqId);
     my $dataSource = getDataSource($chrSourceId);
 
@@ -57,7 +59,13 @@ while(<FILE>){
       $taxonName .= "_$strain";
     }
 
-    print OUT ">$taxonName|$chrSourceId|$1|$type Annotation|$dataSource|(protein coding) $2\n";
+    my $defline = ">$taxonName|$chrSourceId|$sourceId|$type Annotation|$dataSource|$desc";
+
+    if ($_ =~ />\S+\s+(.+)\s+length/){$defline .= " $1";}
+
+    $defline .= "\n";
+
+    print OUT "$defline";
   }
   else {
     print OUT "$_";
@@ -85,6 +93,18 @@ sub getIdAndSOTerm {
   $stmt1->finish();
 
   return ($naSeqId,$soTerm);
+}
+
+sub getDesc {
+  my ($soTerm) = @_;
+
+  my $desc;
+
+  $desc = "(protein coding)" if ($soTerm =~ /protein_coding/);
+  $desc = "(pseudogenic)" if ($soTerm =~ /pseudogenic/);
+  $desc = "(non_coding)" if ($soTerm =~ /nc_primary/);
+
+  return $desc;
 }
 
 sub getChrAndTaxonName {
@@ -115,6 +135,12 @@ sub getDataSource {
   elsif ($type eq 'Py') {
     $source = 'Plasmodium_yoelii_TIGR';
   }
+  elsif ($type eq 'Pb') {
+    $source = 'Plasmodium_berghei_Sanger';
+  }
+  elsif ($type eq 'Pc') {
+    $source = 'Plasmodium_chabaudi_Sanger';
+  }
   else {
     $chrSourceId =~ s/\s//g;
     $source = 'Plasmodium_falciparum_TIGR' if ($chrSourceId =~ /MAL2\b|MAL10\b|MAL11\b|MAL14\b/);
@@ -123,4 +149,5 @@ sub getDataSource {
   }
 
   return $source;
+
 }
