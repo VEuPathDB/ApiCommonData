@@ -6,6 +6,29 @@ use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 
 # return null if not found:  be sure to check handle that condition!!
+sub getNASequenceId {
+  my ($plugin, $sourceId) = @_;
+                                                                                                                             
+  if (!$plugin->{sourceIdFeatureIdMap}) {
+                                                                                                                             
+    $plugin->{sourceIdFeatureIdMap} = {};
+                                                                                                                             
+    my $sql = "
+SELECT source_id, na_sequence_id
+FROM Dots.SplicedNASequence
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($sourceId, $na_sequence_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_sequence_id;
+    }
+  }
+                                                                                                                             
+  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+}
+
+
+
+# return null if not found:  be sure to check handle that condition!!
 sub getGeneFeatureId {
   my ($plugin, $sourceId) = @_;
 
