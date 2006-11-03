@@ -161,6 +161,7 @@ EOSQL
 
     $self->addDescription($snpId,$description);
     $count++;
+    $self->undefPointerCache();
 
     if ($count % 100 == 0){
       $self->log("Updated $count rows");
