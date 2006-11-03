@@ -15,7 +15,7 @@ sub initToxoAnalysis {
 
   my $allSpecies = 'Tgondii';
 
-  my $taxId = ["Tgondii:5811"];
+  my $taxId = ["Tgondii:5811","TgondiiApicoplast:5811","TgondiiGT1:5811","TgondiiVeg:398031","TgondiiRH:383379"];
 
   my ($mgr, $projectDir, $release)
     = &initToxoPlasmoAnalysis($propertyFile, $printXML,
@@ -52,6 +52,7 @@ sub initToxoPlasmoAnalysis {
   my @properties = 
     (
      # universal analysis pipeline properties
+
      ["release",   "",  "release number (eg 5.2)"],
      ["projectDir",   "",  "path to the project's directory tree"],
      ["clusterServer", "",  "full name of cluster server"],
@@ -97,7 +98,7 @@ sub initToxoPlasmoAnalysis {
   &createDataDir($mgr,$allSpecies,$mgr->{dataDir});
 
   &makeUserProjectGroup($mgr);
-	
+
   if ($mgr->{myPipelineDir} eq "primary") {
   	&copyPipelineDirToComputeCluster($mgr);
   }
