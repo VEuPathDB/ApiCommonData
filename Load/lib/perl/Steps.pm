@@ -1732,6 +1732,24 @@ sub modifyDownloadFile {
   $mgr->endStep($signal);
 }
 
+sub writeGeneAliasFile {
+  my ($mgr,$extDb,$extDbVer,$database, $dir) = @_;
+
+  my $signal = "write${dir}GeneAliasFile";
+
+  return if $mgr->startStep("Writing $dir gene alias file for download site", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $release = $propertySet->getProp('release');
+
+  my $outFile ="$mgr->{dataDir}/downloadSite/$dir/${dir}GeneAliases_${database}-${release}.txt";
+
+  $mgr->runCmd("getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile");
+
+  $mgr->endStep($signal);
+}
+
 sub modifyGenomeDownloadFile {
   my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable) = @_;
 
