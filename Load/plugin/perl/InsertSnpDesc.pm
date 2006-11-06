@@ -143,6 +143,8 @@ sub createDescription{
 
   foreach my $snpId (@$snps){
     my $description;
+    my %alleles;
+    my %products;
 
     $sql = <<EOSQL;
      SELECT strain, allele, product
@@ -152,14 +154,20 @@ EOSQL
 
     $stmt = $self->prepareAndExecute($sql);
     while (my ($strain, $allele, $product) = $stmt->fetchrow_array()) {
+
+      $alleles{$allele}++;
+
       if($product){
+	$products{$allele} = $product;
 	$description .= "\"$strain\:$allele\:$product\" ";
       }else{
 	$description .= "\"$strain\:$allele\" ";
       }
     }
 
-    $self->addDescription($snpId,$description);
+    my $snpFeat = $self->addMajorMinorInfo($snpId, \%alleles, \%products);
+    $snpFeat->setDescription($description);
+    $snpFeat->submit;
     $count++;
     $self->undefPointerCache();
 
@@ -171,17 +179,41 @@ EOSQL
   return $count;
 }
 
-sub addDescription{
-  my ($self, $snpId, $description) = @_;
+sub addMajorMinorInfo{
+  my ($self, $snpId, $alleles, $products) = @_;
+  my $majorAllele;
+  my $majorAlleleCount;
+  my $minorAllele;
+  my $minorAlleleCount;
+  my $majorProduct;
+  my $majorProductCount;
+  my $minorProduct;
+  my $minorProductCount;
+  my @sortedAlleleKeys;
+
+  foreach my $allele (sort {$$alleles{$b} <=> $$alleles{$a}} keys %$alleles){
+    push(@sortedAlleleKeys, $allele);
+  }
+
+  $majorAllele = @sortedAlleleKeys[0];
+  $majorAlleleCount = $$alleles{$majorAllele};
+  $minorAllele = @sortedAlleleKeys[1];
+  $minorAlleleCount = $$alleles{$minorAllele};
+  $majorProduct = $$products{$majorAllele};
+  $minorProduct = $$products{$minorAllele};
+
 
   my $snpFeat = GUS::Model::DoTS::SnpFeature->new({na_feature_id => $snpId});
-
   $snpFeat->retrieveFromDB();
 
-  $snpFeat->setDescription($description);
+  $snpFeat->setMajorAllele($majorAllele);
+  $snpFeat->setMajorAlleleCount($majorAlleleCount);
+  $snpFeat->setMajorProduct($majorProduct);
+  $snpFeat->setMinorAllele($minorAllele);
+  $snpFeat->setMinorAlleleCount($minorAlleleCount);
+  $snpFeat->setMinorProduct($minorProduct);
 
-  $snpFeat->submit();
+  return $snpFeat;
 }
-
 
 1;
