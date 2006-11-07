@@ -11,6 +11,8 @@ CREATE INDEX dots.aaseq_subclassdbrel_ix
 ON dots.AaSequenceImp (external_database_release_id, subclass_view,
                       aa_sequence_id);
 
+CREATE INDEX dots.NaFeat_alleles_ix ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id, na_feature_id); 
+
 -------------------------------------------------------------------------------
 
 -- materialized views
