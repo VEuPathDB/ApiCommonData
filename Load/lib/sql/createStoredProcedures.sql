@@ -5,15 +5,18 @@ is
     idx    number;
 begin
     rslt := '';
-    for idx IN 1 .. length(seq)
-    loop
-        case upper(substr(seq, idx, 1))
-            when 'A' then rslt := 'T' || rslt;
-            when 'C' then rslt := 'G' || rslt;
-            when 'G' then rslt := 'C' || rslt;
-            when 'T' then rslt := 'A' || rslt;
-        end case;
-    end loop;
+    if seq is not null
+    then
+        for idx IN 1 .. length(seq)
+        loop
+            case upper(substr(seq, idx, 1))
+                when 'A' then rslt := 'T' || rslt;
+                when 'C' then rslt := 'G' || rslt;
+                when 'G' then rslt := 'C' || rslt;
+                when 'T' then rslt := 'A' || rslt;
+            end case;
+        end loop;
+    end if;
     return rslt;
 end reverse_complement;
 /
