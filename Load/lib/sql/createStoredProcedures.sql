@@ -14,6 +14,7 @@ begin
                 when 'C' then rslt := 'G' || rslt;
                 when 'G' then rslt := 'C' || rslt;
                 when 'T' then rslt := 'A' || rslt;
+                else rslt := substr(seq, idx, 1) || rslt;
             end case;
         end loop;
     end if;
