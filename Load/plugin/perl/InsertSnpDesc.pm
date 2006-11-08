@@ -104,6 +104,11 @@ sub run{
     }
   }
 
+  $self->{revComp} = {A => 'T',
+		      T => 'A',
+		      C => 'G',
+		      G => 'C'};
+
   $self->getSnpIds(\@snps, \@extDbRlsList);
 
   my $count = $self->createDescription(\@snps);
@@ -142,7 +147,8 @@ sub createDescription{
   my $count = 0;
 
   foreach my $snpId (@$snps){
-    my $description;
+    my $strains;
+    my $strainsRevComp;
     my %alleles;
     my %products;
 
@@ -154,19 +160,33 @@ EOSQL
 
     $stmt = $self->prepareAndExecute($sql);
     while (my ($strain, $allele, $product) = $stmt->fetchrow_array()) {
+      $strain =~ s/\s//g;
+      $allele =~ s/\s//g;
+      uc($allele);
 
       $alleles{$allele}++;
 
+      my $revCompAllele;
       if($product){
+	$product =~ s/\s//g;
 	$products{$allele} = $product;
-	$description .= "\"$strain\:$allele\:$product\" ";
+
+	$strains .= "\"$strain\:$allele\:$product\" ";
+
+	$revCompAllele = $self->{revComp}->{$allele};
+	$strainsRevComp .= "\"$strain\:$revCompAllele\:$product\" ";
+
       }else{
-	$description .= "\"$strain\:$allele\" ";
+	$strains .= "\"$strain\:$allele\" ";
+
+	$revCompAllele = $self->{revComp}->{$allele};
+	$strainsRevComp .= "\"$strain\:$revCompAllele\" ";
       }
     }
 
     my $snpFeat = $self->addMajorMinorInfo($snpId, \%alleles, \%products);
-    $snpFeat->setDescription($description);
+    $snpFeat->setStrains($strains);
+    $snpFeat->setStrainsRevcomp($strainsRevComp);
     $snpFeat->submit;
     $count++;
     $self->undefPointerCache();
@@ -192,7 +212,7 @@ sub addMajorMinorInfo{
   my @sortedAlleleKeys;
 
   foreach my $allele (sort {$$alleles{$b} <=> $$alleles{$a}} keys %$alleles){
-    push(@sortedAlleleKeys, $allele);
+    push(@sortedAlleleKeys, $allele) unless($allele eq "");
   }
 
   $majorAllele = @sortedAlleleKeys[0];
