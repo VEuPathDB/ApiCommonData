@@ -7,7 +7,7 @@ use DBI;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
-use GUS::Model::DoTS::SequenceType;
+# use GUS::Model::DoTS::SequenceType;
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::DoTS::Source;
 use GUS::Model::DoTS::EST;
@@ -19,6 +19,7 @@ use GUS::Model::DoTS::NASequenceRef;
 use GUS::Model::SRes::Contact;
 use GUS::Model::SRes::Reference;
 use GUS::Model::SRes::TaxonName;
+use GUS::Model::SRes::SequenceOntology_Row;
 use Bio::PrimarySeq; 
 use Bio::Tools::SeqStats;
 
@@ -146,8 +147,8 @@ sub run {
     my $extDb = $self->getExtDbRlsId($self->getArg('extDbName'),
                                      $self->getArg('extDbRlsVer'))
                 or die "Couldn't retrieve external database!\n";
-    my $seqType = $self->getSeqType();
-
+#   my $seqType = $self->getSeqType(); removed in favor of SeqenceOnotologyID
+    my $seqType = $self->getSeqOntologyID($self);
     #SET THE EXTERNAL DATABASE NAME INTO THE CONTEXT
     my $file = $self->getArgs()->{'inputFile'} || die "No Such Input File";
     open (ESTs, "<$file");
@@ -241,17 +242,17 @@ sub buildSequence {
     my $bioSeq = Bio::PrimarySeq->new(-seq=>$seq, 
                                           -alphabet=>'dna', 
                                           -id=>0);
-
-    my $seqcount  =  Bio::Tools::SeqStats->new(-seq=>$bioSeq);
+    my $seqcount  =  Bio::Tools::SeqStats->count_monomers($bioSeq);
       #$gusSeq->setSourceId($est->{'IDENTIFIERS'}->{'EST name'});  #Changed per Mark's request
       $gusSeq->setSourceId($est->{'IDENTIFIERS'}->{'GenBank Acc'});
-      $gusSeq->setSecondaryIdentifier($est->{'IDENTIFIERS'}->{'GenBank Acc'});
+      $gusSeq->setSecondaryIdentifier($est->{'IDENTIFIERS'}->{'GenBank gi'});
       $gusSeq->setName($est->{'IDENTIFIERS'}->{'EST name'});
       $gusSeq->setTaxonId($self->{$organism});
       $gusSeq->setSequenceVersion(0);
       $gusSeq->setExternalDatabaseReleaseId($extDb);
       $gusSeq->setDescription($est->{'COMMENTS'}->{'content'});
-      $gusSeq->setSequenceTypeId($seqType);
+      #$gusSeq->setSequenceTypeId($seqType);
+      $gusSeq->setSequenceOntologyId($seqType);
       $gusSeq->setSequence($seq);
       $gusSeq->setACount(%$seqcount->{'A'});
       $gusSeq->setCCount(%$seqcount->{'C'});
@@ -459,6 +460,21 @@ sub getSeqType {
 
 return $seqType;
 }
+
+# Added Oct 31 2006 CP -----------
+
+sub getSeqOntologyID {
+   my ($plugin) = @_;
+   
+   my $sql = "
+SELECT sequence_ontology_id FROM sres.sequenceOntology WHERE term_name='EST'
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    my $seqOntologyId =  $stmt->fetchrow_array();                                                                             
+return $seqOntologyId;
+}
+
+#---------------------------------
 
 
 1;
