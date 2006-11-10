@@ -7,6 +7,9 @@ ON dots.NaFeatureImp (subclass_view, parent_id, na_feature_id);
 CREATE INDEX dots.aafeat_subclassparent_ix
 ON dots.AaFeatureImp (subclass_view, parent_id, aa_feature_id);
 
+CREATE INDEX aafeature_subclasssource_ix
+ON dots.AaFeatureImp (subclass_view, source_id, aa_feature_id); 
+
 CREATE INDEX dots.aaseq_subclassdbrel_ix
 ON dots.AaSequenceImp (external_database_release_id, subclass_view,
                       aa_sequence_id);
