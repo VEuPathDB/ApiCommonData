@@ -39,11 +39,15 @@ GRANT REFERENCES ON dots.NaFeatureNaGene TO apidb;
 GRANT REFERENCES ON dots.NaGene TO apidb;
 GRANT REFERENCES ON dots.SeqVariation TO apidb;
 GRANT REFERENCES ON dots.SnpFeature TO apidb;
+GRANT REFERENCES ON dots.ExternalAaSequence TO apidb;
+GRANT REFERENCES ON dots.Similarity TO apidb;
+GRANT REFERENCES ON dots.TranslatedAaSequence TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease TO apidb;
 GRANT REFERENCES ON sres.GoTerm TO apidb;
 GRANT REFERENCES ON sres.GoEvidenceCode TO apidb;
 GRANT REFERENCES ON sres.GoRelationship TO apidb;
+GRANT REFERENCES ON sres.TaxonName TO apidb;
 
 GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
@@ -55,11 +59,15 @@ GRANT SELECT ON dots.GoAssociationInstanceLoe TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GoAssocInstEvidCode TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.SeqVariation TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.SnpFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.ExternalAaSequence TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.Similarity TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.TranslatedAaSequence TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.ExternalDatabaseRelease TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.ExternalDatabase TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoTerm TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoEvidenceCode TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoRelationship TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.TaxonName TO apidb WITH GRANT OPTION;
 GRANT SELECT ON core.TableInfo TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.NaFeatureNaGene TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.NaGene TO apidb WITH GRANT OPTION;
@@ -138,6 +146,48 @@ ORDER BY o.ontology, gt.go_id;
 CREATE INDEX apidb.GoTermSum_sourceId_idx ON apidb.GoTermSummary (source_id);
 
 GRANT SELECT ON apidb.GoTermSummary TO gus_r;
+
+-------------------------------------------------------------------------------
+
+/* why doesn't this work?
+CREATE MATERIALIZED VIEW apidb.PdbSimilarity AS
+*/
+CREATE TABLE apidb.PdbSimilarity AS
+SELECT taf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
+       substr(eas.source_id, 1,
+              instr(eas.source_id, '_', -1) - 1)
+         AS pdb_id,
+       s.pvalue_mant, s.pvalue_exp, tn.name AS taxon,
+       ROUND( (s.number_identical / s.total_match_length) * 100)
+         AS percent_identity,
+       ROUND( (s.total_match_length / tas.length) * 100)
+         AS percent_plasmo_coverage,
+       s.score
+FROM dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, core.TableInfo tas_ti,
+     dots.Similarity s, core.TableInfo eas_ti,
+     dots.ExternalAaSequence eas,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     sres.TaxonName tn
+WHERE taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas_ti.name = 'TranslatedAASequence'
+  AND tas_ti.table_id = s.query_table_id
+  AND s.query_id = tas.aa_sequence_id
+  AND eas_ti.name = 'ExternalAASequence'
+  AND eas_ti.table_id = s.subject_table_id
+  AND s.subject_id = eas.aa_sequence_id
+  AND tn.name_class = 'scientific name'
+  AND eas.external_database_release_id
+      = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'PDB protein sequences'
+  AND eas.taxon_id = tn.taxon_id
+ORDER BY taf.source_id, eas.source_id;
+
+CREATE INDEX apidb.PdbSim_sourceId_ix
+ON apidb.PdbSimilarity (source_id, score DESC);
+
+GRANT SELECT on apidb.PdbSimilarity TO gus_r;
 
 -------------------------------------------------------------------------------
 
