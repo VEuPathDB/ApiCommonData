@@ -8,13 +8,15 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
 #only use --strain if there is no strain info associated with the taxon name
-my ($gusConfigFile,$inFile,$type,$strain,$outFile,$extDb,$extDbVer,$sequenceTable,$verbose);
+my ($gusConfigFile,$inFile,$type,$strain,$outFile,$extDb,$extDbVer,$sequenceTable,$seqExtDb,$seqExtDbVer,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "sequenceTable=s" => \$sequenceTable,
 	    "type=s" => \$type,
 	    "strain:s" => \$strain,
 	    "extDb=s" => \$extDb,
 	    "extDbVer=s" => \$extDbVer,
+	    "seqExtDb=s" => \$seqExtDb,
+	    "seqExtDbVer=s" => \$seqExtDbVer,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile,
 	    "infile=s" => \$inFile);
@@ -35,9 +37,13 @@ my $dbh = $db->getQueryHandle(0);
 
 my $extDbRls = getDbRlsId();
 
+my $seqDbRls = getSeqDbRls() if ($seqExtDb && $seqExtDbVer);
+
 my $sql = "select v.na_sequence_id,s.term_name from dots.transcript v,sres.sequenceontology s where v.source_id = ? and external_database_release_id = $extDbRls and v.sequence_ontology_id = s.sequence_ontology_id";
 
 my $stmt1 = $dbh->prepare($sql);
+
+$extDbRls = $seqDbRls if $seqDbRls;
 
 $sql = "select ns.source_id,tn.name from dots.$sequenceTable ns,sres.taxonname tn where ns.external_database_release_id = $extDbRls and ns.na_sequence_id = ? and ns.taxon_id = tn.taxon_id and tn.name_class = 'scientific name'";
 
@@ -53,7 +59,7 @@ while(<FILE>){
     my ($naSeqId,$soTerm) = getIdAndSOTerm($1);
     my $desc = getDesc($soTerm);
     my ($chrSourceId,$taxonName) = getChrAndTaxonName($naSeqId);
-    my $dataSource = getDataSource($chrSourceId);
+    my $dataSource = $seqDbRls ? getPredictionSource() : getDataSource($chrSourceId);
 
     if ($strain){
       $taxonName .= "_$strain";
@@ -82,6 +88,16 @@ sub getDbRlsId {
   return $extDbRlsId;
 }
 
+
+sub getSeqDbRls {
+  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+
+  $stmt->execute($seqExtDb,$seqExtDbVer);
+
+  my ($seqExtDbRlsId) = $stmt->fetchrow_array();
+
+  return $seqExtDbRlsId;
+}
 
 sub getIdAndSOTerm {
   my ($id) = @_;
@@ -146,8 +162,35 @@ sub getDataSource {
     $source = 'Plasmodium_falciparum_TIGR' if ($chrSourceId =~ /MAL2\b|MAL10\b|MAL11\b|MAL14\b/);
     $source = 'Plasmodium_falciparum_Sanger' if ($chrSourceId =~ /MAL1\b|MAL3\b|MAL4\b|MAL5\b|MAL6\b|MAL7\b|MAL8\b|MAL9\b|MAL13\b/);
     $source = 'Plasmodium_falciparum_Stanford' if ($chrSourceId =~ /MAL12\b/);
+    $source = 'Plasmodium_falciparum_plastid_NCBI' if ($chrSourceId =~ /X9527/);
   }
 
   return $source;
 
+}
+
+
+sub getPredictionSource {
+  my $source;
+
+  if ($type eq 'Tg'){
+    $source = 'Toxoplasma_gondii_predicted';
+  }
+  elsif ($type eq 'Pv') {
+    $source = 'Plasmodium_vivax_predicted';
+  }
+  elsif ($type eq 'Py') {
+    $source = 'Plasmodium_yoelii_predicted';
+  }
+  elsif ($type eq 'Pb') {
+    $source = 'Plasmodium_berghei_predicted';
+  }
+  elsif ($type eq 'Pc') {
+    $source = 'Plasmodium_chabaudi_predicted';
+  }
+  else {
+    $source = 'Plasmodium_falciparum_predicted';
+  }
+
+  return $source;
 }
