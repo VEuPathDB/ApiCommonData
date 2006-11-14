@@ -1677,6 +1677,27 @@ sub predictAndPrintTranscriptSequences {
 		  "Predict and print $species $type");
 }
 
+
+sub predictAndPrintPredictedTranscriptSequences {
+  my ($mgr,$species,$dbName,$dbRlsVer,$type,$seqDbName,$seqRlsVer,$flag) = @_;
+
+  my $cds = $type eq 'cds' ? "--cds" : "";
+
+  my $noReversed = $flag eq 'noReversed' ? "--noReversed" : "";
+
+  $type = $type eq 'transcripts' ? ucfirst($type) : uc($type);
+
+  my $file = "$mgr->{dataDir}/seqfiles/${species}Predicted${type}.fsa";
+
+  my $args = "--extDbName '$dbName' --extDbRlsVer '$dbRlsVer' --seqExtDbName '$seqDbName' --seqExtDbRlsVer '$seqRlsVer' --sequenceFile $file $cds $noReversed";
+
+  $mgr->runPlugin("determinePredicted${species}$type",
+		  "GUS::Supported::Plugin::ExtractTranscriptSequences", $args,
+		  "Determine and print $species $type from prediction algorithm");
+}
+
+
+
 sub formatBlastFile {
   my ($mgr,$file,$fileDir,$link,$arg) = @_;
 
@@ -1704,7 +1725,7 @@ sub formatBlastFile {
 }
 
 sub modifyDownloadFile {
-  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable) = @_;
+  my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable,$seqExtDb, $seqExtDbVer) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -1727,7 +1748,11 @@ sub modifyDownloadFile {
 
   $mgr->runCmd("mkdir -p $mgr->{dataDir}/downloadSite/$dir");
 
-  $mgr->runCmd("modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable");
+  my $cmd = "modifyDefLine -infile $inFile -outfile $outFile -extDb '$extDb' -extDbVer '$extDbVer' -type $type -sequenceTable $sequenceTable";
+
+  $cmd .= " -seqExtDb '$seqExtDb' -seqExtDbVer $seqExtDbVer" if ($seqExtDb && $seqExtDbVer);
+
+  $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 }
