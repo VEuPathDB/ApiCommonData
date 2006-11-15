@@ -51,6 +51,18 @@ sub getArgumentsDeclaration{
 		reqd => 1,
 		isList => 0
 	       }),
+     stringArg({name => 'transcriptExternalDatabaseName',
+		descr => 'sres.externaldatabase.name for the annotated transcript sequences',
+		constraintFunc => undef,
+		reqd => 1,
+		isList => 0
+	       }),
+     stringArg({name => 'transcriptExternalDatabaseVersion',
+		descr => 'sres.externaldatabaserelease.version for the annotated transcript sequences',
+		constraintFunc => undef,
+		reqd => 1,
+		isList => 0
+	       }),
      stringArg({name => 'seqTable',
 		descr => 'where do we find the nucleotide sequences',
 		constraintFunc => undef,
@@ -168,6 +180,7 @@ sub run {
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
   $self->{'naExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('naExternalDatabaseName'),$self->getArg('naExternalDatabaseVersion'));
+  $self->{'transcriptExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('transcriptExternalDatabaseName'),$self->getArg('transcriptExternalDatabaseVersion'));
 
   my $file = $self->getArg('snpFile');
 
@@ -633,30 +646,43 @@ sub getAllTranscriptLocations {
 
   my %data;
 
+  my $transcriptExtDbRls = $self->{'transcriptExtDbRlsId'};
+  my $naExtDbRls = $self->{'naExtDbRlsId'};
+
   my $seqTable = $self->getArg('seqTable');
   $seqTable =~ s/::/./;
 
-  my $regex;
-  if($seqTable =~ /External/) {
-    $regex = "MAL\\d+";
-  }
-  elsif($seqTable =~ /Virtual/) {
-    $regex = "^([I,X,V])|(TG).+";
-  }
-  else {
+#  my $regex;
+#  if($seqTable =~ /External/) {
+#    $regex = "MAL\\d+";
+#  }
+#  elsif($seqTable =~ /Virtual/) {
+#    $regex = "^([I,X,V])|(TG).+";
+#  }
+  unless($seqTable =~ /DoTS\.ExternalN/ || $seqTable =~ /^DoTS\.VirtualN/) {
     $self->userError("Only ExternalNaSequence or VirtualNaSequence are supported for retrieving Transcripts");
   }
+
+#  my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
+#             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, $seqTable ens
+#             WHERE tf.na_feature_id = nl.na_feature_id
+#              AND tf.na_sequence_id = ens.na_sequence_id
+#              AND regexp_like(ens.source_id, '$regex')
+#            ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
+
 
   my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
              FROM dots.TRANSCRIPT tf, dots.NaLocation nl, $seqTable ens
              WHERE tf.sequence_ontology_id = 121
               AND tf.na_feature_id = nl.na_feature_id
               AND tf.na_sequence_id = ens.na_sequence_id
-              AND regexp_like(ens.source_id, '$regex')
-            ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
+              AND ens.external_database_release_id = ?
+              and tf.external_database_release_id = ?
+              and tf.name != 'ORF'
+            ORDER BY nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
-  $sh->execute();
+  $sh->execute($naExtDbRls, $transcriptExtDbRls);
 
   while(my ($naSeqId, $naFeatureId, $start, $end) = $sh->fetchrow_array()) {
 
