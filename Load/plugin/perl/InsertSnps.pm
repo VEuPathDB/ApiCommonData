@@ -749,8 +749,8 @@ sub getAllTranscriptLocations {
 #  elsif($seqTable =~ /Virtual/) {
 #    $regex = "^([I,X,V])|(TG).+";
 #  }
-  unless($seqTable =~ /DoTS\.ExternalN/ || $seqTable =~ /^DoTS\.VirtualN/) {
-    $self->userError("Only ExternalNaSequence or VirtualNaSequence are supported for retrieving Transcripts");
+  unless($seqTable =~ /DoTS\.ExternalN/ || $seqTable =~ /^DoTS\.Virtual/) {
+    $self->userError("Only ExternalNaSequence or VirtualSequence are supported for retrieving Transcripts");
   }
 
 #  my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
