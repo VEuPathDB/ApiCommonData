@@ -251,6 +251,8 @@ sub processSnpFile{
     }
 
     $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
+    $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
+    $self->_addMajorMinorInfo($snpFeature);
 
     $snpFeature->submit();
     $self->undefPointerCache();
@@ -261,6 +263,94 @@ sub processSnpFile{
   }
   return $lineNum;
 }
+
+# ----------------------------------------------------------------------
+
+sub _addMajorMinorInfo {
+  my ($self, $snpFeature) = @_;
+
+  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+  my $sourceId = $snpFeature->getSourceId();
+
+  my (%alleles, %products);
+
+  foreach my $seqVar (@seqVars) {
+    my $allele = $seqVar->getAllele();
+    my $product = $seqVar->getProduct();
+
+    $alleles{$allele}++;
+    $products{$allele} = $product if($product);
+  }
+
+  my @sortedAlleleKeys;
+  foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
+    push(@sortedAlleleKeys, $allele) unless($allele eq "");
+  }
+
+  if(scalar(@sortedAlleleKeys) < 2) {
+    $self->userError("No Variation for source_id $sourceId");
+  }
+
+  my $majorAllele = @sortedAlleleKeys[0];
+  my $minorAllele = @sortedAlleleKeys[1];
+
+  my $majorAlleleCount = $alleles{$majorAllele};
+  my $minorAlleleCount = $alleles{$minorAllele};
+
+  my $majorProduct = $products{$majorAllele};
+  my $minorProduct = $products{$minorAllele};
+
+  $snpFeature->setMajorAllele($majorAllele);
+  $snpFeature->setMajorAlleleCount($majorAlleleCount);
+  $snpFeature->setMajorProduct($majorProduct);
+  $snpFeature->setMinorAllele($minorAllele);
+  $snpFeature->setMinorAlleleCount($minorAlleleCount);
+  $snpFeature->setMinorProduct($minorProduct);
+
+  return($snpFeature);
+}
+
+
+# ----------------------------------------------------------------------
+
+sub _makeSnpFeatureDescriptionFromSeqVars {
+  my ($self, $snpFeature, $isCoding) = @_;
+
+  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+
+  my (@strains, @strainsRevComp);
+
+  foreach my $seqVar (@seqVars) {
+    my $strain = $seqVar->getStrain();
+    my $allele = $seqVar->getAllele();
+    my $product = $seqVar->getProduct();
+
+    $strain =~ s/\s//g;
+    $allele =~ s/\s//g;
+    $product =~ s/\s//g;
+
+    my $revCompAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+
+    if($isCoding) {
+      push(@strains, "\"$strain\:$allele\:$product\"");
+      push(@strainsRevComp, "\"$strain\:$revCompAllele\:$product\"");
+
+    } 
+    else {
+      push(@strains, "\"$strain\:$allele\"");
+      push(@strainsRevComp, "\"$strain\:$revCompAllele\"");
+    }
+  }
+
+  my $strains = join(' ', @strains);
+  my $strainsRevComp = join(' ', @strainsRevComp);
+
+  $snpFeature->setStrains($strains);
+  $snpFeature->setStrainsRevcomp($strainsRevComp);
+
+  return($snpFeature);
+}
+
 
 # ----------------------------------------------------------------------
 
@@ -277,6 +367,7 @@ sub _updateSequenceVars {
     my $variationAllele = $seqVar->getAllele();
     my $matchesReference = $variationAllele eq $referenceAllele ? 1 : 0;
     $seqVar->setMatchesReference($matchesReference);
+
 
     next unless($variationAllele);
 
@@ -385,28 +476,27 @@ sub createSnpFeature {
 
       $self->_isSnpPositionOk($naSeq, $base, $naLoc, $sourceId);
     }
-    else {
-      my $seqVarSoTerm = $self->getSeqVarSoTerm($start, $end, $base);
-      $soId = $self->getSoId($seqVarSoTerm);
 
-      my $seqVar =  GUS::Model::DoTS::SeqVariation->
-        new({'source_id' => $sourceId,
-             'external_database_release_id' => $extDbRlsId,
-             'name' => $name,
-             'sequence_ontology_id' => $soId,
-             'strain' => $strain,
-             'allele' => $base,
-             'organism' => $organism
-            });
+    my $seqVarSoTerm = $self->getSeqVarSoTerm($start, $end, $base);
+    $soId = $self->getSoId($seqVarSoTerm);
 
-      $seqVar->retrieveFromDB() if $self->getArg('restart');
-      $seqVar->setParent($snpFeature);
-      $seqVar->setParent($naSeq);
+    my $seqVar =  GUS::Model::DoTS::SeqVariation->
+      new({'source_id' => $sourceId,
+           'external_database_release_id' => $extDbRlsId,
+           'name' => $name,
+           'sequence_ontology_id' => $soId,
+           'strain' => $strain,
+           'allele' => $base,
+           'organism' => $organism
+          });
 
-      $naLoc = $self->getNaLoc($start, $end);
-      $seqVar->addChild($naLoc);
+    $seqVar->retrieveFromDB() if $self->getArg('restart');
+    $seqVar->setParent($snpFeature);
+    $seqVar->setParent($naSeq);
 
-    }
+    $naLoc = $self->getNaLoc($start, $end);
+    $seqVar->addChild($naLoc);
+
   }
   return $snpFeature;
 }
