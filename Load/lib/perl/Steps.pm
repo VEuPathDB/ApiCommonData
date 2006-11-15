@@ -880,9 +880,9 @@ sub extractIdsFromBlastResult {
 }
 
 sub filterBLASTResults{
-  my ($mgr, $taxonList, $gi2taxidFile, $blastDir) = @_;
+  my ($mgr, $taxonList, $gi2taxidFile, $blastDir, $fileName) = @_;
 
-  my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.unfiltered.out";
+  my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/$fileName";
 
   my $outFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
 
@@ -2153,9 +2153,9 @@ sub snpMummerToGFF {
 }
 
 sub loadMummerSnpResults {
-  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$targetTable,$org,$refOrg,$gffFile,$restart) = @_;
+  my ($mgr,$snpDbName,$snpDbRlsVer,$targetDbName,$targetDbRlsVer,$transcriptDbName,$transcriptDbRlsVer,$targetTable,$org,$refOrg,$gffFile,$restart) = @_;
 
-  my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{dataDir}/snp/$gffFile";
+  my $args = "--reference '$refOrg' --organism '$org' --snpExternalDatabaseName '$snpDbName' --snpExternalDatabaseVersion '$snpDbRlsVer' --naExternalDatabaseName '$targetDbName' --naExternalDatabaseVersion '$targetDbRlsVer' --transcriptExternalDatabaseName '$transcriptDbName' --transcriptExternalDatabaseVersion '$transcriptDbRlsVer' --seqTable '$targetTable' --ontologyTerm 'SNP' --snpFile $mgr->{dataDir}/snp/$gffFile";
 
   $args .= " --restart $restart" if $restart;
 
