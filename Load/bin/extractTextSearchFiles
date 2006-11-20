@@ -177,6 +177,7 @@ SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
 FROM dots.GeneFeature gf, dots.NaSequence ns,
      sres.TaxonName tn
 WHERE gf.source_id IS NOT NULL
+  AND gf.product IS NOT NULL
   AND gf.na_sequence_id = ns.na_sequence_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
