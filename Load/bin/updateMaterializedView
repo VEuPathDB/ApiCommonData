@@ -79,6 +79,7 @@ if ($num > 0) {
    print "mView has changed -- updating\n";
 #   $sth = $dbh->prepare("EXECUTE DBMS_MVIEW.REFRESH('${owner}.${mView}')");
    $sth = $dbh->prepare("begin DBMS_MVIEW.REFRESH('${owner}.${mView}'); end;");
+   $sth->{RaiseError} = 1;
    $sth->execute();
    $sth->finish();
 }
