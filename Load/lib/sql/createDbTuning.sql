@@ -14,7 +14,9 @@ CREATE INDEX dots.aaseq_subclassdbrel_ix
 ON dots.AaSequenceImp (external_database_release_id, subclass_view,
                       aa_sequence_id);
 
-CREATE INDEX dots.NaFeat_alleles_ix ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id, na_feature_id); 
+CREATE INDEX dots.NaFeat_alleles_ix
+ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id,
+                     na_feature_id); 
 
 -------------------------------------------------------------------------------
 
@@ -42,12 +44,15 @@ GRANT REFERENCES ON dots.SnpFeature TO apidb;
 GRANT REFERENCES ON dots.ExternalAaSequence TO apidb;
 GRANT REFERENCES ON dots.Similarity TO apidb;
 GRANT REFERENCES ON dots.TranslatedAaSequence TO apidb;
+GRANT REFERENCES ON dots.DbRefNaFeature TO apidb;
+GRANT REFERENCES ON dots.DbRefNaSequence TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease TO apidb;
 GRANT REFERENCES ON sres.GoTerm TO apidb;
 GRANT REFERENCES ON sres.GoEvidenceCode TO apidb;
 GRANT REFERENCES ON sres.GoRelationship TO apidb;
 GRANT REFERENCES ON sres.TaxonName TO apidb;
+GRANT REFERENCES ON sres.DbRef TO apidb;
 
 GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
@@ -68,9 +73,12 @@ GRANT SELECT ON sres.GoTerm TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoEvidenceCode TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.GoRelationship TO apidb WITH GRANT OPTION;
 GRANT SELECT ON sres.TaxonName TO apidb WITH GRANT OPTION;
+GRANT SELECT ON sres.DbRef TO apidb WITH GRANT OPTION;
 GRANT SELECT ON core.TableInfo TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.NaFeatureNaGene TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.NaGene TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.DbRefNaFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.DbRefNaSequence TO apidb WITH GRANT OPTION;
 
 -------------------------------------------------------------------------------
 
@@ -188,6 +196,58 @@ CREATE INDEX apidb.PdbSim_sourceId_ix
 ON apidb.PdbSimilarity (source_id, score DESC);
 
 GRANT SELECT on apidb.PdbSimilarity TO gus_r;
+
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW apidb.GeneId AS
+SELECT LOWER(dr.primary_identifier) AS id, gf.source_id AS gene
+FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed
+WHERE dr.primary_identifier IS NOT NULL
+  AND gf.na_feature_id = drnf.na_feature_id
+  AND drnf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id
+        = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+                  'NRDB_pdb_dbXRefBySeqIdentity',
+                  'NRDB_ref_dbXRefBySeqIdentity',
+                  'NRDB_sp_dbXRefBySeqIdentity',
+                  'GenBank')
+UNION
+SELECT LOWER(dr.secondary_identifier) AS id, gf.source_id AS gene
+FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed
+WHERE dr.secondary_identifier IS NOT NULL
+  AND gf.na_feature_id = drnf.na_feature_id
+  AND drnf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id
+        = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+                  'NRDB_pdb_dbXRefBySeqIdentity',
+                  'NRDB_ref_dbXRefBySeqIdentity',
+                  'NRDB_sp_dbXRefBySeqIdentity',
+                  'GenBank')
+UNION
+SELECT lower(dr.primary_identifier) AS id, sns.source_id AS gene
+FROM dots.SplicedNaSequence sns, dots.dbrefNaSequence drns,
+     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+      sres.ExternalDatabase ed
+WHERE sns.na_sequence_id = drns.na_sequence_id
+  AND drns.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id 
+  AND ed.name = 'GenBank'
+UNION
+SELECT LOWER(alias) AS id, gene FROM apidb.GeneAlias;
+
+GRANT SELECT ON apidb.GeneId TO gus_r;
+
+CREATE INDEX apidb.GeneId_gene_idx ON apidb.GeneId (gene);
+CREATE INDEX apidb.GeneId_id_idx ON apidb.GeneId (id);
 
 -------------------------------------------------------------------------------
 

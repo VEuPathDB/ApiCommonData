@@ -8,4 +8,6 @@ DROP MATERIALIZED VIEW apidb.GeneAlias;
 
 DROP MATERIALIZED VIEW apidb.GoTermSummary;
 
+DROP MATERIALIZED VIEW apidb.GeneId;
+
 exit
