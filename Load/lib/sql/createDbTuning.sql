@@ -214,6 +214,7 @@ WHERE dr.primary_identifier IS NOT NULL
                   'NRDB_pdb_dbXRefBySeqIdentity',
                   'NRDB_ref_dbXRefBySeqIdentity',
                   'NRDB_sp_dbXRefBySeqIdentity',
+                  'Predicted protein structures',
                   'GenBank')
 UNION
 SELECT LOWER(dr.secondary_identifier) AS id, gf.source_id AS gene
@@ -230,6 +231,7 @@ WHERE dr.secondary_identifier IS NOT NULL
                   'NRDB_pdb_dbXRefBySeqIdentity',
                   'NRDB_ref_dbXRefBySeqIdentity',
                   'NRDB_sp_dbXRefBySeqIdentity',
+                  'Predicted protein structures',
                   'GenBank')
 UNION
 SELECT lower(dr.primary_identifier) AS id, sns.source_id AS gene
