@@ -249,18 +249,19 @@ sub processProteinResults {
 	$self->{'matchCount'}++;
       }
       my $dbname = $match->att('dbname');
-      $childDomain =
-	$self->buildDomainFeature($match->id(), $aaId, $dbname,
-				  $parentId);
 
       my @locationKids = $match->children('location');
       foreach my $location (@locationKids) {
+	$childDomain = $self->buildDomainFeature($match->id(), $aaId, $dbname,
+				  $parentId, $location->att('score'));
 	if ($isNoIPR) {
 	  $self->{noIPR}->{locationCount}++;
 	} else {
 	  $self->{locationCount}++;
 	}
+
 	$self->buildLocation($location, $childDomain);
+
       }
     }
     last if ($self->getArg('testnumber') && $self->{interproCount}
@@ -271,14 +272,15 @@ sub processProteinResults {
 }
 
 sub buildDomainFeature {
-  my ($self, $domainSourceId, $aaId, $dbName, $parentId) = @_;
-
+  my ($self, $domainSourceId, $aaId, $dbName, $parentId, $evalue) = @_;
+	
   my $domainFeat = GUS::Model::DoTS::DomainFeature->
     new({ source_id => $domainSourceId,
 	  external_database_release_id => $self->{extDbRlsId},
 	  aa_sequence_id => $aaId,
           is_predicted => 1,
-	  parent_id => $parentId
+	  parent_id => $parentId,
+	  e_value => $evalue
 	});
 
   $domainFeat->submit();
