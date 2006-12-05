@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+##turn an excel  table into a wiki table
+
+use strict;
+use Spreadsheet::BasicRead;
+use Bio::Seq;
+use Bio::Tools::GFF;
+use Getopt::Long qw(GetOptions);
+
+my $verbose = 0;
+my $inputFile;
+my $outputFile;
+
+GetOptions("verbose!"        => \$verbose,
+           "inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $inputFile) {
+  die "Must supply a valid input file!\nUsage: readExcel --inputFile <FILE> --outputFile <FILE> [--verbose]";
+}
+
+my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
+                  skipHeadings  => 1,
+                  skipBlankRows => 1) || die "Could not open '$inputFile':$!";
+
+open(OUT, ">> $outputFile");
+
+print OUT "Accession\tIEDB ID\tEpitope Name\tedate\tSequence\tStrain\n";
+
+while(my $data = $spreadSheet->getNextRow()){
+  next unless $data;
+
+  my $secondaryId = $$data[0];
+  $secondaryId =~ s/^\<.*edate=(\d+)\".*/$1/;
+
+  my $iedbId = $$data[2];
+  my $epiName = $$data[3];
+  my $seq = $$data[5];
+  my $accession = $$data[11];
+  my $strain = $$data[8];
+
+  print OUT "$accession\t$iedbId\t$epiName\t$secondaryId\t$seq\t$strain\n";
+}
+
+close (OUT);
+
+
+###TODO####
+# Generalize plugin by making columns to take and order to print in
+# customizable via the command line
+###########
