@@ -1,0 +1,270 @@
+#!/usr/bin/perl
+
+## script for running blast over a batch of sequences against a database and outputting the top match that matches in length and with at least 98% identity
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+use CBIL::Bio::Blast::BlastAnal;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+use Getopt::Long;
+
+use strict;
+
+my $debug = 0;
+
+$| = 1;
+
+my $regex = '\S*?\|\S*?\|(\S+)\|';
+my $queryFile;
+my $epitopeFile;
+my $blastDir;
+my $database;
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+
+&GetOptions("regex=s" => \$regex,
+            "queryFile=s" => \$queryFile,
+	    "database=s" => \$database,
+	    "gusConfigFile=s" => \$gusConfigFile,
+	    "epitopeFile=s" => \$epitopeFile,
+	    "blastDir=s" => \$blastDir,
+	    "debug!" => \$debug,
+            );
+
+unless ($queryFile && $database && $epitopeFile && $blastDir){ die "Usage: runBlast --queryFile <FILE> --database <PATH> --epitopeFile <FILE> --blastDir <DIRPATH> [--regex <STRING>] [--gusConfigFile <FILE>] [--debug]";}
+
+die "Cannot find '$queryFile':$!\n" unless (-e $queryFile);
+die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
+die "The directory '$blastDir' does not exist: $!\n" unless (-d $blastDir);
+
+print STDERR "Establishing dbi login\n" if $debug;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $debug,0,1,
+                                        $gusconfig->getCoreSchemaName()
+				       );
+my $dbh = $db->getQueryHandle();
+
+
+#create the files
+my $tempFile = $queryFile;
+$tempFile =~ s/(\S+\/)+(\w+).\w+/$1/;
+$tempFile .="tmp.out";
+
+my $outFile = $queryFile;
+$outFile =~ s/(\S+\/)+(\w+).\w+/$2/;
+$outFile = "$blastDir/${outFile}.out";
+
+my $errorLog = $queryFile;
+$errorLog =~ s/(\S+\/)+(\w+).\w+/$2/;
+$errorLog = "$blastDir/${errorLog}_blast.err";
+
+open (ERR, ">$errorLog") || die "Could not open error log '$errorLog' for writing: $!";
+
+
+#get the epitopes...we only want to do this once
+my %epitopes;
+&makeEpitopeHash($epitopeFile, \%epitopes);
+
+
+
+#first create a query file object using seqio ...
+
+my $batchQueryFile  = Bio::SeqIO->new(-file => $queryFile , '-format' => 'Fasta');
+
+#loop through those sequences one at a time
+while ( my $seq = $batchQueryFile->next_seq() ) {
+  my $queryLength = $seq->length();
+  my $seqId = $seq->id();
+
+  #create file containing single sequence
+  &createSeqFile($tempFile, $seq);
+
+  #run blast on this single sequence
+  my $blast = &runBlast($database, $tempFile, $queryLength, $regex, $debug);
+
+  print STDERR "Count: ".$blast->getSubjectCount()."\n" if $debug;
+
+  my @subjects = $blast->getSubjects();
+
+
+  if($blast->getSubjectCount() > 1){
+    ##do something here ... test if the first one is 100% and rest are less then OK, jsust use first otherwise throw error
+    my $top = shift @subjects;
+    my $percMatch = $top->getTotalIdentities();
+    my $equal = 0;
+
+    foreach my $sub (@subjects){
+      if($sub->getTotalIdentities() == $percMatch){
+        print STDERR "The subjects '".$top->getID()."' and '".$sub->getID."' match the sequence '$seqId' with the same percent identity.\n";
+        next;
+	$equal = 1;
+      }
+    }
+
+    &mapEpitopes($queryLength, $top, $seqId, \%epitopes, $outFile, $debug) unless($equal);
+
+  }elsif($blast->getSubjectCount() == 0){
+
+    print ERR "No blast hits returned for $seqId\n";
+
+  }else{
+    ##we're good
+    my $subject = $subjects[0];
+
+    &mapEpitopes($queryLength, $subject, $seqId, \%epitopes, $outFile, $debug);
+
+  }
+}
+
+my $cmd = "rm $tempFile";
+system($cmd);
+my $status = $? >> 8;
+die "Failed with status '$status running cmd: $cmd'" if $status;
+
+close (ERR);
+
+
+#----------------Subroutines----------------------
+
+sub makeEpitopeHash{
+  my ($epitopeFile,$epitopes) = @_;
+
+  print STDERR "Generating epitope hash from file...\n" if $debug;
+
+  open (FILE, $epitopeFile) || die "Could not open file '$epitopeFile':$!'";
+
+  while (<FILE>){
+    chomp;
+
+    my @data = split('\t',$_);
+
+    next if ($data[0] eq 'Accession');
+
+    $$epitopes{$data[0]}->{$data[1]} =  ({seq => $data[4],
+					  secondary_id => $data[3],
+					  name => $data[2]
+					 });
+  }
+}
+
+
+sub createSeqFile{
+  my ($tempFile, $seq) = @_;
+
+    my $singleQueryFile = Bio::SeqIO->new(-file => ">$tempFile" , '-format' => 'Fasta');
+
+  $singleQueryFile->write_seq($seq);
+
+}
+
+
+sub runBlast{
+  my ($database, $tempFile, $queryLength, $regex, $debug) = @_;
+
+  my $cmd = "/files/cbil/software/ncbi-blast2/current/blastall -p blastp -d $database -i $tempFile -v 3 -b 3 -F F";
+
+  my @blastOutput = `$cmd`;
+
+  if ($debug){
+    foreach my $entry (@blastOutput){
+      print "$entry\n";
+    }
+  }
+
+  my $blast = CBIL::Bio::Blast::BlastAnal->new($debug);
+
+  $blast->parseBlast($queryLength,97,1,$regex,\@blastOutput);
+
+  return $blast;
+}
+
+
+sub mapEpitopes{
+  my ($queryLength, $subject, $seqId, $epitopes, $outFile, $debug) = @_;
+  my $subId = $subject->getID();
+
+    unless ($queryLength == $subject->getLength()){
+
+      print ERR "LENGTH ERROR: Query ID: $seqId Query Length: $queryLength\tBLAST Result: $subId Subject Length: ".$subject->getLength()."\n";
+
+    }else{
+
+    ## extract this sequence from the db ...
+      my $sequence = &getSequence($subId);
+
+      print STDERR "getting epitopes...\n" if $debug;
+
+      my $foundAll = 1;
+      foreach my $epitope (keys %{$epitopes{$seqId}}){
+
+	my ($start, $end) = &getLocation($epitopes{$seqId}->{$epitope}->{seq}, $sequence);
+
+	if ($start && $end) {
+	  $epitopes{$seqId}->{$epitope}->{start} = $start;
+	  $epitopes{$seqId}->{$epitope}->{end} = $end;
+	}else{
+	  $foundAll = 0;
+	  print ERR "EPITOPE '$epitope' NOT FOUND IN SEQ '$subId'\n";
+	}
+      }
+
+      if($foundAll){
+	##output the results into a file that you can load with plugin
+	&printResultsToFile($seqId, $subId, \%epitopes, $outFile);
+      }
+    }
+}
+
+
+sub getSequence{
+  my ($subId) = @_;
+
+  my $sql = <<EOSQL;
+SELECT sequence
+FROM DoTs.TranslatedAASequence
+WHERE source_id = '$subId'
+EOSQL
+
+  my $sth = $dbh->prepareAndExecute($sql);
+  my ($sequence) = $sth->fetchrow_array();
+
+  return $sequence;
+}
+
+
+sub getLocation{
+  my ($epiSeq, $subSeq) = @_;
+  my $start;
+  my $end;
+
+  if($subSeq =~ /$epiSeq/i){
+    ($start) = @-; #@- holds one before the start of match
+    $start ++;
+    ($end) = @+; #@+ holds the end of match
+
+  }
+return ($start,$end);
+}
+
+
+sub printResultsToFile{
+  my ($seqId, $subId, $epitopes, $outFile) = @_;
+
+  foreach my $iedbId (keys %{$epitopes{$seqId}}){
+
+    my $name = $epitopes->{$seqId}->{$iedbId}->{name};
+    my $start = $epitopes->{$seqId}->{$iedbId}->{start};
+    my $end = $epitopes->{$seqId}->{$iedbId}->{end};
+
+    open(OUT,">>$outFile") || die "Could not open '$outFile' for appending:$!\n";;
+
+    print OUT "$subId\t$iedbId\t$name\t$start\t$end\n";
+
+    close(OUT);
+  }
+}
