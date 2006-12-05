@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+
+## script that uses Bio::Perl to retrieve sequences (accessions or GI numbers passed in a file on stdin) from genpept
+
+use strict;
+use Bio::Perl;
+use Getopt::Long;
+
+my($inFile,$outFile,$help);
+
+&GetOptions("inFile=s" => \$inFile,
+	    "outFile=s" => \$outFile,
+            "help!" => \$help,
+           );
+
+die "Usage: getGBSeqs --inFile <FILE> --outFile <FILE>\n" if $help;
+die "Cannot find file '$inFile'" unless (-e $inFile);
+die "Must provide an output file" unless ($outFile);
+
+#make a db object
+my $db = Bio::DB::GenPept->new();
+my $errorLog = $outFile;
+$errorLog =~ s/.fsa/.err/;
+my %seen;
+
+open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!";
+open (OUT, ">> $outFile");
+open (ERROR, ">> $errorLog");
+
+  while (<IDS>) {
+    chomp;
+
+    next if(/Accession/);
+
+    my @data = split('\t',$_);
+    my $accession = $data[0];
+
+    if($seen{$accession}==1){
+      next;
+    }else{
+      $seen{$accession} = 1;
+    }
+
+    my $seq = $db->get_Seq_by_acc($accession);
+    if($seq){
+      print OUT ">".$accession." ".$seq->desc()." length=".$seq->length()."\n".&breakSequence($seq->seq());
+    }else{
+      print ERROR "Cannot find entry in Protein for accession number '$accession'\n";
+    }
+  }
+
+close(IDS);
+close(OUT);
+close(ERROR);
+
+
+sub breakSequence{
+  my($seq,$lineLength,$beginSpace) = @_;
+
+  my $lineLength = $lineLength ? $lineLength : 60;
+
+  ##just in case there are returns...
+  $seq =~ s/\s//g;
+  my $new="";
+
+  for (my $i=0;$i<length($seq);$i+=$lineLength){
+    $new .= $beginSpace.substr($seq,$i,$lineLength)."\n";
+  }
+
+  return $new;
+}
