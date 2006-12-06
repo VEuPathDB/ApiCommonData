@@ -27,7 +27,7 @@ my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
 
 open(OUT, ">> $outputFile");
 
-print OUT "Accession\tIEDB ID\tEpitope Name\tedate\tSequence\tStrain\n";
+print OUT "Accession\tIEDB ID\tStrain\tedate\tSequence\tEpitope Name\n";
 
 while(my $data = $spreadSheet->getNextRow()){
   next unless $data;
@@ -41,7 +41,7 @@ while(my $data = $spreadSheet->getNextRow()){
   my $accession = $$data[11];
   my $strain = $$data[8];
 
-  print OUT "$accession\t$iedbId\t$epiName\t$secondaryId\t$seq\t$strain\n";
+  print OUT "$accession\t$iedbId\t$strain\t$secondaryId\t$seq\t$epiName\n";
 }
 
 close (OUT);
