@@ -54,6 +54,26 @@ AND nfng.na_gene_id = g.na_gene_id
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
 }
 
+# return null if not found:  be sure to check handle that condition!!
+sub getAAFeatureId {
+  my ($plugin, $sourceId) = @_;
+
+  if (!$plugin->{sourceIdFeatureIdMap}) {
+
+    $plugin->{sourceIdFeatureIdMap} = {};
+
+    my $sql = "
+SELECT source_id, aa_feature_id
+FROM Dots.AAFeature
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($sourceId, $na_feature_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_feature_id;
+    }
+  }
+
+  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+}
 
 sub getAASeqIdFromFeatId {
   my ($featId) = shift;
