@@ -1,0 +1,168 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use Switch;
+use strict;
+
+my ($excelDir, $excelOutDir, $queryDir, $blastOutDir, $blaseDatabase, $idRegex, $verbose);
+
+my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
+
+&GetOptions("excelDir=s" => \$excelDir,
+	    "excelOutDir=s" => \$excelOutDir,
+	    "queryDir=s"=> \$queryDir,
+	    "blastOutDir=s" => \$blastOutDir,
+	    "blastDatabase=s" => \$blaseDatabase,
+	    "speciesRegex=s" => \$speciesRegex,
+	    "idRegex=s" => \$idRegex,
+	    "verbose!" => \$verbose,
+	   );
+
+if (!$excelDir || !$excelOutDir || !$queryDir || !$blastOutDir || !$blaseDatabase) {
+  die "usage: createEpitopeMappingFile.pl --excelDir <DIRPATH> --excelOutDir <DIRPATH> --queryDir <DIRPATH> --blastOutDir <DIRPATH> --blastDatabase <PATH> [--speciesRegex <STRING>] [--idRegex <STRING>] [--verbose]\n";
+}
+
+
+&createEpitopeFiles($excelDir,$excelOutDir);
+&getGenPetSeqs($excelOutDir, $queryDir);
+&generateMap($blastOutDir, $queryDir, $excelOutDir, $blaseDatabase, $speciesRegex, $idRegex);
+
+
+
+sub createEpitopeFiles{
+  my ($excelDir,$excelOutDir) = @_;
+
+  unless (-d $excelOutDir){
+    my $cmd = "mkdir -p $excelOutDir";
+
+    &exeCmd($cmd);
+
+  }
+
+  if (-d $excelDir) {
+    my $file;
+
+    opendir(DIR, $excelDir) or die "can't opendir $excelDir: $!";
+
+    while (defined($file = readdir(DIR))) {
+      next if $file =~ /^\.\.?$/;     # skip . and ..
+
+      my $inFile = "$excelDir/$file";
+
+      my $outFile = $file;
+      $outFile =~ s/(\w+).\w+/$1/;
+      $outFile = "$excelOutDir/$outFile.txt";
+
+      my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile";
+
+      &exeCmd($cmd);
+
+    }
+
+    closedir(DIR);
+
+  }else{
+    die "Cannot locate the directory '$excelDir'\n";
+  }
+
+}
+
+
+sub getGenPetSeqs{
+  my ($inputDir, $queryDir) = @_;
+
+  unless (-d $queryDir){
+    my $cmd = "mkdir -p $queryDir";
+
+    &exeCmd($cmd);
+
+  }
+
+  die "Cannot locate the directory '$inputDir':$!\n" unless (-d $inputDir);
+
+  opendir(DIR, $inputDir) or die "can't opendir '$inputDir': $!";
+
+  my $file;
+  while (defined($file = readdir(DIR))) {
+    next if $file =~ /^\.\.?$/;     # skip . and ..
+
+    my $inFile = "$inputDir/$file";
+
+    my $outFile = $file;
+    $outFile =~ s/(\w+).\w+/$1/;
+    $outFile = "$queryDir/$outFile.fsa";
+
+    my $cmd = "retrieveSeqsFromGenPept --inFile $inFile --outFile $outFile";
+
+    &exeCmd($cmd);
+
+  }
+  closedir(DIR);
+}
+
+sub generateMap{
+  my ($blastDir, $queryDir, $excelOutDir, $blastDatabase, $speciesRegex, $idRegex) = @_;
+
+  unless (-d $blastDir){
+    my $cmd = "mkdir -p $blastDir";
+    &exeCmd($cmd);
+  }
+
+  unless(-d $queryDir){ die "Could not find the query file directory '$queryDir':$!";}
+
+  opendir(EDIR, $excelOutDir) or die "can't opendir '$excelOutDir': $!";
+
+  my $file;
+  while (defined($file = readdir(EDIR))) {
+    next if $file =~ /^\.\.?$/;     # skip . and ..
+
+    my $baseFileName = $file;
+    $baseFileName =~ s/(\w+).\w+/$1/;
+
+    #get the files and database that go together
+    my $epitopeFile = "$excelOutDir/$file";
+
+    my $queryFile = "$queryDir/$baseFileName.fsa";
+
+    my $species = $baseFileName;
+    $species =~ s/$speciesRegex/$1/;
+
+    my $database;
+    switch ($species) {
+
+      case "Pb"  { $database = "Pberghei_proteins"; }
+      case "Pf"  { $database = "Pfalciparum_proteins"; }
+      case "Pv"  { $database = "Pvivax_proteins"; }
+      case "Py"  { $database = "Pyoelii_proteins"; }
+      case "Tg"  { $database = "Tgondii_proteins"; }
+      else       { print "$species does not match a known database." }
+    }
+
+    print "SPECIES: $species\t" if $verbose;
+    print "DATABASE: $database\n" if $verbose;
+
+    $database = "$blastDatabase/$database";
+
+    my $cmd = "runAndParseBlast --queryFile $queryFile --database $database --epitopeFile $epitopeFile --blastDir $blastDir";
+
+    if ($idRegex){
+      $cmd .= " --regex $idRegex";
+    }
+
+    &exeCmd($cmd);
+  }
+
+  closedir(EDIR);
+}
+
+
+sub exeCmd{
+  my ($cmd) = @_;
+
+  print STDERR "$cmd\n";
+  system($cmd);
+  my $status = $? >> 8;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}
+
