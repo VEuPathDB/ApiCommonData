@@ -146,8 +146,7 @@ sub makeEpitopeHash{
     next if ($data[0] eq 'Accession');
 
     $$epitopes{$data[0]}->{$data[1]} =  ({seq => $data[4],
-					  secondary_id => $data[3],
-					  name => $data[2]
+					  name => $data[5]
 					 });
   }
 }
