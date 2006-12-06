@@ -2,8 +2,9 @@
 ##                 InsertDBxRefs.pm
 ##
 ## Creates new entries in the tables SRes.DbRef and DoTS.DbRefNAFeature
-## to represent mappings to external resources that are found in a tab
-## delimited file of the form gene_id, DbRef_pk, DbRef remark
+## or DoTS.DbRefAAFeature (a non-standard GUS table) to represent
+## mappings to external resources that are found in a tab delimited
+## file of the form gene_id, DbRef_pk, DbRef remark
 ## $Id$
 ##
 #######################################################################
@@ -24,17 +25,17 @@ use GUS::Model::DoTS::DbRefAAFeature;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature to represent new DBxRef associations with NAFeature.
+Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature or DoTS.DbRefAAFeature to represent new DBxRef associations with NAFeature or AAFeature.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature to represent new DbRef/NAFeature class associations.
+Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature or DoTS.DbRefAAFeature to represent new DbRef/NAFeature/AAFeature class associations.
 PLUGIN_PURPOSE
 
 my $tablesAffected =
-	[['SRes.DbRef', 'The entries representing the new links to the external datasets will go here.'],['DoTS.DbRefNAFeature', 'The entries representing the new DbRef/NAFeature class mappings are created here.']];
+	[['SRes.DbRef', 'The entries representing the new links to the external datasets will go here.'],['DoTS.DbRefNAFeature', 'The entries representing the new DbRef/NAFeature class mappings are created here.'],['DoTS.DbRefAAFeature','The entries representing the new DbRef/AAFeature class mappings are created here.']];
 
-my $tablesDependedOn = [['DoTS.NAFeature', 'The genes to be linked to external datasets are found here.'],['DoTS.NAGene','If the gene id is not found in DoTS.NAFeature, this table will be checked in case the gene id is an alias.']];
+my $tablesDependedOn = [['DoTS.NAFeature', 'The genes to be linked to external datasets are found here.'],['DoTS.NAGene','If the gene id is not found in DoTS.NAFeature, this table will be checked in case the gene id is an alias.'],['DoTS.AAFeature','The aa features to be linked to external databasets are found here.']];
 
 my $howToRestart = <<PLUGIN_RESTART;
 There is currently no restart method.
@@ -224,6 +225,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.DbRefNAFeature',
+	  'DoTS.DbRefAAFeature',
           'SRes.DbRef',
 	 );
 }
