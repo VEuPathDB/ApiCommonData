@@ -146,6 +146,8 @@ sub makeEpitopeHash{
     next if ($data[0] eq 'Accession');
 
     $$epitopes{$data[0]}->{$data[1]} =  ({seq => $data[4],
+					  secondary_id => $data[3],
+					  strain => $data[2],
 					  name => $data[5]
 					 });
   }
@@ -254,16 +256,27 @@ return ($start,$end);
 sub printResultsToFile{
   my ($seqId, $subId, $epitopes, $outFile) = @_;
 
+  my $dbRefOutFile = $outFile;
+  $dbRefOutFile =~ s/\.out/Refs.out/;
+
   foreach my $iedbId (keys %{$epitopes{$seqId}}){
 
     my $name = $epitopes->{$seqId}->{$iedbId}->{name};
     my $start = $epitopes->{$seqId}->{$iedbId}->{start};
     my $end = $epitopes->{$seqId}->{$iedbId}->{end};
+    my $secondId = $epitopes->{$seqId}->{$iedbId}->{secondary_id};
+    my $strain = $epitopes->{$seqId}->{$iedbId}->{strain};
 
-    open(OUT,">>$outFile") || die "Could not open '$outFile' for appending:$!\n";;
+    open(OUT,">>$outFile") || die "Could not open '$outFile' for appending:$!\n";
 
     print OUT "$subId\t$iedbId\t$name\t$start\t$end\n";
 
     close(OUT);
+
+    open (REFOUT, ">>$dbRefOutFile") || die "Could not open '$dbRefOutFile' for appending: $!\n";
+
+    print REFOUT "$subId\t$iedbId\t$secondId\t$strain\n";
+
+    close(REFOUT);
   }
 }
