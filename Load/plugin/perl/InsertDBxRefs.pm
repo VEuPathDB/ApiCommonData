@@ -20,6 +20,7 @@ use Carp;
 use ApiCommonData::Load::Util;
 use GUS::Model::SRes::DbRef;
 use GUS::Model::DoTS::DbRefNAFeature;
+use GUS::Model::DoTS::DbRefAAFeature;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -85,6 +86,15 @@ my $argsDeclaration =
                constraintFunc => undef,
                isList=> 1
               }),
+   enumArg({name => 'SequenceType',
+	    descr => 'The type of sequence we are loading DBxRefs for.  Default is NA.',
+	    constraintFunc=> undef,
+	    reqd  => 0,
+	    isList => 0,
+	    enum => "AA,NA",
+	    default => "NA",
+	   }),
+
   ];
 
 
@@ -137,9 +147,9 @@ sub getMapping {
 
     my @vals = split(/\t/, $_);
 
-    my $naFeat = $vals[0];
+    my $feature = $vals[0];
 
-    $naFeat =~ s/\s//g;
+    $feature =~ s/\s//g;
 
     my  %dbRef;
 
@@ -154,15 +164,28 @@ sub getMapping {
       $self->log("Processed $lineCt entries.\n");
     }
 
-    my $naFeatId = ApiCommonData::Load::Util::getGeneFeatureId($self, $naFeat);
+    my $featId;
+    my $type = $self->getArg('SequenceType');
 
-    unless($naFeatId){
-      $self->log("Skipping: source_id $naFeat not found in database.");
+    if($type eq "NA"){
+
+      $featId = ApiCommonData::Load::Util::getGeneFeatureId($self, $feature);
+
+    }elsif($type eq "AA"){
+
+      $featId = ApiCommonData::Load::Util::getAAFeatureId($self, $feature);
+
+    }else{
+      die "$type is not a valid sequence type.  Please use one of AA or NA.";
+    }
+
+    unless($featId){
+      $self->log("Skipping: source_id $feature not found in database.");
       next;
     }
 
 
-    $self->makeDbXRef($naFeatId, \%dbRef);
+    $self->makeDbXRef($featId, \%dbRef, $type);
 
     $lineCt++;
   }
@@ -175,7 +198,7 @@ sub getMapping {
 }
 
 sub makeDbXRef {
-  my ($self, $naFeatId, $dbRef) = @_;
+  my ($self, $featId, $dbRef, $type) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
@@ -183,10 +206,15 @@ sub makeDbXRef {
 
   my $dbRefId = $newDbRef->getId();
 
-  my $dbXref = GUS::Model::DoTS::DbRefNAFeature->new({
-						    na_feature_id => $naFeatId,
-						    db_ref_id => $dbRefId,
-						    });
+  my $tableName = "GUS::Model::DoTS::DbRef${type}Feature";
+
+  my $column = lc($type);
+  $column = "${type}_feature_id";
+
+  my $dbXref = $tableName->new({
+				$column => $featId,
+				db_ref_id => $dbRefId,
+			       });
 
   $dbXref->submit() unless $dbXref->retrieveFromDB();
 
