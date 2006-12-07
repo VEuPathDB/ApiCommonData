@@ -144,6 +144,8 @@ sub getMapping {
 
   while (<XREFMAP>) {
     $self->undefPointerCache(); #if at bottom, not always hit
+    
+    next if /^(\s)*$/;
     chomp;
 
     my @vals = split(/\t/, $_);
