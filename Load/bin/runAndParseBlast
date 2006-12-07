@@ -31,7 +31,7 @@ my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 	    "debug!" => \$debug,
             );
 
-unless ($queryFile && $database && $epitopeFile && $blastDir){ die "Usage: runBlast --queryFile <FILE> --database <PATH> --epitopeFile <FILE> --blastDir <DIRPATH> [--regex <STRING>] [--gusConfigFile <FILE>] [--debug]";}
+unless ($queryFile && $database && $epitopeFile && $blastDir){ die "Usage: runAndParseBlast --queryFile <FILE> --database <PATH> --epitopeFile <FILE> --blastDir <DIRPATH> [--regex <STRING>] [--gusConfigFile <FILE>] [--debug]";}
 
 die "Cannot find '$queryFile':$!\n" unless (-e $queryFile);
 die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
