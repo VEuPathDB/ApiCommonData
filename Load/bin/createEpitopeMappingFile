@@ -26,7 +26,7 @@ if (!$excelDir || !$excelOutDir || !$queryDir || !$blastOutDir || !$blaseDatabas
 
 &createEpitopeFiles($excelDir,$excelOutDir);
 &getGenPetSeqs($excelOutDir, $queryDir);
-&generateMap($blastOutDir, $queryDir, $excelOutDir, $blaseDatabase, $speciesRegex, $idRegex);
+&generateMap($blastOutDir, $queryDir, $excelOutDir, $blaseDatabase, $speciesRegex, $idRegex, $verbose);
 
 
 
@@ -102,7 +102,7 @@ sub getGenPetSeqs{
 }
 
 sub generateMap{
-  my ($blastDir, $queryDir, $excelOutDir, $blastDatabase, $speciesRegex, $idRegex) = @_;
+  my ($blastDir, $queryDir, $excelOutDir, $blastDatabase, $speciesRegex, $idRegex,$verbose) = @_;
 
   unless (-d $blastDir){
     my $cmd = "mkdir -p $blastDir";
@@ -139,8 +139,8 @@ sub generateMap{
       else       { print "$species does not match a known database." }
     }
 
-    print "SPECIES: $species\t" if $verbose;
-    print "DATABASE: $database\n" if $verbose;
+    print STDERR "SPECIES: $species\t" if $verbose;
+    print STDERR "DATABASE: $database\n" if $verbose;
 
     $database = "$blastDatabase/$database";
 
