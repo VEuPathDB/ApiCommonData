@@ -113,6 +113,7 @@ sub run{
   open(MAP, $file);
 
   while (<MAP>){
+    next if /^(\s)*$/;
     chomp;
 
     my @data = split('\t',$_);
