@@ -1036,6 +1036,7 @@ sub documentSplign {
 		{ name => "splign",
 		  params => $args,
 		  url => "http://www.ncbi.nlm.nih.gov/sutils/splign/",
+		  pubmedIds => "16381840 ",
 		  credits => "Yu.Kapustin, A.Souvorov, T.Tatusova. 
                              Splign - a Hybrid Approach To Spliced Alignments.
                              RECOMB 2004 - Currents in Computational Molecular Biology. p.741."
