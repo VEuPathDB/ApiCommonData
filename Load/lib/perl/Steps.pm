@@ -403,12 +403,8 @@ sub documentPsipred {
                                        version => $version,
                                        params => "default",
                                        url => "http://bioinf.cs.ucl.ac.uk/psipred/",
-                                       pubmedIds => "",
-                                       credits => "Jones, D.T. (1999)
-                                                  Protein secondary structure prediction based on position-specific 
-                                                  scoring matrices.
-                                                  J. Mol. Biol. 292:195-202.
-                                                  http://bioinf.cs.ucl.ac.uk"}]};
+                                       pubmedIds => "10493868",
+                                       credits => ""}]};
   $mgr->documentStep("psipred", $documentation);
 }
 
@@ -1012,10 +1008,7 @@ sub documentTandemRepeatFinder {
 		  params => $args,
 		  url => "http://tandem.bu.edu/trf/trf.html",
 		  pubmedIds => "9862982",
-		  credits => "G. Benson,
-                              Tandem repeats finder: a program to analyze DNA sequences,
-                              Nucleic Acids Research (1999)
-                              Vol. 27, No. 2, pp. 573-580."
+		  credits => ""
 		}
 	       ]
     };
@@ -1035,8 +1028,9 @@ sub documentSplign {
       tools => [
 		{ name => "splign",
 		  params => $args,
+                  version => "07/19/06",
 		  url => "http://www.ncbi.nlm.nih.gov/sutils/splign/",
-		  pubmedIds => "16381840 ",
+		  pubmedIds => "16381840",
 		  credits => "Yu.Kapustin, A.Souvorov, T.Tatusova. 
                              Splign - a Hybrid Approach To Spliced Alignments.
                              RECOMB 2004 - Currents in Computational Molecular Biology. p.741."
@@ -1411,9 +1405,7 @@ sub documentTRNAScan {
                   params => $options,
                   url => "http://selab.wustl.edu/cgi-bin/selab.pl?mode=software#trnascan",
                   pubmedIds => "9023104",
-                  credits => "Lowe, T.M. & Eddy, S.R. (1997),
-                              tRNAscan-SE: a program for improved detection of transfer RNA genes in genomic sequence'', 
-                              Nucl. Acids Res., 25, 955-964"
+                  credits => ""
                 }
                ]
     };
@@ -1598,11 +1590,8 @@ sub documentExportPred {
 		  version => $version,
 		  params => "default",
 		  url => "http://bioinf.wehi.edu.au/exportpred/",
-		  pubmedIds => "",
-		  credits => "Sargeant et al.
-                              Lineage-specific expansion of proteins exported to erythrocytes in malaria parasites,
-                              Genome Biology (2006)
-                              http://genomebiology.com/2006/7/2/R12"
+		  pubmedIds => "16507167",
+		  credits => ""
 		}
 	       ]
     };
