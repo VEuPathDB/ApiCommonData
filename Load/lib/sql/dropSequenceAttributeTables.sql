@@ -1,9 +1,21 @@
-drop table ApiDB.AaSequenceAttribute;
-drop sequence ApiDB.AaSequenceAttribute_sq;
-delete from Core.TableInfo where name = 'AaSequenceAttribute';
+DROP TABLE apidb.AaSequenceAttribute;
+DROP SEQUENCE apidb.AaSequenceAttribute_sq;
 
-drop table ApiDB.NaSequenceAttribute;
-drop sequence ApiDB.NaSequenceAttribute_sq;
-delete from Core.TableInfo where name = 'NaSequenceAttribute';
+DELETE FROM core.TableInfo
+WHERE name = 'AaSequenceAttribute'
+AND database_id =
+    (SELECT database_id
+     FROM core.DatabaseInfo
+     WHERE name = 'ApiDB');
 
-exit;
+DROP TABLE apidb.NaSequenceAttribute;
+DROP SEQUENCE apidb.NaSequenceAttribute_sq;
+
+DELETE FROM core.TableInfo
+WHERE name = 'NaSequenceAttribute'
+AND database_id =
+    (SELECT database_id
+     FROM core.DatabaseInfo
+     WHERE name = 'ApiDB');
+
+exit
