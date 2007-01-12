@@ -1,6 +1,6 @@
-GRANT SELECT ON dots.GeneFeature TO apidb;
-GRANT SELECT ON dots.NaGene TO apidb;
-GRANT SELECT ON dots.NaFeatureNaGene TO apidb;
+GRANT SELECT ON dots.GeneFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.NaGene TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.NaFeatureNaGene TO apidb WITH GRANT OPTION;
 
 CREATE VIEW apidb.GeneNameMapping AS
 SELECT g.name AS alias, gf.source_id

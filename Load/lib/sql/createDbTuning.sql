@@ -46,6 +46,7 @@ GRANT REFERENCES ON dots.Similarity TO apidb;
 GRANT REFERENCES ON dots.TranslatedAaSequence TO apidb;
 GRANT REFERENCES ON dots.DbRefNaFeature TO apidb;
 GRANT REFERENCES ON dots.DbRefNaSequence TO apidb;
+GRANT REFERENCES ON dots.SplicedNaSequence TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabase TO apidb;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease TO apidb;
 GRANT REFERENCES ON sres.GoTerm TO apidb;
@@ -79,6 +80,7 @@ GRANT SELECT ON dots.NaFeatureNaGene TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.NaGene TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.DbRefNaFeature TO apidb WITH GRANT OPTION;
 GRANT SELECT ON dots.DbRefNaSequence TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.SplicedNaSequence TO apidb WITH GRANT OPTION;
 
 -------------------------------------------------------------------------------
 
