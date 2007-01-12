@@ -1,8 +1,8 @@
-grant select on DoTS.GeneFeature to PlasmoDB;
-grant select on DoTS.NAGene to PlasmoDB;
-grant select on DoTS.NAFeatureNAGene to PlasmoDB;
+GRANT SELECT ON dots.GeneFeature TO apidb;
+GRANT SELECT ON dots.NaGene TO apidb;
+GRANT SELECT ON dots.NaFeatureNaGene TO apidb;
 
-CREATE VIEW plasmodb.GeneNameMapping AS
+CREATE VIEW apidb.GeneNameMapping AS
 SELECT g.name AS alias, gf.source_id
 FROM dots.NaGene g, dots.naFeatureNaGene nfg, dots.GeneFeature gf
 WHERE g.na_gene_id = nfg.na_gene_id
@@ -11,6 +11,6 @@ UNION
 SELECT source_id AS alias, source_id
 FROM dots.GeneFeature;
 
-GRANT SELECT ON plasmodb.GeneNameMapping TO gus_r;
+GRANT SELECT ON apidb.GeneNameMapping TO gus_r;
 
 exit

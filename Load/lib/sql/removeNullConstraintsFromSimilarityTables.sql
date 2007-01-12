@@ -26,3 +26,5 @@ ALTER TABLE DoTSVer.SimilaritySpanVer MODIFY number_positive NULL;
 ALTER TABLE DoTSVer.SimilaritySpanVer MODIFY score NULL;
 ALTER TABLE DoTSVer.SimilaritySpanVer MODIFY pvalue_mant NULL;
 ALTER TABLE DoTSVer.SimilaritySpanVer MODIFY pvalue_exp NULL;
+
+exit
