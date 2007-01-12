@@ -8,7 +8,6 @@ CONNECT TO plasmodbwww
 IDENTIFIED BY po34weep
 USING 'apicomm.db.cbil.upenn.edu';
 
-exit;
 CREATE DATABASE LINK toxodb.login_comment
 CONNECT TO toxodbwww
 IDENTIFIED BY Rh2t0xic
