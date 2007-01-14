@@ -1,5 +1,10 @@
-DROP USER ApiDB CASCADE;
-delete from core.tableinfo where database_id in (select database_id from core.databaseinfo where name = 'ApiDB');
-delete from Core.DatabaseInfo where name = 'ApiDB';
+DROP USER apidb CASCADE;
+
+DELETE FROM core.TableInfo
+WHERE database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE name = 'ApiDB');
+
+DELETE FROM core.DatabaseInfo WHERE name = 'ApiDB';
 
 exit;

@@ -1,5 +1,6 @@
-CREATE VIEW dots.SeqVariation
-AS
+DROP VIEW dots.SeqVariation;
+
+CREATE VIEW dots.SeqVariation AS
 SELECT na_feature_id, na_sequence_id, subclass_view, name, sequence_ontology_id,
        parent_id, external_database_release_id, source_id,
        prediction_algorithm_id, is_predicted, review_status_id,
