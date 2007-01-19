@@ -127,6 +127,46 @@ sub getGeneFeatureIdFromSourceId {
   return $gusAASeq;
 }
 
+sub getCodingSequenceFromExons {
+  my ($gusExons) = @_;
+
+  die "No Exons found" unless(scalar(@$gusExons) > 0);
+
+  foreach(@$gusExons) {
+    die "Expected DoTS Exon... found " . ref($_)
+      unless(UNIVERSAL::isa($_, 'GUS::Model::DoTS::ExonFeature'));
+  }
+
+  # this code gets the feature locations of the exons and puts them in order
+  my @exons = map { $_->[0] }
+    sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+      map { [ $_, $_->getFeatureLocation ]}
+	@$gusExons;
+
+  my $codingSequence;
+
+  for my $exon (@exons) {
+    my $chunk = $exon->getFeatureSequence();
+
+    my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
+
+    my $codingStart = $exon->getCodingStart();
+    my $codingEnd = $exon->getCodingEnd();
+
+    next unless ($codingStart && $codingEnd);
+
+    my $trim5 = $exonIsReversed ? $exonEnd - $codingStart : $codingStart - $exonStart;
+    substr($chunk, 0, $trim5, "") if $trim5 > 0;
+
+    my $trim3 = $exonIsReversed ? $codingEnd - $exonStart : $exonEnd - $codingEnd;
+    substr($chunk, -$trim3, $trim3, "") if $trim3 > 0;
+
+    $codingSequence .= $chunk;
+  }
+
+  return($codingSequence);
+}
+
 
 
 1;
