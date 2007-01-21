@@ -16,7 +16,10 @@ ON dots.AaSequenceImp (external_database_release_id, subclass_view,
 
 CREATE INDEX dots.NaFeat_alleles_ix
 ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id,
-                     na_feature_id); 
+                     na_feature_id);
+
+CREATE INDEX dots.AaSequenceImp_string2_ix
+ON dots.AaSequenceImp (string2, aa_sequence_id);
 
 -------------------------------------------------------------------------------
 
