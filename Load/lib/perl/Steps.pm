@@ -18,7 +18,7 @@ sub createDataDir {
   &_createDir($mgr, $dataDir);
 
   my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
-		     'sage', 'analysis', 'similarity');
+		     'sage', 'analysis', 'similarity', 'assembly');
 
   foreach my $subDir (@dataSubDirs) {
     &_createDir($mgr, "$dataDir/$subDir");
@@ -32,7 +32,7 @@ sub createDataDir {
 
   foreach my $species (@Species) {
     foreach my $subDir (@assemblySubDirs) {
-      &_createDir($mgr, "$dataDir/assembly/${species}/$subDir");
+      &_createDir($mgr, "$dataDir/assembly/${species}${subDir}");
     }
   }
 
@@ -609,6 +609,123 @@ sub loadDbXRefs {
   }
 
   $mgr->endStep($signal);
+}
+
+#sub loadEpitopeDbXRefs{
+#  my ($mgr, $inputDir, $columnSpec, $extDbName, $extDbVer, $fileExtension, $seqType) = @_;
+#  my @dirs;
+
+#  my $signal = "load${inputDir}DbRefs";
+
+#  return if $mgr->startStep("Loading $inputDir", $signal);
+
+#  &createExtDbAndDbRls($mgr,$extDbName,$extDbVer);
+
+#  if(-d $inputDir){
+#    opendir(DIR, $inputDir) || die "Can't open directory '$inputDir'";
+
+#    while (defined($dir = readdir(DIR))) {
+#      if($dir =~ /\w+BLAST/){
+#	push (@dirs, $dir);
+#      }
+#    }
+#  }
+
+#  my @inputFiles;
+#  foreach my $dir (@dirs){
+
+#    @inputFiles = &_getInputFiles($dir, $fileExtension);
+
+#    foreach my $file (@inputFiles){
+
+#      my $args = "--extDbName $extDbName --extDbReleaseNumber $extDbVer --DbRefMappingFile '$mgr->{dataDir}/misc/${outputFile}_$db' --columnSpec \"$columnSpec\"";
+
+#      if ($seqType){
+#	$args .= " --SequenceType $seqType";
+#      }
+
+#      my $subSignal = "load${file}DbRefs";
+
+#      $mgr->runPlugin ($subSignal,
+#		       "ApiCommonData::Load::Plugin::InsertDBxRefs", "$args",
+#		       "Loading dbXRefs from $file");
+
+#    }
+#  }
+
+#  $mgr->endStep($signal);
+
+#}
+
+sub _getInputFiles{
+  my ($fileOrDir, $seqFileExtension) = @_;
+  my @inputFiles;
+
+  if (-d $fileOrDir) {
+    opendir(DIR, $fileOrDir) || die "Can't open directory '$fileOrDir'";
+    my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
+    @inputFiles = map { "$fileOrDir/$_" } @noDotFiles;
+    @inputFiles = grep(/.*\.$seqFileExtension$/, @inputFiles) if $seqFileExtension;
+  } else {
+    $inputFiles[0] = $fileOrDir;
+  }
+  return @inputFiles;
+}
+
+#sub loadEpitopes{
+#  my ($mgr, $inputDir, $extDbName, $extDbVer, $fileExtension) = @_;
+#  my @dirs;
+
+#  my $signal = "loadEpitopes${inputDir}";
+
+#  return if $mgr->startStep("Loading $inputDir", $signal);
+
+#  &createExtDbAndDbRls($mgr,$extDbName,$extDbVer);
+
+#  if(-d $inputDir){
+#    opendir(DIR, $inputDir) || die "Can't open directory '$inputDir'";
+
+#    while (defined($dir = readdir(DIR))) {
+#      if($dir =~ /\w+BLAST/){
+#	push (@dirs, $dir);
+#      }
+#    }
+#  }
+
+#  my @inputFiles;
+#  foreach my $dir (@dirs){
+
+#    @inputFiles = &_getInputFiles($dir, $fileExtension);
+
+#    foreach my $file (@inputFiles){
+
+#    my $args = " --inputFile $file --extDbRelSpec $extDbRlsSpec --seqExtDbRelSpec $seqExtDbRlsSpec";
+
+#    my $subSignal = "load${file}DbRefs";
+
+#    $mgr->runPlugin ($subSignal,
+#		     "ApiCommonData::Load::Plugin::InsertEpitopeFeature",
+#		     "$args","Loading Epitopes from $file");
+#    }
+#  }
+
+#  $mgr->endStep($signal);
+
+#}
+
+sub createEpitopeFiles {
+  my ($mgr, $inputDir, $excelDir, $queryDir, $blastDir, $databasePath) = @_;
+
+  my $signal = "createEpitopeFiles$inputDir";
+
+  return if $mgr->startStep("Creating Epitope files from $inputDir", $signal);
+
+    my $cmd = "createEpitopeMappingFile --excelDir $inputDir --excelOutDir $excelDir --queryDir $queryDir --blastOutDir $blastDir --blastDatabase $databasePath";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
 }
 
 sub extractNaSeq {
