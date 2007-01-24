@@ -92,6 +92,7 @@ sub initToxoPlasmoAnalysis {
   # set up global variables
   $mgr->{propertiesFile} = $propertiesFile;
   $mgr->{myPipelineDir} = $myPipelineDir;
+  $mgr->{myPipelineName} = $myPipelineName;
   $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
   $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline/primary/data";
 
@@ -99,7 +100,7 @@ sub initToxoPlasmoAnalysis {
 
   &makeUserProjectGroup($mgr);
 
-  if ($mgr->{myPipelineDir} eq "primary") {
+  if ($mgr->{myPipelineName} eq "primary") {
   	&copyPipelineDirToComputeCluster($mgr);
   }
 
