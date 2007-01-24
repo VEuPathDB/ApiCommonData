@@ -15,3 +15,7 @@ SELECT AA_FEATURE_ID, AA_SEQUENCE_ID, FEATURE_NAME_ID, PARENT_ID,
        ROW_USER_ID, ROW_GROUP_ID, ROW_PROJECT_ID, ROW_ALG_INVOCATION_ID
 FROM dots.AaFeatureImp
 WHERE subclass_view='TranslatedAAFeature';
+
+GRANT SELECT ON dots.TranslatedAaFeature TO gus_r;
+
+GRANT INSERT, UPDATE, DELETE ON dots.TranslatedAaFeature TO gus_w;
