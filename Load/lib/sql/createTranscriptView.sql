@@ -20,3 +20,5 @@ WHERE subclass_view = 'Transcript';
 
 GRANT SELECT ON dots.Transcript TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON dots.Transcript TO gus_w;
+
+exit
