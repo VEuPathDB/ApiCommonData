@@ -467,10 +467,10 @@ sub copyPipelineDirToComputeCluster {
 
   return if $mgr->startStep("Copying analysis_pipeline from $releaseDir to $clusterReleaseDir on clusterServer", $signal);
 
-  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipline/primary",
+  $mgr->{cluster}->copyTo("$projectDir", "$release/analysis_pipeline/primary",
 			  "$clusterProjectDir");
 
-  $mgr->{cluster}->runCmdOnCluster("ln -s $clusterProjectDir/$release/primary/logs $clusterProjectDir/$release/primary/data");
+  $mgr->{cluster}->runCmdOnCluster("ln -s $clusterReleaseDir/primary/logs $clusterReleaseDir/primary/data");
 
   $mgr->endStep($signal);
 }
