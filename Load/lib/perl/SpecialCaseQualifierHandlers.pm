@@ -186,7 +186,7 @@ sub ECNumber {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
 
 
-  my $aaSeq = $self->_getGeneAASeq($feature);
+  my $aaSeq = $self->getGeneAASeq($feature);
 
   foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
     if ($tagValue eq ""){
