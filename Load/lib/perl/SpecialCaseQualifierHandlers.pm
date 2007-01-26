@@ -248,7 +248,7 @@ sub anticodon {
   die "Feature has more than one /anticodon\n" if scalar(@tags) != 1;
 
   my $transcript = $self->_getGeneTranscript($feature);
-#  $transcript->setAnticodon($tags[0]);
+  $transcript->setAnticodon($tags[0]);
   return [];
 }
 
