@@ -1,4 +1,4 @@
-package ApiCommonData::Load::OneCds2BioperlTree;
+package ApiCommonData::Load::Cds2BioperlTree;
 
 
 use strict;
