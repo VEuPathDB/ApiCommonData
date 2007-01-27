@@ -59,7 +59,6 @@ sub sourceIdAndTranscriptSeq {
   $geneFeature->setSourceId($tagValues[0]);
 
   # now do the exons and transcript seq
-
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
     my ($transcriptMin, $transcriptMax, @exons, $isReversed);
@@ -165,7 +164,7 @@ sub _undoProduct{
 sub setPseudo {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
 
-  my $transcript = $self->getGeneTranscript($feature);
+  my $transcript = &getGeneTranscript($self->{plugin}, $feature);
 
   $feature->setIsPseudo(1);
   $transcript->setIsPseudo(1);
@@ -185,8 +184,7 @@ sub setPseudo {
 sub ECNumber {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
 
-
-  my $aaSeq = $self->getGeneAASeq($feature);
+  my $aaSeq = &getGeneAASeq($self->{plugin},$feature);
 
   foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
     if ($tagValue eq ""){
@@ -245,7 +243,7 @@ sub anticodon {
   my @tags = $bioperlFeature->get_tag_values($tag);
   die "Feature has more than one /anticodon\n" if scalar(@tags) != 1;
 
-  my $transcript = $self->getGeneTranscript($feature);
+  my $transcript = &getGeneTranscript($self->{plugin}, $feature);
   $transcript->setAnticodon($tags[0]);
   return [];
 }
