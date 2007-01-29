@@ -1,0 +1,144 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+
+use DBI;
+use List::Util qw(min max);
+use Getopt::Long qw(GetOptions);
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($file, $algInvId, $debug);
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+
+GetOptions("file=s" => \$file,
+	   "algInvId=i" => \$algInvId,
+	   "gusConfigFile=s" => \$gusConfigFile,
+	   "debug" => \$debug
+	  );
+
+unless ($algInvId && -e $file) {
+  die
+"
+Report the features and qualifiers used in an embl file
+
+Usage: validateISF bioperlTreeFile algInvId [gusConfigFile] [--debug]
+
+";
+}
+
+print STDERR "Establishing dbi login\n" if $debug;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $debug,0,1,
+                                        $gusconfig->getCoreSchemaName()
+				       );
+my $dbh = $db->getQueryHandle();
+
+
+my $answers = &_getCountEmblFeatures($file, $debug);
+my $queries = &_makeTestSql($algInvId, $debug);
+
+my ($passed, $failed, $failures) = &_validateData($answers, $queries, $debug);
+
+
+print STDERR "$passed tests succeeded, $failed tests failed: ";
+
+foreach my $failure (@$failures){
+  print STDERR "$failure "
+}
+
+print STDERR"\n";
+
+sub _makeTestSql{
+  my ($algInvId, $debug) = @_;
+  my %queries;
+
+  print STDERR "Preparing SQL using AlgInvId: $algInvId\n" if $debug;
+
+  $queries{'coding_gene'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name IN ('protein_coding', 'pseudogene')
+EOSQL
+
+
+  return \%queries;
+}
+
+
+sub _getCountEmblFeatures{
+  my ($file, $debug) = @_;
+  open(FILE, $file) || die "Couldn't open embl file '$file' for reading\n";
+
+
+  my $currentFeature;
+  my %answers;
+  while (<FILE>) {
+    if (/^<\s(\w+)\s>/) {
+      $currentFeature = $1;
+      if (!$answers{$currentFeature}) {
+	$answers{$currentFeature} = 1;
+      }else{
+	$answers{$currentFeature}++;
+      }
+    } elsif (/^(\w+):/) {
+      my $qualifier = $1;
+      if (!$answers{$qualifier}) {
+	$answers{$qualifier} = 1;
+      }else{
+	$answers{$qualifier}++;
+      }
+    }
+  }
+
+
+  if ($debug){
+    foreach my $feature (sort(keys %answers)) {
+      my $outFile = "/home/jldommer/data/testData/MAL1.qualifiers";
+      open(OUT, ">> $outFile") or die "Couldn't open $outFile for writing: $!\n";
+      print OUT "$feature: ".$answers{$feature}."\n";
+      print OUT "\n";
+    }
+    close(OUT);
+  }
+
+  return \%answers;
+
+}
+
+sub _validateData{
+  my ($answers, $queries, $debug) = @_;
+  my $passed = 0;
+  my $failed = 0;
+  my @failures;
+
+  foreach my $query (keys %{$queries}){
+    $queries->{$query}->execute();
+    my $result = $queries->{$query}->fetchrow_array();
+
+    my $expected = $answers->{$query};
+
+    print STDERR "$query RESULT: $result\n" if $debug;
+    print STDERR "$query EXPECTED: $expected\n" if $debug;
+
+    unless($result == $expected){
+      $failed++;
+      push(@failures, $query);
+    }else{
+      $passed++;
+    }
+
+  }
+
+  return ($passed, $failed, \@failures);
+}
