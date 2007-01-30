@@ -59,13 +59,13 @@ sub _getExpectedAnswers{
   while (<FILE>) {
     if (/^\s*<\s(\w+)\s>/) {
       $currentFeature = "f:$1";
-      next if ($currentFeature eq "f:gene");
       if (!$answers{$currentFeature}) {
 	$answers{$currentFeature} = 1;
       }else{
 	$answers{$currentFeature}++;
       }
     } elsif (/^\s*(\w+):/) {
+      next if ($currentFeature eq "f:gene");
       my $qualifier = "q:$1";
       if (!$answers{$qualifier}) {
 	$answers{$qualifier} = 1;
