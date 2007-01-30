@@ -10,26 +10,26 @@ use Getopt::Long qw(GetOptions);
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($file, $algInvId, $debug);
+my ($inputfile, $algInvId, $debug);
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
-GetOptions("file=s" => \$file,
+GetOptions("inputfile=s" => \$inputfile,
 	   "algInvId=i" => \$algInvId,
 	   "gusConfigFile=s" => \$gusConfigFile,
 	   "debug" => \$debug
 	  );
 
-unless ($algInvId && -e $file) {
+unless ($algInvId && -e $inputfile) {
   die
 "
-Report the features and qualifiers used in an embl file
+Validate the gene models in a database.
 
-Usage: validateISF bioperlTreeFile algInvId [gusConfigFile] [--debug]
+Usage: validateISF --inputfile bioperlTreeFile --algInvId id [--gusConfigFile file] [--debug]
 
 ";
 }
 
-print STDERR "Establishing dbi login\n" if $debug;
+my $answers = &_getExpectedAnswers($inputfile, $debug);
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -42,10 +42,9 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle();
 
 
-my $answers = &_getCountEmblFeatures($file, $debug);
-my $queries = &_makeTestSql($algInvId, $debug);
+my $queries = &_getTestSql($algInvId, $debug);
 
-my ($passed, $failed, $failures) = &_validateData($answers, $queries, $debug);
+my ($passed, $failed, $failures) = &_validateData($queries, $answers, $debug);
 
 
 print STDERR "$passed tests succeeded, $failed tests failed: ";
@@ -56,43 +55,26 @@ foreach my $failure (@$failures){
 
 print STDERR"\n";
 
-sub _makeTestSql{
-  my ($algInvId, $debug) = @_;
-  my %queries;
 
-  print STDERR "Preparing SQL using AlgInvId: $algInvId\n" if $debug;
+############################################################################
 
-  $queries{'coding_gene'} = $dbh->prepare(<<EOSQL);
-SELECT count(f.na_feature_id)
-FROM DoTs.GeneFeature f,
-     SRes.SequenceOntology s
-WHERE f.row_alg_invocation_id  = $algInvId
-AND f.sequence_ontology_id = s.sequence_ontology_id
-AND s.term_name IN ('protein_coding', 'pseudogene')
-EOSQL
-
-
-  return \%queries;
-}
-
-
-sub _getCountEmblFeatures{
+sub _getExpectedAnswers{
   my ($file, $debug) = @_;
-  open(FILE, $file) || die "Couldn't open embl file '$file' for reading\n";
+  open(FILE, $file) || die "Couldn't open input file '$file' for reading\n";
 
 
   my $currentFeature;
   my %answers;
   while (<FILE>) {
-    if (/^<\s(\w+)\s>/) {
-      $currentFeature = $1;
+    if (/^\s*<\s(\w+)\s>/) {
+      $currentFeature = "f:$1";
       if (!$answers{$currentFeature}) {
 	$answers{$currentFeature} = 1;
       }else{
 	$answers{$currentFeature}++;
       }
-    } elsif (/^(\w+):/) {
-      my $qualifier = $1;
+    } elsif (/^\s*(\w+):/) {
+      my $qualifier = "q:$1";
       if (!$answers{$qualifier}) {
 	$answers{$qualifier} = 1;
       }else{
@@ -101,20 +83,136 @@ sub _getCountEmblFeatures{
     }
   }
 
+  $answers{'test:coding_genes'} = $answers{'f:coding_gene'};
+  $answers{'test:rRNAs'} = $answers{'f:rRNA_gene'};
+  $answers{'test:tRNAs'} = $answers{'f:tRNA_gene'};
+  $answers{'test:snRNAs'} = $answers{'f:snRNA_gene'};
+  $answers{'test:pseudo_genes'} = $answers{'q:pseudo'};
+  $answers{'test:unique_transcript_parents'} =
+    $answers{'f:coding_gene'} + $answers{'f:rRNA_gene'} +
+      $answers{'f:tRNA_gene'} + $answers{'f:snRNA_gene'};
+  $answers{'test:exons'} = $answers{'f:exon'};
+  $answers{'test:unique_exon_parents'} =
+    $answers{'test:unique_transcript_parents'};
+  $answers{'test:aa_seqs'} = $answers{'test:coding_genes'};
+  $answers{'test:spliced_seqs'} = $answers{'f:transcript'};
+  $answers{'test:exon_rna_feature'} = $answers{'f:exon'};
+  $answers{'test:'} = $answers{'f:'};
+
 
   if ($debug){
     foreach my $feature (sort(keys %answers)) {
-      my $outFile = "/home/jldommer/data/testData/MAL1.qualifiers";
-      open(OUT, ">> $outFile") or die "Couldn't open $outFile for writing: $!\n";
-      print OUT "$feature: ".$answers{$feature}."\n";
-      print OUT "\n";
+      print STDERR "$feature: ".$answers{$feature}."\n";
     }
-    close(OUT);
   }
 
   return \%answers;
 
 }
+
+sub _makeTestSql{
+  my ($algInvId, $debug) = @_;
+  my %queries;
+
+  print STDERR "Preparing SQL using AlgInvId: $algInvId\n" if $debug;
+
+  $queries{'test:coding_genes'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name IN ('protein_coding', 'pseudogene')
+EOSQL
+
+  $queries{'test:RNAs'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name = 'rRNA'
+EOSQL
+
+  $queries{'test:tRNAs'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name = 'tRNA'
+EOSQL
+
+  $queries{'test:snRNAs'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name = 'snRNA'
+EOSQL
+
+  $queries{'test:pseudo_genes'} = $dbh->prepare(<<EOSQL);
+SELECT count(f.na_feature_id)
+FROM DoTs.GeneFeature f,
+     SRes.SequenceOntology s
+WHERE f.row_alg_invocation_id  = $algInvId
+AND f.sequence_ontology_id = s.sequence_ontology_id
+AND s.term_name = 'pseudogene'
+EOSQL
+
+  # count transcripts (that are attached to genes)
+  $queries{'test:unique_transcript_parents'} = $dbh->prepare(<<EOSQL);
+SELECT count (distinct t.parent_id)
+FROM DoTs.Transcript t
+     DoTS.Gene g
+WHERE g.row_alg_invocation_id  = $algInvId
+AND g.na_feature_id = t.parent_id
+EOSQL
+
+  $queries{'test:exons'} = $dbh->prepare(<<EOSQL);
+SELECT count(e.na_feature_id)
+FROM DoTs.ExonFeature e
+     DoTS.Gene g
+WHERE g.row_alg_invocation_id  = $algInvId
+AND g.na_feature_id = e.parent_id
+EOSQL
+
+  $queries{'test:unique_exon_parents'} = $dbh->prepare(<<EOSQL);
+SELECT count(distinct e.parent_id)
+FROM DoTs.ExonFeature e
+     DoTS.Gene g
+WHERE g.row_alg_invocation_id  = $algInvId
+AND g.na_feature_id = t.parent_id
+EOSQL
+
+  $queries{'test:aa_seqs'} = $dbh->prepare(<<EOSQL);
+SELECT count(distinct taf.aa_sequence_id)
+FROM DoTs.Transcript t,
+     DoTS.TranslatedAAFeature taf
+WHERE t.row_alg_invocation_id  = $algInvId
+AND taf.na_feature_id = t.na_feature_id
+EOSQL
+
+  $queries{'test:spliced_seqs'} = $dbh->prepare(<<EOSQL);
+SELECT count(distinct ss.ss_sequence_id)
+FROM DoTs.Transcript t,
+     DoTS.SplicedNaSequence ss
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.na_sequence_id = ss.na_sequence_id
+EOSQL
+
+  $queries{'test:exon_rna_feature'} = $dbh->prepare(<<EOSQL);
+SELECT count(distinct erf.exon_feature_id)
+FROM DoTs.Transcript t,
+     DoTS.ExonRnaFeature erf
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.na_feature_id = erf.rna_feature_id
+EOSQL
+
+  return \%queries;
+}
+
 
 sub _validateData{
   my ($answers, $queries, $debug) = @_;
