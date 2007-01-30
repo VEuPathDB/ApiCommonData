@@ -1,0 +1,60 @@
+
+use strict;
+
+my $prevtranscript;
+my @exons;
+while(<STDIN>) {
+  my @fields = split(/\t/);
+
+  if ($fields[2] eq 'transcript') {
+    &correctAndPrint($prevtranscript, \@exons);
+    @exons = ();
+    $prevtranscript = \@fields;
+  } else {
+    push(@exons, \@fields);
+  }
+}
+&correctAndPrint($prevtranscript, \@exons);
+
+
+# (1) exon locations: smaller loc precede bigger
+# (2) exon coding start/end:  start < end
+# (3) transcript loc: start at min exon start; end at max exon end
+sub correctAndPrint {
+  my ($transcript, $exons) = @_;
+
+  return unless $transcript;
+
+
+  # correct if on rev strand
+  my $minLoc = 100000000;
+  my $maxLoc = 0;
+  if ($transcript->[6] eq '-') {
+    my @fixedExons;
+    foreach my $exon (@$exons) {
+      my $tmp = $exon->[3];
+      $exon->[3] = $exon->[4];
+      $exon->[4] = $tmp;
+      $minLoc = $exon->[3] if $exon->[3] < $minLoc;
+      $maxLoc = $exon->[4] if $exon->[4] > $maxLoc;
+      my @props = split(/\;/, $exon->[8]);
+      $props[2] =~ /CodingEnd (\d+)/;
+      my $start = $1;
+      $props[3] =~ /CodingStart (\d+)/;
+      my $end = $1;
+      $props[2] = " CodingEnd $end ";
+      $props[3] = " CodingStart $start \n";
+      $exon->[8] = join("\;", @props) ;
+      push(@fixedExons, $exon);
+    }
+    $transcript->[3] = $minLoc;
+    $transcript->[4] = $maxLoc;
+    $exons = \@fixedExons;
+  }
+
+  print join("\t", @$transcript);
+  foreach my $exon (@$exons) {
+    print join("\t", @$exon);
+  }
+
+}
