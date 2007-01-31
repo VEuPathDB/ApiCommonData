@@ -44,8 +44,13 @@ sub makeGusSkeleton{
 
       push(@{$transcriptExons->{$gusTranscriptId}->{exons}}, $gusExon);
     }
-    my $translatedAASequence = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
-    my $translatedAAFeature = &makeTranslatedAAFeat($translatedAASequence, $dbRlsId, $gusTranscript);
+
+    if ($bioperlFeatureTree->primary_tag() eq 'coding_gene') {
+      my $translatedAASequence =
+	&makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
+      my $translatedAAFeature =
+	&makeTranslatedAAFeat($translatedAASequence, $dbRlsId, $gusTranscript);
+    }
   }
 
   # attach gene's exons to the appropriate transcripts
