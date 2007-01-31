@@ -17,11 +17,12 @@ sub preprocess {
   # (1) retype CDS into Gene
   # (4) create transcript, give it a copy of the gene's location
   # (5) add to gene
-  # (6) remove exons from gene and add to transcript
+  # (6) add exons to transcript
+  # (7) remove exons from gene
   foreach my $bioperlFeatureTree ($bioperlSeq->get_SeqFeatures()) {
     my $type = $bioperlFeatureTree->primary_tag();
-    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA")) {
-      $type = "coding" if $type eq "CDS";
+    if (grep {$type eq $_} ("transcript","CDS", "tRNA", "rRNA", "snRNA")) {
+      $type = "coding" if ($type eq "CDS" || $type eq "transcript");
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
@@ -30,9 +31,11 @@ sub preprocess {
       foreach my $exon (@exons) {
 	my $t = $exon->primary_tag();
 	die "expected bioperl exon but got '$t'" unless $t = "exon";
-	$gene->remove_SeqFeature($exon);
 	$transcript->add_SeqFeature($exon);
       }
+      # we have to remove the exons before adding the transcript b/c
+      # remove_SeqFeatures() removes all subfeatures of the $gene
+      $gene->remove_SeqFeatures();
       $gene->add_SeqFeature($transcript);
     }
   }
