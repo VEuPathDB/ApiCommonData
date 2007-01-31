@@ -79,7 +79,10 @@ sub _getExpectedAnswers{
   $answers{'test:rRNAs'} = _nonNull(\%answers, 'f:rRNA_gene');
   $answers{'test:tRNAs'} = _nonNull(\%answers, 'f:tRNA_gene');
   $answers{'test:snRNAs'} = _nonNull(\%answers, 'f:snRNA_gene');
-  $answers{'test:pseudo_genes'} = $answers{'q:pseudo'};
+  $answers{'test:protein_sequences'} = _nonNull(\%answers, 'q:Protein');
+  $answers{'test:ec_associations'} = _nonNull(\%answers, 'q:EC_number');
+  $answers{'test:pseudo_genes'} = _nonNull(\%answers, 'q:pseudo') +
+    _nonNull(\%answers, 'q:Pseudogene');
   $answers{'test:unique_transcript_parents'} =
     _nonNull(\%answers, 'f:coding_gene') + _nonNull(\%answers, 'f:rRNA_gene') +
       _nonNull(\%answers, 'f:tRNA_gene') + _nonNull(\%answers, 'f:snRNA_gene');
@@ -87,7 +90,10 @@ sub _getExpectedAnswers{
   $answers{'test:unique_exon_parents'} =
     $answers{'test:unique_transcript_parents'};
   $answers{'test:aa_seqs'} = $answers{'test:coding_genes'};
+  $answers{'test:aa_seq_product'} = $answers{'test:coding_genes'};
+  $answers{'test:trans_aa_feat_product'} = $answers{'test:coding_genes'};
   $answers{'test:spliced_seqs'} = _nonNull(\%answers, 'f:transcript');
+  $answers{'test:transcript_product'} = _nonNull(\%answers, 'f:transcript');
   $answers{'test:exon_rna_feature'} = _nonNull(\%answers, 'f:exon');
 
 
@@ -188,6 +194,48 @@ FROM DoTs.Transcript t,
      DoTS.TranslatedAAFeature taf
 WHERE t.row_alg_invocation_id  = $algInvId
 AND taf.na_feature_id = t.na_feature_id
+EOSQL
+
+  $queries{'test:transcript_product'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.Transcript t
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.product is not null
+EOSQL
+
+  $queries{'test:aa_seq_product'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.TranslatedAASequence t
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.description is not null
+EOSQL
+
+  $queries{'test:trans_aa_feat_product'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.TranslatedAAFeature t
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.description is not null
+EOSQL
+
+  $queries{'test:ec_associations'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.AASequenceEnzymeClass e,
+     DoTS.TranslatedAASequence tas
+WHERE tas.row_alg_invocation_id  = $algInvId
+AND e.row_alg_invocation_id  = $algInvId
+AND tas.aa_sequence_id = e.aa_sequence_id
+AND e.enzyme_class_id is not null
+EOSQL
+
+  $queries{'test:protein_sequences'} = <<EOSQL;
+SELECT count(distinct tas.aa_sequence_id)
+FROM DoTs.Transcript t,
+     DoTS.TranslatedAAFeature taf,
+     DoTS.TranslatedAASequence tas
+WHERE t.row_alg_invocation_id  = $algInvId
+AND taf.na_feature_id = t.na_feature_id
+AND tas.aa_sequence_id = taf.aa_sequence_id
+AND tas.sequence is not null
 EOSQL
 
   $queries{'test:spliced_seqs'} = <<EOSQL;
