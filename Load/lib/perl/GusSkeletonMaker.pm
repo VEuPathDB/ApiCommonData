@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::GusSkeletonMaker;
+package ApiCommonData::Load::GusSkeletonMaker;
 
 use strict;
 use GUS::Model::DoTS::SplicedNASequence;
@@ -36,30 +36,35 @@ sub makeGusSkeleton{
 
     $transcriptNaSeq->addChild($gusTranscript);
 
-    my $gusTranscriptId = $gusTranscript->getId();
-    $transcriptExons->{$gusTranscriptId}->{transcript} = $gusTranscript;
+#    my $gusTranscriptId = $gusTranscript->getId();
+    $transcriptExons->{$gusTranscript}->{transcript} = $gusTranscript;
 
     foreach my $bioperlExon ($bioperlTranscript->get_SeqFeatures()) {
       my $gusExon = &getGusExon($plugin, $bioperlExon, $genomicSeqId, $dbRlsId, $gusGene);
       $bioperlExon->{gusFeature} = $gusExon;
 
-      push(@{$transcriptExons->{$gusTranscriptId}->{exons}}, $gusExon);
+      push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
-    if ($bioperlFeatureTree->primary_tag() eq 'coding_gene') {
-      my $translatedAASequence =
-	&makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
-      my $translatedAAFeature =
-	&makeTranslatedAAFeat($translatedAASequence, $dbRlsId, $gusTranscript);
+    if ($bioperlGene->primary_tag() eq 'coding_gene') {
+      my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
+      $gusTranscript->addChild($translatedAAFeat);
+
+      my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
+      $translatedAASeq->addChild($translatedAAFeat);
+
+      # make sure we submit all kids of the translated aa seq
+      $gusGene->addToSubmitList($translatedAASeq);
     }
   }
 
   # attach gene's exons to the appropriate transcripts
   # update the transcript's splicedNaSequence
-  foreach my $transcriptId (keys %$transcriptExons) {
-    my $gusTranscript = $transcriptExons->{$transcriptId}->{transcript};
+  # the transcriptObjId is the perl object id for the transcript object
+  foreach my $transcriptObjId (keys %$transcriptExons) {
+    my $gusTranscript = $transcriptExons->{$transcriptObjId}->{transcript};
 
-    if(my $exons = $transcriptExons->{$transcriptId}->{exons}) {
+    if(my $exons = $transcriptExons->{$transcriptObjId}->{exons}) {
 
       foreach my $exon (@$exons) {
         my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
@@ -180,23 +185,18 @@ sub makeTranslatedAASeq {
 	     external_database_release_id => $dbRlsId
 	    });
 
-#  $translatedAaSeq->submit();
   return $translatedAaSeq;
 }
 
 #--------------------------------------------------------------------------------
 
 sub makeTranslatedAAFeat {
-  my ($translatedAASeq, $dbRlsId, $gusTranscript) = @_;
+  my ($dbRlsId) = @_;
 
   my $transAAFeat = GUS::Model::DoTS::TranslatedAAFeature->
     new({external_database_release_id => $dbRlsId,
-         aa_sequence_id => $translatedAASeq->getId(),
          is_predicted => 0,
         });
-
-  $transAAFeat->setParent($gusTranscript);
-  $transAAFeat->setParent($translatedAASeq);
 
   return $transAAFeat;
 }
