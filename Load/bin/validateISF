@@ -133,7 +133,7 @@ FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
 WHERE f.row_alg_invocation_id  = $algInvId
 AND f.sequence_ontology_id = s.sequence_ontology_id
-AND s.term_name = 'rRNA'
+AND s.term_name = 'rRNA_encoding'
 EOSQL
 
   $queries{'test:tRNAs'} = <<EOSQL;
@@ -142,7 +142,7 @@ FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
 WHERE f.row_alg_invocation_id  = $algInvId
 AND f.sequence_ontology_id = s.sequence_ontology_id
-AND s.term_name = 'tRNA'
+AND s.term_name = 'tRNA_encoding'
 EOSQL
 
   $queries{'test:snRNAs'} = <<EOSQL;
@@ -151,7 +151,7 @@ FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
 WHERE f.row_alg_invocation_id  = $algInvId
 AND f.sequence_ontology_id = s.sequence_ontology_id
-AND s.term_name = 'snRNA'
+AND s.term_name = 'snRNA_encoding'
 EOSQL
 
   $queries{'test:pseudo_genes'} = <<EOSQL;
