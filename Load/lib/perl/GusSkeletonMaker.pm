@@ -179,7 +179,7 @@ sub makeTranslatedAASeq {
 	     external_database_release_id => $dbRlsId
 	    });
 
-  $translatedAaSeq->submit();
+#  $translatedAaSeq->submit();
   return $translatedAaSeq;
 }
 
