@@ -10,8 +10,8 @@ use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
-		'tRNA_gene'=> 'tRNA',
-		'rRNA_gene'=> 'rRNA',
+		'tRNA_gene'=> 'tRNA_encoding',
+		'rRNA_gene'=> 'rRNA_encoding',
 		'transcript' => 'transcript',
 		'exon' => 'exon'
 	      };
