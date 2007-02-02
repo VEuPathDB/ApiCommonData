@@ -131,6 +131,7 @@ sub _undoProvidedTranslation{
   my ($self) = @_;
 
 }
+
 ################ Product ################################
 
 # only keep the first /product qualifier
@@ -162,6 +163,60 @@ sub product {
 sub _undoProduct{
   my ($self) = @_;
 
+}
+
+
+################ Gene ###############################3
+# we wrap these methods so that we don't call the standard SCQH directly, to
+# have finer control over the order of undoing
+sub gene {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return GUS::Supported::SpecialCaseQualifierHandlers::gene($self, $tag, $bioperlFeature, $feature);
+}
+
+sub _undoGene{
+  my ($self) = @_;
+
+  return GUS::Supported::SpecialCaseQualifierHandlers::_undoGene($self);
+}
+
+################ dbXRef ###############################
+
+sub dbXRef {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return GUS::Supported::SpecialCaseQualifierHandlers::dbXRef($self, $tag, $bioperlFeature, $feature);
+}
+
+sub _undoDbXRef{
+  my ($self) = @_;
+
+  return GUS::Supported::SpecialCaseQualifierHandlers::_undoDbXRef($self);
+}
+
+
+################ Gap Length ###############################
+
+sub gapLength {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return GUS::Supported::SpecialCaseQualifierHandlers::gapLength($self, $tag, $bioperlFeature, $feature);
+}
+
+sub _undoGapLength{
+  my ($self) = @_;
+
+  return GUS::Supported::SpecialCaseQualifierHandlers::_undoGapLength($self);
+}
+
+
+################ Note ########################################
+
+sub note {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return GUS::Supported::SpecialCaseQualifierHandlers::note($self, $tag, $bioperlFeature, $feature);}
+
+sub _undoNote{
+  my ($self) = @_;
+  return GUS::Supported::SpecialCaseQualifierHandlers::_undoNote($self);
 }
 
 ############### Pseudo  ###############################
