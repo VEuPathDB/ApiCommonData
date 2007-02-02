@@ -1,0 +1,31 @@
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::CdsAndExons2BioperlTree"/>
+
+  <gusSkeletonMaker class="PlasmoDBData::Load::GusSkeletonMaker"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <specialCaseQualifierHandler name="standard" 
+           class="GUS::Supported::SpecialCaseQualifierHandlers"/>
+
+  <feature name="coding_gene" so="protein_coding">
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
+  </feature>
+
+  <feature name="transcript" so="transcript">
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
+    <qualifier name="CodingStart"    column="coding_start"/>
+    <qualifier name="CodingEnd"      column="coding_end"/>
+    <qualifier name="GenePrediction" column="source_id"/>
+    <qualifier name="OrderNumber"    column="order_number"/>
+  </feature>
+
+</mapping>
+
