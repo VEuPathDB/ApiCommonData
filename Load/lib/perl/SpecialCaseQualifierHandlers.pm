@@ -22,7 +22,10 @@ my $soTerms = ({pseudogene => 1,
 sub new {
   my ($class) = @_;
   my $self = {};
+
   bless($self, $class);
+
+  $self->{standardSCQH} = GUS::Supported::SpecialCaseQualifierHandlers->new();
   return $self;
 }
 
@@ -171,26 +174,24 @@ sub _undoProduct{
 # have finer control over the order of undoing
 sub gene {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  return GUS::Supported::SpecialCaseQualifierHandlers::gene($self, $tag, $bioperlFeature, $feature);
+  return $self->{standardSCQH}->gene($tag, $bioperlFeature, $feature);
 }
 
 sub _undoGene{
   my ($self) = @_;
-
-  return GUS::Supported::SpecialCaseQualifierHandlers::_undoGene($self);
+  return $self->{standardSCQH}->_undoGene();
 }
 
 ################ dbXRef ###############################
 
 sub dbXRef {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  return GUS::Supported::SpecialCaseQualifierHandlers::dbXRef($self, $tag, $bioperlFeature, $feature);
+  return $self->{standardSPQH}->dbXRef($tag, $bioperlFeature, $feature);
 }
 
 sub _undoDbXRef{
   my ($self) = @_;
-
-  return GUS::Supported::SpecialCaseQualifierHandlers::_undoDbXRef($self);
+  return $self->{standardSCQH}->_undoNote();
 }
 
 
@@ -198,13 +199,12 @@ sub _undoDbXRef{
 
 sub gapLength {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  return GUS::Supported::SpecialCaseQualifierHandlers::gapLength($self, $tag, $bioperlFeature, $feature);
+  return $self->{standardSCQH}->gapLength($tag, $bioperlFeature, $feature);
 }
 
 sub _undoGapLength{
   my ($self) = @_;
-
-  return GUS::Supported::SpecialCaseQualifierHandlers::_undoGapLength($self);
+  return $self->{standardSCQH}->_undoGapLength();
 }
 
 
@@ -212,11 +212,12 @@ sub _undoGapLength{
 
 sub note {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  return GUS::Supported::SpecialCaseQualifierHandlers::note($self, $tag, $bioperlFeature, $feature);}
+  return $self->{standardSCQH}->note($tag, $bioperlFeature, $feature);
+}
 
 sub _undoNote{
   my ($self) = @_;
-  return GUS::Supported::SpecialCaseQualifierHandlers::_undoNote($self);
+  return $self->{standardSCQH}->_undoNote();
 }
 
 ############### Pseudo  ###############################
