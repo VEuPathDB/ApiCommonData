@@ -85,15 +85,17 @@ sub sourceIdAndTranscriptSeq {
       push(@exons, $exon);
     }
 
-    my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
+    if($bioperlFeature->primary_tag() eq "coding_gene"){
+      my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
 
-    if($isReversed) {
-      $translatedAaFeature->setTranslationStart($transcriptMax);
-      $translatedAaFeature->setTranslationStop($transcriptMin);
-    }
-    else {
-      $translatedAaFeature->setTranslationStart($transcriptMin);
-      $translatedAaFeature->setTranslationStop($transcriptMax);
+      if($isReversed) {
+	$translatedAaFeature->setTranslationStart($transcriptMax);
+	$translatedAaFeature->setTranslationStop($transcriptMin);
+      }
+      else {
+	$translatedAaFeature->setTranslationStart($transcriptMin);
+	$translatedAaFeature->setTranslationStop($transcriptMax);
+      }
     }
 
     my $transcriptCodingSequence = ApiCommonData::Load::Util::getCodingSequenceFromExons(\@exons);
