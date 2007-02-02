@@ -2,6 +2,7 @@
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
 
 
 use DBI;
@@ -10,100 +11,109 @@ use Getopt::Long qw(GetOptions);
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($inputfile, $algInvId, $debug);
+my ($inputfile, $algInvId, $verbose);
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 GetOptions("inputfile=s" => \$inputfile,
 	   "algInvId=i" => \$algInvId,
 	   "gusConfigFile=s" => \$gusConfigFile,
-	   "debug" => \$debug
+	   "verbose" => \$verbose
 	  );
 
-unless ($algInvId && -e $inputfile) {
+unless ($algInvId && $inputfile) {
   die
 "
 Validate the gene models in a database.
 
-Usage: validateISF --inputfile bioperlTreeFile --algInvId id [--gusConfigFile file] [--debug]
+Usage: validateISF --inputfile bioperlTreeFile --algInvId id [--gusConfigFile file] [--verbose]
+
+verbose prints report of feature and qualifier counts
 
 ";
 }
 
-my $answers = &_getExpectedAnswers($inputfile, $debug);
+my $answers = &_getExpectedAnswers($inputfile, $verbose);
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getDatabaseLogin(),
                                         $gusconfig->getDatabasePassword(),
-                                        $debug,0,1,
+                                        0,0,1,
                                         $gusconfig->getCoreSchemaName()
 				       );
 my $dbh = $db->getQueryHandle();
 
 
-my $queries = &_makeTestSql($algInvId, $debug);
+my $queries = &_makeTestSql($algInvId);
 
-&_validateData($queries, $answers, $dbh, $debug);
+&_validateData($queries, $answers, $dbh);
 
 
 ############################################################################
 
 sub _getExpectedAnswers{
-  my ($file, $debug) = @_;
+  my ($file, $verbose) = @_;
   open(FILE, $file) || die "Couldn't open input file '$file' for reading\n";
 
 
   my $currentFeature;
-  my %answers;
+  my $f = {};  # hash to hold feature counts
+  my $q = {};  # hash to hold qualifier counts
+  my $a = {};   # hash to hold answers to tests
   while (<FILE>) {
     if (/^\s*<\s(\w+)\s>/) {
-      $currentFeature = "f:$1";
-      if (!$answers{$currentFeature}) {
-	$answers{$currentFeature} = 1;
-      }else{
-	$answers{$currentFeature}++;
-      }
+      $currentFeature = $1;
+      $f->{$currentFeature}++;
     } elsif (/^\s*(\w+):/) {
-      next if ($currentFeature eq "f:gene");  # ignore sanger's unneeded 'gene'
-      my $qualifier = "q:$1";
-      if (!$answers{$qualifier}) {
-	$answers{$qualifier} = 1;
-      }else{
-	$answers{$qualifier}++;
-      }
+      next if ($currentFeature eq "gene");  # ignore sanger's unneeded 'gene'
+      my $qualifier = $1;
+      $q->{$currentFeature}->{$qualifier}++;
+      $q->{TOTAL}->{$qualifier}++;
     }
   }
 
-  $answers{'test:coding_genes'} = _nonNull(\%answers, 'f:coding_gene');
-  $answers{'test:rRNAs'} = _nonNull(\%answers, 'f:rRNA_gene');
-  $answers{'test:tRNAs'} = _nonNull(\%answers, 'f:tRNA_gene');
-  $answers{'test:snRNAs'} = _nonNull(\%answers, 'f:snRNA_gene');
-  $answers{'test:protein_sequences'} = _nonNull(\%answers, 'q:Protein');
-  $answers{'test:ec_associations'} = _nonNull(\%answers, 'q:EC_number');
-  $answers{'test:pseudo_genes'} = _nonNull(\%answers, 'q:pseudo') +
-    _nonNull(\%answers, 'q:Pseudogene');
-  $answers{'test:unique_transcript_parents'} =
-    _nonNull(\%answers, 'f:coding_gene') + _nonNull(\%answers, 'f:rRNA_gene') +
-      _nonNull(\%answers, 'f:tRNA_gene') + _nonNull(\%answers, 'f:snRNA_gene');
-  $answers{'test:exons'} = _nonNull(\%answers, 'f:exon');
-  $answers{'test:unique_exon_parents'} =
-    $answers{'test:unique_transcript_parents'};
-  $answers{'test:aa_seqs'} = $answers{'test:coding_genes'};
-  $answers{'test:aa_seq_product'} = $answers{'test:coding_genes'};
-  $answers{'test:trans_aa_feat_product'} = $answers{'test:coding_genes'};
-  $answers{'test:spliced_seqs'} = _nonNull(\%answers, 'f:transcript');
-  $answers{'test:transcript_product'} = _nonNull(\%answers, 'f:transcript');
-  $answers{'test:exon_rna_feature'} = _nonNull(\%answers, 'f:exon');
+  $a->{'coding_genes'} = _nonNull($f, 'coding_gene');
+  $a->{'rRNAs'} = _nonNull($f, 'rRNA_gene');
+  $a->{'tRNAs'} = _nonNull($f,'tRNA_gene');
+  $a->{'snRNAs'} = _nonNull($f, 'snRNA_gene');
+  $a->{'protein_sequences'} = _nonNull($q->{TOTAL}, 'Protein');
+  $a->{'ec_associations'} = _nonNull($q->{TOTAL}, 'EC_number');
+  $a->{'pseudo_genes'} = _nonNull($q->{TOTAL}, 'pseudo') +
+    _nonNull($q->{TOTAL}, 'Pseudogene');
+  $a->{'unique_transcript_parents'} =
+    _nonNull($f, 'coding_gene') + _nonNull($f, 'rRNA_gene') +
+      _nonNull($f, 'tRNA_gene') + _nonNull($f, 'snRNA_gene');
+  $a->{'exons'} = _nonNull($f, 'exon');
+  $a->{'unique_exon_parents'} =
+    $a->{'unique_transcript_parents'};
+  $a->{'aa_seqs'} = $a->{'coding_genes'};
+  $a->{'aa_seq_product'} = $a->{'coding_genes'};
+  $a->{'trans_aa_feat_product'} = $a->{'coding_genes'};
+  $a->{'spliced_seqs'} = _nonNull($f, 'transcript');
+  $a->{'transcript_product'} = _nonNull($q->{coding_gene}, 'product') +
+    _nonNull($q->{rRNA_gene}, 'product') +
+      _nonNull($q->{tRNA_gene}, 'product') +
+	_nonNull($q->{snRNA_gene}, 'product');
+  $a->{'exon_rna_feature'} = _nonNull($f, 'exon');
 
 
-  if ($debug){
-    foreach my $key (sort(keys %answers)) {
-      print STDERR "$key: ".$answers{$key}."\n";
-    }
+  if ($verbose) {
+    print STDERR "********************\n";
+    print STDERR "** Feature Counts **\n";
+    print STDERR "********************\n";
+    print STDERR Dumper $f;
+    print STDERR "**********************\n";
+    print STDERR "** Qualifier Counts **\n";
+    print STDERR "**********************\n";
+    print STDERR Dumper $q;
+    print STDERR "*******************\n";
+    print STDERR "** Answer Counts **\n";
+    print STDERR "*******************\n";
+    print STDERR Dumper $a;
   }
 
-  return \%answers;
+  return $a;
 
 }
 
@@ -113,12 +123,10 @@ sub _nonNull {
 }
 
 sub _makeTestSql{
-  my ($algInvId, $debug) = @_;
+  my ($algInvId) = @_;
   my %queries;
 
-  print STDERR "Preparing SQL using AlgInvId: $algInvId\n" if $debug;
-
-  $queries{'test:coding_genes'} = <<EOSQL;
+  $queries{'coding_genes'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
@@ -127,7 +135,7 @@ AND f.sequence_ontology_id = s.sequence_ontology_id
 AND s.term_name IN ('protein_coding', 'pseudogene')
 EOSQL
 
-  $queries{'test:rRNAs'} = <<EOSQL;
+  $queries{'rRNAs'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
@@ -136,7 +144,7 @@ AND f.sequence_ontology_id = s.sequence_ontology_id
 AND s.term_name = 'rRNA_encoding'
 EOSQL
 
-  $queries{'test:tRNAs'} = <<EOSQL;
+  $queries{'tRNAs'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
@@ -145,7 +153,7 @@ AND f.sequence_ontology_id = s.sequence_ontology_id
 AND s.term_name = 'tRNA_encoding'
 EOSQL
 
-  $queries{'test:snRNAs'} = <<EOSQL;
+  $queries{'snRNAs'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
@@ -154,7 +162,7 @@ AND f.sequence_ontology_id = s.sequence_ontology_id
 AND s.term_name = 'snRNA_encoding'
 EOSQL
 
-  $queries{'test:pseudo_genes'} = <<EOSQL;
+  $queries{'pseudo_genes'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
      SRes.SequenceOntology s
@@ -164,7 +172,7 @@ AND s.term_name = 'pseudogene'
 EOSQL
 
   # count transcripts (that are attached to genes)
-  $queries{'test:unique_transcript_parents'} = <<EOSQL;
+  $queries{'unique_transcript_parents'} = <<EOSQL;
 SELECT count (distinct t.parent_id)
 FROM DoTs.Transcript t,
      DoTS.GeneFeature g
@@ -172,7 +180,7 @@ WHERE g.row_alg_invocation_id  = $algInvId
 AND g.na_feature_id = t.parent_id
 EOSQL
 
-  $queries{'test:exons'} = <<EOSQL;
+  $queries{'exons'} = <<EOSQL;
 SELECT count(e.na_feature_id)
 FROM DoTs.ExonFeature e,
      DoTS.GeneFeature g
@@ -180,7 +188,7 @@ WHERE g.row_alg_invocation_id  = $algInvId
 AND g.na_feature_id = e.parent_id
 EOSQL
 
-  $queries{'test:unique_exon_parents'} = <<EOSQL;
+  $queries{'unique_exon_parents'} = <<EOSQL;
 SELECT count(distinct e.parent_id)
 FROM DoTs.ExonFeature e,
      DoTS.GeneFeature g
@@ -188,7 +196,23 @@ WHERE g.row_alg_invocation_id  = $algInvId
 AND g.na_feature_id = e.parent_id
 EOSQL
 
-  $queries{'test:aa_seqs'} = <<EOSQL;
+
+  $queries{'trans_aa_feat_product'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.TranslatedAAFeature t
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.description is not null
+EOSQL
+
+  $queries{'exon_rna_feature'} = <<EOSQL;
+SELECT count(distinct rfe.exon_feature_id)
+FROM DoTs.Transcript t,
+     DoTS.RnaFeatureExon rfe
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.na_feature_id = rfe.rna_feature_id
+EOSQL
+
+  $queries{'aa_seqs'} = <<EOSQL;
 SELECT count(distinct taf.aa_sequence_id)
 FROM DoTs.Transcript t,
      DoTS.TranslatedAAFeature taf
@@ -196,28 +220,13 @@ WHERE t.row_alg_invocation_id  = $algInvId
 AND taf.na_feature_id = t.na_feature_id
 EOSQL
 
-  $queries{'test:transcript_product'} = <<EOSQL;
+  $queries{'transcript_product'} = <<EOSQL;
 SELECT count(*)
 FROM DoTs.Transcript t
 WHERE t.row_alg_invocation_id  = $algInvId
 AND t.product is not null
 EOSQL
-
-  $queries{'test:aa_seq_product'} = <<EOSQL;
-SELECT count(*)
-FROM DoTs.TranslatedAASequence t
-WHERE t.row_alg_invocation_id  = $algInvId
-AND t.description is not null
-EOSQL
-
-  $queries{'test:trans_aa_feat_product'} = <<EOSQL;
-SELECT count(*)
-FROM DoTs.TranslatedAAFeature t
-WHERE t.row_alg_invocation_id  = $algInvId
-AND t.description is not null
-EOSQL
-
-  $queries{'test:ec_associations'} = <<EOSQL;
+  $queries{'ec_associations'} = <<EOSQL;
 SELECT count(*)
 FROM DoTs.AASequenceEnzymeClass e,
      DoTS.TranslatedAASequence tas
@@ -227,7 +236,14 @@ AND tas.aa_sequence_id = e.aa_sequence_id
 AND e.enzyme_class_id is not null
 EOSQL
 
-  $queries{'test:protein_sequences'} = <<EOSQL;
+  $queries{'aa_seq_product'} = <<EOSQL;
+SELECT count(*)
+FROM DoTs.TranslatedAASequence t
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.description is not null
+EOSQL
+
+  $queries{'protein_sequences'} = <<EOSQL;
 SELECT count(distinct tas.aa_sequence_id)
 FROM DoTs.Transcript t,
      DoTS.TranslatedAAFeature taf,
@@ -238,7 +254,7 @@ AND tas.aa_sequence_id = taf.aa_sequence_id
 AND tas.sequence is not null
 EOSQL
 
-  $queries{'test:spliced_seqs'} = <<EOSQL;
+  $queries{'spliced_seqs'} = <<EOSQL;
 SELECT count(distinct ss.na_sequence_id)
 FROM DoTs.Transcript t,
      DoTS.SplicedNaSequence ss
@@ -246,20 +262,12 @@ WHERE t.row_alg_invocation_id  = $algInvId
 AND t.na_sequence_id = ss.na_sequence_id
 EOSQL
 
-  $queries{'test:exon_rna_feature'} = <<EOSQL;
-SELECT count(distinct rfe.exon_feature_id)
-FROM DoTs.Transcript t,
-     DoTS.RnaFeatureExon rfe
-WHERE t.row_alg_invocation_id  = $algInvId
-AND t.na_feature_id = rfe.rna_feature_id
-EOSQL
-
   return \%queries;
 }
 
 
 sub _validateData{
-  my ($queries, $answers, $dbh, $debug) = @_;
+  my ($queries, $answers, $dbh) = @_;
   my $passed = 0;
   my @failures;
   my @zeros;
@@ -268,18 +276,16 @@ sub _validateData{
   foreach my $queryName (keys %{$queries}){
     die "no answer provided for query '$queryName'" 
       unless defined($answers->{$queryName});
+
+    my $expected = $answers->{$queryName};
+
     my $stmt = $dbh->prepare($queries->{$queryName});
     my $time = time();
     print STDERR "running query '$queryName' ";
     $stmt->execute();
     my $result = $stmt->fetchrow_array();
     my $totTime = time() - $time + 1;
-    print STDERR "($totTime sec)\n";
-
-    my $expected = $answers->{$queryName};
-
-    print STDERR "$queryName RESULT: $result\n" if $debug;
-    print STDERR "$queryName EXPECTED: $expected\n" if $debug;
+    print STDERR "($totTime sec)\t\t[expected=$expected  got=$result]\n";
 
     if ($result != $expected) {
       push(@failures, [$queryName, $expected, $result]);
@@ -290,14 +296,14 @@ sub _validateData{
     }
   }
 
-  print "$passed tests succeeded:\n";
+  print "\n$passed tests succeeded:\n";
   foreach my $info (@passes) {
-    print "  $info->[0]   expected: $info->[1]    got: $info->[2]\n"
+    print "  $info->[0]\t\t\texpected: $info->[1]    got: $info->[2]\n"
   }
   my $failed = scalar(@failures);
   print "$failed tests failed: \n";
   foreach my $failureInfo (@failures) {
-    print "  $failureInfo->[0]   expected: $failureInfo->[1]    got: $failureInfo->[2]\n"
+    print "  $failureInfo->[0]\t\t\texpected: $failureInfo->[1]    got: $failureInfo->[2]\n"
   }
   my $zero = scalar(@zeros);
   print "$zero expected 0: \n";
