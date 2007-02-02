@@ -38,7 +38,6 @@ sub undoAll{
   $self->{'algInvocationIds'} = $algoInvocIds;
   $self->{'dbh'} = $dbh;
 
-  $self->_undoTranslations();
   $self->_undoFunction();
   $self->_undoProduct();
   $self->_undoECNumber();
