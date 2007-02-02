@@ -9,6 +9,7 @@ use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::AALocation;
 use GUS::Supported::Plugin::InsertSequenceFeaturesUndo;
 use GUS::Model::DoTS::AASequenceEnzymeClass;
+use GUS::Model::DoTS::NAFeatureComment;
 
 # this is the list of so terms that this file uses.  we have them here so we
 # can check them at start up time.
@@ -42,6 +43,7 @@ sub undoAll{
   $self->_undoECNumber();
   $self->_undoAnticodon();
   $self->_undoProvidedTranslation();
+  $self->_undoMiscSignalNote();
   $self->_undoSourceIdAndTranscriptSeq();
 }
 
@@ -310,6 +312,34 @@ sub getGeneTranscript {
   my $transcript = $gusGeneFeature->getChild("DoTS::Transcript");
   $transcript || $plugin->error("Can't find transcript for feature with na_feature_id = " . $gusGeneFeature->getId());
   return $transcript;
+}
+
+
+###################  misc_signal /note  #################
+
+sub miscSignalNote {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @notes;
+  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
+    if ($tagValue eq 'TGA slenocysteine codon') {
+      my $soId = $self->_getSOPrimaryKey('stop_codon_redefinition_as_selenocysteine');
+      $feature->setSequenceOntologyId($soId);
+    } elsif ($tagValue eq 'SECIS element') {
+      my $id = $self->_getSOPrimaryKey('SECIS_element');
+      $feature->setSequenceOntologyId($id);
+    }
+
+    my $arg = {comment_string => substr($tagValue, 0, 4000)};
+    push(@notes, GUS::Model::DoTS::NAFeatureComment->new($arg));
+
+  }
+  return \@notes;
+}
+
+sub _undoMiscSignalNote{
+  my ($self) = @_;
+  $self->_deleteFromTable('DoTS.NAFeatureComment');
 }
 
 #################################################################
