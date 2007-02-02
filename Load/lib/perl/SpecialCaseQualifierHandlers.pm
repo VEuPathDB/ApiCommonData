@@ -250,6 +250,20 @@ sub _undoAnticodon{
   my ($self) = @_;
 }
 
+################# transcript's protein ID ######################################
+sub transcriptProteinId {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my ($proteinId) = $bioperlFeature->get_tag_values($tag);
+
+  my $transcript = $feature->getChild("DoTS::Transcript");
+
+  $transcript->setProteinId($proteinId);
+  $transcript->submit();
+
+  return [];
+}
+
 ################ Function ################################
 
 sub function {
