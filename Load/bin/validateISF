@@ -83,9 +83,9 @@ sub _getExpectedAnswers{
   $a->{'tRNAs'} = _nonNull($f,'tRNA_gene');
   $a->{'snRNAs'} = _nonNull($f, 'snRNA_gene');
   $a->{'protein_sequences'} = _nonNull($q->{TOTAL}, 'Protein');
-  $a->{'ec_associations'} = _nonNull($q->{TOTAL}, 'EC_number');
+  $a->{'ec_associations'} = _nonNull($q->{TOTAL}, 'EC_number') + _nonNull($q->{TOTAL}, 'ECNumber');
   $a->{'pseudo_genes'} = _nonNull($q->{TOTAL}, 'pseudo') +
-    _nonNull($q->{TOTAL}, 'Pseudogene');
+    _nonNull($q->{TOTAL}, 'Pseudogene') + _nonNull($q->{TOTAL}, 'Pseudo');
   $a->{'unique_transcript_parents'} =
     _nonNull($f, 'coding_gene') + _nonNull($f, 'rRNA_gene') +
       _nonNull($f, 'tRNA_gene') + _nonNull($f, 'snRNA_gene');
