@@ -11,13 +11,14 @@ use Getopt::Long qw(GetOptions);
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($inputfile, $algInvId, $verbose);
+my ($inputfile, $algInvId, $verbose, $justOneTest);
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 GetOptions("inputfile=s" => \$inputfile,
 	   "algInvId=i" => \$algInvId,
 	   "gusConfigFile=s" => \$gusConfigFile,
-	   "verbose" => \$verbose
+	   "verbose" => \$verbose,
+           "justOneTest=s" => \$justOneTest
 	  );
 
 unless ($algInvId && $inputfile) {
@@ -25,9 +26,13 @@ unless ($algInvId && $inputfile) {
 "
 Validate the gene models in a database.
 
-Usage: validateISF --inputfile bioperlTreeFile --algInvId id [--gusConfigFile file] [--verbose]
+Usage: validateISF --inputfile bioperlTreeFile --algInvId id [--gusConfigFile file] [--verbose]  [--justOneTest name_of_test]
 
-verbose prints report of feature and qualifier counts
+where:
+  intputfile  - bioperl tree file as output by ISF
+  algInvId    - the row_alg_invocation_id for the run that is being tested
+  verbose     - print a report of feature and qualifier counts
+  justOneTest - run only the specified test (for debugging a new test)
 
 ";
 }
@@ -47,7 +52,7 @@ my $dbh = $db->getQueryHandle();
 
 my $queries = &_makeTestSql($algInvId);
 
-&_validateData($queries, $answers, $dbh);
+&_validateData($queries, $answers, $justOneTest, $dbh);
 
 
 ############################################################################
@@ -267,15 +272,20 @@ EOSQL
 
 
 sub _validateData{
-  my ($queries, $answers, $dbh) = @_;
+  my ($queries, $answers, $justOneTest, $dbh) = @_;
   my $passed = 0;
   my @failures;
   my @zeros;
   my @passes;
 
+  die "No test called '$justOneTest' exists"
+    if ($justOneTest && !$queries->{$justOneTest});
+
   foreach my $queryName (keys %{$queries}){
     die "no answer provided for query '$queryName'" 
       unless defined($answers->{$queryName});
+
+    next if ($justOneTest && $queryName ne $justOneTest);
 
     my $expected = $answers->{$queryName};
 
