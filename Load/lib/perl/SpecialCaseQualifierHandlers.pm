@@ -173,11 +173,6 @@ sub setPseudo {
   $feature->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogene"));
   $transcript->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogenic_transcript"));
 
-  # remove the translated aa feat and seq from the skeleton
-  $transcript->removeChildrenInClass(DoTS::TranslatedAAFeature);
-  my $aaSeq = 
-    $transcript->getChild(DoTS::TranslatedAAFeature)->getParent(TranslatedAaSequence);
-  $feature->removeFromSubmitList($aaSeq);
   return [];
 }
 
