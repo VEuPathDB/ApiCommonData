@@ -10,6 +10,7 @@ use GUS::Model::DoTS::AALocation;
 use GUS::Supported::Plugin::InsertSequenceFeaturesUndo;
 use GUS::Model::DoTS::AASequenceEnzymeClass;
 use GUS::Model::DoTS::NAFeatureComment;
+use ApiCommonData::Load::Util;
 
 # this is the list of so terms that this file uses.  we have them here so we
 # can check them at start up time.
