@@ -65,7 +65,7 @@ sub _getExpectedAnswers{
 	$answers{$currentFeature}++;
       }
     } elsif (/^\s*(\w+):/) {
-      next if ($currentFeature eq "f:gene");
+      next if ($currentFeature eq "f:gene");  # ignore sanger's unneeded 'gene'
       my $qualifier = "q:$1";
       if (!$answers{$qualifier}) {
 	$answers{$qualifier} = 1;
@@ -263,6 +263,7 @@ sub _validateData{
   my $passed = 0;
   my @failures;
   my @zeros;
+  my @passes;
 
   foreach my $queryName (keys %{$queries}){
     die "no answer provided for query '$queryName'" 
@@ -283,12 +284,16 @@ sub _validateData{
     if ($result != $expected) {
       push(@failures, [$queryName, $expected, $result]);
     } else {
+      push(@passes, [$queryName, $expected, $result]);
       push (@zeros, $queryName) if ($expected == 0);
       $passed++;
     }
   }
 
-  print "$passed tests succeeded\n";
+  print "$passed tests succeeded:\n";
+  foreach my $info (@passes) {
+    print "  $info->[0]   expected: $info->[1]    got: $info->[2]\n"
+  }
   my $failed = scalar(@failures);
   print "$failed tests failed: \n";
   foreach my $failureInfo (@failures) {
