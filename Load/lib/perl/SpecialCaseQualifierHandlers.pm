@@ -186,7 +186,7 @@ sub _undoGene{
 
 sub dbXRef {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  return $self->{standardSPQH}->dbXRef($tag, $bioperlFeature, $feature);
+  return $self->{standardSCQH}->dbXRef($tag, $bioperlFeature, $feature);
 }
 
 sub _undoDbXRef{
