@@ -45,11 +45,17 @@ sub undoAll{
 
   $self->_undoFunction();
   $self->_undoProduct();
+  $self->_undoGene();
   $self->_undoECNumber();
   $self->_undoAnticodon();
   $self->_undoProvidedTranslation();
   $self->_undoMiscSignalNote();
   $self->_undoSourceIdAndTranscriptSeq();
+  $self->_undoDbXRef();
+  $self->_undoGapLength();
+  $self->_undoNote();
+  $self->_undoPseudo();
+  $self->_undoTranscriptProteinId();
 }
 
 
@@ -238,6 +244,10 @@ sub setPseudo {
   return [];
 }
 
+sub _undoPseudo{
+    my ($self) = @_;
+}
+
 ################ EC Number ###############################
 
 # attach EC number to translated aa seq.
@@ -321,11 +331,13 @@ sub transcriptProteinId {
   my $transcript = $feature->getChild("DoTS::Transcript");
 
   $transcript->setProteinId($proteinId);
-  $transcript->submit();
 
   return [];
 }
 
+sub _undoTranscriptProteinId{
+  my ($self) = @_;
+}
 ################ Function ################################
 
 sub function {
@@ -340,14 +352,6 @@ sub function {
 sub _undoFunction{
   my ($self) = @_;
 
-}
-
-#################################################################
-
-sub _deleteFromTable{
-   my ($self, $tableName) = @_;
-
-  &GUS::Supported::Plugin::InsertSequenceFeaturesUndo::deleteFromTable($tableName, $self->{'algInvocationIds'}, $self->{'dbh'});
 }
 
 ################## static methods to be used by this and other S.C.Q.H.s ######
