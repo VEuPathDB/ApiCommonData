@@ -1,9 +1,10 @@
 package ApiCommonData::Load::Plugin::InsertBlastZAlignments;
+@ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict;
 use warnings;
 
-use base qw(GUS::PluginMgr::Plugin);
+use GUS::PluginMgr::Plugin;
 
 use GUS::Model::DoTS::Similarity;
 use GUS::Model::DoTS::SimilaritySpan;
@@ -121,11 +122,11 @@ sub run {
 
   my $context;
   my %handler = ( s => sub {
-		    my ($context, $query, $subject) = @_;
-		    ($context->{queryLen}) = $query =~ m/(\d+)\s+[01]\s+\d+\s*$/;
-		    ($context->{subjLen}) = $subject =~ m/(\d+)\s+[01]\s+\d+\s*$/;
-		    $context->{queryIsReversed} = $query =~ m/1\s+\d+\s*$/;
-		    $context->{subjIsReversed} = $subject =~ m/1\s+\d+\s*$/;
+                    $context = shift;
+		    my ($query, $subject) = @_;
+		    ($context->{queryLen}, $context->{queryIsReversed}) = $query =~ m/(\d+)\s+([01])\s+\d+\s*$/;
+
+		    ($context->{subjLen}, $context->{subjIsReversed}) = $subject =~ m/(\d+)\s+([01])\s+\d+\s*$/;
 		  },
 
 		  a => sub {
@@ -134,8 +135,8 @@ sub run {
 
 		  h => sub {
 		    my ($context, $query, $subject) = @_;
-		    my ($querySourceId) = $query =~ m/^>(\S+)/;
-		    my ($subjSourceId) = $subject =~ m/^>(\S+)/;
+		    my ($querySourceId) = $query =~ m/>(\S+)/;
+		    my ($subjSourceId) = $subject =~ m/>(\S+)/;
 		    $context->{queryId} = $self->_getSeqId($querySourceId,
 							   $queryTable,
 							   $queryExtDbRlsId);
@@ -197,6 +198,7 @@ sub _processSimilarity {
     @{$hsp}{qw(queryStart subjStart queryEnd subjEnd percId)} =
       $_ =~ m/^\s+l\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)/;
     $hsp->{alnLen} = $hsp->{queryEnd} - $hsp->{queryStart} + 1;
+    $hsp->{isReversed} = ($context->{queryIsReversed} || $context->{subjIsReversed});
 
     # recalculate coordinates on + strand, if necessary:
     if ($context->{queryIsReversed}) {
@@ -210,11 +212,29 @@ sub _processSimilarity {
       $hsp->{subjStart} = $hsp->{subjLen} - $hsp->{subjEnd}   + 1;
     }
 
-    $queryStart = min($queryStart, $hsp->{queryStart}) || $hsp->{queryStart};
-    $queryEnd   = max($queryEnd,   $hsp->{queryEnd}  ) || $hsp->{queryEnd};
+    if ($queryStart){
+      $queryStart = min($queryStart, $hsp->{queryStart});
+    }else{
+      $queryStart = $hsp->{queryStart};
+    }
 
-    $subjStart  = min($subjStart,  $hsp->{subjStart} ) || $hsp->{subjStart};
-    $subjEnd    = max($subjEnd,    $hsp->{subjEnd}   ) || $hsp->{subjEnd};
+    if ($queryEnd){
+      $queryEnd = min($queryEnd, $hsp->{queryEnd});
+    }else{
+      $queryEnd = $hsp->{queryEnd};
+    }
+
+    if ($subjStart){
+      $subjStart = min($subjStart, $hsp->{subjStart});
+    }else{
+      $subjStart = $hsp->{subjStart};
+    }
+
+    if ($subjEnd){
+      $subjEnd = min($subjEnd, $hsp->{subjEnd});
+    }else{
+      $subjEnd = $hsp->{subjEnd};
+    }
 
     $hsp;
 
