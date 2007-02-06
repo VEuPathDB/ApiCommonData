@@ -122,7 +122,7 @@ sub new {
   my $argumentDeclaration    = &getArgumentsDeclaration();
   
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 4207 $',
+		     cvsRevision => '$Revision$',
 		     name => ref($self),
 		     revisionNotes => '',
 		     argsDeclaration => $argumentDeclaration,
@@ -376,7 +376,10 @@ sub runArrayResultLoader {
   my $groupName =  $self->getArg('group') ?  $self->getArg('group') : $q->{'group_name'};
 
   my $arraySubclassView = $self->getArg('arraySubclassView');
+  $arraySubclassView =~ s/\w+:://;
+
   my $resultSubclassView = $self->getArg('resultSubclassView');
+  $resultSubclassView =~ s/\w+:://;
 
   my $commitString = "";
   if ($self->getArg('commit')) {
