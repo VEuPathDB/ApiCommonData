@@ -96,6 +96,7 @@ sub _getExpectedAnswers{
   $a->{'aa_seq_product'} = $a->{'coding_genes'};
   $a->{'trans_aa_feat_product'} = $a->{'coding_genes'};
   $a->{'spliced_seqs'} = _nonNull($f, 'transcript');
+  $a->{'spliced_seqs_not_null'} = _nonNull($f, 'transcript');
   $a->{'transcript_product'} = _nonNull($q->{coding_gene}, 'product') +
     _nonNull($q->{rRNA_gene}, 'product') +
       _nonNull($q->{tRNA_gene}, 'product') +
@@ -265,6 +266,15 @@ FROM DoTs.Transcript t,
      DoTS.SplicedNaSequence ss
 WHERE t.row_alg_invocation_id  = $algInvId
 AND t.na_sequence_id = ss.na_sequence_id
+EOSQL
+
+  $queries{'spliced_seqs_not_null'} = <<EOSQL;
+SELECT count(distinct ss.na_sequence_id)
+FROM DoTs.Transcript t,
+     DoTS.SplicedNaSequence ss
+WHERE t.row_alg_invocation_id  = $algInvId
+AND t.na_sequence_id = ss.na_sequence_id
+AND ss.sequence is not NULL
 EOSQL
 
   return \%queries;
