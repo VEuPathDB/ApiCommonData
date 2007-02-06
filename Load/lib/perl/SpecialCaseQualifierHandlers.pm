@@ -206,7 +206,7 @@ sub dbXRef {
 
 sub _undoDbXRef{
   my ($self) = @_;
-  return $self->{standardSCQH}->_undoNote();
+  return $self->{standardSCQH}->_undoDbXRef();
 }
 
 
