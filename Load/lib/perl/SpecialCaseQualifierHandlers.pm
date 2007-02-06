@@ -37,11 +37,18 @@ sub setPlugin{
 
 }
 
-sub undoAll{
+sub initUndo{
   my ($self, $algoInvocIds, $dbh) = @_;
 
   $self->{'algInvocationIds'} = $algoInvocIds;
   $self->{'dbh'} = $dbh;
+  $self->{standardSCQH}->initUndo($algoInvocIds, $dbh);
+}
+
+sub undoAll{
+  my ($self, $algoInvocIds, $dbh) = @_;
+
+  $self->initUndo($algoInvocIds, $dbh);
 
   $self->_undoFunction();
   $self->_undoProduct();
