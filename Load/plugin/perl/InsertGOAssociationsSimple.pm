@@ -418,22 +418,5 @@ sub getEvidenceId {
   return $evId;
 }
 
-sub getSequenceId{
-    my ($self, $sourceId) = @_;
-    my $dbIdCol = $self->{orgInfo}->{dbIdCol};
-    my $dbList = $self->getArg('orgExternalDbReleaseList');
-    #my $dbList = '( ' . join (',', @{$self->getArg('orgExternalDbReleaseList') }) . ') ';
-
-    my $sql = "select eas.aa_sequence_id
-               from dots.externalAASequence eas
-               where $dbIdCol = '$sourceId'
-	       and eas.external_database_release_id in ($dbList)";
-
-    my $sth = $self->prepareAndExecute($sql);
-    my ($seqGusId) = $sth->fetchrow_array();
-
-    return $seqGusId;
-}
-
 1;
 
