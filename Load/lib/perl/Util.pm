@@ -5,8 +5,9 @@ use strict;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 
+# Note: this method was previously called getNASequenceId, which was misleading
 # return null if not found:  be sure to check handle that condition!!
-sub getNASequenceId {
+sub getSplicedNASequenceId {
   my ($plugin, $sourceId) = @_;
 
   if (!$plugin->{sourceIdFeatureIdMap}) {
