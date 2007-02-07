@@ -8,11 +8,9 @@ use GUS::Model::DoTS::TranslatedAASequence;
 # return null if not found:  be sure to check handle that condition!!
 sub getNASequenceId {
   my ($plugin, $sourceId) = @_;
-                                                                                                                             
+
   if (!$plugin->{sourceIdFeatureIdMap}) {
-                                                                                                                             
     $plugin->{sourceIdFeatureIdMap} = {};
-                                                                                                                             
     my $sql = "
 SELECT source_id, na_sequence_id
 FROM Dots.SplicedNASequence
@@ -22,7 +20,6 @@ FROM Dots.SplicedNASequence
       $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_sequence_id;
     }
   }
-                                                                                                                             
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
 }
 
@@ -101,16 +98,15 @@ sub getAASeqIdFromGeneId {
 sub getAASeqIdFromCaselessSourceId {
   my ($plugin, $sourceId) = @_;
 
-    $sourceId = uc($sourceId);
+  $sourceId = uc($sourceId);
 
-    my $sql = "SELECT aa_sequence_id
+  my $sql = "SELECT aa_sequence_id
                FROM DoTS.TranslatedAASequence
                Where upper(source_id) = \'$sourceId\'";
 
-    my $recordSet = $plugin->prepareAndExecute($sql);
-    my($aaSeqId) = $recordSet->fetchrow_array(); 
-                                                                                                                             
-return $aaSeqId;
+  my $recordSet = $plugin->prepareAndExecute($sql);
+  my($aaSeqId) = $recordSet->fetchrow_array(); 
+  return $aaSeqId;
 }
 
 
@@ -120,7 +116,7 @@ sub getGeneFeatureIdFromSourceId {
   my $gusGF = GUS::Model::DoTS::GeneFeature->new( { 'source_id' => $featureId, } );
 
   $gusGF->retrieveFromDB() ||
-       die "no translated aa sequence: $featureId";
+    die "no translated aa sequence: $featureId";
 
   my $gusAASeq = $gusGF->getId();
 
@@ -132,7 +128,7 @@ sub getCodingSequenceFromExons {
 
   die "No Exons found" unless(scalar(@$gusExons) > 0);
 
-  foreach(@$gusExons) {
+  foreach (@$gusExons) {
     die "Expected DoTS Exon... found " . ref($_)
       unless(UNIVERSAL::isa($_, 'GUS::Model::DoTS::ExonFeature'));
   }
