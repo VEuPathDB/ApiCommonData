@@ -91,37 +91,27 @@ sub getAASeqIdFromFeatId {
 sub getAASeqIdFromGeneId {
   my ($plugin, $geneId) = @_;
 
-  my $featId = getGeneFeatureId($plugin, $geneId);
-  return getAASeqIdFromFeatId($featId);
+  my $geneFeatId = getGeneFeatureId($plugin, $geneId);
+    my $sql = "
+SELECT taf.aa_sequence_id
+FROM Dots.Transcript t, Dots.TranslatedAAFeature taf
+WHERE t.parent_id = '$geneFeatId'
+AND taf.na_feature_id = t.na_feature_id
+";
+  my $stmt = $plugin->prepareAndExecute($sql);
+  my ($aa_sequence_id) = $stmt->fetchrow_array();
+  return $aa_sequence_id;
 }
-
-
-sub getAASeqIdFromCaselessSourceId {
-  my ($plugin, $sourceId) = @_;
-
-  $sourceId = uc($sourceId);
-
-  my $sql = "SELECT aa_sequence_id
-               FROM DoTS.TranslatedAASequence
-               Where upper(source_id) = \'$sourceId\'";
-
-  my $recordSet = $plugin->prepareAndExecute($sql);
-  my($aaSeqId) = $recordSet->fetchrow_array(); 
-  return $aaSeqId;
-}
-
 
 sub getGeneFeatureIdFromSourceId {
-  my $featureId = shift;
+  my $sourceId = shift;
 
-  my $gusGF = GUS::Model::DoTS::GeneFeature->new( { 'source_id' => $featureId, } );
+  my $gusGF = GUS::Model::DoTS::GeneFeature->new( { 'source_id' => $sourceId, } );
 
   $gusGF->retrieveFromDB() ||
-    die "no translated aa sequence: $featureId";
+    die "can't find gene feature for source_id: $sourceId";
 
-  my $gusAASeq = $gusGF->getId();
-
-  return $gusAASeq;
+  return $gusGF->getId();
 }
 
 sub getCodingSequenceFromExons {

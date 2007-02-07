@@ -11,7 +11,7 @@ use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::MotifAASequence;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::PluginMgr::Plugin;
-
+use ApiCommonData::Load::Util;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Inserts motif data from a 2-column tab delimited file containing the sequence ID and the start location of the motif.
@@ -161,7 +161,7 @@ sub run{
 
     unless(%done->{$sourceId}){
 
-      my $aaSeqId = $self->getAaSeqId($sourceId);
+      my $aaSeqId = &ApiCommonData::Load::Util::getAaSeqIdFromGeneId($self, $sourceId);
 
       if($aaSeqId){
 
