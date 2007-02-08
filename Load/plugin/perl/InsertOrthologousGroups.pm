@@ -18,8 +18,15 @@ use ApiCommonData::Load::Util;
 
 my $argsDeclaration =
 [
+ stringArg({ descr => 'Name of the gene source id table; GeneFeature is the default table',
+             name  => 'SourceIdTable',
+             isList    => 0,
+             constraintFunc => undef,
+	     reqd           => 0,
+	   }),
 
-   fileArg({name           => 'OrthologFile',
+
+    fileArg({name           => 'OrthologFile',
             descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
             reqd           => 1,
             mustExist      => 1,
@@ -151,20 +158,24 @@ sub run {
           });
     $seqGroupLoaded++;
 
-    foreach my $element (@$foundIds) {
-      if(my $geneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $element)) {
+    my $sourceidtable = ($self->getArg('SourceIdTable')) ? $self->getArg('SourceIdTable') : "GeneFeature";
+    my $method = "ApiCommonData::Load::Util::Get${sourceidtable}Id";
 
-        my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
-          new({sequence_id => $geneFeatureId,
-               source_table_id => $elementResultTable ,
-              })->setParent($seqGroup);
-        $seqSeqGroupLoaded++;
-      }
-      else {
-        print STDERR "Skipping $element\n";
-        $skipped++;
-      }
+    foreach my $element (@$foundIds) {
+	if(my $geneFeatureId = &$method($self, $element)) {
+	    
+	    my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
+		new({sequence_id => $geneFeatureId,
+		     source_table_id => $elementResultTable ,
+		 })->setParent($seqGroup);
+	    $seqSeqGroupLoaded++;
+	}
+	else {
+	    print STDERR "Skipping $element\n";
+	    $skipped++;
+	}
     }
+
     $seqGroup->submit();
     $self->undefPointerCache();
   }
