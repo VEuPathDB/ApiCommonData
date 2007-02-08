@@ -54,20 +54,29 @@ sub preprocess {
 
 sub copyQualifiers {
   my ($tempTree, $bioperlFeatureTree) = @_;
+
   for my $qualifier ($tempTree->get_all_tags()) {
-    unless ($bioperlFeatureTree->has_tag($qualifier) 
-            and ($bioperlFeatureTree->get_tag_values($qualifier) 
-                 eq $tempTree->get_tag_values($qualifier)
-                )
-           ) {
+
+    if ($bioperlFeatureTree->has_tag($qualifier)) {
+      # remove tag and recreate with merged non-redundant values
+      my %seen;
+      my @uniqVals = grep {!$seen{$_}++} 
+                       $bioperlFeatureTree->remove_tag($qualifier), 
+                       $tempTree->get_tag_values($qualifier);
+                       
       $bioperlFeatureTree->add_tag_value(
                              $qualifier, 
+                             @uniqVals
+                           );    
+    } else {
+      $bioperlFeatureTree->add_tag_value(
+                             $qualifier,
                              $tempTree->get_tag_values($qualifier)
                            );
-     }
+    }
+     
   }
   undef $tempTree;
-
 }
 
 1;
