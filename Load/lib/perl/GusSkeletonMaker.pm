@@ -14,6 +14,7 @@ my $soTerms = { 'coding_gene'=>'protein_coding',
 		'rRNA_gene'=> 'rRNA_encoding',
 		'snRNA_gene'=> 'snRNA_encoding',
 		'snoRNA_gene'=> 'snoRNA_encoding',
+		'misc_RNA_gene'=> 'non_protein_coding',
 		'transcript' => 'transcript',
 		'exon' => 'exon'
 	      };
@@ -86,7 +87,8 @@ sub makeGusGene {
 
   my $type = $bioperlGene->primary_tag();
 
-  $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene"));
+  $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") 
+     unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene"));
 
   my $gusGene = $plugin->makeSkeletalGusFeature($bioperlGene, $genomicSeqId,
 						$dbRlsId, 

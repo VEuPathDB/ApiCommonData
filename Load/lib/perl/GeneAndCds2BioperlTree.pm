@@ -31,12 +31,12 @@ sub preprocess {
       $tempTree = $bioperlFeatureTree;
       next;
     }
-    
+
     copyQualifiers($tempTree, $bioperlFeatureTree) if ($tempTree);
 
     $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
     
-    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "snoRNA")) {
+    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "snoRNA", "misc_RNA")) {
       $type = "coding" if $type eq "CDS";
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
