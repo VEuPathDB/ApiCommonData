@@ -63,6 +63,7 @@ sub undoAll{
   $self->_undoNote();
   $self->_undoPseudo();
   $self->_undoTranscriptProteinId();
+  $self->_undoTranscriptTranslExcept();
 }
 
 
@@ -255,6 +256,18 @@ sub _undoPseudo{
     my ($self) = @_;
 }
 
+############### transl_except  ###############################
+
+sub transcriptTranslExcept {
+  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+  my $transcript = $geneFeature->getChild("DoTS::Transcript");
+  my ($transl_except) = $bioperlFeature->get_tag_values($tag);
+  $transcript->setTranslExcept($transl_except);
+  return [];
+}
+
+sub _undoTranscriptTranslExcept {}
+
 ################ EC Number ###############################
 
 # attach EC number to translated aa seq.
@@ -338,6 +351,12 @@ sub transcriptProteinId {
   my $transcript = $feature->getChild("DoTS::Transcript");
 
   $transcript->setProteinId($proteinId);
+
+  my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+  if ($translatedAAFeat) {
+    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+    $aaSeq->setSecondaryIdentifier($proteinId) if ($aaSeq);
+  }
 
   return [];
 }
