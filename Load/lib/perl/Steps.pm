@@ -551,13 +551,13 @@ sub copy {
 }
 
 sub shortenDefLine{
-  my ($mgr, $inputFile) = @_;
+  my ($mgr, $inputFile, $dir) = @_;
 
   my $outputFile = $inputFile.".fsa";
 
   my $signal = "shortenNrDefLines";
 
-  $mgr->runCmd(shortenDefLine --inputFile $inputFile --outputFile $outputFile);
+  $mgr->runCmd("shortenDefLine --inputFile $mgr->{dataDir}/$dir/$inputFile --outputFile $mgr->{dataDir}/$dir/$outputFile");
   $mgr->endStep($signal);
 }
 
