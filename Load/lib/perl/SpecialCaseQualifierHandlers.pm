@@ -76,9 +76,25 @@ sub undoAll{
 sub sourceIdAndTranscriptSeq {
   my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
 
-  # first set source id
+  # first set source id, and propogate it to the transcript and aa seq
   my @tagValues = $bioperlFeature->get_tag_values($tag);
   $geneFeature->setSourceId($tagValues[0]);
+
+  my @transcripts = $geneFeature->getChildren("DoTS::Transcript");
+  my $count = 0;
+  foreach my $transcript (@transcripts) {
+    $count++;
+    $transcript->setSourceId("$tagValues[0]-$count");
+    my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+    if ($translatedAAFeat) {
+      $translatedAAFeat->setSourceId("$tagValues[0]-$count");
+      my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+      if ($aaSeq) {
+	$aaSeq->setSourceId("$tagValues[0]-$count");
+      }
+    }
+  }
+
 
   # now do the exons and transcript seq
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
