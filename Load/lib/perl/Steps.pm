@@ -550,6 +550,17 @@ sub copy {
   $mgr->endStep($signal);
 }
 
+sub shortenDefLine{
+  my ($mgr, $inputFile) = @_;
+
+  my $outputFile = $inputFile.".fsa";
+
+  my $signal = "shortenNrDefLines";
+
+  $mgr->runCmd(shortenDefLine --inputFile $inputFile --outputFile $outputFile);
+  $mgr->endStep($signal);
+}
+
 sub findProteinXRefs {
   my ($mgr, $proteinFile, $nrFile, $nrRegex, $protRegex) = @_;
 
