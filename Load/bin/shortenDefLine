@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+# shortens the NRDB deflines to the first gi number (cuts at the first space)
+
+use strict;
+use Getopt::Long qw(GetOptions);
+
+my $inputFile;
+my $outputFile;
+
+GetOptions("inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $inputFile) {
+  die "\nERROR:  Must supply a valid input file!\nUsage: shortenDefLine --inputFile <FILE> --outputFile <FILE>\n\nPURPOSE: shortens the NRDB deflines to the first gi number (cuts at the first space) so that BLAST doesn't choke on the return strings.\n";
+}
+
+open(IN, "< $inputFile");
+open(OUT, "> $outputFile");
+
+while(<IN>){
+	if(/(^\>gi\S+)/){
+		print OUT "$1\n";
+	}else{
+		print OUT;
+	}
+}
