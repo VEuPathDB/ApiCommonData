@@ -557,6 +557,8 @@ sub shortenDefLine{
 
   my $signal = "shortenNrDefLines";
 
+  return if $mgr->startStep("Shortening DefLines for $inputFile", $signal);
+
   $mgr->runCmd("shortenDefLine --inputFile $mgr->{dataDir}/$dir/$inputFile --outputFile $mgr->{dataDir}/$dir/$outputFile");
   $mgr->endStep($signal);
 }
