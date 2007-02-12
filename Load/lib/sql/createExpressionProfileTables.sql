@@ -49,7 +49,9 @@ SELECT core.tableinfo_sq.nextval, 'ProfileSet',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'ProfileSet' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
 
@@ -109,7 +111,9 @@ SELECT core.tableinfo_sq.nextval, 'Profile',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'Profile' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
 
@@ -158,7 +162,9 @@ SELECT core.tableinfo_sq.nextval, 'ProfileElement',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'ProfileElement' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
 
@@ -203,7 +209,9 @@ SELECT core.tableinfo_sq.nextval, 'ProfileElementName',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'ProfileElementName' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
 
@@ -250,7 +258,9 @@ SELECT core.tableinfo_sq.nextval, 'GeneProfileCorrelation',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'GeneProfileCorrelation' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
 

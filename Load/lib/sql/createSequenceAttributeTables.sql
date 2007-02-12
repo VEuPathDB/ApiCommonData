@@ -43,7 +43,9 @@ SELECT core.tableinfo_sq.nextval, 'AaSequenceAttribute',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'AaSequenceAttribute' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ------------------------------------------------------------------------------
 
@@ -93,7 +95,9 @@ SELECT core.tableinfo_sq.nextval, 'NaSequenceAttribute',
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d;
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'NaSequenceAttribute' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
 
 ------------------------------------------------------------------------------
 
