@@ -88,7 +88,7 @@ my $argsDeclaration =
                isList=> 1
               }),
    enumArg({name => 'SequenceType',
-	    descr => 'The type of sequence we are loading DBxRefs for.  Default is NA.',
+	    descr => 'The type of sequence we are loading DBxRefs for.  Default is NA. Note: if AA, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
 	    reqd  => 0,
 	    isList => 0,
@@ -150,9 +150,9 @@ sub getMapping {
 
     my @vals = split(/\t/, $_);
 
-    my $feature = $vals[0];
+    my $sourceId = $vals[0];
 
-    $feature =~ s/\s//g;
+    $sourceId =~ s/\s//g;
 
     my  %dbRef;
 
@@ -172,18 +172,18 @@ sub getMapping {
 
     if($type eq "NA"){
 
-      $featId = ApiCommonData::Load::Util::getGeneFeatureId($self, $feature);
+      $featId = ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
 
     }elsif($type eq "AA"){
 
-      $featId = ApiCommonData::Load::Util::getAAFeatureId($self, $feature);
+      $featId = ApiCommonData::Load::Util::getAAFeatureId($self, $sourceId);
 
     }else{
       die "$type is not a valid sequence type.  Please use one of AA or NA.";
     }
 
     unless($featId){
-      $self->log("Skipping: source_id $feature not found in database.");
+      $self->log("Skipping: source_id '$sourceId' not found in database.");
       next;
     }
 
