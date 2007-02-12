@@ -53,6 +53,8 @@ AND nfng.na_gene_id = g.na_gene_id
 }
 
 # return null if not found:  be sure to check handle that condition!!
+# NOTE: the provided source_id must be an AAFeature source_id, not a 
+# GeneFeature source_id
 sub getAAFeatureId {
   my ($plugin, $sourceId) = @_;
 
