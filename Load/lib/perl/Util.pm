@@ -99,8 +99,9 @@ WHERE t.parent_id = '$geneFeatId'
 AND taf.na_feature_id = t.na_feature_id
 ";
   my $stmt = $plugin->prepareAndExecute($sql);
-  my ($aa_sequence_id) = $stmt->fetchrow_array();
-  return $aa_sequence_id;
+  my @aaSeqIds = $stmt->fetchrow_array();
+  $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: " . join(", ", @aaSeqIds)) if scalar(@aaSeqIds) > 1;
+  return $aaSeqIds[0];
 }
 
 sub getGeneFeatureIdFromSourceId {
