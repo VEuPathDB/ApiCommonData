@@ -262,8 +262,8 @@ sub setPseudo {
   $feature->setIsPseudo(1);
   $transcript->setIsPseudo(1);
 
-  $feature->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogene"));
-  $transcript->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogenic_transcript"));
+#  $feature->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogene"));
+#  $transcript->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogenic_transcript"));
 
   return [];
 }
