@@ -32,7 +32,7 @@ my $argsDeclaration =
 	     }),
 
    stringArg({ name           => 'extDbRlsVer',
-	       descr          => 'external database release version for the GO ontology',
+	       descr          => 'external database release version for the GO ontology. Must be equal to the cvs version of the GO ontology as stated in the oboFile',
 	       reqd           => 1,
 	       constraintFunc => undef,
 	       isList         => 0,
@@ -111,7 +111,7 @@ sub run {
   my $extDbRlsName = $self->getArg('extDbRlsName');
   my $extDbRlsVer = $self->getArg('extDbRlsVer');
 
-  $self->error("extDbRlsVer $extDbRlsVer does not match CVS revision $cvsRevision\n")
+  $self->error("extDbRlsVer $extDbRlsVer does not match CVS version $cvsRevision of the obo file\n")
     unless $cvsRevision eq $extDbRlsVer;
 
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName, $extDbRlsVer);
