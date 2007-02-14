@@ -85,7 +85,7 @@ sub _getExpectedAnswers{
   $a->{'protein_sequences'} = _nonNull($q->{TOTAL}, 'Protein') + _nonNull($q->{TOTAL}, 'translation');
   $a->{'ec_associations'} = _nonNull($q->{TOTAL}, 'EC_number') + _nonNull($q->{TOTAL}, 'ECNumber');
   $a->{'pseudo_genes'} = _nonNull($q->{TOTAL}, 'pseudo') +
-    _nonNull($q->{TOTAL}, 'Pseudogene') + _nonNull($q->{TOTAL}, 'Pseudo');
+    _nonNull($q->{TOTAL}, 'Pseudogene') + _nonNull($q->{TOTAL}, 'Pseudo') + _nonNull($q->{TOTAL}, 'partial');
   $a->{'unique_transcript_parents'} =
     _nonNull($f, 'coding_gene') + _nonNull($f, 'rRNA_gene') +
       _nonNull($f, 'tRNA_gene') + _nonNull($f, 'snRNA_gene');
@@ -171,10 +171,8 @@ EOSQL
   $queries{'pseudo_genes'} = <<EOSQL;
 SELECT count(f.na_feature_id)
 FROM DoTs.GeneFeature f,
-     SRes.SequenceOntology s
 WHERE f.row_alg_invocation_id  = $algInvId
-AND f.sequence_ontology_id = s.sequence_ontology_id
-AND s.term_name = 'pseudogene'
+AND f.is_pseudo = 1
 EOSQL
 
   # count transcripts (that are attached to genes)
