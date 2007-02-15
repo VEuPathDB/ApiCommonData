@@ -67,9 +67,13 @@ SELECT source_id, aa_feature_id
 FROM Dots.AAFeature
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
-    while ( my($sourceId, $na_feature_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_feature_id;
+    while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_feature_id;
     }
+  }
+
+  unless($sourceId =~ /-\d$/){
+    $sourceId .= "-1";
   }
 
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
