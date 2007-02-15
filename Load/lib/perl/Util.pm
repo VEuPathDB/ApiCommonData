@@ -72,10 +72,6 @@ FROM Dots.AAFeature
     }
   }
 
-  unless($sourceId =~ /-\d$/){
-    $sourceId .= "-1";
-  }
-
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
 }
 
@@ -108,6 +104,22 @@ AND taf.na_feature_id = t.na_feature_id
   my @aaSeqIds = $stmt->fetchrow_array();
   $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: " . join(", ", @aaSeqIds)) if scalar(@aaSeqIds) > 1;
   return $aaSeqIds[0];
+}
+
+sub getTranslatedAAFeatureIdFromGeneSourceId {
+    my ($plugin, $sourceId) = @_;
+
+    my $geneFeatId = getGeneFeatureId($plugin, $sourceId);
+    my $sql = "
+SELECT taf.aa_feature_id
+FROM Dots.Transcript t, Dots.TranslatedAAFeature taf
+WHERE t.parent_id = '$geneFeatId'
+AND taf.na_feature_id = t.na_feature_id
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    my @aaFeatIds = $stmt->fetchrow_array();
+    $plugin->error("trying to map gene source id '$sourceId' to a single aa_feature_id, but found more than one aa_feature_id: " . join(", ", @aaFeatIds)) if scalar(@aaFeatIds) > 1;
+    return $aaFeatIds[0];
 }
 
 sub getGeneFeatureIdFromSourceId {
