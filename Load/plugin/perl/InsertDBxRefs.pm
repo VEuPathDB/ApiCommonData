@@ -176,7 +176,7 @@ sub getMapping {
 
     }elsif($type eq "AA"){
 
-      $featId = ApiCommonData::Load::Util::getAAFeatureId($self, $sourceId);
+      $featId = ApiCommonData::Load::Util::getTranslatedAAFeatureIdFromGeneSourceId($self, $sourceId);
 
     }else{
       die "$type is not a valid sequence type.  Please use one of AA or NA.";
