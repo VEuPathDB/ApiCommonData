@@ -29,7 +29,7 @@ sub initPlasmoAnalysis {
 
   my $allSpecies = 'Pfalciparum,Pyoelii,Pvivax,Pberghei,Pchabaudi';
 
-  my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5821","Pchabaudi:5825"];
+  my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5821","Pchabaudi:5825","Pknowlesi:5851"];
 
   my ($mgr, $projectDir, $release)
     = &initToxoPlasmoAnalysis($propertyFile, $printXML,
