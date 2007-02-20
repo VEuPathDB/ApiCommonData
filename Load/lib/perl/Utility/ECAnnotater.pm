@@ -57,6 +57,13 @@ sub _getEcId {
    return $gusECId;
 }
 
+
+sub undoTables {
+   qw(
+   DoTS.AASequenceEnzymeClass
+   );
+}
+
 return 1;
 
 
