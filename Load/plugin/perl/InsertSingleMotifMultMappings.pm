@@ -161,7 +161,7 @@ sub run{
 
     unless(%done->{$sourceId}){
 
-      my $aaSeqId = &ApiCommonData::Load::Util::getAaSeqIdFromGeneId($self, $sourceId);
+      my $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $sourceId);
 
       if($aaSeqId){
 
