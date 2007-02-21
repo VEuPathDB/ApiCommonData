@@ -170,7 +170,7 @@ EOSQL
 
   $queries{'pseudo_genes'} = <<EOSQL;
 SELECT count(f.na_feature_id)
-FROM DoTs.GeneFeature f,
+FROM DoTs.GeneFeature f
 WHERE f.row_alg_invocation_id  = $algInvId
 AND f.is_pseudo = 1
 EOSQL
