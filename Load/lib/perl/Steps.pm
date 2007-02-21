@@ -1,11 +1,84 @@
 use strict;
 
 use Bio::SeqIO;
-#use CBIL::Util::GenomeDir;
+use CBIL::Util::PropertySet;
 use GUS::Pipeline::NfsCluster;
 use GUS::Pipeline::SshCluster;
+use GUS::Pipeline::Manager;
 
 chomp(my $pipelineScript = `basename $0`);
+
+sub init {
+  my ($propertiesFile, $printXML, $allSpecies, $taxId) = @_;
+
+  $| = 1;
+  umask 002;
+
+  &usage unless -e $propertiesFile;
+  &usage if ($printXML && $printXML ne "-printXML");
+
+  # [name, default (or null if reqd), comment]
+  my @properties = 
+    (
+     # universal analysis pipeline properties
+
+     ["release",   "",  "release number (eg 5.2)"],
+     ["projectDir",   "",  "path to the project's directory tree"],
+     ["clusterServer", "",  "full name of cluster server"],
+     ["gusConfigFile",  "",  "gus configuration file"],
+     ["nodePath",             "",  "full path of scratch dir on cluster node"],
+     ["nodeClass", "","cluster management protocol"],
+     ["clusterProjectDir", "",  "path to the project's dir tree on cluster"],
+     ["stopBefore",   "none",  "the step to stop before.  uses the signal name"],
+     ["commit", "", "fill in"],
+     ["testNextPlugin", "", "fill in"],
+     ["projectName", "", " project name from projectinfo.name"],
+    );
+
+  # get necessary properties
+  my $propertySet  = CBIL::Util::PropertySet->new($propertiesFile, \@properties, 1);
+  my $myPipelineName = $propertySet->getProp('myPipelineName');
+  my $projectDir = $propertySet->getProp('projectDir');
+  my $clusterProjectDir = $propertySet->getProp('clusterProjectDir');
+  my $release = $propertySet->getProp('release');
+
+  my $analysisPipelineDir = "$projectDir/$release/analysis_pipeline/";
+  my $myPipelineDir = "$analysisPipelineDir/$myPipelineName";
+
+  my $cluster;
+  if ($propertySet->getProp('clusterServer') ne "none") {
+    $cluster = GUS::Pipeline::SshCluster->new($propertySet->getProp('clusterServer'),
+					      $propertySet->getProp('clusterUser') );
+  } else {
+    $cluster = GUS::Pipeline::NfsCluster->new();
+  }
+
+  my $mgr = GUS::Pipeline::Manager->new($myPipelineDir, $propertySet,
+					$propertiesFile, $cluster,
+					$propertySet->getProp('testNextPlugin'),
+					$printXML);
+
+  # set up global variables
+  $mgr->{propertiesFile} = $propertiesFile;
+  $mgr->{myPipelineDir} = $myPipelineDir;
+  $mgr->{myPipelineName} = $myPipelineName;
+  $mgr->{dataDir} = "$analysisPipelineDir/primary/data";
+  $mgr->{clusterDataDir} = "$clusterProjectDir/$release/analysis_pipeline/primary/data";
+
+  &createDataDir($mgr,$allSpecies,$mgr->{dataDir});
+
+  &makeUserProjectGroup($mgr);
+
+  if ($mgr->{myPipelineName} eq "primary") {
+  	&copyPipelineDirToComputeCluster($mgr);
+  }
+
+  my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
+
+  $mgr->{taxonHsh} = $taxonHsh;
+
+  return ($mgr, $projectDir, $release);
+}
 
 sub createDataDir {
   my ($mgr,$allSpecies, $dataDir) = @_;
