@@ -1,5 +1,6 @@
-CREATE VIEW dots.SnpFeature
-AS
+DROP VIEW dots.SnpFeature;
+
+CREATE VIEW dots.SnpFeature AS
 SELECT na_feature_id, na_sequence_id, subclass_view, name,
        sequence_ontology_id, parent_id, external_database_release_id,
        source_id, prediction_algorithm_id, is_predicted,
