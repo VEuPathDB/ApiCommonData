@@ -1558,7 +1558,7 @@ sub extractProteinSeqs {
 
 
 sub startProteinBlastOnComputeCluster {
-  my ($mgr,$queryFile,$subjectFile,$queue) = @_;
+  my ($mgr,$queryFile,$subjectFile,$queue,$ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $name = $queryFile . "-" . $subjectFile;
@@ -1570,6 +1570,9 @@ sub startProteinBlastOnComputeCluster {
   $mgr->endStep($signal);
 
   my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
+  if($ppn){
+    $clusterCmdMsg .= " $ppn";
+  }
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
