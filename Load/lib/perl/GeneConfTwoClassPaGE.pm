@@ -1,5 +1,5 @@
 package ApiCommonData::Load::GeneConfTwoClassPaGE;
-use base qw(GUS::Community::RadAnalysis::AbstractProcesser);
+use base qw(GUS::Community::RadAnalysis::AbstractProcessor);
 
 use strict;
 
@@ -95,7 +95,7 @@ If this is a 2 channel experiment  (R for Reference, D for DyeSwap)
 
 =head1 DESCRIPTION
 
-Subclass of GUS::Community::RadAnalysis::AbstractProcesser which implements the process().
+Subclass of GUS::Community::RadAnalysis::AbstractProcessor which implements the process().
 Query Database to create a PageInput file and then Run Page.
 
 =head1 TODO
@@ -198,7 +198,7 @@ sub process {
 
   my $database;
   unless($database = GUS::ObjRelP::DbiDatabase->getDefaultDatabase()) {
-    GUS::Community::RadAnalysis::ProcesserError->new("Package [UserProvidedNorm] Requires Default DbiDatabase")->throw();
+    GUS::Community::RadAnalysis::ProcessorError->new("Package [UserProvidedNorm] Requires Default DbiDatabase")->throw();
   }
 
   my $dbh = $database->getQueryHandle();
@@ -480,7 +480,7 @@ sub runPage {
   my $systemResult = system($pageCommand);
 
   unless($systemResult / 256 == 0) {
-    GUS::Community::RadAnalysis::ProcesserError->new("Error while attempting to run PaGE:\n$pageCommand")->throw();
+    GUS::Community::RadAnalysis::ProcessorError->new("Error while attempting to run PaGE:\n$pageCommand")->throw();
   }
 
   my $geneConfList = $pageOut . "-gene_conf_list.txt";
@@ -566,7 +566,7 @@ sub preparePageInput {
         $self->addElementData($name, $id, $analysisView, $dbh);
       }
       else {
-        GUS::Community::RadAnalysis::ProcesserError->new("Only Categories of analysis or quantification are allowed")->throw();
+        GUS::Community::RadAnalysis::ProcessorError->new("Only Categories of analysis or quantification are allowed")->throw();
       }
     }
   }
