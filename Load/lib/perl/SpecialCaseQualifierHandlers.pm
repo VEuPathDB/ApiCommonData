@@ -96,6 +96,11 @@ sub sourceIdAndTranscriptSeq {
   }
 
 
+  # second, initialize isPseudo
+  if (!defined($geneFeature->getIsPseudo())) {
+    $geneFeature->setIsPseudo(0);
+  }
+
   # now do the exons and transcript seq
   foreach my $transcript ($geneFeature->getChildren('DoTS::Transcript')) {
 
