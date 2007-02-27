@@ -16,6 +16,8 @@ use GUS::Model::Core::TableInfo;
 
 use  GUS::ObjRelP::DbiDatabase;
 
+use Data::Dumper;
+
 =head1 NAME
 
 ApiCommonData::Load::GeneConfTwoClassPaGE;
@@ -206,11 +208,13 @@ sub process {
   # Get all the elements for an ArrayDesign
   my $arrayDesignName = $self->getArrayDesignName();
   my $arrayTable = $self->queryForArrayTable($dbh, $arrayDesignName);
-  my $allElements = $self->queryForElements($dbh, $arrayTable, $arrayDesignName);
+
+  my $allElements = $self->queryForElements($dbh, $arrayDesignName);
 
   # make the page Input file
-  my ($header, $pageMatrix) = $self->preparePageInput($dbh, $allElements, $arrayTable);
-  $self->writePageInputFile($header, $pageMatrix);
+  my $pageMatrix = $self->preparePageInput($logicalGroups, $dbh);
+
+  $self->writePageInputFile($pageMatrix, $logicalGroups);
 
   # run page
   my $resultFile = $self->runPage();
@@ -247,103 +251,39 @@ sub process {
 sub setupLogicalGroups {
   my ($self, $dbh) = @_;
 
+  my @logicalGroups;
+
+  my $studyName = $self->getStudyName();
+
   my $conditionAName = $self->getNameConditionA();
   my $conditionBName = $self->getNameConditionB();
 
-  my $logicalGroupA = GUS::Model::RAD::LogicalGroup->new({name => $conditionAName});
-  my $logicalGroupB = GUS::Model::RAD::LogicalGroup->new({name => $conditionBName});
+  my $aUris = $self->getQuantificationUrisConditionA();
+  my $aAnalysisNames = $self->getAnalysisNamesConditionA();
 
-  unless($logicalGroupA->retrieveFromDB) {
-    my $aUris = $self->getQuantificationUrisConditionA();
-    my $aAnalysisNames = $self->getAnalysisNamesConditionA();
+  my $bUris = $self->getQuantificationUrisConditionB();
+  my $bAnalysisNames = $self->getAnalysisNamesConditionB();
 
-    $self->setupLinks($logicalGroupA, $aUris, 'quantification', $dbh) if(scalar(@$aUris) > 0);
-    $self->setupLinks($logicalGroupA, $aAnalysisNames, 'analysis', $dbh) if(scalar(@$aAnalysisNames) > 0);
+  if(scalar(@$aUris) > 0 && scalar(@$bUris) > 0) {
+    my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'quantification', $aUris, $studyName, $dbh);
+    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'quantification', $bUris, $studyName, $dbh);
+
+    push(@logicalGroups, $logicalGroupA);
+    push(@logicalGroups, $logicalGroupB);
   }
 
-  unless($logicalGroupB->retrieveFromDB) {
-    my $bUris = $self->getQuantificationUrisConditionB();
-    my $bAnalysisNames = $self->getAnalysisNamesConditionB();
+  if(scalar(@$bAnalysisNames) > 0 && scalar(@$aAnalysisNames) > 0) {
+    my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'analysis', $aAnalysisNames, $studyName, $dbh);
+    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'analysis', $bAnalysisNames, $studyName, $dbh);
 
-    $self->setupLinks($logicalGroupB, $bUris, 'quantification', $dbh)  if(scalar(@$bUris) > 0);
-    $self->setupLinks($logicalGroupB, $bAnalysisNames, 'analysis', $dbh) if(scalar(@$bAnalysisNames) > 0);
+    push(@logicalGroups, $logicalGroupA);
+    push(@logicalGroups, $logicalGroupB);
   }
 
-  return [$logicalGroupA, $logicalGroupB];
+  return \@logicalGroups;
 }
 
-#--------------------------------------------------------------------------------
 
-sub setupLinks {
-  my ($self, $lg, $names, $type, $dbh) = @_;
-
-  my $studyName = $self->getStudyName();
-  my $coreHash = $self->queryForTable($dbh);
-
-  my %allSql = (quantification => <<Sql,
-select quantification_id
-from Rad.QUANTIFICATION q, Rad.ACQUISITION a,
-     Rad.STUDYASSAY sa, Study.Study s
-where q.acquisition_id = a.acquisition_id
- and a.assay_id = sa.assay_id
- and sa.study_id = s.study_id
- and s.name = ?
- and q.uri = ?
-Sql
-                analysis => <<Sql,
-Sql
-                );
-
-  my $sql = $allSql{$type};
-  my $sh = $dbh->prepare($sql);
-
-  my @links;
-  my $orderNum = 1;
-
-  foreach(@$names) {
-    $sh->execute($studyName, $_);
-
-    my ($quantId) = $sh->fetchrow_array();
-    $sh->finish();
-
-    unless($quantId) {
-      GUS::Community::RadAnalysis::SqlError->new("Could not retrieve quantification for [$_]")->throw();
-    }
-
-    my $link = GUS::Model::RAD::LogicalGroupLink->new({order_num => $orderNum,
-                                                       table_id => $coreHash->{$type},
-                                                       row_id => $quantId,
-                                                      });
-    $link->setParent($lg);
-
-    $orderNum++;
-  }
-
-  return \@links;
-}
-
-#--------------------------------------------------------------------------------
-
-sub queryForTable {
-  my ($self, $dbh) = @_;
-
-  my %rv;
-
-  my $sql = "select lower(t.name), t.table_id from Core.TableInfo t, Core.DATABASEINFO d
-             where t.database_id = d.database_id
-              and d.name = 'RAD'
-              and t.name in ('Quantification', 'Analysis')";
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  while(my ($name, $id) = $sh->fetchrow_array()) {
-    $rv{$name} = $id;
-  }
-  $sh->finish();
-
-  return \%rv;
-}
 
 #--------------------------------------------------------------------------------
 
@@ -390,8 +330,6 @@ sub setupProtocol {
 
     $protocol->setProtocolTypeId($oe->getId());
   }
-
-
 
   my $oeHash = $self->getOntologyEntries();
 
@@ -554,150 +492,85 @@ sub runPage {
 #--------------------------------------------------------------------------------
 
 sub writePageInputFile {
-  my ($self, $header, $input) = @_;
+  my ($self, $input, $logicalGroups) = @_;
+
+  my @header;
+
+  my $baseX = $self->getBaseX();
 
   my $pageIn = $self->getPageInputFile();
   open(PAGE, "> $pageIn") or die "Cannot open file [$pageIn] for writing: $!";
 
-  print PAGE join("\t", "id", @$header) . "\n";
+  my $conditionAName = $self->getNameConditionA();
+  my $conditionBName = $self->getNameConditionB();
 
-  foreach(keys %$input) {
-    print PAGE join("\t", $_, @{$input->{$_}}) . "\n";
+  my $conditionACount;
+  my $conditionBCount;
+
+  foreach my $lg (@$logicalGroups) {
+    foreach my $link ($lg->getChildren('RAD::LogicalGroupLink')) {
+      $conditionACount++ if($lg->getName eq $conditionAName);
+      $conditionBCount++ if($lg->getName eq $conditionBName);
+    }
   }
+
+  push @header, @{$self->pageHeader('c0r', $conditionACount)};
+  push @header, @{$self->pageHeader('c1r', $conditionBCount)};
+
+
+  print PAGE join("\t", "id", @header) . "\n";
+
+  foreach my $element (keys %$input) {
+    my @output;
+
+
+    if ($baseX) {
+      push @output, map {$baseX ** $_} @{$input->{$element}->{$conditionAName}};
+      push @output, map {$baseX ** $_} @{$input->{$element}->{$conditionBName}};
+    }
+    else {
+      push @output, @{$input->{$element}->{$conditionAName}};
+      push @output, @{$input->{$element}->{$conditionBName}};
+    }
+
+    print PAGE join("\t", $element, @output) . "\n";
+  }
+  close PAGE;
 }
 
 #--------------------------------------------------------------------------------
 
 sub preparePageInput {
-  my ($self, $dbh, $allElements, $arrayTable) = @_;
+  my ($self, $logicalGroups, $dbh) = @_;
 
-  my %pageInput;
+  my $quantView = $self->getQuantificationView();
+  my $analysisView = $self->getAnalysisView();
 
-  my $baseX = $self->getBaseX();
+  foreach my $lg (@$logicalGroups) {
+    my $name = $lg->getName();
+    my $category = $lg->getCategory();
 
-  my $aUris = $self->getQuantificationUrisConditionA();
-  my $bUris = $self->getQuantificationUrisConditionB();
+    my @links = $lg->getChildren('RAD::LogicalGroupLink');
 
-  my $aAnalysisNames = $self->getAnalysisNamesConditionA();
-  my $bAnalysisNames = $self->getAnalysisNamesConditionB();
+    my @orderedLinks  = map { $_->[0] }
+      sort { $a->[1] <=> $b->[1] }
+        map { [$_, $_->getOrderNum()] } @links;
 
-  my $headers = $self->makeHeader($aUris, $bUris, $aAnalysisNames, $bAnalysisNames);
+    foreach my $link (@orderedLinks) {
+      my $id = $link->getRowId();
 
-  my $quantShA = $self->getQuantificationSqlHandle($aUris, $dbh);
-  my $quantShB = $self->getQuantificationSqlHandle($bUris, $dbh);
-
-  # TODO:  getAnalysisSqlHandle (A and B)
-
-  foreach my $element (@$allElements) {
-    if(my $quantView = $self->getQuantificationView()) {
-      my $conditionAValues = $self->getQuantificationValues($element, $quantShA, $aUris, $baseX);
-      my $conditionBValues = $self->getQuantificationValues($element, $quantShB, $bUris, $baseX);
-
-      push(@{$pageInput{$element}}, @$conditionAValues, @$conditionBValues);
-    }
-
-    # TODO:  This Bit is not yet implemented!!!
-    if(my $analysisView = $self->getAnalysisView()) {
-      my $conditionAValues = $self->getAnalysisValues();
-      my $conditionBValues = $self->getAnalysisValues();
-
-      push(@{$pageInput{$element}}, @$conditionAValues, @$conditionBValues);
+      if($category eq 'quantification') {
+        $self->addElementData($name, $id, $quantView, $dbh);
+      }
+      elsif($category eq 'analysis') {
+        $self->addElementData($name, $id, $analysisView, $dbh);
+      }
+      else {
+        GUS::Community::RadAnalysis::ProcesserError->new("Only Categories of analysis or quantification are allowed")->throw();
+      }
     }
   }
-  return($headers, \%pageInput);
-}
-
-#--------------------------------------------------------------------------------
-
-sub getQuantificationSqlHandle {
-  my ($self, $uris, $dbh) = @_;
-
-  my $uriString = join(',', map { "'$_'" } @$uris);
-
-  my $view = $self->getQuantificationView();
-  return unless($view);
-
-  # add to this for other views of CompositeElementResultImp
-  my %quantSql = ('RMAExpress' => <<Sql,
-select q.uri, e.rma_expression_measure
-from Rad.QUANTIFICATION q,
-     Rad.ACQUISITION a, Rad.STUDYASSAY sa, Study.Study s,
-     Rad.RMAEXPRESS e, RAD.SHORTOLIGOFAMILY spot 
-where e.quantification_id = q.quantification_id
- and spot.composite_element_id = e.composite_element_id 
- and q.acquisition_id = a.acquisition_id
- and a.assay_id = sa.assay_id
- and sa.study_id = s.study_id
- and q.uri in ($uriString)
- and s.name = ?
- and spot.composite_element_id = ?
-Sql
-               );
-
-  my $sql = $quantSql{$view};
-
-  return $dbh->prepare($sql);
-}
-
-
-#--------------------------------------------------------------------------------
-
-sub getAnalysisValues {
-  die "Query For analysis table is not yet implemented";
-}
-
-#--------------------------------------------------------------------------------
-
-sub getQuantificationValues {
-  my ($self, $element, $sh, $uris, $baseX) = @_;
-
-  my @rv;
-
-  my $studyName = $self->getStudyName();
-
-  $sh->execute($studyName, $element);
-
-  my %values;
-
-  while(my ($uri, $value) = $sh->fetchrow_array()) {
-    $values{$uri} = $value;
-  }
-  $sh->finish();
-
-  # make sure the order is always the same
-  # add 'NA' for those with potential missing values
-
-  foreach my $uri (@$uris) {
-
-    if($baseX && $values{$uri}) {
-      $values{$uri} = $baseX ** $values{$uri};
-    }
-
-    unless($values{$uri}) {
-      $values{$uri} = 'NA';
-    }
-
-    push(@rv, $values{$uri});
-  }
-
-  return \@rv;
-}
-
-
-#--------------------------------------------------------------------------------
-
-sub makeHeader {
-  my ($self, $au, $bu, $aa, $ba) = @_;
-
-  my @header;
-
-  push(@header, @{$self->pageHeader('c0r', scalar(@$au))});
-  push(@header, @{$self->pageHeader('c1r', scalar(@$bu))});
-
-  push(@header, @{$self->pageHeader('c0r', scalar(@$aa))});
-  push(@header, @{$self->pageHeader('c1r', scalar(@$ba))});
-
-  return \@header;
+  return $self->getElementData();
 }
 
 #--------------------------------------------------------------------------------
@@ -712,66 +585,6 @@ sub pageHeader {
     push(@values, $value);
   }
   return \@values;
-}
-
-
-#--------------------------------------------------------------------------------
-
-sub queryForElements {
-  my ($self, $dbh, $arrayTable, $arrayDesignName) = @_;
-
-  my %allSql = ('RAD.ShortOligoFamily' => <<Sql,
-select composite_element_id 
-from $arrayTable e, Rad.ARRAYDESIGN a
-where a.array_design_id = e.array_design_id
- and a.name = ?
-Sql
-                'RAD.Spot' => <<Sql,
-select element_id 
-from $arrayTable e, Rad.ARRAYDESIGN a
-where a.array_design_id = e.array_design_id
- and a.name = ?
-Sql
-                );
-
-  my $sql = $allSql{$arrayTable};
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($arrayDesignName);
-
-  my @elementIds;
-
-  while(my ($elementId) = $sh->fetchrow_array()) {
-    push(@elementIds, $elementId);
-  }
-  $sh->finish();
-
-  return \@elementIds;
-}
-
-#--------------------------------------------------------------------------------
-
-sub queryForArrayTable {
-  my ($self, $dbh, $arrayDesignName) = @_;
-
-  my $sql = <<Sql;
-select oe.value
-from study.ontologyentry oe, Rad.ARRAYDESIGN a
-where a.technology_type_id = oe.ontology_entry_id
-and a.name = ?
-Sql
-
-  my $sh = $dbh->prepare($sql);
-  $sh->execute($arrayDesignName);  
-
-  my ($type) = $sh->fetchrow_array();
-  $sh->finish();
-
-  if($type eq 'in_situ_oligo_features') {
-    return 'RAD.ShortOligoFamily';
-  }
-
-  return 'RAD.Spot';
 }
 
 #--------------------------------------------------------------------------------
