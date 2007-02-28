@@ -212,7 +212,10 @@ sub process {
   my $allElements = $self->queryForElements($dbh, $arrayDesignName);
 
   # make the page Input file
-  my $pageMatrix = $self->preparePageInput($logicalGroups, $dbh);
+  my $quantView = $self->getQuantificationView();
+  my $analysisView = $self->getAnalysisView();
+
+  my $pageMatrix = $self->createDataMatrixFromLogicalGroups($logicalGroups, $quantView, $analysisView, $dbh);
 
   $self->writePageInputFile($pageMatrix, $logicalGroups);
 
@@ -525,8 +528,8 @@ sub writePageInputFile {
 
 
     if ($baseX) {
-      push @output, map {$baseX ** $_} @{$input->{$element}->{$conditionAName}};
-      push @output, map {$baseX ** $_} @{$input->{$element}->{$conditionBName}};
+      push @output, map {$_ eq 'NA' ? 'NA' : $baseX ** $_} @{$input->{$element}->{$conditionAName}};
+      push @output, map {$_ eq 'NA' ? 'NA' : $baseX ** $_} @{$input->{$element}->{$conditionBName}};
     }
     else {
       push @output, @{$input->{$element}->{$conditionAName}};
@@ -536,41 +539,6 @@ sub writePageInputFile {
     print PAGE join("\t", $element, @output) . "\n";
   }
   close PAGE;
-}
-
-#--------------------------------------------------------------------------------
-
-sub preparePageInput {
-  my ($self, $logicalGroups, $dbh) = @_;
-
-  my $quantView = $self->getQuantificationView();
-  my $analysisView = $self->getAnalysisView();
-
-  foreach my $lg (@$logicalGroups) {
-    my $name = $lg->getName();
-    my $category = $lg->getCategory();
-
-    my @links = $lg->getChildren('RAD::LogicalGroupLink');
-
-    my @orderedLinks  = map { $_->[0] }
-      sort { $a->[1] <=> $b->[1] }
-        map { [$_, $_->getOrderNum()] } @links;
-
-    foreach my $link (@orderedLinks) {
-      my $id = $link->getRowId();
-
-      if($category eq 'quantification') {
-        $self->addElementData($name, $id, $quantView, $dbh);
-      }
-      elsif($category eq 'analysis') {
-        $self->addElementData($name, $id, $analysisView, $dbh);
-      }
-      else {
-        GUS::Community::RadAnalysis::ProcessorError->new("Only Categories of analysis or quantification are allowed")->throw();
-      }
-    }
-  }
-  return $self->getElementData();
 }
 
 #--------------------------------------------------------------------------------
