@@ -3097,6 +3097,12 @@ sub modifyOrfFileForDownload {
 
   my $dir = $1;
 
+  $species =~ /\b(\w)/;
+
+  my $sp = $1;
+
+  my $speciesAbreviation = "${dir}$sp";
+
   my $database = lcfirst($dbName);
 
   my $output = "${dir}${species}Orfs";
@@ -3106,7 +3112,7 @@ sub modifyOrfFileForDownload {
 
   $mgr->runCmd("mkdir -p $dataDir/downloadSite/$dir");
 
-  my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/$output --inFile $dataDir/seqfiles/$file --genus $genus --species $species --dbName $dbName";
+  my $cmd = "modifyOrfFileDefline --outFile $dataDir/downloadSite/$dir/$output --inFile $dataDir/seqfiles/$file --species $speciesAbreviation --dbName $dbName";
 
   $mgr->runCmd($cmd);
 
