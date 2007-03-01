@@ -592,9 +592,9 @@ sub _getCodingSequence {
 
   return unless($transcript);
 
-  my @rnaFeatureExons = $transcript->getChildren("DoTS::RNAFeatureExon");
+  my @rnaFeatureExons = $transcript->getChildren("DoTS::RNAFeatureExon",1);
 
-  my @exons = map { $_->getParent("DoTS::ExonFeature") } @rnaFeatureExons;
+  my @exons = map { $_->getParent("DoTS::ExonFeature",1) } @rnaFeatureExons;
 
   #my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
   my $transcriptId = $transcript->getId();
