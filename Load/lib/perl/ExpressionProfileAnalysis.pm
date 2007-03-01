@@ -374,7 +374,13 @@ sub writeFile {
       push @output, @{$input->{$element}->{$name}};
     }
 
-    print FILE join("\t", $element, @output) . "\n";
+    my $naCount;
+    map {$naCount++ if($_ eq 'NA')} @output;
+
+    # Don't print if they are all NA's
+    unless(scalar(@output) == $naCount) {
+      print FILE join("\t", $element, @output) . "\n";
+    }
   }
   close FILE;
 }
