@@ -12,7 +12,11 @@ use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
 use GUS::Model::DoTS::SeqVariation;
 
+use GUS::Model::DoTS::RNAFeatureExon;
+
 use ApiCommonData::Load::Plugin::InsertSnps;
+
+use Data::Dumper;
 
 use GUS::PluginMgr::PluginError;
 
@@ -84,7 +88,8 @@ sub makeNaSequences {
 sub makeRealTranscript {
   my ($self, $dbh) = @_;
 
-  my $sql = "select na_feature_id from dots.TRANSCRIPT where source_id = 'PFD0872w'";
+  my $sql = "select na_feature_id from dots.TRANSCRIPT where source_id = 'PFD0872w-1'";
+  #my $sql = "select na_feature_id from dots.TRANSCRIPT where source_id = 'PFI0455w-1'";
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
@@ -136,6 +141,8 @@ sub makeTestLocationAndMap {
 sub test__getCodingSequence {
   my ($self) = @_;
 
+  #print STDERR "Enter Sub: test_getCodingSequence\n";
+
   my $shouldBeNull = $insertSnps->_getCodingSequence('', '', '', '');
   $self->assert_null($shouldBeNull);
 
@@ -153,11 +160,20 @@ sub test__getCodingSequence {
   my $exon1 = GUS::Model::DoTS::ExonFeature->new({coding_start => 3, coding_end => 8});
   my $exon2 = GUS::Model::DoTS::ExonFeature->new({coding_start => 23, coding_end => 28});
 
+  my $rnaFeatureExon1 = GUS::Model::DoTS::RNAFeatureExon->new();
+  my $rnaFeatureExon2 = GUS::Model::DoTS::RNAFeatureExon->new();
+
+  $rnaFeatureExon1->setParent($exon1);
+  $rnaFeatureExon2->setParent($exon2);
+
+  $rnaFeatureExon1->setParent($transcript);
+  $rnaFeatureExon2->setParent($transcript);
+
   $exon1->{'sequence'} = 'ABCDEFGHIJ';
   $exon2->{'sequence'} = 'ABCDEFGHIJ';
 
-  $exon1->setParent($transcript);
-  $exon2->setParent($transcript);
+  #$exon1->setParent($transcript);
+  #$exon2->setParent($transcript);
 
   $loc1->setParent($exon1);
   $loc2->setParent($exon2);
@@ -190,8 +206,10 @@ sub test__getCodingSequence {
 sub test_getTranscript {
   my ($self) = @_;
 
-  $insertSnps->{'transcriptExtDbRlsId'} = 41;
-  $insertSnps->{'naExtDbRlsId'} = 41;
+  #print STDERR "Enter Sub: test_getTranscript\n";
+
+  $insertSnps->{'transcriptExtDbRlsId'} = 21;
+  $insertSnps->{'naExtDbRlsId'} = 21;
 
   my $naSeqToLocations = $insertSnps->getAllTranscriptLocations();
   # Test that it returns undef correctly
@@ -225,7 +243,7 @@ sub test_getTranscript {
 
   my $transcript = $insertSnps->getTranscript($naSeqId, $location, $location, $naSeqToLocations);
   my $sourceId = $transcript->getSourceId();
-  $self->assert_equals('PFD0872w',  $sourceId);
+  $self->assert_equals('PFD0872w-1',  $sourceId);
 
 }
 
@@ -234,8 +252,10 @@ sub test_getTranscript {
 sub test_getAllTranscriptLocations {
   my ($self) = @_;
 
-  $insertSnps->{'transcriptExtDbRlsId'} = 41;
-  $insertSnps->{'naExtDbRlsId'} = 41;
+#  #print STDERR "Enter Sub: test_getAllTranscriptLocations\n";
+
+  $insertSnps->{'transcriptExtDbRlsId'} = 21;
+  $insertSnps->{'naExtDbRlsId'} = 21;
 
   my $naSeqToLocations = $insertSnps->getAllTranscriptLocations();
 
@@ -254,6 +274,8 @@ sub test_getAllTranscriptLocations {
 
 sub test_getCodingSubstitutionPositions {
   my ($self) = @_;
+
+  #print STDERR "Enter Sub: test_getCodingSubstitutionPositions\n";
 
   my $cds = 'ABCDEFGH';
   my $mockCds = 'ABCDE*GH';
@@ -284,6 +306,8 @@ sub test_getCodingSubstitutionPositions {
 
 sub test__swapBaseInSequence {
   my ($self) = @_;
+
+  #print STDERR "Enter Sub: test_swapBaseInSequence\n";
 
   my $string = 'ABCDEFGH';
 
@@ -333,6 +357,8 @@ sub test__swapBaseInSequence {
 sub test__isSnpPositionOk {
   my ($self) = @_;
 
+  #print STDERR "Enter Sub: test_isSnpPositionOk\n";
+
   $insertSnps->{'naExtDbRlsId'} = $insertSnps->getExtDbRlsId($insertSnps->getArg('naExternalDatabaseName'),$insertSnps->getArg('naExternalDatabaseVersion'));
 
   my $naSeq = $insertSnps->getNaSeq('MAL4');
@@ -370,6 +396,8 @@ sub test__isSnpPositionOk {
 sub test__getAminoAcidSequenceOfSnp {
   my ($self) = @_;
 
+  #print STDERR "Enter Sub: test_getAminoAcidSequenceOfSnp\n";
+
   my $codingSequence = "ATGAGAAAATTATACTGCGTATTATTATTGAGCGCCTTTGAGTTTACATATATGATAAAC";
   my $aminoAcidSequence = "MRKLYCVLLLSAFEFTYMIN";
 
@@ -387,6 +415,8 @@ sub test__getAminoAcidSequenceOfSnp {
 
 sub test_calculateAminoAcidPosition {
   my ($self) = @_;
+
+  #print STDERR "Enter Sub: test_calculateAminoAcidPosition\n";
 
   my $aaPosition;
 
@@ -414,6 +444,8 @@ sub test_calculateAminoAcidPosition {
 sub test_getSeqVarSoTerm {
   my ($self) = @_;
 
+  #print STDERR "Enter Sub: test_getSeqVarSoTerm\n";
+
   my $snp = $insertSnps->getSeqVarSoTerm(1, 1, 'A');
   $self->assert_str_equals('substitution', $snp);
 
@@ -435,6 +467,8 @@ sub test_getSeqVarSoTerm {
 sub test_createMockSequence {
   my ($self) = @_;
 
+  #print STDERR "Enter Sub: test_createMockSequence\n";
+
   my $mockSeq = $insertSnps->createMockSequence(1, 10);
   $self->assert_str_equals('**********', $mockSeq);
 
@@ -444,6 +478,8 @@ sub test_createMockSequence {
 
 sub test_makeSnpFeatureDescriptionFromSeqVars {
   my $self = shift;
+
+  #print STDERR "Enter Sub: test_makeSnpFeatureDescriptionFromSeqVars\n";
 
   my $nonCodingSnpFeature =  GUS::Model::DoTS::SnpFeature->new({source_id => 'noncoding', 
                                                        is_coding => '0',
@@ -483,6 +519,8 @@ sub test_makeSnpFeatureDescriptionFromSeqVars {
 
 sub test_addMajorMinorInfo {
   my $self = shift;
+
+  #print STDERR "Enter Sub: test_addMajorMinorInfo\n";
 
   my $snpFeature =  GUS::Model::DoTS::SnpFeature->new({source_id => 'test_1', 
                                                                 is_coding => '0',
