@@ -17,6 +17,8 @@ use CBIL::Bio::SequenceUtils;
 
 use Benchmark;
 
+use Data::Dumper;
+
 
 $| = 1;
 
@@ -215,6 +217,7 @@ sub processSnpFile{
     my $snpStart = $feature->location()->start();
     my $snpEnd = $feature->location()->end();
 
+    # MAL??
     my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
 
     my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
@@ -589,7 +592,11 @@ sub _getCodingSequence {
 
   return unless($transcript);
 
-  my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
+  my @rnaFeatureExons = $transcript->getChildren("DoTS::RNAFeatureExon");
+
+  my @exons = map { $_->getParent("DoTS::ExonFeature") } @rnaFeatureExons;
+
+  #my @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
   my $transcriptId = $transcript->getId();
 
   unless (@exons) {
@@ -760,7 +767,7 @@ sub getAllTranscriptLocations {
 #              AND regexp_like(ens.source_id, '$regex')
 #            ORDER BY tf.na_sequence_id, nl.start_min, nl.end_max";
 
-
+  # TODO:  Take out the seqontology_id...
 #  my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
 #             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, $seqTable ens
 #             WHERE tf.sequence_ontology_id = 121
@@ -771,19 +778,19 @@ sub getAllTranscriptLocations {
 #              and tf.name != 'ORF'
 #            ORDER BY nl.start_min, nl.end_max";
 
-  my $sql = "SELECT tf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, DoTS.SplicedNASequence ens
+  my $sql = "SELECT gf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, DoTS.SplicedNASequence ens, Dots.GeneFeature gf
              WHERE tf.na_feature_id = nl.na_feature_id
+             and gf.na_feature_id = tf.parent_id
               AND tf.na_sequence_id = ens.na_sequence_id
-              AND ens.external_database_release_id = ?
-              and tf.external_database_release_id = ?
+              AND ens.external_database_release_id = $naExtDbRls
+              and tf.external_database_release_id = $transcriptExtDbRls
             ORDER BY nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
-  $sh->execute($naExtDbRls, $transcriptExtDbRls);
+  $sh->execute();
 
   while(my ($naSeqId, $naFeatureId, $start, $end) = $sh->fetchrow_array()) {
-
     my $location = { na_feature_id => $naFeatureId,
                      end => $end,
                      start => $start,
