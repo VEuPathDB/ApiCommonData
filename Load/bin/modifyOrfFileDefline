@@ -1,20 +1,26 @@
 #!@perl@
 
 ##modify defline of orffinder output
+##input is the gff file of sequences such as
+##2570384.c000128966.Contig1      orfFinder       ORF     2560    2802    .       +       .       locus_tag "2570384.c000128966.Con
+##tig1-1-2560-2802"  ; translation NYNILNFFFFFFVTIICYLYYNSRNLYIIHLFVVQTHLVFVIFVNLFIIHVRKKIKFVFTCFCFVYCYTLHLHIYIYKHKL
+##the output would be
+##>Pg|2570384.c000128966.Contig1-1-2560-2802|computed|PlasmoDB|length=54
+
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use CBIL::Bio::SequenceUtils;
 
-my ($verbose,$outFile,$inFile,$genus,$species,$dbName);
+my ($verbose,$outFile,$inFile,$spAbrev,$dbName);
 &GetOptions("verbose!"=> \$verbose,
             "outFile=s" => \$outFile,"inFile=s" => \$inFile, 
-            "genus=s" => \$genus,"species=s" => \$species,
+            "speciesAbreviation=s" => \$spAbrev,
             "dbName=s" => \$dbName);
 
-if(!$inFile || !$outFile || !$genus || !$species || !$dbName){
-	die "usage: modifyOrfFileDefline --outFile --inFile --genus --species --verbose  --dbName \n";
+if(!$inFile || !$outFile || !$spAbrev || !$dbName){
+	die "usage: modifyOrfFileDefline --outFile --inFile --speciesAbreviation --verbose  --dbName \n";
 }
 
 open(IN, $inFile);
@@ -24,9 +30,6 @@ open(OUT,">$outFile");
 while(<IN>) {
   chomp;
   my @arr = split(/\t/,$_);
-  my($name,$seq);
-  if($arr[8] =~/locus_tag\s"(\S+)"/){$name = $1;}
-  if($arr[8]=~ /translation\s(\S+)$/){$seq = $1;}
   &printSequence(\@arr);
 }
 
@@ -37,7 +40,7 @@ sub printSequence{
   if($arr->[8]=~ /translation\s(\S+)$/){$seq = $1;}
   my $len = length($seq);
 
-  my $defline = ">${genus}_${species}|$arr->[0]|${name}|computed|${dbName}|length=$len\n";
+  my $defline = ">${spAbrev}|${name}|computed|${dbName}|length=$len\n";
 
   print OUT $defline . CBIL::Bio::SequenceUtils::breakSequence($seq,60);
 }
