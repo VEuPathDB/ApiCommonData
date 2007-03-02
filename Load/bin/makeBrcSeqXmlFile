@@ -76,7 +76,7 @@ AND edr.version = '$extDbRlsVer'
 AND ed.external_database_id = edr.external_database_id
 AND ens.external_database_release_id = edr.external_database_release_id
 AND ens.sequence_ontology_id = so.sequence_ontology_id
-AND (so.term_name = 'supercontig' OR so.term_name = 'contig')
+AND (so.term_name = 'supercontig' OR so.term_name = 'contig' OR so.term_name = 'chromosome')
 ORDER BY ens.source_id
 ";
 
@@ -208,14 +208,14 @@ where:
                will be appended)
   brcSubmits:  'yes' if the BRC submits this genome to refseq. 'no' otherwise
   strain:      optional. only needed if taxon name doesn't already include it
-  curation:    '%%' delimited list of curation info.  each element is a '|'
+  curators:    '%%' delimited list of curation info.  each element is a '|'
                delimited list of who_is_responsible_for_annotating and
                who_is_responsible_for_modifying 
   changesFile: a file with a list of sequences that have changed since
                    the original, as discussed below
 
 Sample command line:
-% makeBrcSeqXmlFile --extDbName "Sanger P. falciparum chromosomes"  --extDbRlsVer "2005-09-26"  --gffPrefix PfalciparumGeneModels_PlasmoDB --brcSubmits no --curation "Sanger|Haiming%%TIGR|Mark"
+% makeBrcSeqXmlFile --extDbName "Sanger P. falciparum chromosomes"  --extDbRlsVer "2005-09-26"  --gffPrefix PfalciparumGeneModels_PlasmoDB --brcSubmits no --curators "Sanger|Haiming%%TIGR|Mark"
 
 
 Changed Seqs File
