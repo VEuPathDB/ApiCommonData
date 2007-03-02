@@ -523,8 +523,10 @@ sub test_addMajorMinorInfo {
   #print STDERR "Enter Sub: test_addMajorMinorInfo\n";
 
   my $snpFeature =  GUS::Model::DoTS::SnpFeature->new({source_id => 'test_1', 
-                                                                is_coding => '0',
-                                                               });
+                                                       is_coding => '0',
+                                                       reference_aa => 'a_product',
+                                                       reference_na => 'a',
+                                                      });
 
 
   my $seqVar1 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
@@ -537,7 +539,7 @@ sub test_addMajorMinorInfo {
                                                      product => 'a_product',
                                                     });
 
-  my $seqVar3 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+  my $seqVar3 = GUS::Model::DoTS::SeqVariation->new({strain => '3D7',
                                                      allele => 'a',
                                                      product => 'a_product',
                                                     });
@@ -594,8 +596,10 @@ sub test_addMajorMinorInfo {
   } catch GUS::PluginMgr::PluginUserError with { };
 
   my $snpFeature3 =  GUS::Model::DoTS::SnpFeature->new({source_id => 'test_3', 
-                                                                is_coding => '0',
-                                                               });
+                                                        is_coding => '0',
+                                                        reference_na => 'a',
+                                                        reference_aa => 'a_product',
+                                                       });
 
 
   my $seqVar3_1 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
@@ -604,13 +608,13 @@ sub test_addMajorMinorInfo {
                                                     });
 
   my $seqVar3_2 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
-                                                     allele => 'a',
-                                                     product => 'a_product',
+                                                     allele => 'b',
+                                                     product => 'c_product',
                                                     });
 
   my $seqVar3_3 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
                                                      allele => 'c',
-                                                     product => '',
+                                                     product => 'c_product',
                                                     });
 
   $seqVar3_1->setParent($snpFeature3);
@@ -620,12 +624,88 @@ sub test_addMajorMinorInfo {
   my $test2 = $insertSnps->_addMajorMinorInfo($snpFeature3);
 
   $self->assert_equals('a', $test2->getMajorAllele());
-  $self->assert_equals(2, $test2->getMajorAlleleCount());
+  $self->assert_equals(1, $test2->getMajorAlleleCount());
   $self->assert_equals('a_product', $test2->getMajorProduct());
 
-  $self->assert_equals('c', $test2->getMinorAllele());
   $self->assert_equals(1, $test2->getMinorAlleleCount());
-  $self->assert_null($test2->getMinorProduct());
+
+  my $snpFeature3 =  GUS::Model::DoTS::SnpFeature->new({source_id => 'test_3', 
+                                                        is_coding => '0',
+                                                        reference_na => 'a',
+                                                        reference_aa => 'a_product',
+                                                       });
+
+
+  my $seqVar3_1 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'a',
+                                                     product => 'a_product',
+                                                    });
+
+  my $seqVar3_2 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'b',
+                                                     product => 'c_product',
+                                                    });
+
+  my $seqVar3_3 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'b',
+                                                     product => 'c_product',
+                                                    });
+
+  my $seqVar3_4 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'c',
+                                                     product => '',
+                                                    });
+
+  $seqVar3_1->setParent($snpFeature3);
+  $seqVar3_2->setParent($snpFeature3);
+  $seqVar3_3->setParent($snpFeature3);
+  $seqVar3_4->setParent($snpFeature3);
+
+  my $test2 = $insertSnps->_addMajorMinorInfo($snpFeature3);
+
+  $self->assert_equals('b', $test2->getMajorAllele());
+  $self->assert_equals(2, $test2->getMajorAlleleCount());
+  $self->assert_equals('c_product', $test2->getMajorProduct());
+
+  $self->assert_equals('a', $test2->getMinorAllele());
+  $self->assert_equals(1, $test2->getMinorAlleleCount());
+
+  my $snpFeature4 =  GUS::Model::DoTS::SnpFeature->new({source_id => 'test_3', 
+                                                        is_coding => '0',
+                                                        reference_na => 'a',
+                                                        reference_aa => 'a_product',
+                                                       });
+
+
+  my $seqVar4_1 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'a',
+                                                     product => 'a_product',
+                                                    });
+
+  my $seqVar4_2 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'b',
+                                                     product => 'c_product',
+                                                    });
+
+  my $seqVar4_3 = GUS::Model::DoTS::SeqVariation->new({strain => 'strain',
+                                                     allele => 'c',
+                                                     product => '',
+                                                    });
+
+
+
+  $seqVar4_1->setParent($snpFeature4);
+  $seqVar4_2->setParent($snpFeature4);
+  $seqVar4_3->setParent($snpFeature4);
+
+  my $test4 = $insertSnps->_addMajorMinorInfo($snpFeature4);
+
+  $self->assert_equals('a', $test4->getMajorAllele());
+  $self->assert_equals(1, $test4->getMajorAlleleCount());
+  $self->assert_equals('a_product', $test4->getMajorProduct());
+
+  $self->assert_equals(1, $test4->getMinorAlleleCount());
+
 
 
 }
