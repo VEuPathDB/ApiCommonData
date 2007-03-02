@@ -275,6 +275,9 @@ sub _addMajorMinorInfo {
   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
   my $sourceId = $snpFeature->getSourceId();
 
+  my $referenceAllele = $snpFeature->getReferenceNa();
+  my $referenceProduct = $snpFeature->getReferenceAa();
+
   my (%alleles, %products);
 
   foreach my $seqVar (@seqVars) {
@@ -285,17 +288,39 @@ sub _addMajorMinorInfo {
     $products{$allele} = $product if($product);
   }
 
-  my @sortedAlleleKeys;
-  foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
-    push(@sortedAlleleKeys, $allele) unless($allele eq "");
+  my %counts;
+  foreach(keys %alleles) {
+    my $count = $alleles{$_};
+    $counts{$count} = 1;
   }
 
-  if(scalar(@sortedAlleleKeys) < 2) {
+  my @sortedAlleleKeys;
+    foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
+      push(@sortedAlleleKeys, $allele) unless($allele eq "");
+    }
+
+  my $numbers = scalar(keys %counts);
+
+  if(scalar(@sortedAlleleKeys) == 1) {
     $self->userError("No Variation for source_id $sourceId");
   }
 
   my $majorAllele = @sortedAlleleKeys[0];
   my $minorAllele = @sortedAlleleKeys[1];
+
+  if($numbers == 1) {
+    if($minorAllele eq $referenceAllele) {
+      $minorAllele = $majorAllele;
+      $majorAllele = $referenceAllele;
+    }
+    else {   
+      $majorAllele = $referenceAllele;
+    }
+  }
+  if($numbers == 2) {
+    $minorAllele = $referenceAllele
+      unless($majorAllele eq $referenceAllele || $minorAllele eq $referenceAllele);
+  } 
 
   my $majorAlleleCount = $alleles{$majorAllele};
   my $minorAlleleCount = $alleles{$minorAllele};
