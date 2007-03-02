@@ -8,11 +8,19 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($configFile, $changedSeqsFile);
-&GetOptions("configFile=s" => \$configFile,
-            "changedSeqsFile=s" => \$changedSeqsFile);
+my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffPrefix, $strain,
+    $brcSubmitsToRefseq, $curatorsString);
+&GetOptions("extDbName=s" => \$extDbName,
+	    "extDbRlsVer=s" => \$extDbRlsVer,
+	    "brcSubmits=s" => \$brcSubmitsToRefseq,
+	    "gffPrefix=s" => \$gffPrefix,
+	    "curators=s" => \$curatorsString,
+            "strain=s" => \$strain,
+            "changesFile=s" => \$changedSeqsFile
+             );
 
-&usage() unless ($configFile);
+&usage() unless ($extDbName, $extDbRlsVer, $gffPrefix, $brcSubmitsToRefseq,
+		 $curatorsString);
 
 my $gusconfig = GUS::Supported::GusConfig->new();
 
@@ -22,48 +30,18 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         0,0,1,
                                         $gusconfig->getCoreSchemaName());
 
-my $propsHash  = &parseConfigFile($configFile);
-
 my $changedSeqs = &parseChangedSeqs($changedSeqsFile);
 
-my $seqXml = &makeSeqXml($propsHash, $changedSeqs, $db);
+my $seqXml = &makeSeqXml($extDbName, $extDbRlsVer, $changedSeqs, $db);
 
-my $curationXml = &makeCurationXml($propsHash);
+my $curationXml = &makeCurationXml($curatorsString);
 
-&getTaxonInfo($propsHash, $db);  # put taxon info into propsHash
+my ($taxonId, $organism) = &getTaxonInfo($extDbName, $extDbRlsVer, $db);
 
-print &makeXml($propsHash, $seqXml, $curationXml);
+print &makeXml($organism, $taxonId, $strain, $gffPrefix, $extDbRlsVer,
+      $brcSubmitsToRefseq, $seqXml, $curationXml);
 
 #################################################################
-
-
-sub parseConfigFile {
-  my ($file) = @_;
-
-  open(FILE, $file) || die "can't open config file '$file'\n";
-  my $propsHash = {};
-  while (<FILE>) {
-    chomp;
-    next if (/^\#/ || /^\s*$/);
-    /(\w+)\=(.+)/ || die "illegal line in config file: '$_'\n";
-    my $key = $1;
-    my $value = $2;
-    if ($key eq 'curation') {
-      push(@{$propsHash->{curation}}, $value);
-    } else {
-      $propsHash->{$key} = $value;
-    }
-  }
-
-  my @reqdKeys = ('extDbName', 'extDbRlsVer', 'brcSubmitsToRefseq', 'gffPrefix');
-  foreach my $key (@reqdKeys){
-    $propsHash->{$key} || die "missing or illegal value for property '$key'";
-  }
-
-  scalar(@{$propsHash->{curation}} >= 1) || die "missing or illegal value for property 'curation'";
-
-  return $propsHash;
-}
 
 sub parseChangedSeqs {
   my ($file) = @_;
@@ -83,7 +61,7 @@ sub parseChangedSeqs {
 }
 
 sub makeSeqXml {
-  my ($propsHash, $changedSeqsHash, $db) = @_;
+  my ($extDbName, $extDbRlsVer, $changedSeqsHash, $db) = @_;
 
   my $dbh = $db->getQueryHandle(0);
 
@@ -93,8 +71,8 @@ SELECT distinct ens.source_id
 FROM sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.ExternalNaSequence ens,
      sres.SequenceOntology so
-WHERE ed.name = '$propsHash->{extDbName}'
-AND edr.version = '$propsHash->{extDbRlsVer}'
+WHERE ed.name = '$extDbName'
+AND edr.version = '$extDbRlsVer'
 AND ed.external_database_id = edr.external_database_id
 AND ens.external_database_release_id = edr.external_database_release_id
 AND ens.sequence_ontology_id = so.sequence_ontology_id
@@ -129,10 +107,12 @@ ORDER BY ens.source_id
 }
 
 sub makeCurationXml {
-  my ($propsHash) = @_;
+  my ($curationString) = @_;
+
+  my @curations = split(/\%\%/, $curationString);
 
   my @curationXml;
-  foreach my $curation (@{$propsHash->{curation}}) {
+  foreach my $curation (@curations) {
     $curation =~ /(.+)\s*\|\s*(.+)/ || die "illegal format for curation property '$curation'";
     my $annot = $1;
     my $gene_ends = $2;
@@ -146,15 +126,15 @@ sub makeCurationXml {
 }
 
 sub getTaxonInfo {
-  my ($propsHash, $db) = @_;
+  my ($extDbName, $extDbRlsVer, $db) = @_;
 
   # query to get: taxon_id, taxon_name,
   my $sql = "
 SELECT distinct t.ncbi_tax_id, tn.name
 FROM sres.Taxon t, sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.ExternalNaSequence ens
-WHERE ed.name = '$propsHash->{extDbName}'
-AND edr.version = '$propsHash->{extDbRlsVer}'
+WHERE ed.name = '$extDbName'
+AND edr.version = '$extDbRlsVer'
 AND ed.external_database_id = edr.external_database_id
 AND ens.external_database_release_id = edr.external_database_release_id
 AND t.taxon_id = ens.taxon_id
@@ -165,19 +145,20 @@ AND tn.taxon_id = t.taxon_id
   my $stmt = $dbh->prepareAndExecute($sql);
 
   my ($ncbi_tax_id, $name) = $stmt->fetchrow_array();
-  $propsHash->{organism} = $name;
-  $propsHash->{taxonId} = $ncbi_tax_id;
+  return ($ncbi_tax_id, $name);
 }
 
 sub makeXml {
-  my ($propsHash, $seqInfo, $curationInfo, $seqList) = @_;
+  my ($organism, $taxonId, $strain, $gffPrefix, $extDbRlsVer,
+      $brcSubmitsToRefseq, $seqInfo, $curationInfo) = @_;
 
-  my $strain = "";
-  if ($propsHash->{strain}) {
+  if ($strain) {
     $strain = qw{
-    <parameter name="strain">$propsHash->{strain}</parameter>"};
+    <parameter name="strain">$strain</parameter>"};
+  } else {
+    $strain = "";
   }
-  my $gffFileName = "$propsHash->{gffPrefix}_$propsHash->{extDbRlsVer}.gff";
+  my $gffFileName = "${gffPrefix}_${extDbRlsVer}.gff";
 
   return qq{
 <source>
@@ -187,17 +168,17 @@ sub makeXml {
   </category>
 
   <category name="organism">
-    <parameter name="name">$propsHash->{organism}</parameter>$strain
-    <parameter name="taxon_id">$propsHash->{taxonId}</parameter>
+    <parameter name="name">$organism</parameter>$strain
+    <parameter name="taxon_id">$taxonId</parameter>
   </category>
 
   <category name="gff3">
     <parameter name="corresponding_gff3_file">$gffFileName</parameter>
-    <parameter name="ftp_url">$propsHash->{ftp}</parameter>
+    <parameter name="ftp_url">ftp://ftp.brc-central.org/xml/</parameter>
   </category>
 
   <category name="submission">
-    <parameter name="brc_central_submits_to_refseq">$propsHash->{brcSubmitsToRefseq}</parameter>
+    <parameter name="brc_central_submits_to_refseq">$brcSubmitsToRefseq</parameter>
   </category>
 
   <category name="sequence_info">
@@ -214,49 +195,27 @@ sub makeXml {
 }
 
 sub usage {
-  print STDERR "
+  print STDERR q{
 Create an XML file to send to BRC Central specifying the sequence meta info 
 for a GFF file.
 
-usage: makeBrcSeqXmlFile --configFile file [--changedSeqsFile file]
+usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffPrefix --brcSubmits --curators [--strain] [--changesFile file]
 
 where:
-  configFile:      a configuration file, as discussed below
-  changedSeqsFile: a file with a list of sequences that have changed since 
+  extDbName:   ExternalDatabase.name for the genome sequence
+  extDbRlsVer: ExternalDatabaseRelease.version for the genome sequence
+  gffPrefix:   the prefix of the gff file name, to which db name and version
+               will be appended)
+  brcSubmits:  'yes' if the BRC submits this genome to refseq. 'no' otherwise
+  strain:      optional. only needed if taxon name doesn't already include it
+  curation:    '%%' delimited list of curation info.  each element is a '|'
+               delimited list of who_is_responsible_for_annotating and
+               who_is_responsible_for_modifying 
+  changesFile: a file with a list of sequences that have changed since
                    the original, as discussed below
 
-
-Config File
-
-The config file is in 'property file' format (see sample below).  here are the
-properties:
-
-extDbName=   (ExternalDatabase.name for the genome sequence)
-
-extDbRlsVer= (ExternalDatabaseRelease.version for the genome sequence)
-
-gffPrefix= (the prefix of the gff file name, to which db name and version,
-            eg _PlasmoDB-5.2.gff, will be appended)
-
-brcSubmitsToRefseq= (yes|no)
-
-strain= (optional. only needed if taxon name doesn't already include it)
-
-curation= (who_is_responsible_for_annotating | who_is_responsible_for_modifying)
-
-gene_end=  (who is responsible for modifying the gene structure)
-
-   * NOTE: there can be more than one curation property
-
-
-Sample Config File
-
-extDbName=Sanger P. falciparum chromosomes
-extDbRelVer=2005-09-26
-gffPrefix=PlasmoGeneModels_PlasmoDB
-brcSubmitsToRefseq=yes
-curation=Sanger | Haiming
-curation=TIGR | Mark
+Sample command line:
+% makeBrcSeqXmlFile --extDbName "Sanger P. falciparum chromosomes"  --extDbRlsVer "2005-09-26"  --gffPrefix PfalciparumGeneModels_PlasmoDB --brcSubmits no --curation "Sanger|Haiming%%TIGR|Mark"
 
 
 Changed Seqs File
@@ -266,6 +225,6 @@ with these columns:
  sequence_source_id
  submitted to genbank (1 or 0)
 
-";
+};
   exit(1);
 }
