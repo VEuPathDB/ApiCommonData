@@ -391,6 +391,30 @@ sub createPsipredSubdir {
   $mgr->endStep($signal);
 }
 
+sub fixProteinIdsForPsipred{
+    my ($mgr,$file,$fileDir) = @_;
+
+    my $propertySet = $mgr->{propertySet};
+
+    my $signal = "fix${file}ForPsipred";
+
+    return if $mgr->startStep("Fixing protein IDs in $file for psipred", $signal);
+
+    my $outputFile = $file;
+    $outputFile =~ s/(\S+)\.(\S+)/$1/;
+    $outputFile .= "Psipred.".$2;
+
+    my $fix = 's/^(\S+)-(\d)/$1_$2/g';
+
+    my $cmd = "cat $mgr->{dataDir}/${fileDir}/$file | perl -pe '$fix' > $mgr->{dataDir}/${fileDir}/${outputFile}";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+#TODO: write step to correct ids in Psipred results to look like those in database
+
 sub startPsipredOnComputeCluster {
   my ($mgr,$query,$subject,$queue) = @_;
 
