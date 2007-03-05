@@ -536,7 +536,13 @@ sub writePageInputFile {
       push @output, @{$input->{$element}->{$conditionBName}};
     }
 
-    print PAGE join("\t", $element, @output) . "\n";
+    my $naCount;
+    map {$naCount++ if($_ eq 'NA')} @output;
+
+    # Don't print if they are all NA's
+    unless(scalar(@output) == $naCount) {
+      print PAGE join("\t", $element, @output) . "\n";
+    }
   }
   close PAGE;
 }
