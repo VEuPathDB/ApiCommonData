@@ -11,6 +11,8 @@ use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
 use GUS::Model::DoTS::Transcript;
 
+use Error qw (:try);
+
 use Bio::Seq;
 use Bio::Tools::GFF;
 use CBIL::Bio::SequenceUtils;
@@ -255,9 +257,17 @@ sub processSnpFile{
 
     $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
     $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
-    $self->_addMajorMinorInfo($snpFeature);
 
-    $snpFeature->submit();
+    try {
+      $self->_addMajorMinorInfo($snpFeature);
+      $snpFeature->submit();
+    } catch GUS::PluginMgr::PluginUserError with {
+      my $e = shift;
+      my $msg = $e->text();
+
+      $self->log("WARNING:  $msg");
+    };
+
     $self->undefPointerCache();
 
     $lineNum++;
@@ -302,7 +312,7 @@ sub _addMajorMinorInfo {
   my $numbers = scalar(keys %counts);
 
   if(scalar(@sortedAlleleKeys) == 1) {
-    $self->userError("No Variation for source_id $sourceId");
+    $self->userError("No Variation for source_id [$sourceId]");
   }
 
   my $majorAllele = @sortedAlleleKeys[0];
@@ -471,12 +481,12 @@ sub createSnpFeature {
   my $ref = $self->getArg('reference');
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
-    new({NAME => $name,
-         SEQUENCE_ONTOLOGY_ID => $soId,
-         EXTERNAL_DATABASE_RELEASE_ID => $extDbRlsId,
-         SOURCE_ID => $sourceId,
-         REFERENCE_STRAIN => $ref,
-         ORGANISM => $organism,
+    new({name => $name,
+         sequence_ontology_id => $soId,
+         external_database_release_id => $extDbRlsId,
+         source_id => $sourceId,
+         reference_strain => $ref,
+         organism => $organism,
 	});
 
   $snpFeature->retrieveFromDB() if $self->getArg('restart');
@@ -822,6 +832,7 @@ sub getAllTranscriptLocations {
                    };
     push(@{$data{$naSeqId}}, $location);
   }
+
   return(\%data);
 }
 
