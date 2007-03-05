@@ -1106,7 +1106,12 @@ sub filterBLASTResults{
   my ($mgr, $taxonList, $gi2taxidFile, $blastDir, $fileName) = @_;
 
   my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/$fileName";
-
+  my $inputFile = $blastFile.'.unfiltered';
+  
+  unless (-e $inputFile) {
+    rename($blastFile, $inputFile) or die "can not rename $blastFile to $inputFile\n";
+  }
+  
   my $outFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
 
   $gi2taxidFile = "$mgr->{dataDir}/misc/$gi2taxidFile";
@@ -1119,7 +1124,7 @@ sub filterBLASTResults{
 
   return if $mgr->startStep("Filtering blast results for $blastDir", $signal);
 
-  my $cmd = "splitAndFilterBLASTX --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $blastFile --outputFile $outFile 2>> $logFile";
+  my $cmd = "splitAndFilterBLASTX --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $outFile 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
