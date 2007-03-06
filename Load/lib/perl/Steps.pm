@@ -382,11 +382,12 @@ sub createPsipredSubdir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $psipredTaskSize = $propertySet->getProp('psipred.taskSize');
   my $psipredPath = $propertySet->getProp('psipred.clusterpath');
+  my $ncbiBinPath = $propertySet->getProp('psipred.ncbibin');
 
   &makePsipredDir($queryFile, $dbFile, $dataDir, $clusterDataDir,
 		  $nodePath, $psipredTaskSize,
 		  $psipredPath,
-		  $queryFile,"$clusterDataDir/psipred",$dbFile,$nodeClass);
+		  $queryFile,"$clusterDataDir/psipred",$dbFile,$nodeClass,$ncbiBinPath);
 
   $mgr->endStep($signal);
 }
