@@ -64,6 +64,7 @@ sub undoAll{
   $self->_undoPseudo();
   $self->_undoTranscriptProteinId();
   $self->_undoTranscriptTranslExcept();
+  $self->_undoOrfTranslation();
 }
 
 
@@ -399,6 +400,33 @@ sub function {
 sub _undoFunction{
   my ($self) = @_;
 
+}
+
+
+################### open reading frame translation  #################
+sub orfTranslation {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  my @tags = $bioperlFeature->get_tag_values($tag);
+  my $transAaFeat = GUS::Model::DoTS::TranslatedAAFeature->new({
+            'is_predicted' => 1,
+            'external_database_release_id' => $feature->getExternalDatabaseReleaseId(),
+            'source_id' => $bioperlFeature->get_tag_values('locus_tag'),
+  });
+  my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
+            'sequence' => $tags[0],
+            'source_id' => $bioperlFeature->get_tag_values('locus_tag'),
+            'external_database_release_id' => $feature->getExternalDatabaseReleaseId(),
+            'length' => length($tags[0]),
+  });
+  $aaSeq->submit();
+  $transAaFeat->setAaSequenceId($aaSeq->getId());
+  return [$transAaFeat];
+}
+
+sub _undoOrfTranslation {
+  my ($self) = @_;
+  $self->_deleteFromTable('DoTS.TranslatedAAFeature');
+  $self->_deleteFromTable('DoTS.TranslatedAASequence');
 }
 
 ################## static methods to be used by this and other S.C.Q.H.s ######
