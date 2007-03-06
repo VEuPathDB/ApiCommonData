@@ -176,7 +176,7 @@ sub makeTRNAscanDir {
 sub makePsipredDir {
   my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
       $nodePath, $taskSize, $psipredPath,$queryFile, $fileDir,
-      $subjectFile,$nodeClass) = @_;
+      $subjectFile,$nodeClass, $ncbiBinPath) = @_;
 
   my $inputDir = "$localDataDir/psipred/$queryName-$subjectName/input";
 
@@ -191,7 +191,7 @@ sub makePsipredDir {
 
   my $queryFilePath = "$clusterDataDir/seqfiles/$queryFile";
 
-  &makePsipredTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$psipredPath);
+  &makePsipredTaskPropFile($inputDir, $queryFilePath,$subjectFilePath,$psipredPath,$ncbiBinPath);
 
   &runCmd("chmod -R g+w $localDataDir/psipred/$queryName-$subjectName");
 }
@@ -316,7 +316,7 @@ inputFilePath=$seqFilePath
 }
 
 sub makePsipredTaskPropFile {
-  my ($inputDir, $queryFilePath,$subjectFilePath, $psipredPath) = @_;
+  my ($inputDir, $queryFilePath,$subjectFilePath, $psipredPath, $ncbiBinPath) = @_;
 
   open(F, ">$inputDir/task.prop") 
     || die "Can't open $inputDir/task.prop for writing";
@@ -325,6 +325,7 @@ sub makePsipredTaskPropFile {
 "psipredDir=$psipredPath
 dbFilePath=$subjectFilePath
 inputFilePath=$queryFilePath
+ncbiBinDir=$ncbiBinPath
 ";
     close(F);
 }
