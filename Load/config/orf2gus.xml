@@ -1,0 +1,12 @@
+<mapping>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <feature name="ORF" table="DoTS::Transcript" so="ORF">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="translation" handler="api" method="orfTranslation"/>
+  </feature>
+
+</mapping>
+
