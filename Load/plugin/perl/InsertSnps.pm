@@ -304,14 +304,19 @@ sub _addMajorMinorInfo {
     $counts{$count} = 1;
   }
 
-  my @sortedAlleleKeys;
-    foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
-      push(@sortedAlleleKeys, $allele) unless($allele eq "");
+  my (@sortedAlleleKeys, $nullAllele);
+  foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
+    if($allele eq "") {
+      $nullAllele = 1;
     }
+    else {
+      push(@sortedAlleleKeys, $allele) ;
+    }
+  }
 
   my $numbers = scalar(keys %counts);
 
-  if(scalar(@sortedAlleleKeys) == 1) {
+  if(scalar(@sortedAlleleKeys) == 1 && !$nullAllele) {
     $self->userError("No Variation for source_id [$sourceId]");
   }
 
