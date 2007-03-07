@@ -3266,6 +3266,4 @@ EOF
          "Loading $dir Iprscan output");
 }
 
-sub 
-
 1;
