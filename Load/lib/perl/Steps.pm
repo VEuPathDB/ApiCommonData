@@ -337,7 +337,7 @@ sub parsedbEST {
 
 
 sub createPsipredDirWithFormattedDb {
-  my ($mgr,$dbFile,$dbFileDir) = @_;
+  my ($mgr,$dbFile,$dbFileDir,$format) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -355,11 +355,13 @@ sub createPsipredDirWithFormattedDb {
 
   $mgr->runCmd("${psipredPath}/pfilt $mgr->{dataDir}/psipred/${dbFile}Ln > $mgr->{dataDir}/psipred/${dbFile}Filt");
 
-  $mgr->runCmd("${ncbiBlastPath}/formatdb -i $mgr->{dataDir}/psipred/${dbFile}Filt -p T");
-
-  $mgr->runCmd("rm -f $mgr->{dataDir}/psipred/${dbFile}Ln");
+  if($format){
+    $mgr->runCmd("${ncbiBlastPath}/formatdb -i $mgr->{dataDir}/psipred/${dbFile}Filt -p T");
 
   $mgr->runCmd("rm -f $mgr->{dataDir}/psipred/${dbFile}Filt");
+  }
+
+  $mgr->runCmd("rm -f $mgr->{dataDir}/psipred/${dbFile}Ln");
 
   $mgr->endStep($signal);
 
