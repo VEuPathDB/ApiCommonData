@@ -1571,7 +1571,7 @@ sub extractNRDB {
 }
 
 sub extractProteinSeqs {
-  my ($mgr,$name,$sql) = @_;
+  my ($mgr,$name,$sql,$minLength,$maxStopCodonPercent) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${name}Extract";
@@ -1581,7 +1581,12 @@ sub extractProteinSeqs {
   my $seqFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${name}Extract.log";
 
-  my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose 2>> $logFile";
+  my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose";
+
+  $cmd .= " --minLength $minLength " if $minLength;
+  $cmd .= " --maxStopCodonPercent $maxStopCodonPercent " if $maxStopCodonPercent;
+
+  $cmd .= " 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
@@ -3259,6 +3264,8 @@ EOF
          "ApiCommonData::Load::Plugin::InsertInterproscanResults", 
          $args,
          "Loading $dir Iprscan output");
- }
+}
+
+sub 
 
 1;

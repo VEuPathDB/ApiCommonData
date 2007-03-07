@@ -39,6 +39,25 @@ sub initPlasmoAnalysis {
 }
 
 
+sub initOrthomclAnalysis {
+  my ($propertyFile, $printXML, $pipelineName) = @_;
+
+  my $allSpecies = 'BAE_all';
+
+  my $taxId = [];
+
+  my ($mgr, $projectDir, $release)
+    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
+			      $allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
+#####################################################################
+# Internal subroutines
+#####################################################################
+
+
 sub initToxoPlasmoAnalysis {
   my ($propertiesFile, $printXML, $allSpecies, $taxId) = @_;
 
@@ -149,5 +168,18 @@ my @toxoProps =
  ["trfPath","","path to find the trf software"]
 );
 
+my @orthomclProps = 
+(
+ ["wuBlastBinPathCluster", "", "path to find wu BLAST on cluster"],
+ ["wuBlastPath", "", "path to find wu BLAST locally"],
+ ["blastzPath", "", "path to find BLASTZ locally"],
+ ["projectName", "", " project name from projectinfo.name"],
+ ["ncbiBlastPath", "", "path to find ncbi blast dir on server"],
+);
+
+my @orthomclProps = 
+(
+
+);
 
 1;
