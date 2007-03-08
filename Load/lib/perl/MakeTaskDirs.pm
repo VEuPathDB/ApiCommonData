@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir makeIprscanDir);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeDirForGfClient makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir makeIprscanDir);
 
 use strict;
 use Carp;
@@ -57,6 +57,31 @@ sub makeRMDir {
 
 sub makeGenomeDir {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
+	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass) = @_;
+    my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
+    my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
+    &_createDir("$localDataDir/genome");
+
+    my @targetFiles;
+    &runCmd("mkdir -p $inputDir");
+    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+			    $nodePath,
+			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
+    my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
+    my $serverInputDir = "$serverBase/input";
+    &makeGenomeTaskPropFile($inputDir, $serverInputDir, $seqFileName,
+			    $gaOptions, $gaBinPath);
+    my $oocFile; # = $serverGDir . '/11.ooc';
+    &makeGenomeParamsPropFile($inputDir . '/params.prop', $oocFile);
+
+    push @targetFiles, "$clusterDataDir/seqfiles/$genomeFile.fsa";
+    &makeGenomeTargetListFile($inputDir . '/target.lst', @targetFiles);
+
+    &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
+}
+
+sub makeGenomeDirForGfClient {
+    my ($queryName, $targetName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort) = @_;
     my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
     my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
@@ -69,10 +94,10 @@ sub makeGenomeDir {
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
-    &makeGenomeTaskPropFile($inputDir, $targetDirPath,$nodePort, $queryName,
+    &makeGenomeTaskPropFileForGfClient($inputDir, $targetDirPath,$nodePort, $queryName,
 			    $maxIntron, $gaBinPath, $clusterDataDir);
 
-    &makeGenomeTargetListFile($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
+    &makeGenomeTargetListFileForGfClient($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
 
     &runCmd("chmod -R g+w $localDataDir/genome/$queryName-$targetName");
 }
@@ -260,7 +285,24 @@ dangleMax=$dangleMax
     close(F);
 }
 
+
 sub makeGenomeTaskPropFile {
+    my ($inputDir, $serverInputDir, $seqFileName, $gaOptions, $gaBinPath) = @_;
+
+    my $targetListFile = "$inputDir/target.lst";
+    my $serverTargetListFile = "$serverInputDir/target.lst";
+
+    open(F, ">$inputDir/task.prop")
+	|| die "Can't open $inputDir/task.prop for writing";
+    print F
+"gaBinPath=$gaBinPath
+targetListPath=$serverTargetListFile
+queryPath=$seqFileName
+";
+    close(F);
+}
+
+sub makeGenomeTaskPropFileForGfClient {
     my ($inputDir, $targetDirPath, $nodePort, $query, $maxIntron, $gaBinPath, $clusterDataDir) = @_;
 
     open(F, ">$inputDir/task.prop")
@@ -276,6 +318,15 @@ maxIntron=$maxIntron
 }
 
 sub makeGenomeTargetListFile {
+    my ($targetListFile, @targetFiles) = @_;
+
+    open(F, ">$targetListFile") || die "Can't open $targetListFile for writing";
+
+    foreach (@targetFiles) { print F $_ . "\n"; }
+    close(F);
+}
+
+sub makeGenomeTargetListFileForGfClient {
     my ($targetListFile, $localDataDir, $targetName,$clusterDataDir) = @_; 
 
     open(F, ">$targetListFile") || die "Can't open $targetListFile for writing";
