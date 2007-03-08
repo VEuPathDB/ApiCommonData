@@ -510,10 +510,10 @@ sub documentPsipred {
 
 
 sub createRepeatMaskDir {
-  my ($mgr, $file) = @_;
+  my ($mgr, $species, $file) = @_;
 
   my $propertySet = $mgr->{propertySet};
-  my $signal = "make" . ucfirst($file) . "RMDir";
+  my $signal = "make$species" . ucfirst($file) . "SubDir";
 
   return if $mgr->startStep("Creating $file repeatmask dir", $signal);
 
@@ -526,12 +526,13 @@ sub createRepeatMaskDir {
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
 
-  &makeRMDir($file, $dataDir, $clusterDataDir,
-	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
+  my $speciesFile = $species . $file;
+  &makeRMDir($speciesFile, $dataDir, $clusterDataDir,
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, 
+	     $nodeClass);
 
   $mgr->endStep($signal);
 }
-
 
 sub createRepeatMaskDir_new {
   my ($mgr, $file) = @_;
