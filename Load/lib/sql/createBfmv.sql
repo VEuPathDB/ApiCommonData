@@ -45,17 +45,9 @@ SELECT gf.source_id,
        DECODE(nvl(nl.is_reversed, 0), 0, 'forward', 1, 'reverse',
               nl.is_reversed) AS strand,
        sequence.source_id AS sequence_id,
---     SUBSTR('<i>' ||                        -- italicize HTML
---            SUBSTR(tn.name, 1, 1) || '.' || -- "<genus-initial>."
---            REGEXP_REPLACE(SUBSTR(tn.name, INSTR(tn.name, ' ', 1, 1)),
---                           '[[:space:]]+', chr(38)||'nbsp;') ||
---                   -- remainder of name, with spaces replaced with NBSPs
---            '</i>',                         -- /italicize HTML
---            1, 60) -- TaxonName.name is varchar2(255), actual |names| < 60
---       AS formatted_organism,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
-       nvl(protein.tm_domains, 0) AS tm_count,
+       NVL(protein.tm_domains, 0) AS tm_count,
        so_id, SUBSTR(so.term_name, 1, 200) AS so_term_name,
        SUBSTR(so.definition, 1, 150) AS so_term_definition,
        so.ontology_name, so.so_version,
@@ -67,9 +59,9 @@ SELECT gf.source_id,
        ed.name AS external_db_name,
        edr.version AS external_db_version,
        exons.exon_count, cmnt.comment_string,
-       substr(etc.chromosome, 1, 80) AS chromosome,
-       substr(etc.citation,  1, 80) AS citation,
-       substr(etc.protein_id, 1, 80) AS protein_id,
+       SUBSTR(etc.chromosome, 1, 80) AS chromosome,
+       SUBSTR(etc.citation,  1, 80) AS citation,
+       SUBSTR(etc.protein_id, 1, 80) AS protein_id,
        etc.linkout, etc.molecular_weight_note, etc.dtext, etc.sptext,
        etc.signalp_start, etc.signalp_end
 FROM dots.GeneFeature gf, dots.NaLocation nl,
@@ -234,22 +226,26 @@ SELECT snp.source_id AS source_id,
        DECODE(snp.is_coding, 0, 'no', 1, 'yes') AS is_coding,
        snp.position_in_CDS,
        snp.position_in_protein,
-       SUBSTR(CASE WHEN gene_info.is_reversed = 1 THEN snp.strains_revcomp ELSE snp.strains END, 1, 200) AS description,
-       SUBSTR(snp.reference_aa, 1, 200) AS reference_aa,
-       DECODE(snp.has_nonsynonymous_allele, 0, 'no', 1, 'yes') AS has_nonsynonymous_allele,
-       gene_info.source_id AS gene_source_id,
-       DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse') AS gene_strand,
        SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence,50,snp_loc.start_min + 1))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence,50,snp_loc.start_min - 50)
+                   THEN snp.strains_revcomp
+                   ELSE snp.strains END, 1, 200) AS description,
+       SUBSTR(snp.reference_aa, 1, 200) AS reference_aa,
+       DECODE(snp.has_nonsynonymous_allele, 0, 'no', 1, 'yes')
+         AS has_nonsynonymous_allele,
+       gene_info.source_id AS gene_source_id,
+       DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
+         AS gene_strand,
+       SUBSTR(CASE WHEN gene_info.is_reversed = 1
+                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1))
+                   ELSE DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50)
               END, 1, 50) AS lflank,
        SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence,1,snp_loc.start_min))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence,1,snp_loc.start_min)
+                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 1, snp_loc.start_min))
+                   ELSE DBMS_LOB.SUBSTR(s.sequence, 1, snp_loc.start_min)
               END, 1, 50) AS allele,
        SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence,50,snp_loc.start_min - 50))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence,50, snp_loc.start_min + 1)
+                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50))
+                   ELSE DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1)
               END, 1, 50) AS rflank,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
@@ -259,13 +255,13 @@ FROM dots.ExternalNaSequence s, dots.SnpFeature snp, dots.NaLocation snp_loc,
      (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id
       FROM dots.GeneFeature gene, dots.NaLocation gene_loc
       WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
-WHERE  edr.external_database_release_id = snp.external_database_release_id
-  AND  ed.external_database_id = edr.external_database_id
-  AND  s.na_sequence_id = snp.na_sequence_id
-  AND  s.taxon_id = taxon.taxon_id
-  AND  s.taxon_id = tn.taxon_id
-  AND  snp_loc.na_feature_id = snp.na_feature_id
-  AND  gene_info.na_feature_id(+) = snp.parent_id;
+WHERE edr.external_database_release_id = snp.external_database_release_id
+  AND ed.external_database_id = edr.external_database_id
+  AND s.na_sequence_id = snp.na_sequence_id
+  AND s.taxon_id = taxon.taxon_id
+  AND s.taxon_id = tn.taxon_id
+  AND snp_loc.na_feature_id = snp.na_feature_id
+  AND gene_info.na_feature_id(+) = snp.parent_id;
 
 GRANT SELECT ON apidb.SnpAttributes TO PUBLIC;
 
@@ -284,21 +280,17 @@ SELECT SUBSTR(taas.source_id, 1, 60) AS source_id,
        SUBSTR(ens.source_id, 1, 30) AS nas_id,
        SUBSTR(taas.source_id, 1, 50) AS orf_id,
        taas.length
-FROM dots.ExternalNaSequence ens,
-        dots.Transcript t,
-        dots.TranslatedAaFeature taaf,
-        dots.TranslatedAaSequence taas,
-        sres.Taxon,
-        sres.TaxonName tn,
-        sres.SequenceOntology so
-  WHERE t.na_feature_id = taaf.na_feature_id
-    AND taaf.aa_sequence_id = taas.aa_sequence_id
-    AND ens.na_sequence_id = t.na_sequence_id
-    AND ens.taxon_id = tn.taxon_id
-    AND ens.taxon_id = taxon.taxon_id
-    AND t.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name = 'ORF'
-    AND tn.name_class='scientific name';
+FROM dots.ExternalNaSequence ens, dots.Transcript t,
+     dots.TranslatedAaFeature taaf, dots.TranslatedAaSequence taas,
+     sres.Taxon, sres.TaxonName tn, sres.SequenceOntology so
+WHERE t.na_feature_id = taaf.na_feature_id
+  AND taaf.aa_sequence_id = taas.aa_sequence_id
+  AND ens.na_sequence_id = t.na_sequence_id
+  AND ens.taxon_id = tn.taxon_id
+  AND ens.taxon_id = taxon.taxon_id
+  AND t.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name = 'ORF'
+  AND tn.name_class='scientific name';
 
 GRANT SELECT ON apidb.OrfAttributes TO PUBLIC;
 
@@ -320,8 +312,8 @@ SELECT ens.source_id,
        (length - (a_count + c_count + g_count + t_count)) AS other_count,
        ens.length,
        l.dbest_name,
-       nvl(l.vector, 'unknown') AS vector,
-       nvl(l.stage, 'unknown') AS stage,
+       NVL(l.vector, 'unknown') AS vector,
+       NVL(l.stage, 'unknown') AS stage,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        ed.name AS external_db_name
