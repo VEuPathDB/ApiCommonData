@@ -508,6 +508,7 @@ sub documentPsipred {
   $mgr->documentStep("psipred", $documentation);
 }
 
+
 sub createRepeatMaskDir {
   my ($mgr, $file) = @_;
 
@@ -531,7 +532,61 @@ sub createRepeatMaskDir {
   $mgr->endStep($signal);
 }
 
+
+sub createRepeatMaskDir_new {
+  my ($mgr, $file) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "make" . ucfirst($file) . "RMDir";
+
+  return if $mgr->startStep("Creating $file repeatmask dir", $signal);
+
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $rmTaskSize = $propertySet->getProp('repeatmask.taskSize');
+  my $rmPath = $propertySet->getProp('repeatmask.path');
+  my $rmOptions = $propertySet->getProp('repeatmask.options');
+  my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
+
+  &makeRMDir($file, $dataDir, $clusterDataDir,
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
+
+  $mgr->endStep($signal);
+}
+
 sub createGenomeDir {
+  my ($mgr, $species, $query, $genome) = @_;
+  my $signal = "create$species" . ucfirst($query) . "-" . ucfirst($genome) . "GenomeDir";
+  return if $mgr->startStep("Creating ${query}-${genome} genome dir", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $dataDir = $mgr->{dataDir};
+  my $clusterDataDir = $mgr->{clusterDataDir};
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $gaTaskSize = $propertySet->getProp('genome.taskSize');
+  my $gaPath = $propertySet->getProp('genome.path');
+  my $gaOptions = $propertySet->getProp('genome.options');
+  my $genomeVer = $propertySet->getProp('genome.version');
+  my $clusterServer = $propertySet->getProp('clusterServer');
+  my $extGDir = $propertySet->getProp('externalDbDir') . '/' . $genomeVer;
+  my $srvGDir = $propertySet->getProp('serverExternalDbDir');
+  my $genus = $propertySet->getProp('genusNickname');
+
+  $extGDir .= "/$genus/$species";
+  $srvGDir .= "/$genus/$species";
+  my $speciesQuery = $species . $query;
+  my $genomeFile = $species . $genome;
+  &makeGenomeDir($speciesQuery, $genome, $dataDir, $clusterDataDir,
+    $nodePath, $gaTaskSize, $gaOptions, $gaPath, $genomeFile, $nodeClass);
+
+  $mgr->endStep($signal);
+}
+
+sub createGenomeDirForGfClient {
   my ($mgr, $query, $genomeDir,$maxIntron) = @_;
 
   my $signal = "create" . ucfirst($query) . "-" . ucfirst($genomeDir) . "GenomeDir";
@@ -548,7 +603,7 @@ sub createGenomeDir {
   my $clusterServer = $propertySet->getProp('clusterServer');
   my $nodePort = $propertySet->getProp('nodePort');
 
-  &makeGenomeDir($query, $genomeDir, $dataDir, $clusterDataDir,
+  &makeGenomeDirForGfClient($query, $genomeDir, $dataDir, $clusterDataDir,
     $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort);
   $mgr->endStep($signal);
 }
