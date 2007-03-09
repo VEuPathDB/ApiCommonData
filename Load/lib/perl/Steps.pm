@@ -3088,7 +3088,7 @@ sub createExtDbAndDbRls {
 
   my $releasePluginArgs = "--databaseName '$extDbName' --databaseVersion '$extDbRlsVer'";
 
-  $releasePluginArgs .= "--description '$extDbRlsDescrip'" if $extDbRlsDescrip;
+  $releasePluginArgs .= " --description '$extDbRlsDescrip'" if $extDbRlsDescrip;
 
   $mgr->runPlugin("createRelease_${extDbName}_$extDbRlsVer",
 		  "GUS::Supported::Plugin::InsertExternalDatabaseRls",$releasePluginArgs,
