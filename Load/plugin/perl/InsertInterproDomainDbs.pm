@@ -178,7 +178,7 @@ sub loadHMMFormat {
    open (DFILE, $file);
    while (<DFILE>) {
      chomp;
-     if (/\/\//) {
+     if (/^\/\//) {
        $self->submitDbRef($dbName, $dataHash->{ACC}, $dataHash->{NAME},
 			  $dataHash->{DESC}, $logFreq, ++$eCount);
      }
@@ -208,7 +208,7 @@ sub loadPRFFormat {
    open (DFILE, $file);
    while (<DFILE>) {
      chomp;  # trailing newline
-     if (/\/\//) {
+     if (/^\/\//) {
        $self->submitDbRef($dbName, $dataHash->{AC}, $dataHash->{ID},
 			  $dataHash->{DE}, $logFreq, ++$eCount);
      }
