@@ -270,15 +270,19 @@ sub loadPrintsFormat {
 }
 
 #>Q9XYH6_CRYPV#PD000006#561#605 | 45 | pd_PD000006;sp_Q9XYH6_CRYPV_Q9XYH6; | (8753)  ATP-BINDING COMPLETE PROTEOME ABC TRANSPORTER TRANSPORTER COMPONENT ATPASE MEMBRANE SYSTEM
+#NLSGGQKQRVSLARAVYQNTDILILDDVFSALDNVVSTSIFQKCI
 sub loadProdomFormat {
    my ($self, $dbName, $file, $logFreq) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
    open DFILE, "<$file";
    my $eCount = 0;
+   my %seen;
    while (<DFILE>) {
+     next unless /^>/;
      chomp;
      my @dataAry = split(/\|/);
      my ($junk, $primId, $junk2) = split(/\#/, $dataAry[0]);
+     next if $seen{$primId}++;
      my ($junk3, $desc) = split(/\)\s+/, $dataAry[3]);
      $desc =~ s/\s+$//;   # lose trailing white space
      $self->submitDbRef($dbName, $primId, undef, $desc, $logFreq, ++$eCount);
