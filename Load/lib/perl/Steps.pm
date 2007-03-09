@@ -1683,7 +1683,7 @@ sub startGenomeAlignOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runGenomeAlign --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
+  my $clusterCmdMsg = "runGenomeAlign $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $targetDir $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
