@@ -40,13 +40,13 @@ sub _createDir {
 
 sub makeRMDir {
     my ($datasetName, $localDataDir, $clusterDataDir,
-	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass) = @_;
+	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes) = @_;
 
     &_createDir("$localDataDir/repeatmask");
     my $inputDir = "$localDataDir/repeatmask/$datasetName/input";
     my $serverBase = "$clusterDataDir/repeatmask/$datasetName";
     &runCmd("mkdir -p $inputDir");
-    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+    &makeControllerPropFile($inputDir, $serverBase, $numNodes, $taskSize,
 			    $nodePath,
 			    "DJob::DistribJobTasks::RepeatMaskerTask",
 			    $nodeClass);
@@ -82,14 +82,14 @@ sub makeGenomeDir {
 
 sub makeGenomeDirForGfClient {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
-	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort) = @_;
+	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort, $numNodes) = @_;
     my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
     my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
     my $targetDirPath = "$clusterDataDir/seqfiles/$targetName/nib";
     &_createDir("$localDataDir/genome");
 
     &runCmd("mkdir -p $inputDir");
-    &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
+    &makeControllerPropFile($inputDir, $serverBase, $numNodes, $taskSize,
 			    $nodePath,
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";

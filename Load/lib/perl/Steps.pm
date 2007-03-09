@@ -535,7 +535,7 @@ sub createRepeatMaskDir {
 }
 
 sub createRepeatMaskDir_new {
-  my ($mgr, $file) = @_;
+  my ($mgr, $file, $numNodes) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "make" . ucfirst($file) . "RMDir";
@@ -552,7 +552,7 @@ sub createRepeatMaskDir_new {
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
 
   &makeRMDir($file, $dataDir, $clusterDataDir,
-	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes);
 
   $mgr->endStep($signal);
 }
@@ -588,7 +588,7 @@ sub createGenomeDir {
 }
 
 sub createGenomeDirForGfClient {
-  my ($mgr, $query, $genomeDir,$maxIntron) = @_;
+  my ($mgr, $query, $genomeDir,$maxIntron, $numNodes) = @_;
 
   my $signal = "create" . ucfirst($query) . "-" . ucfirst($genomeDir) . "GenomeDir";
   return if $mgr->startStep("Creating ${query}-${genomeDir} genome dir", $signal);
@@ -605,7 +605,7 @@ sub createGenomeDirForGfClient {
   my $nodePort = $propertySet->getProp('nodePort');
 
   &makeGenomeDirForGfClient($query, $genomeDir, $dataDir, $clusterDataDir,
-    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort);
+    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort, $numNodes);
   $mgr->endStep($signal);
 }
 
