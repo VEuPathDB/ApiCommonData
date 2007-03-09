@@ -534,6 +534,31 @@ sub createRepeatMaskDir {
   $mgr->endStep($signal);
 }
 
+<<<<<<< .mine
+sub createRepeatMaskDir_new {
+  my ($mgr, $file) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "make" . ucfirst($file) . "RMDir";
+
+  return if $mgr->startStep("Creating $file repeatmask dir", $signal);
+
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $rmTaskSize = $propertySet->getProp('repeatmask.taskSize');
+  my $rmPath = $propertySet->getProp('repeatmask.path');
+  my $rmOptions = $propertySet->getProp('repeatmask.options');
+  my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
+
+  &makeRMDir($file, $dataDir, $clusterDataDir,
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass);
+
+  $mgr->endStep($signal);
+}
+
+=======
 sub createRepeatMaskDir_new {
   my ($mgr, $file, $numNodes) = @_;
 
@@ -557,6 +582,7 @@ sub createRepeatMaskDir_new {
   $mgr->endStep($signal);
 }
 
+>>>>>>> .r15216
 sub createGenomeDir {
   my ($mgr, $species, $query, $genome) = @_;
   my $signal = "create$species" . ucfirst($query) . "-" . ucfirst($genome) . "GenomeDir";
@@ -587,6 +613,30 @@ sub createGenomeDir {
   $mgr->endStep($signal);
 }
 
+<<<<<<< .mine
+sub createGenomeDirForGfClient {
+  my ($mgr, $query, $genomeDir,$maxIntron) = @_;
+
+  my $signal = "create" . ucfirst($query) . "-" . ucfirst($genomeDir) . "GenomeDir";
+  return if $mgr->startStep("Creating ${query}-${genomeDir} genome dir", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+  my $dataDir = $mgr->{dataDir};
+  my $clusterDataDir = $mgr->{clusterDataDir};
+
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $gaTaskSize = $propertySet->getProp('genome.taskSize');
+  my $gaPath = $propertySet->getProp('genome.path');
+  my $clusterServer = $propertySet->getProp('clusterServer');
+  my $nodePort = $propertySet->getProp('nodePort');
+
+  &makeGenomeDirForGfClient($query, $genomeDir, $dataDir, $clusterDataDir,
+    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort);
+  $mgr->endStep($signal);
+}
+
+=======
 sub createGenomeDirForGfClient {
   my ($mgr, $query, $genomeDir,$maxIntron, $numNodes) = @_;
 
@@ -609,6 +659,7 @@ sub createGenomeDirForGfClient {
   $mgr->endStep($signal);
 }
 
+>>>>>>> .r15216
 sub copyPipelineDirToComputeCluster {
   my ($mgr) = @_;
 
@@ -1683,7 +1734,7 @@ sub startGenomeAlignOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runGenomeAlign $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $targetDir $queue";
+  my $clusterCmdMsg = "runGenomeAlignWithGfClient --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
