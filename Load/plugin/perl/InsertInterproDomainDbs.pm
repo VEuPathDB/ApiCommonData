@@ -174,19 +174,21 @@ sub loadHMMFormat {
    my ($self, $dbName, $file, $logFreq) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
    my $dataHash = {};
+   my %seen;
    my $eCount = 0;
    open (DFILE, $file);
    while (<DFILE>) {
      chomp;
      if (/^\/\//) {
+       $dataHash->{ACC} =~ s/\.\d+\.(fs|ls)$// if $dbName eq 'PFAM';  # lose any version info (eg, PF00032.1.fs)
+       next if $seen{$dataHash->{ACC}}++;
        $self->submitDbRef($dbName, $dataHash->{ACC}, $dataHash->{NAME},
 			  $dataHash->{DESC}, $logFreq, ++$eCount);
      }
      elsif (/^(ACC|NAME|DESC)\s+(.+)/) {
        my $key = $1;
        my $val = $2;
-       my @a = split(/\./, $val);  # lose any version info (eg, PF00032.1.fs)
-       $dataHash->{$key} = $a[0];
+       $dataHash->{$key} = $val;
      }
 
      last if ($testNum && $eCount >= $testNum);
@@ -382,7 +384,7 @@ sub loadSuperfamilyFormat {
 
 sub submitDbRef{
    my ($self, $dbName, $id, $name, $descr, $logFreq, $eCount) = @_;
-
+   warn "$dbName, $id, $name, $descr\n" if $self->getArgs()->{'veryVerbose'};;
    my $gusHash = { 'primary_identifier' => $id,
 		   'secondary_identifier' => $name,
 		   'external_database_release_id' => $self->{$dbName}->{extDbRlsId},
