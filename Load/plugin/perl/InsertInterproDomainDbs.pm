@@ -180,7 +180,7 @@ sub loadHMMFormat {
    while (<DFILE>) {
      chomp;
      if (/^\/\//) {
-       $dataHash->{ACC} =~ s/\.\d+\.(fs|ls)$// if $dbName eq 'PFAM';  # lose any version info (eg, PF00032.1.fs)
+       $dataHash->{ACC} =~ s/\.\d+\.(?:fs|ls)$// if $dbName eq 'PFAM';  # lose any version info (eg, PF00032.1.fs)
        next if $seen{$dataHash->{ACC}}++;
        $self->submitDbRef($dbName, $dataHash->{ACC}, $dataHash->{NAME},
 			  $dataHash->{DESC}, $logFreq, ++$eCount);
@@ -206,18 +206,20 @@ sub loadPRFFormat {
    my ($self, $dbName, $file, $logFreq) = @_;
    my $testNum = $self->getArgs()->{'testnumber'};
    my $dataHash = {};
+   my %seen;
    my $eCount = 0;
    open (DFILE, $file);
    while (<DFILE>) {
      chomp;  # trailing newline
      if (/^\/\//) {
+       next if !$dataHash->{AC} or $seen{$dataHash->{AC}}++;
        $self->submitDbRef($dbName, $dataHash->{AC}, $dataHash->{ID},
 			  $dataHash->{DE}, $logFreq, ++$eCount);
      }
-     elsif (/^(AC|ID|DE)\s+(.+)/) {
-       $dataHash->{$1} = $2;
-       chop $dataHash->{$1};   # trailing punctuation
-       $dataHash->{$1} =~ s/\; MATRIX// if ($1 eq 'ID');
+     elsif (my ($k, $v) = /^(AC|ID|DE)\s+(.+)/) {
+       $dataHash->{$k} = $v;
+       $dataHash->{$k} =~ s/[\.;]+$//;   # trailing punctuation
+       $dataHash->{$k} =~ s/;\s+(?:MATRIX|PATTERN)$// if ($k eq 'ID');
      }
 
      last if ($testNum && $eCount >= $testNum);
