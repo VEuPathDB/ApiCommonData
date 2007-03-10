@@ -317,7 +317,6 @@ sub loadPirsfFormat {
      } elsif ($getDescNext) {
        $getDescNext = 0;
        $desc = $_;
-       $eCount++;
        $self->submitDbRef($dbName, $id, undef, $desc, $logFreq, ++$eCount);
        last if ($testNum && $eCount >= $testNum)
      }
