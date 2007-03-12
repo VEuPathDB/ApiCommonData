@@ -14,6 +14,7 @@ use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::RNAType;
 use GUS::Model::SRes::SequenceOntology;
+use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -153,15 +154,19 @@ sub run {
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
 						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
 
-  my $rnaId = $self->getSoId("tRNA_gene") || $self->error ("Can't retrieve so_id for tRNA_gene");
+  my $rnaId = $self->getSoId("tRNA_encoding") || $self->error ("Can't retrieve so_id for tRNA_gene");
 
-  my $primTransc = $self->getSoId("nc_primary_transcript") || $self->error ("Can't retrieve so_id for nc_primary_transcript");;
+  my $primTransc = $self->getSoId("transcript") || $self->error ("Can't retrieve so_id for transcript");
 
-  my $exon = $self->getSoId("exon") || $self->error ("Can't retrieve so_id for exon");;
+  my $exon = $self->getSoId("exon") || $self->error ("Can't retrieve so_id for exon");
+
+  my $procTransc = $self->getSoId("processed_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
 
   my %soIds = ('geneFeat' => $rnaId,
 	       'transcript' => $primTransc,
-	       'exonFeat' => $exon);
+	       'exonFeat' => $exon,
+	       'procTransc' => $procTransc
+	      );
 
   my $tRNAs = $self->parseFile();
 
@@ -253,6 +258,7 @@ sub loadScanData {
 
     $processed++;
 
+#MAY NEED TO SUBMIT THE SPLICEDNASEQUENCE AS WELL
     $extNaSeq->submit();
     $self->undefPointerCache();
   }
@@ -283,7 +289,7 @@ sub getGeneFeat {
 
   $sourceId =~ s/\s//g;
 
-  my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'name' => "tRNA_gene",
+  my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'name' => "tRNA_encoding",
 						     'sequence_ontology_id' => $soIds->{'geneFeat'},
 						     'external_database_release_id' => $scanReleaseId,
 						     'source_id' => $sourceId,
@@ -306,13 +312,14 @@ sub getGeneFeat {
 
   $geneFeat->addChild($naLoc);
 
-  my $transcript = $self->getTranscript($seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId);
+  my $transcript = $self->getTranscript($seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId, $geneFeat);
 
-  $geneFeat->addChild($transcript);
 }
 
 sub getTranscript {
-  my ($self,$seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId) = @_;
+  my ($self,$seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId, $geneFeat) = @_;
+
+  $sourceId .= "-1";
 
   my $transcript = GUS::Model::DoTS::Transcript->new({'name' => "transcript",
 						      'sequence_ontology_id' => $soIds->{'transcript'},
@@ -324,16 +331,20 @@ sub getTranscript {
 
   $transcript->retrieveFromDB();
 
-  $extNaSeq->addChild($transcript);
+  $geneFeat->addChild($transcript);
 
   my $rnaType = $self->getRNAType($tRNAs->{$seqSourceId}->{$tRNA}->{'anticodon'});
 
   $transcript->addChild($rnaType);
 
-  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,,$extNaSeq);
+  my $exonFeats = $self->getExonFeats($soIds,$scanReleaseId,$seqSourceId,$tRNA,$tRNAs,$extNaSeq);
 
   foreach my $exon (@{$exonFeats}) {
-    $transcript->addChild($exon);
+    my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
+    $rnaFeatureExon->setParent($transcript);
+    $rnaFeatureExon->setParent($exon);
+
+    $exon->setParent($geneFeat);
   }
 
   my $start = $tRNAs->{$seqSourceId}->{$tRNA}->{'start'};
@@ -345,6 +356,12 @@ sub getTranscript {
   my $naLoc = $self->getNaLocation($start,$end,$isReversed);
 
   $transcript->addChild($naLoc);
+
+  my $taxonId = $extNaSeq->getTaxonId();
+
+  my $transcriptSeq = $self->getTranscriptSeq($exonFeats, $taxonId, $scanReleaseId, $soIds);
+
+  $transcriptSeq->addChild($transcript);
 
   return $transcript;
 }
@@ -400,9 +417,14 @@ sub getExonFeats {
 sub makeExonFeat {
   my ($self,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
 
-  my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon", 
+  my $codingStart = $isReversed ? $end : $start;
+  my $codingEnd = $isReversed ? $start : $end;
+
+  my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon",
 						 'sequence_ontology_id' => $soIds->{'exonFeat'},
 						 'order_number' => $orderNum,
+						 'coding_start' => $codingStart,
+						 'coding_end' => $codingEnd,
 						 'external_database_release_id' => $scanReleaseId});
 
   my $naLoc = $self->getNaLocation($start,$end,$isReversed);
@@ -424,12 +446,32 @@ sub getNaLocation {
   return $naLoc;
 }
 
+sub getTranscriptSeq{
+  my ($self, $exonFeats, $taxonId, $scanReleaseId, $soIds) = @_;
+
+  my $transcriptNaSeq =
+    GUS::Model::DoTS::SplicedNASequence->new({sequence_ontology_id => $soIds->{'procTransc'},
+                                              sequence_version => 1,
+                                              taxon_id => $taxonId,
+                                              external_database_release_id => $scanReleaseId
+                                             });
+
+  my $transcriptSeq = ApiCommonData::Load::Util::getCodingSequenceFromExons($exonFeats);
+
+
+  $transcriptNaSeq->setSequence($transcriptSeq);
+
+  return $transcriptNaSeq;
+}
+
 
 sub undoTables {
-  return qw(DoTS.NALocation,
-	    DoTS.GeneFeature,
-	    DoTS.Transcript,
-	    DoTS.ExonFeature,
-	    DoTS.RNAType
-           );
+  return ('DoTS.NALocation',
+	  'DoTS.GeneFeature',
+	  'DoTS.RnaFeatureExon',
+	  'DoTS.SplicedNASequence',
+	  'DoTS.Transcript',
+	  'DoTS.ExonFeature',
+	  'DoTS.RNAType'
+	 );
 }
