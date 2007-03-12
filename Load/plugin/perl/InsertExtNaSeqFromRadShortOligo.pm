@@ -89,23 +89,38 @@ sub run {
 
   die "Couldn't find external_database_release_id" unless $extDbRlsId;
 
-  my $sql = "SELECT sequence,element_id FROM RAD.ShortOligo WHERE external_database_release_id = $extDbRlsId";
+  my $sql = "
+SELECT sequence, element_id, source_id
+FROM RAD.ShortOligo
+WHERE external_database_release_id = $extDbRlsId
+order by source_id
+";
 
   my $stmt = $self->prepareAndExecute($sql);
-  my $count = 0;
-  while (my ($seq, $elementId) = $stmt->fetchrow_array()) {
-    if ($count++ % 5000 == 0) {
-      $self->undefPointerCache();
-      $self->log("processing oligo number $count");
-    }
-    my $naSeq = GUS::Model::DoTS::ExternalNASequence->
-      new({sequence => $seq,
-	   external_database_release_id =>$extDbRlsId});
+  my $sourceIdHash = {};
+  while (my ($seq, $elementId, $sourceId) = $stmt->fetchrow_array()) {
+    push(@{$sourceIdHash->{$sourceId}}, [$seq, $elementId]);
+  }
 
-    my $elementNaSeq = GUS::Model::RAD::ElementNASequence->
-      new({element_id=>$elementId});
-    $naSeq->addChild($elementNaSeq);
-    $naSeq->submit();
+  my $count = 0;
+  foreach my $sourceId (keys %{$sourceIdHash}) {
+    my @sortedOligos =sort {$a->[0] cmp $b->[0]} @{$sourceIdHash->{$sourceId}};
+    my $o = 0;
+    foreach my $oligo (@sortedOligos) {
+      if ($count++ % 5000 == 0) {
+	$self->undefPointerCache();
+	$self->log("processing oligo number $count");
+      }
+      my $naSeq = GUS::Model::DoTS::ExternalNASequence->
+	new({sequence => $oligo->[0],
+	     source_id => "$sourceId_$o";
+	     external_database_release_id =>$extDbRlsId});
+
+      my $elementNaSeq = GUS::Model::RAD::ElementNASequence->
+	new({element_id=>$oligo->[1]);
+      $naSeq->addChild($elementNaSeq);
+      $naSeq->submit();
+    }
   }
 
   my $msg = "Inserted $count na seqs";
