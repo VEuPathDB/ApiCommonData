@@ -4,10 +4,10 @@ package ApiCommonData::Load::Plugin::InsertAveragedProfiles;
 
 use strict;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::PlasmoDB::Profile;
-use GUS::Model::PlasmoDB::ProfileSet;
-use GUS::Model::PlasmoDB::ProfileElement;
-use GUS::Model::PlasmoDB::ProfileElementName;
+use GUS::Model::ApiDB::Profile;
+use GUS::Model::ApiDB::ProfileSet;
+use GUS::Model::ApiDB::ProfileElement;
+use GUS::Model::ApiDB::ProfileElementName;
 use ApiCommonData::Load::ExpressionProfileInsertion;
 
 my $argsDeclaration =
@@ -100,13 +100,15 @@ sub processProfileSet {
 
   $self->log("Creating averaged ProfileSet for $profileSetName");
 
+  my ($descrip, $header) = $self->getMetaInfo($profileSetName, $extDbRlsId);
+  my $expectedElementCount =  scalar(@$header);
+
   my $gene2profileIds = 
     $self->findGene2ProfilesMapping($profileSetName, $extDbRlsId); #debug sql
 
-  my ($descrip, $header) = $self->getMetaInfo($profileSetName, $extDbRlsId);
-  my $expectedElementCount =  scalar($header);
-
   my @genes = keys(%{$gene2profileIds});
+
+  $self->error("Found no genes for $profileSetName, $extDbRlsId") unless scalar(@genes);
 
   $self->log("Generating averaged profiles for ". scalar(@genes) ." genes");
   my $count = 0;
@@ -145,7 +147,7 @@ sub findGene2ProfilesMapping {
 
   my $sql = "
 SELECT g.source_id, p.profile_id
-FROM Dots.Similarity s, Plasmodb.Profile p, Plasmodb.ProfileSet ps,
+FROM Dots.Similarity s, ApiDB.Profile p, ApiDB.ProfileSet ps,
      Dots.Transcript t, Dots.GeneFeature g
 WHERE ps.name = '$profileSetName'
 AND ps.external_database_release_id = $dbRlsId
@@ -171,7 +173,7 @@ sub getMetaInfo {
 
   my $sql = "
 SELECT ps.description, en.name, en.element_order
-FROM plasmodb.profileSet ps, plasmodb.profileElementName en
+FROM apidb.profileSet ps, apidb.profileElementName en
 WHERE ps.name = '$profileSetName'
 AND ps.external_database_release_id = $dbRlsId
 AND en.profile_set_id = ps.profile_set_id
@@ -186,7 +188,8 @@ ORDER BY en.element_order
     $descrip = $row[0];
     push(@header, $row[1]);
   }
-  return ($descrip, "\t" . join("\t", @header)); # first header column empty
+  $self->error("Couldn't find meta data for profileset '$profileSetName' and extDbRlsId '$dbRlsId'") unless $descrip;
+  return ($descrip, \@header); # first header column empty
 }
 
 sub getAverageProfile {
@@ -197,7 +200,7 @@ sub getAverageProfile {
   my $idsString = join(",", @{$profileIds});
   my $sql = "
 SELECT profile_id, profile_as_string
-FROM plasmodb.profile
+FROM apidb.profile
 WHERE profile_id in ($idsString)
 AND no_evidence_of_expr = 0
 ";
@@ -224,10 +227,10 @@ AND no_evidence_of_expr = 0
 sub undoTables {
   my ($self) = @_;
 
-  return ('PlasmoDB.ProfileElement',
-	  'PlasmoDB.Profile',
-	  'PlasmoDB.ProfileElementName',
-	  'PlasmoDB.ProfileSet',
+  return ('ApiDB.ProfileElement',
+	  'ApiDB.Profile',
+	  'ApiDB.ProfileElementName',
+	  'ApiDB.ProfileSet',
 	 );
 }
 
