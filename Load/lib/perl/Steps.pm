@@ -1493,7 +1493,7 @@ sub  loadAveragedProfiles {
   $args .= " --loadProfileElement" if $loadProfileElement;
 
   $mgr->runPlugin($signal,
-                  "PlasmoDBData::Load::Plugin::InsertAveragedProfiles", $args,
+                  "ApiCommonData::Load::Plugin::InsertAveragedProfiles", $args,
                   "Inserting averaged profiles for $setName");
 }
 
@@ -1532,7 +1532,7 @@ sub calculateExpressionStats {
   my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --timePointsMappingFile '$projectDir/$mappingFile' --percentProfileSet '$percentsAveraged'";
 
   $mgr->runPlugin($signal,
-                  "PlasmoDBData::Load::Plugin::CalculateProfileSummaryStats", $args,
+                  "ApiCommonData::Load::Plugin::CalculateProfileSummaryStats", $args,
 		  "Calculating profile summary stats for $profileSet");
 
 }
