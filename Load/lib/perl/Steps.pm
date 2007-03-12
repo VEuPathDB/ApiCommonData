@@ -1962,7 +1962,7 @@ sub loadExportPredResults {
   my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec '$sourceIdDb' --extDbRlsSpec '$genDb'";
 
   $mgr->runPlugin($signal,
-		  "PlasmoDBData::Load::Plugin::InsertExportPredFeature",
+		  "ApiCommonData::Load::Plugin::InsertExportPredFeature",
 		  "$args",
 		  "Loading exportpred results for $name");
 }
