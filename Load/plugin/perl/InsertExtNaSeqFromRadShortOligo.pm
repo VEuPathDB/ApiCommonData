@@ -50,6 +50,18 @@ my $documentation = { purpose=>$purpose,
 
 my $argsDeclaration = 
   [
+   stringArg({name => 'extDbName',
+	      descr => 'the external database name to tag the seq with.',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+   stringArg({name => 'extDbRlsVer',
+	      descr => 'the version of the external database to tag the seq with.',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
    stringArg({name => 'arrayDesignName',
 	      descr => 'Name of array design as found in RAD.ArrayDesign.name',
 	      reqd => 1,
@@ -78,10 +90,12 @@ sub new {
 sub run {
   my ($self) = @_;
 
-
-  my $arrayDesignName = $self->getArg('arrayDesignName');
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
+					$self->getArg('extDbRlsVer'));
 
   die "Couldn't find external_database_release_id" unless $extDbRlsId;
+
+  my $arrayDesignName = $self->getArg('arrayDesignName');
 
   my $sql = "
 SELECT sequence, element_id, source_id
@@ -99,7 +113,7 @@ ORDER BY source_id
   }
 
   if (scalar(keys %{$sourceIdHash}) == 0) {
-    $self->error("Didn't find any oligos for extDbRlsId=$extDbRlsId");
+    $self->error("Didn't find any oligos for arrayDesignName=$arrayDesignName");
   }
 
   my $count = 0;
