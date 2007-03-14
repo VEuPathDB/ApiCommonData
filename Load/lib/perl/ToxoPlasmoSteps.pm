@@ -11,28 +11,28 @@ use strict;
 ## declarations.  we intend to incorporate them into the steps that need them
 
 sub initToxoAnalysis {
-  my ($propertyFile, $printXML, $pipelineName) = @_;
+  my ($propertyFile, $optionalArgs) = @_;
 
   my $allSpecies = 'Tgondii';
 
   my $taxId = ["Tgondii:5811","TgondiiApicoplast:5811","TgondiiGT1:5811","TgondiiVeg:398031","TgondiiRH:383379"];
 
   my ($mgr, $projectDir, $release)
-    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
+    = &initToxoPlasmoAnalysis($propertyFile, $optionalArgs,
 			      $allSpecies, $taxId);
 
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
 sub initPlasmoAnalysis {
-  my ($propertyFile, $printXML, $pipelineName) = @_;
+  my ($propertyFile, $optionalArgs) = @_;
 
   my $allSpecies = 'Pfalciparum,Pyoelii,Pvivax,Pberghei,Pchabaudi';
 
   my $taxId = ["Pfalciparum:36329","PfalciparumPlastid:36329","PfalciparumMito:36329","Pyoelii:352914","Pvivax:126793","Pberghei:5823","Pchabaudi:31271","Pknowlesi:5851"];
 
   my ($mgr, $projectDir, $release)
-    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
+    = &initToxoPlasmoAnalysis($propertyFile, $optionalArgs,
 			      $allSpecies, $taxId);
 
   return ($mgr, $projectDir, $release, $allSpecies);
@@ -40,14 +40,14 @@ sub initPlasmoAnalysis {
 
 
 sub initOrthomclAnalysis {
-  my ($propertyFile, $printXML, $pipelineName) = @_;
+  my ($propertyFile, $optionalArgs) = @_;
 
   my $allSpecies = 'BAE_all';
 
   my $taxId = [];
 
   my ($mgr, $projectDir, $release)
-    = &initToxoPlasmoAnalysis($propertyFile, $printXML,
+    = &initToxoPlasmoAnalysis($propertyFile, $optionalArgs,
 			      $allSpecies, $taxId);
 
   return ($mgr, $projectDir, $release, $allSpecies);
@@ -59,13 +59,22 @@ sub initOrthomclAnalysis {
 
 
 sub initToxoPlasmoAnalysis {
-  my ($propertiesFile, $printXML, $allSpecies, $taxId) = @_;
+  my ($propertiesFile, $inputOptionalArgs, $allSpecies, $taxId) = @_;
 
   $| = 1;
   umask 002;
 
+  my $optionalArgs = {printXML => 0,
+		      skipCleanup => 0};
+
   &usage unless -e $propertiesFile;
-  &usage if ($printXML && $printXML ne "-printXML");
+  &usage unless scalar(@$inputOptionalArgs <= scalar(keys(%$optionalArgs)));
+  foreach my $optionalArg (@$inputOptionalArgs) {
+    &usage unless $optionalArg =~ /\-(\w+)/;
+    my $arg = $1;
+    &usage unless defined($optionalArgs->{$arg});
+    $optionalArgs->{$arg} = 1;
+  }
 
   # [name, default (or null if reqd), comment]
   my @properties = 
@@ -106,7 +115,9 @@ sub initToxoPlasmoAnalysis {
   my $mgr = GUS::Pipeline::Manager->new($myPipelineDir, $propertySet,
 					$propertiesFile, $cluster,
 					$propertySet->getProp('testNextPlugin'),
-					$printXML);
+					$optionalArgs->{-printXml},
+					$optionalArgs->{-skipCleanup},
+				       );
 
   # set up global variables
   $mgr->{propertiesFile} = $propertiesFile;
@@ -129,6 +140,15 @@ sub initToxoPlasmoAnalysis {
 
   return ($mgr, $projectDir, $release);
 }
+
+sub usage {
+  my $prog = `basename $0`;
+  chomp $prog;
+  print STDERR "usage: $prog propertiesfile [-printXML -skipCleanup]\n";
+  exit 1;
+}
+
+
 
   my @plasmoProps = (
     # step specific properties
