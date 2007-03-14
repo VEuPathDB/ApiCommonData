@@ -74,7 +74,7 @@ my $argsDeclaration =
 sub new {
     my ($class) = @_;
     my $self = {};
-    bless($self,$class);
+    bless($self,$class); 
 
 
     $self->initialize({requiredDbVersion => 3.5,
