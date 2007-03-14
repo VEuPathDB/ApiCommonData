@@ -56,7 +56,7 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'extDbReleaseNumber',
+   stringArg({name => 'extDbRlsVer',
 	      descr => 'the version of the external database with which to find the oligoes in RAD',
 	      reqd => 1,
 	      constraintFunc => undef,
@@ -113,11 +113,11 @@ order by source_id
       }
       my $naSeq = GUS::Model::DoTS::ExternalNASequence->
 	new({sequence => $oligo->[0],
-	     source_id => "$sourceId_$o";
+	     source_id => "${sourceId}_$o",
 	     external_database_release_id =>$extDbRlsId});
 
       my $elementNaSeq = GUS::Model::RAD::ElementNASequence->
-	new({element_id=>$oligo->[1]);
+	new({element_id=>$oligo->[1]});
       $naSeq->addChild($elementNaSeq);
       $naSeq->submit();
     }
