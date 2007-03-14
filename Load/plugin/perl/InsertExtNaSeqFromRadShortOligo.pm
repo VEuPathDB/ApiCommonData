@@ -78,7 +78,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 15062 $', # cvs fills this in!
+		       cvsRevision => '$Revision: $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -88,7 +88,7 @@ sub new {
 }
 
 sub run {
-  my ($self) = @_;
+  my ($self) = @_; 
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
 					$self->getArg('extDbRlsVer'));
