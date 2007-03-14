@@ -91,7 +91,7 @@ sub makeGenomeDirForGfClient {
     &runCmd("mkdir -p $inputDir");
     &makeControllerPropFile($inputDir, $serverBase, $numNodes, $taskSize,
 			    $nodePath,
-			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
+			    "DJob::DistribJobTasks::GenomeAlignWithGfClientTask", $nodeClass);
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
     &makeGenomeTaskPropFileForGfClient($inputDir, $targetDirPath,$nodePort, $queryName,
