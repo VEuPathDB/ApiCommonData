@@ -50,14 +50,8 @@ my $documentation = { purpose=>$purpose,
 
 my $argsDeclaration = 
   [
-   stringArg({name => 'extDbName',
-	      descr => 'the external database name with which to find the oligos in RAD.',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     }),
-   stringArg({name => 'extDbRlsVer',
-	      descr => 'the version of the external database with which to find the oligoes in RAD',
+   stringArg({name => 'arrayDesignName',
+	      descr => 'Name of array design as found in RAD.ArrayDesign.name',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -84,22 +78,28 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
-					$self->getArg('extDbRlsVer'));
+
+  my $arrayDesignName = $self->getArg('arrayDesignName');
 
   die "Couldn't find external_database_release_id" unless $extDbRlsId;
 
   my $sql = "
 SELECT sequence, element_id, source_id
-FROM RAD.ShortOligo
-WHERE external_database_release_id = $extDbRlsId
-order by source_id
+FROM RAD.ShortOligo o, RAD.ShortOligoFamily of, RAD.ArrayDesign a
+WHERE a.name = '$arrayDesignName'
+AND of.array_design_id = a.array_design_id
+AND o.composite_element_id = of.composite_element_id
+ORDER BY source_id
 ";
 
   my $stmt = $self->prepareAndExecute($sql);
   my $sourceIdHash = {};
   while (my ($seq, $elementId, $sourceId) = $stmt->fetchrow_array()) {
     push(@{$sourceIdHash->{$sourceId}}, [$seq, $elementId]);
+  }
+
+  if (scalar(keys %{$sourceIdHash}) == 0) {
+    $self->error("Didn't find any oligos for extDbRlsId=$extDbRlsId");
   }
 
   my $count = 0;
