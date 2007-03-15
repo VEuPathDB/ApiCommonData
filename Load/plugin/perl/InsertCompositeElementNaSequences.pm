@@ -53,14 +53,8 @@ my $documentation = { purpose=>$purpose,
 
 my $argsDeclaration = 
   [
-   stringArg({name => 'extDbName',
-	      descr => 'the external database name with which to find the oligo families in RAD.',
-	      reqd => 1,
-	      constraintFunc => undef,
-	      isList => 0,
-	     }),
-   stringArg({name => 'extDbReleaseNumber',
-	      descr => 'the version of the external database with which to find the oligo families in RAD',
+   stringArg({name => 'arrayDesignName',
+	      descr => 'Name of array design as found in RAD.ArrayDesign.name',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -72,7 +66,6 @@ sub new {
     my ($class) = @_;
     my $self = {};
     bless($self,$class);
-
 
     $self->initialize({requiredDbVersion => 3.5,
 		       cvsRevision => '$Revision: 15062 $', # cvs fills this in!
@@ -87,16 +80,32 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
-					$self->getArg('extDbRlsVer'));
+  my $arrayDesignName = $self->getArg('arrayDesignName');
 
-  die "Couldn't find external_database_release_id" unless $extDbRlsId;
+  # first check that there are no null source_ids
+  my $sql = "
+SELECT count(element_id)
+FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
+WHERE a.name = '$arrayDesignName'
+AND sof.array_design_id = a.array_design_id
+AND sof.source_id is null
+";
 
-  my $sql = "SELECT name,source_id, composite_element_id FROM RAD.ShortOligoFamily WHERE external_database_release_id = $extDbRlsId";
+  my $stmt = $self->prepareAndExecute($sql);
+
+  my ($nulls) = $stmt->fetchrow_array();
+  $self->error("found $nulls oligo families w/ null source_id") if $nulls;
+
+  my $sql = "
+SELECT source_id, composite_element_id
+FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
+WHERE a.name = '$arrayDesignName'
+AND sof.array_design_id = a.array_design_id
+";
 
   my $stmt = $self->prepareAndExecute($sql);
   my $count = 0;
-  while (my ($name, $sourceId, $compositeElementId) = $stmt->fetchrow_array()) {
+  while (my ($sourceId, $compositeElementId) = $stmt->fetchrow_array()) {
     if ($count++ % 1000 == 0) {
       $self->undefPointerCache();
       $self->log("processing oligo family number $count");
