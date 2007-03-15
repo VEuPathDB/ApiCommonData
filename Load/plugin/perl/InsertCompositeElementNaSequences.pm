@@ -74,7 +74,7 @@ sub new {
     bless($self,$class);
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 15062 $', # cvs fills this in!
+		       cvsRevision => '$Revision: 15277 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -113,18 +113,19 @@ AND sof.source_id is not null
   my $stmt = $self->prepareAndExecute($sql);
   my $count = 0;
   my $unmapped =0;
-  while (my ($geneSourceId, $compositeElementId, $name) = $stmt->fetchrow_array()) {
-    print STDERR "$geneSourceId, $compositeElementId, $name\n";
-    if ($count++ % 1000 == 0) {
+  while (my ($geneSourceId, $compositeElementId) = $stmt->fetchrow_array()) {
+    if ($count % 1000 == 0) {
       $self->undefPointerCache();
-      $self->log("processing oligo family number $count ($unmapped unmappable so far");
+      $self->log("processing oligo family number $count ($unmapped unmappable so far)");
     }
+    $count++;
     my $transcriptSequenceId =
       ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self,$geneSourceId);
     if (!$transcriptSequenceId) {
       $self->error("no transcript seq found for gene '$geneSourceId'")
 	unless $self->getArg('tolerateUnmappables');
       $unmapped++;
+      next;
     }
     my $compositeElementNaSeq = GUS::Model::RAD::CompositeElementNASequence->
       new({composite_element_id=>$compositeElementId,
