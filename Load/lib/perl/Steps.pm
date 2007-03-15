@@ -1556,6 +1556,44 @@ sub calculateExpressionStats {
 
 }
 
+sub InsertExtNaSeqFromShortOligos {
+  my ($mgr,$extDbName,$extDbRlsVer,$arrayName) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "insertExtNaSeqFromOligos-$arrayName";
+
+  $signal =~ s/\s//g;
+
+  my $projectDir = $propertySet->getProp('projectDir');
+
+  my $args = "--extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --arrayDesignName '$arrayName'";
+
+  $mgr->runPlugin($signal,
+                  "ApiCommonData::Load::Plugin::InsertExtNaSeqFromRadShortOligo", $args,
+		  "Inserting ExtNaSeq from Short Oligos for '$arrayName'");
+
+}
+
+# map array elements to genes
+sub InsertCompositeElementNaSequences {
+  my ($mgr,$arrayName,$tolerateUnmappables) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "insertCompositeElementNaSeqs-$arrayName";
+
+  $signal =~ s/\s//g;
+
+  my $projectDir = $propertySet->getProp('projectDir');
+
+  my $args = "--arrayDesignName '$arrayName' --tolerateUnmappables '$tolerateUnmappables'";
+
+  $mgr->runPlugin($signal,
+                  "ApiCommonData::Load::Plugin::InsertCompositeElementNaSequences", $args,
+		  "Inserting CompositeElementNaSequences for '$arrayName'");
+
+}
 
 sub extractSageTags {
   my ($mgr,$species) = @_;
