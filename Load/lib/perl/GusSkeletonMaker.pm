@@ -16,12 +16,13 @@ my $soTerms = { 'coding_gene'=>'protein_coding',
 		'snoRNA_gene'=> 'snoRNA_encoding',
 		'misc_RNA_gene'=> 'non_protein_coding',
 		'transcript' => 'transcript',
-		'exon' => 'exon'
+		'exon' => 'exon',
+		'ORF' => 'ORF',
 	      };
 
 #--------------------------------------------------------------------------------
 
-sub makeGusSkeleton{
+sub makeGeneSkeleton{
   my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $taxonId) = @_;
 
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId);
@@ -80,6 +81,22 @@ sub makeGusSkeleton{
   return $gusGene;
 }
 
+sub makeOrfSkeleton{
+  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId, $taxonId) = @_;
+
+  my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId);
+  $bioperlOrf->{gusFeature} = $gusMiscFeature;
+
+  my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
+  $gusMiscFeature->addChild($translatedAAFeat);
+
+  my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
+  $translatedAASeq->addChild($translatedAAFeat);
+
+  # make sure we submit all kids of the translated aa seq
+  $gusMiscFeature->addToSubmitList($translatedAASeq);
+}
+
 #--------------------------------------------------------------------------------
 
 sub makeGusGene {
@@ -94,6 +111,21 @@ sub makeGusGene {
 						$dbRlsId, 
 						'GUS::Model::DoTS::GeneFeature',
 						$soTerms->{$type});
+  return $gusGene;
+}
+
+sub makeGusOrf {
+  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId) = @_;
+
+  my $type = $bioperlOrf->primary_tag();
+
+  $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") unless $type eq  "ORF";
+
+  my $gusOrf = $plugin->makeSkeletalGusFeature($bioperlOrf, $genomicSeqId,
+					       $dbRlsId,
+					       'GUS::Model::DoTS::TranscriptFeature',
+					       $soTerms->{$type});
+  return $gusOrf;
 }
 
 #--------------------------------------------------------------------------------
