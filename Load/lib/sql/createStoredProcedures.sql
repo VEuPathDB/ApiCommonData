@@ -41,6 +41,9 @@ apidb.tab_to_string (p_varchar2_tab  IN  apidb.varchartab,
 RETURN VARCHAR2 IS
 l_string     VARCHAR2(32767);
 BEGIN
+  IF p_varchar2_tab.FIRST IS NULL THEN
+    RETURN null;
+  END IF;
   FOR i IN p_varchar2_tab.FIRST .. p_varchar2_tab.LAST LOOP
     IF i != p_varchar2_tab.FIRST THEN
       l_string := l_string || p_delimiter;
