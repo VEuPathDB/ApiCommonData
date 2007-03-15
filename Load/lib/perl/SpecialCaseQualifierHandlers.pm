@@ -64,7 +64,7 @@ sub undoAll{
   $self->_undoPseudo();
   $self->_undoTranscriptProteinId();
   $self->_undoTranscriptTranslExcept();
-  $self->_undoOrfTranslation();
+  $self->_undoProvidedOrfTranslation();
 }
 
 
