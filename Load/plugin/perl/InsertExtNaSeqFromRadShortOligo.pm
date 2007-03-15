@@ -7,6 +7,7 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::RAD::ElementNASequence;
+use Data::Dumper;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -15,7 +16,7 @@ PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
 Link oligos stored in RAD.ShortOligo to DoTS.ExternalNaSequence by inserting
-them there and linking via RAD.ElementNaSequence. Retain the external_database_release_id.
+them there and linking via RAD.ElementNaSequence. 
 PLUGIN_PURPOSE
 
 my $tablesAffected =
@@ -78,7 +79,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: $', # cvs fills this in!
+		       cvsRevision => '$Revision: 15272 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -97,13 +98,28 @@ sub run {
 
   my $arrayDesignName = $self->getArg('arrayDesignName');
 
+  # first check that there are no null source_ids
   my $sql = "
-SELECT sequence, element_id, source_id
-FROM RAD.ShortOligo o, RAD.ShortOligoFamily of, RAD.ArrayDesign a
+SELECT count(element_id)
+FROM RAD.ShortOligo so, RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
-AND of.array_design_id = a.array_design_id
-AND o.composite_element_id = of.composite_element_id
-ORDER BY source_id
+AND sof.array_design_id = a.array_design_id
+AND so.composite_element_id = sof.composite_element_id
+AND sof.source_id is null
+";
+
+  my $stmt = $self->prepareAndExecute($sql);
+
+  my ($nulls) = $stmt->fetchrow_array();
+  $self->error("found $nulls oligo families w/ null source_id") if $nulls;
+
+  $sql = "
+SELECT sequence, element_id, sof.source_id
+FROM RAD.ShortOligo so, RAD.ShortOligoFamily sof, RAD.ArrayDesign a
+WHERE a.name = '$arrayDesignName'
+AND sof.array_design_id = a.array_design_id
+AND so.composite_element_id = sof.composite_element_id
+ORDER BY sof.source_id
 ";
 
   my $stmt = $self->prepareAndExecute($sql);
@@ -116,17 +132,20 @@ ORDER BY source_id
     $self->error("Didn't find any oligos for arrayDesignName=$arrayDesignName");
   }
 
-  my $count = 0;
+  my $count = 1;
   foreach my $sourceId (keys %{$sourceIdHash}) {
     my @sortedOligos =sort {$a->[0] cmp $b->[0]} @{$sourceIdHash->{$sourceId}};
     my $o = 0;
     foreach my $oligo (@sortedOligos) {
-      if ($count++ % 5000 == 0) {
+      $o++;
+      if ($count % 5000 == 0) {
 	$self->undefPointerCache();
 	$self->log("processing oligo number $count");
       }
+      $count++;
       my $naSeq = GUS::Model::DoTS::ExternalNASequence->
 	new({sequence => $oligo->[0],
+	     sequence_version => "1",
 	     source_id => "${sourceId}_$o",
 	     external_database_release_id =>$extDbRlsId});
 
@@ -135,6 +154,7 @@ ORDER BY source_id
       $naSeq->addChild($elementNaSeq);
       $naSeq->submit();
     }
+      exit();
   }
 
   my $msg = "Inserted $count na seqs";
