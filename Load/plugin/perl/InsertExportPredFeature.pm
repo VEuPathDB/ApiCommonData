@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::InsertExportPredFeature;
+package ApiCommonData::Load::Plugin::InsertExportPredFeature;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict;
