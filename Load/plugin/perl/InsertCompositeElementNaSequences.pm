@@ -59,6 +59,12 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
+   booleanArg({name => 'tolerateUnmappables',
+	      descr => 'Do not fail on composite elements that do not correspond to a gene',
+	      reqd => 0,
+	      default => 0,
+	      isList => 0,
+	     }),
   ];
 
 
@@ -84,7 +90,7 @@ sub run {
 
   # first check that there are no null source_ids
   my $sql = "
-SELECT count(element_id)
+SELECT count(composite_element_id)
 FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
@@ -94,32 +100,39 @@ AND sof.source_id is null
   my $stmt = $self->prepareAndExecute($sql);
 
   my ($nulls) = $stmt->fetchrow_array();
-  $self->error("found $nulls oligo families w/ null source_id") if $nulls;
+#  $self->error("found $nulls oligo families w/ null source_id") if $nulls;
 
-  my $sql = "
-SELECT source_id, composite_element_id
+  $sql = "
+SELECT sof.source_id, composite_element_id, sof.name
 FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
+AND sof.source_id is not null
 ";
 
   my $stmt = $self->prepareAndExecute($sql);
   my $count = 0;
-  while (my ($sourceId, $compositeElementId) = $stmt->fetchrow_array()) {
+  my $unmapped =0;
+  while (my ($geneSourceId, $compositeElementId, $name) = $stmt->fetchrow_array()) {
+    print STDERR "$geneSourceId, $compositeElementId, $name\n";
     if ($count++ % 1000 == 0) {
       $self->undefPointerCache();
-      $self->log("processing oligo family number $count");
+      $self->log("processing oligo family number $count ($unmapped unmappable so far");
     }
     my $transcriptSequenceId =
-      ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self,$sourceId);
-
-    my $compositeElementNaSeq = GUS::Model::RAD::ElementNASequence->
+      ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self,$geneSourceId);
+    if (!$transcriptSequenceId) {
+      $self->error("no transcript seq found for gene '$geneSourceId'")
+	unless $self->getArg('tolerateUnmappables');
+      $unmapped++;
+    }
+    my $compositeElementNaSeq = GUS::Model::RAD::CompositeElementNASequence->
       new({composite_element_id=>$compositeElementId,
 	   na_sequence_id => $transcriptSequenceId});
     $compositeElementNaSeq->submit();
   }
 
-  my $msg = "Inserted $count composite element na seqs";
+  my $msg = "Inserted $count composite element na seqs.  $unmapped composite elements were not mappable to a transcript";
 
   return $msg;
 
