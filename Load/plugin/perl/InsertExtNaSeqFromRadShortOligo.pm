@@ -100,11 +100,10 @@ sub run {
 
   # first check that there are no null source_ids
   my $sql = "
-SELECT count(element_id)
-FROM RAD.ShortOligo so, RAD.ShortOligoFamily sof, RAD.ArrayDesign a
+SELECT count(composite_element_id)
+FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
-AND so.composite_element_id = sof.composite_element_id
 AND sof.source_id is null
 ";
 
