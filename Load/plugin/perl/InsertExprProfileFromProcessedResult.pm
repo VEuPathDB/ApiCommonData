@@ -221,6 +221,7 @@ WHERE s.external_database_release_id = $extDbRlsId
   ORDER BY g.source_id
 ";
 
+  print STDERR $sql;
 
   # transform individual result rows to a single row with all results for a
   # sourceId

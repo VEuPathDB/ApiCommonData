@@ -101,9 +101,10 @@ WHERE t.parent_id = '$geneFeatId'
 AND taf.na_feature_id = t.na_feature_id
 ";
   my $stmt = $plugin->prepareAndExecute($sql);
-  my @aaSeqIds = $stmt->fetchrow_array();
-  $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $stmt->fetchrow_array();
-  return $aaSeqIds[0];
+  my ($aaSeqId) = $stmt->fetchrow_array();
+  my ($tooMany) = $stmt->fetchrow_array();
+  $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
+  return $aaSeqId;
 }
 
 sub getTranslatedAAFeatureIdFromGeneSourceId {
@@ -117,23 +118,30 @@ WHERE t.parent_id = '$geneFeatId'
 AND taf.na_feature_id = t.na_feature_id
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
-    my @aaFeatIds = $stmt->fetchrow_array();
-    $plugin->error("trying to map gene source id '$sourceId' to a single aa_feature_id, but found more than one aa_feature_id: ") if $stmt->fetchrow_array();
-    return $aaFeatIds[0];
+    my ($aaFeatId) = $stmt->fetchrow_array();
+    my ($tooMany) = $stmt->fetchrow_array();
+    $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
+    return $aaFeatId;
 }
 
+# returns null if not found
 sub getTranscriptSequenceIdFromGeneSourceId {
     my ($plugin, $sourceId) = @_;
 
     my $geneFeatId = getGeneFeatureId($plugin, $sourceId);
+
+    return undef unless $geneFeatId;
     my $sql = "
 SELECT t.na_sequence_id
 FROM Dots.Transcript t
-WHERE t.parent_id = '$geneFeatId'
+WHERE t.parent_id = $geneFeatId
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
+    my $transcriptCount = 0;
     my ($na_sequence_id) = $stmt->fetchrow_array();
-    $plugin->error("trying to map gene source id '$sourceId' to a single aa_feature_id, but found more than one aa_feature_id") if $stmt->fetchrow_array();
+    my ($toomany) = $stmt->fetchrow_array();
+
+    $plugin->error("trying to map gene source id '$sourceId' to a single aa_feature_id, but found more than one aa_feature_id") if $toomany;
     return $na_sequence_id;
 }
 
