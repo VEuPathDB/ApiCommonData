@@ -68,12 +68,14 @@ sub initToxoPlasmoAnalysis {
 		      skipCleanup => 0};
 
   &usage unless -e $propertiesFile;
-  &usage unless scalar(@$inputOptionalArgs <= scalar(keys(%$optionalArgs)));
-  foreach my $optionalArg (@$inputOptionalArgs) {
-    &usage unless $optionalArg =~ /\-(\w+)/;
-    my $arg = $1;
-    &usage unless defined($optionalArgs->{$arg});
-    $optionalArgs->{$arg} = 1;
+  if ($inputOptionalArgs){
+    &usage unless scalar(@$inputOptionalArgs <= scalar(keys(%$optionalArgs)));
+    foreach my $optionalArg (@$inputOptionalArgs) {
+      &usage unless $optionalArg =~ /\-(\w+)/;
+      my $arg = $1;
+      &usage unless defined($optionalArgs->{$arg});
+      $optionalArgs->{$arg} = 1;
+    }
   }
 
   # [name, default (or null if reqd), comment]
@@ -115,8 +117,8 @@ sub initToxoPlasmoAnalysis {
   my $mgr = GUS::Pipeline::Manager->new($myPipelineDir, $propertySet,
 					$propertiesFile, $cluster,
 					$propertySet->getProp('testNextPlugin'),
-					$optionalArgs->{-printXml},
-					$optionalArgs->{-skipCleanup},
+					$optionalArgs->{printXml},
+					$optionalArgs->{skipCleanup},
 				       );
 
   # set up global variables
