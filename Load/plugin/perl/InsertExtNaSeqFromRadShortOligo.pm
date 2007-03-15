@@ -98,26 +98,13 @@ sub run {
 
   my $arrayDesignName = $self->getArg('arrayDesignName');
 
-  # first check that there are no null source_ids
-  my $sql = "
-SELECT count(composite_element_id)
-FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
-WHERE a.name = '$arrayDesignName'
-AND sof.array_design_id = a.array_design_id
-AND sof.source_id is null
-";
-
-  my $stmt = $self->prepareAndExecute($sql);
-
-  my ($nulls) = $stmt->fetchrow_array();
-  $self->error("found $nulls oligo families w/ null source_id") if $nulls;
-
   $sql = "
 SELECT sequence, element_id, sof.source_id
 FROM RAD.ShortOligo so, RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
 AND so.composite_element_id = sof.composite_element_id
+AND sof.source_id is not null
 ORDER BY sof.source_id
 ";
 
