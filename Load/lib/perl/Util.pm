@@ -120,7 +120,7 @@ AND taf.na_feature_id = t.na_feature_id
     my $stmt = $plugin->prepareAndExecute($sql);
     my ($aaFeatId) = $stmt->fetchrow_array();
     my ($tooMany) = $stmt->fetchrow_array();
-    $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
+    $plugin->error("trying to map gene source id '$sourceId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
     return $aaFeatId;
 }
 
