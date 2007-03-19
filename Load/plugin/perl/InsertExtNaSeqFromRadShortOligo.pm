@@ -98,8 +98,8 @@ sub run {
 
   my $arrayDesignName = $self->getArg('arrayDesignName');
 
-  $sql = "
-SELECT sequence, element_id, sof.source_id
+  my $sql = "
+SELECT sequence, element_id, sof.name, x_position, y_position
 FROM RAD.ShortOligo so, RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
@@ -110,9 +110,10 @@ ORDER BY sof.source_id
 
   my $stmt = $self->prepareAndExecute($sql);
   my $sourceIdHash = {};
-  while (my ($seq, $elementId, $sourceId) = $stmt->fetchrow_array()) {
-    push(@{$sourceIdHash->{$sourceId}}, [$seq, $elementId]);
+  while (my ($seq, $elementId, $sourceId, $x, $y) = $stmt->fetchrow_array()) {
+    push(@{$sourceIdHash->{$sourceId}}, [$seq, $elementId, $x, $y]);
   }
+  $stmt->finish();
 
   if (scalar(keys %{$sourceIdHash}) == 0) {
     $self->error("Didn't find any oligos for arrayDesignName=$arrayDesignName");
@@ -120,32 +121,40 @@ ORDER BY sof.source_id
 
   my $count = 1;
   foreach my $sourceId (keys %{$sourceIdHash}) {
-    my @sortedOligos =sort {$a->[0] cmp $b->[0]} @{$sourceIdHash->{$sourceId}};
-    my $o = 0;
-    foreach my $oligo (@sortedOligos) {
-      $o++;
+    my @oligos = @{$sourceIdHash->{$sourceId}};
+
+    foreach my $oligo (@oligos) {
+
+      my $seq = $oligo->[0];
+      my $elementId = $oligo->[1];
+      my $x = $oligo->[2];
+      my $y = $oligo->[3];
+
+      my $seqSourceId = "${sourceId}_${x}_${y}";
+
+      my $naSeq = GUS::Model::DoTS::ExternalNASequence->
+	new({sequence => $seq,
+	     sequence_version => "1",
+	     source_id => $seqSourceId,
+	     external_database_release_id =>$extDbRlsId
+            });
+
+      my $elementNaSeq = GUS::Model::RAD::ElementNASequence->
+	new({element_id=>$elementId});
+
+      $naSeq->addChild($elementNaSeq);
+      $naSeq->submit();
+
       if ($count % 5000 == 0) {
 	$self->undefPointerCache();
 	$self->log("processing oligo number $count");
       }
       $count++;
-      my $naSeq = GUS::Model::DoTS::ExternalNASequence->
-	new({sequence => $oligo->[0],
-	     sequence_version => "1",
-	     source_id => "${sourceId}_$o",
-	     external_database_release_id =>$extDbRlsId});
-
-      my $elementNaSeq = GUS::Model::RAD::ElementNASequence->
-	new({element_id=>$oligo->[1]});
-      $naSeq->addChild($elementNaSeq);
-      $naSeq->submit();
     }
-      exit();
+
   }
 
-  my $msg = "Inserted $count na seqs";
-
-  return $msg;
+  return "Inserted $count na seqs";
 
 }
 
