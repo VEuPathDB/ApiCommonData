@@ -21,12 +21,12 @@ use Data::Dumper;
 # (7) add to transcript
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
-  my $tempTree;
 
   my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
   foreach my $bioperlFeatureTree (@seqFeatures) {
+    my $tempTree;
     my $type = $bioperlFeatureTree->primary_tag();
-    
+  
     if ($type eq 'gene') {
       $tempTree = $bioperlFeatureTree;
       next;
