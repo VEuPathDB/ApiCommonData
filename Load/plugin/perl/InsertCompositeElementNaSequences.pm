@@ -88,8 +88,8 @@ sub run {
 
   my $arrayDesignName = $self->getArg('arrayDesignName');
 
-  $sql = "
-SELECT sof.source_id, composite_element_id, sof.name
+  my $sql = "
+SELECT sof.source_id, composite_element_id
 FROM RAD.ShortOligoFamily sof, RAD.ArrayDesign a
 WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
@@ -106,10 +106,14 @@ AND sof.source_id is not null
     }
     $count++;
     my $transcriptSequenceId =
-      ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self,$geneSourceId);
+      ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self, $geneSourceId);
+    my $msg = "no transcript seq found for gene '$geneSourceId'";
+
     if (!$transcriptSequenceId) {
-      $self->error("no transcript seq found for gene '$geneSourceId'")
+      $self->error($msg)
 	unless $self->getArg('tolerateUnmappables');
+
+      $self->log("WARN: $msg");
       $unmapped++;
       next;
     }
@@ -118,6 +122,7 @@ AND sof.source_id is not null
 	   na_sequence_id => $transcriptSequenceId});
     $compositeElementNaSeq->submit();
   }
+  $stmt->finish();
 
   my $msg = "Inserted $count composite element na seqs.  $unmapped composite elements were not mappable to a transcript";
 
