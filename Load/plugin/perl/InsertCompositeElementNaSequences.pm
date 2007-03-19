@@ -107,9 +107,10 @@ AND sof.source_id is not null
     $count++;
     my $transcriptSequenceId =
       ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self, $geneSourceId);
-    my $msg = "no transcript seq found for gene '$geneSourceId'";
 
     if (!$transcriptSequenceId) {
+      my $msg = "no transcript seq found for gene '$geneSourceId'";
+
       $self->error($msg)
 	unless $self->getArg('tolerateUnmappables');
 
