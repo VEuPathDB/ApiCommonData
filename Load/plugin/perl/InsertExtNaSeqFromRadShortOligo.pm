@@ -124,6 +124,10 @@ ORDER BY sof.source_id
     my @oligos = @{$sourceIdHash->{$sourceId}};
 
     foreach my $oligo (@oligos) {
+      if ($count % 4500 == 0) {
+	$self->undefPointerCache();
+	$self->log("processing oligo number $count");
+      }
 
       my $seq = $oligo->[0];
       my $elementId = $oligo->[1];
@@ -145,10 +149,6 @@ ORDER BY sof.source_id
       $naSeq->addChild($elementNaSeq);
       $naSeq->submit();
 
-      if ($count % 5000 == 0) {
-	$self->undefPointerCache();
-	$self->log("processing oligo number $count");
-      }
       $count++;
     }
 
