@@ -91,7 +91,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 15293 $', # cvs fills this in!
+		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -121,16 +121,16 @@ sub run {
       ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $data[0]);
 
     my $objArgs = {
-		   AA_SEQUENCE_ID => $aaSeqId,
-		   DEVELOPMENTAL_STAGE => $data[1],
-		   IS_EXPRESSED => $data[2],
-		   NUMBER_OF_SPANS => $data[3],
-		   SEQUENCE_COUNT => $data[4],
-		   SPECTRUM_COUNT => $data[5],
-		   AA_SEQ_PERCENT_COVERED => $data[6],
-		   AA_SEQ_LENGTH => $data[7],
-		   AA_SEQ_MOLECULAR_WEIGHT => $data[8],
-		   AA_SEQ_PI		   => $data[9],
+		   aa_sequence_id => $aaSeqId,
+		   developmental_stage => $data[1],
+		   is_expressed => $data[2],
+		   number_of_spans => $data[3],
+		   sequence_count => $data[4],
+		   spectrum_count => $data[5],
+		   aa_seq_percent_covered => $data[6],
+		   aa_seq_length => $data[7],
+		   aa_seq_molecular_weight => $data[8],
+		   aa_seq_pi		   => $data[9],
 		  };
     my $mss = GUS::Model::ApiDB::MassSpecSummary->new($objArgs);
     $mss->submit();
