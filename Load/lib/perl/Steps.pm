@@ -3269,10 +3269,10 @@ EOF
 }
 
 sub loadOrfFile {
-    my ($mgr, $orfFile, $extDbName, $extDbRlsVer, $mapFile, $soCvsVersion) = @_;
-    
+    my ($mgr, $orfFile, $extDbName, $extDbRlsVer, $mapFile, $soCvsVersion, $subclass, $defaultOrg) = @_;
+
     my $signal = "load_$orfFile";
-    
+
     my $args = <<"EOF";
 --extDbName '$extDbName'  \\
 --extDbRlsVer '$extDbRlsVer' \\
@@ -3281,12 +3281,16 @@ sub loadOrfFile {
 --fileFormat gff3   \\
 --seqSoTerm ORF  \\
 --soCvsVersion $soCvsVersion \\
---naSequenceSubclass ExternalNASequence \\
+--naSequenceSubclass $subclass \\
 EOF
 
+    if ($defaultOrg){
+      $args .= "--defaultOrganism '$defaultOrg'";
+    }
+
     $mgr->runPlugin(
-        $signal, 
-        "GUS::Supported::Plugin::InsertSequenceFeatures", 
+        $signal,
+        "GUS::Supported::Plugin::InsertSequenceFeatures",
         $args, 
         "Loading $orfFile output");
 
