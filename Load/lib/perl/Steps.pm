@@ -1556,16 +1556,29 @@ sub calculateExpressionStats {
 
 }
 
+
+sub InsertRadAnalysisFromConfig {
+  my ($mgr, $configFile, $name) = @_;
+
+  return if $mgr->startStep("Loading Rad Analysis for $name", $name);
+
+  my $args = "--configFile $configFile";
+
+  $mgr->runPlugin($name,
+                  "GUS::Community::Plugin::InsertBatchRadAnalysis",
+                  $args, 
+                  "Inserting Rad Analysis for $name");
+
+}
+
 sub InsertExtNaSeqFromShortOligos {
   my ($mgr,$extDbName,$extDbRlsVer,$arrayName) = @_;
-
-  my $propertySet = $mgr->{propertySet};
 
   my $signal = "insertExtNaSeqFromOligos-$arrayName";
 
   $signal =~ s/\s//g;
 
-  my $projectDir = $propertySet->getProp('projectDir');
+  return if $mgr->startStep("Loading ExtNaSeq from Short Oligos for $signal", $signal);
 
   my $args = "--extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --arrayDesignName '$arrayName'";
 
@@ -1579,13 +1592,11 @@ sub InsertExtNaSeqFromShortOligos {
 sub InsertCompositeElementNaSequences {
   my ($mgr,$arrayName,$tolerateUnmappables) = @_;
 
-  my $propertySet = $mgr->{propertySet};
-
   my $signal = "insertCompositeElementNaSeqs-$arrayName";
 
   $signal =~ s/\s//g;
 
-  my $projectDir = $propertySet->getProp('projectDir');
+  return if $mgr->startStep("Loading CompostieElementSequences for $arrayName", $signal);
 
   my $args = "--arrayDesignName '$arrayName' --tolerateUnmappables '$tolerateUnmappables'";
 
