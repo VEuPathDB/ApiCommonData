@@ -95,6 +95,8 @@ sub makeOrfSkeleton{
 
   # make sure we submit all kids of the translated aa seq
   $gusMiscFeature->addToSubmitList($translatedAASeq);
+
+  return $gusMiscFeature;
 }
 
 #--------------------------------------------------------------------------------
