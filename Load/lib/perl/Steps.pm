@@ -993,6 +993,33 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
+sub extractTranscriptSeq {
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$transcriptTable,$seqTable,$identifier) = @_;
+
+  my $type = ucfirst($seqType);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $signal = "extract${name}$type";
+
+  return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $sql = my $sql = "select t.$identifier, s.description,
+            'length='||s.length,s.sequence
+             from dots.$transcriptTable t, dots.$seqTable s
+             where t.external_database_release_id = $dbRlsId
+             and t.na_sequence_id = s.na_sequence_id";
+
+  my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
 sub extractESTs {
   my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database) = @_;
 
