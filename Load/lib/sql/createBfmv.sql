@@ -262,6 +262,7 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
   AND s.na_sequence_id = snp.na_sequence_id
   AND s.taxon_id = taxon.taxon_id
   AND s.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
   AND snp_loc.na_feature_id = snp.na_feature_id
   AND gene_info.na_feature_id(+) = snp.parent_id;
 
