@@ -123,7 +123,7 @@ sub makeGusOrf {
 
   my $gusOrf = $plugin->makeSkeletalGusFeature($bioperlOrf, $genomicSeqId,
 					       $dbRlsId,
-					       'GUS::Model::DoTS::TranscriptFeature',
+					       'GUS::Model::DoTS::Transcript',
 					       $soTerms->{$type});
   return $gusOrf;
 }
