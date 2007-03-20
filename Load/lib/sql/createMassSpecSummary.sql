@@ -1,17 +1,17 @@
 CREATE TABLE apidb.MassSpecSummary (
  mass_spec_summary_id         NUMBER(12) NOT NULL,
  aa_sequence_id               NUMBER(12) NOT NULL,
- prediction_algorithm_id      NUMBER(12) NOT NULL,
+ prediction_algorithm_id      NUMBER(12),
  external_database_release_id NUMBER(12),
- developmental_stage          VARCHAR2(20) NOT NULL,
- is_expressed                 NUMBER(1) NOT NULL,
- number_of_spans              NUMBER(12) NOT NULL,
- sequence_count               NUMBER(12) NOT NULL,
- spectrum_count               NUMBER(12) NOT NULL,
- aa_seq_percent_covered       FLOAT(126) NOT NULL,
- aa_seq_length                NUMBER(12) NOT NULL,
- aa_seq_molecular_weight      NUMBER(12) NOT NULL,
- aa_seq_pi                    FLOAT(126) NOT NULL,
+ developmental_stage          VARCHAR2(20),
+ is_expressed                 NUMBER(1),
+ number_of_spans              NUMBER(12),
+ sequence_count               NUMBER(12),
+ spectrum_count               NUMBER(12),
+ aa_seq_percent_covered       FLOAT(126),
+ aa_seq_length                NUMBER(12),
+ aa_seq_molecular_weight      NUMBER(12),
+ aa_seq_pi                    FLOAT(126),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -42,6 +42,9 @@ GRANT SELECT ON apidb.MassSpecSummary TO gus_r;
 ------------------------------------------------------------------------------
 
 CREATE SEQUENCE apidb.MassSpecSummary_sq;
+
+GRANT SELECT ON apidb.MassSpecSummary_sq TO gus_r;
+GRANT SELECT ON apidb.MassSpecSummary_sq TO gus_w;
 
 ------------------------------------------------------------------------------
 
