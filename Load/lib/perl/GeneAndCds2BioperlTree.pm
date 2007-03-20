@@ -31,19 +31,22 @@ sub preprocess {
   foreach my $bioperlFeatureTree (@seqFeatures) {
     my $type = $bioperlFeatureTree->primary_tag();
     
+    next if ($type eq 'mRNA');
+    
     if ($type eq 'gene') {
       $geneFeature = $bioperlFeatureTree;
       next;
     }
 
-    if ($geneFeature && $type ne 'mRNA') {
-      copyQualifiers($geneFeature, $bioperlFeatureTree);
-      undef $geneFeature;
-    }
-    
     $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
     
-    if (grep {$type eq $_} (
+    # This will accept genes of type misc_feature (e.g. cgd4_1050 of GI:46229367)
+    # because it will have a geneFeature but not standalone misc_feature 
+    # as found in GI:32456060.
+    # And will accept transcripts that do not have 'gene' parents (e.g. tRNA
+    # in GI:32456060)
+    if ($geneFeature 
+        or grep {$type eq $_} (
              'CDS',
              'misc_RNA', 
              'rRNA',
@@ -52,6 +55,10 @@ sub preprocess {
              'tRNA', 
              )
         ) {
+
+      copyQualifiers($geneFeature, $bioperlFeatureTree);
+      undef $geneFeature;
+
       $type = "coding" if $type eq "CDS";
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
