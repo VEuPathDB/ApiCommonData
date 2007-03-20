@@ -127,7 +127,6 @@ sub run {
     next if /^\s*$/;
     my @data = split(/\t/);
     scalar(@data) == 10 || $self->error("wrong number of columns in line: '$_'");
-
     my $aaSeqId = 
       ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $data[0]);
 
@@ -143,6 +142,7 @@ sub run {
 
     my $objArgs = {
 		   aa_sequence_id => $aaSeqId,
+                   external_database_release_id => $extDbRlsId,
 		   developmental_stage => $data[1],
 		   is_expressed => $data[2],
 		   number_of_spans => $data[3],
