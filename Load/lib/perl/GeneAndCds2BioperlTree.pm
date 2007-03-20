@@ -7,9 +7,13 @@ use Bio::SeqFeature::Generic;
 use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
-#input: CDS with join location (if multiple exons)
-#output: standard api tree: gene->transcript->exons
-#                                           ->CDS
+#input:
+#
+# gene  [folded into CDS]        
+# mRNA  (optional)  [discarded]
+# CDS
+#
+#output: standard api tree: gene->transcript->exons->CDS
 
 # (0) remove all seq features, add back the non-genes
 # (1) copy old gene qualifiers to cds/rna feature
@@ -21,22 +25,33 @@ use Data::Dumper;
 # (7) add to transcript
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
+  my $geneFeature;
 
   my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
   foreach my $bioperlFeatureTree (@seqFeatures) {
-    my $tempTree;
     my $type = $bioperlFeatureTree->primary_tag();
-  
+    
     if ($type eq 'gene') {
-      $tempTree = $bioperlFeatureTree;
+      $geneFeature = $bioperlFeatureTree;
       next;
     }
 
-    copyQualifiers($tempTree, $bioperlFeatureTree) if ($tempTree);
-
+    if ($geneFeature && $type ne 'mRNA') {
+      copyQualifiers($geneFeature, $bioperlFeatureTree);
+      undef $geneFeature;
+    }
+    
     $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
     
-    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "snoRNA", "misc_RNA")) {
+    if (grep {$type eq $_} (
+             'CDS',
+             'misc_RNA', 
+             'rRNA',
+             'snRNA', 
+             'snoRNA',
+             'tRNA', 
+             )
+        ) {
       $type = "coding" if $type eq "CDS";
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
@@ -53,16 +68,16 @@ sub preprocess {
 }
 
 sub copyQualifiers {
-  my ($tempTree, $bioperlFeatureTree) = @_;
-
-  for my $qualifier ($tempTree->get_all_tags()) {
+  my ($geneFeature, $bioperlFeatureTree) = @_;
+  
+  for my $qualifier ($geneFeature->get_all_tags()) {
 
     if ($bioperlFeatureTree->has_tag($qualifier)) {
       # remove tag and recreate with merged non-redundant values
       my %seen;
       my @uniqVals = grep {!$seen{$_}++} 
                        $bioperlFeatureTree->remove_tag($qualifier), 
-                       $tempTree->get_tag_values($qualifier);
+                       $geneFeature->get_tag_values($qualifier);
                        
       $bioperlFeatureTree->add_tag_value(
                              $qualifier, 
@@ -71,12 +86,11 @@ sub copyQualifiers {
     } else {
       $bioperlFeatureTree->add_tag_value(
                              $qualifier,
-                             $tempTree->get_tag_values($qualifier)
+                             $geneFeature->get_tag_values($qualifier)
                            );
     }
      
   }
-  undef $tempTree;
 }
 
 1;
