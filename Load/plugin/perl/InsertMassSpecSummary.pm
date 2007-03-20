@@ -119,6 +119,8 @@ sub run {
 
   open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
 
+  my $tolerateMissingIds = $self->getArg('tolerateMissingIds');
+  my $skippedCount = 0;
   my $count = 0;
   while (<FILE>) {
     chomp;
@@ -129,8 +131,15 @@ sub run {
     my $aaSeqId = 
       ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $data[0]);
 
-    next if (!$aaSeqId && $tolerateMissingIds);
-    $self->error("Couldn't find aaSeqId for line: '$_'") unless $aaSeqId;
+    if (!$aaSeqId) {
+      if ($tolerateMissingIds) {
+	$self->log("skipping '$data[0]': can't find in database");
+	$skippedCount++;
+	next;
+      } else {
+	$self->error("Couldn't find aaSeqId for line: '$_'");
+      }
+    }
 
     my $objArgs = {
 		   aa_sequence_id => $aaSeqId,
@@ -150,7 +159,7 @@ sub run {
     $self->log("processed $count") if ($count % 1000) == 0;
   }
 
-  return "Inserted $count rows";
+  return "Inserted $count rows. Skipped $skippedCount (could't find source id)";
 }
 
 sub undoTables {
