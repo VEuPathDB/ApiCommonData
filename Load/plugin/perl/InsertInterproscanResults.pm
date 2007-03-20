@@ -216,6 +216,10 @@ sub processProteinResults {
   my $queryTable = "GUS::Model::DoTS::$tableName";
 
   my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
+  if (!$protein->att('id')) {
+  	$self->log("Skipping: Interproscan Results file has a match with empty source ID");
+	return;
+  }
   my @interproKids = $protein->children('interpro');
 
   my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
