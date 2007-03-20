@@ -7,6 +7,8 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::RAD::ElementNASequence;
+use GUS::Model::ApiDB::MassSpecSummary;
+use ApiCommonData::Load::Util;
 use Data::Dumper;
 
 
@@ -72,7 +74,12 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-     fileArg({name => 'inputFile',
+   booleanArg({name => 'tolerateMissingIds',
+	       descr => "don't fail if an input sourceId is not found in database",
+	       reqd => 0,
+	       default => 0
+	   }),
+      fileArg({name => 'inputFile',
 	      descr => 'file containing the data',
 	      constraintFunc=> undef,
 	      reqd  => 1,
@@ -113,12 +120,17 @@ sub run {
   open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
 
   my $count = 0;
-  while (FILE) {
+  while (<FILE>) {
+    chomp;
+    next if /^\s*$/;
     my @data = split(/\t/);
     scalar(@data) == 10 || $self->error("wrong number of columns in line: '$_'");
 
     my $aaSeqId = 
       ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $data[0]);
+
+    next if (!$aaSeqId && $tolerateMissingIds);
+    $self->error("Couldn't find aaSeqId for line: '$_'") unless $aaSeqId;
 
     my $objArgs = {
 		   aa_sequence_id => $aaSeqId,
@@ -135,6 +147,7 @@ sub run {
     my $mss = GUS::Model::ApiDB::MassSpecSummary->new($objArgs);
     $mss->submit();
     $count++;
+    $self->log("processed $count") if ($count % 1000) == 0;
   }
 
   return "Inserted $count rows";
