@@ -94,6 +94,9 @@ sub getAASeqIdFromGeneId {
   my ($plugin, $geneId) = @_;
 
   my $geneFeatId = getGeneFeatureId($plugin, $geneId);
+
+  return undef unless $geneFeatId;
+
     my $sql = "
 SELECT taf.aa_sequence_id
 FROM Dots.Transcript t, Dots.TranslatedAAFeature taf
