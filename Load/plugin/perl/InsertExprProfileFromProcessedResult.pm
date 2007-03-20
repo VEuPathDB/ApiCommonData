@@ -92,7 +92,7 @@ my $argsDeclaration =
 	       default => 0
 	   }),
    booleanArg({name => 'tolerateMissingIds',
-	       descr => '',
+	       descr => "don't fail if an input sourceId is not found in database",
 	       reqd => 0,
 	       default => 0
 	   }),
