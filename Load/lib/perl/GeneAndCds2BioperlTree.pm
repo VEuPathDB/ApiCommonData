@@ -56,7 +56,7 @@ sub preprocess {
              )
         ) {
 
-      copyQualifiers($geneFeature, $bioperlFeatureTree);
+      copyQualifiers($geneFeature, $bioperlFeatureTree) if ($geneFeature);
       undef $geneFeature;
 
       $type = "coding" if $type eq "CDS";
