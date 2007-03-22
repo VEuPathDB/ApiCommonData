@@ -834,6 +834,16 @@ sub loadDbXRefs {
 
     my $dbName = "NRDB_${dbType}_dbXRefBySeqIdentity";
 
+    unless (-e "$mgr->{dataDir}/misc/${outputFile}_$db"){
+      my $log = "$mgr->{myPipelineDir}/logs/load${outputFile}_$db.err";
+
+      open(LOG,">>$log") or die "Can't open log file $log. Reason: $!\n";
+      print LOG "$mgr->{dataDir}/misc/${outputFile}_$db does not exist. Skipping...\n";
+      close(LOG);
+
+      next;
+    }
+
     &createExtDbAndDbRls($mgr,$dbName,$NrdbVer);
 
     my $args = "--extDbName $dbName --extDbReleaseNumber $NrdbVer --DbRefMappingFile '$mgr->{dataDir}/misc/${outputFile}_$db' --columnSpec \"secondary_identifier,primary_identifier\"";
