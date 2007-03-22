@@ -486,7 +486,28 @@ sub fixProteinIdsForPsipred{
   $mgr->endStep($signal);
 }
 
-#TODO: write step to correct ids in Psipred results to look like those in database
+sub fixPsipredFileNames{
+    my ($mgr,$fileDir) = @_;
+
+    my $propertySet = $mgr->{propertySet};
+
+    my $signal = "fixPsipredFileNamesIn${fileDir}";
+    $signal =~ s/\//_/;
+
+    return if $mgr->startStep("Fixing protein IDs in psipred result files for $fileDir", $signal);
+
+    $mgr->runCmd("cp -r $mgr->{dataDir}/${fileDir}/master/mainresult $mgr->{dataDir}/${fileDir}/master/mainresultFromPsipred");
+
+    my @files = &_getInputFiles("$mgr->{dataDir}/${fileDir}/master/mainresult");
+
+    foreach my $file (@files){
+      my $original = $file;
+      $file =~ s/(\S+)_(\d)/$1-$2/g;
+      $mgr->runCmd("mv $original $file");
+    }
+
+  $mgr->endStep($signal);
+}
 
 sub startPsipredOnComputeCluster {
   my ($mgr,$query,$subject,$queue) = @_;
