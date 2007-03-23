@@ -4,7 +4,7 @@ package ApiCommonData::Load::Plugin::CalculateProfileSummaryStats;
 
 use strict;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::PlasmoDB::Profile;
+use GUS::Model::ApiDB::Profile;
 
 my $argsDeclaration =
 [
@@ -127,7 +127,7 @@ sub makePercentsHash {
   my %percentsHash;
   my $sql = "
 SELECT source_id, profile_as_string
-FROM plasmodb.profile p, plasmodb.profileset ps
+FROM apidb.profile p, apidb.profileset ps
 WHERE ps.name = '$percentsProfileSetName'
 AND ps.external_database_release_id = $dbRlsId
 AND p.profile_set_id = ps.profile_set_id
@@ -152,7 +152,7 @@ sub processProfileSet {
 
   my $sql = "
 SELECT source_id, profile_as_string, no_evidence_of_expr, profile_id
-FROM plasmodb.profile p, plasmodb.profileset ps
+FROM apidb.profile p, apidb.profileset ps
 WHERE ps.name = '$profileSetName'
 AND ps.external_database_release_id = $dbRlsId
 AND p.profile_set_id = ps.profile_set_id
@@ -199,7 +199,7 @@ sub getHeader {
 
   my $sql = "
 SELECT en.name
-FROM plasmodb.profileSet ps, plasmodb.profileElementName en
+FROM apidb.profileSet ps, apidb.profileElementName en
 WHERE ps.name = '$profileSetName'
 AND ps.external_database_release_id = $dbRlsId
 AND en.profile_set_id = ps.profile_set_id
@@ -243,7 +243,7 @@ sub secondPass {
     $profileCount++;
     my $profileId = $sourceId2profileId->{$sourceId};
     my $profile =
-      GUS::Model::PlasmoDB::Profile->new({profile_id => $profileId});
+      GUS::Model::ApiDB::Profile->new({profile_id => $profileId});
 
     $profile->retrieveFromDB()
       || $self->error("Couldn't retrieve Profile with source_id '$sourceId'");
