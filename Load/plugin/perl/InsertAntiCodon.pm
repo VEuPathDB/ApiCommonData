@@ -154,6 +154,8 @@ sub parseFile {
 
     my $anticodon = $line[1] || $self->error("File is missing an anticodon for $transcriptSourceId or is not formatted properly");
 
+    $transcriptSourceId .= "-1";
+
     $tRNAs{$transcriptSourceId} = $anticodon;
   }
 
