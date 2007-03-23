@@ -7,6 +7,7 @@ require Exporter;
 
 use strict;
 use Data::Dumper;
+use ApiCommonData::Load::Util;
 
 # parse an input file into in-memory structures
 sub parseInputFile {
