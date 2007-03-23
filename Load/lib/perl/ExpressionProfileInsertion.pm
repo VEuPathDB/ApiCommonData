@@ -18,6 +18,7 @@ sub parseInputFile {
   my $header = <PROFILES_FILE>;
   chomp($header);
   my @header = split(/\t/, $header);
+  shift(@header);   # lose column heading for the sourceId column
   <PROFILES_FILE> if $skipSecondRow;
   my $profileRows;
   while (<PROFILES_FILE>) {
@@ -109,7 +110,6 @@ sub _makeProfileSet {
   my ($plugin, $dbRlsId, $header, $name, $descrip, $sourceIdType) = @_;
 
   my @header = @{$header};
-  shift(@header);   # lose column heading for the sourceId column
 
   my $elementCount = scalar(@header);
   my $profileSet = GUS::Model::ApiDB::ProfileSet->
