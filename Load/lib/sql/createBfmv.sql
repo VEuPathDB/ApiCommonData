@@ -29,7 +29,6 @@ GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
 
 -- comment this out -- it takes 4 hours to rebuild
 --DROP MATERIALIZED VIEW apidb.GeneAttributes;
---DROP TABLE apidb.GeneAttributes;
 
 --CREATE TABLE apidb.GeneAttributes AS
 CREATE MATERIALIZED VIEW apidb.GeneAttributes AS
@@ -149,9 +148,7 @@ GRANT SELECT ON apidb.GeneAttributes TO PUBLIC;
 ---------------------------
 
 DROP MATERIALIZED VIEW apidb.SequenceAttributes;
-DROP TABLE apidb.SequenceAttributes;
 
---CREATE TABLE apidb.SequenceAttributes AS
 CREATE MATERIALIZED VIEW apidb.SequenceAttributes AS
 SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
@@ -207,10 +204,8 @@ GRANT SELECT ON apidb.SequenceAttributes TO PUBLIC;
 -- SNPs
 ---------------------------
 
-DROP TABLE apidb.SnpAttributes;
 DROP MATERIALIZED VIEW apidb.SnpAttributes;
 
---CREATE TABLE apidb.SnpAttributes AS
 CREATE MATERIALIZED VIEW apidb.SnpAttributes AS
 SELECT snp.source_id AS source_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
@@ -234,6 +229,12 @@ SELECT snp.source_id AS source_id,
        SUBSTR(snp.reference_aa, 1, 200) AS reference_aa,
        DECODE(snp.has_nonsynonymous_allele, 0, 'no', 1, 'yes')
          AS has_nonsynonymous_allele,
+       SUBSTR(snp.major_allele, 1, 40) AS major_allele,
+       SUBSTR(snp.major_product, 1, 40) AS major_product,
+       SUBSTR(snp.minor_allele, 1, 40) AS minor_allele,
+       SUBSTR(snp.minor_product, 1, 40) AS minor_product,
+       snp.major_allele_count, snp.minor_allele_count, snp.strains,
+       snp.strains_revcomp,
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
@@ -273,25 +274,25 @@ GRANT SELECT ON apidb.SnpAttributes TO PUBLIC;
 ---------------------------
 
 DROP MATERIALIZED VIEW apidb.OrfAttributes;
-DROP TABLE apidb.OrfAttributes;
 
---CREATE TABLE apidb.OrfAttributes AS
 CREATE MATERIALIZED VIEW apidb.OrfAttributes AS
-SELECT SUBSTR(taas.source_id, 1, 60) AS source_id,
+SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        SUBSTR(ens.source_id, 1, 30) AS nas_id,
-       SUBSTR(taas.source_id, 1, 50) AS orf_id,
-       taas.length
-FROM dots.ExternalNaSequence ens, dots.Transcript t,
-     dots.TranslatedAaFeature taaf, dots.TranslatedAaSequence taas,
-     sres.Taxon, sres.TaxonName tn, sres.SequenceOntology so
-WHERE t.na_feature_id = taaf.na_feature_id
-  AND taaf.aa_sequence_id = taas.aa_sequence_id
-  AND ens.na_sequence_id = t.na_sequence_id
+       tas.length,
+       nl.start_min, nl.end_max, nl.is_reversed
+FROM dots.ExternalNaSequence ens, dots.Miscellaneous m,
+     dots.TranslatedAaFeature taaf, dots.TranslatedAaSequence tas,
+     sres.Taxon, sres.TaxonName tn, sres.SequenceOntology so,
+     dots.NaLocation nl
+WHERE m.na_feature_id = taaf.na_feature_id
+  AND taaf.aa_sequence_id = tas.aa_sequence_id
+  AND ens.na_sequence_id = m.na_sequence_id
   AND ens.taxon_id = tn.taxon_id
   AND ens.taxon_id = taxon.taxon_id
-  AND t.sequence_ontology_id = so.sequence_ontology_id
+  AND m.sequence_ontology_id = so.sequence_ontology_id
+  AND m.na_feature_id = nl.na_feature_id
   AND so.term_name = 'ORF'
   AND tn.name_class='scientific name';
 
@@ -302,9 +303,7 @@ GRANT SELECT ON apidb.OrfAttributes TO PUBLIC;
 ---------------------------
 
 DROP MATERIALIZED VIEW apidb.EstAttributes;
-DROP TABLE apidb.EstAttributes;
 
---CREATE TABLE apidb.EstAttributes AS
 CREATE MATERIALIZED VIEW apidb.EstAttributes AS
 SELECT ens.source_id,
        e.seq_primer AS primer,
@@ -342,9 +341,7 @@ GRANT SELECT ON apidb.EstAttributes TO PUBLIC;
 ---------------------------
 
 DROP MATERIALIZED VIEW apidb.ArrayElementAttributes;
-DROP TABLE apidb.ArrayElementAttributes;
 
---CREATE TABLE apidb.ArrayElementAttributes AS
 CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes AS
 SELECT ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
