@@ -110,19 +110,6 @@ sub initToxoAnalysis {
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
-sub initCryptoAnalysis {
-  my ($propertyFile, $optionalArgs) = @_;
-
-  my $allSpecies = 'Tgondii';
-
-  my $taxId = ["Tgondii:5811","TgondiiApicoplast:5811","TgondiiGT1:5811","TgondiiVeg:398031","TgondiiRH:383379"];
-
-  my ($mgr, $projectDir, $release)
-    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
-
-  return ($mgr, $projectDir, $release, $allSpecies);
-}
-
 sub initPlasmoAnalysis {
   my ($propertyFile, $optionalArgs) = @_;
 
