@@ -666,7 +666,7 @@ sub createGenomeDir {
 }
 
 sub createGenomeDirForGfClient {
-  my ($mgr, $query, $genomeDir,$maxIntron, $numNodes) = @_;
+  my ($mgr, $query, $genomeDir,$maxIntron, $numNodes,$noRepMask) = @_;
 
   my $signal = "create" . ucfirst($query) . "-" . ucfirst($genomeDir) . "GenomeDir";
   return if $mgr->startStep("Creating ${query}-${genomeDir} genome dir", $signal);
@@ -683,7 +683,7 @@ sub createGenomeDirForGfClient {
   my $nodePort = $propertySet->getProp('nodePort');
 
   &makeGenomeDirForGfClient($query, $genomeDir, $dataDir, $clusterDataDir,
-    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort, $numNodes);
+    $nodePath, $gaTaskSize, $maxIntron, $gaPath, $nodeClass, $nodePort, $numNodes, $noRepMask);
   $mgr->endStep($signal);
 }
 
