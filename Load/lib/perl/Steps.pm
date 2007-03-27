@@ -1853,6 +1853,24 @@ sub startGenomeAlignOnComputeCluster {
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
 
+sub startGfClientWORepMaskOnComputeCluster {
+  my ($mgr,$queryFile,$targetDir,$queue) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $name = $queryFile . "-" . $targetDir;
+
+  $name = ucfirst($name);
+  my $signal = "startAlign$name";
+  return if $mgr->startStep("Starting $name alignment on cluster", $signal);
+
+  $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runGfClientWORepMask --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
 
 sub documentTRNAScan {
   my ($mgr, $version, $options) = @_;
