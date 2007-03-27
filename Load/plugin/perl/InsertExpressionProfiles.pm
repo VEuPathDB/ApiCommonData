@@ -5,11 +5,6 @@ package ApiCommonData::Load::Plugin::InsertExpressionProfiles;
 use strict;
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Util;
-use GUS::Model::ApiDB::Profile;
-use GUS::Model::ApiDB::ProfileSet;
-use GUS::Model::ApiDB::ProfileElement;
-use GUS::Model::ApiDB::ProfileElementName;
 use ApiCommonData::Load::ExpressionProfileInsertion;
 
 my $argsDeclaration =
