@@ -2475,7 +2475,7 @@ sub loadContigAlignments {
     &getTableId($mgr, "Assembly") :
       &getTableId($mgr, "AssemblySequence");
   $tmpFile = $qDir . "/blocked.seq";
-  $qTabId = &getTableId($mgr, $table);
+  $qTabId = &getTableId($mgr, "$table") if $table;
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
