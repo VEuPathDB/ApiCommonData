@@ -2460,7 +2460,7 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table) = @_;
   my $propertySet = $mgr->{propertySet};
   my $dataDir = $mgr->{'dataDir'};
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
@@ -2474,7 +2474,7 @@ sub loadContigAlignments {
     &getTableId($mgr, "Assembly") :
       &getTableId($mgr, "AssemblySequence");
   $tmpFile = $qDir . "/blocked.seq";
-
+  $qTabId = &getTableId($mgr, "ExternalNASequence");
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
