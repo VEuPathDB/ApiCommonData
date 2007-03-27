@@ -138,7 +138,6 @@ sub run {
   my $profileRows = $self->getProfileRows($studyName,$protocolName,
 					  $arrayDesignName, $header,
 					  $extDbRlsId);
-  print Dumper $profileRows;
 
   my $msg = &processInputProfileSet($self, $extDbRlsId, $header, $profileRows,
 				    $studyName, $studyDescrip, 'gene',
@@ -180,9 +179,9 @@ ORDER BY s.name, q.quantification_id
     }
     push(@$header, $elementName);
   }
-  $self->error("Couldn't find study for $extDbRlsId, $protocolName") unless ($studyCount);
+  $self->error("Couldn't find study for extDbRlsId: $extDbRlsId and protocolName: $protocolName") unless ($studyCount);
 
-  return ($studyName, $header);
+  return ($prevStudyName, $header);
 }
 
 
@@ -221,26 +220,24 @@ WHERE s.external_database_release_id = $extDbRlsId
   ORDER BY g.source_id
 ";
 
-  print STDERR $sql;
-
   # transform individual result rows to a single row with all results for a
   # sourceId
   my $stmt = $self->prepareAndExecute($sql);
   my $rows = [];
-  my $sourceIdRowHash;
+  my $sourceIdRowHash = {};
   my $count = 0;
-  my $prevSourceId = "bleh";
+  my $prevSourceId = "first";
   my ($sourceId, $quantName, $result);
   while (($sourceId, $quantName, $result) = $stmt->fetchrow_array()) {
     if ($sourceId ne $prevSourceId) {
-      my $row = $self->makeSourceIdRow($sourceId, $sourceIdRowHash, $header);
-      push(@$rows, $row) unless $count == 0;
+      my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
+      push(@$rows, $row) unless $count++ == 0;
       $prevSourceId = $sourceId;
       $sourceIdRowHash = {};
     }
     $sourceIdRowHash->{$quantName} = $result;
   }
-  my $row = $self->makeSourceIdRow($sourceId, $sourceIdRowHash, $header);
+  my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
   push(@$rows, $row);
   return $rows;
 }

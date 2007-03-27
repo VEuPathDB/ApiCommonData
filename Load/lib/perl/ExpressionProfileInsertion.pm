@@ -8,6 +8,10 @@ require Exporter;
 use strict;
 use Data::Dumper;
 use ApiCommonData::Load::Util;
+use GUS::Model::ApiDB::Profile;
+use GUS::Model::ApiDB::ProfileSet;
+use GUS::Model::ApiDB::ProfileElement;
+use GUS::Model::ApiDB::ProfileElementName;
 
 # parse an input file into in-memory structures
 sub parseInputFile {
@@ -69,7 +73,7 @@ sub processInputProfileSet {
       $plugin->undefPointerCache();
     }
   }
-  $plugin->log("$count profiles submitted for $name. $notFound not found");
+  $plugin->log("$count profiles submitted for '$name'. $notFound not found");
 }
 
 
