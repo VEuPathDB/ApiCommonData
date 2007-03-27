@@ -82,7 +82,7 @@ sub makeGenomeDir {
 
 sub makeGenomeDirForGfClient {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
-	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort, $numNodes) = @_;
+	$nodePath, $taskSize, $maxIntron, $gaBinPath, $nodeClass, $nodePort, $numNodes,$noRepMask) = @_;
     my $inputDir = "$localDataDir/genome/$queryName-$targetName/input";
     my $serverBase = "$clusterDataDir/genome/$queryName-$targetName";
     my $targetDirPath = "$clusterDataDir/seqfiles/$targetName/nib";
@@ -95,7 +95,7 @@ sub makeGenomeDirForGfClient {
     my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
     &makeGenomeTaskPropFileForGfClient($inputDir, $targetDirPath,$nodePort, $queryName,
-			    $maxIntron, $gaBinPath, $clusterDataDir);
+			    $maxIntron, $gaBinPath, $clusterDataDir,$noRepMask);
 
     &makeGenomeTargetListFileForGfClient($inputDir . '/target.lst', $localDataDir, $targetName,$clusterDataDir);
 
@@ -303,14 +303,16 @@ queryPath=$seqFileName
 }
 
 sub makeGenomeTaskPropFileForGfClient {
-    my ($inputDir, $targetDirPath, $nodePort, $query, $maxIntron, $gaBinPath, $clusterDataDir) = @_;
+    my ($inputDir, $targetDirPath, $nodePort, $query, $maxIntron, $gaBinPath, $clusterDataDir,$noRepMask) = @_;
+
+    my $queryFile = $noRepMask ? "$clusterDataDir/repeatmask/$query/master/mainresult/blocked.seq" : "$clusterDataDir/seqfiles/${query}.fsa";
 
     open(F, ">$inputDir/task.prop")
 	|| die "Can't open $inputDir/task.prop for writing";
     print F
 "gaBinPath=$gaBinPath
 targetDirPath=$targetDirPath
-queryPath=$clusterDataDir/repeatmask/$query/master/mainresult/blocked.seq
+queryPath=$queryFile
 nodePort=$nodePort
 maxIntron=$maxIntron
 ";
