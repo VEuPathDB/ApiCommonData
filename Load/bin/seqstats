@@ -1,0 +1,55 @@
+#!@perl@
+
+# Report sequence statistics for one or two FASTA data sets.
+# Datasets can be a single file or a directory of FASTA files.
+# If two data sets are provided the report will also state 
+# if the two sets contain the same sequences. 
+# The sequence comparisons are case insensitive and 
+# do not consider the sequence ids.
+#
+# Use case:
+# Split one FASTA file of n sequences into a directory of 
+# n FASTA files. The split can be validated with
+# seqstats.pl original.fa /split/directory
+
+use FindBin qw($Bin);
+use lib "$Bin";
+
+use ApiCommonData::Load::Utility::FastaStats;
+
+if (@ARGV < 1) {
+    $this = `basename $0`;
+    $this =~ s/\n//;
+    print "usage: " . $this . " fasta_dataset_1 [fasta_dataset_2]\n\n";
+    print "Report sequence statistics for one or two FASTA data sets.\n";
+    print "Datasets can be a single file or a directory of FASTA files.\n";
+    print "If two data sets are provided the report will also state \n";
+    print "if the two sets contain the same sequences. \n";
+    print "The sequence comparisons are case insensitive and \n";
+    print "do not consider the sequence ids.";
+    print "\n";
+    exit 1;
+}
+
+if ( ! -e $ARGV[0] ){
+    die "No such file or directory. " . $ARGV[0] . "\n";
+}
+if ( $ARGV[1] && ! -e $ARGV[1] ){
+    die "No such file or directory. " . $ARGV[1] . "\n";
+}
+
+my $ic = new ApiCommonData::Load::Utility::FastaStats({ dataset=>$ARGV[0], fullstats=>1, listduplicates=>0});
+
+$ic->printStats();
+
+if ($ARGV[1]) {
+    my $ic2 = new ApiCommonData::Load::Utility::FastaStats({ dataset=>$ARGV[1], fullstats=>1, listduplicates=>0});
+    $ic2->printStats();
+    
+    if ($ic->equals($ic2)) {
+        print "Data sets are equal\n";
+    } else {
+        print "Data sets differ\n";
+    }
+}
+exit 0;
