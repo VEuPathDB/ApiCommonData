@@ -143,6 +143,8 @@ WHERE gf.na_feature_id = nl.na_feature_id
 
 GRANT SELECT ON apidb.GeneAttributes TO PUBLIC;
 
+CREATE INDEX apidb.GeneAttr_sourceId ON apidb.GeneAttributes (source_id);
+
 ---------------------------
 -- sequences
 ---------------------------
@@ -199,6 +201,8 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
 ;
 
 GRANT SELECT ON apidb.SequenceAttributes TO PUBLIC;
+
+CREATE INDEX apidb.SeqAttr_source_id ON apidb.SequenceAttributes (source_id);
 
 ---------------------------
 -- SNPs
@@ -269,6 +273,8 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
 
 GRANT SELECT ON apidb.SnpAttributes TO PUBLIC;
 
+CREATE INDEX apidb.SnpAttr_source_id ON apidb.SnpAttributes (source_id);
+
 ---------------------------
 -- ORFs
 ---------------------------
@@ -297,6 +303,8 @@ WHERE m.na_feature_id = taaf.na_feature_id
   AND tn.name_class='scientific name';
 
 GRANT SELECT ON apidb.OrfAttributes TO PUBLIC;
+
+CREATE INDEX apidb.OrfAttr_source_id ON apidb.OrfAttributes (source_id);
 
 ---------------------------
 -- ESTs
@@ -336,6 +344,8 @@ AND   edr.external_database_id = ed.external_database_id;
 
 GRANT SELECT ON apidb.EstAttributes TO PUBLIC;
 
+CREATE INDEX apidb.EstAttr_source_id ON apidb.EstAttributes (source_id);
+
 ---------------------------
 -- array elements
 ---------------------------
@@ -356,5 +366,8 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
 ;
 
 GRANT SELECT ON apidb.ArrayElementAttributes TO PUBLIC;
+
+CREATE INDEX apidb.AEAttr_source_id
+ON apidb.ArrayElementAttributes (source_id);
 
 exit
