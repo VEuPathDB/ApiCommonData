@@ -2460,7 +2460,7 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile) = @_;
   my $propertySet = $mgr->{propertySet};
   my $dataDir = $mgr->{'dataDir'};
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
@@ -2468,13 +2468,14 @@ sub loadContigAlignments {
   my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
   my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
   my $qFile = "$dataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
+  $qFile =  "$dataDir/seqfiles/$querySeqFile" if $querySeqFile;
   my $tmpFile;
   my $qDir = "/tmp/" . $queryName;
   my $qTabId = ($queryName =~ /FinalTranscript/i) ? 
     &getTableId($mgr, "Assembly") :
       &getTableId($mgr, "AssemblySequence");
   $tmpFile = $qDir . "/blocked.seq";
-  $qTabId = &getTableId($mgr, "ExternalNASequence");
+  $qTabId = &getTableId($mgr, $table);
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
