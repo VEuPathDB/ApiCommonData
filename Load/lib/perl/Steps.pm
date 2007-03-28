@@ -489,7 +489,8 @@ sub fixPsipredFileNames{
 
     foreach my $file (@files){
       my $original = $file;
-      $file =~ s/(\S+)_(\d)/$1-$2/g;
+#      $file =~ s/(\S+)_(\d)/$1-$2/g;
+      $file =~ s/(\S+)\.(ss2)/$1-1.$2/g;
       $mgr->runCmd("mv $original $file");
     }
 
@@ -1011,7 +1012,39 @@ sub extractNaSeq {
   $mgr->endStep($signal);
 }
 
-sub extractTranscriptSeq {
+sub extractAnnotatedAndPredictedTranscriptSeq {
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$transcriptTable,$primarySeqTable,$identifier) = @_;
+
+  my $type = ucfirst($seqType);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $signal = "extract${name}$type";
+
+  return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $sql = my $sql = "select t.$identifier, ss.description,
+            'length='||ss.length,ss.sequence
+             from DoTS.SplicedNASequence ss,
+                  DoTS.$primarySeqTable ns,
+                  DoTS.GeneFeature g,
+                  DoTs.Transcript t
+             where ns.external_database_release_id = $dbRlsId
+             and ns.na_sequence_id = g.na_sequence_id
+             and g.na_feature_id = t.parent_id
+             and t.na_sequence_id = ss.na_sequence_id";
+
+  my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub extractAnnotatedTranscriptSeq {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$transcriptTable,$seqTable,$identifier) = @_;
 
   my $type = ucfirst($seqType);
