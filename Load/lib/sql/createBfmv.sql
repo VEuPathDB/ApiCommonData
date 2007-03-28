@@ -227,9 +227,6 @@ SELECT snp.source_id AS source_id,
        DECODE(snp.is_coding, 0, 'no', 1, 'yes') AS is_coding,
        snp.position_in_CDS,
        snp.position_in_protein,
-       SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN snp.strains_revcomp
-                   ELSE snp.strains END, 1, 200) AS description,
        SUBSTR(snp.reference_aa, 1, 200) AS reference_aa,
        DECODE(snp.has_nonsynonymous_allele, 0, 'no', 1, 'yes')
          AS has_nonsynonymous_allele,
@@ -242,18 +239,10 @@ SELECT snp.source_id AS source_id,
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
-       SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50)
-              END, 1, 50) AS lflank,
-       SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 1, snp_loc.start_min))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence, 1, snp_loc.start_min)
-              END, 1, 50) AS allele,
-       SUBSTR(CASE WHEN gene_info.is_reversed = 1
-                   THEN apidb.reverse_complement(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50))
-                   ELSE DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1)
-              END, 1, 50) AS rflank,
+       SUBSTR(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50), 1, 50)
+         AS lflank,
+       SUBSTR(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1), 1, 50)
+         AS rflank,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
 FROM dots.ExternalNaSequence s, dots.SnpFeature snp, dots.NaLocation snp_loc,
