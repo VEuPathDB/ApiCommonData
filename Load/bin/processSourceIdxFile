@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use FileHandle;
+
+my ($inFile,$outFile,$verbose);
+&GetOptions("inFile=s" => \$inFile,
+            "outFile=s" => \$outFile,
+	    "verbose!" => \$verbose);
+
+
+die "usage:processIdxFile --inFile --outFile
+     generates a file of ids and taxon names from an input source.idx file from PDB\n" if (! -e $file);
+
+
+my $inFh = new FileHandle("$inFile") || die "Can't open $inFile\n";
+
+my $outFh = new FileHandle("$outFile",">") || die "Can't open $outFile\n";
+
+while(my $line = $inFh->getline){
+  chomp;
+  next if ($line !~ /^\d+/);
+  my @ln = split (/\t/,$line);
+  my $id = $ln[0];
+  my @names = split(/\;\s/,$ln[1]);
+  print $outFh ("$id\n") if (@names < 0);
+  foreach my $name (@names) {
+    $name =~ s/^\s//;
+    print $outFh ("$id\t$name\n");
+  }
+}
+
