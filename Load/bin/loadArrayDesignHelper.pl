@@ -117,7 +117,7 @@ while(<DATA>) {
   my @values = map { $addData{$_} } sort keys %addData;
   my $row = join("\t", @values);
 
-  print DATAOUT $row . "\t" . <DATA>;
+  print DATAOUT $row . "\t" . $_;
 }
 
 close DATA;
