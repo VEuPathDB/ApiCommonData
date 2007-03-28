@@ -467,11 +467,11 @@ sub getTranscriptSeq{
 
 sub undoTables {
   return ('DoTS.NALocation',
-	  'DoTS.GeneFeature',
 	  'DoTS.RnaFeatureExon',
-	  'DoTS.SplicedNASequence',
+	  'DoTS.RNAType',
 	  'DoTS.Transcript',
+	  'DoTS.SplicedNASequence',
 	  'DoTS.ExonFeature',
-	  'DoTS.RNAType'
+	  'DoTS.GeneFeature'
 	 );
 }
