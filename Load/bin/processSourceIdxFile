@@ -13,7 +13,7 @@ my ($inFile,$outFile,$verbose);
 
 
 die "usage:processIdxFile --inFile --outFile
-     generates a file of ids and taxon names from an input source.idx file from PDB\n" if (! -e $file);
+     generates a file of ids and taxon names from an input source.idx file from PDB\n" if (! -e $inFile && ! $outFile);
 
 
 my $inFh = new FileHandle("$inFile") || die "Can't open $inFile\n";
