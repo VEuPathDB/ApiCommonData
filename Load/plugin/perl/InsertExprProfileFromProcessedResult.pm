@@ -219,6 +219,7 @@ WHERE s.external_database_release_id = $extDbRlsId
   AND g.na_feature_id = t.parent_id
   ORDER BY g.source_id
 ";
+  print STDERR "$sql\n";
 
   # transform individual result rows to a single row with all results for a
   # sourceId
