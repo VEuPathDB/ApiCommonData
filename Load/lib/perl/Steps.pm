@@ -3522,12 +3522,8 @@ sub startIprScanOnComputeCluster {
 
    my $signal = "load${dir}Iprscan";
    return if $mgr->startStep("Starting Data Load $signal", $signal);
-
-   my $iprver = $propertySet->getProp('iprscan.version');
-   my $iprdataver = $propertySet->getProp('iprscan.dataversion');
+   
    my $goversion = $propertySet->getProp('iprscan.goversion');
-
-   # my $conf = "$ENV{GUS_HOME}/config/interpro-config-plasmodb.xml";
 
    my $args = <<"EOF";
 --resultFileDir=$resultFileDir \\

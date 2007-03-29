@@ -284,6 +284,7 @@ sub _getStatsForFile {
     
     $theFile =~ s/(.*\.gz)\s*$/gzip -dc < $1|/;
     $theFile =~ s/(.*\.Z)\s*$/uncompress -c < $1|/;
+    $theFile =~ s/(.*\.zip)\s*$/unzip -p $1|/;
 
     open(FILE1, $theFile ) or die "Can not open " . $theFile . " for reading\n";
     
