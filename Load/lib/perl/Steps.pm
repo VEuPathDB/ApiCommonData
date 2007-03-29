@@ -2511,7 +2511,7 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop) = @_;
   my $propertySet = $mgr->{propertySet};
   my $dataDir = $mgr->{'dataDir'};
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
@@ -2542,6 +2542,8 @@ sub loadContigAlignments {
         . " --ok_internal_gap 15 --ok_end_gap 50 --min_query_pct 10";
 
   $args .= " --query_db_rel_id $queryDbRlsId" if $queryDbRlsId;
+
+  $args .= " --percentTop $percentTop" if $percentTop;
 
   $action = ucfirst($action);
 
