@@ -385,7 +385,11 @@ sub loadSuperfamilyFormat {
 
 sub submitDbRef{
    my ($self, $dbName, $id, $name, $descr, $logFreq, $eCount) = @_;
-   warn "$dbName, $id, $name, $descr\n" if $self->getArgs()->{'veryVerbose'};;
+   
+   map { $_ =~ s/^\s+//; $_ =~ s/\s+$//; } ($id, $name);
+
+   warn "'$dbName', '$id', '$name', '$descr'\n" if $self->getArgs()->{'veryVerbose'};
+
    my $gusHash = { 'primary_identifier' => $id,
 		   'secondary_identifier' => $name,
 		   'external_database_release_id' => $self->{$dbName}->{extDbRlsId},
