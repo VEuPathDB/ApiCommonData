@@ -236,7 +236,7 @@ WHERE s.external_database_release_id = $extDbRlsId
       $prevSourceId = $sourceId;
       $sourceIdRowHash = {};
     }
-    $sourceIdRowHash->{$quantName} = $result;
+    push(@{$sourceIdRowHash->{$quantName}}, $result);
   }
   my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
   push(@$rows, $row);
@@ -246,8 +246,13 @@ WHERE s.external_database_release_id = $extDbRlsId
 sub makeSourceIdRow {
   my ($self, $sourceId, $sourceIdRowHash, $header) = @_;
   my $row = [$sourceId];
-  foreach my $quantName (@$header) { 
-    push(@$row, $sourceIdRowHash->{$quantName});
+  foreach my $quantName (@$header) {
+    my $count = scalar(@{$sourceIdRowHash->{$quantName}});
+    my $avg;
+    foreach my $val (@{$sourceIdRowHash->{$quantName}}) {
+      $avg += $val/$count;
+    }
+    push(@$row, $avg);
   }
   return $row;
 }
