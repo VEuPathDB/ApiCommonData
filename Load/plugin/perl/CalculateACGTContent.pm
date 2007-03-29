@@ -112,7 +112,7 @@ sub getMonomerCount{
   my $naSeqObj = GUS::Model::DoTS::NASequence->new({na_sequence_id => $seqId});
   $naSeqObj->retrieveFromDB();
   my $naSeq = $naSeqObj->getSequence();
-print "ID: $seqId\n";
+
   my $seqobj = Bio::PrimarySeq->new(-seq=>$naSeq,
 				    -alphabet=>'dna');
 
