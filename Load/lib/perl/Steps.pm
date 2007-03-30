@@ -489,8 +489,8 @@ sub fixPsipredFileNames{
 
     foreach my $file (@files){
       my $original = $file;
-#      $file =~ s/(\S+)_(\d)/$1-$2/g;
-      $file =~ s/(\S+)\.(ss2)/$1-1.$2/g;
+      $file =~ s/(\S+)_(\d)/$1-$2/g;
+#      $file =~ s/(\S+)\.(ss2)/$1-1.$2/g;
       $mgr->runCmd("mv $original $file");
     }
 
@@ -3454,6 +3454,8 @@ sub copyToDownloadSiteWithSsh {
   $mgr->runCmd("mv $dataDir/downloadSite $dataDir/release-$release");
 
   my $ssh = GUS::Pipeline::SshCluster->new($server,$user);
+
+  $ssh->setManager($mgr);
 
   $ssh->copyTo($dataDir, "release-$release", $serverDir);
 
