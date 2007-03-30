@@ -169,7 +169,6 @@ sub process {
   # make the Process Result
   my $result = GUS::Community::RadAnalysis::ProcessResult->new();
 
-  $result->setArrayDesignName($arrayDesignName);
   $result->setArrayTable($arrayTable);
   $result->setResultFile($resultFile);
   $result->setResultView($RESULT_VIEW);
