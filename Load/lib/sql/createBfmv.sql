@@ -22,6 +22,16 @@ GRANT REFERENCES ON dots.VirtualSequence TO apidb;
 GRANT SELECT ON dots.VirtualSequence TO apidb WITH GRANT OPTION;
 GRANT REFERENCES ON dots.TranslatedAaFeature TO apidb;
 GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
+GRANT SELECT ON dots.aalocation TO apidb;
+GRANT SELECT ON dots.NaFeatureComment TO apidb;
+GRANT SELECT ON dots.ExonFeature TO apidb;
+GRANT SELECT ON dots.TransmembraneAaFeature TO apidb;
+GRANT SELECT ON dots.GeneFeature TO apidb;
+GRANT SELECT ON dots.NaLocation TO apidb;
+GRANT SELECT ON dots.ExternalNaSequence TO apidb;
+GRANT SELECT ON dots.Miscellaneous TO apidb;
+GRANT SELECT ON sres.SequenceOntology TO apidb;
+GRANT SELECT ON sres.Taxon TO apidb;
 
 ---------------------------
 -- genes
