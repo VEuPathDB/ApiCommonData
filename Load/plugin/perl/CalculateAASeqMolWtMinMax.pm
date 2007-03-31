@@ -112,6 +112,11 @@ EOSQL
 
   my $count = 0;
   while (my ($aaSeqId, $seq) = $sth->fetchrow_array()) {
+    
+    # J is valid IUPAC for leucine/isoleucine ambiguity but apparently
+    # Bio::Tools::SeqStats didn't get the memo - J is not allowed.
+    $seq =~ s/J/L/g;
+    
     my $seq = Bio::PrimarySeq->new(-id => $aaSeqId,
 				   -seq => $seq,
 				   -alphabet => "protein",
