@@ -147,3 +147,4 @@ my $newSeqAttr = GUS::Model::ApiDB::AaSequenceAttribute->
 }
 
 1;
+
