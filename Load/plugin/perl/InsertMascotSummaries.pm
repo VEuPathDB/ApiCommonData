@@ -19,7 +19,7 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::MassSpecFeature;
-use GUS::Model::DoTS::MassSpecSummary;
+use GUS::Model::ApiDB::MassSpecSummary;
 use GUS::Model::DoTS::NAFeature;
 
 # utility
@@ -290,7 +290,7 @@ sub insertMassSpecSummary {
     $record->{seqLength}    = $aaSeq->getLength();
     $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
 
-    my $mss = GUS::Model::DoTS::MassSpecSummary->new({
+    my $mss = GUS::Model::ApiDB::MassSpecSummary->new({
        'aa_sequence_id'          => $record->{aaSequenceId},
        'is_expressed'            => 1,
        'developmental_stage'     => $record->{devStage},
