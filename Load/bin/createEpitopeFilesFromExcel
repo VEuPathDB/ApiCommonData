@@ -1,0 +1,100 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use Switch;
+use strict;
+
+my ($excelDir, $outDir);
+
+&GetOptions("excelDir=s" => \$excelDir,
+	    "outDir=s" => \$outDir,
+	   );
+
+if (!$excelDir || !$outDir) {
+  die "usage: createEpitopeFilesFromExcel --excelDir <DIRPATH> --outDir <DIRPATH>\n";
+}
+
+&createEpitopeFiles($excelDir,$outDir);
+&createEpitopeFastaFiles($outDir);
+
+sub createEpitopeFiles{
+  my ($excelDir,$outDir) = @_;
+
+  unless (-d $outDir){
+    my $cmd = "mkdir -p $outDir";
+
+    &exeCmd($cmd);
+
+  }
+
+  if (-d $excelDir) {
+    my $file;
+
+    opendir(DIR, $excelDir) or die "can't opendir $excelDir: $!";
+
+    while (defined($file = readdir(DIR))) {
+      next if $file =~ /^\.\.?$/;     # skip . and ..
+
+      my $inFile = "$excelDir/$file";
+
+      my $outFile = $file;
+      $outFile =~ s/(\w+).\w+/$1/;
+      $outFile = "$outDir/$outFile.txt";
+
+      my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile";
+
+      &exeCmd($cmd);
+
+    }
+
+    closedir(DIR);
+
+  }else{
+    die "Cannot locate the directory '$excelDir'\n";
+  }
+}
+
+sub createEpitopeFastaFiles{
+  my($inputDir) = @_;
+
+    if (-d $inputDir) {
+      my $file;
+      my $outputDir = "$inputDir/fasta";
+
+      &exeCmd("mkdir $outputDir") unless (-d $outputDir);
+
+      opendir(DIR, $inputDir) or die "can't opendir $inputDir: $!";
+
+      while (defined($file = readdir(DIR))) {
+	next if $file =~ /^\.\.?$/;     # skip . and ..
+
+	my $inFile = "$inputDir/$file";
+
+	my $outFile = $file;
+	$outFile =~ s/(\w+).\w+/$1/;
+	$outFile = "$outputDir/$outFile.fsa";
+
+	my $cmd = "generateEpitopeFastaFile --inputFile $inFile --outputFile $outFile";
+
+	&exeCmd($cmd);
+
+      }
+
+      closedir(DIR);
+
+
+    }else{
+      die "Cannot locate the directory '$inputDir'\n";
+    }
+}
+
+
+sub exeCmd{
+  my ($cmd) = @_;
+
+  print STDERR "$cmd\n";
+  system($cmd);
+  my $status = $? >> 8;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}
