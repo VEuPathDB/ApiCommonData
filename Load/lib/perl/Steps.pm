@@ -490,7 +490,6 @@ sub fixPsipredFileNames{
     foreach my $file (@files){
       my $original = $file;
       $file =~ s/(\S+)_(\d)/$1-$2/g;
-#      $file =~ s/(\S+)\.(ss2)/$1-1.$2/g;
       $mgr->runCmd("mv $original $file");
     }
 
