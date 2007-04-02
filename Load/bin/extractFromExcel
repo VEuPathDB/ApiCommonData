@@ -18,7 +18,7 @@ GetOptions("verbose!"        => \$verbose,
           );
 
 unless (-e $inputFile) {
-  die "Must supply a valid input file!\nUsage: readExcel --inputFile <FILE> --outputFile <FILE> [--verbose]";
+  die "Must supply a valid input file!\nUsage: extractFromExcel --inputFile <FILE> --outputFile <FILE> [--verbose]";
 }
 
 my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
