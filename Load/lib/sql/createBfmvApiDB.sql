@@ -17,6 +17,11 @@ SELECT 'toxodb' AS project_id, GeneAttributes.* FROM
 apidb.GeneAttributes@TOXOBLD
 );
 
+select count(*) from apidb.geneattributes@CRYPTOB;
+select count(*) from apidb.geneattributes@PLASBLD;
+select count(*) from apidb.geneattributes@TOXOBLD;
+select count(*) from apidb.geneattributes;
+
 ---------------------------
 -- SEQUENCEs
 ---------------------------
@@ -35,6 +40,11 @@ UNION
 SELECT 'toxodb' AS project_id, SequenceAttributes.* FROM  
 apidb.SequenceAttributes@TOXOBLD
 );
+
+select count(*) from apidb.sequenceattributes@CRYPTOB;
+select count(*) from apidb.sequenceattributes@PLASBLD;
+select count(*) from apidb.sequenceattributes@TOXOBLD;
+select count(*) from apidb.sequenceattributes;
 
 ---------------------------
 -- ESTs
@@ -55,6 +65,11 @@ SELECT 'toxodb' AS project_id, EstAttributes.* FROM
 apidb.EstAttributes@TOXOBLD
 );
 
+select count(*) from apidb.estattributes@CRYPTOB;
+select count(*) from apidb.estattributes@PLASBLD;
+select count(*) from apidb.estattributes@TOXOBLD;
+select count(*) from apidb.estattributes;
+
 ---------------------------
 -- ORFs
 ---------------------------
@@ -73,6 +88,11 @@ UNION
 SELECT 'toxodb' AS project_id, OrfAttributes.* FROM  
 apidb.OrfAttributes@TOXOBLD
 );
+
+select count(*) from apidb.orfattributes@CRYPTOB;
+select count(*) from apidb.orfattributes@PLASBLD;
+select count(*) from apidb.orfattributes@TOXOBLD;
+select count(*) from apidb.orfattributes;
 
 ---------------------------
 -- SNPs
@@ -94,3 +114,7 @@ SELECT 'toxodb' AS project_id, SnpAttributes.* FROM
 apidb.SnpAttributes@TOXOBLD
 );
 
+select count(*) from apidb.snpattributes@CRYPTOB;
+select count(*) from apidb.snpattributes@PLASBLD;
+select count(*) from apidb.snpattributes@TOXOBLD;
+select count(*) from apidb.snpattributes;
