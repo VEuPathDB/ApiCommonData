@@ -37,14 +37,46 @@ GRANT SELECT ON sres.Taxon TO apidb;
 -- genes
 ---------------------------
 
+-- GoTermList mview is used to create GeneAttributes
+
+DROP MATERIALIZED VIEW apidb.GoTermList;
+
+CREATE MATERIALIZED VIEW apidb.GoTermList AS
+SELECT gf.source_id, o.ontology, 
+       DECODE(gec.name, 'IEA', 'predicted', 'annotated') AS source,
+       apidb.tab_to_string(CAST(COLLECT(gt.name) AS apidb.varchartab), ', ') AS go_terms
+FROM dots.GeneFeature gf, dots.Transcript t,
+     dots.TranslatedAaFeature taf, dots.GoAssociation ga,
+     sres.GoTerm gt, dots.GoAssociationInstance gai,
+     dots.GoAssociationInstanceLoe gail,
+     dots.GoAssocInstEvidCode gaiec, sres.GoEvidenceCode gec,
+     (SELECT gr.child_term_id AS go_term_id, gp.name AS ontology
+      FROM sres.GoRelationship gr, sres.GoTerm gp
+      WHERE gr.parent_term_id = gp.go_term_id
+        AND gp.go_id in ('GO:0008150','GO:0003674','GO:0005575')) o
+WHERE gf.na_feature_id = t.parent_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = ga.row_id
+  AND ga.table_id = (SELECT table_id
+                     FROM core.TableInfo
+                     WHERE name = 'TranslatedAASequence')
+  AND ga.go_term_id = gt.go_term_id
+  AND ga.go_association_id = gai.go_association_id
+  AND gai.go_assoc_inst_loe_id = gail.go_assoc_inst_loe_id
+  AND gai.go_association_instance_id
+      = gaiec.go_association_instance_id
+  AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
+  AND gt.go_term_id = o.go_term_id
+GROUP BY gf.source_id, o.ontology, 
+         DECODE(gec.name, 'IEA', 'predicted', 'annotated');
+
 -- comment this out -- it takes 4 hours to rebuild
 --DROP MATERIALIZED VIEW apidb.GeneAttributes;
 
---CREATE TABLE apidb.GeneAttributes AS
-CREATE MATERIALIZED VIEW apidb.GeneAttributes AS
+CREATE MATERIALIZED VIEW apidb.GeneAttributes1 AS
 SELECT gf.source_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
-       SUBSTR(gf.product, 1, 300) AS product,
+       SUBSTR(gf.product, 1, 200) AS product,
        LEAST(nl.start_min, nl.end_max) AS start_min,
        GREATEST(nl.start_min, nl.end_max) AS end_max,
        sns.length AS transcript_length,
@@ -54,26 +86,36 @@ SELECT gf.source_id,
            AS context_end,
        DECODE(nvl(nl.is_reversed, 0), 0, 'forward', 1, 'reverse',
               nl.is_reversed) AS strand,
-       sequence.source_id AS sequence_id,
+       SUBSTR(sequence.source_id, 1, 50) AS sequence_id,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        NVL(protein.tm_domains, 0) AS tm_count,
-       so_id, SUBSTR(so.term_name, 1, 200) AS so_term_name,
+       so_id, SUBSTR(so.term_name, 1, 150) AS so_term_name,
        SUBSTR(so.definition, 1, 150) AS so_term_definition,
-       so.ontology_name, so.so_version,
+       so.ontology_name, SUBSTR(so.so_version, 1, 7) AS so_version,
        SUBSTR(NVL(rt1.anticodon, rt2.anticodon), 1, 3) AS anticodon,
        protein.molecular_weight,
        protein.isoelectric_point, protein.min_molecular_weight,
        protein.max_molecular_weight, protein.hydropathicity_gravy_score,
        protein.aromaticity_score, protein.cds_length, protein.protein_length,
+       protein.ec_numbers,
        ed.name AS external_db_name,
-       edr.version AS external_db_version,
-       exons.exon_count, cmnt.comment_string,
-       SUBSTR(etc.chromosome, 1, 80) AS chromosome,
-       SUBSTR(etc.citation,  1, 80) AS citation,
-       SUBSTR(etc.protein_id, 1, 80) AS protein_id,
-       etc.linkout, etc.molecular_weight_note, etc.dtext, etc.sptext,
-       etc.signalp_start, etc.signalp_end
+       SUBSTR(edr.version, 1, 10) AS external_db_version,
+       exons.exon_count, SUBSTR(cmnt.comment_string, 1, 300) AS comment_string,
+       SUBSTR(annotated_go_component.go_terms, 1, 250) AS annotated_go_component,
+       SUBSTR(annotated_go_function.go_terms, 1, 250) AS annotated_go_function,
+       SUBSTR(annotated_go_process.go_terms, 1, 250) AS annotated_go_process,
+       SUBSTR(predicted_go_component.go_terms, 1, 250) AS predicted_go_component,
+       SUBSTR(predicted_go_function.go_terms, 1, 250) AS predicted_go_function,
+       SUBSTR(predicted_go_process.go_terms, 1, 250) AS predicted_go_process,
+       winzeler_expn.winzeler_max_level, winzeler_expn.winzeler_max_pct,
+       winzeler_expn.winzeler_max_timing, winzeler_expn.winzeler_min_level,
+       winzeler_expn.winzeler_min_timing,
+       derisi_expn.derisi_max_level, derisi_expn.derisi_max_pct,
+       derisi_expn.derisi_max_timing, derisi_expn.derisi_min_level,
+       derisi_expn.derisi_min_timing,
+       SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
+       sequence.chromosome_order_num
 FROM dots.GeneFeature gf, dots.NaLocation nl,
      sres.SequenceOntology so, sres.Taxon,
      sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
@@ -81,10 +123,18 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
      sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr,
      dots.SplicedNaSequence sns,
-     (SELECT na_sequence_id, source_id, length, taxon_id
+     apidb.GoTermList annotated_go_component,
+     apidb.GoTermList annotated_go_function,
+     apidb.GoTermList annotated_go_process,
+     apidb.GoTermList predicted_go_component,
+     apidb.GoTermList predicted_go_function,
+     apidb.GoTermList predicted_go_process,
+     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
       FROM dots.ExternalNaSequence
       UNION
-      SELECT na_sequence_id, source_id, length, taxon_id
+      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
       FROM dots.VirtualSequence) sequence,
      (SELECT taf.na_feature_id, tas.molecular_weight,
              tas.length AS protein_length,
@@ -93,7 +143,8 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
              asa.isoelectric_point,
              asa.min_molecular_weight, asa.max_molecular_weight,
              asa.hydropathicity_gravy_score,
-             asa.aromaticity_score, transmembrane.tm_domains
+             asa.aromaticity_score, transmembrane.tm_domains,
+             ec.ec_numbers
       FROM  dots.TranslatedAaFeature taf,
             dots.TranslatedAaSequence tas,
             apidb.AaSequenceAttribute asa,
@@ -102,31 +153,77 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
                    FROM dots.TransmembraneAaFeature tmaf, dots.AaLocation al
                    WHERE tmaf.aa_feature_id = al.aa_feature_id
                    GROUP BY tmaf.aa_sequence_id) tms
-             GROUP BY tms.aa_sequence_id) transmembrane
+             GROUP BY tms.aa_sequence_id) transmembrane,
+            (SELECT aa_sequence_id, 
+                    SUBSTR(apidb.tab_to_string(CAST(COLLECT(ec_number)
+                                               AS apidb.varchartab), '; '),
+                           1, 300)
+                      AS ec_numbers
+             FROM (SELECT DISTINCT asec.aa_sequence_id,
+                          ec.ec_number || ' (' || ec.description || ')' AS ec_number
+                   FROM dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
+                   WHERE ec.enzyme_class_id = asec.enzyme_class_id)
+             GROUP BY aa_sequence_id) ec
       WHERE taf.aa_sequence_id = tas.aa_sequence_id
+        AND taf.aa_sequence_id = asa.aa_sequence_id
         AND tas.aa_sequence_id = transmembrane.aa_sequence_id(+)
-        AND taf.aa_sequence_id = asa.aa_sequence_id) protein,
+        AND tas.aa_sequence_id = ec.aa_sequence_id(+)) protein,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
      (SELECT nfc.na_feature_id,
-             MAX(dbms_lob.substr(nfc.comment_string, 300, 1))
+             MAX(DBMS_LOB.SUBSTR(nfc.comment_string, 300, 1))
                AS comment_string
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
-     (SELECT gf.source_id, s.chromosome, gf.citation, t.protein_id,
-            'literal' AS linkout, 'literal' AS molecular_weight_note,
-            'literal' AS dtext, 'literal' AS sptext,
-            al.start_min AS signalp_start, al.end_max AS signalp_end,
-            SUBSTR(gf.citation, 1, 80) AS annotated_go_component,
-            SUBSTR(gf.citation, 1, 80) AS annotated_go_function,
-            SUBSTR(gf.citation, 1, 80) AS annotated_go_process,
-            SUBSTR(gf.citation, 1, 80) AS predicted_go_component,
-            SUBSTR(gf.citation, 1, 80) AS predicted_go_function,
-            SUBSTR(gf.citation, 1, 80) AS predicted_go_process
-      FROM dots.Source s, dots.GeneFeature gf, dots.Transcript t,
-           dots.AaLocation al
-      WHERE 1=0) etc
+     (SELECT p.subject_row_id AS na_feature_id,
+             p.max_expression AS derisi_max_level,
+             p.max_percentile AS derisi_max_pct,
+             p.equiv_max AS derisi_max_timing,
+             p.equiv_min AS derisi_min_timing,
+             p.min_expression AS derisi_min_level
+      FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
+      WHERE ps.name = 'DeRisi 3D7 Smoothed Averaged'
+        AND ti.name = 'GeneFeature'
+        AND p.profile_set_id = ps.profile_set_id
+        AND ti.table_id = p.subject_table_id) derisi_expn,
+     (SELECT exp.source_id,
+             exp.winzeler_max_level,
+             exp.winzeler_min_level,
+             pct.winzeler_max_pct,
+             MIN(minpen.name) AS winzeler_min_timing,
+             MIN(maxpen.name) AS winzeler_max_timing
+      FROM apidb.Expression minrow,
+           apidb.ProfileElementName minpen,
+           apidb.Expression maxrow,
+           apidb.ProfileElementName maxpen,
+           apidb.ProfileSet ps,
+           (SELECT e.source_id,
+                   MAX(value) AS winzeler_max_pct
+            FROM apidb.Expression e
+            WHERE e.profile_set_name = 'winzeler_cc_sorbPct'
+            GROUP by e.source_id, e.profile_set_name) pct,
+           (SELECT e.source_id, e.profile_set_name,
+                   MIN(value) AS winzeler_min_level,
+                   MAX(value) AS winzeler_max_level
+            FROM apidb.Expression e
+            WHERE e.profile_set_name = 'winzeler_cc_sorbExp'
+            GROUP BY e.source_id, e.profile_set_name) exp
+      WHERE minrow.value = exp.winzeler_min_level
+        AND minrow.source_id = exp.source_id
+        AND minrow.profile_set_name = exp.profile_set_name
+        AND maxrow.value = exp.winzeler_max_level
+        AND maxrow.source_id = exp.source_id
+        AND maxrow.profile_set_name = exp.profile_set_name
+        AND maxrow.profile_set_name = ps.name
+        AND minrow.element_order = minpen.element_order
+        AND ps.profile_set_id = minpen.profile_set_id
+        AND maxrow.element_order = maxpen.element_order
+        AND ps.profile_set_id = maxpen.profile_set_id
+      GROUP BY exp.source_id,
+               exp.winzeler_max_level,
+               exp.winzeler_min_level,
+               pct.winzeler_max_pct) winzeler_expn
 WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.na_sequence_id = sequence.na_sequence_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
@@ -144,16 +241,37 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
-  AND gf.source_id = etc.source_id(+)
+  AND gf.source_id = annotated_go_component.source_id(+)
+  AND 'annotated' = annotated_go_component.source(+)
+  AND 'cellular_component' = annotated_go_component.ontology(+)
+  AND gf.source_id = annotated_go_function.source_id(+)
+  AND 'annotated' = annotated_go_function.source(+)
+  AND 'molecular_function' = annotated_go_function.ontology(+)
+  AND gf.source_id = annotated_go_process.source_id(+)
+  AND 'annotated' = annotated_go_process.source(+)
+  AND 'biological_process' = annotated_go_process.ontology(+)
+  AND gf.source_id = predicted_go_component.source_id(+)
+  AND 'predicted' = predicted_go_component.source(+)
+  AND 'cellular_component' = predicted_go_component.ontology(+)
+  AND gf.source_id = predicted_go_function.source_id(+)
+  AND 'predicted' = predicted_go_function.source(+)
+  AND 'molecular_function' = predicted_go_function.ontology(+)
+  AND gf.source_id = predicted_go_process.source_id(+)
+  AND 'predicted' = predicted_go_process.source(+)
+  AND 'biological_process' = predicted_go_process.ontology(+)
+  AND gf.na_feature_id = derisi_expn.na_feature_id(+)
+  AND gf.source_id = winzeler_expn.source_id(+)
   /* skip toxo predictions */
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
                       'TwinScanEt predictions')
 ;
 
-GRANT SELECT ON apidb.GeneAttributes TO PUBLIC;
+GRANT SELECT ON apidb.GeneAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.GeneAttr_sourceId ON apidb.GeneAttributes (source_id);
+GRANT PUBLIC SYNONYM apidb.GeneAttributes FOR apidb.GeneAttributes1;
+
+CREATE INDEX apidb.GeneAttr_sourceId ON apidb.GeneAttributes1 (source_id);
 
 ---------------------------
 -- sequences
