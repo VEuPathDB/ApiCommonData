@@ -1,4 +1,4 @@
-set timing on
+set time on timing on
 ---------------------------
 -- set permissions
 ---------------------------
@@ -71,7 +71,7 @@ GROUP BY gf.source_id, o.ontology,
          DECODE(gec.name, 'IEA', 'predicted', 'annotated');
 
 -- comment this out -- it takes 4 hours to rebuild
---DROP MATERIALIZED VIEW apidb.GeneAttributes;
+--DROP MATERIALIZED VIEW apidb.GeneAttributes1;
 
 CREATE MATERIALIZED VIEW apidb.GeneAttributes1 AS
 SELECT gf.source_id,
@@ -187,43 +187,17 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
         AND ti.name = 'GeneFeature'
         AND p.profile_set_id = ps.profile_set_id
         AND ti.table_id = p.subject_table_id) derisi_expn,
-     (SELECT exp.source_id,
-             exp.winzeler_max_level,
-             exp.winzeler_min_level,
-             pct.winzeler_max_pct,
-             MIN(minpen.name) AS winzeler_min_timing,
-             MIN(maxpen.name) AS winzeler_max_timing
-      FROM apidb.Expression minrow,
-           apidb.ProfileElementName minpen,
-           apidb.Expression maxrow,
-           apidb.ProfileElementName maxpen,
-           apidb.ProfileSet ps,
-           (SELECT e.source_id,
-                   MAX(value) AS winzeler_max_pct
-            FROM apidb.Expression e
-            WHERE e.profile_set_name = 'winzeler_cc_sorbPct'
-            GROUP by e.source_id, e.profile_set_name) pct,
-           (SELECT e.source_id, e.profile_set_name,
-                   MIN(value) AS winzeler_min_level,
-                   MAX(value) AS winzeler_max_level
-            FROM apidb.Expression e
-            WHERE e.profile_set_name = 'winzeler_cc_sorbExp'
-            GROUP BY e.source_id, e.profile_set_name) exp
-      WHERE minrow.value = exp.winzeler_min_level
-        AND minrow.source_id = exp.source_id
-        AND minrow.profile_set_name = exp.profile_set_name
-        AND maxrow.value = exp.winzeler_max_level
-        AND maxrow.source_id = exp.source_id
-        AND maxrow.profile_set_name = exp.profile_set_name
-        AND maxrow.profile_set_name = ps.name
-        AND minrow.element_order = minpen.element_order
-        AND ps.profile_set_id = minpen.profile_set_id
-        AND maxrow.element_order = maxpen.element_order
-        AND ps.profile_set_id = maxpen.profile_set_id
-      GROUP BY exp.source_id,
-               exp.winzeler_max_level,
-               exp.winzeler_min_level,
-               pct.winzeler_max_pct) winzeler_expn
+     (SELECT p.subject_row_id AS na_feature_id,
+             p.max_expression AS winzeler_max_level,
+             p.max_percentile AS winzeler_max_pct,
+             p.equiv_max AS winzeler_max_timing,
+             p.equiv_min AS winzeler_min_timing,
+             p.min_expression AS winzeler_min_level
+      FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
+      WHERE ps.name = 'winzeler_cc_sorbExp'
+        AND ti.name = 'GeneFeature'
+        AND p.profile_set_id = ps.profile_set_id
+        AND ti.table_id = p.subject_table_id) winzeler_expn
 WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.na_sequence_id = sequence.na_sequence_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
@@ -260,7 +234,7 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND 'predicted' = predicted_go_process.source(+)
   AND 'biological_process' = predicted_go_process.ontology(+)
   AND gf.na_feature_id = derisi_expn.na_feature_id(+)
-  AND gf.source_id = winzeler_expn.source_id(+)
+  AND gf.na_feature_id = winzeler_expn.na_feature_id(+)
   /* skip toxo predictions */
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
@@ -269,17 +243,18 @@ WHERE gf.na_feature_id = nl.na_feature_id
 
 GRANT SELECT ON apidb.GeneAttributes1 TO PUBLIC;
 
-GRANT PUBLIC SYNONYM apidb.GeneAttributes FOR apidb.GeneAttributes1;
-
 CREATE INDEX apidb.GeneAttr_sourceId ON apidb.GeneAttributes1 (source_id);
+
+CREATE OR REPLACE SYNONYM apidb.GeneAttributesSyn
+                             FOR apidb.GeneAttributes1;
 
 ---------------------------
 -- sequences
 ---------------------------
 
-DROP MATERIALIZED VIEW apidb.SequenceAttributes;
+DROP MATERIALIZED VIEW apidb.SequenceAttributes1;
 
-CREATE MATERIALIZED VIEW apidb.SequenceAttributes AS
+CREATE MATERIALIZED VIEW apidb.SequenceAttributes1 AS
 SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
        (sequence.length
@@ -328,17 +303,19 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND sequence.na_sequence_id = source.na_sequence_id(+)
 ;
 
-GRANT SELECT ON apidb.SequenceAttributes TO PUBLIC;
+GRANT SELECT ON apidb.SequenceAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.SeqAttr_source_id ON apidb.SequenceAttributes (source_id);
+CREATE INDEX apidb.SeqAttr_source_id ON apidb.SequenceAttributes1 (source_id);
 
+CREATE OR REPLACE SYNONYM apidb.SequenceAttributesSyn
+                             FOR apidb.SequenceAttributes1;
 ---------------------------
 -- SNPs
 ---------------------------
 
-DROP MATERIALIZED VIEW apidb.SnpAttributes;
+DROP MATERIALIZED VIEW apidb.SnpAttributes1;
 
-CREATE MATERIALIZED VIEW apidb.SnpAttributes AS
+CREATE MATERIALIZED VIEW apidb.SnpAttributes1 AS
 SELECT snp.source_id AS source_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
@@ -388,17 +365,19 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
   AND snp_loc.na_feature_id = snp.na_feature_id
   AND gene_info.na_feature_id(+) = snp.parent_id;
 
-GRANT SELECT ON apidb.SnpAttributes TO PUBLIC;
+GRANT SELECT ON apidb.SnpAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.SnpAttr_source_id ON apidb.SnpAttributes (source_id);
+CREATE INDEX apidb.SnpAttr1_source_id ON apidb.SnpAttributes1 (source_id);
 
+CREATE OR REPLACE SYNONYM apidb.SnpAttributesSyn
+                             FOR apidb.SnpAttributes1;
 ---------------------------
 -- ORFs
 ---------------------------
 
-DROP MATERIALIZED VIEW apidb.OrfAttributes;
+DROP MATERIALIZED VIEW apidb.OrfAttributes1;
 
-CREATE MATERIALIZED VIEW apidb.OrfAttributes AS
+CREATE MATERIALIZED VIEW apidb.OrfAttributes1 AS
 SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
@@ -419,17 +398,19 @@ WHERE m.na_feature_id = taaf.na_feature_id
   AND so.term_name = 'ORF'
   AND tn.name_class='scientific name';
 
-GRANT SELECT ON apidb.OrfAttributes TO PUBLIC;
+GRANT SELECT ON apidb.OrfAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.OrfAttr_source_id ON apidb.OrfAttributes (source_id);
+CREATE INDEX apidb.OrfAttr1_source_id ON apidb.OrfAttributes1 (source_id);
 
+CREATE OR REPLACE SYNONYM apidb.OrfAttributesSyn
+                             FOR apidb.OrfAttributes1;
 ---------------------------
 -- ESTs
 ---------------------------
 
-DROP MATERIALIZED VIEW apidb.EstAttributes;
+DROP MATERIALIZED VIEW apidb.EstAttributes1;
 
-CREATE MATERIALIZED VIEW apidb.EstAttributes AS
+CREATE MATERIALIZED VIEW apidb.EstAttributes1 AS
 SELECT ens.source_id,
        e.seq_primer AS primer,
        ens.a_count,
@@ -459,17 +440,19 @@ AND   tn.name_class='scientific name'
 AND   ens.external_database_release_id = edr.external_database_release_id
 AND   edr.external_database_id = ed.external_database_id;
 
-GRANT SELECT ON apidb.EstAttributes TO PUBLIC;
+GRANT SELECT ON apidb.EstAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.EstAttr_source_id ON apidb.EstAttributes (source_id);
+CREATE INDEX apidb.EstAttr_source_id ON apidb.EstAttributes1 (source_id);
 
+CREATE OR REPLACE SYNONYM apidb.EstAttributesSyn
+                             FOR apidb.EstAttributes1;
 ---------------------------
 -- array elements
 ---------------------------
 
-DROP MATERIALIZED VIEW apidb.ArrayElementAttributes;
+DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1;
 
-CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes AS
+CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1 AS
 SELECT ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
@@ -482,9 +465,11 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
   AND taxon.taxon_id = ens.taxon_id
 ;
 
-GRANT SELECT ON apidb.ArrayElementAttributes TO PUBLIC;
+GRANT SELECT ON apidb.ArrayElementAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.AEAttr_source_id
-ON apidb.ArrayElementAttributes (source_id);
+CREATE INDEX apidb.AEAttr1_source_id
+ON apidb.ArrayElementAttributes1 (source_id);
 
+CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributesSyn
+                             FOR apidb.ArrayElementAttributes1;
 exit
