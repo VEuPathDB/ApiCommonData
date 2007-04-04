@@ -1,0 +1,39 @@
+<?xml version="1.0"  encoding="ISO-8859-1" ?>
+<!DOCTYPE cfg SYSTEM "FileTranslatorCfg.dtd" >
+
+<!-- $Revision: 4137 $ $Date: 2005-11-17 11:03:01 -0500 (Thu, 17 Nov 2005) $ $Author: jbrestel $ -->
+
+<cfg functions_class='GUS::Community::FileTranslator::Functions'>
+  <inputs qualifier_row_present='0'>
+    <header type="header" name='col_headers'>
+      <col header_val = 'id' req='1' name='id' />
+      <col header_val='conf 0 up'  req = '1' name='confUp' />
+      <col header_val='conf 0 down'  req = '1' name='confDown' />
+      <col header_val='mean ratio 0'  req = '1' name='mean0' />
+    </header>
+  </inputs>
+
+  <outputs>
+    <map name='row_id'>
+      <in name='id' />
+      <do> $id </do>
+    </map>
+
+    <idmap function='maxConfAndFoldChange'
+           output_header="confidence\tfold_change"
+           mapkey='$confUp\t$confDown\tmean0'  >
+      <in name='confUp'/>
+      <in name='confDown'/>
+      <in name='mean0'/>
+    </idmap>
+
+<!-- 
+    <idmap function='foldChange'
+           output_header="fold_change"
+           mapkey='$mean0\t$mean1'  >
+      <in name='mean0'/>
+      <in name='mean1'/>
+    </idmap>
+-->
+  </outputs>
+</cfg>
