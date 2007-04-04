@@ -474,10 +474,14 @@ sub runPage {
   my $isLogged = $self->getIsDataLogged();
   my $isPaired = $self->getIsDataPaired();
 
-  my $isLoggedArg = $isLogged ? "--data_is_logged" : "--data_not_logged";
+  my $design = "--design " . $self->getDesign if($self->getDesign && $channels == 2);
+
+  # The input fed to page is always "unlogged"
+  my $isLoggedArg = "--data_not_logged";
+
   my $isPairedArg = $isPaired ? "--paired" : "--unpaired";
 
-  my $pageCommand = "$PAGE --infile $pageIn --outfile $pageOut --output_gene_confidence_list --output_text --num_channels $channels $isLoggedArg $isPairedArg --level_confidence $LEVEL_CONFIDENCE --use_logged_data --tstat --min_presence $MIN_PRESCENCE --missing_value NA";
+  my $pageCommand = "$PAGE --infile $pageIn --outfile $pageOut --output_gene_confidence_list --output_text --num_channels $channels $isLoggedArg $isPairedArg --level_confidence $LEVEL_CONFIDENCE --use_logged_data --tstat --min_presence $MIN_PRESCENCE --missing_value NA $design";
 
   my $systemResult = system($pageCommand);
 
@@ -525,7 +529,7 @@ sub writePageInputFile {
   foreach my $element (keys %$input) {
     my @output;
 
-
+    # Unlog if it is logged...
     if ($baseX) {
       push @output, map {$_ eq 'NA' ? 'NA' : $baseX ** $_} @{$input->{$element}->{$conditionAName}};
       push @output, map {$_ eq 'NA' ? 'NA' : $baseX ** $_} @{$input->{$element}->{$conditionBName}};
