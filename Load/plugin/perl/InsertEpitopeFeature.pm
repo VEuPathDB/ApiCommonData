@@ -7,6 +7,7 @@ use FileHandle;
 use GUS::Model::DoTS::EpitopeFeature;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::TranslatedAASequence;
+use GUS::Model::DoTS::MotifAASequence;
 use GUS::PluginMgr::Plugin;
 
 
@@ -15,12 +16,12 @@ Inserts epitope data from a tab delimited file.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes a file containing the source ids of the epitopes and the proteins that contain them and the start, end, and name of the epitope within the sequence.  This data is entered into the EpitopeFeature and AALocation tables to provide a mapping of the eptiope on the proteins.
+Takes a file containing the source ids of the epitopes and the proteins that contain them and the start, end, and name of the epitope within the sequence.  This data is entered into the EpitopeFeature and AALocation tables to provide a mapping of the epitope on the proteins, and the EpitopeFeature is then linked to the MotifAASequence containing the epitope.
 PLUGIN_PURPOSE
 
 my $tablesAffected = [['DoTS::EpitopeFeature','The information on the epitope and the links to the AA sequence are made here.'],['DoTS::AALocation','The start and end location of the eptiope on the given sequence is located here.']];
 
-my $tablesDependedOn = ['DoTS::TranslatedAASequence','The sequence that the epitope is found in must be in this table.'];
+my $tablesDependedOn = [['DoTS::TranslatedAASequence','The sequence that the epitope is found in must be in this table.'],['DoTS::MotifAASequence','The epitope sequences must exist here.']];
 
 my $howToRestart = <<PLUGIN_RESTART;
 Provide the restart flag with the algInvocation number of the run that failed.
@@ -32,7 +33,7 @@ PLUGIN_FAILURE_CASES
 
 my $notes = <<PLUGIN_NOTES;
 The plugin will take in a file of the form:
-AASeq_sourceid   IEDB ID   Epitope Name   start    end
+AASeq_sourceid   IEDB ID   Epitope Name   start    end   is on BLAST hit   found all epitopes in set on sequence
 PLUGIN_NOTES
 
 my $documentation = {purposeBrief => $purposeBrief,
@@ -166,9 +167,15 @@ sub getAaSeqId{
 sub createEpitopeEntry{
   my ($self, $data, $epiExtDbRls) = @_;
 
+  my $motifId = $self->getMotifId($$data[1]);
+
+  my $type = $self->getType($$data[5],$$data[6]);
+
   my $epitope = GUS::Model::DoTS::EpitopeFeature->new({aa_sequence_id => $$data[0],
 						       source_id => $$data[1],
 						       description => $$data[2],
+						       motif_aa_sequence_id => $motifId,
+						       type => $type,
 						       external_database_release_id => $epiExtDbRls,
 						       is_predicted => 0
 						      });
@@ -189,6 +196,41 @@ sub createAALocation{
 
 }
 
+sub getMotifId{
+  my ($self,$sourceId) = @_;
+  my $motifId;
+
+  my $motif = GUS::Model::DoTS::MotifAASequence->new({source_id => $sourceId});
+
+  if($motif->retrieveFromDB()){
+    $motifId = $motif->getId();
+  }else{
+    die "Epitope '$sourceId' not found in DoTS.MotifAASequence.  Please use GUS::Supported::Plugin::LoadFastaSequences to insert it.";
+  }
+
+  return $motifId;
+}
+
+sub getType{
+  my ($self, $onBlastHit, $foundFullSet) = @_;
+  my $type;
+
+  if($onBlastHit){
+    if($foundFullSet){
+      $type = "On Blast Hit Full Set";
+    }else{
+      $type = "On Blast Hit Not Full Set";
+    }
+  }else{
+    if($foundFullSet){
+      $type = "Not on Blast Hit Full Set";
+    }else{
+      $type = "Not on Blast Hit Not Full Set";
+    }
+  }
+
+  return $type;
+}
 
 sub restart{
   my ($self, $restartIds, $done) = @_;
