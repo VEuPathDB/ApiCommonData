@@ -27,21 +27,18 @@ my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
 
 open(OUT, ">> $outputFile");
 
-print OUT "Accession\tIEDB ID\tStrain\tedate\tSequence\tEpitope Name\n";
+print OUT "Accession\tIEDB ID\tStrain\tSequence\tEpitope Name\n";
 
 while(my $data = $spreadSheet->getNextRow()){
   next unless $data;
 
-  my $secondaryId = $$data[0];
-  $secondaryId =~ s/^\<.*edate=(\d+)\".*/$1/;
+  my $iedbId = $$data[1];
+  my $epiName = $$data[2];
+  my $seq = $$data[4];
+  my $accession = $$data[10];
+  my $strain = $$data[7];
 
-  my $iedbId = $$data[2];
-  my $epiName = $$data[3];
-  my $seq = $$data[5];
-  my $accession = $$data[11];
-  my $strain = $$data[8];
-
-  print OUT "$accession\t$iedbId\t$strain\t$secondaryId\t$seq\t$epiName\n";
+  print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
 }
 
 close (OUT);
