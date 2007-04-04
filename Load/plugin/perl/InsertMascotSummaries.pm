@@ -542,6 +542,19 @@ sub declareArgs {
 
 }
 
+sub undoTables {
+    qw(
+    DoTS.AALocation
+    DoTS.MassSpecFeature
+    DoTS.MassSpecSummary
+    DoTS.NALocation
+    DoTS.NAFeature
+    DoTSVer.MassSpecFeatureVer
+    Core.AlgorithmParam
+    Core.AlgorithmInvocation
+    );
+}
+
 
 sub getDocumentation {
 my $purpose = <<PURPOSE;
