@@ -27,7 +27,9 @@ FastaStats - module to report statistics of FASTA format sequence data
 
 Generate and print information about a sequence FASTA data set (a FASTA file or a directory of
 FASTA files). Information includes the number of sequences, residue counts, number of 
-duplicate header ids. Input files may be compressed with gzip or compress.
+duplicate header ids. Input files may be compressed with gzip or compress. Tar (*.tar),
+gzipped tar (*.tgz or *.tar.gz) and zip (*.zip) bundles are also supported but the file 
+counts will reported as '1'.
 
 Two FastaStat objects can be compared for equality. Equality 
 defined as having the same sequences, independent of order and header id.
@@ -282,9 +284,13 @@ sub _getStatsForFile {
     
     my ($s, $id, @ids, $byte, %count);
     
-    $theFile =~ s/(.*\.gz)\s*$/gzip -dc < $1|/;
-    $theFile =~ s/(.*\.Z)\s*$/uncompress -c < $1|/;
-    $theFile =~ s/(.*\.zip)\s*$/unzip -p $1|/;
+    $theFile =~ s/(.*\.gz)\s*$/gzip -dc < $1|/         or
+    $theFile =~ s/(.*\.Z)\s*$/uncompress -c < $1|/     or
+    $theFile =~ s/(.*\.zip)\s*$/unzip -p $1|/          or
+    $theFile =~ s/(.*\.tar)\s*$/tar  xOf - < $1|/      or
+    $theFile =~ s/(.*\.tgz)\s*$/tar zxOf - < $1|/      or
+    $theFile =~ s/(.*\.tar.gz)\s*$/tar zxOf - < $1|/    ;
+
 
     open(FILE1, $theFile ) or die "Can not open " . $theFile . " for reading\n";
     
