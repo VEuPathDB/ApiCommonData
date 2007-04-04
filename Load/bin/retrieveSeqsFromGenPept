@@ -23,8 +23,8 @@ my $errorLog = $outFile;
 $errorLog =~ s/.fsa/.err/;
 my %seen;
 
-open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!";
-open (OUT, ">> $outFile");
+open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!\n";
+open (OUT, ">> $outFile") or die "Cannot open file '$outFile' for writing: $!\n";
 open (ERROR, ">> $errorLog");
 
   while (<IDS>) {
