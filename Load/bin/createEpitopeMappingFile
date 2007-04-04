@@ -5,68 +5,28 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($excelDir, $excelOutDir, $queryDir, $blastOutDir, $blaseDatabase, $idRegex, $verbose);
+my ($inputDir, $queryDir, $outputDir, $blastDatabase, $subjectPath, $idRegex, $verbose);
 
 my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 
-&GetOptions("excelDir=s" => \$excelDir,
-	    "excelOutDir=s" => \$excelOutDir,
+&GetOptions("inputDir=s" => \$inputDir,
 	    "queryDir=s"=> \$queryDir,
-	    "blastOutDir=s" => \$blastOutDir,
-	    "blastDatabase=s" => \$blaseDatabase,
+	    "outputDir=s" => \$outputDir,
+	    "blastDatabase=s" => \$blastDatabase,
+	    "subjectPath=s" => \$subjectPath,
 	    "speciesRegex=s" => \$speciesRegex,
 	    "idRegex=s" => \$idRegex,
 	    "verbose!" => \$verbose,
 	   );
 
-if (!$excelDir || !$excelOutDir || !$queryDir || !$blastOutDir || !$blaseDatabase) {
-  die "usage: createEpitopeMappingFile.pl --excelDir <DIRPATH> --excelOutDir <DIRPATH> --queryDir <DIRPATH> --blastOutDir <DIRPATH> --blastDatabase <PATH> [--speciesRegex <STRING>] [--idRegex <STRING>] [--verbose]\n";
+if (!$inputDir || !$queryDir || !$outputDir || !$blastDatabase) {
+  die "usage: createEpitopeMappingFile.pl --inputDir <DIRPATH> --queryDir <DIRPATH> --outputDir <DIRPATH> --blastDatabase <PATH> --subjectPath <DIRPATH> [--speciesRegex <STRING>] [--idRegex <STRING>] [--verbose]\n";
 }
 
 
-&createEpitopeFiles($excelDir,$excelOutDir);
-&getGenPetSeqs($excelOutDir, $queryDir);
-&generateMap($blastOutDir, $queryDir, $excelOutDir, $blaseDatabase, $speciesRegex, $idRegex, $verbose);
-
-
-
-sub createEpitopeFiles{
-  my ($excelDir,$excelOutDir) = @_;
-
-  unless (-d $excelOutDir){
-    my $cmd = "mkdir -p $excelOutDir";
-
-    &exeCmd($cmd);
-
-  }
-
-  if (-d $excelDir) {
-    my $file;
-
-    opendir(DIR, $excelDir) or die "can't opendir $excelDir: $!";
-
-    while (defined($file = readdir(DIR))) {
-      next if $file =~ /^\.\.?$/;     # skip . and ..
-
-      my $inFile = "$excelDir/$file";
-
-      my $outFile = $file;
-      $outFile =~ s/(\w+).\w+/$1/;
-      $outFile = "$excelOutDir/$outFile.txt";
-
-      my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile";
-
-      &exeCmd($cmd);
-
-    }
-
-    closedir(DIR);
-
-  }else{
-    die "Cannot locate the directory '$excelDir'\n";
-  }
-
-}
+&getGenPetSeqs($inputDir, $queryDir);
+&runBlast($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex, $verbose);
+&exactMapEpitopes($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose);
 
 
 sub getGenPetSeqs{
@@ -101,29 +61,33 @@ sub getGenPetSeqs{
   closedir(DIR);
 }
 
-sub generateMap{
-  my ($blastDir, $queryDir, $excelOutDir, $blastDatabase, $speciesRegex, $idRegex,$verbose) = @_;
-
-  unless (-d $blastDir){
-    my $cmd = "mkdir -p $blastDir";
-    &exeCmd($cmd);
-  }
+sub runBlast{
+  my ($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex,$verbose) = @_;
 
   unless(-d $queryDir){ die "Could not find the query file directory '$queryDir':$!";}
 
-  opendir(EDIR, $excelOutDir) or die "can't opendir '$excelOutDir': $!";
+  unless (-d $outputDir){
+    my $cmd = "mkdir -p $outputDir";
+    &exeCmd($cmd);
+  }
+
+  opendir(EDIR, $inputDir) or die "can't opendir '$inputDir': $!";
 
   my $file;
   while (defined($file = readdir(EDIR))) {
     next if $file =~ /^\.\.?$/;     # skip . and ..
+    next if $file =~ /fasta/;       # skip the fasta dir
 
     my $baseFileName = $file;
     $baseFileName =~ s/(\w+).\w+/$1/;
 
     #get the files and database that go together
-    my $epitopeFile = "$excelOutDir/$file";
+    my $epitopeFile = "$inputDir/$file";
+
 
     my $queryFile = "$queryDir/$baseFileName.fsa";
+
+    my $outFile = "$outputDir/$baseFileName.out";
 
     my $species = $baseFileName;
     $species =~ s/$speciesRegex/$1/;
@@ -131,24 +95,29 @@ sub generateMap{
     my $database;
     switch ($species) {
 
-      case "Pb"  { $database = "Pberghei_proteins"; }
-      case "Pf"  { $database = "Pfalciparum_proteins"; }
-      case "Pv"  { $database = "Pvivax_proteins"; }
-      case "Py"  { $database = "Pyoelii_proteins"; }
-      case "Tg"  { $database = "Tgondii_proteins"; }
+      case "Pb"  { $database = "Pberghei_proteins";}
+      case "Pc"  { $database = "Pchabaudi_proteins";}
+      case "Pf"  { $database = "Pfalciparum_proteins";}
+      case "Pk"  { $database = "Pknowlesi_proteins";}
+      case "Pv"  { $database = "Pvivax_proteins";}
+      case "Py"  { $database = "Pyoelii_proteins";}
+      case "Tg"  { $database = "Tgondii_proteins";}
       else       { print "$species does not match a known database." }
     }
 
-    print STDERR "SPECIES: $species\t" if $verbose;
-    print STDERR "DATABASE: $database\n" if $verbose;
-
     $database = "$blastDatabase/$database";
 
-    my $cmd = "runAndParseBlast --queryFile $queryFile --database $database --epitopeFile $epitopeFile --blastDir $blastDir";
+    print STDERR "SPECIES: $species\t" if $verbose;
+    print STDERR "DATABASE: $database\n" if $verbose;
+    print STDERR "OUTDIR: $outputDir\n" if $verbose;
+
+    my $cmd = "runAndParseBlast --queryFile $queryFile --database $database --epitopeFile $epitopeFile --outputFile $outFile";
 
     if ($idRegex){
       $cmd .= " --regex $idRegex";
     }
+
+    print STDERR "CMD: $cmd\n" if $verbose;
 
     &exeCmd($cmd);
   }
@@ -156,6 +125,60 @@ sub generateMap{
   closedir(EDIR);
 }
 
+
+sub exactMapEpitopes{
+  my ($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose) = @_;
+
+#TODO: Make sure we don't get exact matches for epitope:sequence pairs that we have matches on BLAST hits for
+
+  unless (-d $outputDir){
+    my $cmd = "mkdir -p $outputDir";
+    &exeCmd($cmd);
+  }
+
+  opendir(EDIR, $inputDir) or die "can't opendir '$inputDir': $!";
+
+  my $file;
+  while (defined($file = readdir(EDIR))) {
+    next if $file =~ /^\.\.?$/;     # skip . and ..
+    next if $file =~ /fasta/;       # skip the fasta dir
+
+    my $baseFileName = $file;
+    $baseFileName =~ s/(\w+).\w+/$1/;
+
+    #get the files and database that go together
+    my $epitopeFile = "$inputDir/$file";
+
+    my $outFile = "$outputDir/$baseFileName.out";
+
+    my $species = $baseFileName;
+    $species =~ s/$speciesRegex/$1/;
+
+    my $subjectFile;
+    switch ($species) {
+
+      case "Pb"  { $subjectFile = "PbergheiAnnotatedProteins.fsa"; }
+      case "Pc"  { $subjectFile = "PchabaudiAnnotatedProteins.fsa"; }
+      case "Pf"  { $subjectFile = "PfalciparumAnnotatedProteins.fsa"; }
+      case "Pk"  { $subjectFile = "PknowlesiAnnotatedProteins.fsa"; }
+      case "Pv"  { $subjectFile = "PvivaxAnnotatedProteins.fsa"; }
+      case "Py"  { $subjectFile = "PyoeliiAnnotatedProteins.fsa"; }
+      case "Tg"  { $subjectFile = "TgondiiAnnotatedProteins.fsa"; }
+      else       { print "$species does not match a known database." }
+    }
+
+    print "SPECIES: $species\t" if $verbose;
+    print "DATABASE: $subjectFile\n" if $verbose;
+
+    $subjectFile = "$subjectPath/$subjectFile";
+
+    my $cmd = "exactMapEpitopes --subjectFile $subjectFile --epitopeFile $epitopeFile --outputFile $outFile";
+
+    &exeCmd($cmd);
+  }
+
+  closedir(EDIR);
+}
 
 sub exeCmd{
   my ($cmd) = @_;
@@ -165,4 +188,3 @@ sub exeCmd{
   my $status = $? >> 8;
   die "Failed with status '$status running cmd: $cmd'" if $status;
 }
-
