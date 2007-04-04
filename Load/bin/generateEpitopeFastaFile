@@ -26,7 +26,8 @@ next if /Accession/;
 
 my @values = split("\t",$_);
 
-print OUT ">$values[1]|$values[5]|$values[2]\n$values[4]\n";
+#IEDB ID|epitope name|species\nsequence
+print OUT ">$values[1]|$values[4]|$values[2]\n$values[3]\n";
 
 }
 
