@@ -1,0 +1,97 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+use CBIL::Bio::Blast::BlastAnal;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+use ApiCommonData::Load::MapAndPrintEpitopes;
+use Getopt::Long;
+use String::Approx 'amatch';
+
+use strict;
+
+my $debug = 0;
+
+$| = 1;
+
+my $regex = '\S*?\|\S*?\|(\S+)\|';
+my $subjectFile;
+my $epitopeFile;
+my $outputFile;
+
+&GetOptions("regex=s" => \$regex,
+            "subjectFile=s" => \$subjectFile,
+	    "epitopeFile=s" => \$epitopeFile,
+	    "outputFile=s" => \$outputFile,
+	    "debug!" => \$debug,
+            );
+
+unless ($subjectFile && $epitopeFile && $outputFile){ die "Usage: ExactMapEpitopes --subjectFile <FILE> --epitopeFile <FILE> --outputFile <FILEPATH> [--regex <STRING>] [--debug]";}
+
+die "Cannot find '$subjectFile':$!\n" unless (-e $subjectFile);
+die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
+
+print "Establishing dbi login\n" if $debug;
+
+#create the error file
+my $errorLog = $outputFile;
+$errorLog =~ s/\.out/.err/;
+
+open (ERR, ">>$errorLog") || die "Could not open error log '$errorLog' for writing: $!";
+
+
+#get the epitopes...we only want to do this once
+my %epitopes;
+&ApiCommonData::Load::MapAndPrintEpitopes::makeEpitopeHash($epitopeFile, \%epitopes);
+
+
+#create hash of subject seqs
+my %subjects;
+&makeSubjectHash($subjectFile, \%subjects);
+
+foreach my $seq (keys %epitopes){
+
+  #do exact string comparison
+  my ($matches) = &getExactMatches($seq, \%epitopes, \%subjects);
+
+  foreach my $match (keys %$matches){
+    my $subId = $match;
+    my $subjSeq = $subjects{$match}->{'primary_seq'}->{'seq'};
+
+    &ApiCommonData::Load::MapAndPrintEpitopes::mapEpitopes($subjSeq, $subId, $seq, \%epitopes, $outputFile, $debug);
+  }
+}
+
+
+#----------------Subroutines----------------------
+
+sub makeSubjectHash{
+  my ($subjectFile, $subjects) = @_;
+
+  my $seqFile  = Bio::SeqIO->new(-file => $subjectFile , '-format' => 'Fasta');
+
+  while ( my $seq = $seqFile->next_seq() ) {
+    $$subjects{$seq->id()} = $seq;
+  }
+}
+
+sub getExactMatches{
+  my ($seq, $epitopes, $subjects) = @_;
+  my %matches;
+
+  foreach my $epitope (keys %{$epitopes{$seq}}){
+    my $pept = $epitopes{$seq}->{$epitope}->{'seq'};
+
+    foreach my $subject (keys %$subjects){
+      my $subjSeq = $subjects{$subject}->{'primary_seq'}->{'seq'};
+
+      if ($subjSeq =~ /$pept/i){
+	push(@{$matches{$subject}},$epitope);
+      }
+
+    }
+  }
+
+  return \%matches;
+}
