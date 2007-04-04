@@ -41,19 +41,19 @@ RAD::ArrayDesign name
 
 =item C<quantificationUrisConditionA>
 
-RAD::Quantification uris
+**OPTIONAL  RAD::Quantification uris
 
 =item C<quantificationUrisConditionB>
 
-RAD::Quantification uris
+**OPTIONAL RAD::Quantification uris
 
 =item C<analysisNamesConditionA>
 
- **Not yet implemented** (Analyses do not have names... must use analysisparam)
+**OPTIONAL  (Analyses do not have names... must use analysisparam)
 
 =item C<analysisNamesConditionB>
 
- **Not yet implemented** (Analyses do not have names... must use analysisparam)
+**OPTIONAL (Analyses do not have names... must use analysisparam)
 
 =item C<studyName>
 
@@ -65,7 +65,7 @@ The name for the input (RAD::LogicalGroup)
 
 =item C<nameConditionB>
 
-The name for the input (RAD::LogicalGroup)
+**OPTIONAL The name for the input (RAD::LogicalGroup)
 
 =item C<numberOfChannels>
 
@@ -90,6 +90,10 @@ If the data is logged... what base?
 =item C<design>
 
 If this is a 2 channel experiment  (R for Reference, D for DyeSwap)
+
+=item C<referenceCondition>
+
+**OPTIONAL What is in the NUMERATOR of the ratio (or log2(ratio))
 
 =back
 
@@ -122,6 +126,8 @@ sub new {
 
   my $args = $argsHash;
 
+  $args->{translator} = $XML_TRANSLATOR unless($args->{translator});
+
   $args->{quantificationUrisConditionA} = [] unless($argsHash->{quantificationUrisConditionA});
   $args->{quantificationUrisConditionB} = [] unless($argsHash->{quantificationUrisConditionB});
 
@@ -134,10 +140,6 @@ sub new {
 
   unless($args->{studyName}) {
     GUS::Community::RadAnalysis::InputError->new("Parameter [studyName] is missing in the config file")->throw();
-  }
-
-  unless($args->{nameConditionA} && $args->{nameConditionB}) {
-    GUS::Community::RadAnalysis::InputError->new("Parameters [nameConditionA] and [nameConditionB] are required in the config file")->throw();
   }
 
   unless($args->{numberOfChannels}) {
@@ -160,7 +162,7 @@ sub new {
     GUS::Community::RadAnalysis::InputError->new("Parameter [baseX] must be given when specifying Data Is Logged")->throw();
   }
 
-  if($args->{numberOfChannels} == 2 && ($args->{design} ne 'R' || $args->{design} ne 'D') ) {
+  if($args->{numberOfChannels} == 2 && !($args->{design} eq 'R' || $args->{design} eq 'D') ) {
     GUS::Community::RadAnalysis::InputError->new("Parameter [design] must be given (R|D) when specifying 2 channel data.")->throw();
   }
 
@@ -190,6 +192,9 @@ sub getAnalysisNamesConditionB {$_[0]->{analysisNamesConditionB}}
 
 sub getPageInputFile {$_[0]->{pageInputFile}}
 sub getBaseX {$_[0]->{baseX}}
+
+sub getReferenceCondition {$_[0]->{referenceCondition}}
+sub getTranslator {$_[0]->{translator}}
 
 #--------------------------------------------------------------------------------
 
@@ -228,7 +233,8 @@ sub process {
   $result->setArrayTable($arrayTable);
   $result->setResultFile($resultFile);
   $result->setResultView($RESULT_VIEW);
-  $result->setXmlTranslator($XML_TRANSLATOR);
+
+  $result->setXmlTranslator($self->getTranslator());
 
   my $translatorArgs = { numberOfChannels => $self->getNumberOfChannels(),
                          design => $self->getDesign(),
@@ -266,19 +272,23 @@ sub setupLogicalGroups {
   my $bUris = $self->getQuantificationUrisConditionB();
   my $bAnalysisNames = $self->getAnalysisNamesConditionB();
 
-  if(scalar(@$aUris) > 0 && scalar(@$bUris) > 0) {
+  if(scalar(@$aUris) > 0) {
     my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'quantification', $aUris, $studyName, $dbh);
-    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'quantification', $bUris, $studyName, $dbh);
-
     push(@logicalGroups, $logicalGroupA);
+  }
+
+  if(scalar(@$bUris) > 0) {
+    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'quantification', $bUris, $studyName, $dbh);
     push(@logicalGroups, $logicalGroupB);
   }
 
-  if(scalar(@$bAnalysisNames) > 0 && scalar(@$aAnalysisNames) > 0) {
+  if(scalar(@$aAnalysisNames) > 0) {
     my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'analysis', $aAnalysisNames, $studyName, $dbh);
-    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'analysis', $bAnalysisNames, $studyName, $dbh);
-
     push(@logicalGroups, $logicalGroupA);
+  }
+
+  if(scalar(@$bAnalysisNames) > 0 && scalar(@$aAnalysisNames) > 0) {
+    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'analysis', $bAnalysisNames, $studyName, $dbh);
     push(@logicalGroups, $logicalGroupB);
   }
 
@@ -292,6 +302,8 @@ sub setupLogicalGroups {
 sub setupParamValues {
   my ($self) = @_;
 
+  my $refCondition = $self->getReferenceCondition() ? $self->getReferenceCondition() : $self->getNameConditionA();
+
   my $values = { level_confidence_list => $LEVEL_CONFIDENCE,
                  min_presence_list => $MIN_PRESCENCE,
                  data_is_logged => $self->getIsDataLogged(),
@@ -300,7 +312,7 @@ sub setupParamValues {
                  software_version => $PAGE,
                  software_language => 'perl',
                  num_channels => $self->getNumberOfChannels(),
-                 reference_condition => $self->getNameConditionA(),
+                 reference_condition => $refCondition,
                };
 
   if(my $design = $self->getDesign()) {
