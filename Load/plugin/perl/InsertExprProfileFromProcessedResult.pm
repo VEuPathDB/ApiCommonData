@@ -229,17 +229,20 @@ WHERE s.external_database_release_id = $extDbRlsId
   my $count = 0;
   my $prevSourceId = "first";
   my ($sourceId, $quantName, $result);
+
   while (($sourceId, $quantName, $result) = $stmt->fetchrow_array()) {
-    if ($sourceId ne $prevSourceId) {
+    if ($sourceId ne $prevSourceId && $prevSourceId ne 'first') {
       my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
       push(@$rows, $row) unless $count++ == 0;
-      $prevSourceId = $sourceId;
       $sourceIdRowHash = {};
     }
+
+    $prevSourceId = $sourceId;
     push(@{$sourceIdRowHash->{$quantName}}, $result);
   }
   my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
   push(@$rows, $row);
+
   return $rows;
 }
 
