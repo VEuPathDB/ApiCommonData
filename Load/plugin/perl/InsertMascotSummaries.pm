@@ -11,6 +11,8 @@ use GUS::PluginMgr::Plugin;
 
 # read from
 use GUS::Model::DoTS::Transcript;
+use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::DoTS::Miscellaneous;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::SRes::SequenceOntology;
@@ -59,12 +61,13 @@ sub run {
     open(F, $inputFile) or die "Could not open $inputFile: $!\n";
     while (<F>) {
         chomp;
+        next if m/^\s*$/;
         if (m/^# /) {
             chomp(my $ln = <F>);
             undef $record;
             $record = $self->initRecord($ln);
             if ( ! $record->{naFeatureId}) {
-                warn "'$record->{proteinId}' or '$record->{description}' from '$record->{sourcefile}' not found in DoTS.Transcript, skipping\n" if  $self->getArg('veryVerbose');
+                warn "'$record->{proteinId}' or '$record->{description}' from '$record->{sourcefile}' not found, skipping\n" if  $self->getArg('veryVerbose');
                 $self->{summariesSkipped}++;
                 $self->nextRecord(*F);
                 next;
@@ -116,20 +119,33 @@ sub getSourceIdAndNaFeatureId {
     # in a hetergeneous data set (old Wastling data for example)
     # we need to fish for the correct record, if any.
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select  t.source_id, t.na_feature_id
-        from dots.transcript t
-        where t.source_id  = ?
-           or t.source_id  = ?
-           or t.protein_id = ?
-           or t.protein_id = ?
+        select m.source_id, m.na_feature_id
+        from dots.miscellaneous m
+        where (m.source_id = ?
+           or  m.source_id = ?)
+        union
+        select g.source_id, taf.na_feature_id
+        from dots.translatedaafeature taf,
+             dots.genefeature g,
+             dots.transcript t
+        where taf.na_feature_id = t.na_feature_id
+          and t.parent_id = g.na_feature_id 
+          and (g.source_id  = ?
+           or  g.source_id  = ?
+           or  t.protein_id = ?
+           or  t.protein_id = ?)
 EOSQL
     
-    $sth->execute($candidate_ids[0], $candidate_ids[1], $candidate_ids[0], $candidate_ids[1]);
+    $sth->execute(
+        $candidate_ids[0], $candidate_ids[1], # look for orf by source_id
+        $candidate_ids[0], $candidate_ids[1], # look for gene by source_id
+        $candidate_ids[0], $candidate_ids[1], # look for gene by protein_id
+    );
     
     my $res = $sth->fetchall_arrayref();
     
     return undef if (scalar @{$res} != 1);
-    
+
     return ($res->[0]->[0], $res->[0]->[1]);
 }
 
@@ -184,7 +200,7 @@ EOSQL
     
     my $res = $sth->fetchall_arrayref();
     if (scalar @{$res} == 0) {
-        warn "ORF $record->{sourceId} not mapped to a gene\n" if $self->getArg('verbose');
+        warn "ORF $record->{sourceId} not mapped to a gene, will leave as ORF.\n" if $self->getArg('verbose');
         return;
     }
     if (scalar @{$res}  > 1) {
@@ -193,13 +209,15 @@ EOSQL
     
     
     my $proteinSeq = $row{sequence};
+
+    $proteinSeq or $self->error("No sequence found for $record->{sourceId}");
     
     my @newCoords;
     
     for my $pep (@{$record->{peptides}}) {
         my $start = index($proteinSeq, $pep->{sequence}) +1;
         if ($start == 0) {
-            warn "Peptide set on ORF $record->{sourceId} not fully mapped to a gene\n" if $self->getArg('verbose');
+            warn "Peptide set on ORF $record->{sourceId} not fully mapped to a gene, will leave as ORF.\n" if $self->getArg('verbose');
             return;
         }
         my $end   = length($pep->{sequence}) + $start -1;
@@ -270,11 +288,14 @@ sub insertRecordsIntoDb {
 sub insertMassSpecSummary {
     my ($self, $record) = @_;
     
-    my $transcript = GUS::Model::DoTS::Transcript->new(
-        {na_feature_id => $record->{naFeatureId}});
-
-    $transcript->retrieveFromDB() 
-        or $self->error("No Transcript with na_feature_id = '$record->{naFeatureId}'");
+    my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $record->{naFeatureId}});
+    unless ($transcript->retrieveFromDB()) {
+      my $transcript = GUS::Model::DoTS::Miscellaneous->new({ na_feature_id => $record->{naFeatureId}});
+        unless ($transcript->retrieveFromDB()) {
+          $self->error(
+            "No GeneFeature or Miscellaneous row with na_feature_id = $record->{naFeatureId}\n");
+        }
+    }
 
     my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
 
@@ -424,41 +445,33 @@ sub mapToNASequence {
 }
 
 # Return AoA ref of exon coordinates for the encoding NA seq. An ORF has one 'exon'.
-# The lookups of exonfeatures and coordinates depend on data modeling. E.g.
-# exonfeatures may be a child of RnaType or of Transcript. ORFs are assumed
-# to not have an exonfeature. So some fishing is required.
-# Open Reading Frames must have a sequence ontology id for ORF set in Transcript
-# or they will not be located.
+# ORFs are assumed to not have an exonfeature. So some fishing is required.
 sub getExons {
     my ($self, $id) = @_;
     my @exons; my $exonCoords = [];
-
+    my $exonParent;
+    
     my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $id });
-    unless ($transcript->retrieveFromDB()) {
-      $self->logVerbose("No Transcript row was fetched with source_id = $id\n");
-      return undef;
-    }
-
-    my $so = GUS::Model::SRes::SequenceOntology->new(
-        {sequence_ontology_id => $transcript->getSequenceOntologyId()}
-    );
-    $so->retrieveFromDB;
-    my $soTerm = $so->get('term_name');
-
-    if ($soTerm =~ /^ORF/i) {
-        @exons = $transcript;
+    if ($transcript->retrieveFromDB()) {
+        # is a gene
+        $exonParent = GUS::Model::DoTS::GeneFeature->new({
+            na_feature_id => $transcript->get('parent_id')});
+        @exons = $exonParent->getChildren("DoTS::ExonFeature", 1);
     } else {
-        @exons = $transcript->getChildren("DoTS::ExonFeature", 1);
-        unless (@exons) {
-            my $rna = $transcript->getParent("DoTS::RnaType", 1);
-            @exons = $rna->getChildren("DoTS::ExonFeature", 1) if $rna;
+        # should be an orf
+        $exonParent = GUS::Model::DoTS::Miscellaneous->new({ na_feature_id => $id });
+        unless ($exonParent->retrieveFromDB()) {
+          $self->logVerbose(
+            "No Transcript or Miscellaneous row was fetched with na_feature_id = $id\n");
+             return undef;
         }
-    }
+        @exons = $exonParent;
+   }
+
 
     unless (@exons) {
       $self->error(<<"EOF")
-      Can not find an exon/CDS for transcript $id
-      as a  child of either dots.Transcript or dots.RnaType.
+      Can not find an exon/CDS for transcript $id.
       Can't map its peptide hits to the chromosome.\n
 EOF
     }
