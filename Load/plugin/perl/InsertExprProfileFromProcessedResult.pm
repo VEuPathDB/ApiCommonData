@@ -219,7 +219,6 @@ WHERE s.external_database_release_id = $extDbRlsId
   AND g.na_feature_id = t.parent_id
   ORDER BY g.source_id
 ";
-  print STDERR "$sql\n";
 
   # transform individual result rows to a single row with all results for a
   # sourceId
@@ -232,8 +231,11 @@ WHERE s.external_database_release_id = $extDbRlsId
 
   while (($sourceId, $quantName, $result) = $stmt->fetchrow_array()) {
     if ($sourceId ne $prevSourceId && $prevSourceId ne 'first') {
-      my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash, $header);
-      push(@$rows, $row) unless $count++ == 0;
+      if ($count++ != 0) {
+	my $row = $self->makeSourceIdRow($prevSourceId, $sourceIdRowHash,
+					 $header);
+	push(@$rows, $row);
+      }
       $sourceIdRowHash = {};
     }
 
@@ -248,6 +250,7 @@ WHERE s.external_database_release_id = $extDbRlsId
 
 sub makeSourceIdRow {
   my ($self, $sourceId, $sourceIdRowHash, $header) = @_;
+
   my $row = [$sourceId];
   foreach my $quantName (@$header) {
     my $count = scalar(@{$sourceIdRowHash->{$quantName}});
