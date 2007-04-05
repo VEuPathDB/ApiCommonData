@@ -1633,6 +1633,23 @@ sub calculateExpressionStats {
 
 }
 
+sub InsertExpressionProfileFromProcessedResult {
+  my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc) = @_;
+
+  my $signal = "load_" . $extDbName;
+  $signal =~ s/[\s\(\)]//g;
+
+  return if $mgr->startStep("Loading ExpressionProfile for $extDbName", $signal);
+
+  $desc = $extDbName unless($desc);
+
+  my $args = "--arrayDesignName '$arrayName' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --protocolName '$protocolName' --processingType '$resultView' --studyDescrip '$desc'";
+
+  $mgr->runPlugin($signal,
+                  "ApiCommonData::Load::Plugin::InsertExprProfileFromProcessedResult",
+                  $args, 
+                  "Inserting Rad Analysis for $extDbName");
+}
 
 sub InsertRadAnalysisFromConfig {
   my ($mgr, $configFile, $name) = @_;
