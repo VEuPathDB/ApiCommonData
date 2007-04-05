@@ -2,36 +2,38 @@ set time on timing on
 ---------------------------
 -- set permissions
 ---------------------------
+-- These mviews can't be created unless the apidb user has these privileges.
+-- But now that we're running this script as the apidb user, they generate
+-- errors (you can't grant privileges to yourself).  So they're commented out.
+-- GRANT CREATE TABLE TO apidb;
+-- GRANT CREATE MATERIALIZED VIEW TO apidb;
 
-GRANT CREATE TABLE TO apidb;
-GRANT CREATE MATERIALIZED VIEW TO apidb;
-
-GRANT REFERENCES ON dots.ExternalNaSequence TO apidb;
-GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON sres.TaxonName TO apidb;
-GRANT SELECT ON sres.TaxonName TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.SnpFeature TO apidb;
-GRANT SELECT ON dots.SnpFeature TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.Library TO apidb;
-GRANT SELECT ON dots.Library TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.Est TO apidb;
-GRANT SELECT ON dots.Est TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.Source TO apidb;
-GRANT SELECT ON dots.Source TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.VirtualSequence TO apidb;
-GRANT SELECT ON dots.VirtualSequence TO apidb WITH GRANT OPTION;
-GRANT REFERENCES ON dots.TranslatedAaFeature TO apidb;
-GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
-GRANT SELECT ON dots.aalocation TO apidb;
-GRANT SELECT ON dots.NaFeatureComment TO apidb;
-GRANT SELECT ON dots.ExonFeature TO apidb;
-GRANT SELECT ON dots.TransmembraneAaFeature TO apidb;
-GRANT SELECT ON dots.GeneFeature TO apidb;
-GRANT SELECT ON dots.NaLocation TO apidb;
-GRANT SELECT ON dots.ExternalNaSequence TO apidb;
-GRANT SELECT ON dots.Miscellaneous TO apidb;
-GRANT SELECT ON sres.SequenceOntology TO apidb;
-GRANT SELECT ON sres.Taxon TO apidb;
+-- GRANT REFERENCES ON dots.ExternalNaSequence TO apidb;
+-- GRANT SELECT ON dots.ExternalNaSequence TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON sres.TaxonName TO apidb;
+-- GRANT SELECT ON sres.TaxonName TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.SnpFeature TO apidb;
+-- GRANT SELECT ON dots.SnpFeature TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.Library TO apidb;
+-- GRANT SELECT ON dots.Library TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.Est TO apidb;
+-- GRANT SELECT ON dots.Est TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.Source TO apidb;
+-- GRANT SELECT ON dots.Source TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.VirtualSequence TO apidb;
+-- GRANT SELECT ON dots.VirtualSequence TO apidb WITH GRANT OPTION;
+-- GRANT REFERENCES ON dots.TranslatedAaFeature TO apidb;
+-- GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
+-- GRANT SELECT ON dots.aalocation TO apidb;
+-- GRANT SELECT ON dots.NaFeatureComment TO apidb;
+-- GRANT SELECT ON dots.ExonFeature TO apidb;
+-- GRANT SELECT ON dots.TransmembraneAaFeature TO apidb;
+-- GRANT SELECT ON dots.GeneFeature TO apidb;
+-- GRANT SELECT ON dots.NaLocation TO apidb;
+-- GRANT SELECT ON dots.ExternalNaSequence TO apidb;
+-- GRANT SELECT ON dots.Miscellaneous TO apidb;
+-- GRANT SELECT ON sres.SequenceOntology TO apidb;
+-- GRANT SELECT ON sres.Taxon TO apidb;
 
 ---------------------------
 -- genes
@@ -328,7 +330,7 @@ WHERE gf.na_feature_id = nl.na_feature_id
 
 GRANT SELECT ON apidb.GeneAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.GeneAttr_sourceId ON apidb.GeneAttributes1 (source_id);
+CREATE INDEX apidb.GeneAttr1_sourceId ON apidb.GeneAttributes1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributesSyn
                              FOR apidb.GeneAttributes1;
@@ -390,7 +392,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
 
 GRANT SELECT ON apidb.SequenceAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.SeqAttr_source_id ON apidb.SequenceAttributes1 (source_id);
+CREATE INDEX apidb.SeqAttr1_source_id ON apidb.SequenceAttributes1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.SequenceAttributesSyn
                              FOR apidb.SequenceAttributes1;
@@ -527,7 +529,7 @@ AND   edr.external_database_id = ed.external_database_id;
 
 GRANT SELECT ON apidb.EstAttributes1 TO PUBLIC;
 
-CREATE INDEX apidb.EstAttr_source_id ON apidb.EstAttributes1 (source_id);
+CREATE INDEX apidb.EstAttr1_source_id ON apidb.EstAttributes1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAttributesSyn
                              FOR apidb.EstAttributes1;
