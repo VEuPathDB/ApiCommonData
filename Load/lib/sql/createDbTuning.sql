@@ -162,10 +162,7 @@ GRANT SELECT ON apidb.GoTermSummary TO gus_r;
 
 -------------------------------------------------------------------------------
 
-/* why doesn't this work?
 CREATE MATERIALIZED VIEW apidb.PdbSimilarity AS
-*/
-CREATE TABLE apidb.PdbSimilarity AS
 SELECT taf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
        substr(eas.source_id, 1,
               instr(eas.source_id, '_', -1) - 1)
