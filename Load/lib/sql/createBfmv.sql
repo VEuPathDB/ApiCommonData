@@ -39,8 +39,10 @@ set time on timing on
 -- genes
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.GoTermList ###;
 DROP MATERIALIZED VIEW apidb.GoTermList;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.GoTermList ###;
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
 SELECT gf.source_id, o.ontology, 
        DECODE(gec.name, 'IEA', 'predicted', 'annotated') AS source,
@@ -72,8 +74,10 @@ GROUP BY gf.source_id, o.ontology,
 
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.GeneGoAttributes ###;
 DROP MATERIALIZED VIEW apidb.GeneGoAttributes;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.GeneGoAttributes ###;
 CREATE MATERIALIZED VIEW apidb.GeneGoAttributes AS
 SELECT gene.source_id,
        annotated_go_component.go_terms AS annotated_go_component,
@@ -126,8 +130,10 @@ CREATE INDEX apidb.GeneGoAttr_sourceId ON apidb.GeneGoAttributes (source_id);
 
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.DerisiExpn ###;
 DROP MATERIALIZED VIEW apidb.DerisiExpn;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.DerisiExpn ###;
 CREATE MATERIALIZED VIEW apidb.DerisiExpn AS
 SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
        derisi_max_timing, derisi_min_timing, derisi_min_level
@@ -151,8 +157,10 @@ CREATE INDEX apidb.Derisi_sourceId ON apidb.DerisiExpn (source_id);
 
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.WinzelerExpn ###;
 DROP MATERIALIZED VIEW apidb.WinzelerExpn;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.WinzelerExpn ###;
 CREATE MATERIALIZED VIEW apidb.WinzelerExpn AS
 SELECT gene.source_id, expn.winzeler_max_level, winzeler_max_pct,
        winzeler_max_timing, winzeler_min_timing, winzeler_min_level
@@ -175,8 +183,10 @@ GRANT SELECT ON apidb.WinzelerExpn TO PUBLIC;
 CREATE INDEX apidb.Winzeler_sourceId ON apidb.WinzelerExpn (source_id);
 
 ---------------------------
+prompt ### DROP MATERIALIZED VIEW apidb.GeneProteinAttributes ###;
 DROP MATERIALIZED VIEW apidb.GeneProteinAttributes;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.GeneProteinAttributes ###;
 CREATE MATERIALIZED VIEW apidb.GeneProteinAttributes AS
 SELECT gene.source_id, 
        protein.tm_count, protein.molecular_weight,
@@ -229,8 +239,10 @@ CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.GeneAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.GeneAttributes1 AS
 SELECT gf.source_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
@@ -339,8 +351,10 @@ CREATE OR REPLACE SYNONYM apidb.GeneAttributesSyn
 -- sequences
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.SequenceAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.SequenceAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.SequenceAttributes1 AS
 SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
@@ -400,8 +414,10 @@ CREATE OR REPLACE SYNONYM apidb.SequenceAttributesSyn
 -- SNPs
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.SnpAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.SnpAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.SnpAttributes1 AS
 SELECT snp.source_id AS source_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
@@ -462,8 +478,10 @@ CREATE OR REPLACE SYNONYM apidb.SnpAttributesSyn
 -- ORFs
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.OrfAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.OrfAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.OrfAttributes1 AS
 SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
@@ -495,8 +513,10 @@ CREATE OR REPLACE SYNONYM apidb.OrfAttributesSyn
 -- ESTs
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.EstAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.EstAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.EstAttributes1 AS
 SELECT ens.source_id,
        e.seq_primer AS primer,
@@ -537,8 +557,10 @@ CREATE OR REPLACE SYNONYM apidb.EstAttributesSyn
 -- array elements
 ---------------------------
 
+prompt ### DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1 ###;
 DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1;
 
+prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1 ###;
 CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1 AS
 SELECT ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
