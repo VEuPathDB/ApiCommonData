@@ -87,8 +87,9 @@ GRANT SELECT ON dots.SplicedNaSequence TO apidb WITH GRANT OPTION;
 
 -------------------------------------------------------------------------------
 
+DROP MATERIALIZED VIEW apidb.GeneAlias;
 CREATE MATERIALIZED VIEW apidb.GeneAlias AS
-SELECT DISTINCT alias, gene FROM
+SELECT DISTINCT pairs.alias, pairs.gene FROM
 (SELECT ng.name AS alias, gf.source_id AS gene
  FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
  WHERE gf.na_feature_id = nfng.na_feature_id
@@ -103,7 +104,15 @@ SELECT DISTINCT alias, gene FROM
  FROM dots.GeneFeature
  UNION
  SELECT lower(source_id) AS alias, source_id AS gene
- FROM dots.GeneFeature);
+ FROM dots.GeneFeature) pairs,
+      dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
+      sres.ExternalDatabase ed
+WHERE pairs.gene = gf.source_id
+  AND gf.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+                            'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
+                            'TwinScanEt predictions');
 
 GRANT SELECT ON apidb.GeneAlias TO gus_r;
 
