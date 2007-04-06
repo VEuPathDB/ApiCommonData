@@ -387,7 +387,7 @@ sub getExonFeats {
   if ($tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'}) {
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
 
-    $exon = $self->makeExonFeat($soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($$seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'intronStart'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
 
     $extNaSeq->addChild($exon);
 
@@ -395,7 +395,7 @@ sub getExonFeats {
 
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 1 : 2;
 
-    $exon = $self->makeExonFeat($soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'intronEnd'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
 
     $extNaSeq->addChild($exon);
 
@@ -404,7 +404,7 @@ sub getExonFeats {
   else {
     $orderNum = $tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'} == 1 ? 2 : 1;
 
-    $exon = $self->makeExonFeat($soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
+    $exon = $self->makeExonFeat($seqSourceId,$soIds,$orderNum,$scanReleaseId,$tRNAs->{$seqSourceId}->{$tRNA}->{'start'},$tRNAs->{$seqSourceId}->{$tRNA}->{'end'},$tRNAs->{$seqSourceId}->{$tRNA}->{'isReversed'});
 
     $extNaSeq->addChild($exon);
 
@@ -415,12 +415,15 @@ sub getExonFeats {
 }
 
 sub makeExonFeat {
-  my ($self,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
+  my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
+
+  $seqSourceId = "${seqSourceId}-1-$orderNum";
 
   my $codingStart = $isReversed ? $end : $start;
   my $codingEnd = $isReversed ? $start : $end;
 
   my $exon = GUS::Model::DoTS::ExonFeature->new({'name' => "exon",
+						 'source_id' => $seqSourceId,
 						 'sequence_ontology_id' => $soIds->{'exonFeat'},
 						 'order_number' => $orderNum,
 						 'coding_start' => $codingStart,
