@@ -67,7 +67,10 @@ sub run {
             undef $record;
             $record = $self->initRecord($ln);
             if ( ! $record->{naFeatureId}) {
-                warn "'$record->{proteinId}' or '$record->{description}' from '$record->{sourcefile}' not found, skipping\n" if  $self->getArg('veryVerbose');
+                warn "'$record->{proteinId}' ",
+                     &{sub{"or '$record->{description}' " if ($record->{description})}},
+                     &{sub{"from '$record->{sourcefile}' " if ($record->{sourcefile})}},
+                     "not found, skipping\n" if  $self->getArg('veryVerbose');
                 $self->{summariesSkipped}++;
                 $self->nextRecord(*F);
                 next;
@@ -122,7 +125,9 @@ sub getSourceIdAndNaFeatureId {
         select m.source_id, m.na_feature_id
         from dots.miscellaneous m
         where (m.source_id = ?
-           or  m.source_id = ?)
+           or  m.source_id = ?
+           or  m.source_id like ?
+           or  m.source_id like ?)
         union
         select g.source_id, taf.na_feature_id
         from dots.translatedaafeature taf,
@@ -135,14 +140,20 @@ sub getSourceIdAndNaFeatureId {
            or  t.protein_id = ?
            or  t.protein_id = ?)
 EOSQL
-    
+
     $sth->execute(
         $candidate_ids[0], $candidate_ids[1], # look for orf by source_id
+        ($candidate_ids[0]) ? $candidate_ids[0].'%' : '', # orf id may be
+        ($candidate_ids[1]) ? $candidate_ids[1].'%' : '', # truncated a little
         $candidate_ids[0], $candidate_ids[1], # look for gene by source_id
         $candidate_ids[0], $candidate_ids[1], # look for gene by protein_id
     );
     
     my $res = $sth->fetchall_arrayref();
+    
+    if (scalar @{$res} > 1) {
+      warn "$candidate_ids[0] returns more than one row. This protein will be skipped.\n"
+    }
     
     return undef if (scalar @{$res} != 1);
 
