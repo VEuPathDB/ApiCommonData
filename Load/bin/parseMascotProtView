@@ -1,0 +1,254 @@
+#!/usr/bin/perl
+
+# Extract data from Mascot Protein View html files. See __END__ of this
+# script for sample output
+
+use strict;
+use File::Find;
+use File::Basename;
+use IO::Handle;
+use Getopt::Long;
+use Data::Dumper;
+
+use constant DEBUG => 1; # increased verbosity with increased debug level
+
+my ($indir, $outfile, @results);
+
+GetOptions( 
+    "indir=s" => \$indir,
+    "outfile=s" => \$outfile    
+);
+
+if (!defined $indir || !defined $outfile) {usage(); exit;}
+
+my $runningPepCount = 0;
+my $skippedFiles = 0;
+
+##############################################################################
+
+my @infiles;
+if ( -d $indir || -l $indir ) {
+    find( {
+            follow => 1, 
+            wanted => sub { push @infiles, "$File::Find::dir/$_" if /\.html?/ }
+          }, 
+          $indir
+        );
+} else {
+    push @infiles, $indir; # process single file
+}
+
+
+for my $file (@infiles) {
+    push @results, parseProtView($file);
+}
+
+writeTabFile(\@results);
+
+printReport();
+
+##############################################################################
+
+sub writeTabFile {
+    my ($results) = @_;
+    
+    ($outfile) ? 
+        (open (TABF, ">$outfile") or die "could not open $outfile for writing\n") :
+        (open (TABF, ">&STDOUT") or die "could not write to stdout\n");
+    
+    TABF->autoflush(1);
+    for my $h (@$results) {
+        print TABF 
+              '# source_id',      "\t",
+              'description',      "\t",
+              'seqMolWt',         "\t",
+              'seqPI',            "\t",
+              'score',            "\t",
+              'percentCoverage',  "\t",
+              'spanCount',        "\t",
+              'spectrumCount',    "\t",
+              'sourcefile',       "\n",
+              ;
+
+        print TABF
+              $h->{source_id},       "\t",
+              $h->{description},     "\t",
+              $h->{seqMolWt},        "\t",
+              $h->{seqPI},           "\t",
+              $h->{score},           "\t",
+              $h->{percentCoverage}, "\t",
+              $h->{spanCount},       "\t",
+              $h->{spectrumCount},   "\t",
+              $h->{sourcefile},      "\n",
+              ;
+    
+    
+        print TABF
+                  '## start',      "\t",
+                  'end',           "\t",
+                  'observed',      "\t",
+                  'mr_expect',     "\t",
+                  'mr_calc',       "\t",
+                  'delta',         "\t",
+                  'miss',          "\t",
+                  'sequence',      "\t",
+                  'modification',  "\t",
+                  'query',         "\t",
+                  'hit',           "\t",
+                  'ions_score',    "\n",
+                  ;
+    
+        for my $pep (@{$h->{peptides}}) {
+            print TABF
+                  $pep->{start},         "\t",
+                  $pep->{end},           "\t",
+                  $pep->{observed},      "\t",
+                  $pep->{mr_expect},     "\t",
+                  $pep->{mr_calc},       "\t",
+                  $pep->{delta},         "\t",
+                  $pep->{miss},          "\t",
+                  $pep->{sequence},      "\t",
+                  $pep->{modification},  "\t",
+                  $pep->{query},         "\t",
+                  $pep->{hit},           "\t",
+                  $pep->{ions_score},    "\n",
+                  ;
+            $runningPepCount++;
+        }
+    }
+}
+
+
+sub parseProtView {
+    my ($protview) = @_;
+    my ($hit, $protScore, $coverage, $curpos, 
+        $query, $rank, $score, $start, $end,
+        $observed, $mr_expt, $mr_calc, $delta, $miss,
+        $peptide, $mod_string);
+    
+    my $h   = {};
+    my $pep = {};
+    my $spanSeen = {};
+    
+    $h->{spanCount} = $h->{spectrumCount} = 0;
+    
+    open(F, $protview) or die "Could not open $protview: $!\n";
+    ($h->{sourcefile}) = $protview =~ m|$indir/?(.+)|;
+    (DEBUG > 1) && warn "Processing '$protview'\n";
+    while (<F>) {
+        s/[\r\n]//g;
+        if (/Match to: /) {
+            stripMarkup($_);
+            ($h->{source_id}, $h->{score}) = 
+                m/Match to:\s*(.+)\s+Score:\s*(\d+)/;
+            my $next = <F>;
+            $next =~ s/[\r\n]//g;
+            ($h->{description}) = $next =~ m{<b>(.+)</b>}i;
+        } elsif (/^Nominal mass/) {
+            stripMarkup($_);
+            ($h->{seqMolWt}, $h->{seqPI}) = 
+                m/Nominal mass \(Mr\): (\d+); Calculated pI value: ([\d\.]+)/;
+        } elsif (/Sequence Coverage:/) {
+            stripMarkup($_);
+            ($h->{percentCoverage}) = m/Sequence Coverage:\s*([^\b%]+)/;
+        } elsif ( /http:\/\/.*\/cgi\/peptide_view/ && ! /zilch/ ) { # table of peptides
+            while ( ! m|</[Aa]>| ) { chomp ($_ .= <F>); }
+            undef $pep;
+            ($pep->{query}) = m/query=(\d+)/;
+            ($pep->{hit}) = m/hit=(\d+)/;
+            ($pep->{ion_score}) = m/Ions score (\d+)/;
+            my @match_data = split /\s\s+/;
+            ($pep->{start}, $pep->{end}) = split /\s+-\s+/, $match_data[1];
+
+            ($pep->{observed})  = $match_data[2];
+            ($pep->{mr_expect}) = $match_data[3];
+            ($pep->{mr_calc})   = $match_data[4];
+            ($pep->{delta})     = $match_data[5];
+            ($pep->{miss})      = $match_data[6];
+            
+            ($pep->{sequence}, $pep->{modification}) = $match_data[7] =~ 
+                    m|^([^\s<]+)            # peptide
+                      .*</b>\s* 
+                      (.*)                  # modification
+                      \s*\(<a\s+href.+\)|ix;
+            
+            $pep->{sequence} = adjustSequence($pep->{sequence});
+            
+            ($pep->{ions_score}) = m/Ions score (\d+)/;
+            push @{$h->{peptides}}, $pep;
+            $h->{spectrumCount}++;
+            $h->{spanCount}++ unless $spanSeen->{$pep->{sequence}}++;
+        } elsif (/^C;Gene name:.*?ORFNames=(.+);$/) {
+            # in some cases the source id provided in the 'Match to:'
+            # line is not the one we can use and there is a usable
+            # id elsewhere in the file. Override the first...
+            $h->{source_id} = $1;       
+        }
+    }
+    
+    if ($h->{source_id} eq '') {
+        DEBUG && warn "skipping invalid file: '$protview'\n";
+        $skippedFiles++;
+        return;
+    }
+    
+    MUNG_IDS($h->{source_id});
+    MUNG_IDS($h->{description});
+    
+    return $h;
+}
+
+# do what ever sequence clean up is needed. such as trimming
+# protease cleavage contexts that are not part of the MS peptide:
+# FK.SSFNYFNEQK.SY becomes SSFNYFNEQK
+sub adjustSequence {
+    my ($sequence) = @_;
+    $sequence =~ s/^[^\.]+\.//;
+    $sequence =~ s/\.[^\.]+$//;
+    return $sequence;
+}
+
+sub stripMarkup {
+  $_[0] =~ s/<(([^ >]|\n)*)>//g;
+}
+
+# data-specific alterations of source_ids. should be delt with in some other way.
+sub MUNG_IDS {
+    $_[0] =~ s/^ChTU502_[IVNA]+_//                              or
+    $_[0] =~ s/^CpIOWA_[IVNA]+_//                               or
+    $_[0] =~ s/^CpEST_//                                        or
+    $_[0] =~ s/^CpGSS_//                                        or
+    $_[0] =~ s/^CpIOWA_(EAK\d+)/\1.1/                           or
+    $_[0] =~ s/^ChTU502_(EAL\d+)/\1.1/                          or
+    $_[0] =~ s/^CpIOWA_//                                       or
+    $_[0] =~ s/^CpT2IOWA_(\d{2}-\d-\d+-\d+)/AAEE010000$1/       or
+    $_[0] =~ s/^ChTU502_//                                       ;
+}
+
+sub printReport {
+warn scalar @infiles . " files processed.\n" .
+            $skippedFiles . " files skipped.\n" .
+            scalar @results . ' proteins, ' .
+            $runningPepCount . " peptides extracted.\n";
+}
+sub usage {
+    chomp (my $thisScript = `basename $0`);
+    print <<"EOF";
+usage: 
+$thisScript --indir dirOfMascotProteinViews --outfile outputFilename
+
+Parses all Mascot Protein View .html and .htm files in a directory and subdirectories. 
+Output is a format that can be load into GUS with ApiCommonData::Load::Plugin::InsertMascotSummaries
+EOF
+}
+
+__END__
+
+# source_id	description	seqMolWt	seqPI	score	percentCoverage	spanCount	spectrumCount	sourcefile
+cgd6_120	|EAK87340.1 |disulfide-isomerase, signal peptide plus ER retention motif, putative ER protein	54211	5.34	320	15	5	5	CrypProt LTQ ASB14 spot 21 Protein View.htm
+## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
+113	127	824.04	1646.06	1646.77	-0.71	0	FFSGIDSVQNYSGAR		22	1	95
+139	154	821.11	1640.20	1640.86	-0.66	0	LTGPAVQVAESEEAIK		21	1	73
+352	369	897.28	1792.55	1792.96	-0.40	0	SEPIPAEQSGPVTVVVGK		23	1	75
+370	377	521.27	1040.52	1039.53	0.99	0	TFEEIVFR		12	1	32
+419	434	902.10	1802.18	1802.86	-0.68	0	INGPQNDIPYEGFSPR		24	1	49
