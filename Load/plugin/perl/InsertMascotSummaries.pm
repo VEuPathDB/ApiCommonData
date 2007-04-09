@@ -311,12 +311,12 @@ sub addMassSpecFeatureToRecord {
 
     $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
-    $pep->{description} = <<"EOF";
-match: $record->{sourceId}
-ions score: $pep->{ions_score}
-modification: $pep->{modification}
-report: '$record->{sourcefile}'
-EOF
+    $pep->{description} = join '', (
+        ($record->{sourceId} && "match: $record->{sourceId}\n"),
+        ($pep->{ions_score} && "score: $pep->{ions_score}\n"),
+        ($pep->{modification} && "modification: $pep->{modification}\n"),
+        ($record->{sourcefile} && "report: '$record->{sourcefile}\n")
+    );
 
     push @{$record->{peptides}}, $pep;
 }
@@ -509,6 +509,7 @@ sub mapToNASequence {
 }
 
 # duplicate records have same na_feature_id and same set of peptide sequences
+# and are from the same sourcefile.
 sub pruneDuplicateRecords {
     my ($self, $recordSet) = @_;
     my %seen;
