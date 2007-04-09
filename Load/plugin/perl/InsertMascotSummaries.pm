@@ -208,10 +208,11 @@ sub mapOrfToGene {
     my $recNaFeatureId = $record->{naFeatureId};
     
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select gt.source_id, gt.na_feature_id, taas.sequence
+        select gf.source_id, t.na_feature_id, taas.sequence
         from
-        dots.transcript orf,
-        dots.transcript gt,
+        dots.miscellaneous orf,
+        dots.genefeature gf,
+        dots.transcript t,
         dots.nalocation gtnal,
         dots.nalocation orfnal,
         dots.translatedaafeature taaf,
@@ -219,14 +220,15 @@ sub mapOrfToGene {
         sres.sequenceontology so
         where
         orf.na_feature_id = ?
-        and gt.na_feature_id = gtnal.na_feature_id
+        and gf.na_feature_id = gtnal.na_feature_id
         and orf.na_feature_id = orfnal.na_feature_id
-        and orf.na_sequence_id = gt.na_sequence_id
+        and orf.na_sequence_id = gf.na_sequence_id
         and gtnal.start_max < orfnal.end_min
         and gtnal.end_min > orfnal.start_max
-        and gt.na_feature_id = taaf.na_feature_id
+        and gf.na_feature_id = t.parent_id
+        and t.na_feature_id = taaf.na_feature_id
         and taaf.aa_sequence_id = taas.aa_sequence_id
-        and gt.sequence_ontology_id = so.sequence_ontology_id
+        and gf.sequence_ontology_id = so.sequence_ontology_id
         and so.term_name != 'ORF'
             -- orf and gene must be same strand and frame --
         and orfnal.is_reversed = gtnal.is_reversed
