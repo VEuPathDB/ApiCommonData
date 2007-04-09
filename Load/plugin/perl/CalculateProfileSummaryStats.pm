@@ -293,6 +293,8 @@ sub calculateSummaryStats {
 	    $minKey = $key;
 	}
     }    
+    $resultHash{'max_expression'} = $max;
+    $resultHash{'min_expression'} = $min;
     $resultHash{'equiv_max'} = $timePointMapping{$maxKey};
     $resultHash{'equiv_min'} = $timePointMapping{$minKey};
     $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
