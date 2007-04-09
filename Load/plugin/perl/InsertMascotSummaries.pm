@@ -525,13 +525,16 @@ sub pruneDuplicateRecords {
             my @newSeqs = map {$_->{sequence}} @{$r->{peptides}};
             sort @newSeqs;
 
-            next REC if (scalar @oldSeqs != scalar @newSeqs);
+            next REC if (
+                  (scalar @oldSeqs != scalar @newSeqs) or
+                  ($existingRec->{sourcefile} ne $r->{sourcefile})
+                );
 
             for (my $i=0; $i < @newSeqs; $i++) {
                 next REC if ($oldSeqs[$i] ne $newSeqs[$i]);
             }
 
-            warn "row $i ($r->{proteinId}) is duplicate; removing.\n" if $self->getArg('veryVerbose');
+            warn "record $i ($r->{proteinId}) is duplicate; removing.\n" if $self->getArg('veryVerbose');
             delete $recordSet->[$i];
         } else {
             $seen{$r->{naFeatureId}} = $r;
