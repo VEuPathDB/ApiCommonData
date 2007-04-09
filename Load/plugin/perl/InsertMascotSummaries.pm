@@ -113,6 +113,9 @@ sub initRecord {
         $self->getSourceIdAndNaFeatureId($record->{proteinId}, 
                                          $record->{description});
 
+    ($record->{aaSequenceId}) = 
+        $self->getAaSequenceId($record->{naFeatureId});
+
     return $record;
 }
 
@@ -158,6 +161,27 @@ EOSQL
     return undef if (scalar @{$res} != 1);
 
     return ($res->[0]->[0], $res->[0]->[1]);
+}
+
+sub getAaSequenceId {
+    my ($self, $naFeatureId) = @_;
+    my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $naFeatureId});
+    unless ($transcript->retrieveFromDB()) {
+      my $transcript = GUS::Model::DoTS::Miscellaneous->new({ na_feature_id => $naFeatureId});
+        unless ($transcript->retrieveFromDB()) {
+          $self->error(
+            "No GeneFeature or Miscellaneous row with na_feature_id = $naFeatureId\n");
+        }
+    }
+
+    my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
+
+    my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
+        aa_sequence_id => $translatedAAFeature->getAaSequenceId()
+    });
+    $aaSeq->retrieveFromDB or $self->error("No aa_sequence_id for na_feature_id = '$naFeatureId'");
+
+    return $aaSeq->getId();
 }
 
 sub convertOrfRecordsToGenes { # if possible, otherwise leave as is.
@@ -277,6 +301,8 @@ sub addMassSpecFeatureToRecord {
       $pep->{ions_score}
     ) = split "\t", $ln;
 
+    $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
+    
     $pep->{description} = <<"EOF";
 match: $record->{sourceId}
 ions score: $pep->{ions_score}
@@ -285,6 +311,24 @@ report: '$record->{sourcefile}'
 EOF
 
     push @{$record->{peptides}}, $pep;
+}
+
+sub setPepStartEnd {
+    my ($self, $pep, $aaSequenceId) = @_;
+
+    my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
+        aa_sequence_id => $aaSequenceId
+    });
+    $aaSeq->retrieveFromDB or $self->error("failed to find aa_sequence_id $aaSequenceId in TranslatedAASequence\n");
+    
+    my $proteinSeq = $aaSeq->getSequence();
+    
+    $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
+    if ($pep->{start} == 0) {
+        self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId'\n");
+    }
+    $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
+    
 }
 
 sub insertRecordsIntoDb {
