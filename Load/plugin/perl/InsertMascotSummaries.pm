@@ -84,7 +84,9 @@ sub run {
     }
 
     $self->convertOrfRecordsToGenes($recordSet);
-
+    
+    $self->pruneDuplicateRecords($recordSet);
+    
     $self->insertRecordsIntoDb($recordSet);    
 
     $self->setResultDescr(<<"EOF");
@@ -331,7 +333,7 @@ sub setPepStartEnd {
     
     $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
     if ($pep->{start} == 0) {
-        self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId'\n");
+        $self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId'\n");
     }
     $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
     
@@ -340,6 +342,7 @@ sub setPepStartEnd {
 sub insertRecordsIntoDb {
     my ($self, $recordSet) = @_;
     for my $record (@{$recordSet}) {
+        next if (!defined $record);
         my $mss = $self->insertMassSpecSummary($record);
         $self->insertMassSpecFeatures($record, $mss);
     }
@@ -504,6 +507,39 @@ sub mapToNASequence {
 
     return $naLocations;
 }
+
+# duplicate records have same na_feature_id and same set of peptide sequences
+sub pruneDuplicateRecords {
+    my ($self, $recordSet) = @_;
+    my %seen;
+    my $i = 0;
+    REC:
+    for (my $i=0; $i < @{$recordSet}; $i++) {
+        my $r = @{$recordSet}[$i];
+        
+        if (my $existingRec = $seen{$r->{naFeatureId}}) {
+
+            my @oldSeqs = map {$_->{sequence}} @{$existingRec->{peptides}};
+            sort @oldSeqs;
+
+            my @newSeqs = map {$_->{sequence}} @{$r->{peptides}};
+            sort @newSeqs;
+
+            next REC if (scalar @oldSeqs != scalar @newSeqs);
+
+            for (my $i=0; $i < @newSeqs; $i++) {
+                next REC if ($oldSeqs[$i] ne $newSeqs[$i]);
+            }
+
+            warn "row $i ($r->{proteinId}) is duplicate; removing.\n" if $self->getArg('veryVerbose');
+            delete $recordSet->[$i];
+        } else {
+            $seen{$r->{naFeatureId}} = $r;
+        }
+    }
+}
+
+
 
 # Return AoA ref of exon coordinates for the encoding NA seq. An ORF has one 'exon'.
 # ORFs are assumed to not have an exonfeature. So some fishing is required.
