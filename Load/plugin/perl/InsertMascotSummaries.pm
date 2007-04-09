@@ -80,6 +80,7 @@ sub run {
             m/^## / and next;
             $self->addMassSpecFeatureToRecord($_, $record);
         }
+        $self->undefPointerCache();
     }
 
     $self->convertOrfRecordsToGenes($recordSet);
@@ -114,7 +115,8 @@ sub initRecord {
                                          $record->{description});
 
     ($record->{aaSequenceId}) = 
-        $self->getAaSequenceId($record->{naFeatureId});
+        $self->getAaSequenceId($record->{naFeatureId}) 
+        if ($record->{naFeatureId});
 
     return $record;
 }
@@ -181,7 +183,9 @@ sub getAaSequenceId {
     });
     $aaSeq->retrieveFromDB or $self->error("No aa_sequence_id for na_feature_id = '$naFeatureId'");
 
-    return $aaSeq->getId();
+    my $id = $aaSeq->getId();
+    
+    return $id;
 }
 
 sub convertOrfRecordsToGenes { # if possible, otherwise leave as is.
