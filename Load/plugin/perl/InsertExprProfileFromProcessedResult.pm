@@ -1,4 +1,3 @@
-
 package ApiCommonData::Load::Plugin::InsertExprProfileFromProcessedResult;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
@@ -153,16 +152,18 @@ sub makeHeader {
 
  # sort by quantification_id to retain the desired order of quants
   my $sql = "
-SELECT s.name, q.name, q.quantification_id
+SELECT s.name, a.name, q.quantification_id
 FROM Study.Study s, RAD.Protocol p,
-     RAD.StudyAssay sa, RAD.Acquisition a, RAD.Quantification q
+     RAD.StudyAssay sa, RAD.Acquisition ac, 
+     Rad.Assay a, RAD.Quantification q
 WHERE s.external_database_release_id = $extDbRlsId
   AND p.name = '$protocolName'
   AND sa.study_id = s.study_id
   AND a.assay_id = sa.assay_id
-  AND q.acquisition_id = a.acquisition_id
+  AND ac.assay_id = a.assay_id
+  AND q.acquisition_id = ac.acquisition_id
   AND q.protocol_id = p.protocol_id
-ORDER BY s.name, q.quantification_id
+ORDER BY s.name, a.name
 ";
 
   my $stmt = $self->prepareAndExecute($sql);
@@ -198,9 +199,9 @@ sub getProfileRows {
   $self->error("can't find resultColumn") unless $resultColumn;
 
   my $sql = "
-SELECT g.source_id, q.name, cer.$resultColumn
+SELECT g.source_id, a.name, cer.$resultColumn
 FROM Study.Study s, RAD.ArrayDesign ad, RAD.Protocol p,
-     RAD.StudyAssay sa, RAD.Acquisition a, RAD.Quantification q,
+     RAD.StudyAssay sa, RAD.Assay a, RAD.Acquisition ac, RAD.Quantification q,
      RAD.ShortOligoFamily  ce, RAD.$resultViewName cer,
      DoTS.GeneFeature g, RAD.CompositeElementNaSequence ces,
      DoTS.Transcript t
@@ -209,7 +210,8 @@ WHERE s.external_database_release_id = $extDbRlsId
   AND p.name = '$protocolName'
   AND sa.study_id = s.study_id
   AND a.assay_id = sa.assay_id
-  AND q.acquisition_id = a.acquisition_id
+  AND ac.assay_id = a.assay_id
+  AND q.acquisition_id = ac.acquisition_id
   AND q.protocol_id = p.protocol_id
   AND ce.array_design_id = ad.array_design_id
   AND cer.composite_element_id = ce.composite_element_id
