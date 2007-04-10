@@ -112,8 +112,8 @@ sub initRecord {
     # Try looking up a proper source_id and na_sequence_id. Mascot datasets
     # may contain matches to proteins for which we don't have records (and
     # therefore no na_feature_id) - we skip those.
-    ($record->{sourceId}, $record->{naFeatureId}) = 
-        $self->getSourceIdAndNaFeatureId($record->{proteinId}, 
+    ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}) = 
+        $self->getSourceNaFeatureNaSequenceIds($record->{proteinId}, 
                                          $record->{description});
 
     ($record->{aaSequenceId}) = 
@@ -123,20 +123,20 @@ sub initRecord {
     return $record;
 }
 
-sub getSourceIdAndNaFeatureId {
+sub getSourceNaFeatureNaSequenceIds {
     my ($self, @candidate_ids) = @_;
     
     # in a hetergeneous data set (old Wastling data for example)
     # we need to fish for the correct record, if any.
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select m.source_id, m.na_feature_id
+        select m.source_id, m.na_feature_id, m.na_sequence_id
         from dots.miscellaneous m
         where (m.source_id = ?
            or  m.source_id = ?
            or  m.source_id like ?
            or  m.source_id like ?)
         union
-        select g.source_id, taf.na_feature_id
+        select g.source_id, taf.na_feature_id, t.na_sequence_id
         from dots.translatedaafeature taf,
              dots.genefeature g,
              dots.transcript t
@@ -164,7 +164,7 @@ EOSQL
     
     return undef if (scalar @{$res} != 1);
 
-    return ($res->[0]->[0], $res->[0]->[1]);
+    return ($res->[0]->[0], $res->[0]->[1], $res->[0]->[2]);
 }
 
 sub getAaSequenceId {
@@ -210,7 +210,7 @@ sub mapOrfToGene {
     my $recNaFeatureId = $record->{naFeatureId};
     
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select gf.source_id, t.na_feature_id, taas.sequence
+        select gf.source_id, t.na_feature_id, taas.sequence, t.na_sequence_id
         from
         dots.miscellaneous orf,
         dots.genefeature gf,
@@ -269,8 +269,11 @@ EOSQL
 
     # Have successful mapping of ORF to gene. Change source_id/na_feature_id 
     # and update peptide coordinates relative to new protein coord.
+    $record->{orfId} = $record->{sourceId};
+    $record->{orfId} = $record->{sourceId};
     $record->{sourceId} = $row{source_id};
     $record->{naFeatureId} = $row{na_feature_id};
+    $record->{naSequenceId} = $row{na_sequence_id};
     for my $pep (@{$record->{peptides}}) {
         $pep->{start} = shift @newCoords;
         $pep->{end}   = shift @newCoords;
@@ -352,26 +355,11 @@ sub insertRecordsIntoDb {
 sub insertMassSpecSummary {
     my ($self, $record) = @_;
     
-    my $transcript = GUS::Model::DoTS::Transcript->new({ na_feature_id => $record->{naFeatureId}});
-    unless ($transcript->retrieveFromDB()) {
-      my $transcript = GUS::Model::DoTS::Miscellaneous->new({ na_feature_id => $record->{naFeatureId}});
-        unless ($transcript->retrieveFromDB()) {
-          $self->error(
-            "No GeneFeature or Miscellaneous row with na_feature_id = $record->{naFeatureId}\n");
-        }
-    }
-
-    my $translatedAAFeature = $transcript->getChild("DoTS::TranslatedAAFeature", 1);
-
     my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
-        aa_sequence_id => $translatedAAFeature->getAaSequenceId()
+        aa_sequence_id => $record->{aaSequenceId}
     });
     $aaSeq->retrieveFromDB;
 
-    $record->{aaSequenceId} = $aaSeq->getId();
-    $record->{naSequenceId} = $transcript->getNaSequenceId();
-    $record->{naFeatureId}  = $transcript->getId();
-    $record->{sourceId}     = $transcript->getSourceId();
     $record->{seqLength}    = $aaSeq->getLength();
     $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
 
@@ -528,7 +516,8 @@ sub pruneDuplicateRecords {
 
             next REC if (
                   (scalar @oldSeqs != scalar @newSeqs) or
-                  ($existingRec->{sourcefile} ne $r->{sourcefile})
+                  ($existingRec->{sourcefile} ne $r->{sourcefile}
+                    && !$existingRec->{orfId} && !$r->{orfId})
                 );
 
             for (my $i=0; $i < @newSeqs; $i++) {
@@ -658,9 +647,9 @@ sub declareArgs {
 
 sub undoTables {
     qw(
+    ApiDB.MassSpecSummary
     DoTS.AALocation
     DoTS.MassSpecFeature
-    DoTS.MassSpecSummary
     DoTS.NALocation
     DoTS.NAFeature
     DoTSVer.MassSpecFeatureVer
@@ -787,17 +776,35 @@ my $documentation = {
 __END__
 
 select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
-from dots.massspecsummary mss,
+from apidb.massspecsummary mss,
 dots.massspecfeature msf,
 dots.aalocation aal,
-dots.translatedaasequence taas
+dots.translatedaafeature taaf,
+dots.nafeature misc
 where mss.mass_spec_summary_id = msf.source_id
 and msf.aa_feature_id = aal.aa_feature_id
-and mss.aa_sequence_id = taas.aa_sequence_id
-and taas.source_id = 'AAEL01000400-5-3912-3475'
+and mss.aa_sequence_id = taaf.aa_sequence_id
+and taaf.na_feature_id = misc.na_feature_id
+and misc.source_id = 'AAEE01000014-3-77790-78011'
 
+
+select aa_location_id, start_min, end_max, mss.MASS_SPEC_SUMMARY_ID
+from apidb.massspecsummary mss,
+dots.massspecfeature msf,
+dots.aalocation aal,
+dots.translatedaafeature taaf,
+dots.transcript t,
+dots.genefeature gf
+where mss.mass_spec_summary_id = msf.source_id
+and msf.aa_feature_id = aal.aa_feature_id
+and mss.aa_sequence_id = taaf.aa_sequence_id
+and taaf.na_feature_id = t.na_feature_id
+and t.parent_id = gf.na_feature_id
+and gf.source_id = 'cgd3_1540'
+
+ 
 select na_location_id, start_min, end_max
-from dots.massspecsummary mss,
+from apidb.massspecsummary mss,
 dots.massspecfeature msf,
 dots.nalocation nal,
 dots.translatedaasequence taas,
