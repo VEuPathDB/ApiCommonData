@@ -178,6 +178,30 @@ sub parseProtView {
             push @{$h->{peptides}}, $pep;
             $h->{spectrumCount}++;
             $h->{spanCount}++ unless $spanSeen->{$pep->{sequence}}++;
+        } elsif (m|^<B><FONT [^>]+>[^<]+</FONT></B>[^<]+$|) {
+            undef $pep;
+            my @match_data = split /\s\s+/;
+            
+            warn join '; ', @match_data, "\n\n";
+            ($pep->{start}, $pep->{end}) = split /\s+-\s+/, $match_data[1];
+
+            ($pep->{observed})  = $match_data[2];
+            ($pep->{mr_expect}) = $match_data[3];
+            ($pep->{mr_calc})   = $match_data[4];
+            ($pep->{delta})     = $match_data[5];
+            ($pep->{miss})      = $match_data[6];
+            
+            ($pep->{sequence}, $pep->{modification}) = $match_data[7] =~ 
+                    m|^([^\s<]+)            # peptide
+                      .*</b>\s* 
+                      (.*)                  # modification
+                      \s*|ix;
+            warn $match_data[7] , "\n";
+            $pep->{sequence} = adjustSequence($pep->{sequence});
+            
+            push @{$h->{peptides}}, $pep;
+            $h->{spectrumCount}++;
+            $h->{spanCount}++ unless $spanSeen->{$pep->{sequence}}++;
         } elsif (/^C;Gene name:.*?ORFNames=(.+);$/) {
             # in some cases the source id provided in the 'Match to:'
             # line is not the one we can use and there is a usable
@@ -187,9 +211,13 @@ sub parseProtView {
     }
     
     if ($h->{source_id} eq '') {
-        DEBUG && warn "skipping invalid file: '$protview'\n";
+        DEBUG && warn "INFO: skipping invalid file: '$protview'\n";
         $skippedFiles++;
         return;
+    }
+    
+    if (! $h->{peptides} ) {
+        warn "WARN: No peptides extracted from '$h->{sourcefile}'\n";
     }
     
     MUNG_IDS($h->{source_id});
@@ -197,6 +225,9 @@ sub parseProtView {
     
     return $h;
 }
+
+
+sub parsePeptideLine {}
 
 # do what ever sequence clean up is needed. such as trimming
 # protease cleavage contexts that are not part of the MS peptide:
