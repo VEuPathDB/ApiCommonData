@@ -1030,7 +1030,7 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
              from DoTS.SplicedNASequence ss,
                   DoTS.$primarySeqTable ns,
                   DoTS.GeneFeature g,
-                  DoTs.Transcript t
+                  DoTs.$transcriptTable t
              where ns.external_database_release_id = $dbRlsId
              and ns.na_sequence_id = g.na_sequence_id
              and g.na_feature_id = t.parent_id
@@ -1041,6 +1041,253 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
   $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
+}
+
+
+sub makeTranscriptDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource,$dataType) = @_;
+
+    my $sql = <<"EOF";
+    SELECT  replace(tn.name, ' ', '_')
+                ||'|'||
+            enas.source_id
+                ||'|'||
+            gf.source_id
+                ||'|'||
+            '$dataType'
+                ||'|'||
+            '$dataSource'
+                ||'|'||
+            '(so.term_name) ' || gf.product as defline,
+            snas.sequence
+       FROM dots.externalNASequence enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.SplicedNaSequence snas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.SEQUENCE_ONTOLOGY_ID = so.sequence_ontology_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id 
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
+sub makeCdsDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+    
+    my $sql = <<"EOF";
+    SELECT  replace(tn.name, ' ', '_')
+                ||'|'||
+            enas.source_id
+                ||'|'||
+            gf.source_id
+                ||'|'||
+            'Annotation'
+                ||'|'||
+            'GenBank'
+                ||'|'||
+            '(protein coding) ' || gf.product as defline,
+            SUBSTR(snas.sequence, 
+              taaf.translation_start,
+              taaf.translation_stop)
+       FROM dots.externalNASequence enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.SplicedNaSequence snas,
+            dots.translatedaafeature taaf,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND t.na_feature_id = taaf.na_feature_id
+        AND snas.SEQUENCE_ONTOLOGY_ID = so.sequence_ontology_id
+        AND so.term_name = 'processed_transcript'
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id 
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+    
+}
+
+sub makeAnnotatedProteinDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+
+    my $sql = <<"EOF";
+    SELECT
+    t.sequence_ontology_id,
+    replace(tn.name, ' ', '_') 
+        ||'|'||
+    enas.source_id
+        ||'|'||
+    gf.source_id 
+        ||'|'||
+    'Annotation'
+        ||'|'||
+    'GenBank'
+        ||'|'||
+    '(protein coding) ' || taas.description as defline,
+    taas.sequence
+       FROM dots.externalNASequence enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE t.na_feature_id = taaf.na_feature_id
+        AND gf.na_feature_id = t.parent_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND enas.na_sequence_id = gf.na_sequence_id 
+        AND taas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
+sub makeOrfProteinDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length) = @_;
+
+    my $sql = <<"EOF";
+    SELECT
+    replace(tn.name, ' ', '_') 
+        ||'|'||
+    enas.source_id
+        ||'|'||
+    taas.source_id 
+        ||'|'||
+    'computed'
+        ||'|'||
+    'CryptoDB'
+        ||'|'||
+    'length=' || taas.length || taas.description as defline,
+    taas.sequence
+       FROM dots.externalNASequence enas,
+            dots.transcript t,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE t.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND enas.na_sequence_id = t.na_sequence_id 
+        AND enas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
+        AND taas.length > $length
+        AND t.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
+sub makeGenomicDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+
+    my $sql = <<"EOF";
+        SELECT
+        replace(tn.name, ' ', '_') 
+            ||'|'||
+        enas.source_id
+            ||'|'||
+        edr.version
+            ||'|'||
+        'ds-DNA'
+            ||'|'||
+        'GenBank',
+        enas.sequence
+           FROM dots.externalNASequence enas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr
+          WHERE enas.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND enas.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
+sub makeDownloadFile {
+    my ($mgr, $species, $name, $sql) = @_;
+
+    my $signal = "${name}DownloadFile";
+
+    return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
+
+    my $dlDir = "$mgr->{pipelineDir}/data/downloadSite/$species";
+    unless (-e $dlDir) {
+        mkdir $dlDir
+          or die "Can not make directory '$dlDir'\n";
+    }
+
+    my $seqFile = "$dlDir/${name}";
+    (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
+
+    my $logFile = "$mgr->{pipelineDir}/logs/${name}DownloadFile.log";
+
+    my $cmd = <<"EOF";
+      gusExtractSequences --outputFile $seqFile \\
+      --idSQL \"$sql\" \\
+      --verbose 2>> $logFile
+EOF
+
+    $mgr->runCmd($cmd);
+    $mgr->endStep($signal);
+}
+
+# make release-?? directory within pre-existing site dir and
+# copy download files to there. Meant to be called once after
+# all download files are made. OK to call again, rsync will 
+# only copy diffs. Though you'll need to remove the pipeline signal.
+sub syncDownloadDirToSite {
+    my ($mgr, $site) = @_;
+
+    my $signal = "syncDownloadDir";
+    
+    return if $mgr->startStep("Syncronizing download files to website", $signal);
+    my $propertySet = $mgr->{propertySet};
+    my $parentDir = 'release-' . $propertySet->getProp('projectRelease');
+    
+    my $cmd = "rsync -ae ssh $mgr->{pipelineDir}/downloadSite/ $site/$parentDir";
+
+    $mgr->runCmd($cmd);
+    # do we really need a signal? rysnc won't re-copy files already in place
+    # if this step is called again.
+    #$mgr->endStep($signal);
 }
 
 sub extractAnnotatedTranscriptSeq {
