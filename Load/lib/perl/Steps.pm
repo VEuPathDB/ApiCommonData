@@ -1058,7 +1058,7 @@ sub makeTranscriptDownloadFile {
                 ||'|'||
             '$dataSource'
                 ||'|'||
-            '(so.term_name) ' || gf.product as defline,
+            '('|| so.term_name || ')' || gf.product as defline,
             snas.sequence
        FROM dots.externalNASequence enas,
             dots.genefeature gf,
