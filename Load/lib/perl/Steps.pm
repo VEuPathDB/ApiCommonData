@@ -1045,7 +1045,7 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
 
 
 sub makeTranscriptDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource,$dataType) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer) = @_;
 
     my $sql = <<"EOF";
     SELECT  replace(tn.name, ' ', '_')
@@ -1078,6 +1078,11 @@ sub makeTranscriptDownloadFile {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
+
+    if ($genomeExtDb && $genomeExtDbVer) {
+      my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
+      $sql .= " and enas.external_database_release_id = $genomeDbRls";
+    }
 
     makeDownloadFile($mgr, $species, $name, $sql);
 
@@ -1129,7 +1134,7 @@ EOF
 }
 
 sub makeAnnotatedProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
 
     my $sql = <<"EOF";
     SELECT
@@ -1142,7 +1147,7 @@ sub makeAnnotatedProteinDownloadFile {
         ||'|'||
     'Annotation'
         ||'|'||
-    'GenBank'
+    '$dataSource'
         ||'|'||
     '(protein coding) ' || taas.description as defline,
     taas.sequence
@@ -1212,7 +1217,7 @@ EOF
 }
 
 sub makeGenomicDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
 
     my $sql = <<"EOF";
         SELECT
@@ -1224,7 +1229,7 @@ sub makeGenomicDownloadFile {
             ||'|'||
         'ds-DNA'
             ||'|'||
-        'GenBank',
+        '$dataSource',
         enas.sequence
            FROM dots.externalNASequence enas,
                 sres.taxonname tn,
@@ -1242,11 +1247,13 @@ EOF
 }
 
 sub makeDownloadFile {
-    my ($mgr, $species, $name, $sql) = @_;
+    my ($mgr, $species, $name, $sql, $projectDB) = @_;
 
     my $signal = "${name}DownloadFile";
 
     return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
+
+    my $release = $propertySet->getProp('projectRelease');
 
     my $dlDir = "$mgr->{pipelineDir}/data/downloadSite/$species";
     unless (-e $dlDir) {
@@ -1254,7 +1261,7 @@ sub makeDownloadFile {
           or die "Can not make directory '$dlDir'\n";
     }
 
-    my $seqFile = "$dlDir/${name}";
+    my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
     (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
     my $logFile = "$mgr->{pipelineDir}/logs/${name}DownloadFile.log";
