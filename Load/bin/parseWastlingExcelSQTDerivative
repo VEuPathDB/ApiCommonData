@@ -50,6 +50,7 @@ while (my $row = $spreadSheet->getNextRow) {
       for my $hit (@hitgroup) {
         push @{$hit->{peptides}}, $pep;
         $hit->{sequenceCount}++ unless $hit->{$pep->{sequence}}++;
+        $hit->{spectrumCount}++;
       }
       $startOfHitGroup++;
     }    
@@ -136,7 +137,7 @@ sub parseOneHitDefinition {
     my $row = shift;
     my $h = {};
     ($h->{locus},
-     $h->{spectrumCount},
+     $h->{providedSpectrumCount},
      $h->{seqMolWt},
      $h->{seqPI},
      $h->{description_junk}) = @$row;
