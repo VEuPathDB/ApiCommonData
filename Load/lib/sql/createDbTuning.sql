@@ -183,7 +183,7 @@ prompt DROP/CREATE MATERIALIZED VIEW apidb.PdbSimilarity;
 
 DROP MATERIALIZED VIEW apidb.PdbSimilarity;
 CREATE MATERIALIZED VIEW apidb.PdbSimilarity AS
-SELECT taf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
+SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
        substr(eas.source_id, 1,
               instr(eas.source_id, '_', -1) - 1)
          AS pdb_id,
@@ -198,7 +198,7 @@ FROM dots.TranslatedAaFeature taf,
      dots.Similarity s, core.TableInfo eas_ti,
      dots.ExternalAaSequence eas,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-     sres.TaxonName tn
+     sres.TaxonName tn, dots.Transcript t, dots.GeneFeature gf
 WHERE taf.aa_sequence_id = tas.aa_sequence_id
   AND tas_ti.name = 'TranslatedAASequence'
   AND tas_ti.table_id = s.query_table_id
@@ -212,6 +212,8 @@ WHERE taf.aa_sequence_id = tas.aa_sequence_id
   AND edr.external_database_id = ed.external_database_id
   AND ed.name = 'PDB protein sequences'
   AND eas.taxon_id = tn.taxon_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND gf.na_feature_id = t.parent_id
 ORDER BY taf.source_id, eas.source_id;
 
 CREATE INDEX apidb.PdbSim_sourceId_ix
