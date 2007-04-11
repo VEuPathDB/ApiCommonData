@@ -49,7 +49,7 @@ while (my $row = $spreadSheet->getNextRow) {
       my $pep = parseOnePeptide($row);
       for my $hit (@hitgroup) {
         push @{$hit->{peptides}}, $pep;
-        $hit->{spanCount}++ unless $hit->{$pep->{sequence}}++;
+        $hit->{sequenceCount}++ unless $hit->{$pep->{sequence}}++;
       }
       $startOfHitGroup++;
     }    
@@ -79,7 +79,7 @@ sub writeTabFile {
               'seqPI',            "\t",
               'score',            "\t",
               'percentCoverage',  "\t",
-              'spanCount',        "\t",
+              'sequenceCount',    "\t",
               'spectrumCount',    "\t",
               'sourcefile',       "\n",
               ;
@@ -91,7 +91,7 @@ sub writeTabFile {
               $h->{seqPI},           "\t",
               $h->{score},           "\t",
               $h->{percentCoverage}, "\t",
-              $h->{spanCount},       "\t",
+              $h->{sequenceCount},   "\t",
               $h->{spectrumCount},   "\t",
               $h->{sourcefile},      "\n",
               ;

@@ -65,7 +65,7 @@ sub writeTabFile {
               'seqPI',            "\t",
               'score',            "\t",
               'percentCoverage',  "\t",
-              'spanCount',        "\t",
+              'sequenceCount',    "\t",
               'spectrumCount',    "\t",
               'sourcefile',       "\n",
               ;
@@ -77,7 +77,7 @@ sub writeTabFile {
               $h->{seqPI},           "\t",
               $h->{score},           "\t",
               $h->{percentCoverage}, "\t",
-              $h->{spanCount},       "\t",
+              $h->{sequenceCount},   "\t",
               $h->{spectrumCount},   "\t",
               $h->{sourcefile},      "\n",
               ;
@@ -130,7 +130,7 @@ sub parseProtView {
     my $pep = {};
     my $spanSeen = {};
     
-    $h->{spanCount} = $h->{spectrumCount} = 0;
+    $h->{sequenceCount} = $h->{spectrumCount} = 0;
     
     open(F, $protview) or die "Could not open $protview: $!\n";
     ($h->{sourcefile}) = $protview =~ m|$indir/?(.+)|;
@@ -177,12 +177,11 @@ sub parseProtView {
             ($pep->{ions_score}) = m/Ions score (\d+)/;
             push @{$h->{peptides}}, $pep;
             $h->{spectrumCount}++;
-            $h->{spanCount}++ unless $spanSeen->{$pep->{sequence}}++;
+            $h->{sequenceCount}++ unless $spanSeen->{$pep->{sequence}}++;
         } elsif (m|^<B><FONT [^>]+>[^<]+</FONT></B>[^<]+$|) {
             undef $pep;
             my @match_data = split /\s\s+/;
             
-            warn join '; ', @match_data, "\n\n";
             ($pep->{start}, $pep->{end}) = split /\s+-\s+/, $match_data[1];
 
             ($pep->{observed})  = $match_data[2];
@@ -196,12 +195,12 @@ sub parseProtView {
                       .*</b>\s* 
                       (.*)                  # modification
                       \s*|ix;
-            warn $match_data[7] , "\n";
+
             $pep->{sequence} = adjustSequence($pep->{sequence});
             
             push @{$h->{peptides}}, $pep;
             $h->{spectrumCount}++;
-            $h->{spanCount}++ unless $spanSeen->{$pep->{sequence}}++;
+            $h->{sequenceCount}++ unless $spanSeen->{$pep->{sequence}}++;
         } elsif (/^C;Gene name:.*?ORFNames=(.+);$/) {
             # in some cases the source id provided in the 'Match to:'
             # line is not the one we can use and there is a usable
@@ -275,7 +274,7 @@ EOF
 
 __END__
 
-# source_id	description	seqMolWt	seqPI	score	percentCoverage	spanCount	spectrumCount	sourcefile
+# source_id	description	seqMolWt	seqPI	score	percentCoverage	sequenceCount	spectrumCount	sourcefile
 cgd6_120	|EAK87340.1 |disulfide-isomerase, signal peptide plus ER retention motif, putative ER protein	54211	5.34	320	15	5	5	CrypProt LTQ ASB14 spot 21 Protein View.htm
 ## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
 113	127	824.04	1646.06	1646.77	-0.71	0	FFSGIDSVQNYSGAR		22	1	95
