@@ -1045,7 +1045,7 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
 
 
 sub makeTranscriptDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer) = @_;
 
     my $sql = <<"EOF";
     SELECT  replace(tn.name, ' ', '_')
@@ -1060,7 +1060,7 @@ sub makeTranscriptDownloadFile {
                 ||'|'||
             '('|| so.term_name || ')' || gf.product as defline,
             snas.sequence
-       FROM dots.externalNASequence enas,
+       FROM dots.$seqTable enas,
             dots.genefeature gf,
             dots.transcript t,
             dots.SplicedNaSequence snas,
@@ -1090,7 +1090,7 @@ EOF
 
 sub makeCdsDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
-    
+
     my $sql = <<"EOF";
     SELECT  replace(tn.name, ' ', '_')
                 ||'|'||
@@ -1106,7 +1106,7 @@ sub makeCdsDownloadFile {
             SUBSTR(snas.sequence, 
               taaf.translation_start,
               taaf.translation_stop)
-       FROM dots.externalNASequence enas,
+       FROM dots.externalnasequence enas,
             dots.genefeature gf,
             dots.transcript t,
             dots.SplicedNaSequence snas,
@@ -1130,14 +1130,14 @@ EOF
 
     makeDownloadFile($mgr, $species, $name, $sql);
 
-    
+
 }
 
 
 
 sub makeDerivedCdsDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
-    
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
+
     my $sql = <<"EOF";
     SELECT replace(tn.name, ' ', '_')
                 ||'|'||
@@ -1153,7 +1153,7 @@ sub makeDerivedCdsDownloadFile {
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM dots.externalNASequence enas,
+           FROM dots.$seqTable enas,
                 dots.genefeature gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
@@ -1174,20 +1174,19 @@ EOF
 
     makeDownloadFile($mgr, $species, $name, $sql);
 
-    
 }
 
 sub makeAnnotatedProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
 
     my $sql = <<"EOF";
     SELECT
     t.sequence_ontology_id,
-    replace(tn.name, ' ', '_') 
+    replace(tn.name, ' ', '_')
         ||'|'||
     enas.source_id
         ||'|'||
-    gf.source_id 
+    gf.source_id
         ||'|'||
     'Annotation'
         ||'|'||
@@ -1195,7 +1194,7 @@ sub makeAnnotatedProteinDownloadFile {
         ||'|'||
     '(protein coding) ' || taas.description as defline,
     taas.sequence
-       FROM dots.externalNASequence enas,
+       FROM dots.$seqTable enas,
             dots.genefeature gf,
             dots.transcript t,
             dots.translatedaafeature taaf,
@@ -1261,11 +1260,11 @@ EOF
 }
 
 sub makeGenomicDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
 
     my $sql = <<"EOF";
         SELECT
-        replace(tn.name, ' ', '_') 
+        replace(tn.name, ' ', '_')
             ||'|'||
         enas.source_id
             ||'|'||
@@ -1275,7 +1274,7 @@ sub makeGenomicDownloadFile {
             ||'|'||
         '$dataSource',
         enas.sequence
-           FROM dots.externalNASequence enas,
+           FROM dots.$seqTable enas,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
                 sres.externaldatabaserelease edr
@@ -1330,11 +1329,11 @@ sub syncDownloadDirToSite {
     my ($mgr, $site) = @_;
 
     my $signal = "syncDownloadDir";
-    
+
     return if $mgr->startStep("Syncronizing download files to website", $signal);
     my $propertySet = $mgr->{propertySet};
     my $parentDir = 'release-' . $propertySet->getProp('projectRelease');
-    
+
     my $cmd = "rsync -ae ssh $mgr->{pipelineDir}/downloadSite/ $site/$parentDir";
 
     $mgr->runCmd($cmd);
