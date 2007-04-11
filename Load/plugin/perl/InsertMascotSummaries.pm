@@ -395,7 +395,7 @@ sub insertMassSpecFeatures {
         my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
             'aa_sequence_id'          => $record->{aaSequenceId},
             'prediction_algorithm_id' => $self->getPredictionAlgId,
-            'external_database_release_id' => $self->getArg->('extDbRelId'),
+            'external_database_release_id' => $self->{extDbRlsId},
             'developmental_stage'     => $record->{devStage},
             'description'             => $pep->{description},
             'source_id'               => $mss->getMassSpecSummaryId,
