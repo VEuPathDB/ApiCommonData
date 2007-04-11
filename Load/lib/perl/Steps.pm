@@ -1133,6 +1133,50 @@ EOF
     
 }
 
+
+
+sub makeDerivedCdsDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
+    
+    my $sql = <<"EOF";
+    SELECT replace(tn.name, ' ', '_')
+                ||'|'||
+           enas.source_id
+                ||'|'||
+           gf.source_id 
+                ||'|'||
+           'Annotation'
+                ||'|'||
+           '$dataSource'
+                ||'|'||
+           '(protein coding) ' || gf.product as defline,
+           SUBSTR(snas.sequence,
+                  taaf.translation_start,
+                  taaf.translation_stop - taaf.translation_start + 1)
+           FROM dots.externalNASequence enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                dots.TranslatedAaFeature taaf,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND t.na_feature_id = taaf.na_feature_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+    
+}
+
 sub makeAnnotatedProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$dataSource) = @_;
 
