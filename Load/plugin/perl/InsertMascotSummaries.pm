@@ -364,16 +364,17 @@ sub insertMassSpecSummary {
     $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
 
     my $mss = GUS::Model::ApiDB::MassSpecSummary->new({
-       'aa_sequence_id'          => $record->{aaSequenceId},
-       'is_expressed'            => 1,
-       'developmental_stage'     => $record->{devStage},
-       'sequence_count'          => $record->{sequenceCount},
-       'prediction_algorithm_id' => $self->getPredictionAlgId,
-       'spectrum_count'          => $record->{spectrumCount},
-       'aa_seq_length'           => $record->{seqLength},
-       'aa_seq_molecular_weight' => $record->{seqMolWt},
-       'aa_seq_pi'               => $record->{seqPI},
-       'aa_seq_percent_covered'  => $record->{percentCoverage},
+       'aa_sequence_id'                => $record->{aaSequenceId},
+       'is_expressed'                  => 1,
+       'developmental_stage'           => $record->{devStage},
+       'sequence_count'                => $record->{sequenceCount},
+       'prediction_algorithm_id'       => $self->getPredictionAlgId,
+       'spectrum_count'                => $record->{spectrumCount},
+       'aa_seq_length'                 => $record->{seqLength},
+       'aa_seq_molecular_weight'       => $record->{seqMolWt},
+       'aa_seq_pi'                     => $record->{seqPI},
+       'aa_seq_percent_covered'        => $record->{percentCoverage},
+       'external_database_release_id'  => $self->{extDbRlsId},
     });
 
     $mss->submit();
@@ -394,7 +395,7 @@ sub insertMassSpecFeatures {
         my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
             'aa_sequence_id'          => $record->{aaSequenceId},
             'prediction_algorithm_id' => $self->getPredictionAlgId,
-            #           'external_database_release_id' => $self->getArg->('extDbRelId'), #DEBUG
+            'external_database_release_id' => $self->getArg->('extDbRelId'),
             'developmental_stage'     => $record->{devStage},
             'description'             => $pep->{description},
             'source_id'               => $mss->getMassSpecSummaryId,
