@@ -49,6 +49,7 @@ while (my $row = $spreadSheet->getNextRow) {
       my $pep = parseOnePeptide($row);
       for my $hit (@hitgroup) {
         push @{$hit->{peptides}}, $pep;
+        $hit->{spanCount}++ unless $hit->{$pep->{sequence}}++;
       }
       $startOfHitGroup++;
     }    
@@ -171,10 +172,10 @@ sub parseOnePeptide {
 # The original Excel can have a group of locus-column ids like:
 #   CpIOWA_EAK87386
 #   cgd2_130|EAK87386.1|60S
-# Where the hits are the same protein but have differing identifier semantics.
+# where the hits are the same protein but have differing identifier semantics.
+# We will drop the cases where the source_id is found in a secondary_id.
 # This method must be called after munging this column into source_id and
 # secondary_id (see MUNG_ID()).
-# We will drop the cases where the source_id is found in a secondary_id.
 sub pruneDuplicates {
     my $hits = shift;
     my @prunedHits;
@@ -191,17 +192,18 @@ sub pruneDuplicates {
 sub MUNG_IDS {
     $_[0] =~ s/^ChTU502_[IVNA]+_//                              or
     $_[0] =~ s/^CpIOWA_[IVNA]+_//                               or
-    $_[0] =~ s/^CpEST_//                                        or
-    $_[0] =~ s/^CpGSS_//                                        or
     $_[0] =~ s/^CpIOWA_(EAK\d+)/\1.1/                           or
     $_[0] =~ s/^ChTU502_(EAL\d+)/\1.1/                          or
-    $_[0] =~ s/^CpIOWA_//                                       or
+    $_[0] =~ s/^(?:CpIOWA_)?(CAD\d{5})/\1.1/                    or
     $_[0] =~ s/^CpT2IOWA_(\d{2}-\d-\d+-\d+)/AAEE010000$1/       or
+    $_[0] =~ s/^CpEST_//                                        or
+    $_[0] =~ s/^CpGSS_//                                        or
+    $_[0] =~ s/^CpIOWA_//                                       or
     $_[0] =~ s/^ChTU502_//                                       ;
-
+    
     # cgd5_3040|EAK88225.1|40S
     # to
-    # EAK88225
+    # EAK88225.1
     $_[0] =~ s/^[^\|]+\|([^\|\s]+)\s*\|.*/\1/;
 
 }
