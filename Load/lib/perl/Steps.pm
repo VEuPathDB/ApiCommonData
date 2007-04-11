@@ -1247,13 +1247,15 @@ EOF
 }
 
 sub makeDownloadFile {
-    my ($mgr, $species, $name, $sql, $projectDB) = @_;
+    my ($mgr, $species, $name, $sql) = @_;
 
     my $signal = "${name}DownloadFile";
 
     return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
 
+    my $propertySet = $mgr->{propertySet};
     my $release = $propertySet->getProp('projectRelease');
+    my $projectDB = $propertySet->getProp('projectDB');
 
     my $dlDir = "$mgr->{pipelineDir}/data/downloadSite/$species";
     unless (-e $dlDir) {
