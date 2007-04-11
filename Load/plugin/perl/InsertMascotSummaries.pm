@@ -105,7 +105,7 @@ sub initRecord {
       $record->{seqPI},
       $record->{score},
       $record->{percentCoverage},
-      $record->{spanCount},
+      $record->{sequenceCount},
       $record->{spectrumCount},
       $record->{sourcefile},
     ) = split "\t", $ln;
@@ -367,13 +367,12 @@ sub insertMassSpecSummary {
        'aa_sequence_id'          => $record->{aaSequenceId},
        'is_expressed'            => 1,
        'developmental_stage'     => $record->{devStage},
-       'number_of_spans'         => $record->{spanCount},
+       'sequence_count'          => $record->{sequenceCount},
        'prediction_algorithm_id' => $self->getPredictionAlgId,
        'spectrum_count'          => $record->{spectrumCount},
        'aa_seq_length'           => $record->{seqLength},
        'aa_seq_molecular_weight' => $record->{seqMolWt},
        'aa_seq_pi'               => $record->{seqPI},
-       'sequence_count'          => 1,
        'aa_seq_percent_covered'  => $record->{percentCoverage},
     });
 
@@ -652,7 +651,6 @@ sub undoTables {
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    DoTSVer.MassSpecFeatureVer
     Core.AlgorithmParam
     Core.AlgorithmInvocation
     );
@@ -680,12 +678,12 @@ Open reading frame reports are converted to genes when possible
 and the orf-associated peptide coordinates are adjusted.
 
 Sample tab-delimited input:
-# source_id	description	seqMolWt	seqPI	score	percentCoverage	spanCount	spectrumCount	sourcefile
+# source_id	description	seqMolWt	seqPI	score	percentCoverage	sequenceCount	spectrumCount	sourcefile
 Liv008927	AAEL01000002-1-20221-21813	60509	4.82	117	3	2	2	CrypProt LTQ spot k2 Protein View.htm
 ## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
 301	309	530.12	1058.23	1057.54	0.69	0	VNADLLEER		11	1	88
 311	320	588.39	1174.77	1175.59	-0.81	0	VLVGEMEIDR	Oxidation (M) 	14	1	29
-# source_id	description	seqMolWt	seqPI	score	percentCoverage	spanCount	spectrumCount	sourcefile
+# source_id	description	seqMolWt	seqPI	score	percentCoverage	sequenceCount	spectrumCount	sourcefile
 Liv070540	AAEE01000003-3-1125870-1128359	92046	4.49	430	17	9	9	CrypProt LTQ spot L Protein View.htm
 ## start	end	observed	mr_expect	mr_calc	delta	miss	sequence	modification	query	hit	ions_score
 79	85	422.79	843.57	842.44	1.13	0	LFGFFGR		8	1	30
