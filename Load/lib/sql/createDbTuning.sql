@@ -87,6 +87,8 @@ GRANT SELECT ON dots.SplicedNaSequence TO apidb WITH GRANT OPTION;
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.GeneAlias;
+
 DROP MATERIALIZED VIEW apidb.GeneAlias;
 CREATE MATERIALIZED VIEW apidb.GeneAlias AS
 SELECT DISTINCT pairs.alias, pairs.gene FROM
@@ -121,6 +123,9 @@ CREATE INDEX apidb.GeneAlias_alias_idx ON apidb.GeneAlias (alias);
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.SequenceAlias;
+
+DROP MATERIALIZED VIEW apidb.SequenceAlias;
 CREATE MATERIALIZED VIEW apidb.SequenceAlias AS
 SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
 FROM dots.ExternalNaSequence ens;
@@ -131,6 +136,9 @@ GRANT SELECT ON apidb.SequenceAlias TO gus_r;
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.GoTermSummary;
+
+DROP MATERIALIZED VIEW apidb.GoTermSummary;
 CREATE MATERIALIZED VIEW apidb.GoTermSummary AS
 SELECT gf.source_id, 
        decode(ga.is_not, 0, '', 1, 'not', ga.is_not) as is_not,
@@ -171,6 +179,9 @@ GRANT SELECT ON apidb.GoTermSummary TO gus_r;
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.PdbSimilarity;
+
+DROP MATERIALIZED VIEW apidb.PdbSimilarity;
 CREATE MATERIALIZED VIEW apidb.PdbSimilarity AS
 SELECT taf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
        substr(eas.source_id, 1,
@@ -210,6 +221,9 @@ GRANT SELECT on apidb.PdbSimilarity TO gus_r;
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.GeneId;
+
+DROP MATERIALIZED VIEW apidb.GeneId;
 CREATE MATERIALIZED VIEW apidb.GeneId AS
 SELECT LOWER(dr.primary_identifier) AS id, gf.source_id AS gene
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
