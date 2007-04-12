@@ -1321,6 +1321,59 @@ EOF
     $mgr->endStep($signal);
 }
 
+##for the following you need to check out and build WDK and ApiCommonWebsite
+##you also need to have in your gus_home config directory the following files or those that correspond to the project:
+##plasmoDbModel.xml,plasmoDbModel-config.xml (personalize this with your login and password), plasmoDbModel.prop 
+
+sub runGffDump {
+  my ($mgr, $species, $model, $organism) = @_;
+
+  my $signal = "dump${organism}GffFile";
+
+  return if $mgr->startStep("Creating gff file from model $model for $organism", $signal);
+
+  my $dir = "$mgr->{dataDir}/downloadSite/$species";
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     gffDump 
+     -model plasmoDbModel 
+     -organism \"Plasmodium falciparum\" 
+     -dir $dir
+     2>> $logFile
+EOF
+
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
+sub run WdkRecordDump {
+  my ($mgr, $species, $model, $organism, $recordType) = @_;
+
+  my $signal = "dump${organism}WdkRecord";
+
+  return if $mgr->startStep("Creating wdk record from model $model for $organism", $signal);
+
+  my $dir = "$mgr->{dataDir}/downloadSite/$species";
+
+  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     wdkRecordDump
+     -model plasmoDbModel 
+     -organism \"Plasmodium falciparum\" 
+     -type $recordType
+     -dir $dir
+     2>> $logFile
+EOF
+
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
+
+
 # make release-?? directory within pre-existing site dir and
 # copy download files to there. Meant to be called once after
 # all download files are made. OK to call again, rsync will 
