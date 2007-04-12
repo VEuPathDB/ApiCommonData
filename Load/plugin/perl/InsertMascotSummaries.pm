@@ -336,7 +336,7 @@ sub setPepStartEnd {
     
     $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
     if ($pep->{start} == 0) {
-        $self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId'\n");
+        $self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId' (@{[$aaSeq->getSourceId()]})\n");
     }
     $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
     
