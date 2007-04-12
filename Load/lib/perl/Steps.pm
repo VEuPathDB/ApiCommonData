@@ -1216,7 +1216,7 @@ EOF
 }
 
 sub makeOrfProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
 
     my $sql = <<"EOF";
     SELECT
@@ -1228,7 +1228,7 @@ sub makeOrfProteinDownloadFile {
         ||'|'||
     'computed'
         ||'|'||
-    'CryptoDB'
+    '$projectDB'
         ||'|'||
     'length=' || taas.length || taas.description as defline,
     taas.sequence
@@ -1256,6 +1256,49 @@ EOF
     makeDownloadFile($mgr, $species, $name, $sql);
 
 }
+
+sub makeOrfProteinDownloadFileWithAbreviatedDefline {
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$projectDB) = @_;
+
+    my $sql = <<"EOF";
+    SELECT
+    replace(tn.name, ' ', '_')
+        ||'|'||
+    taas.source_id 
+        ||'|'||
+    'computed'
+        ||'|'||
+    '$projectDB'
+        ||'|'||
+    'length=' || taas.length || taas.description as defline,
+    taas.sequence
+       FROM dots.externalNASequence enas,
+            dots.transcript t,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE t.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND enas.na_sequence_id = t.na_sequence_id 
+        AND enas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
+        AND taas.length > $length
+        AND t.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
+
+
 
 sub makeGenomicDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
