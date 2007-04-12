@@ -1389,7 +1389,7 @@ EOF
   $mgr->endStep($signal);
 }
 
-sub run WdkRecordDump {
+sub runWdkRecordDump {
   my ($mgr, $species, $model, $organism, $recordType) = @_;
 
   my $signal = "dump${organism}WdkRecord";
