@@ -105,6 +105,7 @@ WHERE a.name = '$arrayDesignName'
 AND sof.array_design_id = a.array_design_id
 AND so.composite_element_id = sof.composite_element_id
 AND sof.source_id is not null
+AND so.sequence is not null
 ORDER BY sof.source_id
 ";
 
