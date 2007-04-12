@@ -1180,9 +1180,7 @@ sub makeAnnotatedProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
 
     my $sql = <<"EOF";
-    SELECT
-    t.sequence_ontology_id,
-    replace(tn.name, ' ', '_')
+    SELECT replace(tn.name, ' ', '_')
         ||'|'||
     enas.source_id
         ||'|'||
