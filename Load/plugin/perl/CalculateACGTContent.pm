@@ -113,11 +113,13 @@ sub getMonomerCount{
   $naSeqObj->retrieveFromDB();
   my $naSeq = $naSeqObj->getSequence();
 
+  $naSeq =~ s/-//g;
+
   my $seqobj = Bio::PrimarySeq->new(-seq=>$naSeq,
 				    -alphabet=>'dna');
 
   my $seqStats  =  Bio::Tools::SeqStats->new(-seq=>$seqobj);
-
+return;
   $monomersHash = $seqStats->count_monomers();
   foreach my $base (keys %$monomersHash) {
     if ($base eq 'A'){
