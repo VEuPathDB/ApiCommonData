@@ -1257,7 +1257,7 @@ EOF
 
 }
 
-sub makeOrfProteinDownloadFileWithAbreviatedDefline {
+sub makeOrfDownloadFileWithAbrevDefline {
     my ($mgr, $species, $name, $extDb, $extDbVer, $length,$projectDB) = @_;
 
     my $sql = <<"EOF";
