@@ -1286,7 +1286,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND m.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = 'transcript'
+        AND so.term_name = 'ORF'
         AND taas.length > $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
