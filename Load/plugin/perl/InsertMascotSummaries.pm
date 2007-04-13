@@ -210,7 +210,9 @@ sub mapOrfToGene {
     my $recNaFeatureId = $record->{naFeatureId};
     
     my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select gf.source_id, t.na_feature_id, taas.sequence, t.na_sequence_id
+        select gf.source_id, t.na_feature_id, 
+               taas.sequence, t.na_sequence_id,
+               taas.aa_sequence_id
         from
         dots.miscellaneous orf,
         dots.genefeature gf,
@@ -270,10 +272,10 @@ EOSQL
     # Have successful mapping of ORF to gene. Change source_id/na_feature_id 
     # and update peptide coordinates relative to new protein coord.
     $record->{orfId} = $record->{sourceId};
-    $record->{orfId} = $record->{sourceId};
     $record->{sourceId} = $row{source_id};
     $record->{naFeatureId} = $row{na_feature_id};
     $record->{naSequenceId} = $row{na_sequence_id};
+    $record->{aaSequenceId} = $row{aa_sequence_id};
     for my $pep (@{$record->{peptides}}) {
         $pep->{start} = shift @newCoords;
         $pep->{end}   = shift @newCoords;
