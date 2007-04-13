@@ -314,6 +314,11 @@ sub addMassSpecFeatureToRecord {
 
     $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
+    if ($pep->{start} == 0) {
+        $self->log("$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...");
+        return;
+    }
+
     $pep->{description} = join '', (
         ($record->{sourceId} && "match: $record->{sourceId}\n"),
         ($pep->{ions_score} && "score: $pep->{ions_score}\n"),
@@ -335,9 +340,6 @@ sub setPepStartEnd {
     my $proteinSeq = $aaSeq->getSequence();
     
     $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
-    if ($pep->{start} == 0) {
-        $self->error("peptide '$pep->{sequence}' not found for aaSequenceId $aaSequenceId' (@{[$aaSeq->getSourceId()]})\n");
-    }
     $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
     
 }
@@ -415,7 +417,10 @@ sub insertMassSpecFeatures {
                         $record->{naSequenceId},
                         $pep
                       );
-    
+        
+        next if ! $naLoc; # peptide not found on protein 
+                          # (eg. annotation changed since analysis)
+        
         $msFeature->setParent($naLoc);
         $msFeature->addChild($aaLoc);    
         $translatedAAFeature->addChild($msFeature);
@@ -430,10 +435,20 @@ sub insertMassSpecFeatures {
 
 sub addNALocation {
     my ($self, $sourceId, $naFeatureId, $naSequenceId, $pep) = @_;
+
+    if (! $pep->{start} and ! $pep->{end}) {
+      $self->error("pepStart and pepEnd coordinates not available for $sourceId");
+    }
+
     my $naLocations = $self->mapToNASequence(
         $naFeatureId, $pep->{start}, $pep->{end}
     );
-
+    
+    if (! $naLocations) {
+        $self->log("Peptide at $pep->{start}..$pep->{end} not found on $sourceId. Discarding this peptide...");
+        return undef;
+    }
+    
     my $naFeature = GUS::Model::DoTS::NAFeature->new({
         na_sequence_id                  => $naSequenceId,
         name                            => 'located_sequence_feature',
@@ -441,8 +456,6 @@ sub addNALocation {
         source_id                       => $sourceId,
         prediction_algorithm_id         => $self->getPredictionAlgId,
     });
-
- #   $naFeature->retrieveFromDB();
 
     foreach (@$naLocations) {
         $naFeature->addChild(
@@ -488,7 +501,9 @@ sub mapToNASequence {
     );
 
     my $map = $gene->map($peptideCoords);
-
+    
+    return undef if ! $map;
+    
     foreach (sort { $a->start <=> $b->start } $map->each_Location ) {
         push @$naLocations, [$_->start, $_->end, $_->strand];
     }
