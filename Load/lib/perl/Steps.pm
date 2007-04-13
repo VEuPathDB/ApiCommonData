@@ -1272,7 +1272,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
         ||'|'||
     'length=' || taas.length || taas.description as defline,
     taas.sequence
-       FROM dots.externalNASequence enas,
+       FROM dots.NASequence enas,
             dots.miscellaneous m,
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
