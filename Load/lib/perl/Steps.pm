@@ -1286,7 +1286,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND t.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = 'ORF'
+        AND so.term_name = 'transcript'
         AND taas.length > $length
         AND t.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
@@ -1378,12 +1378,14 @@ sub runGffDump {
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $cmd = <<"EOF";
-     gffDump 
-     -model $model
-     -organism \"$organism\"
+     gffDump \\
+     -model $model \\
+     -organism \"$organism\" \\
      -dir $dir
      2>> $logFile
 EOF
+
+  print STDERR "$cmd\n";
 
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
@@ -1402,9 +1404,9 @@ sub runWdkRecordDump {
 
   my $cmd = <<"EOF";
      wdkRecordDump
-     -model $model
-     -organism \"$organism\" 
-     -type $recordType
+     -model $model \\
+     -organism \"$organism\" \\
+     -type $recordType \\
      -dir $dir
      2>> $logFile
 EOF
