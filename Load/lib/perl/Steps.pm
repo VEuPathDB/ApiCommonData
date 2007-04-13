@@ -1350,7 +1350,7 @@ sub makeDownloadFile {
     my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
     (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
-    my $logFile = "$mgr->{pipelineDir}/logs/${name}DownloadFile.log";
+    my $logFile = "$mgr->{myPipelineDir}/logs/${name}DownloadFile.log";
 
     my $cmd = <<"EOF";
       gusExtractSequences --outputFile $seqFile \\
@@ -1369,13 +1369,13 @@ EOF
 sub runGffDump {
   my ($mgr, $species, $model, $organism) = @_;
 
-  my $signal = "dump${organism}GffFile";
+  my $signal = "dump${species}GffFile";
 
   return if $mgr->startStep("Creating gff file from model $model for $organism", $signal);
 
   my $dir = "$mgr->{dataDir}/downloadSite/$species";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $cmd = <<"EOF";
      gffDump 
@@ -1392,13 +1392,13 @@ EOF
 sub runWdkRecordDump {
   my ($mgr, $species, $model, $organism, $recordType) = @_;
 
-  my $signal = "dump${organism}WdkRecord";
+  my $signal = "dump${speciesx}WdkRecord";
 
   return if $mgr->startStep("Creating wdk record from model $model for $organism", $signal);
 
   my $dir = "$mgr->{dataDir}/downloadSite/$species";
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $cmd = <<"EOF";
      wdkRecordDump
