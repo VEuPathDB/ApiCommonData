@@ -1273,22 +1273,22 @@ sub makeOrfDownloadFileWithAbrevDefline {
     'length=' || taas.length || taas.description as defline,
     taas.sequence
        FROM dots.externalNASequence enas,
-            dots.transcript t,
+            dots.miscellaneous m,
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr
-      WHERE t.na_feature_id = taaf.na_feature_id
+      WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
-        AND enas.na_sequence_id = t.na_sequence_id 
+        AND enas.na_sequence_id = m.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND t.sequence_ontology_id = so.sequence_ontology_id
+        AND m.sequence_ontology_id = so.sequence_ontology_id
         AND so.term_name = 'transcript'
         AND taas.length > $length
-        AND t.external_database_release_id = edr.external_database_release_id
+        AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
@@ -1394,7 +1394,7 @@ EOF
 sub runWdkRecordDump {
   my ($mgr, $species, $model, $organism, $recordType) = @_;
 
-  my $signal = "dump${speciesx}WdkRecord";
+  my $signal = "dump${species}WdkRecord";
 
   return if $mgr->startStep("Creating wdk record from model $model for $organism", $signal);
 
