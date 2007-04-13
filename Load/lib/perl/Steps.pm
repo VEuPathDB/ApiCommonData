@@ -1381,7 +1381,7 @@ sub runGffDump {
      gffDump \\
      -model $model \\
      -organism \"$organism\" \\
-     -dir $dir
+     -dir $dir \\
      2>> $logFile
 EOF
 
@@ -1407,7 +1407,7 @@ sub runWdkRecordDump {
      -model $model \\
      -organism \"$organism\" \\
      -type $recordType \\
-     -dir $dir
+     -dir $dir \\
      2>> $logFile
 EOF
 
