@@ -1262,8 +1262,8 @@ sub makeOrfProteinDownloadFileWithAbreviatedDefline {
 
     my $sql = <<"EOF";
     SELECT
-    replace(tn.name, ' ', '_')
-        ||'|'||
+    replace(substr(tn.name, 1, instr(tn.name || ' ', ' ') + 1), ' ', '_')
+        ||'||'||
     taas.source_id 
         ||'|'||
     'computed'
