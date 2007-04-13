@@ -1379,8 +1379,8 @@ sub runGffDump {
 
   my $cmd = <<"EOF";
      gffDump 
-     -model plasmoDbModel 
-     -organism \"Plasmodium falciparum\" 
+     -model $model
+     -organism \"$organism\"
      -dir $dir
      2>> $logFile
 EOF
@@ -1402,8 +1402,8 @@ sub runWdkRecordDump {
 
   my $cmd = <<"EOF";
      wdkRecordDump
-     -model plasmoDbModel 
-     -organism \"Plasmodium falciparum\" 
+     -model $model
+     -organism \"$organism\" 
      -type $recordType
      -dir $dir
      2>> $logFile
