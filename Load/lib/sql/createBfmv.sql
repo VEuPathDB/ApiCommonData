@@ -24,13 +24,12 @@ set time on timing on
 -- GRANT SELECT ON dots.VirtualSequence TO apidb WITH GRANT OPTION;
 -- GRANT REFERENCES ON dots.TranslatedAaFeature TO apidb;
 -- GRANT SELECT ON dots.TranslatedAaFeature TO apidb WITH GRANT OPTION;
--- GRANT SELECT ON dots.aalocation TO apidb;
+-- GRANT SELECT ON dots.AaLocation TO apidb;
 -- GRANT SELECT ON dots.NaFeatureComment TO apidb;
 -- GRANT SELECT ON dots.ExonFeature TO apidb;
 -- GRANT SELECT ON dots.TransmembraneAaFeature TO apidb;
 -- GRANT SELECT ON dots.GeneFeature TO apidb;
 -- GRANT SELECT ON dots.NaLocation TO apidb;
--- GRANT SELECT ON dots.ExternalNaSequence TO apidb;
 -- GRANT SELECT ON dots.Miscellaneous TO apidb;
 -- GRANT SELECT ON sres.SequenceOntology TO apidb;
 -- GRANT SELECT ON sres.Taxon TO apidb;
@@ -124,7 +123,7 @@ WHERE gene.source_id = annotated_go_component.source_id(+)
   AND 'predicted' = predicted_go_process.source(+)
   AND 'biological_process' = predicted_go_process.ontology(+);
 
-GRANT SELECT ON apidb.GeneGoAttributes TO PUBLIC;
+GRANT SELECT ON apidb.GeneGoAttributes TO gus_r;
 
 CREATE INDEX apidb.GeneGoAttr_sourceId ON apidb.GeneGoAttributes (source_id);
 
@@ -151,7 +150,7 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
         AND ti.table_id = p.subject_table_id) expn
 WHERE gene.source_id = expn.source_id(+);
 
-GRANT SELECT ON apidb.DerisiExpn TO PUBLIC;
+GRANT SELECT ON apidb.DerisiExpn TO gus_r;
 
 CREATE INDEX apidb.Derisi_sourceId ON apidb.DerisiExpn (source_id);
 
@@ -178,7 +177,7 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
         AND ti.table_id = p.subject_table_id) expn
 WHERE gene.source_id = expn.source_id(+);
 
-GRANT SELECT ON apidb.WinzelerExpn TO PUBLIC;
+GRANT SELECT ON apidb.WinzelerExpn TO gus_r;
 
 CREATE INDEX apidb.Winzeler_sourceId ON apidb.WinzelerExpn (source_id);
 
@@ -233,17 +232,17 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
         AND tas.aa_sequence_id = ec.aa_sequence_id(+)) protein
 WHERE gene.source_id = protein.source_id(+);
 
-GRANT SELECT ON apidb.GeneProteinAttributes TO PUBLIC;
+GRANT SELECT ON apidb.GeneProteinAttributes TO gus_r;
 
 CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.GeneAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.GeneAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.GeneAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 AS
 SELECT gf.source_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
        SUBSTR(gf.product, 1, 200) AS product,
@@ -340,22 +339,22 @@ WHERE gf.na_feature_id = nl.na_feature_id
                       'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
                       'TwinScanEt predictions');
 
-GRANT SELECT ON apidb.GeneAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.GeneAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.GeneAttr1_sourceId ON apidb.GeneAttributes1 (source_id);
+CREATE INDEX apidb.GeneAttr1111_sourceId ON apidb.GeneAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.GeneAttributesSyn
-                             FOR apidb.GeneAttributes1;
+CREATE OR REPLACE SYNONYM apidb.GeneAttributes
+                             FOR apidb.GeneAttributes1111;
 
 ---------------------------
 -- sequences
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.SequenceAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.SequenceAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.SequenceAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.SequenceAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.SequenceAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 AS
 SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
        (sequence.length
@@ -368,16 +367,20 @@ SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        taxon.ncbi_tax_id,
        SUBSTR(sequence.description, 1, 400) AS sequence_description,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
-       SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name
+       SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
+       SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
+       sequence.chromosome_order_num
 FROM sres.TaxonName tn, sres.Taxon,
      (SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
-             t_count, length, description, external_database_release_id
+             t_count, length, description, external_database_release_id,
+             chromosome, chromosome_order_num
       FROM dots.ExternalNaSequence
       WHERE -- see both? use the VirtualSequence.
             source_id NOT IN (SELECT source_id FROM dots.VirtualSequence)
       UNION
       SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
-             t_count, length, description, external_database_release_id
+             t_count, length, description, external_database_release_id,
+             chromosome, chromosome_order_num
       FROM dots.VirtualSequence) sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
       FROM dots.dbrefNaSequence drns, sres.DbRef dr,
@@ -391,34 +394,29 @@ FROM sres.TaxonName tn, sres.Taxon,
      (SELECT edr.external_database_release_id,
              edr.version AS database_version, ed.name AS database_name
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-      WHERE edr.external_database_id = ed.external_database_id) db,
-     (SELECT src.na_sequence_id,
-             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
-            'This contig has been mapped to chromosome ' || src.chromosome || '.') AS chromosomemappingtext
-      FROM dots.Source src) source
+      WHERE edr.external_database_id = ed.external_database_id) db
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
-  AND sequence.na_sequence_id = source.na_sequence_id(+)
 ;
 
-GRANT SELECT ON apidb.SequenceAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.SequenceAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.SeqAttr1_source_id ON apidb.SequenceAttributes1 (source_id);
+CREATE INDEX apidb.SeqAttr1111_source_id ON apidb.SequenceAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.SequenceAttributesSyn
-                             FOR apidb.SequenceAttributes1;
+CREATE OR REPLACE SYNONYM apidb.SequenceAttributes
+                             FOR apidb.SequenceAttributes1111;
 ---------------------------
 -- SNPs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.SnpAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.SnpAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.SnpAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.SnpAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.SnpAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 AS
 SELECT snp.source_id AS source_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
@@ -428,7 +426,7 @@ SELECT snp.source_id AS source_id,
        WHEN ed.name = 'Sanger reichenowi SNPs' THEN 'sangerReichenowiSnps'
        WHEN ed.name = 'PlasmoDB combined SNPs' THEN 'plasmoDbCombinedSnps'
        END AS dataset_hidden,
-       s.source_id AS seq_source_id,
+       sequence.source_id AS seq_source_id,
        snp_loc.start_min,
        SUBSTR(snp.reference_strain, 1, 200) AS reference_strain,
        SUBSTR(snp.reference_na, 1, 200) AS reference_na,
@@ -442,82 +440,101 @@ SELECT snp.source_id AS source_id,
        SUBSTR(snp.major_product, 1, 40) AS major_product,
        SUBSTR(snp.minor_allele, 1, 40) AS minor_allele,
        SUBSTR(snp.minor_product, 1, 40) AS minor_product,
-       snp.major_allele_count, snp.minor_allele_count, snp.strains,
-       snp.strains_revcomp,
+       snp.major_allele_count, snp.minor_allele_count,
+       SUBSTR(snp.strains, 1, 1000) AS strains,
+       SUBSTR(snp.strains_revcomp, 1, 1000) AS strains_revcomp,
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
-       SUBSTR(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min - 50), 1, 50)
+       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 50, snp_loc.start_min - 50), 1, 50)
          AS lflank,
-       SUBSTR(DBMS_LOB.SUBSTR(s.sequence, 50, snp_loc.start_min + 1), 1, 50)
+       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 50, snp_loc.start_min + 1), 1, 50)
          AS rflank,
        SUBSTR(tn.name, 1, 40) AS organism,
-       taxon.ncbi_tax_id
-FROM dots.ExternalNaSequence s, dots.SnpFeature snp, dots.NaLocation snp_loc,
+       taxon.ncbi_tax_id,
+       SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
+       sequence.chromosome_order_num
+FROM dots.NaSequence ns, dots.SnpFeature snp, dots.NaLocation snp_loc,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, sres.Taxon,
      sres.TaxonName tn,
+     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
+      FROM dots.ExternalNaSequence
+      UNION
+      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
+      FROM dots.VirtualSequence) sequence,
      (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id
       FROM dots.GeneFeature gene, dots.NaLocation gene_loc
       WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
 WHERE edr.external_database_release_id = snp.external_database_release_id
   AND ed.external_database_id = edr.external_database_id
-  AND s.na_sequence_id = snp.na_sequence_id
-  AND s.taxon_id = taxon.taxon_id
-  AND s.taxon_id = tn.taxon_id
+  AND ns.na_sequence_id = snp.na_sequence_id
+  AND sequence.na_sequence_id = snp.na_sequence_id
+  AND sequence.taxon_id = taxon.taxon_id
+  AND sequence.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND snp_loc.na_feature_id = snp.na_feature_id
   AND gene_info.na_feature_id(+) = snp.parent_id;
 
-GRANT SELECT ON apidb.SnpAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.SnpAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.SnpAttr1_source_id ON apidb.SnpAttributes1 (source_id);
+CREATE INDEX apidb.SnpAttr1111_source_id ON apidb.SnpAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.SnpAttributesSyn
-                             FOR apidb.SnpAttributes1;
+CREATE OR REPLACE SYNONYM apidb.SnpAttributes
+                             FOR apidb.SnpAttributes1111;
 ---------------------------
 -- ORFs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.OrfAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.OrfAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.OrfAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.OrfAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.OrfAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 AS
 SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
-       SUBSTR(ens.source_id, 1, 30) AS nas_id,
+       SUBSTR(sequence.source_id, 1, 30) AS nas_id,
        tas.length,
-       nl.start_min, nl.end_max, nl.is_reversed
-FROM dots.ExternalNaSequence ens, dots.Miscellaneous m,
-     dots.TranslatedAaFeature taaf, dots.TranslatedAaSequence tas,
-     sres.Taxon, sres.TaxonName tn, sres.SequenceOntology so,
-     dots.NaLocation nl
+       nl.start_min, nl.end_max, nl.is_reversed,
+       SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
+       sequence.chromosome_order_num
+FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
+     dots.TranslatedAaSequence tas, sres.Taxon, sres.TaxonName tn,
+     sres.SequenceOntology so, dots.NaLocation nl,
+     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
+      FROM dots.ExternalNaSequence
+      UNION
+      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
+             chromosome_order_num
+      FROM dots.VirtualSequence) sequence
 WHERE m.na_feature_id = taaf.na_feature_id
   AND taaf.aa_sequence_id = tas.aa_sequence_id
-  AND ens.na_sequence_id = m.na_sequence_id
-  AND ens.taxon_id = tn.taxon_id
-  AND ens.taxon_id = taxon.taxon_id
+  AND sequence.na_sequence_id = m.na_sequence_id
+  AND sequence.taxon_id = tn.taxon_id
+  AND sequence.taxon_id = taxon.taxon_id
   AND m.sequence_ontology_id = so.sequence_ontology_id
   AND m.na_feature_id = nl.na_feature_id
   AND so.term_name = 'ORF'
   AND tn.name_class='scientific name';
 
-GRANT SELECT ON apidb.OrfAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.OrfAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.OrfAttr1_source_id ON apidb.OrfAttributes1 (source_id);
+CREATE INDEX apidb.OrfAttr1111_source_id ON apidb.OrfAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.OrfAttributesSyn
-                             FOR apidb.OrfAttributes1;
+CREATE OR REPLACE SYNONYM apidb.OrfAttributes
+                             FOR apidb.OrfAttributes1111;
 ---------------------------
 -- ESTs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.EstAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.EstAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.EstAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.EstAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.EstAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.EstAttributes1111 AS
 SELECT ens.source_id,
        e.seq_primer AS primer,
        ens.a_count,
@@ -547,21 +564,21 @@ AND   tn.name_class='scientific name'
 AND   ens.external_database_release_id = edr.external_database_release_id
 AND   edr.external_database_id = ed.external_database_id;
 
-GRANT SELECT ON apidb.EstAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.EstAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.EstAttr1_source_id ON apidb.EstAttributes1 (source_id);
+CREATE INDEX apidb.EstAttr1111_source_id ON apidb.EstAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.EstAttributesSyn
-                             FOR apidb.EstAttributes1;
+CREATE OR REPLACE SYNONYM apidb.EstAttributes
+                             FOR apidb.EstAttributes1111;
 ---------------------------
 -- array elements
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1 ###;
-DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1;
+prompt ### DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1111 ###;
+DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1111;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1 ###;
-CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 ###;
+CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 AS
 SELECT ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
@@ -574,11 +591,11 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
   AND taxon.taxon_id = ens.taxon_id
 ;
 
-GRANT SELECT ON apidb.ArrayElementAttributes1 TO PUBLIC;
+GRANT SELECT ON apidb.ArrayElementAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.AEAttr1_source_id
-ON apidb.ArrayElementAttributes1 (source_id);
+CREATE INDEX apidb.AEAttr1111_source_id
+ON apidb.ArrayElementAttributes1111 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributesSyn
-                             FOR apidb.ArrayElementAttributes1;
+CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
+                             FOR apidb.ArrayElementAttributes1111;
 exit
