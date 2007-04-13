@@ -82,10 +82,10 @@ sub run {
         }
         $self->undefPointerCache();
     }
-
+        
     $self->convertOrfRecordsToGenes($recordSet);
     
-    $self->pruneDuplicateRecords($recordSet);
+    $self->pruneDuplicateAndEmptyRecords($recordSet);
     
     $self->insertRecordsIntoDb($recordSet);    
 
@@ -315,7 +315,7 @@ sub addMassSpecFeatureToRecord {
     $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
     if ($pep->{start} == 0) {
-        $self->log("$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...");
+        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n");
         return;
     }
 
@@ -445,7 +445,7 @@ sub addNALocation {
     );
     
     if (! $naLocations) {
-        $self->log("Peptide at $pep->{start}..$pep->{end} not found on $sourceId. Discarding this peptide...");
+        warn "Peptide at $pep->{start}..$pep->{end} not found on $sourceId. Discarding this peptide...\n";
         return undef;
     }
     
@@ -513,7 +513,7 @@ sub mapToNASequence {
 
 # duplicate records have same na_feature_id and same set of peptide sequences
 # and are from the same sourcefile.
-sub pruneDuplicateRecords {
+sub pruneDuplicateAndEmptyRecords {
     my ($self, $recordSet) = @_;
     my %seen;
     my $i = 0;
@@ -521,6 +521,11 @@ sub pruneDuplicateRecords {
     for (my $i=0; $i < @{$recordSet}; $i++) {
         my $r = @{$recordSet}[$i];
         
+        if (scalar @{$r->{peptides}} == 0) {
+            warn "$r->{sourceId} has no peptides. removing.\n";
+            next REC;
+        }
+
         if (my $existingRec = $seen{$r->{naFeatureId}}) {
 
             my @oldSeqs = map {$_->{sequence}} @{$existingRec->{peptides}};
@@ -539,7 +544,7 @@ sub pruneDuplicateRecords {
                 next REC if ($oldSeqs[$i] ne $newSeqs[$i]);
             }
 
-            warn "record $i ($r->{proteinId}) is duplicate; removing.\n" if $self->getArg('veryVerbose');
+            warn "record $i ($r->{sourceId}) is duplicate; removing.\n" if $self->getArg('veryVerbose');
             delete $recordSet->[$i];
         } else {
             $seen{$r->{naFeatureId}} = $r;
