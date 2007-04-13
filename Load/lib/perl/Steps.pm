@@ -1411,6 +1411,8 @@ sub runWdkRecordDump {
      2>> $logFile
 EOF
 
+  print STDERR "$cmd\n";
+
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
 }
