@@ -315,7 +315,7 @@ sub addMassSpecFeatureToRecord {
     $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
     if ($pep->{start} == 0) {
-        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n");
+        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
         return;
     }
 
