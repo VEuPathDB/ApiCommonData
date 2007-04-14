@@ -1403,10 +1403,10 @@ sub runWdkRecordDump {
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $cmd = <<"EOF";
-     wdkRecordDump
+     wdkRecordDump \\
      -model $model \\
      -organism \"$organism\" \\
-     -type $recordType \\
+     -type \"$recordType\" \\
      -dir $dir \\
      2>> $logFile
 EOF
