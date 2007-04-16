@@ -370,17 +370,17 @@ SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
        sequence.chromosome_order_num
-FROM sres.TaxonName tn, sres.Taxon,
+FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      (SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
              t_count, length, description, external_database_release_id,
-             chromosome, chromosome_order_num
+             chromosome, chromosome_order_num, sequence_ontology_id
       FROM dots.ExternalNaSequence
       WHERE -- see both? use the VirtualSequence.
             source_id NOT IN (SELECT source_id FROM dots.VirtualSequence)
       UNION
       SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
              t_count, length, description, external_database_release_id,
-             chromosome, chromosome_order_num
+             chromosome, chromosome_order_num, sequence_ontology_id
       FROM dots.VirtualSequence) sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
       FROM dots.dbrefNaSequence drns, sres.DbRef dr,
@@ -398,6 +398,8 @@ FROM sres.TaxonName tn, sres.Taxon,
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
+  AND sequence.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name IN ('chromosome', 'contig', 'supercontig')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
 ;
