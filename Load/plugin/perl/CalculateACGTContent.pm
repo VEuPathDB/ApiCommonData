@@ -119,7 +119,7 @@ sub getMonomerCount{
 				    -alphabet=>'dna');
 
   my $seqStats  =  Bio::Tools::SeqStats->new(-seq=>$seqobj);
-return;
+
   $monomersHash = $seqStats->count_monomers();
   foreach my $base (keys %$monomersHash) {
     if ($base eq 'A'){
