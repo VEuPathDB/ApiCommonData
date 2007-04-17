@@ -325,7 +325,6 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.source_id = derisiExpn.source_id(+)
   AND gf.source_id = winzelerExpn.source_id(+)
   AND t.na_sequence_id = sns.na_sequence_id(+)
-  AND gf.sequence_ontology_id = so.sequence_ontology_id
   AND gf.na_feature_id = t.parent_id
   AND t.na_feature_id = rt1.parent_id(+)
   AND gf.na_feature_id = rt2.parent_id(+)
@@ -334,10 +333,11 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
-  /* skip toxo predictions */
-  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
-                      'TwinScanEt predictions');
+  -- skip toxo predictions
+  AND (tn.name != 'Toxoplasma gondii' 
+       OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+                          'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
+                          'TwinScanEt predictions'));
 
 GRANT SELECT ON apidb.GeneAttributes1111 TO gus_r;
 
