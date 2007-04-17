@@ -1264,7 +1264,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
     SELECT
     replace(substr(tn.name, 1, instr(tn.name || ' ', ' ') + 1), ' ', '_')
         ||'||'||
-    taas.source_id 
+    m.source_id 
         ||'|'||
     'computed'
         ||'|'||
@@ -1350,7 +1350,7 @@ sub makeDownloadFile {
     my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
     (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
-    my $logFile = "$mgr->{myPipelineDir}/logs/${name}DownloadFile.log";
+    my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
 
     my $cmd = <<"EOF";
       gusExtractSequences --outputFile $seqFile \\
