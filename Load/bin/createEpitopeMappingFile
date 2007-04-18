@@ -27,7 +27,7 @@ if (!$inputDir || !$queryDir || !$outputDir || !$blastDatabase) {
 &getGenPetSeqs($inputDir, $queryDir);
 &runBlast($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex, $verbose);
 &exactMapEpitopes($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose);
-
+print STDERR "Mapping Complete\n";
 
 sub getGenPetSeqs{
   my ($inputDir, $queryDir) = @_;
@@ -167,12 +167,12 @@ sub exactMapEpitopes{
       else       { print "$species does not match a known database." }
     }
 
-    print "SPECIES: $species\t" if $verbose;
-    print "DATABASE: $subjectFile\n" if $verbose;
+    print STDERR "SPECIES: $species\t" if $verbose;
+    print STDERR "DATABASE: $subjectFile\n" if $verbose;
 
     $subjectFile = "$subjectPath/$subjectFile";
 
-    my $cmd = "exactMapEpitopes --subjectFile $subjectFile --epitopeFile $epitopeFile --outputFile $outFile";
+    my $cmd = "exactMapEpitopes --subjectFile $subjectFile --epitopeFile $epitopeFile --outputFile $outFile --rejectDuplicates";
 
     &exeCmd($cmd);
   }
