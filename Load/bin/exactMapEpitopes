@@ -15,19 +15,19 @@ my $debug = 0;
 
 $| = 1;
 
-my $regex = '\S*?\|\S*?\|(\S+)\|';
 my $subjectFile;
 my $epitopeFile;
 my $outputFile;
+my $rejectDuplicates;
 
-&GetOptions("regex=s" => \$regex,
-            "subjectFile=s" => \$subjectFile,
+&GetOptions("subjectFile=s" => \$subjectFile,
 	    "epitopeFile=s" => \$epitopeFile,
 	    "outputFile=s" => \$outputFile,
+	    "rejectDuplicates" => \$rejectDuplicates,
 	    "debug!" => \$debug,
             );
 
-unless ($subjectFile && $epitopeFile && $outputFile){ die "Usage: ExactMapEpitopes --subjectFile <FILE> --epitopeFile <FILE> --outputFile <FILEPATH> [--regex <STRING>] [--debug]";}
+unless ($subjectFile && $epitopeFile && $outputFile){ die "Usage: ExactMapEpitopes --subjectFile <FILE> --epitopeFile <FILE> --outputFile <FILEPATH> [--rejectDuplicates] [--debug]";}
 
 die "Cannot find '$subjectFile':$!\n" unless (-e $subjectFile);
 die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
@@ -50,10 +50,17 @@ my %epitopes;
 my %subjects;
 &makeSubjectHash($subjectFile, \%subjects);
 
+my %seen;
+if ($rejectDuplicates && -e $outputFile){
+  &getSeen(\%seen, $outputFile, $debug);
+}
+
+print STDERR "Finding exact matches...\n";
+
 foreach my $seq (keys %epitopes){
 
   #do exact string comparison
-  my ($matches) = &getExactMatches($seq, \%epitopes, \%subjects);
+  my ($matches) = &getExactMatches($seq, \%epitopes, \%subjects, \%seen);
 
   foreach my $match (keys %$matches){
     my $subId = $match;
@@ -69,6 +76,8 @@ foreach my $seq (keys %epitopes){
 sub makeSubjectHash{
   my ($subjectFile, $subjects) = @_;
 
+  print STDERR "Getting database sequences from file...\n";
+
   my $seqFile  = Bio::SeqIO->new(-file => $subjectFile , '-format' => 'Fasta');
 
   while ( my $seq = $seqFile->next_seq() ) {
@@ -77,13 +86,15 @@ sub makeSubjectHash{
 }
 
 sub getExactMatches{
-  my ($seq, $epitopes, $subjects) = @_;
+  my ($seq, $epitopes, $subjects, $seen) = @_;
   my %matches;
 
   foreach my $epitope (keys %{$epitopes{$seq}}){
     my $pept = $epitopes{$seq}->{$epitope}->{'seq'};
 
     foreach my $subject (keys %$subjects){
+      next if($seen->{$epitope} eq $subject);
+
       my $subjSeq = $subjects{$subject}->{'primary_seq'}->{'seq'};
 
       if ($subjSeq =~ /$pept/i){
@@ -94,4 +105,27 @@ sub getExactMatches{
   }
 
   return \%matches;
+}
+
+sub getSeen{
+  my ($seen, $outputFile, $debug) = @_;
+
+  open(FILE, "< $outputFile") || die "Could not open file '$outputFile' for reading: $!\n";
+
+  while(<FILE>){
+    chomp;
+
+    my @values = split('\t',$_);
+
+    my $seqId = $values[0];
+
+    my $epiId = $values[1];
+
+    print STDERR "SEQUENCE ID: $seqId\tEPITOPE ID: $epiId\n" if $debug;
+
+    $seen->{$epiId} = $seqId;
+  }
+
+  close(FILE);
+
 }
