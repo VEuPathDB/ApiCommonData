@@ -16,7 +16,7 @@ my $debug = 0;
 
 $| = 1;
 
-my $regex = '\S*?\|\S*?\|(\S+)\|';
+my $regex = '\S*?\|\S*?\|(\S*?)\|';
 my $queryFile;
 my $epitopeFile;
 my $outputFile;
@@ -68,6 +68,8 @@ my %epitopes;
 #first create a query file object using seqio ...
 
 my $batchQueryFile  = Bio::SeqIO->new(-file => $queryFile , '-format' => 'Fasta');
+
+print STDERR "Running BLAST...\n";
 
 #loop through those sequences one at a time
 while ( my $seq = $batchQueryFile->next_seq() ) {
@@ -161,7 +163,7 @@ sub runBlast{
 
 sub validateHit{
   my ($queryLength, $subject, $seqId) = @_;
-  my $subId = $subject->getID();
+  my $subId = $subject->getID()."-1";
   my $subjSeq;
 
   my $msg = "Query ID: $seqId Query Length: $queryLength\tBLAST Result: $subId Subject Length: ".$subject->getLength().".";
