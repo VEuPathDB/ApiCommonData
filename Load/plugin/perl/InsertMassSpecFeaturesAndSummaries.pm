@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15949 $',
+                     cvsRevision       => '$Revision: 15957 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -219,12 +219,14 @@ sub addRecordsToGenes {
         push(@gf,$naFeature);
       } 
     }
-    if (!$official) {
-      ##need to map using nalocations
+    if (!$official) { ##need to map using nalocations
       foreach my $naf (@gf) {
         $official = $self->getGeneFromNaFeatureId($record, $naf->getNaFeatureId());
         last if $official;
       }
+    }
+    if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
+      $official = $self->testPeptidesAgainstAllProteins($record);
     }
     if (!$official) { ##failed finding an official gene model to map these to ...
       ##NOTE: should check to see if one of the @gf is an orf and if so then go ahead and use it
@@ -255,6 +257,41 @@ sub addRecordsToGenes {
       $self->setPepDescription($pep,$record);
     }
   }
+}
+
+##return genefeature if only one protein contains all peptides ...
+sub testPeptidesAgainstAllProteins {
+  my($self,$record) = @_;
+  my @matches;
+  foreach my $prot ($self->getAllProteins()){
+    push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
+  }
+  if(scalar(@matches == 1)){
+    my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $matches[0]->[0] });
+    $gf->retrieveFromDB();
+    warn "Able to uniquely map all peptides from $record->{proteinId} to ".$gf->getSourceId()."\n";
+    return $gf;
+  }
+}
+
+sub getAllProteins {
+  my($self) = @_;
+  if(!$self->{allProteins}){
+    my $protStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
+      select gf.na_feature_id,aas.sequence
+      from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taaf, dots.translatedaasequence aas
+      where gf.external_database_release_id = $self->{geneExtDbRlsId}
+      and gf.na_feature_id = t.parent_id
+      and taaf.na_feature_id = t.na_feature_id
+      and aas.aa_sequence_id = taaf.aa_sequence_id
+EOSQL
+    $protStmt->execute();
+    while(my $row = $protStmt->fetchrow_arrayref()){
+      push(@{$self->{allProteins}},[$row->[0],$row->[1]]);
+    }
+    warn "Cached ".scalar(@{$self->{allProteins}})." proteins from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
+  }
+  return @{$self->{allProteins}};
 }
 
 sub getAASequenceForGene {
@@ -310,12 +347,7 @@ sub getGeneFromNaFeatureId {
   $mapStmt->execute($naFeatureId);
   
   foreach my $row ($mapStmt->fetchrow_hashref('NAME_lc')) {
-    
-    my $proteinSeq = $row->{sequence};
-    
-    foreach my $pep (@{$record->{peptides}}) {
-      return unless $proteinSeq =~ /$pep->{sequence}/i;
-    }
+    return unless $self->checkThatAllPeptidesMatch($record,$row->{sequence});
     ##if here then all peps match
     my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $row->{na_feature_id} });
     $gf->retrieveFromDB();
@@ -323,6 +355,15 @@ sub getGeneFromNaFeatureId {
     warn "Able to map $record->{proteinId} to ".$gf->getSourceId()."\n";
     return $gf;
   }
+}
+
+sub checkThatAllPeptidesMatch {
+  my($self,$record,$protSeq) = @_;
+  foreach my $pep (@{$record->{peptides}}) {
+    return 0 unless $protSeq =~ /$pep->{sequence}/i;
+  }
+#  warn "all peptides from $record->{proteinId} match\n";
+  return 1;
 }
 
 sub isOrf {
