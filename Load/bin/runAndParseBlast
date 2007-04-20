@@ -91,6 +91,7 @@ while ( my $seq = $batchQueryFile->next_seq() ) {
     ##do something here ... test if the first one is 100% and rest are less then OK, just use first otherwise throw error
     my $top = shift @subjects;
     my $percMatch = $top->getTotalIdentities();
+    my $score = $top->getTotalHSPPercent();
     my $equal = 0;
 print "more than one hit\n";
     foreach my $sub (@subjects){
@@ -102,7 +103,7 @@ print "more than one hit\n";
     }
 
     if(my ($subId, $subjSeq) = &validateHit($queryLength, $top, $seqId)){
-      &setBlastHit(\%epitopes, $seqId);
+      &setBlastHit(\%epitopes, $seqId, $score);
       &ApiCommonData::Load::MapAndPrintEpitopes::mapEpitopes($subjSeq, $subId, $seqId, \%epitopes, $outputFile, $debug) unless($equal);
     }
 
@@ -113,9 +114,10 @@ print "more than one hit\n";
   }else{
     ##we're good
     my $subject = $subjects[0];
+    my $score = $subject->getTotalHSPPercent();
 
     if(my ($subId, $subjSeq) = &validateHit($queryLength, $subject, $seqId)){
-      &setBlastHit(\%epitopes, $seqId);
+      &setBlastHit(\%epitopes, $seqId, $score);
       &ApiCommonData::Load::MapAndPrintEpitopes::mapEpitopes($subjSeq, $subId, $seqId, \%epitopes, $outputFile, $debug);
     }
 
@@ -199,9 +201,10 @@ EOSQL
 }
 
 sub setBlastHit{
-  my($epitopes, $seqId) = @_;
+  my($epitopes, $seqId, $score) = @_;
 
   foreach my $epitope (keys %{$$epitopes{$seqId}}){
     $epitopes{$seqId}->{$epitope}->{blastHit} = 1;
+    $epitopes{$seqId}->{$epitope}->{score} = $score;
   }
 }
