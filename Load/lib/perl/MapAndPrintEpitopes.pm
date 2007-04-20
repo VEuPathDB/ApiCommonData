@@ -79,11 +79,15 @@ sub _printResultsToFile{
       if($$epitopes{$seqId}->{$iedbId}->{blastHit}){
 	$blastHit = 1;
       }
+      my $score = 0;
+      if($$epitopes{$seqId}->{$iedbId}->{score}){
+	$score = $$epitopes{$seqId}->{$iedbId}->{score};
+      }
 
       if($start && $end){
 	open(OUT,">>$outFile") || die "Could not open '$outFile' for appending:$!\n";
 
-	print OUT "$subId\t$iedbId\t$name\t$start\t$end\t$strain\t$blastHit\t$foundAll\n";
+	print OUT "$subId\t$iedbId\t$name\t$start\t$end\t$blastHit\t$score\t$foundAll\n";
 
 	close(OUT);
 
