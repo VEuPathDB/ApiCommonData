@@ -169,7 +169,7 @@ sub createEpitopeEntry{
 
   my $motifId = $self->getMotifId($$data[1]);
 
-  my $type = $self->getType($$data[5],$$data[6]);
+  my $type = $self->getType($$data[5],$$data[7]);
 
   my $epitope = GUS::Model::DoTS::EpitopeFeature->new({aa_sequence_id => $$data[0],
 						       source_id => $$data[1],
@@ -177,6 +177,7 @@ sub createEpitopeEntry{
 						       motif_aa_sequence_id => $motifId,
 						       type => $type,
 						       external_database_release_id => $epiExtDbRls,
+						       score => $$data[6],
 						       is_predicted => 0
 						      });
 
@@ -217,15 +218,15 @@ sub getType{
 
   if($onBlastHit){
     if($foundFullSet){
-      $type = "On Blast Hit Full Set";
+      $type = "Full Set On Blast Hit";
     }else{
-      $type = "On Blast Hit Not Full Set";
+      $type = "Not Full Set On Blast Hit";
     }
   }else{
     if($foundFullSet){
-      $type = "Not on Blast Hit Full Set";
+      $type = "Full Set Not on Blast Hit";
     }else{
-      $type = "Not on Blast Hit Not Full Set";
+      $type = "Not Full Set Not on Blast Hit";
     }
   }
 
