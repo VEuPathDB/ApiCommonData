@@ -33,7 +33,7 @@ use Bio::Coordinate::GeneMapper;
 use Data::Dumper;
 
 ##sql statements should be global variables
-my($idStmt,$orfStmt);
+my($idStmt,$mapStmt);
 
 sub new {
     my ($class) = @_;
@@ -72,15 +72,15 @@ sub run {
             chomp(my $ln = <F>);
             undef $record;
             $record = $self->initRecord($ln);
-            if ( ! $record->{naFeatureId}) {
-                warn "'$record->{proteinId}' ",
-                     &{sub{"or '$record->{description}' " if ($record->{description})}},
-                     &{sub{"from '$record->{sourcefile}' " if ($record->{sourcefile})}},
-                     "not found, skipping\n" if  $self->getArg('veryVerbose');
-                $self->{summariesSkipped}++;
-                $self->nextRecord(*F);
-                next;
-            }
+#            if ( ! $record->{naFeatureId}) {
+#                warn "'$record->{proteinId}' ",
+#                     &{sub{"or '$record->{description}' " if ($record->{description})}},
+#                     &{sub{"from '$record->{sourcefile}' " if ($record->{sourcefile})}},
+#                     "not found, skipping\n" if  $self->getArg('veryVerbose');
+#                $self->{summariesSkipped}++;
+#                $self->nextRecord(*F);
+#                next;
+#            }
             push @{$recordSet}, $record;
         } else {
             m/^## / and next;
@@ -89,7 +89,8 @@ sub run {
         $self->undefPointerCache();
     }
         
-    $self->convertOrfRecordsToGenes($recordSet);
+    ##now need to loop through records and assign to genes ..
+    $self->addRecordsToGenes($recordSet);
     
     $self->pruneDuplicateAndEmptyRecords($recordSet);
     
@@ -118,13 +119,13 @@ sub initRecord {
     # Try looking up a proper source_id and na_sequence_id. Mascot datasets
     # may contain matches to proteins for which we don't have records (and
     # therefore no na_feature_id) - we skip those.
-    ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}) = 
-        $self->getSourceNaFeatureNaSequenceIds($record->{proteinId}, 
-                                         $record->{description});
-
-    ($record->{aaSequenceId}) = 
-        $self->getAaSequenceId($record->{naFeatureId}) 
-        if ($record->{naFeatureId});
+#    ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}) = 
+#        $self->getSourceNaFeatureNaSequenceIds($record->{proteinId}, 
+#                                         $record->{description});
+#
+#    ($record->{aaSequenceId}) = 
+#        $self->getAaSequenceId($record->{naFeatureId}) 
+#        if ($record->{naFeatureId});
 
     return $record;
 }
@@ -196,15 +197,107 @@ sub getAaSequenceId {
     return $id;
 }
 
-sub convertOrfRecordsToGenes { # if possible, otherwise leave as is.
-    my ($self, $recordSet) = @_;
-    for my $record (@{$recordSet}) {
-        $self->mapOrfToGene($record) if (isOrf($record->{naFeatureId}));
+## need to assign to official gene model if possible
+## map peptides onto gene
+## also setDescription of peptides
+## have multiple identifiers (source_id, split("|",description))
+##if none are the official annot then get overlapping genes and see if all peptides map
+sub addRecordsToGenes { 
+  my ($self, $recordSet) = @_;
+  foreach my $record (@{$recordSet}) {
+    my $official = 0;
+    my @gf;
+    foreach my $id ($record->{proteinId},split("\|",$record->{description})){
+      my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
+      if($naFeature->retrieveFromDB()){
+        if($naFeature->getExternalDatabaseId() == $self->getArg('geneExtDbRelId')){
+          ##this one is the official one ...
+          $official = $naFeature;
+          last;
+        }
+        push(@gf,$naFeature);
+      } 
     }
+    if(!$official){
+      ##need to map using nalocations
+      foreach my $naf (@gf){
+        $official = $self->getGeneFromNaFeatureId($record, $naf->getNaFeatureId());
+        last if $official;
+      }
+    }
+    if(!$official){  ##failed finding an official gene model to map these to ...
+      ##NOTE: should check to see if one of the @gf is an orf and if so then go ahead and use it
+      foreach my $feat (@gf){
+        my $ont = $feat->getParent("DoTS::SequenceOntology",1);
+        if($ont && $ont->getTermName() =~ /orf/i){
+          $official = $feat;
+          last;
+        }
+      }
+      if(!$official){
+        warn "Unable to find gene for $record->{proteinId} ... discarding\n";
+        $record->{failed} = 1;
+        next;
+      }
+    }
+    ##need to map the peptides and set the identifiers ....
+    ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}, 
+     $record->{aaSequenceId}, $record->{aaFeatParentId}) =
+      $self->getRecordIdentifiers($official);
+    foreach my $pep (@{$record->{peptides}}){
+      if($self->setPepStartEnd($pep, $self->getAASequenceForGene($official)) == 0){
+        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
+        $pep->{failed} = 1;
+      }
+      $pep->setPepDescription($pep,$record);
+    }
+  }
 }
 
-sub mapOrfToGene {
-    my ($self, $record) = @_;
+sub getAASequenceForGene {
+  my($self,$gf) = @_;
+  return $gf->getChild('DoTS::Transcript',1)->
+    getChild('DoTS::TranslatedAAFeature',1)->
+      getParent('DoTS::TranslatedAASequence',1)->
+        getSequence();
+}
+
+sub getRecordIdentifiers {
+  my($self,$gf) = @_;
+  my $transcript = $gf->getChild('DoTS::Transcript',1);
+  my $transAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature',1);
+  return($gf->getSourceId(),$gf->getNaFeatureId(),$gf->getNaSequenceId(),$transAAFeat->getAaSequenceId(),$transAAFeat->getAaFeatureId());
+}
+sub prepareSQLStatements {
+  my($self) = @_;
+      my $extDbRelId = $self->getArg('geneExtDbRelId');
+    $mapStmt = $self->getQueryHandle()->prepare(<<"EOSQL");
+        select gf.na_feature_id, taas.sequence
+        from
+        dots.nafeature orf,
+        dots.genefeature gf,
+        dots.transcript t,
+        dots.nalocation gfnal,
+        dots.nalocation orfnal,
+        dots.translatedaafeature taaf,
+        dots.translatedaasequence taas,
+        where
+        orf.na_feature_id = ?
+        and gf.na_feature_id = gfnal.na_feature_id
+        and orf.na_feature_id = orfnal.na_feature_id
+        and orf.na_sequence_id = gf.na_sequence_id
+        and gfnal.start_min <= orfnal.end_max
+        and gfnal.end_max >= orfnal.start_min
+        and gf.external_database_release_id = $extDbRelId
+        and gf.na_feature_id = t.parent_id
+        and t.na_feature_id = taaf.na_feature_id
+        and taaf.aa_sequence_id = taas.aa_sequence_id
+        and orfnal.is_reversed = gfnal.is_reversed
+EOSQL
+}
+
+sub getGeneFromFeature {
+    my ($self, $record, $naFeatureId) = @_;
     # Given an Orf, find gene it belongs to:
     #    Find gene whose coordinates overlap with orf.
     #    Declare match if all peptide seqs are substrings of protein seq.
@@ -213,78 +306,26 @@ sub mapOrfToGene {
     # If an ORF partially belongs to a gene model and there's a peptide
     # that isn't spanned by the gene then we leave the ORF record as is.
 
-    my $recNaFeatureId = $record->{naFeatureId};
-    
-    my $sth = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select gf.source_id, t.na_feature_id, 
-               taas.sequence, t.na_sequence_id,
-               taas.aa_sequence_id
-        from
-        dots.miscellaneous orf,
-        dots.genefeature gf,
-        dots.transcript t,
-        dots.nalocation gtnal,
-        dots.nalocation orfnal,
-        dots.translatedaafeature taaf,
-        dots.translatedaasequence taas,
-        sres.sequenceontology so
-        where
-        orf.na_feature_id = ?
-        and gf.na_feature_id = gtnal.na_feature_id
-        and orf.na_feature_id = orfnal.na_feature_id
-        and orf.na_sequence_id = gf.na_sequence_id
-        and gtnal.start_max < orfnal.end_min
-        and gtnal.end_min > orfnal.start_max
-        and gf.na_feature_id = t.parent_id
-        and t.na_feature_id = taaf.na_feature_id
-        and taaf.aa_sequence_id = taas.aa_sequence_id
-        and gf.sequence_ontology_id = so.sequence_ontology_id
-        and so.term_name != 'ORF'
-            -- orf and gene must be same strand and frame --
-        and orfnal.is_reversed = gtnal.is_reversed
-        and mod(gtnal.start_max, 3) = mod(orfnal.start_max, 3)
-EOSQL
-
-    my %row;
-    $sth->execute($recNaFeatureId);
-    $sth->bind_columns( \( @row{ @{$sth->{NAME_lc} } } ));
-    
-    my $res = $sth->fetchall_arrayref();
+    $mapStmt->execute($naFeatureId);
+    my $res = $mapStmt->fetchall_arrayref();
     if (scalar @{$res} == 0) {
-        warn "ORF $record->{sourceId} not mapped to a gene, will leave as ORF.\n" if $self->getArg('verbose');
+        warn "feature $record->{proteinId} not mapped to a gene.\n" if $self->getArg('verbose');
         return;
     }
-    if (scalar @{$res}  > 1) {
-        $self->error("dots.transcript.na_feature_id '$recNaFeatureId' corresponds to more than one gene. This is not supported.");
-    }
-    
-    
-    my $proteinSeq = $row{sequence};
 
-    $proteinSeq or $self->error("No sequence found for $record->{sourceId}");
+    foreach my $row (@$res){
     
-    my @newCoords;
-    
-    for my $pep (@{$record->{peptides}}) {
-        my $start = index($proteinSeq, $pep->{sequence}) +1;
-        if ($start == 0) {
-            warn "Peptide set on ORF $record->{sourceId} not fully mapped to a gene, will leave as ORF.\n" if $self->getArg('verbose');
-            return;
-        }
-        my $end   = length($pep->{sequence}) + $start -1;
-        push @newCoords, ($start, $end);
-    }
-
-    # Have successful mapping of ORF to gene. Change source_id/na_feature_id 
-    # and update peptide coordinates relative to new protein coord.
-    $record->{orfId} = $record->{sourceId};
-    $record->{sourceId} = $row{source_id};
-    $record->{naFeatureId} = $row{na_feature_id};
-    $record->{naSequenceId} = $row{na_sequence_id};
-    $record->{aaSequenceId} = $row{aa_sequence_id};
-    for my $pep (@{$record->{peptides}}) {
-        $pep->{start} = shift @newCoords;
-        $pep->{end}   = shift @newCoords;
+      my $proteinSeq = $row->[1];
+      
+      my $ctMatches = 0;
+      foreach my $pep (@{$record->{peptides}}) {
+        $ctMatches++ if $proteinSeq =~ /$pep->{sequence}/i;
+      }
+      if($ctMatches == scalar(@{$record->{peptides}}){  ##this one maps!!
+        my $gf = GUS::Model::DoTS::GeneFeature->new({'na_feature_id' => $res->[0]});
+        $gf->retrieveFromDB();
+        return $gf;
+      }
     }
 
 }
@@ -320,44 +361,41 @@ sub addMassSpecFeatureToRecord {
       $pep->{ions_score}
     ) = split "\t", $ln;
 
-    $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
+#    $self->setPepStartEnd($pep, $record->{aaSequenceId}) if (!$pep->{start} or !$pep->{end});
     
-    if ($pep->{start} == 0) {
-        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
-        return;
-    }
+#    if ($pep->{start} == 0) {
+#        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
+#        return;
+#    }
 
-    $pep->{description} = join '', (
-        ($record->{sourceId} && "match: $record->{sourceId}\n"),
-        ($pep->{ions_score} && "score: $pep->{ions_score}\n"),
-        ($pep->{modification} && "modification: $pep->{modification}\n"),
-        ($record->{sourcefile} && "report: '$record->{sourcefile}\n")
-    );
 
     push @{$record->{peptides}}, $pep;
 }
 
-sub setPepStartEnd {
-    my ($self, $pep, $aaSequenceId) = @_;
+sub setPepDescription {
+  my($self,$pep,$record) = @_;
+  $pep->{description} = join '', (
+                                  ($record->{sourceId} && "match: $record->{sourceId}\n"),
+                                  ($pep->{ions_score} && "score: $pep->{ions_score}\n"),
+                                  ($pep->{modification} && "modification: $pep->{modification}\n"),
+                                  ($record->{sourcefile} && "report: '$record->{sourcefile}\n")
+                                 );
+}
 
-    my $aaSeq = GUS::Model::DoTS::TranslatedAASequence->new({
-        aa_sequence_id => $aaSequenceId
-    });
-    $aaSeq->retrieveFromDB or $self->error("failed to find aa_sequence_id $aaSequenceId in TranslatedAASequence\n");
-    
-    my $proteinSeq = $aaSeq->getSequence();
-    
+sub setPepStartEnd {
+    my ($self, $pep, $proteinSeq) = @_;
     $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
     $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
-    
+    return $pep->{start};  ##will be 0 if failed ...
 }
 
 sub insertRecordsIntoDb {
     my ($self, $recordSet) = @_;
     for my $record (@{$recordSet}) {
-        next if (!defined $record);
+        next if (!defined $record || $record->{failed});
         my $mss = $self->insertMassSpecSummary($record);
         $self->insertMassSpecFeatures($record, $mss);
+        $self->undefPointerCache();
     }
 }
 
@@ -397,13 +435,11 @@ sub insertMassSpecFeatures {
     my ($self, $record, $mss) = @_;
     
     for my $pep (@{$record->{peptides}}) {
-        my $translatedAAFeature = GUS::Model::DoTS::TranslatedAAFeature->new({
-            'na_feature_id' => $record->{naFeatureId}
-        });
-        $translatedAAFeature->retrieveFromDB();
+        next if $pep->{failed};
         
         my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
             'aa_sequence_id'          => $record->{aaSequenceId},
+            'parent_id'               => $record->{aaFeatParentId},
             'prediction_algorithm_id' => $self->getPredictionAlgId,
             'external_database_release_id' => $self->{extDbRlsId},
             'developmental_stage'     => $record->{devStage},
@@ -431,14 +467,12 @@ sub insertMassSpecFeatures {
         
         $msFeature->setParent($naLoc);
         $msFeature->addChild($aaLoc);    
-        $translatedAAFeature->addChild($msFeature);
         
-        $translatedAAFeature->submit();
+        $msFeature->submit();
         
         $self->{featuresAdded}++;
     }
 
-    $self->undefPointerCache();
 }
 
 sub addNALocation {
@@ -662,7 +696,7 @@ sub declareArgs {
     }),
 
   integerArg({
-      name            =>  'GeneExternalDatabaseRelId', 
+      name            =>  'geneExternalDatabaseRelId', 
       descr           =>  'external_database_release_id for the gene models to which will be attaching these peptides',
       constraintFunc  =>  undef,
       reqd            =>  1,
