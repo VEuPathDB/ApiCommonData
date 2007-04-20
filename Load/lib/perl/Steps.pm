@@ -1403,10 +1403,10 @@ sub runWdkRecordDump {
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $cmd = <<"EOF";
-     wdkRecordDump
+     wdkRecordDump \\
      -model $model \\
      -organism \"$organism\" \\
-     -type $recordType \\
+     -type \"$recordType\" \\
      -dir $dir \\
      2>> $logFile
 EOF
@@ -3864,7 +3864,9 @@ sub copyToDownloadSiteWithSsh {
 
   my $dataDir = $mgr->{'dataDir'};
 
-  $mgr->runCmd("mv $dataDir/downloadSite $dataDir/release-$release");
+  my $cmd = "mv $dataDir/downloadSite $dataDir/release-$release\n";
+
+  $mgr->runCmd($cmd);
 
   my $ssh = GUS::Pipeline::SshCluster->new($server,$user);
 
