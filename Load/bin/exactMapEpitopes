@@ -32,14 +32,7 @@ unless ($subjectFile && $epitopeFile && $outputFile){ die "Usage: ExactMapEpitop
 die "Cannot find '$subjectFile':$!\n" unless (-e $subjectFile);
 die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
 
-print "Establishing dbi login\n" if $debug;
-
-#create the error file
-my $errorLog = $outputFile;
-$errorLog =~ s/\.out/.err/;
-
-open (ERR, ">>$errorLog") || die "Could not open error log '$errorLog' for writing: $!";
-
+print SDTERR "Establishing dbi login\n" if $debug;
 
 #get the epitopes...we only want to do this once
 my %epitopes;
