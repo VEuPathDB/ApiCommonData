@@ -55,12 +55,6 @@ my $tempFile = $queryFile;
 $tempFile =~ s/(\S+\/)+(\w+).\w+/$1/;
 $tempFile .="tmp.out";
 
-my $errorLog = $outputFile;
-$errorLog =~ s/\.out/.err/;
-
-open (ERR, ">>$errorLog") || die "Could not open error log '$errorLog' for writing: $!";
-
-
 #get the epitopes...we only want to do this once
 my %epitopes;
 &ApiCommonData::Load::MapAndPrintEpitopes::makeEpitopeHash($epitopeFile, \%epitopes);
@@ -109,7 +103,7 @@ print "more than one hit\n";
 
   }elsif($blast->getSubjectCount() == 0){
 
-    print ERR "No blast hits returned for $seqId\n";
+    print STDERR "No blast hits returned for $seqId\n";
 
   }else{
     ##we're good
@@ -128,8 +122,6 @@ print "more than one hit\n";
   my $status = $? >> 8;
   die "Failed with status '$status running cmd: $cmd'" if $status;
 }
-
-close (ERR);
 
 
 #----------------Subroutines----------------------
@@ -173,10 +165,10 @@ sub validateHit{
   my $diff = $queryLength - $subject->getLength();
   unless ($diff <= 50 && $diff >= -50){
 
-    print ERR "LENGTH ERROR: $msg BLAST hit rejected.\n"
+    print STDERR "LENGTH ERROR: $msg BLAST hit rejected.\n"
 
   }else{
-    print ERR "WARNING: $msg BLAST hit accepted.\n" unless ($queryLength == $subject->getLength());
+    print STDERR "WARNING: $msg BLAST hit accepted.\n" unless ($queryLength == $subject->getLength());
 
     ## extract this sequence from the db ...
     $subjSeq = &getSequence($subId);
