@@ -33,7 +33,7 @@ use Bio::Coordinate::GeneMapper;
 use Data::Dumper;
 
 ##sql statements should be global variables
-my($idStmt,$mapStmt);
+my($mapStmt);
 
 sub new {
     my ($class) = @_;
@@ -62,7 +62,7 @@ sub run {
     $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
     ##prepare the query statements
-    ($idStmt,$orfStmt) = $self->prepareSQLStatements();
+    ($mapStmt) = $self->prepareSQLStatements();
 
     open(F, $inputFile) or die "Could not open $inputFile: $!\n";
     while (<F>) {
@@ -208,7 +208,7 @@ sub addRecordsToGenes {
     my $official = 0;
     my @gf;
     foreach my $id ($record->{proteinId},split("\|",$record->{description})){
-      my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
+      my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
       if($naFeature->retrieveFromDB()){
         if($naFeature->getExternalDatabaseId() == $self->getArg('geneExtDbRelId')){
           ##this one is the official one ...
@@ -294,40 +294,39 @@ sub prepareSQLStatements {
         and taaf.aa_sequence_id = taas.aa_sequence_id
         and orfnal.is_reversed = gfnal.is_reversed
 EOSQL
+  return $mapStmt;
 }
 
 sub getGeneFromFeature {
-    my ($self, $record, $naFeatureId) = @_;
-    # Given an Orf, find gene it belongs to:
-    #    Find gene whose coordinates overlap with orf.
-    #    Declare match if all peptide seqs are substrings of protein seq.
-    #       Strictly, an ORF may not wholly belong to the gene model, but if
-    #       all the peptides match then we have the gene we are really after.
-    # If an ORF partially belongs to a gene model and there's a peptide
-    # that isn't spanned by the gene then we leave the ORF record as is.
-
-    $mapStmt->execute($naFeatureId);
-    my $res = $mapStmt->fetchall_arrayref();
-    if (scalar @{$res} == 0) {
-        warn "feature $record->{proteinId} not mapped to a gene.\n" if $self->getArg('verbose');
-        return;
-    }
-
-    foreach my $row (@$res){
+  my ($self, $record, $naFeatureId) = @_;
+  # Given an Orf, find gene it belongs to:
+  #    Find gene whose coordinates overlap with orf.
+  #    Declare match if all peptide seqs are substrings of protein seq.
+  #       Strictly, an ORF may not wholly belong to the gene model, but if
+  #       all the peptides match then we have the gene we are really after.
+  # If an ORF partially belongs to a gene model and there's a peptide
+  # that isn't spanned by the gene then we leave the ORF record as is.
+  
+  $mapStmt->execute($naFeatureId);
+  my $res = $mapStmt->fetchall_arrayref();
+  if (scalar @{$res} == 0) {
+    warn "feature $record->{proteinId} not mapped to a gene.\n" if $self->getArg('verbose');
+    return;
+  }
+  
+  foreach my $row (@$res){
     
-      my $proteinSeq = $row->[1];
-      
-      my $ctMatches = 0;
-      foreach my $pep (@{$record->{peptides}}) {
-        $ctMatches++ if $proteinSeq =~ /$pep->{sequence}/i;
-      }
-      if($ctMatches == scalar(@{$record->{peptides}}){  ##this one maps!!
-        my $gf = GUS::Model::DoTS::GeneFeature->new({'na_feature_id' => $res->[0]});
-        $gf->retrieveFromDB();
-        return $gf;
-      }
+    my $proteinSeq = $row->[1];
+    
+    foreach my $pep (@{$record->{peptides}}) {
+      return unless $proteinSeq =~ /$pep->{sequence}/i;
     }
-
+    ##if here then all peps match
+    $mapStmt->finish(); ##clear the stmt handle for next query
+    my $gf = GUS::Model::DoTS::GeneFeature->new({'na_feature_id' => $res->[0]});
+    $gf->retrieveFromDB();
+    return $gf;
+  }
 }
 
 sub isOrf {
@@ -392,7 +391,10 @@ sub setPepStartEnd {
 sub insertRecordsIntoDb {
     my ($self, $recordSet) = @_;
     for my $record (@{$recordSet}) {
-        next if (!defined $record || $record->{failed});
+      if (!defined $record || $record->{failed}){
+        $self->{summariesSkipped}++;
+        next;
+      }
         my $mss = $self->insertMassSpecSummary($record);
         $self->insertMassSpecFeatures($record, $mss);
         $self->undefPointerCache();
@@ -696,7 +698,7 @@ sub declareArgs {
     }),
 
   integerArg({
-      name            =>  'geneExternalDatabaseRelId', 
+      name            =>  'geneExtDbRelId', 
       descr           =>  'external_database_release_id for the gene models to which will be attaching these peptides',
       constraintFunc  =>  undef,
       reqd            =>  1,
