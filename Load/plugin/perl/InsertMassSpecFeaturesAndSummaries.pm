@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15958 $',
+                     cvsRevision       => '$Revision: 15959 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -238,7 +238,7 @@ sub addRecordsToGenes {
       $official = $self->testPeptidesAgainstAllProteins($record);
     }
     if (!$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
-      $official = $self->testPeptidesAgainstAllOrfs($record);
+#      $official = $self->testPeptidesAgainstAllOrfs($record);
     }
     
     if (!$official) {
@@ -358,7 +358,7 @@ sub getRecordIdentifiers {
 sub prepareSQLStatements {
   my($self) = @_;
   $mapStmt = $self->getQueryHandle()->prepare(<<"EOSQL");
-        select gf.na_feature_id, taas.sequence
+        select gf.na_feature_id, taas.sequence, gf.external_database_release_id
         from
         dots.nafeature orf,
         dots.genefeature gf,
@@ -374,7 +374,7 @@ sub prepareSQLStatements {
         and orf.na_sequence_id = gf.na_sequence_id
         and gfnal.start_min <= orfnal.end_max
         and gfnal.end_max >= orfnal.start_min
-        and gf.external_database_release_id = $self->{geneExtDbRlsId}
+        and gf.external_database_release_id = $self->{geneExtDbRlsId}  
         and gf.na_feature_id = t.parent_id
         and t.na_feature_id = taaf.na_feature_id
         and taaf.aa_sequence_id = taas.aa_sequence_id
@@ -390,13 +390,16 @@ sub getGeneFromNaFeatureId {
   #    Declare match if all peptide seqs are substrings of protein seq.
   #       Strictly, an feature may not wholly belong to the gene model, but if
   #       all the peptides match then we have the gene we are really after.
+
+#  warn "getGeneFromNaFeatureid ... na_feature_id = $naFeatureId\n";
   
   $mapStmt->execute($naFeatureId);
-  
-  foreach my $row ($mapStmt->fetchrow_hashref('NAME_lc')) {
-    return unless $self->checkThatAllPeptidesMatch($record,$row->{sequence});
+  my $res = $mapStmt->fetchall_arrayref();
+  return unless scalar(@$res) > 0;
+  foreach my $a (@$res){
+    next unless $self->checkThatAllPeptidesMatch($record,$a->[1]);
     ##if here then all peps match
-    my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $row->{na_feature_id} });
+    my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $a->[0] });
     $gf->retrieveFromDB();
     $mapStmt->finish();         ##clear the stmt handle for next query
     warn "Able to map $record->{proteinId} to ".$gf->getSourceId()."\n";
