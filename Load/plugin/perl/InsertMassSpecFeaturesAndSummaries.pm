@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15959 $',
+                     cvsRevision       => '$Revision: 15960 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -95,7 +95,7 @@ sub run {
     
   $self->pruneDuplicateAndEmptyRecords($recordSet);
     
-#  $self->insertRecordsIntoDb($recordSet);    
+  $self->insertRecordsIntoDb($recordSet);    
 
   $self->setResultDescr(<<"EOF");
     
@@ -238,7 +238,7 @@ sub addRecordsToGenes {
       $official = $self->testPeptidesAgainstAllProteins($record);
     }
     if (!$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
-#      $official = $self->testPeptidesAgainstAllOrfs($record);
+      $official = $self->testPeptidesAgainstAllOrfs($record);
     }
     
     if (!$official) {
