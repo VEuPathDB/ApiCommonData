@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15957 $',
+                     cvsRevision       => '$Revision: 15958 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -95,7 +95,7 @@ sub run {
     
   $self->pruneDuplicateAndEmptyRecords($recordSet);
     
-  $self->insertRecordsIntoDb($recordSet);    
+#  $self->insertRecordsIntoDb($recordSet);    
 
   $self->setResultDescr(<<"EOF");
     
@@ -225,30 +225,34 @@ sub addRecordsToGenes {
         last if $official;
       }
     }
-    if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
-      $official = $self->testPeptidesAgainstAllProteins($record);
-    }
     if (!$official) { ##failed finding an official gene model to map these to ...
       ##NOTE: should check to see if one of the @gf is an orf and if so then go ahead and use it
       foreach my $feat (@gf) {
-        my $ont = $feat->getParent("SRes::SequenceOntology",1);
-        if ($ont && $ont->getTermName() =~ /orf/i) {
+        if ($self->isOrf($feat)) {
           $official = $feat;
           last;
         }
       }
-      if (!$official) {
-        warn "Unable to find gene for $record->{proteinId} ... discarding\n";
-        $record->{failed} = 1;
-        next;
-      }
+    }
+    if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
+      $official = $self->testPeptidesAgainstAllProteins($record);
+    }
+    if (!$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
+      $official = $self->testPeptidesAgainstAllOrfs($record);
+    }
+    
+    if (!$official) {
+      warn "Unable to find gene or ORF for $record->{proteinId} ... discarding\n";
+      $record->{failed} = 1;
+      next;
     }
     ##need to map the peptides and set the identifiers ....
     ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}, 
      $record->{aaSequenceId}, $record->{aaFeatParentId}) =
        $self->getRecordIdentifiers($official);
+    my $pSeq = $self->getAASequenceForGene($official);
     foreach my $pep (@{$record->{peptides}}) {
-      if ($self->setPepStartEnd($pep, $self->getAASequenceForGene($official)) == 0) {
+      if ($self->setPepStartEnd($pep,$pSeq) == 0) {
         warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
         $pep->{failed} = 1;
         $record->{sequenceCount}--;
@@ -274,9 +278,51 @@ sub testPeptidesAgainstAllProteins {
   }
 }
 
+sub testPeptidesAgainstAllOrfs {
+  my($self,$record) = @_;
+  my @matches;
+  foreach my $prot ($self->getAllOrfs()){
+    push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
+  }
+  if(scalar(@matches == 1)){
+    my $orf = GUS::Model::DoTS::NAFeature->new({ 'na_feature_id' => $matches[0]->[0] });
+    $orf->retrieveFromDB();
+    warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
+    return $orf;
+  }
+}
+
+sub getAllOrfs {
+  my($self) = @_;
+  if(!$self->{allOrfs}){
+    warn "Retrieving all ORFS\n";
+    my $orfStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
+      select f.na_feature_id,aas.sequence
+      from dots.nafeature f, sres.SEQUENCEONTOLOGY o, dots.translatedaafeature aaf, 
+        dots.translatedaasequence aas,dots.nasequence s
+      where s.external_database_release_id = $self->{geneExtDbRlsId} 
+      and s.na_sequence_id = f.na_sequence_id
+      and f.sequence_ontology_id = o.sequence_ontology_id
+      and o.term_name = 'ORF'
+      and aaf.na_feature_id = f.na_feature_id
+      and aas.aa_sequence_id = aaf.aa_sequence_id
+      and aas.length >= 100
+EOSQL
+    $orfStmt->execute();
+    my $ct = 0;
+    while(my $row = $orfStmt->fetchrow_arrayref()){
+      warn "Processing $ct ORFS\n" if $ct++ % 20000 == 0;
+      push(@{$self->{allOrfs}},[$row->[0],$row->[1]]);
+    }
+    warn "Cached ".scalar(@{$self->{allOrfs}})." Orfs from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
+  }
+  return @{$self->{allOrfs}};
+}
+
 sub getAllProteins {
   my($self) = @_;
   if(!$self->{allProteins}){
+    warn "Retrieving all Proteins\n";
     my $protStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
       select gf.na_feature_id,aas.sequence
       from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taaf, dots.translatedaasequence aas
@@ -296,18 +342,19 @@ EOSQL
 
 sub getAASequenceForGene {
   my($self,$gf) = @_;
-  return $gf->getChild('DoTS::Transcript',1)->
-    getChild('DoTS::TranslatedAAFeature',1)->
-      getParent('DoTS::TranslatedAASequence',1)->
-        getSequence();
+  my $taaf = $self->isOrf($gf) ? $gf->getChild('DoTS::TranslatedAAFeature',1) :
+    $gf->getChild('DoTS::Transcript',1)->getChild('DoTS::TranslatedAAFeature',1);
+
+  return $taaf->getParent('DoTS::TranslatedAASequence',1)->getSequence();
 }
 
 sub getRecordIdentifiers {
   my($self,$gf) = @_;
-  my $transcript = $gf->getChild('DoTS::Transcript',1);
-  my $transAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature',1);
+  my $transAAFeat = $self->isOrf($gf) ? $gf->getChild('DoTS::TranslatedAAFeature',1) :
+    $gf->getChild('DoTS::Transcript',1)->getChild('DoTS::TranslatedAAFeature',1);
   return($gf->getSourceId(),$gf->getNaFeatureId(),$gf->getNaSequenceId(),$transAAFeat->getAaSequenceId(),$transAAFeat->getAaFeatureId());
 }
+
 sub prepareSQLStatements {
   my($self) = @_;
   $mapStmt = $self->getQueryHandle()->prepare(<<"EOSQL");
@@ -367,16 +414,17 @@ sub checkThatAllPeptidesMatch {
 }
 
 sub isOrf {
-  my ($naFeatureId) = @_;
-    
-  my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
-  $naFeature->retrieveFromDB() || die "Failed to retrieve na_feature_id '$naFeatureId'";;
+  my ($self,$naFeature) = @_;
 
-  my $so = GUS::Model::SRes::SequenceOntology->new({'term_name' => 'ORF'});
-  $so->retrieveFromDB() || die "Failed to retrieve SO Id for ORF";
-    
-  return ($naFeature->getSequenceOntologyId == $so->getId());
-
+#  my $naFeature;
+#  if(ref($naFeatureId) !~ /hash/i){
+#    $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
+#    $naFeature->retrieveFromDB() || die "Failed to retrieve na_feature_id '$naFeatureId'";;
+#  }else{
+#    $naFeature = $naFeatureId;
+#  }
+  my $ont = $naFeature->getParent("SRes::SequenceOntology",1);
+  return ($ont && $ont->getTermName() =~ /orf/i);
 }
 
 sub addMassSpecFeatureToRecord {
@@ -649,7 +697,7 @@ sub getExons {
     @exons = $gf->getChildren("DoTS::ExonFeature", 1);
   } else {
     # should be an orf
-    $exonParent = GUS::Model::DoTS::NaFeature->new({ na_feature_id => $id });
+    $exonParent = GUS::Model::DoTS::NAFeature->new({ na_feature_id => $id });
     unless ($exonParent->retrieveFromDB()) {
       $self->logVerbose(
                         "No Transcript or Miscellaneous row was fetched with na_feature_id = $id\n");
