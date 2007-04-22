@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15960 $',
+                     cvsRevision       => '$Revision: 15961 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -478,7 +478,10 @@ sub setPepStartEnd {
 
 sub insertRecordsIntoDb {
   my ($self, $recordSet) = @_;
+  warn "Inserting records into the db for ".scalar(@{$recordSet})." records\n";
+  my $ct = 0;
   for my $record (@{$recordSet}) {
+    warn "processing record $ct\n" if $ct++ % 50 == 0;
     if (!defined $record || $record->{failed}) {
       $self->{summariesSkipped}++;
       next;
