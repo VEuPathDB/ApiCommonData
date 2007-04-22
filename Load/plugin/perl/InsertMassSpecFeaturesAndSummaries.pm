@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15961 $',
+                     cvsRevision       => '$Revision: 15962 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -527,8 +527,10 @@ sub insertMassSpecSummary {
 sub insertMassSpecFeatures {
   my ($self, $record, $mss) = @_;
     
+  my $ct;
   for my $pep (@{$record->{peptides}}) {
     next if $pep->{failed};
+    $ct++;
         
     my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
                                                             'aa_sequence_id'          => $record->{aaSequenceId},
@@ -549,7 +551,7 @@ sub insertMassSpecFeatures {
                                                   });
     
     my $naLoc = $self->addNALocation(
-                                     $record->{sourceId}, 
+                                     $record->{sourceId}."-ms.$ct", 
                                      $record->{naFeatureId},
                                      $record->{naSequenceId},
                                      $pep
