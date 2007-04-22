@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15962 $',
+                     cvsRevision       => '$Revision: 15963 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -260,7 +260,8 @@ sub addRecordsToGenes {
       }
       $self->setPepDescription($pep,$record);
     }
-  }
+    $self->undefPointerCache();
+  } 
 }
 
 ##return genefeature if only one protein contains all peptides ...
