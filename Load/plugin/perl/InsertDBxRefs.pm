@@ -8,7 +8,7 @@
 ## $Id$
 ##
 #######################################################################
- 
+
 package ApiCommonData::Load::Plugin::InsertDBxRefs;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
@@ -25,24 +25,25 @@ use GUS::Model::DoTS::DbRefAAFeature;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature or DoTS.DbRefAAFeature to represent new DBxRef associations with NAFeature or AAFeature.
+Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature, DoTS.DbRefAAFeature, DoTS.DbRefNASequence, or DoTS.AASequenceDbRef to represent new DBxRef associations with NAFeature, AAFeature, NASequence, or AASequence.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature or DoTS.DbRefAAFeature to represent new DbRef/NAFeature/AAFeature class associations.
+Takes in a tab delimited file and creates new entries in tables SRes.DbRef, DoTS.DbRefNAFeature, DoTS.DbRefAAFeature, DoTS.DbRefNASequence, or DoTs.AASequenceDbRef to represent new DbRef/NAFeature/AAFeature/NASequence/AASequence class associations.
 PLUGIN_PURPOSE
 
 my $tablesAffected =
-	[['SRes.DbRef', 'The entries representing the new links to the external datasets will go here.'],['DoTS.DbRefNAFeature', 'The entries representing the new DbRef/NAFeature class mappings are created here.'],['DoTS.DbRefAAFeature','The entries representing the new DbRef/AAFeature class mappings are created here.']];
+	[['SRes.DbRef', 'The entries representing the new links to the external datasets will go here.'],['DoTS.DbRefNAFeature', 'The entries representing the new DbRef/NAFeature class mappings are created here.'],['DoTS.DbRefAAFeature','The entries representing the new DbRef/AAFeature class mappings are created here.'],['DoTS.DbRefNASequence','The entries representing the new DbRef/NASequence class mappings are created here.'],['DoTS.AASequenceDbRef','The entries representing the new DbRef/AASequence class mappings are created here.']];
 
-my $tablesDependedOn = [['DoTS.NAFeature', 'The genes to be linked to external datasets are found here.'],['DoTS.NAGene','If the gene id is not found in DoTS.NAFeature, this table will be checked in case the gene id is an alias.'],['DoTS.AAFeature','The aa features to be linked to external databasets are found here.']];
+my $tablesDependedOn = [['DoTS.NAFeature', 'The genes to be linked to external datasets are found here.'],['DoTS.NAGene','If the gene id is not found in DoTS.NAFeature, this table will be checked in case the gene id is an alias.'],['DoTS.AAFeature','The aa features to be linked to external databasets are found here.'],['DoTS.AASequence','The aa sequences to be linked to external database will be found here.'],['Dots.ExternalNASequence','The NA sequence to be linked to externaldatabases may be found here'],['DoTS.VirtualSequence','This table is checked if the NA sequence is not found in DoTS.ExternalNASequence.']];
 
 my $howToRestart = <<PLUGIN_RESTART;
 There is currently no restart method.
 PLUGIN_RESTART
 
 my $failureCases = <<PLUGIN_FAILURE_CASES;
-There are no known failure cases.
+1. If the AA feature you are trying to map to is not in the TranslatedAAFeature table, this plugin will fail to find the feature id and will not load the DBxRef.
+2. If the NA sequence you are trying to map to is not in the ExternalNASequence table or the VirtualSequence table, this plugin will fail to find the sequence id and will not load the DBxRef.
 PLUGIN_FAILURE_CASES
 
 my $notes = <<PLUGIN_NOTES;
@@ -87,13 +88,13 @@ my $argsDeclaration =
                constraintFunc => undef,
                isList=> 1
               }),
-   enumArg({name => 'SequenceType',
-	    descr => 'The type of sequence we are loading DBxRefs for.  Default is NA. Note: if AA, then the provided source_ids must be AA source_ids not gene source_ids',
+   enumArg({name => 'tableName',
+	    descr => 'The name of the mapping table for the sequences we are loading DBxRefs for. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
 	    reqd  => 0,
 	    isList => 0,
-	    enum => "AA,NA",
-	    default => "NA",
+	    enum => "DbRefNAFeature,DbRefNASequence,DbRefAAFeature,AASequenceDbRef",
+	    default => "DbRefNAFeature",
 	   }),
 
   ];
@@ -120,14 +121,16 @@ sub run {
 
   my $mappingFile = $self->getArg('DbRefMappingFile');
 
-  my $msg = $self->getMapping($mappingFile);
+  my $tables = getTableParams();
+
+  my $msg = $self->getMapping($mappingFile, $tables);
 
   return $msg;
 
 }
 
 sub getMapping {
-  my ($self, $mappingFile) = @_;
+  my ($self, $mappingFile, $tables) = @_;
 
   my $lineCt = 0;
 
@@ -144,7 +147,7 @@ sub getMapping {
 
   while (<XREFMAP>) {
     $self->undefPointerCache(); #if at bottom, not always hit
-    
+
     next if /^(\s)*$/;
     chomp;
 
@@ -167,28 +170,21 @@ sub getMapping {
       $self->log("Processed $lineCt entries.\n");
     }
 
-    my $featId;
-    my $type = $self->getArg('SequenceType');
+    my $tableName = $self->getArg('tableName');
+    my $getter = $$tables{$tableName}->{getId};
+    my $type = $$tables{$tableName}->{type};
 
-    if($type eq "NA"){
+print "GETTER: $getter\n";
 
-      $featId = ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
+#    my $featId = $getter($self, $sourceId);
 
-    }elsif($type eq "AA"){
-
-      $featId = ApiCommonData::Load::Util::getTranslatedAAFeatureIdFromGeneSourceId($self, $sourceId);
-
-    }else{
-      die "$type is not a valid sequence type.  Please use one of AA or NA.";
-    }
-
-    unless($featId){
-      $self->log("Skipping: source_id '$sourceId' not found in database.");
-      next;
-    }
+#    unless($featId){
+#      $self->log("Skipping: source_id '$sourceId' not found in database.");
+#      next;
+#    }
 
 
-    $self->makeDbXRef($featId, \%dbRef, $type);
+#    $self->makeDbXRef($featId, \%dbRef, $type, $tableName);
 
     $lineCt++;
   }
@@ -201,7 +197,7 @@ sub getMapping {
 }
 
 sub makeDbXRef {
-  my ($self, $featId, $dbRef, $type) = @_;
+  my ($self, $featId, $dbRef, $type, $tableName) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
@@ -209,7 +205,7 @@ sub makeDbXRef {
 
   my $dbRefId = $newDbRef->getId();
 
-  my $tableName = "GUS::Model::DoTS::DbRef${type}Feature";
+  my $tableName = "GUS::Model::DoTS::${tableName}";
 
   my $column = lc($type);
   $column = "${type}_feature_id";
@@ -232,6 +228,23 @@ sub undoTables {
 	 );
 }
 
+sub getTableParams{
+  my ($self) = @_;
+  my %tables;
 
+  $tables{'DbRefNAFeature'} = ({getId => "ApiCommonData::Load::Util::getGeneFeatureId",
+			      type => "NA"});
+
+  $tables{'DbRefAAFeature'} = ({getId => "ApiCommonData::Load::Util::getTranslatedAAFeatureIdFromGeneSourceId",
+				type => "AA"});
+
+  $tables{'DbRefNASequence'} = ({getId => "ApiCommonData::Load::Util::getNASequenceId",
+				 type => "NA"});
+
+  $tables{'DbRefAASequence'} = ({getId => "ApiCommonData::Load::Util::getAASequenceId",
+				 type => "AA"});
+
+  return \%tables;
+}
 
 1;
