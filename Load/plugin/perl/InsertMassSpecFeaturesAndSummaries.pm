@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15964 $',
+                     cvsRevision       => '$Revision: 15975 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -208,7 +208,7 @@ sub addRecordsToGenes {
   foreach my $record (@{$recordSet}) {
     my $official = 0;
     my @gf;
-    foreach my $id ($record->{proteinId},split("\|",$record->{description})) {
+    foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
       if ($naFeature->retrieveFromDB()) {
         if ($naFeature->getExternalDatabaseReleaseId() == $self->{geneExtDbRlsId}) {
@@ -238,7 +238,7 @@ sub addRecordsToGenes {
     if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
       $official = $self->testPeptidesAgainstAllProteins($record);
     }
-    if ($self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
+    if (!$self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
       $official = $self->testPeptidesAgainstAllOrfs($record);
     }
     
@@ -802,7 +802,6 @@ sub declareArgs {
    booleanArg({
                name            =>  'doNotTestOrfs', 
                descr           =>  'if true then do not retrieve all orfs and test peptides against them.',
-               constraintFunc  =>  undef,
                reqd            =>  0,
                isList          =>  0
               }),
