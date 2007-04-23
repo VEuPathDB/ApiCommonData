@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15963 $',
+                     cvsRevision       => '$Revision: 15964 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -214,6 +214,7 @@ sub addRecordsToGenes {
         if ($naFeature->getExternalDatabaseReleaseId() == $self->{geneExtDbRlsId}) {
           ##this one is the official one ...
           $official = $naFeature;
+          warn "Found GeneFeature for $id\n";
           last;
         }
         push(@gf,$naFeature);
@@ -237,7 +238,7 @@ sub addRecordsToGenes {
     if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
       $official = $self->testPeptidesAgainstAllProteins($record);
     }
-    if (!$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
+    if ($self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
       $official = $self->testPeptidesAgainstAllOrfs($record);
     }
     
@@ -795,6 +796,14 @@ sub declareArgs {
                descr           =>  'External Databzse release `name|version` for the gene models to which will be attaching these peptides',
                constraintFunc  =>  undef,
                reqd            =>  1,
+               isList          =>  0
+              }),
+
+   booleanArg({
+               name            =>  'doNotTestOrfs', 
+               descr           =>  'if true then do not retrieve all orfs and test peptides against them.',
+               constraintFunc  =>  undef,
+               reqd            =>  0,
                isList          =>  0
               }),
 
