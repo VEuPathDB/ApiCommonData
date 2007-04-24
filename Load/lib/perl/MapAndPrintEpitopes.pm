@@ -66,9 +66,6 @@ return ($start,$end);
 sub _printResultsToFile{
   my ($seqId, $subId, $epitopes, $outFile, $foundAll) = @_;
 
-  my $dbRefOutFile = $outFile;
-  $dbRefOutFile =~ s/\.out/Refs.txt/;
-
   foreach my $iedbId (keys %{$$epitopes{$seqId}}){
 
       my $name = $epitopes->{$seqId}->{$iedbId}->{name};
@@ -91,11 +88,6 @@ sub _printResultsToFile{
 
 	close(OUT);
 
-	open (REFOUT, ">>$dbRefOutFile") || die "Could not open '$dbRefOutFile' for appending: $!\n";
-
-	print REFOUT "$iedbId\t$iedbId\t$strain\n";
-
-	close(REFOUT);
       }
     }
 }
