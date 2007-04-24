@@ -47,7 +47,8 @@ my $sql;
 # comments
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-       gf.source_id, regexp_replace(c.content, '[[:space:]]', ' ')
+       gf.source_id,
+       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ')', '[[:space:]]', ' ')
 FROM logins.users${commentDblink} u,
      ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
      dots.NaSequence ns, sres.TaxonName tn
@@ -58,8 +59,9 @@ WHERE u.email = c.email
   AND gf.na_sequence_id = ns.na_sequence_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
-ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id,
-         regexp_replace(c.content, '[[:space:]]', ' ')
+ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id,
+       regexp_replace(c.content || ' (' || u.first_name || ' ' || u.last_name || ')', '[[:space:]]', ' ')
 SQL
 
 &extractFile($dbh, $outDir, "comments.txt", $sql);
@@ -69,15 +71,19 @@ exit if $justComments;
 # InterPro domains
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-                tas.source_id,
+                gf.source_id,
                 dr.primary_identifier || ' '
                 || dr.secondary_identifier
-FROM dots.TranslatedAaSequence tas, dots.DomainFeature df,
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, dots.DomainFeature df,
      dots.DbRefAaFeature draf, sres.DbRef dr,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
      sres.TaxonName tn, core.AlgorithmInvocation ainv,
      core.AlgorithmImplementation aimp
-WHERE tas.aa_sequence_id = df.aa_sequence_id
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas.aa_sequence_id = df.aa_sequence_id
   AND df.aa_feature_id = draf.aa_feature_id
   AND draf.db_ref_id = dr.db_ref_id
   AND dr.external_database_release_id = edr.external_database_release_id
@@ -88,7 +94,7 @@ WHERE tas.aa_sequence_id = df.aa_sequence_id
       = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
   AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
-ORDER BY tas.source_id,
+ORDER BY gf.source_id,
          dr.primary_identifier || ' ' || dr.secondary_identifier
 SQL
 
@@ -115,6 +121,7 @@ SQL
 
 # metabolic pathways
 $sql = <<SQL;
+-- plasmo uses NaFeatures. . .
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
                 gf.source_id,
                 nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
@@ -130,9 +137,27 @@ WHERE gf.na_feature_id = drnf.na_feature_id
   AND gf.na_sequence_id = ns.na_sequence_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
-ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-         gf.source_id,
-         nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+UNION
+-- . . . and toxo uses AaFeatures
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+                AS pathway_name
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.DbRefAaFeature draf, sres.DbRef dr,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NaSequence ns, sres.TaxonName tn     
+WHERE gf.na_feature_id = t.parent_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_feature_id = draf.aa_feature_id
+  AND draf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'Links to Pathway Maps'
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+ORDER BY 2, 3, 4  -- union-style order-by
 SQL
 
 &extractFile($dbh, $outDir, "metpaths.txt", $sql);
@@ -158,14 +183,18 @@ SQL
 
 # EC description
 $sql = <<SQL;
-SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), aas.source_id, ec.description
-FROM dots.aaSequence aas, dots.aaSequenceEnzymeClass asec,
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id, ec.description
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, dots.aaSequenceEnzymeClass asec,
      sres.enzymeClass ec, sres.TaxonName tn
-WHERE aas.aa_sequence_id = asec.aa_sequence_id
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas.aa_sequence_id = asec.aa_sequence_id
   AND asec.enzyme_class_id = ec.enzyme_class_id
-  AND aas.taxon_id = tn.taxon_id(+)
+  AND tas.taxon_id = tn.taxon_id(+)
   AND tn.name_class(+) = 'scientific name'
-ORDER BY tn.name, aas.source_id, ec.description
+ORDER BY tn.name, gf.source_id, ec.description
 SQL
 
 &extractFile($dbh, $outDir, "ec.txt", $sql);
@@ -189,13 +218,16 @@ SQL
 
 # BLAST files
 $sql = <<SQL;
-
 SELECT s.pvalue_exp, substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
-       tas.source_id, regexp_replace(eas.description, '[[:space:]]', ' ')
-FROM core.tableInfo subject, dots.similarity s, core.tableInfo query,
+       gf.source_id, regexp_replace(eas.description, '[[:space:]]', ' ')
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     core.tableInfo subject, dots.similarity s, core.tableInfo query,
      dots.ExternalAaSequence eas, dots.TranslatedAaSequence tas,
      sres.TaxonName tn
-WHERE s.query_table_id = query.table_id
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND s.query_table_id = query.table_id
   AND s.subject_table_id = subject.table_id
   AND subject.name = 'ExternalAASequence'
   AND s.subject_id = eas.aa_sequence_id
@@ -204,7 +236,7 @@ WHERE s.query_table_id = query.table_id
   AND s.query_id = tas.aa_sequence_id
   AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
-ORDER BY pvalue_exp, tn.name, tas.source_id, eas.description
+ORDER BY pvalue_exp, tn.name, gf.source_id, eas.description
 SQL
 
 &extractFile($dbh, $outDir, "blast.txt", $sql);
