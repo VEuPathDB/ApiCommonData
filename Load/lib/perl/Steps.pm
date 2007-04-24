@@ -784,6 +784,26 @@ sub copy {
   $mgr->endStep($signal);
 }
 
+sub copyDirectory {
+  my ($mgr, $from, $to, $dir) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  $to =~ s/\/$//;
+  $to =~ /([\w|\.]+)$/;
+
+  my $signal = $1;
+  $signal = "copy_${from}_To_$signal";
+  $signal =~ s/\//:/g; 
+
+  return if $mgr->startStep("Copying $from to $to", $signal);
+
+  $mgr->runCmd("mkdir -p $dir") if $dir;
+  unless (-e $from) { die "$from doesn't exist\n";};
+
+  $mgr->runCmd("cp -ar  $from $to");
+  $mgr->endStep($signal);
+}
+
 sub shortenDefLine{
   my ($mgr, $inputFile, $dir) = @_;
 
@@ -868,52 +888,6 @@ sub loadDbXRefs {
   $mgr->endStep($signal);
 }
 
-#sub loadEpitopeDbXRefs{
-#  my ($mgr, $inputDir, $columnSpec, $extDbName, $extDbVer, $fileExtension, $seqType) = @_;
-#  my @dirs;
-
-#  my $signal = "load${inputDir}DbRefs";
-
-#  return if $mgr->startStep("Loading $inputDir", $signal);
-
-#  &createExtDbAndDbRls($mgr,$extDbName,$extDbVer);
-
-#  if(-d $inputDir){
-#    opendir(DIR, $inputDir) || die "Can't open directory '$inputDir'";
-
-#    while (defined($dir = readdir(DIR))) {
-#      if($dir =~ /\w+BLAST/){
-#	push (@dirs, $dir);
-#      }
-#    }
-#  }
-
-#  my @inputFiles;
-#  foreach my $dir (@dirs){
-
-#    @inputFiles = &_getInputFiles($dir, $fileExtension);
-
-#    foreach my $file (@inputFiles){
-
-#      my $args = "--extDbName $extDbName --extDbReleaseNumber $extDbVer --DbRefMappingFile '$mgr->{dataDir}/misc/${outputFile}_$db' --columnSpec \"$columnSpec\"";
-
-#      if ($seqType){
-#	$args .= " --SequenceType $seqType";
-#      }
-
-#      my $subSignal = "load${file}DbRefs";
-
-#      $mgr->runPlugin ($subSignal,
-#		       "ApiCommonData::Load::Plugin::InsertDBxRefs", "$args",
-#		       "Loading dbXRefs from $file");
-
-#    }
-#  }
-
-#  $mgr->endStep($signal);
-
-#}
-
 sub _getInputFiles{
   my ($fileOrDir, $seqFileExtension) = @_;
   my @inputFiles;
@@ -929,55 +903,48 @@ sub _getInputFiles{
   return @inputFiles;
 }
 
-#sub loadEpitopes{
-#  my ($mgr, $inputDir, $extDbName, $extDbVer, $fileExtension) = @_;
-#  my @dirs;
+sub loadEpitopes{
+  my ($mgr, $inputDir, $species, $epiExtDbSpecs, $seqExtDbSpecs, $fileExtension) = @_;
 
-#  my $signal = "loadEpitopes${inputDir}";
+  my $signal = "loadEpitopes${species}";
 
-#  return if $mgr->startStep("Loading $inputDir", $signal);
+  return if $mgr->startStep("Loading $inputDir", $signal);
 
-#  &createExtDbAndDbRls($mgr,$extDbName,$extDbVer);
+  my @inputFiles;
+  @inputFiles = &_getInputFiles($inputDir, $fileExtension);
 
-#  if(-d $inputDir){
-#    opendir(DIR, $inputDir) || die "Can't open directory '$inputDir'";
+  foreach my $file (@inputFiles){
 
-#    while (defined($dir = readdir(DIR))) {
-#      if($dir =~ /\w+BLAST/){
-#	push (@dirs, $dir);
-#      }
-#    }
-#  }
+    my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
 
-#  my @inputFiles;
-#  foreach my $dir (@dirs){
+    my $baseFileName = $file;
+    $baseFileName =~ /\/(IEDBExport\S+)\./;
+    $baseFileName = $1;
+    my $subSignal = "loadEpitopes${baseFileName}";
+    $mgr->runPlugin ($subSignal,
+		     "ApiCommonData::Load::Plugin::InsertEpitopeFeature",
+		     "$args","Loading Epitopes from $file");
+  }
 
-#    @inputFiles = &_getInputFiles($dir, $fileExtension);
+  $mgr->endStep($signal);
+}
 
-#    foreach my $file (@inputFiles){
+sub createEpitopeMapFiles {
+  my ($mgr, $inputDir, $blastDir, $subjectDir) = @_;
 
-#    my $args = " --inputFile $file --extDbRelSpec $extDbRlsSpec --seqExtDbRelSpec $seqExtDbRlsSpec";
-
-#    my $subSignal = "load${file}DbRefs";
-
-#    $mgr->runPlugin ($subSignal,
-#		     "ApiCommonData::Load::Plugin::InsertEpitopeFeature",
-#		     "$args","Loading Epitopes from $file");
-#    }
-#  }
-
-#  $mgr->endStep($signal);
-
-#}
-
-sub createEpitopeFiles {
-  my ($mgr, $inputDir, $excelDir, $queryDir, $blastDir, $databasePath) = @_;
-
-  my $signal = "createEpitopeFiles$inputDir";
+  my $signal = "createEpitopeMapFiles$inputDir";
 
   return if $mgr->startStep("Creating Epitope files from $inputDir", $signal);
 
-    my $cmd = "createEpitopeMappingFile --excelDir $inputDir --excelOutDir $excelDir --queryDir $queryDir --blastOutDir $blastDir --blastDatabase $databasePath";
+  $inputDir = "$mgr->{dataDir}/iedb/$inputDir";
+
+  my $queryDir = "$mgr->{dataDir}/iedb/fsa";
+
+  my $outputDir = "$mgr->{dataDir}/iedb/results";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+    my $cmd = "createEpitopeMappingFile --inputDir $inputDir --queryDir $queryDir --outputDir $outputDir --blastDatabase $blastDir --subjectPath $subjectDir 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
