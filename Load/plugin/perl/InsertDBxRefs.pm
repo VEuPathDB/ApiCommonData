@@ -20,8 +20,6 @@ use FileHandle;
 use Carp;
 use ApiCommonData::Load::Util;
 use GUS::Model::SRes::DbRef;
-use GUS::Model::DoTS::DbRefNAFeature;
-use GUS::Model::DoTS::DbRefAAFeature;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -171,20 +169,20 @@ sub getMapping {
     }
 
     my $tableName = $self->getArg('tableName');
-    my $getter = $$tables{$tableName}->{getId};
-    my $type = $$tables{$tableName}->{type};
+    my $idColumn = $$tables{$tableName}->{idColumn};
 
-print "GETTER: $getter\n";
+    my $methodName = $$tables{$tableName}->{getId};
+    my $method = "ApiCommonData::Load::Util::$methodName";
 
-#    my $featId = $getter($self, $sourceId);
+    my $featId = &$method($self, $sourceId);
 
-#    unless($featId){
-#      $self->log("Skipping: source_id '$sourceId' not found in database.");
-#      next;
-#    }
+    unless($featId){
+      $self->log("Skipping: source_id '$sourceId' not found in database.");
+      next;
+    }
 
 
-#    $self->makeDbXRef($featId, \%dbRef, $type, $tableName);
+    $self->makeDbXRef($featId, \%dbRef, $idColumn, $tableName);
 
     $lineCt++;
   }
@@ -197,7 +195,7 @@ print "GETTER: $getter\n";
 }
 
 sub makeDbXRef {
-  my ($self, $featId, $dbRef, $type, $tableName) = @_;
+  my ($self, $featId, $dbRef, $column, $tableName) = @_;
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
@@ -206,9 +204,7 @@ sub makeDbXRef {
   my $dbRefId = $newDbRef->getId();
 
   my $tableName = "GUS::Model::DoTS::${tableName}";
-
-  my $column = lc($type);
-  $column = "${type}_feature_id";
+  eval "require $tableName";
 
   my $dbXref = $tableName->new({
 				$column => $featId,
@@ -219,32 +215,35 @@ sub makeDbXRef {
 
 }
 
+sub getTableParams{
+  my ($self) = @_;
+  my %tables;
+
+  $tables{'DbRefNAFeature'} = ({getId => "getGeneFeatureId",
+			      idColumn => "na_feature_id"});
+
+  $tables{'DbRefAAFeature'} = ({getId => "getTranslatedAAFeatureIdFromGeneSourceId",
+				idColumn => "aa_feature_id"});
+
+  $tables{'DbRefNASequence'} = ({getId => "getNASequenceId",
+				 idColumn => "na_sequence_id"});
+
+  $tables{'AASequenceDbRef'} = ({getId => "getAASequenceId",
+				 idColumn => "aa_sequence_id"});
+
+  return \%tables;
+}
+
+
 sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.DbRefNAFeature',
 	  'DoTS.DbRefAAFeature',
+	  'DoTS.DbRefNASequence',
+	  'DoTS.AASequenceDbRef',
           'SRes.DbRef',
 	 );
-}
-
-sub getTableParams{
-  my ($self) = @_;
-  my %tables;
-
-  $tables{'DbRefNAFeature'} = ({getId => "ApiCommonData::Load::Util::getGeneFeatureId",
-			      type => "NA"});
-
-  $tables{'DbRefAAFeature'} = ({getId => "ApiCommonData::Load::Util::getTranslatedAAFeatureIdFromGeneSourceId",
-				type => "AA"});
-
-  $tables{'DbRefNASequence'} = ({getId => "ApiCommonData::Load::Util::getNASequenceId",
-				 type => "NA"});
-
-  $tables{'DbRefAASequence'} = ({getId => "ApiCommonData::Load::Util::getAASequenceId",
-				 type => "AA"});
-
-  return \%tables;
 }
 
 1;
