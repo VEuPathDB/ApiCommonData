@@ -17,8 +17,8 @@ SELECT source_id, na_sequence_id
 FROM Dots.SplicedNASequence
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
-    while ( my($sourceId, $na_sequence_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_sequence_id;
+    while ( my($source_id, $na_sequence_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_sequence_id;
     }
   }
   return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
@@ -44,8 +44,8 @@ WHERE nfng.na_feature_id = gf.na_feature_id
 AND nfng.na_gene_id = g.na_gene_id
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
-    while ( my($sourceId, $na_feature_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$sourceId} = $na_feature_id;
+    while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_feature_id;
     }
   }
 
@@ -69,6 +69,52 @@ FROM Dots.AAFeature
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
       $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_feature_id;
+    }
+  }
+
+  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+}
+
+# return null if not found:  be sure to check handle that condition!!
+# This will only return NASequences from the ExternalNASequence and
+# VirtualSequence subclasses.
+sub getNASequenceId {
+  my ($plugin, $sourceId) = @_;
+
+  if (!$plugin->{sourceIdFeatureIdMap}) {
+
+    $plugin->{sourceIdFeatureIdMap} = {};
+
+    my $sql = "
+SELECT source_id, na_sequence_id
+FROM Dots.ExternalNASequence
+UNION
+SELECT source_id, na_sequence_id
+FROM Dots.VirtualSequence";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($source_id, $na_sequence_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_sequence_id;
+    }
+  }
+
+  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+}
+
+# return null if not found:  be sure to check handle that condition!!
+sub getAASequenceId {
+  my ($plugin, $sourceId) = @_;
+
+  if (!$plugin->{sourceIdFeatureIdMap}) {
+
+    $plugin->{sourceIdFeatureIdMap} = {};
+
+    my $sql = "
+SELECT source_id, aa_sequence_id
+FROM Dots.AASequence
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($source_id, $aa_sequence_id) = $stmt->fetchrow_array()) {
+      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $aa_sequence_id;
     }
   }
 
