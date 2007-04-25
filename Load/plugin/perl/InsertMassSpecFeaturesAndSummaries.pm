@@ -61,6 +61,8 @@ sub run {
     
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
   $self->{geneExtDbRlsId} = $self->getExtDbRlsId($self->getArg('geneExternalDatabaseSpec'));
+  my $minPMatch = $self->getArg('minPercentPeptidesToMap');
+  $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
 
   ##prepare the query statements
   ($mapStmt) = $self->prepareSQLStatements();
@@ -73,15 +75,6 @@ sub run {
       chomp(my $ln = <F>);
       undef $record;
       $record = $self->initRecord($ln);
-      #            if ( ! $record->{naFeatureId}) {
-      #                warn "'$record->{proteinId}' ",
-      #                     &{sub{"or '$record->{description}' " if ($record->{description})}},
-      #                     &{sub{"from '$record->{sourcefile}' " if ($record->{sourcefile})}},
-      #                     "not found, skipping\n" if  $self->getArg('veryVerbose');
-      #                $self->{summariesSkipped}++;
-      #                $self->nextRecord(*F);
-      #                next;
-      #            }
       push @{$recordSet}, $record;
     } else {
       m/^## / and next;
@@ -93,9 +86,11 @@ sub run {
   ##now need to loop through records and assign to genes ..
   $self->addRecordsToGenes($recordSet);
     
-  $self->pruneDuplicateAndEmptyRecords($recordSet);
+  $self->pruneDuplicateAndEmptyRecords($recordSet});
+  $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords});
     
-  $self->insertRecordsIntoDb($recordSet);    
+  $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
+  $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly');    
 
   $self->setResultDescr(<<"EOF");
     
@@ -222,23 +217,49 @@ sub addRecordsToGenes {
     }
     if (!$official) { ##need to map using nalocations
       foreach my $naf (@gf) {
-        $official = $self->getGeneFromNaFeatureId($record, $naf->getNaFeatureId());
-        last if $official;
+        my($gene_id,$perc) = $self->getGeneFromNaFeatureId($record, $naf->getNaFeatureId());
+        if($perc == 100){  ##perfect match ..
+          $official = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $gene_id });
+          $official->retrieveFromDB();
+          warn "Able to map $record->{proteinId} to ".$official->getSourceId()."\n";
+        }
       }
     }
+   
+    if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
+      $official = $self->testPeptidesAgainstAllProteins($record);
+    }
+    ##here want to map to the overlapping official annotation that has the most peptides mapping to it
+    ##must have at least 50% by default
+    if (!$official) { 
+      my @m;
+      foreach my $naf (@gf){
+         my($gene_id,$perc) = $self->getGeneFromNaFeatureId($record, $naf->getNaFeatureId());
+         push(@m,[$gene_id,$perc,$naf]);
+      }
+      my @sortm = sort { $b->[1] <=> $a->[1] } @m;
+      if($sortm[0]->[1] >= $self->{minPepToMatch}){ ##have matched to this gene ... make it  official
+        ## need to copy the record so that can also make a record for this feature
+        $official = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $sortm[0]->[0]});
+        $official->retrieveFromDB();
+        warn "Able to map $record->{proteinId} to ".$official->getSourceId()." at $sortm[0]->[1]\% peptides matching\n";
+        warn "Copying record for $record->{proteinId} so can insert peptides for ".$sortm[0]->[2]->getSourceId()."\n";
+        my $recordCopy = $self->copyRecord($record);
+        $self->mapPeptidesAndSetIdentifiers($recordCopy,$sortm[0]->[2]);
+        push(@{$self->{copiedRecords}},$recordCopy);
+      }
+    }
+    
     if (!$official) { ##failed finding an official gene model to map these to ...
       ##NOTE: should check to see if one of the @gf is an orf and if so then go ahead and use it
       foreach my $feat (@gf) {
         if ($self->isOrf($feat)) {
-          $official = $feat;
+          $official = $feat if $self->checkThatAllPeptidesMatch($record,$self->getAASequenceForGene($feat)) == 100;
           last;
         }
       }
     }
-    if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
-      $official = $self->testPeptidesAgainstAllProteins($record);
-    }
-    if (!$self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa 
+    if (!$self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa then 50 - 100 aa
       $official = $self->testPeptidesAgainstAllOrfs($record);
     }
     
@@ -248,21 +269,37 @@ sub addRecordsToGenes {
       next;
     }
     ##need to map the peptides and set the identifiers ....
-    ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}, 
-     $record->{aaSequenceId}, $record->{aaFeatParentId}) =
-       $self->getRecordIdentifiers($official);
-    my $pSeq = $self->getAASequenceForGene($official);
-    foreach my $pep (@{$record->{peptides}}) {
-      if ($self->setPepStartEnd($pep,$pSeq) == 0) {
-        warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
-        $pep->{failed} = 1;
-        $record->{sequenceCount}--;
-        $record->{spectrumCount}--;  ## this crude as multiple spectra could have gone into this peptide
-      }
-      $self->setPepDescription($pep,$record);
-    }
+    $self->mapPeptidesAndSetIdentifiers($record,$official);
     $self->undefPointerCache();
   } 
+}
+
+sub mapPeptidesAndSetIdentifiers {
+  my($self,$record,$gf) = @_;
+  ($record->{sourceId}, $record->{naFeatureId}, $record->{naSequenceId}, 
+   $record->{aaSequenceId}, $record->{aaFeatParentId}) =
+     $self->getRecordIdentifiers($gf);
+  my $pSeq = $self->getAASequenceForGene($gf);
+  foreach my $pep (@{$record->{peptides}}) {
+    if ($self->setPepStartEnd($pep,$pSeq) == 0) {
+      warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
+      $pep->{failed} = 1;
+      $record->{sequenceCount}--;
+      $record->{spectrumCount}--;  ## this crude as multiple spectra could have gone into this peptide
+    }
+    $self->setPepDescription($pep,$record);
+  }
+}
+
+sub copyRecord {
+  my($self,$record) = @_;
+  my %copy = %$record;
+  undef $copy{peptides};
+  forach my $pep (@{$record->{peptides}}){
+    my $cp = %$pep;
+    push(@{$copy{peptides}},\%cp);
+  }
+  return \%copy;
 }
 
 ##return genefeature if only one protein contains all peptides ...
@@ -283,7 +320,7 @@ sub testPeptidesAgainstAllProteins {
 sub testPeptidesAgainstAllOrfs {
   my($self,$record) = @_;
   my @matches;
-  foreach my $prot ($self->getAllOrfs()){
+  foreach my $prot ($self->getGt100aaOrfs()){
     push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
   }
   if(scalar(@matches == 1)){
@@ -291,13 +328,28 @@ sub testPeptidesAgainstAllOrfs {
     $orf->retrieveFromDB();
     warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
     return $orf;
+  }elsif(scalar(@matches) > 1){
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." ORFs > 100 aa ...\n";
+    return;  ##don't want to do the shorter ones
+  }
+  undef @matches;
+  foreach my $prot ($self->get50to100Orfs()){
+    push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
+  }
+  if(scalar(@matches == 1)){
+    my $orf = GUS::Model::DoTS::NAFeature->new({ 'na_feature_id' => $matches[0]->[0] });
+    $orf->retrieveFromDB();
+    warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
+    return $orf;
+  }elsif(scalar(@matches) > 1){
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." 50 - 100 aa ORFs ...\n";
   }
 }
 
-sub getAllOrfs {
+sub getGt100aaOrfs {
   my($self) = @_;
-  if(!$self->{allOrfs}){
-    warn "Retrieving all ORFS\n";
+  if(!$self->{all100Orfs}){
+    warn "Retrieving all ORFS > 100 aa\n";
     my $orfStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
       select f.na_feature_id,aas.sequence
       from dots.nafeature f, sres.SEQUENCEONTOLOGY o, dots.translatedaafeature aaf, 
@@ -314,11 +366,39 @@ EOSQL
     my $ct = 0;
     while(my $row = $orfStmt->fetchrow_arrayref()){
       warn "Processing $ct ORFS\n" if $ct++ % 20000 == 0;
-      push(@{$self->{allOrfs}},[$row->[0],$row->[1]]);
+      push(@{$self->{all100Orfs}},[$row->[0],$row->[1]]);
     }
-    warn "Cached ".scalar(@{$self->{allOrfs}})." Orfs from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
+    warn "Cached ".scalar(@{$self->{all100Orfs}})." Orfs from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
   }
-  return @{$self->{allOrfs}};
+  return @{$self->{all100Orfs}};
+}
+
+sub get50to100aaOrfs {
+  my($self) = @_;
+  if(!$self->{all50to100Orfs}){
+    warn "Retrieving all ORFS 50to100 aa\n";
+    my $orfStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
+      select f.na_feature_id,aas.sequence
+      from dots.nafeature f, sres.SEQUENCEONTOLOGY o, dots.translatedaafeature aaf, 
+        dots.translatedaasequence aas,dots.nasequence s
+      where s.external_database_release_id = $self->{geneExtDbRlsId} 
+      and s.na_sequence_id = f.na_sequence_id
+      and f.sequence_ontology_id = o.sequence_ontology_id
+      and o.term_name = 'ORF'
+      and aaf.na_feature_id = f.na_feature_id
+      and aas.aa_sequence_id = aaf.aa_sequence_id
+      and aas.length < 100
+      and aas.length >= 50
+EOSQL
+    $orfStmt->execute();
+    my $ct = 0;
+    while(my $row = $orfStmt->fetchrow_arrayref()){
+      warn "Processing $ct ORFS\n" if $ct++ % 20000 == 0;
+      push(@{$self->{all50to100Orfs}},[$row->[0],$row->[1]]);
+    }
+    warn "Cached ".scalar(@{$self->{all50to100Orfs}})." Orfs from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
+  }
+  return @{$self->{all50to100Orfs}};
 }
 
 sub getAllProteins {
@@ -399,14 +479,10 @@ sub getGeneFromNaFeatureId {
   my $res = $mapStmt->fetchall_arrayref();
   return unless scalar(@$res) > 0;
   foreach my $a (@$res){
-    next unless $self->checkThatAllPeptidesMatch($record,$a->[1]);
-    ##if here then all peps match
-    my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $a->[0] });
-    $gf->retrieveFromDB();
-    $mapStmt->finish();         ##clear the stmt handle for next query
-    warn "Able to map $record->{proteinId} to ".$gf->getSourceId()."\n";
-    return $gf;
+    push(@tmp,[$a->[0],$self->checkThatPeptidesMatch($record,$a->[1])]);
   }
+  my @sort = sort { $b->[1] <=> $a->[1] } @tmp;
+  return ($sort[0]->[0],$sort[0]->[1]);
 }
 
 sub checkThatAllPeptidesMatch {
@@ -414,10 +490,19 @@ sub checkThatAllPeptidesMatch {
   foreach my $pep (@{$record->{peptides}}) {
     return 0 unless $protSeq =~ /$pep->{sequence}/i;
   }
-#  warn "all peptides from $record->{proteinId} match\n";
   return 1;
 }
 
+sub checkThatPeptidesMatch {
+  my($self,$record,$protSeq) = @_;
+  my $num = scalar(@{$record->{peptides}});
+  return 0 unless $num;  ##avoid erroneous div by 0
+  my $ct = 0;
+  foreach my $pep (@{$record->{peptides}}) {
+    $ct++ if $protSeq =~ /$pep->{sequence}/i;
+  }
+  return int(0.5 + ($ct / $num * 100));
+}
 sub isOrf {
   my ($self,$naFeature) = @_;
 
@@ -791,6 +876,15 @@ sub declareArgs {
               isList          =>  0
              }),
 
+   integerArg({
+              name            =>  'minPercentPeptidesToMap', # For proteome
+              descr           =>  'Minimum percent of peptides that must match a gene to consider a match [50]',
+              constraintFunc  =>  undef,
+              reqd            =>  0,
+              isList          =>  0
+             }),
+
+
    stringArg({
                name            =>  'geneExternalDatabaseSpec', 
                descr           =>  'External Databzse release `name|version` for the gene models to which will be attaching these peptides',
@@ -805,6 +899,12 @@ sub declareArgs {
                reqd            =>  0,
                isList          =>  0
               }),
+
+   booleanArg({
+               name            =>  'mapOnly', 
+               descr           =>  'Only map the features onto existing and print log statements ... do not insert into the db.',
+               reqd            =>  0,
+               isList          =>  0
 
    stringArg({
               name            =>  'developmentalStage',
