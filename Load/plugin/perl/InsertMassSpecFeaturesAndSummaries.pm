@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15978 $',
+                     cvsRevision       => '$Revision: 16029 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -222,6 +222,7 @@ sub addRecordsToGenes {
           $official = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $gene_id });
           $official->retrieveFromDB();
           warn "Able to map $record->{proteinId} to ".$official->getSourceId()."\n";
+          last;
         }
       }
     }
@@ -242,7 +243,7 @@ sub addRecordsToGenes {
         ## need to copy the record so that can also make a record for this feature
         $official = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $sortm[0]->[0]});
         $official->retrieveFromDB();
-        warn "Able to map $record->{proteinId} to ".$official->getSourceId()." at $sortm[0]->[1]\% peptides matching\n";
+        warn "Able to map $record->{proteinId} to ".$official->getSourceId()." at $sortm[0]->[1]\% of ".scalar(@{$record->{peptides}})." peptides matching\n";
         warn "Copying record for $record->{proteinId} so can insert peptides for ".$sortm[0]->[2]->getSourceId()."\n";
         my $recordCopy = $self->copyRecord($record);
         $self->mapPeptidesAndSetIdentifiers($recordCopy,$sortm[0]->[2]);
@@ -254,7 +255,7 @@ sub addRecordsToGenes {
       ##NOTE: should check to see if one of the @gf is an orf and if so then go ahead and use it
       foreach my $feat (@gf) {
         if ($self->isOrf($feat)) {
-          $official = $feat if $self->checkThatAllPeptidesMatch($record,$self->getAASequenceForGene($feat)) == 100;
+          $official = $feat if $self->checkThatAllPeptidesMatch($record,$self->getAASequenceForGene($feat));
           last;
         }
       }
@@ -262,9 +263,20 @@ sub addRecordsToGenes {
     if (!$self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa then 50 - 100 aa
       $official = $self->testPeptidesAgainstAllOrfs($record);
     }
+
+    ##want to assign to a genemodel even if not an official one if still haven't found an official one!!
+    if(!$official){
+      foreach my $naf (@gf){
+        if($self->checkThatAllPeptidesMatch($record,$self->getAASequenceForGene($naf))){
+          $official = $naf;
+          warn "Unable to locate official gene model for $record->{proteinId} so using ".$naf->getSourceId()."\n";
+          last;
+        }
+      }
+    }
     
     if (!$official) {
-      warn "Unable to find gene or ORF for $record->{proteinId} ... discarding\n";
+      warn "Unable to find gene or ORF for $record->{proteinId} (".scalar(@{$record->{peptides}})." peptides)... discarding\n";
       $record->{failed} = 1;
       next;
     }
@@ -319,6 +331,7 @@ sub testPeptidesAgainstAllProteins {
 
 sub testPeptidesAgainstAllOrfs {
   my($self,$record) = @_;
+  return unless scalar(@{$record->{peptides}}) > 0; ##don't test if there are no peptides
   my @matches;
   foreach my $prot ($self->getGt100aaOrfs()){
     push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
@@ -333,7 +346,7 @@ sub testPeptidesAgainstAllOrfs {
     return;  ##don't want to do the shorter ones
   }
   undef @matches;
-  foreach my $prot ($self->get50to100Orfs()){
+  foreach my $prot ($self->get50to100aaOrfs()){
     push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
   }
   if(scalar(@matches == 1)){
@@ -426,8 +439,9 @@ sub getAASequenceForGene {
   my($self,$gf) = @_;
   my $taaf = $self->isOrf($gf) ? $gf->getChild('DoTS::TranslatedAAFeature',1) :
     $gf->getChild('DoTS::Transcript',1)->getChild('DoTS::TranslatedAAFeature',1);
-
-  return $taaf->getParent('DoTS::TranslatedAASequence',1)->getSequence();
+  return unless $taaf;
+  my $seq = $taaf->getParent('DoTS::TranslatedAASequence',1);
+  return $seq->get('sequence'); ##so doesn't get from nafeature if null as we are using Transcript rather than RNAFeature
 }
 
 sub getRecordIdentifiers {
