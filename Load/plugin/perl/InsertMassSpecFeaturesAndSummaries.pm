@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 15975 $',
+                     cvsRevision       => '$Revision: 15978 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -86,7 +86,7 @@ sub run {
   ##now need to loop through records and assign to genes ..
   $self->addRecordsToGenes($recordSet);
     
-  $self->pruneDuplicateAndEmptyRecords($recordSet});
+  $self->pruneDuplicateAndEmptyRecords($recordSet);
   $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords});
     
   $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
@@ -295,8 +295,8 @@ sub copyRecord {
   my($self,$record) = @_;
   my %copy = %$record;
   undef $copy{peptides};
-  forach my $pep (@{$record->{peptides}}){
-    my $cp = %$pep;
+  foreach my $pep (@{$record->{peptides}}){
+    my %cp = %$pep;
     push(@{$copy{peptides}},\%cp);
   }
   return \%copy;
@@ -478,6 +478,7 @@ sub getGeneFromNaFeatureId {
   $mapStmt->execute($naFeatureId);
   my $res = $mapStmt->fetchall_arrayref();
   return unless scalar(@$res) > 0;
+  my @tmp;
   foreach my $a (@$res){
     push(@tmp,[$a->[0],$self->checkThatPeptidesMatch($record,$a->[1])]);
   }
@@ -884,7 +885,6 @@ sub declareArgs {
               isList          =>  0
              }),
 
-
    stringArg({
                name            =>  'geneExternalDatabaseSpec', 
                descr           =>  'External Databzse release `name|version` for the gene models to which will be attaching these peptides',
@@ -905,6 +905,7 @@ sub declareArgs {
                descr           =>  'Only map the features onto existing and print log statements ... do not insert into the db.',
                reqd            =>  0,
                isList          =>  0
+              }),
 
    stringArg({
               name            =>  'developmentalStage',
