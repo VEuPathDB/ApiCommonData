@@ -2608,6 +2608,23 @@ sub formatBlastFile {
   $mgr->endStep($signal);
 }
 
+sub extractKeywordSearchFiles {
+  my ($mgr,$filePrefix,$commentSchema,$dbLink) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "extractSearchFiles";
+
+  return if $mgr->startStep("Extracting flat files for keyword search", $signal);
+
+  my $dataDir = "$mgr->{dataDir}/blastSite/textSearch";
+
+  $mgr->runCmd("mkdir -p ${dataDir}");
+  $mgr->runCmd("extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix --commentSchema $commentSchema --commentDblink $dbLink");
+
+  $mgr->endStep($signal);
+}
+
 sub modifyDownloadFile {
   my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable,$seqExtDb, $seqExtDbVer) = @_;
 
