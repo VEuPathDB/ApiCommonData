@@ -159,10 +159,12 @@ sub run {
     $seqGroupLoaded++;
 
     my $sourceidtable = ($self->getArg('SourceIdTable')) ? $self->getArg('SourceIdTable') : "GeneFeature";
-    my $method = "ApiCommonData::Load::Util::Get${sourceidtable}Id";
-
+    #my $method = "ApiCommonData::Load::Util::Get${sourceidtable}Id";
+	my %sourceid_method = ( 
+				'GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId);
+	
     foreach my $element (@$foundIds) {
-	if(my $geneFeatureId = &$method($self, $element)) {
+	if(my $geneFeatureId = $sourceid_method{$sourceidtable}->($self, $element)) {
 	    
 	    my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
 		new({sequence_id => $geneFeatureId,
