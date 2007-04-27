@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 16051 $',
+                     cvsRevision       => '$Revision: 16096 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -87,10 +87,14 @@ sub run {
   $self->addRecordsToGenes($recordSet);
     
   $self->pruneDuplicateAndEmptyRecords($recordSet);
-  $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords});
+  $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords}) if $self->{copiedRecords};
     
+  warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
   $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
-  $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly');    
+  if($self->{copiedRecords}){
+    warn "inserting into db for ".scalar(@{$self->{copiedRecords}}). " copied records\n" if $self->getArg('mapOnly');
+    $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly'); 
+  }
 
   $self->setResultDescr(<<"EOF");
     
@@ -229,6 +233,13 @@ sub addRecordsToGenes {
    
     if (!$official) { ##failed finding an official gene model to map these to try testing all proteins
       $official = $self->testPeptidesAgainstAllProteins($record);
+      if(ref($official) =~ /array/i){  #hit more than one protein
+        my $first = shift(@$official);
+        foreach my $f (@$official){
+          $self->copyRecord($record,$f);
+        }
+        $official = $first;
+      }
     }
     ##here want to map to the overlapping official annotation that has the most peptides mapping to it
     ##must have at least 50% by default
@@ -245,9 +256,7 @@ sub addRecordsToGenes {
         $official->retrieveFromDB();
         warn "Able to map $record->{proteinId} to ".$official->getSourceId()." at $sortm[0]->[1]\% of ".scalar(@{$record->{peptides}})." peptides matching\n";
         warn "Copying record for $record->{proteinId} so can insert peptides for ".$sortm[0]->[2]->getSourceId()."\n";
-        my $recordCopy = $self->copyRecord($record);
-        $self->mapPeptidesAndSetIdentifiers($recordCopy,$sortm[0]->[2]);
-        push(@{$self->{copiedRecords}},$recordCopy);
+        $self->copyRecord($record,$sortm[0]->[2]);
       }
     }
     
@@ -262,6 +271,13 @@ sub addRecordsToGenes {
     }
     if (!$self->getArg('doNotTestOrfs') && !$official) { ##failed finding an official gene model to map these to try testing all orfs >= 100 aa then 50 - 100 aa
       $official = $self->testPeptidesAgainstAllOrfs($record);
+      if(ref($official) =~ /array/i){  #hit more than one orf 
+        my $first = shift(@$official);
+        foreach my $f (@$official){
+          $self->copyRecord($record,$f);
+        }
+        $official = $first;
+      }
     }
 
     ##want to assign to a genemodel even if not an official one if still haven't found an official one!!
@@ -309,14 +325,16 @@ sub mapPeptidesAndSetIdentifiers {
 }
 
 sub copyRecord {
-  my($self,$record) = @_;
+  my($self,$record,$naf) = @_;
   my %copy = %$record;
   undef $copy{peptides};
   foreach my $pep (@{$record->{peptides}}){
     my %cp = %$pep;
     push(@{$copy{peptides}},\%cp);
   }
-  return \%copy;
+  my $recordCopy = \%copy;
+  $self->mapPeptidesAndSetIdentifiers($recordCopy,$naf);
+  push(@{$self->{copiedRecords}},$recordCopy);
 }
 
 ##return genefeature if only one protein contains all peptides ...
@@ -332,8 +350,10 @@ sub testPeptidesAgainstAllProteins {
     warn "Able to uniquely map all peptides from $record->{proteinId} to ".$gf->getSourceId()."\n";
     return $gf;
   }elsif(scalar(@matches) > 1){
-    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins ...\n";
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins ... adding to each\n";
+    return $self->getNafeatureObjsFromIds(\@matches);  
   }
+  return undef;
 }
 
 sub testPeptidesAgainstAllOrfs {
@@ -343,16 +363,12 @@ sub testPeptidesAgainstAllOrfs {
   foreach my $prot ($self->getGt100aaOrfs()){
     push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
   }
-  if(scalar(@matches == 1)){
-    my $orf = GUS::Model::DoTS::NAFeature->new({ 'na_feature_id' => $matches[0]->[0] });
-    $orf->retrieveFromDB();
-    warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
-    return $orf;
-  }elsif(scalar(@matches) > 1){
-    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." ORFs > 100 aa ...\n";
-    return;  ##don't want to do the shorter ones
-  }
-  undef @matches;
+#  if(scalar(@matches == 1)){
+#    my $orf = GUS::Model::DoTS::NAFeature->new({ 'na_feature_id' => $matches[0]->[0] });
+#    $orf->retrieveFromDB();
+#    warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
+#    return $orf;
+#  }
   foreach my $prot ($self->get50to100aaOrfs()){
     push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
   }
@@ -362,8 +378,20 @@ sub testPeptidesAgainstAllOrfs {
     warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
     return $orf;
   }elsif(scalar(@matches) > 1){
-    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." 50 - 100 aa ORFs ...\n";
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." ORFs ...\n";
+    return $self->getNafeatureObjsFromIds(\@matches);  
   }
+  return undef;
+}
+
+sub getNafeatureObjsFromIds {
+  my($self,$ids) = @_;
+  my @tmp;
+  foreach my $id (@$ids){
+    my $naf = GUS::Model::DoTS::NAFeature->new({ 'na_feature_id' => ref($id) =~ /array/i ? $id->[0] : $id });
+    push(@tmp,$naf) if $naf->retrieveFromDB();
+  }
+  return \@tmp;
 }
 
 sub testPeptidesAgainstPredictedGeneModels {
@@ -375,9 +403,10 @@ sub testPeptidesAgainstPredictedGeneModels {
   if(scalar(@matches >= 1)){  ##there can be multiple overlapping models so more than one could be correct
     my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $matches[0]->[0] });
     $gf->retrieveFromDB();
-    warn "Able to uniquely map all peptides from $record->{proteinId} to predicted gene ".$gf->getSourceId()."\n";
+    warn "Able to map all peptides from $record->{proteinId} to predicted gene ".$gf->getSourceId()."\n";
     return $gf;
   }
+  return undef;
 }
 
 sub getGt100aaOrfs {
