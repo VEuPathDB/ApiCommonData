@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 16029 $',
+                     cvsRevision       => '$Revision: 16051 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -206,7 +206,7 @@ sub addRecordsToGenes {
     foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
       if ($naFeature->retrieveFromDB()) {
-        if ($naFeature->getExternalDatabaseReleaseId() == $self->{geneExtDbRlsId}) {
+        if ($naFeature->getExternalDatabaseReleaseId() == $self->{geneExtDbRlsId} ) {
           ##this one is the official one ...
           $official = $naFeature;
           warn "Found GeneFeature for $id\n";
@@ -274,6 +274,11 @@ sub addRecordsToGenes {
         }
       }
     }
+
+    ##lastly, check against predicted gene models
+    if(!$official && $self->getArg('testPredictedGeneModels')){
+      $official = $self->testPeptidesAgainstPredictedGeneModels($record);
+    }
     
     if (!$official) {
       warn "Unable to find gene or ORF for $record->{proteinId} (".scalar(@{$record->{peptides}})." peptides)... discarding\n";
@@ -326,6 +331,8 @@ sub testPeptidesAgainstAllProteins {
     $gf->retrieveFromDB();
     warn "Able to uniquely map all peptides from $record->{proteinId} to ".$gf->getSourceId()."\n";
     return $gf;
+  }elsif(scalar(@matches) > 1){
+    warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins ...\n";
   }
 }
 
@@ -356,6 +363,20 @@ sub testPeptidesAgainstAllOrfs {
     return $orf;
   }elsif(scalar(@matches) > 1){
     warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." 50 - 100 aa ORFs ...\n";
+  }
+}
+
+sub testPeptidesAgainstPredictedGeneModels {
+  my($self,$record) = @_;
+  my @matches;
+  foreach my $prot ($self->getAllPredProteins()){
+    push(@matches,$prot) if $self->checkThatAllPeptidesMatch($record,$prot->[1]);
+  }
+  if(scalar(@matches >= 1)){  ##there can be multiple overlapping models so more than one could be correct
+    my $gf = GUS::Model::DoTS::GeneFeature->new({ 'na_feature_id' => $matches[0]->[0] });
+    $gf->retrieveFromDB();
+    warn "Able to uniquely map all peptides from $record->{proteinId} to predicted gene ".$gf->getSourceId()."\n";
+    return $gf;
   }
 }
 
@@ -433,6 +454,29 @@ EOSQL
     warn "Cached ".scalar(@{$self->{allProteins}})." proteins from ".$self->getArg('geneExternalDatabaseSpec')." gene models\n";
   }
   return @{$self->{allProteins}};
+}
+
+sub getAllPredProteins {
+  my($self) = @_;
+  if(!$self->{predProteins}){
+    warn "Retrieving pred Proteins\n";
+    my $protStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
+      select gf.na_feature_id,aas.sequence
+      from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taaf, dots.translatedaasequence aas,sres.sequenceontology o
+      where o.term_name = 'protein_coding'
+      and o.sequence_ontology_id = gf.sequence_ontology_id
+      and gf.external_database_release_id != $self->{geneExtDbRlsId}
+      and gf.na_feature_id = t.parent_id
+      and taaf.na_feature_id = t.na_feature_id
+      and aas.aa_sequence_id = taaf.aa_sequence_id
+EOSQL
+    $protStmt->execute();
+    while(my $row = $protStmt->fetchrow_arrayref()){
+      push(@{$self->{predProteins}},[$row->[0],$row->[1]]);
+    }
+    warn "Cached ".scalar(@{$self->{predProteins}})." proteins from predicted gene models\n";
+  }
+  return @{$self->{predProteins}};
 }
 
 sub getAASequenceForGene {
@@ -910,6 +954,13 @@ sub declareArgs {
    booleanArg({
                name            =>  'doNotTestOrfs', 
                descr           =>  'if true then do not retrieve all orfs and test peptides against them.',
+               reqd            =>  0,
+               isList          =>  0
+              }),
+
+   booleanArg({
+               name            =>  'testPredictedGeneModels', 
+               descr           =>  'if true then tests peptides against predicted gene models if can not assign elsewhere.',
                reqd            =>  0,
                isList          =>  0
               }),
