@@ -5,6 +5,7 @@ package ApiCommonData::Load::Plugin::CalculateProfileSummaryStats;
 use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::Profile;
+use Data::Dumper;
 
 my $argsDeclaration =
 [
@@ -21,8 +22,8 @@ my $argsDeclaration =
 	      isList         => 0, }),
 
    fileArg({name           => 'timePointsMappingFile',
-	    descr          => 'Maps the time points in these profile sets to a "universal" set of time points',
-	    reqd           => 1,
+	    descr          => 'Maps the time points in these profile sets to a "universal" set of time points.  If omitted, then do not map timepoints',
+	    reqd           => 0,
 	    mustExist      => 1,
 	    format         => 'Two column tab file: first column, local time points; second, universal time points',
 	    constraintFunc => undef,
@@ -108,6 +109,9 @@ sub run {
 
 sub makeTimePointMap {
   my ($self, $timePointMapFile) = @_;
+
+  return undef unless $timePointMapFile;
+
   open(FILE, $timePointMapFile);
 
   my %map;
@@ -137,6 +141,7 @@ AND p.profile_set_id = ps.profile_set_id
 
   $self->log("Reading percents profile set $percentsProfileSetName into memory");
   while (my ($sourceId, $profileString) = $sth->fetchrow_array()) {
+    print STDERR "$sourceId, $profileString\n";
     my @array = split(/\t/, $profileString);
     $percentsHash{$sourceId} = \@array;
   }
@@ -227,7 +232,7 @@ sub makeProfileHash {
   my %h;
   for (my $i=0; $i<scalar(@$profile); $i++) {
     my $h = $header->[$i];
-    $h =~ s/[^\d]//g;
+    $h =~ s/[^\d]//g if $h =~ /\d/;
     $h{$h} = $profile->[$i];
   }
   return \%h;
@@ -268,7 +273,7 @@ sub calculateSummaryStats {
        $sourceId) = @_;
     my %profileHash = %{$profileHashRef};
     my %percentileHash = %{$percentileHashRef};
-    my %timePointMapping = %{$timePointMappingRef};
+    my %timePointMapping = %{$timePointMappingRef} if $timePointMappingRef;
 
     my %resultHash;
 
@@ -295,9 +300,16 @@ sub calculateSummaryStats {
     }    
     $resultHash{'max_expression'} = $max;
     $resultHash{'min_expression'} = $min;
-    $resultHash{'equiv_max'} = $timePointMapping{$maxKey};
-    $resultHash{'equiv_min'} = $timePointMapping{$minKey};
+    $resultHash{'time_of_max_expr'} = $maxKey;
+    $resultHash{'time_of_min_expr'} = $minKey;
+    if ($timePointMappingRef) {
+      $resultHash{'equiv_max'} = $timePointMapping{$maxKey};
+      $resultHash{'equiv_min'} = $timePointMapping{$minKey};
+      $resultHash{'time_of_max_expr'} = $timePointMapping{$maxKey};
+      $resultHash{'time_of_min_expr'} = $timePointMapping{$minKey};
+    }
     $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
+    print STDERR Dumper %resultHash;die "ppp";
 
     my $maxPercentile = 0;
     foreach my $key (keys %percentileHash) {
