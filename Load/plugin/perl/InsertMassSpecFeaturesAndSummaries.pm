@@ -42,7 +42,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 16096 $',
+                     cvsRevision       => '$Revision: 16102 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -349,7 +349,7 @@ sub testPeptidesAgainstAllProteins {
     $gf->retrieveFromDB();
     warn "Able to uniquely map all peptides from $record->{proteinId} to ".$gf->getSourceId()."\n";
     return $gf;
-  }elsif(scalar(@matches) > 1){
+  }elsif(scalar(@matches) > 1 && scalar(@matches) <= 20){
     warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." proteins ... adding to each\n";
     return $self->getNafeatureObjsFromIds(\@matches);  
   }
@@ -377,7 +377,7 @@ sub testPeptidesAgainstAllOrfs {
     $orf->retrieveFromDB();
     warn "Able to uniquely map all peptides from $record->{proteinId} to ORF ".$orf->getSourceId()."\n";
     return $orf;
-  }elsif(scalar(@matches) > 1){
+  }elsif(scalar(@matches) > 1 && scalar(@matches) <= 20){
     warn "Peptides from $record->{proteinId} map to ".scalar(@matches)." ORFs ...\n";
     return $self->getNafeatureObjsFromIds(\@matches);  
   }
