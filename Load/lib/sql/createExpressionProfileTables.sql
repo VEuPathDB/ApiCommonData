@@ -12,7 +12,7 @@ create table ApiDB.ProfileSet (
  y_axis_descrip        varchar2(400),
  x_axis_units          varchar2(100),
  y_axis_units          varchar2(100),
- source_id_type VARCHAR(200),
+ source_id_type        VARCHAR(200),
  element_count         NUMBER(3),
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
@@ -61,8 +61,8 @@ grant references on dots.nafeatureimp to ApiDB;
 create table ApiDB.Profile (
  profile_id            NUMBER(10),
  profile_set_id        NUMBER(10),
- subject_table_id       number(10),
- subject_row_id         number(10),
+ subject_table_id      NUMBER(10),
+ subject_row_id        NUMBER(10),
  source_id             VARCHAR2(30),
  profile_as_string     VARCHAR2(800),
  no_evidence_of_expr   NUMBER(1),
@@ -75,6 +75,8 @@ create table ApiDB.Profile (
  min_log_ratio         FLOAT(126),
  max_log_ratio         FLOAT(126),
  ind_norm_by_med       FLOAT(126),
+ time_of_max_expr      VARCHAR(40),
+ time_of_min_expr      VARCHAR(40),
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
  USER_WRITE            NUMBER(1),
@@ -93,11 +95,12 @@ create table ApiDB.Profile (
 CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id);
 CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id);
 
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Profile TO gus_w;
+GRANT SELECT ON ApiDB.Profile TO gus_r;
+
 CREATE sequence ApiDB.Profile_sq;
 
-GRANT insert, select, update, delete ON ApiDB.Profile TO gus_w;
-GRANT select ON ApiDB.Profile TO gus_r;
-GRANT select ON ApiDB.Profile_sq TO gus_w;
+GRANT SELECT ON ApiDB.Profile_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -136,7 +139,7 @@ create table ApiDB.ProfileElement (
  row_alg_invocation_id NUMBER(12),
  FOREIGN KEY (profile_id) REFERENCES ApiDB.Profile,
  PRIMARY KEY (profile_element_id)
-);	
+);
 
 CREATE INDEX apiDB.pe_element_order_ind
 ON apiDB.ProfileElement(element_order, profile_element_id);
