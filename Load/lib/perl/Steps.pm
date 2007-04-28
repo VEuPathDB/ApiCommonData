@@ -1989,7 +1989,10 @@ sub calculateExpressionStats {
 
   my $projectDir = $propertySet->getProp('projectDir');
 
-  my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --timePointsMappingFile '$projectDir/$mappingFile' --percentProfileSet '$percentsAveraged'";
+  my $args = "--externalDatabaseSpec '$dbSpec'  --profileSetNames '$profileSet' --percentProfileSet '$percentsAveraged'";
+
+  $args .= " --timePointsMappingFile '$projectDir/$mappingFile'"
+    if $mappingFile;
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::CalculateProfileSummaryStats", $args,
