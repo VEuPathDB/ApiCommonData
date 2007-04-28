@@ -141,7 +141,6 @@ AND p.profile_set_id = ps.profile_set_id
 
   $self->log("Reading percents profile set $percentsProfileSetName into memory");
   while (my ($sourceId, $profileString) = $sth->fetchrow_array()) {
-    print STDERR "$sourceId, $profileString\n";
     my @array = split(/\t/, $profileString);
     $percentsHash{$sourceId} = \@array;
   }
@@ -309,7 +308,6 @@ sub calculateSummaryStats {
       $resultHash{'time_of_min_expr'} = $timePointMapping{$minKey};
     }
     $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
-    print STDERR Dumper %resultHash;die "ppp";
 
     my $maxPercentile = 0;
     foreach my $key (keys %percentileHash) {
