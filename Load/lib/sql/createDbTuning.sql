@@ -280,6 +280,46 @@ CREATE INDEX apidb.GeneId_id_idx ON apidb.GeneId (id);
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.EpitopeSummary;
+
+DROP MATERIALIZED VIEW apidb.EpitopeSummary;
+
+CREATE MATERIALIZED VIEW apidb.EpitopeSummary AS
+SELECT gf.source_id, dr.primary_identifier AS iedb_id,
+       al.start_min||'-'||al.end_max AS location,
+       mas.sequence, tn.name,
+       DECODE(ef.type, 'Not Full Set Not on Blast Hit', 'Low',
+                       'Not Full Set On Blast Hit', 'Medium',
+                       'Full Set Not on Blast Hit', 'Medium',
+                       'Full Set On Blast Hit', 'High',
+                       'unknown epitope type') AS confidence
+FROM dots.GeneFeature gf, dots.Transcript t,
+     dots.TranslatedAaFeature taf, dots.MotifAaSequence mas,
+     dots.TranslatedAaSequence tas, dots.EpitopeFeature ef,
+     dots.AaLocation al, dots.AaSequenceDbRef asdr,
+     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed, Sres.TaxonName tn
+WHERE t.parent_id = gf.na_feature_id
+  AND taf.na_feature_id = t.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas.aa_sequence_id = ef.aa_sequence_id
+  AND ef.aa_feature_id = al.aa_feature_id
+  AND ef.motif_aa_sequence_id = mas.aa_sequence_id
+  AND mas.aa_sequence_id = asdr.aa_sequence_id
+  AND asdr.db_ref_id = dr.db_ref_id
+  AND mas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND ef.external_database_release_id
+      = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'Links to IEDB epitopes';
+
+GRANT SELECT ON apidb.EpitopeSummary TO gus_r;
+
+CREATE INDEX apidb.Epi_srcId_ix ON apidb.EpitopeSummary (source_id);
+
+-------------------------------------------------------------------------------
+
 -- GUS table shortcomings
 
 ALTER TABLE core.AlgorithmParam MODIFY (string_value VARCHAR2(2000));
