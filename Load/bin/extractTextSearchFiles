@@ -21,9 +21,10 @@ my ($outDir, $prefix, $commentSchema, $commentDblink, $justComments,
             "gusConfigFile=s" => \$gusConfigFile);
 
 if (!$outDir || !$commentSchema){
-	die "usage: $0 --outputDir <outputDirectory> [--prefix <file-prefix>]"
+	die "usage: $0 --outputDir <outputDirectory> [--outputPrefix <file-prefix>]"
             . " --commentSchema <commentSchema>"
             . " [--commentDblink <dbLink (with \"@\")>]"
+            . " [--justComments]"
             . " [--verbose] [--debug]"
             . " [--gusConfigFile  <config default=\$GUS_HOME/config/gus.config]\n";
 }
