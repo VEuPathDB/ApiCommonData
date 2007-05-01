@@ -341,8 +341,17 @@ sub setPepStartEnd {
     
     my $proteinSeq = $aaSeq->getSequence();
     
-    $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
-    $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
+    my $count;
+    while ($proteinSeq =~ m/($pep->{sequence})/g) {
+      $pep->{start} = $-[0] +1;
+      $pep->{end}   = $+[0]   ;
+      $count++;
+    }
+    
+    warn "$pep->{sequence} found $count times. keeping only last occurence.\n" if $count > 1;
+    
+#    = index($proteinSeq, $pep->{sequence}) +1;
+#    $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
     
 }
 
