@@ -167,11 +167,11 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
      (SELECT p.source_id,
              p.max_expression AS winzeler_max_level,
              p.max_percentile AS winzeler_max_pct,
-             p.equiv_max AS winzeler_max_timing,
-             p.equiv_min AS winzeler_min_timing,
+             p.time_of_max_expr AS winzeler_max_timing,
+             p.time_of_min_expr AS winzeler_min_timing,
              p.min_expression AS winzeler_min_level
       FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
-      WHERE ps.name = 'winzeler_cc_sorbExp'
+      WHERE ps.name = 'winzeler_cc_sorbLgp'
         AND ti.name = 'GeneFeature'
         AND p.profile_set_id = ps.profile_set_id
         AND ti.table_id = p.subject_table_id) expn
@@ -428,6 +428,7 @@ SELECT snp.source_id AS source_id,
        WHEN ed.name = 'Sanger reichenowi SNPs' THEN 'sangerReichenowiSnps'
        WHEN ed.name = 'PlasmoDB combined SNPs' THEN 'plasmoDbCombinedSnps'
        END AS dataset_hidden,
+       sequence.na_sequence_id,
        sequence.source_id AS seq_source_id,
        snp_loc.start_min,
        SUBSTR(snp.reference_strain, 1, 200) AS reference_strain,
@@ -482,6 +483,9 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
 GRANT SELECT ON apidb.SnpAttributes1111 TO gus_r;
 
 CREATE INDEX apidb.SnpAttr1111_source_id ON apidb.SnpAttributes1111 (source_id);
+
+CREATE INDEX apidb.Snp1111_Seq_ix
+       ON apidb.SnpAttributes1111 (na_sequence_id, dataset, start_min);
 
 CREATE OR REPLACE SYNONYM apidb.SnpAttributes
                              FOR apidb.SnpAttributes1111;
