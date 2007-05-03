@@ -334,13 +334,15 @@ sub rnaScanToGff2 {
 }
 
 sub loadTRNAscan {
-  my ($mgr,$scanDbName,$scanDbVer,$genomeDbName,$genomeDbVer,$soVer,$name) = @_;
+  my ($mgr,$scanDbName,$scanDbVer,$genomeDbName,$genomeDbVer,$soVer,$name,$table) = @_;
 
   my $signal = "tRNAScan$name";
 
   my $dataFile = "$mgr->{'dataDir'}/trnascan/$name/master/mainresult/trnascan.out";
 
   my $args = "--data_file $dataFile --scanDbName '$scanDbName' --scanDbVer '$scanDbVer' --genomeDbName '$genomeDbName' --genomeDbVer '$genomeDbVer' --soVersion '$soVer'";
+
+  $args .=" --seqTable '$table'" if $table;
 
   $mgr->runPlugin($signal,
 		  "ApiCommonData::Load::Plugin::LoadTRNAScan", $args,
