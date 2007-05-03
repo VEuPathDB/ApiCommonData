@@ -60,6 +60,14 @@ sub getArgsDeclaration {
 		 constraintFunc => undef,
 		 reqd => 1,
 		 isList => 0,
+	       }),
+     stringArg({ name => 'seqTable',
+		 descr => 'table where we can find the na sequences to map the tRNA predictions to',
+		 constraintFunc => undef,
+		 reqd => 0,
+		 isList => 0,
+		 enum => "DoTS::ExternalNASequence, DoTS::VirtualSequence",
+		 default => "DoTS::ExternalNASequence",
 	       })
     ];
 
@@ -98,7 +106,7 @@ DoTS.GeneFeature,DoTS.Transcript,DoTS.ExonFeature,DoTS.NALoacation,DoTS.RNAType
 AFFECT
 
   my $tablesDependedOn = <<TABD;
-DoTS.ExternalNASequence,SRes.ExternalDatabase,SRes.ExternalDatabaseRelease
+DoTS.ExternalNASequence or DoTS.VirtualSequence,SRes.ExternalDatabase,SRes.ExternalDatabaseRelease
 TABD
 
   my $howToRestart = <<RESTART;
@@ -106,8 +114,7 @@ No restart provided. Must undo and reload.
 RESTART
 
   my $failureCases = <<FAIL;
-Will fail if db_id, db_rel_id for either the tRNAScan or the genome scanned are absent 
-and when a source_id is not in the DoTS.ExternalNASequence table
+Will fail if db_id, db_rel_id for either the tRNAScan or the genome scanned are absent and when a source_id is not in one of the DoTS.ExternalNASequence or DoTS.VirtualSequence tables
 FAIL
 
   my $documentation = { purpose          => $purpose,
@@ -246,11 +253,12 @@ sub parseFile {
 
 sub loadScanData {
   my ($self,$scanReleaseId,$genomeReleaseId,$tRNAs,$soIds) = @_;
-
   my $processed;
 
+  my $seqTable = $self->getArg('seqTable');
+
   foreach my $seqSourceId (keys %{$tRNAs}) {
-    my $extNaSeq = $self->getExtNASeq($genomeReleaseId,$seqSourceId);
+    my $extNaSeq = $self->getExtNASeq($genomeReleaseId,$seqSourceId,$seqTable);
 
     foreach my $tRNA (keys %{$tRNAs->{$seqSourceId}}) {
       $self->getGeneFeat($scanReleaseId,$soIds,$seqSourceId,$tRNA,$tRNAs,$extNaSeq);
@@ -267,11 +275,14 @@ sub loadScanData {
 }
 
 sub getExtNASeq {
-  my ($self,$genomeReleaseId,$seqSourceId) = @_;
+  my ($self,$genomeReleaseId,$seqSourceId,$table) = @_;
 
-  my $extNaSeq =  GUS::Model::DoTS::ExternalNASequence->new({'external_database_release_id' => $genomeReleaseId,
+  my $seqTable = "GUS::Model::$table";
+  eval "require $seqTable";
+
+  my $extNaSeq = $seqTable->new({'external_database_release_id' => $genomeReleaseId,
 							     'source_id' => $seqSourceId });
-  $extNaSeq->retrieveFromDB();
+  $extNaSeq->retrieveFromDB() || die "Sequence '$seqSourceId' not found with extDbRlsId = $genomeReleaseId in table '$seqTable'\n";
 
   return $extNaSeq;
 }
