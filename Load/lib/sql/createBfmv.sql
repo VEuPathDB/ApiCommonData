@@ -495,7 +495,7 @@ SELECT gf.source_id,
        WinzelerExpn.winzeler_max_timing,
        WinzelerExpn.winzeler_min_timing,
        WinzelerExpn.winzeler_min_level,
-       ToxoExpn.veg, ToxoExpn.rh, ToxoExpn.rh_high_glucose,
+       ToxoExpn.pru, ToxoExpn.veg, ToxoExpn.rh, ToxoExpn.rh_high_glucose,
        ToxoExpn.rh_no_glucose, ToxoExpn.glucose_fold_change,
        ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
        ToxoExpn.veg_rh_fold_change
