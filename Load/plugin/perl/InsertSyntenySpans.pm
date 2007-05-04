@@ -184,12 +184,8 @@ where external_database_release_id = $synDbRlsId";
 
   my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
 
-  my $count = 0;
-  my $anchorCount = 0;
+  my $anchorCount = 1;
   while(my $syntenyRow = $stmt->fetchrow_hashref) {
-    if (++$count % 1000 == 0) {
-      $self->log("added anchors for $count matches");
-    }
     my $refGenes = $self->findGenes($findGenesStmt,
 				    $syntenyRow->{A_NA_SEQUENCE_ID},
 				    $syntenyRow->{A_START},
@@ -208,36 +204,44 @@ where external_database_release_id = $synDbRlsId";
     my $syntenyObj = 
       GUS::Model::ApiDB::Synteny->new({synteny_id => $syntenyRow->{SYNTENY_ID}});
 
+    $syntenyObj->retrieveFromDB();
+
     my $anchors = [];
 
     my $anchorsCursor = 0;
 
-    $self->addAnchor($syntenyObj,
-		     $syntenyRow->{A_START}, $syntenyRow->{B_START},
-		     $anchors, $anchorsCursor++);
+    $anchorCount += $self->addAnchor($syntenyObj,
+				     $syntenyRow->{A_START},
+				     $syntenyRow->{B_START},
+				     $anchors, $anchorsCursor++,
+				     $anchorCount);
 
     foreach my $genePair (@$genePairs) {
 
       if ($genePair->{refStart} > $syntenyRow->{A_START}) {
-	$self->addAnchor($syntenyObj, $genePair->{refStart},
-			 $genePair->{synStart},
-			 $anchors, $anchorsCursor++);
+	$anchorCount += $self->addAnchor($syntenyObj, 
+					 $genePair->{refStart},
+					 $genePair->{synStart},
+					 $anchors, $anchorsCursor++,
+					 $anchorCount);
       }
 
       if ($genePair->{refEnd} < $syntenyRow->{A_END}) {
-	$self->addAnchor($syntenyObj, $genePair->{refEnd},
-			 $genePair->{synEnd},
-			 $anchors, $anchorsCursor++);
+	$anchorCount += $self->addAnchor($syntenyObj,
+					 $genePair->{refEnd},
+					 $genePair->{synEnd},
+					 $anchors, $anchorsCursor++,
+					 $anchorCount);
       }
     }
 
-    $self->addAnchor($syntenyObj,
-		     $syntenyRow->{A_END}, $syntenyRow->{B_END},
-		     $anchors, $anchorsCursor++);
+    $anchorCount += $self->addAnchor($syntenyObj,
+				     $syntenyRow->{A_END},
+				     $syntenyRow->{B_END},
+				     $anchors, $anchorsCursor++,
+				     $anchorCount);
 
-#    $syntenyObj->submit();
-    $anchorCount += $anchorsCursor;
-
+    $syntenyObj->submit();
     $self->undefPointerCache();
   }
   return $anchorCount;
@@ -317,16 +321,20 @@ sub findOrthologPairs {
 }
 
 sub addAnchor {
-  my ($self, $syntenyObj, $refLoc, $synLoc, $anchors, $anchorsCursor) = @_;
+  my ($self, $syntenyObj, $refLoc, $synLoc, $anchors, $anchorsCursor, $anchorCount) = @_;
+
   $anchors->[$anchorsCursor] = {ref_loc=>$refLoc, syntenic_loc=>$synLoc};
+
   if ($anchorsCursor > 0) {
     my $prevAnchor = $anchors->[$anchorsCursor - 1];
     $prevAnchor->{next_ref_loc} = $refLoc;
     $anchors->[$anchorsCursor]->{prev_ref_loc} = $prevAnchor->{ref_loc};
     my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($prevAnchor);
-    $anchorObj->submit();
     $syntenyObj->addChild($anchorObj);
+    $self->log("added $anchorCount anchors") if ($anchorCount % 1000 == 0);
+    return 1;
   }
+  return 0;
 }
 
 sub undoTables {
