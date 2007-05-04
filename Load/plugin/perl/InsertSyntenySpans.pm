@@ -2,11 +2,12 @@ package ApiCommonData::Load::Plugin::InsertSyntenySpans;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
 use strict;
-use warnings;
 
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::ApiDB::Synteny;
+use GUS::Model::ApiDB::SyntenyAnchor;
+use Data::Dumper;
 
 my $argsDeclaration = 
   [
@@ -115,12 +116,19 @@ sub run {
 
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
+  my $count = 0;
+  if (0) {
+
   open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
   while (<IN>) {
     chomp;
     $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+    $count++;
   }
   close(IN);
+}
+  my $anchorCount = $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
+  return "inserted $count synteny spans and $anchorCount anchors ";
 }
 
 sub _handleSyntenySpan {
@@ -155,13 +163,174 @@ EOSQL
 						  b_end   => $b_start + $b_len - 1,
 						  is_reversed => $strand eq "-",
 						  external_database_release_id => $synDbRlsId,
-						   });
+						});
   $synteny->submit();
   $self->undefPointerCache();
 }
 
+sub insertAnchors {
+  my ($self, $synDbRlsId, $extDbRlsIdA) = @_;
+
+  $self->log("Inserting Anchors");
+
+  my ($gene2orthologGroup, $orthologGroup2refGenes)
+    = $self->findOrthologGroups($extDbRlsIdA);
+
+  my $findGenesStmt = $self->getFindGenesStmt();
+
+  my $sql = "
+select * from apidb.Synteny
+where external_database_release_id = $synDbRlsId";
+
+  my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
+
+  my $count = 0;
+  my $anchorCount = 0;
+  while(my $syntenyRow = $stmt->fetchrow_hashref) {
+    if (++$count % 1000 == 0) {
+      $self->log("added anchors for $count matches");
+    }
+    my $refGenes = $self->findGenes($findGenesStmt,
+				    $syntenyRow->{A_NA_SEQUENCE_ID},
+				    $syntenyRow->{A_START},
+				    $syntenyRow->{A_END});
+
+    my $synGenes = $self->findGenes($findGenesStmt,
+				    $syntenyRow->{B_NA_SEQUENCE_ID},
+				    $syntenyRow->{B_START},
+				    $syntenyRow->{B_END});
+
+    # ordered by refGene loc
+    my $genePairs = $self->findOrthologPairs($refGenes, $synGenes,
+					     $gene2orthologGroup,
+					     $orthologGroup2refGenes);
+
+    my $syntenyObj = 
+      GUS::Model::ApiDB::Synteny->new({synteny_id => $syntenyRow->{SYNTENY_ID}});
+
+    my $anchors = [];
+
+    my $anchorsCursor = 0;
+
+    $self->addAnchor($syntenyObj,
+		     $syntenyRow->{A_START}, $syntenyRow->{B_START},
+		     $anchors, $anchorsCursor++);
+
+    foreach my $genePair (@$genePairs) {
+
+      if ($genePair->{refStart} > $syntenyRow->{A_START}) {
+	$self->addAnchor($syntenyObj, $genePair->{refStart},
+			 $genePair->{synStart},
+			 $anchors, $anchorsCursor++);
+      }
+
+      if ($genePair->{refEnd} < $syntenyRow->{A_END}) {
+	$self->addAnchor($syntenyObj, $genePair->{refEnd},
+			 $genePair->{synEnd},
+			 $anchors, $anchorsCursor++);
+      }
+    }
+
+    $self->addAnchor($syntenyObj,
+		     $syntenyRow->{A_END}, $syntenyRow->{B_END},
+		     $anchors, $anchorsCursor++);
+
+#    $syntenyObj->submit();
+    $anchorCount += $anchorsCursor;
+
+    $self->undefPointerCache();
+  }
+  return $anchorCount;
+}
+
+sub getFindGenesStmt {
+  my ($self) = @_;
+
+  my $sql = "
+select g.na_feature_id, l.start_min, l.end_max
+from dots.GeneFeature g, dots.NaLocation l
+where g.na_sequence_id = ?
+and l.na_feature_id = g.na_feature_id
+and l.end_max > ?
+and l.start_min < ?
+";
+  return $self->getQueryHandle()->prepare($sql);
+}
+
+sub findOrthologGroups {
+  my ($self, $extDbRlsIdA) = @_;
+
+my $sql = "
+select ssg.sequence_id, ssg.sequence_group_id, g.external_database_release_id
+from dots.SequenceSequenceGroup ssg, dots.genefeature g
+where g.na_feature_id = ssg.sequence_id
+";
+  my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
+
+  my $gene2orthologGroup = {};
+  my $orthologGroup2refGenes = {};
+  while (my ($geneFeatId, $ssgId, $extDbRlsId) = $stmt->fetchrow_array()) {
+     $gene2orthologGroup->{$geneFeatId} = $ssgId;
+     if ($extDbRlsId = $extDbRlsIdA) {
+       $orthologGroup2refGenes->{$ssgId}->{$geneFeatId} = 1;
+     }
+  }
+  return ($gene2orthologGroup, $orthologGroup2refGenes);
+}
+
+sub findGenes {
+  my ($self, $stmt, $na_sequence_id, $start, $end) = @_;
+
+  $stmt->execute($na_sequence_id, $start, $end);
+
+  my @genes;
+  while (my ($naFeatId, $geneStart, $geneEnd) = $stmt->fetchrow_array()) {
+    push(@genes, {id=>$naFeatId, start=>$geneStart, end=>$geneEnd});
+  }
+  return \@genes;
+}
+
+# each pair is a hash, with these keys:
+#  refStart
+#  synStart 
+#  refEnd
+#  synEnd
+sub findOrthologPairs {
+  my ($self, $refGenes, $synGenes, $gene2orthologGroup, $orthologGroup2refGenes) = @_;
+
+  my @genePairs;
+  foreach my $synGene (@$synGenes) {
+    my $ssgId = $gene2orthologGroup->{$synGene->{id}};
+    foreach my $refGene (@$refGenes) {
+      if ($orthologGroup2refGenes->{$ssgId}->{$refGene->{id}}) {
+	my $genePair = {refStart=>$refGene->{start},
+			refEnd=>$refGene->{end},
+			synStart=>$synGene->{start},
+			synEnd=>$synGene->{end}};
+	push(@genePairs, $genePair);
+      }
+    }
+  }
+  my @sortedPairs = sort {$a->{refStart} <=> $b->{refStart}} @genePairs;
+
+  return \@sortedPairs;
+}
+
+sub addAnchor {
+  my ($self, $syntenyObj, $refLoc, $synLoc, $anchors, $anchorsCursor) = @_;
+  $anchors->[$anchorsCursor] = {ref_loc=>$refLoc, syntenic_loc=>$synLoc};
+  if ($anchorsCursor > 0) {
+    my $prevAnchor = $anchors->[$anchorsCursor - 1];
+    $prevAnchor->{next_ref_loc} = $refLoc;
+    $anchors->[$anchorsCursor]->{prev_ref_loc} = $prevAnchor->{ref_loc};
+    my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($prevAnchor);
+    $anchorObj->submit();
+    $syntenyObj->addChild($anchorObj);
+  }
+}
+
 sub undoTables {
-  return qw(ApiDB.Synteny);
+  return qw(ApiDB.Synteny ApiDB.SyntenyAnchor);
 }
 
 1;
