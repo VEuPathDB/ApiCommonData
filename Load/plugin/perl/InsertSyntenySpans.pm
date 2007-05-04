@@ -117,17 +117,19 @@ sub run {
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
   my $count = 0;
-  if (0) {
 
   open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
   while (<IN>) {
     chomp;
     $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
-    $count++;
+    $count+=2;
   }
   close(IN);
-}
-  my $anchorCount = $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
+
+  my $anchorCount = $self->insertAnchors($synDbRlsId, $extDbRlsIdA,
+					 $self->getArg('extDbRlsSpecA'));
+  $anchorCount += $self->insertAnchors($synDbRlsId, $extDbRlsIdB,
+				       $self->getArg('extDbRlsSpecB'));
   return "inserted $count synteny spans and $anchorCount anchors ";
 }
 
@@ -165,13 +167,25 @@ EOSQL
 						  external_database_release_id => $synDbRlsId,
 						});
   $synteny->submit();
+
+  # add row w/ opposite organism as ref
+  my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $b_pk,
+						  b_na_sequence_id => $a_pk,
+						  a_start => $b_start,
+						  b_start => $a_start,
+						  a_end   => $b_start + $b_len - 1,
+						  b_end   => $a_start + $a_len - 1,
+						  is_reversed => $strand eq "-",
+						  external_database_release_id => $synDbRlsId,
+						});
+  $synteny->submit();
   $self->undefPointerCache();
 }
 
 sub insertAnchors {
-  my ($self, $synDbRlsId, $extDbRlsIdA) = @_;
+  my ($self, $synDbRlsId, $extDbRlsIdA, $extDbSpec) = @_;
 
-  $self->log("Inserting Anchors");
+  $self->log("Inserting anchors, with '$extDbSpec' as reference");
 
   my ($gene2orthologGroup, $orthologGroup2refGenes)
     = $self->findOrthologGroups($extDbRlsIdA);
