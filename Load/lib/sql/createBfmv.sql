@@ -182,6 +182,213 @@ GRANT SELECT ON apidb.WinzelerExpn TO gus_r;
 CREATE INDEX apidb.Winzeler_sourceId ON apidb.WinzelerExpn (source_id);
 
 ---------------------------
+
+prompt ### DROP MATERIALIZED VIEW apidb.ToxoExpn ###;
+DROP MATERIALIZED VIEW apidb.ToxoExpn;
+
+prompt ### CREATE MATERIALIZED VIEW apidb.ToxoExpn ###;
+CREATE MATERIALIZED VIEW apidb.ToxoExpn AS
+SELECT gene.source_id, pru.expression AS pru, veg.expression AS veg,
+       rh.expression AS rh, rh_high_glucose.expression AS rh_high_glucose,
+       rh_no_glucose.expression AS rh_no_glucose,
+       glucose.fold_change AS glucose_fold_change,
+       pru_veg.fold_change AS pru_veg_fold_change,
+       pru_rh.fold_change AS pru_rh_fold_change,
+       veg_rh.fold_change AS veg_rh_fold_change
+FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
+     (SELECT ga.gene, avg(ep1.mean) AS expression
+       FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+        AND lg.name = 'Pru - RMA Quantifications'
+        AND lg.logical_group_id = ai1.logical_group_id
+        AND a1.analysis_id = ai1.analysis_id
+        AND a1.protocol_id = p.protocol_id
+        AND ep1.analysis_id = a1.analysis_id
+        AND sof.composite_element_id = ep1.row_id
+          AND sof.source_id is not null
+        AND ga.alias = sof.source_id
+       GROUP BY ga.gene) pru,
+     (SELECT ga.gene, avg(ep1.mean) AS expression
+       FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+        AND lg.name = 'VEG - RMA Quantifications'
+        AND lg.logical_group_id = ai1.logical_group_id
+        AND a1.analysis_id = ai1.analysis_id
+        AND a1.protocol_id = p.protocol_id
+        AND ep1.analysis_id = a1.analysis_id
+        AND sof.composite_element_id = ep1.row_id
+          AND sof.source_id is not null
+        AND ga.alias = sof.source_id
+       GROUP BY ga.gene) veg,
+     (SELECT ga.gene, avg(ep1.mean) AS expression
+       FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+        AND lg.name = 'RH - RMA Quantifications'
+        AND lg.logical_group_id = ai1.logical_group_id
+        AND a1.analysis_id = ai1.analysis_id
+        AND a1.protocol_id = p.protocol_id
+        AND ep1.analysis_id = a1.analysis_id
+        AND sof.composite_element_id = ep1.row_id
+          AND sof.source_id is not null
+        AND ga.alias = sof.source_id
+       GROUP BY ga.gene) rh,
+     (SELECT ga.gene, avg(ep1.mean) AS expression
+       FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+        AND lg.name = 'RH (High Glucose) - RMA Quantifications'
+        AND lg.logical_group_id = ai1.logical_group_id
+        AND a1.analysis_id = ai1.analysis_id
+        AND a1.protocol_id = p.protocol_id
+        AND ep1.analysis_id = a1.analysis_id
+        AND sof.composite_element_id = ep1.row_id
+          AND sof.source_id is not null
+        AND ga.alias = sof.source_id
+       GROUP BY ga.gene) rh_high_glucose,
+     (SELECT ga.gene, avg(ep1.mean) AS expression
+       FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+        AND lg.name = 'RH (No Glucose) - RMA Quantifications'
+        AND lg.logical_group_id = ai1.logical_group_id
+        AND a1.analysis_id = ai1.analysis_id
+        AND a1.protocol_id = p.protocol_id
+        AND ep1.analysis_id = a1.analysis_id
+        AND sof.composite_element_id = ep1.row_id
+          AND sof.source_id is not null
+        AND ga.alias = sof.source_id
+       GROUP BY ga.gene) rh_no_glucose,
+     (SELECT ga.gene,
+              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                            THEN avg(ep1.mean)/avg(ep2.mean)
+                            ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                            END), 999.9) AS fold_change
+       FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
+            rad.AnalysisInput ai2, rad.Analysis a2,
+            rad.ExpressionProfile ep2,
+            rad.Protocol p, rad.ShortOligoFamily sof,
+            ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+         AND lg1.name = 'RH (No Glucose) - RMA Quantifications'
+         AND ai1.logical_group_id = lg1.logical_group_id
+         AND a1.analysis_id = ai1.analysis_id
+         AND a1.protocol_id = p.protocol_id
+         AND ep1.analysis_id = a1.analysis_id
+         AND sof.composite_element_id = ep1.row_id
+         AND lg2.name = 'RH (High Glucose) - RMA Quantifications'
+         AND ai2.logical_group_id = lg2.logical_group_id
+         AND a2.analysis_id = ai2.analysis_id
+         AND a2.protocol_id = p.protocol_id
+         AND ep2.analysis_id = a2.analysis_id
+         AND sof.composite_element_id = ep2.row_id
+         AND sof.source_id is not null
+         AND ga.alias = sof.source_id
+        GROUP BY ga.gene) glucose,
+     (SELECT ga.gene,
+              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                            THEN avg(ep1.mean)/avg(ep2.mean)
+                            ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                            END), 999.9) AS fold_change
+       FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
+            rad.AnalysisInput ai2, rad.Analysis a2,
+            rad.ExpressionProfile ep2,
+            rad.Protocol p, rad.ShortOligoFamily sof,
+            ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+         AND lg1.name = 'Pru - RMA Quantifications'
+         AND ai1.logical_group_id = lg1.logical_group_id
+         AND a1.analysis_id = ai1.analysis_id
+         AND a1.protocol_id = p.protocol_id
+         AND ep1.analysis_id = a1.analysis_id
+         AND sof.composite_element_id = ep1.row_id
+         AND lg2.name = 'VEG - RMA Quantifications'
+         AND ai2.logical_group_id = lg2.logical_group_id
+         AND a2.analysis_id = ai2.analysis_id
+         AND a2.protocol_id = p.protocol_id
+         AND ep2.analysis_id = a2.analysis_id
+         AND sof.composite_element_id = ep2.row_id
+         AND sof.source_id is not null
+         AND ga.alias = sof.source_id
+        GROUP BY ga.gene) pru_veg,
+     (SELECT ga.gene,
+              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                            THEN avg(ep1.mean)/avg(ep2.mean)
+                            ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                            END), 999.9) AS fold_change
+       FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
+            rad.AnalysisInput ai2, rad.Analysis a2,
+            rad.ExpressionProfile ep2,
+            rad.Protocol p, rad.ShortOligoFamily sof,
+            ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+         AND lg1.name = 'Pru - RMA Quantifications'
+         AND ai1.logical_group_id = lg1.logical_group_id
+         AND a1.analysis_id = ai1.analysis_id
+         AND a1.protocol_id = p.protocol_id
+         AND ep1.analysis_id = a1.analysis_id
+         AND sof.composite_element_id = ep1.row_id
+         AND lg2.name = 'RH - RMA Quantifications'
+         AND ai2.logical_group_id = lg2.logical_group_id
+         AND a2.analysis_id = ai2.analysis_id
+         AND a2.protocol_id = p.protocol_id
+         AND ep2.analysis_id = a2.analysis_id
+         AND sof.composite_element_id = ep2.row_id
+         AND sof.source_id is not null
+         AND ga.alias = sof.source_id
+        GROUP BY ga.gene) pru_rh,
+     (SELECT ga.gene,
+              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                            THEN avg(ep1.mean)/avg(ep2.mean)
+                            ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                            END), 999.9) AS fold_change
+       FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
+            rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
+            rad.AnalysisInput ai2, rad.Analysis a2,
+            rad.ExpressionProfile ep2,
+            rad.Protocol p, rad.ShortOligoFamily sof,
+            ApiDB.GeneAlias ga
+       WHERE p.name = 'R Expression Statistics'
+         AND lg1.name = 'VEG - RMA Quantifications'
+         AND ai1.logical_group_id = lg1.logical_group_id
+         AND a1.analysis_id = ai1.analysis_id
+         AND a1.protocol_id = p.protocol_id
+         AND ep1.analysis_id = a1.analysis_id
+         AND sof.composite_element_id = ep1.row_id
+         AND lg2.name = 'RH - RMA Quantifications'
+         AND ai2.logical_group_id = lg2.logical_group_id
+         AND a2.analysis_id = ai2.analysis_id
+         AND a2.protocol_id = p.protocol_id
+         AND ep2.analysis_id = a2.analysis_id
+         AND sof.composite_element_id = ep2.row_id
+         AND sof.source_id is not null
+         AND ga.alias = sof.source_id
+        GROUP BY ga.gene) veg_rh
+WHERE gene.source_id = pru.gene(+)
+  AND gene.source_id = veg.gene(+)
+  AND gene.source_id = rh.gene(+)
+  AND gene.source_id = rh_no_glucose.gene(+)
+  AND gene.source_id = rh_high_glucose.gene(+)
+  AND gene.source_id = glucose.gene(+)
+  AND gene.source_id = pru_veg.gene(+)
+  AND gene.source_id = pru_rh.gene(+)
+  AND gene.source_id = veg_rh.gene(+);
+
+GRANT SELECT ON apidb.ToxoExpn TO gus_r;
+
+CREATE INDEX apidb.Toxo_sourceId ON apidb.ToxoExpn (source_id);
+
+---------------------------
 prompt ### DROP MATERIALIZED VIEW apidb.GeneProteinAttributes ###;
 DROP MATERIALIZED VIEW apidb.GeneProteinAttributes;
 
@@ -278,16 +485,20 @@ SELECT gf.source_id,
        go.predicted_go_component,
        go.predicted_go_function,
        go.predicted_go_process,
-       derisiExpn.derisi_max_level,
-       derisiExpn.derisi_max_pct,
-       derisiExpn.derisi_max_timing,
-       derisiExpn.derisi_min_timing,
-       derisiExpn.derisi_min_level,
-       winzelerExpn.winzeler_max_level,
-       winzelerExpn.winzeler_max_pct,
-       winzelerExpn.winzeler_max_timing,
-       winzelerExpn.winzeler_min_timing,
-       winzelerExpn.winzeler_min_level
+       DerisiExpn.derisi_max_level,
+       DerisiExpn.derisi_max_pct,
+       DerisiExpn.derisi_max_timing,
+       DerisiExpn.derisi_min_timing,
+       DerisiExpn.derisi_min_level,
+       WinzelerExpn.winzeler_max_level,
+       WinzelerExpn.winzeler_max_pct,
+       WinzelerExpn.winzeler_max_timing,
+       WinzelerExpn.winzeler_min_timing,
+       WinzelerExpn.winzeler_min_level,
+       ToxoExpn.veg, ToxoExpn.rh, ToxoExpn.rh_high_glucose,
+       ToxoExpn.rh_no_glucose, ToxoExpn.glucose_fold_change,
+       ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
+       ToxoExpn.veg_rh_fold_change
 FROM dots.GeneFeature gf, dots.NaLocation nl,
      sres.SequenceOntology so, sres.Taxon,
      sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
@@ -297,8 +508,9 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
      dots.SplicedNaSequence sns,
      apidb.GeneProteinAttributes protein,
      apidb.GeneGoAttributes go,
-     apidb.DerisiExpn derisiExpn,
-     apidb.WinzelerExpn winzelerExpn,
+     apidb.DerisiExpn DerisiExpn,
+     apidb.WinzelerExpn WinzelerExpn,
+     apidb.ToxoExpn ToxoExpn,
      (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
              chromosome_order_num
       FROM dots.ExternalNaSequence
@@ -322,8 +534,9 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id = protein.source_id(+)
   AND gf.source_id = go.source_id(+)
-  AND gf.source_id = derisiExpn.source_id(+)
-  AND gf.source_id = winzelerExpn.source_id(+)
+  AND gf.source_id = DerisiExpn.source_id(+)
+  AND gf.source_id = WinzelerExpn.source_id(+)
+  AND gf.source_id = ToxoExpn.source_id(+)
   AND t.na_sequence_id = sns.na_sequence_id(+)
   AND gf.na_feature_id = t.parent_id
   AND t.na_feature_id = rt1.parent_id(+)
