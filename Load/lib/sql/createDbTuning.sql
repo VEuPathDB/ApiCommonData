@@ -21,6 +21,9 @@ ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id,
 CREATE INDEX dots.AaSequenceImp_string2_ix
 ON dots.AaSequenceImp (string2, aa_sequence_id);
 
+CREATE INDEX dots.loc_feat_ix
+       ON dots.NaLocation(na_feature_id, start_min, end_max, is_reversed);
+
 -------------------------------------------------------------------------------
 
 -- materialized views
