@@ -258,7 +258,7 @@ sub secondPass {
       $profile->set($attr, $stats->{$attr});
     }
 
-    $profile->set('ind_norm_by_med', $stats->{ind_ratio}/$inductionAvg);
+    $profile->set('ind_norm_by_med', $stats->{ind_ratio}/$inductionAvg) if $inductionAvg;
 
     $profile->submit();
     
@@ -306,8 +306,8 @@ sub calculateSummaryStats {
       $resultHash{'equiv_min'} = $timePointMapping{$minKey};
       $resultHash{'time_of_max_expr'} = $timePointMapping{$maxKey};
       $resultHash{'time_of_min_expr'} = $timePointMapping{$minKey};
+      $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
     }
-    $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
 
     my $maxPercentile = 0;
     foreach my $key (keys %percentileHash) {
