@@ -184,7 +184,7 @@ where external_database_release_id = $synDbRlsId";
 
   my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
 
-  my $anchorCount = 1;
+  my $anchorCount = 0;
   while(my $syntenyRow = $stmt->fetchrow_hashref) {
     my $refGenes = $self->findGenes($findGenesStmt,
 				    $syntenyRow->{A_NA_SEQUENCE_ID},
@@ -331,7 +331,8 @@ sub addAnchor {
     $anchors->[$anchorsCursor]->{prev_ref_loc} = $prevAnchor->{ref_loc};
     my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($prevAnchor);
     $syntenyObj->addChild($anchorObj);
-    $self->log("added $anchorCount anchors") if ($anchorCount % 1000 == 0);
+    $self->log("added $anchorCount anchors")
+      if ($anchorCount &&$anchorCount % 1000 == 0);
     return 1;
   }
   return 0;
