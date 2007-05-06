@@ -554,7 +554,11 @@ WHERE gf.na_feature_id = nl.na_feature_id
 
 GRANT SELECT ON apidb.GeneAttributes1111 TO gus_r;
 
-CREATE INDEX apidb.GeneAttr1111_sourceId ON apidb.GeneAttributes1111 (source_id);
+CREATE INDEX apidb.GeneAttr1111_sourceId
+       ON apidb.GeneAttributes1111 (source_id);
+
+CREATE INDEX apidb.GeneAttr_exon_ix
+       ON apidb.GeneAttributes1111 (exon_count, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
                              FOR apidb.GeneAttributes1111;
