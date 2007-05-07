@@ -68,21 +68,26 @@ SQL
 
 print "difference query:\n\n$sql\n\n" if $verbose;
 
-my $sth = $dbh->prepare($sql);
-$sth->execute();
-my $num = $sth->fetchrow_array();
-$sth->finish();
+# it takes a long time to check whether a materialized view is out of date
+# -- just refresh it without checking
 
-print "difference had $num rows\n" if $verbose;
+print "NOT RUNNING DIFFERENCE QUERY -- REFRESHING REGARDLESS" if $verbose;
 
-if ($num > 0) {
-   print "mView has changed -- updating\n";
+# my $sth = $dbh->prepare($sql);
+# $sth->execute();
+# my $num = $sth->fetchrow_array();
+# $sth->finish();
+
+# print "difference had $num rows\n" if $verbose;
+
+# if ($num > 0) {
+#    print "mView has changed -- updating\n";
 #   $sth = $dbh->prepare("EXECUTE DBMS_MVIEW.REFRESH('${owner}.${mView}')");
    $sth = $dbh->prepare("begin DBMS_MVIEW.REFRESH('${owner}.${mView}'); end;");
    $sth->{RaiseError} = 1;
    $sth->execute();
    $sth->finish();
-}
+# }
 
 
 my $date = `date`; chomp($date);
