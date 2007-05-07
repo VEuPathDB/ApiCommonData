@@ -375,7 +375,6 @@ sub addAnchorToGusObj {
   my ($self, $anchor, $syntenyObj, $anchorCount) = @_;
 
   my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($anchor);
-  print STDERR 'id: ' . $syntenyObj->getId() . " " . Dumper $anchor;
   $syntenyObj->addChild($anchorObj);
   $self->log("added $anchorCount anchors")
     if ($anchorCount && $anchorCount % 1000 == 0);
