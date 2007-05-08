@@ -15,11 +15,14 @@ ON dots.AaSequenceImp (external_database_release_id, subclass_view,
                       aa_sequence_id);
 
 CREATE INDEX dots.NaFeat_alleles_ix
-ON dots.NaFeatureImp(subclass_view, number4, number5, na_sequence_id,
+ON dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id,
                      na_feature_id);
 
 CREATE INDEX dots.AaSequenceImp_string2_ix
 ON dots.AaSequenceImp (string2, aa_sequence_id);
+
+CREATE INDEX dots.NaFeat_SubclassSource_ix
+ON dots.NaFeatureImp (subclass_view, source_id);
 
 CREATE INDEX dots.loc_feat_ix
        ON dots.NaLocation(na_feature_id, start_min, end_max, is_reversed);
@@ -116,8 +119,8 @@ WHERE pairs.gene = gf.source_id
   AND gf.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                            'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
-                            'TwinScanEt predictions');
+                      'TigrScan', /*'tRNAscan-SE',*/ 'TwinScan predictions',
+                      'TwinScanEt predictions');
 
 GRANT SELECT ON apidb.GeneAlias TO gus_r;
 

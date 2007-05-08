@@ -546,18 +546,18 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
-  -- skip toxo predictions
+  -- skip toxo predictions (except tRNAs)
   AND (tn.name != 'Toxoplasma gondii' 
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                          'TigrScan', 'tRNAscan-SE', 'TwinScan predictions',
-                          'TwinScanEt predictions'));
+                          'TigrScan', /*'tRNAscan-SE',*/
+                          'TwinScan predictions', 'TwinScanEt predictions'));
 
 GRANT SELECT ON apidb.GeneAttributes1111 TO gus_r;
 
 CREATE INDEX apidb.GeneAttr1111_sourceId
        ON apidb.GeneAttributes1111 (source_id);
 
-CREATE INDEX apidb.GeneAttr_exon_ix
+CREATE INDEX apidb.GeneAttr1111_exon_ix
        ON apidb.GeneAttributes1111 (exon_count, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
