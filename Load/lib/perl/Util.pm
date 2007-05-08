@@ -13,7 +13,7 @@ sub getSplicedNASequenceId {
   if (!$plugin->{sourceIdFeatureIdMap}) {
     $plugin->{sourceIdFeatureIdMap} = {};
     my $sql = "
-SELECT source_id, na_sequence_id
+SELECT DISTINCT source_id, na_sequence_id
 FROM Dots.SplicedNASequence
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
