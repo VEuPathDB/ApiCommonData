@@ -267,7 +267,7 @@ and seq.external_database_release_id = $extDbRlsIdA
 				     1);
 
     $syntenyObj->submit();
-    $self->undefPointerCache();exit;
+    $self->undefPointerCache();
   }
   return $anchorCount;
 }
