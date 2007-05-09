@@ -163,7 +163,7 @@ EOSQL
 						  b_start => $b_start,
 						  a_end   => $a_start + $a_len - 1,
 						  b_end   => $b_start + $b_len - 1,
-						  is_reversed => $strand eq "-",
+						  is_reversed => $strand eq "-"? 1 : 0,
 						  external_database_release_id => $synDbRlsId,
 						});
   $synteny->submit();
@@ -175,7 +175,7 @@ EOSQL
 						  b_start => $a_start,
 						  a_end   => $b_start + $b_len - 1,
 						  b_end   => $a_start + $a_len - 1,
-						  is_reversed => $strand eq "-",
+						  is_reversed => $strand eq "-"? 1 : 0,
 						  external_database_release_id => $synDbRlsId,
 						});
   $synteny->submit();
