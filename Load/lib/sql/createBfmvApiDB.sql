@@ -137,9 +137,6 @@ DROP MATERIALIZED VIEW apidb.SnpAttributes;
 prompt *****CREATE MATERIALIZED VIEW apidb.SnpAttributes
 CREATE MATERIALIZED VIEW apidb.SnpAttributes AS
 (
-SELECT 'cryptodb' AS project_id, SnpAttributes.* FROM  
-apidb.SnpAttributes@CRYPTOB
-UNION
 SELECT 'plasmodb' AS project_id, SnpAttributes.* FROM  
 apidb.SnpAttributes@PLASBLD
 UNION
@@ -147,8 +144,6 @@ SELECT 'toxodb' AS project_id, SnpAttributes.* FROM
 apidb.SnpAttributes@TOXOBLD
 );
 
-prompt *****select count(*) from apidb.snpattributes@CRYPTOB;
-select count(*) from apidb.snpattributes@CRYPTOB;
 prompt *****select count(*) from apidb.snpattributes@PLASBLD;
 select count(*) from apidb.snpattributes@PLASBLD;
 prompt *****select count(*) from apidb.snpattributes@TOXOBLD;
