@@ -147,7 +147,7 @@ sub _handleSyntenySpan {
   WHERE  source_id = ?
     AND  external_database_release_id = ?  
 EOSQL
-  $self->error("Couldn't find primary key for $a_id\n") unless $a_pk;
+  $self->error("Couldn't find primary key for $a_id with external database release id $extDbRlsIdA\n") unless $a_pk;
   
   my ($b_pk) = $self->getQueryHandle()->selectrow_array(<<EOSQL, undef, $b_id, $extDbRlsIdB);
   SELECT na_sequence_id
@@ -155,7 +155,7 @@ EOSQL
   WHERE  source_id = ?
     AND  external_database_release_id = ?  
 EOSQL
-  $self->error("Couldn't find primary key for $b_id\n") unless $b_pk;
+  $self->error("Couldn't find primary key for $b_id with external database release id $extDbRlsIdB\n") unless $b_pk;
   
   my $synteny = GUS::Model::ApiDB::Synteny->new({ a_na_sequence_id => $a_pk,
 						  b_na_sequence_id => $b_pk,
