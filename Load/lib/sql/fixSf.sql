@@ -81,7 +81,8 @@ set taaf.translation_start =
 from dots.exonfeature ef, dots.nalocation l,dots.transcript t
 where t.na_feature_id = taaf.na_feature_id
 and ef.parent_id = t.parent_id
-and ef.order_number = 1
+and ef.order_number = (select min(order_number) from dots.exonfeature efint 
+                       where efint.parent_id = t.parent_id)
 and l.na_feature_id = ef.na_feature_id)
 where taaf.na_feature_id in (
 select it.na_feature_id from dots.transcript it, dots.genefeature igf, dots.NALOCATION il
@@ -98,11 +99,11 @@ select 'fix transcript_start for reverse strand' from dual;
 update dots.translatedaafeature taaf
 set taaf.translation_start = 
 (select l.end_max - ef.coding_start + 1
-from dots.exonfeature ef, dots.nalocation l,dots.transcript t,dots.splicednasequence snas
+from dots.exonfeature ef, dots.nalocation l,dots.transcript t,
 where t.na_feature_id = taaf.na_feature_id
-and snas.na_sequence_id = t.na_sequence_id
 and ef.parent_id = t.parent_id
-and ef.order_number = 1
+and ef.order_number = (select min(order_number) from dots.exonfeature efint 
+                       where efint.parent_id = t.parent_id)
 and l.na_feature_id = ef.na_feature_id)
 where taaf.na_feature_id in (
 select it.na_feature_id from dots.transcript it, dots.genefeature igf, dots.NALOCATION il
