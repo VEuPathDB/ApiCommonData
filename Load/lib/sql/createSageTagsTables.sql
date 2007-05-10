@@ -26,9 +26,14 @@ SELECT      distinct stf.na_feature_id, stf.na_sequence_id,
             str.composite_element_id, st.tag
 FROM        RAD.SageTag st, RAD.SageTagResult str, DoTS.SageTagFeature stf
 WHERE       st.composite_element_id = str.composite_element_id
- AND	    st.composite_element_id = stf.source_id;
+ AND	    st.composite_element_id = stf.source_id
+ AND	    st.array_design_id IN (
+  SELECT array_design_id 
+  FROM RAD.ARRAYDESIGN 
+  WHERE description = 'T. gondii 3p SAGE tags from M. White lab via A Mackey' );
 
---cordinates:
+
+--coordinates:
 UPDATE 	apidb.SageTags_3prime stc
 SET      startm = (
 SELECT decode((l.is_reversed + sm.strand_orientation), 
@@ -199,7 +204,10 @@ SELECT      distinct stf.na_feature_id, stf.na_sequence_id,
             st.composite_element_id, st.tag
 FROM        RAD.SageTag st, DoTS.SageTagFeature stf
 WHERE       st.composite_element_id = stf.source_id
- AND	    st.array_design_id = 2;
+ AND	    st.array_design_id IN (
+  SELECT array_design_id 
+  FROM RAD.ARRAYDESIGN 
+  WHERE description = 'T. gondii 5p SAGE Tags from M. White lab via A Mackey')
 
 --cordinates:
 UPDATE 	apidb.SageTags_5prime stc
