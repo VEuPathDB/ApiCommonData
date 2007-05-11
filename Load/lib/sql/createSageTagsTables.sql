@@ -207,9 +207,9 @@ WHERE       st.composite_element_id = stf.source_id
  AND	    st.array_design_id IN (
   SELECT array_design_id 
   FROM RAD.ARRAYDESIGN 
-  WHERE description = 'T. gondii 5p SAGE Tags from M. White lab via A Mackey')
+  WHERE description = 'T. gondii 5p SAGE Tags from M. White lab via A Mackey');
 
---cordinates:
+--coordinates:
 UPDATE 	apidb.SageTags_5prime stc
 SET      startm = (
 SELECT decode((l.is_reversed + sm.strand_orientation), 
