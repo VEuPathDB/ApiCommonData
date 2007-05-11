@@ -161,7 +161,9 @@ sub run {
     my $sourceidtable = ($self->getArg('SourceIdTable')) ? $self->getArg('SourceIdTable') : "GeneFeature";
     #my $method = "ApiCommonData::Load::Util::Get${sourceidtable}Id";
 	my %sourceid_method = ( 
-				'GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId);
+				'GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
+                                'SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId
+				);
 	
     foreach my $element (@$foundIds) {
 	if(my $geneFeatureId = $sourceid_method{$sourceidtable}->($self, $element)) {
