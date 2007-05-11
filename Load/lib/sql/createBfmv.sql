@@ -171,7 +171,7 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
              p.time_of_min_expr AS winzeler_min_timing,
              p.min_expression AS winzeler_min_level
       FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
-      WHERE ps.name = 'winzeler_cc_sorbLgp'
+      WHERE ps.name = 'winzeler_cc_sorbExp'
         AND ti.name = 'GeneFeature'
         AND p.profile_set_id = ps.profile_set_id
         AND ti.table_id = p.subject_table_id) expn
@@ -267,10 +267,10 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
         AND ga.alias = sof.source_id
        GROUP BY ga.gene) rh_no_glucose,
      (SELECT ga.gene,
-              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
-                            THEN avg(ep1.mean)/avg(ep2.mean)
-                            ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
-                            END), 999.9) AS fold_change
+              CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                   THEN avg(ep1.mean)/avg(ep2.mean)
+                   ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                   END AS fold_change
        FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
             rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
             rad.AnalysisInput ai2, rad.Analysis a2,
@@ -294,10 +294,10 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
          AND ga.alias = sof.source_id
         GROUP BY ga.gene) glucose,
      (SELECT ga.gene,
-              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+             CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
                             THEN avg(ep1.mean)/avg(ep2.mean)
                             ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
-                            END), 999.9) AS fold_change
+                            END AS fold_change
        FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
             rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
             rad.AnalysisInput ai2, rad.Analysis a2,
@@ -321,10 +321,10 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
          AND ga.alias = sof.source_id
         GROUP BY ga.gene) pru_veg,
      (SELECT ga.gene,
-              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+             CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
                             THEN avg(ep1.mean)/avg(ep2.mean)
                             ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
-                            END), 999.9) AS fold_change
+                            END AS fold_change
        FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
             rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
             rad.AnalysisInput ai2, rad.Analysis a2,
@@ -348,10 +348,10 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
          AND ga.alias = sof.source_id
         GROUP BY ga.gene) pru_rh,
      (SELECT ga.gene,
-              to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+             CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
                             THEN avg(ep1.mean)/avg(ep2.mean)
                             ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
-                            END), 999.9) AS fold_change
+                            END AS fold_change
        FROM rad.LogicalGroup lg1, rad.AnalysisInput ai1, rad.Analysis a1,
             rad.ExpressionProfile ep1, rad.LogicalGroup lg2,
             rad.AnalysisInput ai2, rad.Analysis a2,
