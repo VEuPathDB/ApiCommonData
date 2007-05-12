@@ -44,7 +44,7 @@ DROP MATERIALIZED VIEW apidb.GoTermList;
 prompt ### CREATE MATERIALIZED VIEW apidb.GoTermList ###;
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
 SELECT gf.source_id, o.ontology, 
-       DECODE(gec.name, 'IEA', 'predicted', 'annotated') AS source,
+       DECODE(gail.name, 'Interpro', 'predicted', 'annotated') AS source,
        apidb.tab_to_string(CAST(COLLECT(DISTINCT gt.name) AS apidb.varchartab), ', ') AS go_terms
 FROM dots.GeneFeature gf, dots.Transcript t,
      dots.TranslatedAaFeature taf, dots.GoAssociation ga,
@@ -68,8 +68,7 @@ WHERE gf.na_feature_id = t.parent_id
       = gaiec.go_association_instance_id
   AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
   AND gt.go_term_id = o.go_term_id
-GROUP BY gf.source_id, o.ontology, 
-         DECODE(gec.name, 'IEA', 'predicted', 'annotated');
+GROUP BY gf.source_id, o.ontology, gail.name;
 
 ---------------------------
 
@@ -821,4 +820,22 @@ ON apidb.ArrayElementAttributes1111 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
                              FOR apidb.ArrayElementAttributes1111;
+
+---------------------------
+-- cleanup
+---------------------------
+
+prompt These mviews appear superflous (their names end in four digits but no synonym points at them).
+prompt Consider carefully dropping them.
+
+SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS drops
+FROM all_mviews
+WHERE mview_name IN (SELECT mview_name
+                     FROM all_mviews
+                    MINUS
+                     SELECT table_name
+                     FROM all_synonyms)
+  AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
+      LIKE '%fournumbers';
+
 exit
