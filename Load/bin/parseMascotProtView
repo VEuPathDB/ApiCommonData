@@ -151,7 +151,8 @@ sub parseProtView {
         } elsif (/Sequence Coverage:/) {
             stripMarkup($_);
             ($h->{percentCoverage}) = m/Sequence Coverage:\s*([^\b%]+)/;
-        } elsif ( /http:\/\/.*\/cgi\/peptide_view/ && ! /zilch/ ) { # table of peptides
+##        } elsif ( /http:\/\/.*\/cgi\/peptide_view/ && ! /zilch/ ) { # table of peptides
+        } elsif ( /href.*peptide_view.pl/i && ! /zilch/ ) { # table of peptides
             while ( ! m|</[Aa]>| ) { chomp ($_ .= <F>); }
             undef $pep;
             ($pep->{query}) = m/query=(\d+)/;
