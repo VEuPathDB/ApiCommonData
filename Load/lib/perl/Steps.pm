@@ -148,7 +148,7 @@ sub createDataDir {
   &_createDir($mgr, $dataDir);
 
   my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
-		     'sage', 'analysis', 'similarity', 'assembly');
+		     'sage', 'analysis', 'similarity', 'assembly', 'cluster');
 
   foreach my $subDir (@dataSubDirs) {
     &_createDir($mgr, "$dataDir/$subDir");
@@ -166,7 +166,12 @@ sub createDataDir {
     }
   }
 
-  $mgr->endStep($signal);
+  foreach my $species (@Species) {
+    &_createDir($mgr, "$dataDir/cluster/${species}Initial");
+    &_createDir($mgr, "$dataDir/cluster/${species}Intermed");
+  }
+
+ $mgr->endStep($signal);
 }
 
 sub _createDir {
