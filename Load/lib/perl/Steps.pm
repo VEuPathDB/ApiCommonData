@@ -1362,6 +1362,14 @@ EOF
   print STDERR "$cmd\n";
 
   $mgr->runCmd($cmd);
+
+  $organism =~ s/\s/\_/;
+  my $file = "$dir/$organism";
+  $organism = lcfirst($organism);
+  $organism =~ s/^(\w)\w+_(\w+)$/$1_$2/;
+  $file = "$file/${organism}.gff";
+
+  die "Did not create non-empty file $file\n" unless (-s $file);
   $mgr->endStep($signal);
 }
 
