@@ -67,7 +67,7 @@ sub makeGenomeDir {
     &makeControllerPropFile($inputDir, $serverBase, 2, $taskSize,
 			    $nodePath,
 			    "DJob::DistribJobTasks::GenomeAlignTask", $nodeClass);
-    my $seqFileName = "$localDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
+    my $seqFileName = "$clusterDataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
     my $serverInputDir = "$serverBase/input";
     &makeGenomeTaskPropFile($inputDir, $serverInputDir, $seqFileName,
 			    $gaOptions, $gaBinPath);
