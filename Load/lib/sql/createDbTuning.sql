@@ -335,8 +335,11 @@ CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary AS
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment,
-         least(ba.target_end, l.end_max) - greatest(ba.target_start, l.start_min) + 1 AS est_gene_overlap_length,
-         ((ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)) * 100) AS percent_est_bases_aligned,
+         least(ba.target_end, l.end_max)
+         - greatest(ba.target_start, l.start_min) + 1
+           AS est_gene_overlap_length,
+         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+         * 100 AS percent_est_bases_aligned,
          gf.source_id AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
        dots.genefeature gf, dots.nalocation l, sres.ExternalDatabaseRelease edr,
@@ -355,7 +358,8 @@ UNION
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment,
          NULL AS est_gene_overlap_length,
-         NULL AS percent_est_bases_aligned,
+         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+         * 100 AS percent_est_bases_aligned,
          NULL AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq
   WHERE e.na_sequence_id = ba.query_na_sequence_id
@@ -387,6 +391,11 @@ CREATE INDEX apidb.EstSumm_libOverlap_ix
              ON apidb.EstAlignmentGeneSummary
                 (library_id, percent_identity, is_consistent,
                  est_gene_overlap_length, percent_est_bases_aligned);
+
+CREATE INDEX apidb.EstSumm_estSite_ix
+             ON apidb.EstAlignmentGeneSummary
+                (target_sequence_source_id, target_start, target_end,
+                 library_id);
 
 -------------------------------------------------------------------------------
 
