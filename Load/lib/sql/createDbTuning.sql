@@ -331,10 +331,11 @@ prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary;
 DROP MATERIALIZED VIEW apidb.EstAlignmentGeneSummary;
 
 CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary AS
-  SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
-         ba.is_best_alignment,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
          least(ba.target_end, l.end_max)
          - greatest(ba.target_start, l.start_min) + 1
            AS est_gene_overlap_length,
@@ -343,7 +344,10 @@ CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary AS
          gf.source_id AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
        dots.genefeature gf, dots.nalocation l, sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed
+       sres.ExternalDatabase ed,
+       (select source_id, na_sequence_id from dots.ExternalNaSequence
+        union
+        select source_id, na_sequence_id from dots.VirtualSequence) sequence
   WHERE e.na_sequence_id = ba.query_na_sequence_id
     AND aseq.na_sequence_id = ba.query_na_sequence_id
     AND gf.na_sequence_id = ba.target_na_sequence_id
@@ -352,18 +356,24 @@ CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary AS
     AND ba.query_external_db_release_id = edr.external_database_release_id
     AND edr.external_database_id = ed.external_database_id
     AND ed.name = 'dbEST'
+    AND ba.target_na_sequence_id = sequence.na_sequence_id
 UNION
   SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
-         ba.is_best_alignment,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
          NULL AS est_gene_overlap_length,
          ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
          * 100 AS percent_est_bases_aligned,
          NULL AS gene
-  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq
+  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+       (select source_id, na_sequence_id from dots.ExternalNaSequence
+        union
+        select source_id, na_sequence_id from dots.VirtualSequence) sequence
   WHERE e.na_sequence_id = ba.query_na_sequence_id
     AND aseq.na_sequence_id = ba.query_na_sequence_id
+    AND ba.target_na_sequence_id = sequence.na_sequence_id
     AND ba.blat_alignment_id IN
   ( -- set of blat_alignment_ids not in in first leg of UNION
     -- (because they overlap no genes)
