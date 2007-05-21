@@ -1275,11 +1275,11 @@ EOF
 
 
 sub makeGenomicDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain) = @_;
 
     my $sql = <<"EOF";
         SELECT
-        replace(tn.name, ' ', '_')
+        replace(tn.name, ' ', '_')||'$strain'
             ||'|'||
         enas.source_id
             ||'|'||
@@ -1394,7 +1394,7 @@ sub runWdkRecordDump {
 EOF
 
   print STDERR "$cmd\n";
-
+print "GUS_HOME ".$ENV{GUS_HOME}."\n";
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
 }
