@@ -37,6 +37,7 @@ sub createEpitopeFiles{
       next if $file =~ /^\.\.?$/;     # skip . and ..
 
       my $inFile = "$excelDir/$file";
+      next unless qx(od -c $inFile | head -1 |egrep '376 067 000 043|320 317 021 340|333 245-000 000 000'); # MS Office format
 
       my $outFile = $file;
       $outFile =~ s/(\w+).\w+/$1/;
@@ -67,9 +68,10 @@ sub createEpitopeFastaFiles{
       opendir(DIR, $inputDir) or die "can't opendir $inputDir: $!";
 
       while (defined($file = readdir(DIR))) {
-	next if $file =~ /^\.\.?$/;     # skip . and ..
 
 	my $inFile = "$inputDir/$file";
+
+	next unless -f $inFile;
 
 	my $outFile = $file;
 	$outFile =~ s/(\w+).\w+/$1/;
