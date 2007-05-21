@@ -14,9 +14,7 @@ use ApiCommonData::Load::Util;
 
 # this is the list of so terms that this file uses.  we have them here so we
 # can check them at start up time.
-my $soTerms = ({"pseudogene" => 1,
-		"pseudogenic_transcript" => 1,
-		"SECIS_element" => 1,
+my $soTerms = ({"SECIS_element" => 1,
 		"stop_codon_redefinition_as_selenocysteine" => 1,
 	       });
 
@@ -268,8 +266,6 @@ sub setPseudo {
   $feature->setIsPseudo(1);
   $transcript->setIsPseudo(1);
 
-#  $feature->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogene"));
-#  $transcript->setSequenceOntologyId($self->_getSOPrimaryKey("pseudogenic_transcript"));
 
   return [];
 }
