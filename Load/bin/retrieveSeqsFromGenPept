@@ -27,6 +27,13 @@ open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!\n";
 open (OUT, ">> $outFile") or die "Cannot open file '$outFile' for writing: $!\n";
 open (ERROR, ">> $errorLog");
 
+  if (-e $outFile) { 
+    # collect accessions retrieved from previous run
+    open (PREV, "< $outFile") or die "can not open '$outFile' for reading\n";
+    %seen = map { (m/^>(\S+)/) ? ($1,1) : () } <PREV>;
+    close PREV;
+  }
+  
   while (<IDS>) {
     chomp;
 

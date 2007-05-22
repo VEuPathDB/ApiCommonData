@@ -5,16 +5,19 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($inputDir, $queryDir, $outputDir, $blastDatabase, $subjectPath, $idRegex, $verbose);
+my ($inputDir, $queryDir, $outputDir, $blastDatabase, 
+    $subjectPath, $idRegex, $verbose, $speciesKey, $ncbiBlastPath);
 
 my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 
 &GetOptions("inputDir=s" => \$inputDir,
 	    "queryDir=s"=> \$queryDir,
 	    "outputDir=s" => \$outputDir,
+        "ncbiBlastPath=s" => \$ncbiBlastPath,
 	    "blastDatabase=s" => \$blastDatabase,
 	    "subjectPath=s" => \$subjectPath,
 	    "speciesRegex=s" => \$speciesRegex,
+	    "speciesKey=s" => \$speciesKey, # lookup database name in runBlast()
 	    "idRegex=s" => \$idRegex,
 	    "verbose!" => \$verbose,
 	   );
@@ -25,7 +28,7 @@ if (!$inputDir || !$queryDir || !$outputDir || !$blastDatabase) {
 
 
 &getGenPetSeqs($inputDir, $queryDir);
-&runBlast($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex, $verbose);
+&runBlast($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex, $verbose, $ncbiBlastPath);
 &exactMapEpitopes($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose);
 print STDERR "Mapping Complete\n";
 
@@ -45,9 +48,9 @@ sub getGenPetSeqs{
 
   my $file;
   while (defined($file = readdir(DIR))) {
-    next if $file =~ /^\.\.?$/;     # skip . and ..
-
     my $inFile = "$inputDir/$file";
+
+    next unless -f "$inFile";
 
     my $outFile = $file;
     $outFile =~ s/(\w+).\w+/$1/;
@@ -62,7 +65,7 @@ sub getGenPetSeqs{
 }
 
 sub runBlast{
-  my ($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex,$verbose) = @_;
+  my ($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex,$verbose, $ncbiBlastPath) = @_;
 
   unless(-d $queryDir){ die "Could not find the query file directory '$queryDir':$!";}
 
@@ -75,8 +78,7 @@ sub runBlast{
 
   my $file;
   while (defined($file = readdir(EDIR))) {
-    next if $file =~ /^\.\.?$/;     # skip . and ..
-    next if $file =~ /fasta/;       # skip the fasta dir
+    next unless -f "$inputDir/$file";
 
     my $baseFileName = $file;
     $baseFileName =~ s/(\w+).\w+/$1/;
@@ -86,8 +88,13 @@ sub runBlast{
 
     my $queryFile = "$queryDir/$baseFileName.fsa";
 
-    my $species = $baseFileName;
-    $species =~ s/$speciesRegex/$1/;
+    my $species;
+    if ($speciesKey) {
+        $species = $speciesKey;
+    } else {
+        $species = $baseFileName;
+        $species =~ s/$speciesRegex/$1/;
+    }
 
     my $database;
     switch ($species) {
@@ -99,6 +106,8 @@ sub runBlast{
       case "Pv"  { $database = "Pvivax_proteins";}
       case "Py"  { $database = "Pyoelii_proteins";}
       case "Tg"  { $database = "Tgondii_proteins";}
+      case "Cp"  { $database = "Cparvum_proteins";}
+      case "Cp6" { $database = "CparvumChr6_proteins";}
       else       { print "$species does not match a known database." }
     }
 
@@ -118,7 +127,7 @@ sub runBlast{
     print STDERR "OUTDIR: $outputDir\n" if $verbose;
     print STDERR "INDIVIDUAL OUT DIR: $indivOutDir\n" if $verbose;
 
-    my $cmd = "runAndParseBlast --queryFile $queryFile --database $database --epitopeFile $epitopeFile --outputFile $outFile";
+    my $cmd = "runAndParseBlast --ncbiBlastPath $ncbiBlastPath --queryFile $queryFile --database $database --epitopeFile $epitopeFile --outputFile $outFile";
 
     if ($idRegex){
       $cmd .= " --regex $idRegex";
@@ -147,8 +156,7 @@ sub exactMapEpitopes{
 
   my $file;
   while (defined($file = readdir(EDIR))) {
-    next if $file =~ /^\.\.?$/;     # skip . and ..
-    next if $file =~ /fasta/;       # skip the fasta dir
+    next unless -f "$inputDir/$file";
 
     my $baseFileName = $file;
     $baseFileName =~ s/(\w+).\w+/$1/;
@@ -156,8 +164,13 @@ sub exactMapEpitopes{
     #get the files and database that go together
     my $epitopeFile = "$inputDir/$file";
 
-    my $species = $baseFileName;
-    $species =~ s/$speciesRegex/$1/;
+    my $species;
+    if ($speciesKey) {
+        $species = $speciesKey;
+    } else {
+        my $species = $baseFileName;
+        $species =~ s/$speciesRegex/$1/;
+    }
 
     my $subjectFile;
     switch ($species) {
@@ -169,6 +182,8 @@ sub exactMapEpitopes{
       case "Pv"  { $subjectFile = "PvivaxAnnotatedProteins.fsa"; }
       case "Py"  { $subjectFile = "PyoeliiAnnotatedProteins.fsa"; }
       case "Tg"  { $subjectFile = "TgondiiAnnotatedProteins.fsa"; }
+      case "Cp"  { $subjectFile = "CparvumAnnotatedProteins.fsa";}
+      case "Cp6" { $subjectFile = "CparvumChr6AnnotatedProteins.fsa";}
       else       { print "$species does not match a known database." }
     }
 

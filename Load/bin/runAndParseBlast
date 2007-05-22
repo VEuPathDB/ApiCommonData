@@ -17,6 +17,7 @@ my $debug = 0;
 $| = 1;
 
 my $regex = '\S*?\|\S*?\|(\S*?)\|';
+my $ncbiBlastPath;
 my $queryFile;
 my $epitopeFile;
 my $outputFile;
@@ -24,15 +25,17 @@ my $database;
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
 &GetOptions("regex=s" => \$regex,
+            "ncbiBlastPath=s" => \$ncbiBlastPath,
             "queryFile=s" => \$queryFile,
-	    "database=s" => \$database,
-	    "gusConfigFile=s" => \$gusConfigFile,
-	    "epitopeFile=s" => \$epitopeFile,
-	    "outputFile=s" => \$outputFile,
-	    "debug!" => \$debug,
+            "database=s" => \$database,
+            "gusConfigFile=s" => \$gusConfigFile,
+            "epitopeFile=s" => \$epitopeFile,
+            "outputFile=s" => \$outputFile,
+            "debug!" => \$debug,
             );
 
-unless ($queryFile && $database && $epitopeFile && $outputFile){ die "Usage: runAndParseBlast --queryFile <FILE> --database <PATH> --epitopeFile <FILE> --outputFile <FILEPATH> [--regex <STRING>] [--gusConfigFile <FILE>] [--debug]";}
+unless ($queryFile && $database && $epitopeFile && $outputFile){ 
+    die "Usage: runAndParseBlast --ncbiBlastPath <PATH> --queryFile <FILE> --database <PATH> --epitopeFile <FILE> --outputFile <FILEPATH> [--regex <STRING>] [--gusConfigFile <FILE>] [--debug]";}
 
 die "Cannot find '$queryFile':$!\n" unless (-e $queryFile);
 die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
@@ -138,7 +141,7 @@ sub createSeqFile{
 sub runBlast{
   my ($database, $tempFile, $queryLength, $regex, $debug) = @_;
 
-  my $cmd = "/files/cbil/software/ncbi-blast2/current/blastall -p blastp -d $database -i $tempFile -v 3 -b 3 -F F";
+  my $cmd = "$ncbiBlastPath/blastall -p blastp -d $database -i $tempFile -v 3 -b 3 -F F";
 
   my @blastOutput = `$cmd`;
 

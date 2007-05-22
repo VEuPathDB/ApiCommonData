@@ -911,7 +911,7 @@ sub _getInputFiles{
 }
 
 sub loadEpitopes{
-  my ($mgr, $inputDir, $species, $epiExtDbSpecs, $seqExtDbSpecs, $fileExtension) = @_;
+  my ($mgr, $inputDir, $species, $epiExtDbSpecs, $seqExtDbSpecs, $fileExtension, $speciesKey) = @_;
 
   my $signal = "loadEpitopes${species}";
 
@@ -927,7 +927,7 @@ sub loadEpitopes{
     my $baseFileName = $file;
     $baseFileName =~ /\/(IEDBExport\S+)\./;
     $baseFileName = $1;
-    my $subSignal = "loadEpitopes${baseFileName}";
+    my $subSignal = "loadEpitopes${baseFileName}$speciesKey";
     $mgr->runPlugin ($subSignal,
 		     "ApiCommonData::Load::Plugin::InsertEpitopeFeature",
 		     "$args","Loading Epitopes from $file");
@@ -937,11 +937,13 @@ sub loadEpitopes{
 }
 
 sub createEpitopeMapFiles {
-  my ($mgr, $inputDir, $blastDir, $subjectDir) = @_;
+  my ($mgr, $inputDir, $blastDir, $subjectDir, $speciesKey) = @_;
 
-  my $signal = "createEpitopeMapFiles$inputDir";
+  my $signal = "createEpitopeMapFiles$inputDir$speciesKey";
 
   return if $mgr->startStep("Creating Epitope files from $inputDir", $signal);
+
+  my $ncbiBlastPath = $mgr->{propertySet}->getProp('ncbiBlastPath');
 
   $inputDir = "$mgr->{dataDir}/iedb/$inputDir";
 
@@ -951,7 +953,9 @@ sub createEpitopeMapFiles {
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-    my $cmd = "createEpitopeMappingFile --inputDir $inputDir --queryDir $queryDir --outputDir $outputDir --blastDatabase $blastDir --subjectPath $subjectDir 2>> $logFile";
+  my $cmd = "createEpitopeMappingFile --ncbiBlastPath $ncbiBlastPath --inputDir $inputDir --queryDir $queryDir --outputDir $outputDir --blastDatabase $blastDir --subjectPath $subjectDir";
+  $cmd .= " --speciesKey $speciesKey" if ($speciesKey);
+  $cmd .= " 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
