@@ -82,8 +82,6 @@ sub do_update {
 
   return if $DONE{$mview};
 
-  print "updating mview ${owner}.${mview}\n";
-
   # recursively update any parent mviews
   foreach my $edge (@DEPENDENCIES) {
     my ($parent, $child) = $edge;
@@ -91,6 +89,7 @@ sub do_update {
   }
 
   # update this particular one
+  print "updating mview ${owner}.${mview}\n" if $verbose;
   $dbh->do("begin DBMS_MVIEW.REFRESH('${owner}.${mview}'); end;");
 }
 
