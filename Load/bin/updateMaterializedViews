@@ -1,0 +1,98 @@
+#! /usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my %DONE = {};
+my @DEPENDENCIES; # (parent, child) pairs of the dependency graph
+
+my ($verbose, $mView, $owner, $gusConfigFile);
+
+&GetOptions("verbose!"=> \$verbose,
+            "owner=s" => \$owner,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+die "USAGE: $0 --owner <mview owner> {--verbose} {--gusConfigFile <file>}\n"
+  if (!$owner);
+$| = 1;
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					$gusconfig->getReadOnlyDatabaseLogin(),
+					$gusconfig->getReadOnlyDatabasePassword(),
+					$verbose,0,1,
+					$gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+$dbh->{RaiseError} = 1;
+
+# -----------------------------------
+# Main program
+# -----------------------------------
+
+$| = 1;
+
+my $date = `date`; chomp($date);
+print  "refreshMv.pl($owner) started at $date\n" if $verbose;
+
+# Query for the edges of the graph of dependencies
+
+my $sql = <<SQL;
+SELECT parent.owner || '.' || parent.mview_name AS parent,
+       child.owner || '.' || child.mview_name AS child
+FROM all_mviews parent, all_mviews child
+WHERE child.owner = upper('$owner')
+  AND instr(upper(DBMS_METADATA.GET_DDL('MATERIALIZED_VIEW', child.mview_name,
+                                        child.owner)),
+            parent.owner || '.' || parent.mview_name) > 0
+SQL
+
+print "query for mview dependencies:\n\n$sql\n\n" if $verbose;
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+while (my ($parent, $child) = $sth->fetchrow_array()) {
+  push(@DEPENDENCIES, ($parent, $child));
+}
+$sth->finish();
+
+# Now iterate through mviews and update them
+
+$sql = <<SQL;
+SELECT mview_name FROM all_mviews where owner = upper('$owner')
+SQL
+
+print "query to list mviews:\n\n$sql\n\n" if $verbose;
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+while (my ($mview) = $sth->fetchrow_array()) {
+  do_update($owner, $mview);
+}
+$sth->finish();
+
+sub do_update {
+  my ($owner, $mview) = @_;
+
+  return if $DONE{$mview};
+
+  print "updating mview ${owner}.${mview}\n";
+
+  # recursively update any parent mviews
+  foreach my $edge (@DEPENDENCIES) {
+    my ($parent, $child) = $edge;
+    do_update($owner, $parent) if $child eq $mview
+  }
+
+  # update this particular one
+  $dbh->do("begin DBMS_MVIEW.REFRESH('${owner}.${mview}'); end;");
+}
+
+$dbh->disconnect();
+1;
