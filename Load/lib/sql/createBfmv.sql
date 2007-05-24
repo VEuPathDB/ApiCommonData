@@ -443,7 +443,34 @@ GRANT SELECT ON apidb.GeneProteinAttributes TO gus_r;
 CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 
 ---------------------------
+prompt ### DROP/CREATE MATERIALIZED VIEW apidb.GenomicSequence1111 ###;
+DROP MATERIALIZED VIEW apidb.GenomicSequence1111;
 
+CREATE MATERIALIZED VIEW apidb.GenomicSequence1111 AS
+  SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
+         a_count, c_count, g_count, t_count, length,
+         SUBSTR(description, 1, 400) AS description,
+         external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
+         chromosome_order_num, sequence_ontology_id
+  FROM dots.ExternalNaSequence
+  WHERE -- see both? use the VirtualSequence.
+        source_id NOT IN (SELECT source_id FROM dots.VirtualSequence)
+UNION
+  SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
+         a_count, c_count, g_count, t_count, length,
+         SUBSTR(description, 1, 400) AS description,
+         external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
+         chromosome_order_num, sequence_ontology_id
+  FROM dots.VirtualSequence;
+
+GRANT SELECT ON apidb.GenomicSequence1111 TO gus_r;
+
+CREATE INDEX apidb.GS_sourceId1111 ON apidb.GenomicSequence1111 (source_id);
+CREATE INDEX apidb.GS_naSeqId1111 ON apidb.GenomicSequence1111 (na_sequence_id);
+
+CREATE OR REPLACE SYNONYM apidb.GenomicSequence
+                          FOR apidb.GenomicSequence1111;
+---------------------------
 prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
 DROP MATERIALIZED VIEW apidb.GeneAttributes1111;
 
@@ -510,13 +537,7 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
      apidb.DerisiExpn DerisiExpn,
      apidb.WinzelerExpn WinzelerExpn,
      apidb.ToxoExpn ToxoExpn,
-     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.ExternalNaSequence
-      UNION
-      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.VirtualSequence) sequence,
+     apidb.GenomicSequence sequence,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
@@ -560,7 +581,7 @@ CREATE INDEX apidb.GeneAttr1111_exon_ix
        ON apidb.GeneAttributes1111 (exon_count, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
-                             FOR apidb.GeneAttributes1111;
+                          FOR apidb.GeneAttributes1111;
 
 ---------------------------
 -- sequences
@@ -587,17 +608,7 @@ SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
        sequence.chromosome_order_num
 FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
-     (SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
-             t_count, length, description, external_database_release_id,
-             chromosome, chromosome_order_num, sequence_ontology_id
-      FROM dots.ExternalNaSequence
-      WHERE -- see both? use the VirtualSequence.
-            source_id NOT IN (SELECT source_id FROM dots.VirtualSequence)
-      UNION
-      SELECT na_sequence_id, taxon_id, source_id, a_count, c_count, g_count,
-             t_count, length, description, external_database_release_id,
-             chromosome, chromosome_order_num, sequence_ontology_id
-      FROM dots.VirtualSequence) sequence,
+     apidb.GenomicSequence sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
       FROM dots.dbrefNaSequence drns, sres.DbRef dr,
            sres.ExternalDatabaseRelease gb_edr, sres.ExternalDatabase gb_ed
@@ -625,7 +636,7 @@ GRANT SELECT ON apidb.SequenceAttributes1111 TO gus_r;
 CREATE INDEX apidb.SeqAttr1111_source_id ON apidb.SequenceAttributes1111 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.SequenceAttributes
-                             FOR apidb.SequenceAttributes1111;
+                          FOR apidb.SequenceAttributes1111;
 ---------------------------
 -- SNPs
 ---------------------------
@@ -676,13 +687,7 @@ SELECT snp.source_id AS source_id,
 FROM dots.NaSequence ns, dots.SnpFeature snp, dots.NaLocation snp_loc,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, sres.Taxon,
      sres.TaxonName tn,
-     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.ExternalNaSequence
-      UNION
-      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.VirtualSequence) sequence,
+     apidb.GenomicSequence sequence,
      (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id
       FROM dots.GeneFeature gene, dots.NaLocation gene_loc
       WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
@@ -704,7 +709,7 @@ CREATE INDEX apidb.Snp1111_Seq_ix
        ON apidb.SnpAttributes1111 (na_sequence_id, dataset, start_min);
 
 CREATE OR REPLACE SYNONYM apidb.SnpAttributes
-                             FOR apidb.SnpAttributes1111;
+                          FOR apidb.SnpAttributes1111;
 ---------------------------
 -- ORFs
 ---------------------------
@@ -725,13 +730,7 @@ SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
 FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
      dots.TranslatedAaSequence tas, sres.Taxon, sres.TaxonName tn,
      sres.SequenceOntology so, dots.NaLocation nl,
-     (SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.ExternalNaSequence
-      UNION
-      SELECT na_sequence_id, source_id, length, taxon_id, chromosome,
-             chromosome_order_num
-      FROM dots.VirtualSequence) sequence
+     apidb.GenomicSequence sequence
 WHERE m.na_feature_id = taaf.na_feature_id
   AND taaf.aa_sequence_id = tas.aa_sequence_id
   AND sequence.na_sequence_id = m.na_sequence_id
@@ -747,7 +746,7 @@ GRANT SELECT ON apidb.OrfAttributes1111 TO gus_r;
 CREATE INDEX apidb.OrfAttr1111_source_id ON apidb.OrfAttributes1111 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.OrfAttributes
-                             FOR apidb.OrfAttributes1111;
+                        FOR apidb.OrfAttributes1111;
 ---------------------------
 -- ESTs
 ---------------------------
@@ -791,7 +790,7 @@ GRANT SELECT ON apidb.EstAttributes1111 TO gus_r;
 CREATE INDEX apidb.EstAttr1111_source_id ON apidb.EstAttributes1111 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAttributes
-                             FOR apidb.EstAttributes1111;
+                          FOR apidb.EstAttributes1111;
 ---------------------------
 -- array elements
 ---------------------------
@@ -819,7 +818,92 @@ CREATE INDEX apidb.AEAttr1111_source_id
 ON apidb.ArrayElementAttributes1111 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
-                             FOR apidb.ArrayElementAttributes1111;
+                          FOR apidb.ArrayElementAttributes1111;
+
+---------------------------
+-- EstAlignmentGeneSummary
+---------------------------
+
+prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
+
+DROP MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
+
+CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111 AS
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+         e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+         ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
+         least(ba.target_end, ga.end_max)
+         - greatest(ba.target_start, ga.start_min) + 1
+           AS est_gene_overlap_length,
+         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+         * 100 AS percent_est_bases_aligned,
+         ga.source_id AS gene
+  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+       apidb.GeneAttributes ga, sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed, apidb.GenomicSequence sequence
+  WHERE e.na_sequence_id = ba.query_na_sequence_id
+    AND aseq.na_sequence_id = ba.query_na_sequence_id
+    AND sequence.na_sequence_id = ba.target_na_sequence_id
+    AND ga.sequence_id = sequence.source_id
+    AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
+    AND ba.query_external_db_release_id = edr.external_database_release_id
+    AND edr.external_database_id = ed.external_database_id
+    AND ed.name = 'dbEST'
+    AND ba.target_na_sequence_id = sequence.na_sequence_id
+UNION
+  SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+         e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+         ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
+         NULL AS est_gene_overlap_length,
+         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+         * 100 AS percent_est_bases_aligned,
+         NULL AS gene
+  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+       (select source_id, na_sequence_id from dots.ExternalNaSequence
+        union
+        select source_id, na_sequence_id from dots.VirtualSequence) sequence
+  WHERE e.na_sequence_id = ba.query_na_sequence_id
+    AND aseq.na_sequence_id = ba.query_na_sequence_id
+    AND ba.target_na_sequence_id = sequence.na_sequence_id
+    AND ba.blat_alignment_id IN
+  ( -- set of blat_alignment_ids not in in first leg of UNION
+    -- (because they overlap no genes)
+    SELECT ba.blat_alignment_id
+    FROM dots.BlatAlignment ba, sres.ExternalDatabaseRelease edr,
+         sres.ExternalDatabase ed
+    WHERE ba.query_external_db_release_id = edr.external_database_release_id
+      AND edr.external_database_id = ed.external_database_id
+      AND ed.name = 'dbEST'
+  MINUS
+    SELECT ba.blat_alignment_id
+    FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+         apidb.GeneAttributes ga
+    WHERE e.na_sequence_id = ba.query_na_sequence_id
+      AND aseq.na_sequence_id = ba.query_na_sequence_id
+      AND sequence.na_sequence_id = ba.target_na_sequence_id
+      AND ga.sequence_id = sequence.source_id
+      AND least(ba.target_end, ga.end_max)
+          - greatest(ba.target_start, ga.start_min) >= 0
+  );
+
+GRANT SELECT ON apidb.EstAlignmentGeneSummary1111 TO gus_r;
+
+CREATE INDEX apidb.EstSumm_libOverlap_ix1111
+             ON apidb.EstAlignmentGeneSummary1111
+                (library_id, percent_identity, is_consistent,
+                 est_gene_overlap_length, percent_est_bases_aligned);
+
+CREATE INDEX apidb.EstSumm_estSite_ix1111
+             ON apidb.EstAlignmentGeneSummary1111
+                (target_sequence_source_id, target_start, target_end,
+                 library_id);
+
+CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
+                          FOR apidb.EstAlignmentGeneSummary1111;
 
 ---------------------------
 -- cleanup
