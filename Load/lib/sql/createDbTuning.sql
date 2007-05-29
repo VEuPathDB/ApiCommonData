@@ -325,6 +325,30 @@ GRANT SELECT ON apidb.EpitopeSummary TO gus_r;
 CREATE INDEX apidb.Epi_srcId_ix ON apidb.EpitopeSummary (source_id);
 
 -------------------------------------------------------------------------------
+prompt DROP/CREATE MATERIALIZED VIEW apidb.GeneCentromereDistance;
+
+DROP MATERIALIZED VIEW apidb.GeneCentromereDistance;
+
+CREATE MATERIALIZED VIEW apidb.GeneCentromereDistance AS
+SELECT gf.source_id AS gene,
+       LEAST(ABS(cnl.start_min - gnl.end_max),
+             ABS(cnl.end_max - gnl.start_min)) AS centromere_distance,
+       ens.source_id AS genomic_sequence
+FROM dots.GeneFeature gf, dots.NaLocation gnl, dots.Miscellaneous m,
+     dots.NaLocation cnl, sres.SequenceOntology so, dots.ExternalNaSequence ens
+WHERE gf.na_sequence_id = m.na_sequence_id
+  AND m.na_feature_id = cnl.na_feature_id
+  AND gf.na_feature_id = gnl.na_feature_id
+  AND m.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name = 'centromere'
+  AND gf.na_sequence_id = ens.na_sequence_id;
+
+GRANT SELECT ON apidb.GeneCentromereDistance TO gus_r;
+
+CREATE INDEX apidb.GCent_loc_ix
+       ON apidb.GeneCentromereDistance (genomic_sequence, centromere_distance);
+
+-------------------------------------------------------------------------------
 
 -- GUS table shortcomings
 
