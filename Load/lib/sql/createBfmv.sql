@@ -448,15 +448,19 @@ DROP MATERIALIZED VIEW apidb.GenomicSequence1111;
 
 CREATE MATERIALIZED VIEW apidb.GenomicSequence1111 AS
   SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
+         LOWER(SUBSTR(source_id, 1, 40)) AS lowercase_source_id,
          a_count, c_count, g_count, t_count, length,
          SUBSTR(description, 1, 400) AS description,
          external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
          chromosome_order_num, sequence_ontology_id
   FROM dots.ExternalNaSequence
   WHERE -- see both? use the VirtualSequence.
-        source_id NOT IN (SELECT source_id FROM dots.VirtualSequence)
+        source_id IN (SELECT source_id FROM dots.ExternalNaSequence
+                     MINUS
+                      SELECT source_id FROM dots.VirtualSequence)
 UNION
   SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
+         LOWER(SUBSTR(source_id, 1, 40)) AS lowercase_source_id,
          a_count, c_count, g_count, t_count, length,
          SUBSTR(description, 1, 400) AS description,
          external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
@@ -466,6 +470,7 @@ UNION
 GRANT SELECT ON apidb.GenomicSequence1111 TO gus_r;
 
 CREATE INDEX apidb.GS_sourceId1111 ON apidb.GenomicSequence1111 (source_id);
+CREATE INDEX apidb.GS_lcSourceId1111 ON apidb.GenomicSequence1111 (lowercase_source_id);
 CREATE INDEX apidb.GS_naSeqId1111 ON apidb.GenomicSequence1111 (na_sequence_id);
 
 CREATE OR REPLACE SYNONYM apidb.GenomicSequence
