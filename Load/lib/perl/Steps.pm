@@ -2630,6 +2630,11 @@ sub formatBlastFile {
   $mgr->endStep($signal);
 }
 
+sub xdformat {
+  # Note '-C X' to handle invalid letter codes (e.g. J in Cparvum)
+  #  xdformat -C X  -p -t CparvumProteins CparvumAnnotatedProteins.fsa 
+}
+
 sub extractKeywordSearchFiles {
   my ($mgr,$filePrefix,$commentSchema,$dbLink) = @_;
 
