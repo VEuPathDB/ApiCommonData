@@ -117,7 +117,7 @@ sub sourceIdAndTranscriptSeq {
       $transcriptMin = $naLoc->getStartMin if($naLoc->getStartMin < $transcriptMin || !$transcriptMin);
       $transcriptMax = $naLoc->getEndMax if($naLoc->getEndMax > $transcriptMax || !$transcriptMax);
 
-      # This works until there are alternaltive spliced transcripts...
+      # This works until there are alternaltive spliced transcripts...or UTRs
       $exon->setCodingStart($exonStart);
       $exon->setCodingEnd($exonStop);
 
@@ -137,9 +137,23 @@ sub sourceIdAndTranscriptSeq {
       }
     }
 
-    my $transcriptCodingSequence = ApiCommonData::Load::Util::getCodingSequenceFromExons(\@exons);
+    my @exonsSorted = map { $_->[0] }
+      sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+	map { [ $_, $_->getFeatureLocation ]}
+	  @exons;
+
+    my $transcriptSequence;
+    my $count = 0;
+    my $final = scalar(@exonsSorted);
+
+    for my $exon (@exonsSorted) {
+      my $chunk = $exon->getFeatureSequence();
+
+      $transcriptSequence .= $chunk;
+    }
+
     my $splicedNaSeq = $transcript->getParent('DoTS::SplicedNASequence');
-    $splicedNaSeq->setSequence($transcriptCodingSequence);
+    $splicedNaSeq->setSequence($transcriptSequence);
   }
   return [];
 }
