@@ -1,3 +1,33 @@
+create or replace function apidb.reverse_complement_clob (seq clob)
+return clob
+is
+    rslt clob;
+    idx    number;
+begin
+    rslt := '';
+    if seq is not null
+    then
+        for idx IN 1 .. length(seq)
+        loop
+            case upper(substr(seq, idx, 1))
+                when 'A' then rslt := 'T' || rslt;
+                when 'C' then rslt := 'G' || rslt;
+                when 'G' then rslt := 'C' || rslt;
+                when 'T' then rslt := 'A' || rslt;
+                else rslt := substr(seq, idx, 1) || rslt;
+            end case;
+        end loop;
+    end if;
+    return rslt;
+end reverse_complement_clob;
+/
+
+show errors;
+
+GRANT execute ON apidb.reverse_complement_clob TO gus_r;
+GRANT execute ON apidb.reverse_complement_clob TO gus_w;
+
+-------------------------------------------------------------------------------
 create or replace function apidb.reverse_complement (seq varchar2)
 return varchar2
 is
