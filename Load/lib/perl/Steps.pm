@@ -1344,6 +1344,29 @@ EOF
 ##you also need to have in your gus_home config directory the following files or those that correspond to the project:
 ##plasmoDbModel.xml,plasmoDbModel-config.xml (personalize this with your login and password), plasmoDbModel.prop 
 
+sub clearWdkCache {
+  my ($mgr, $model) = @_;
+
+  my $signal = "clear${model}Cache";
+
+  return if $mgr->startStep("Clearing cache for $model", $signal);
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     wdkCache \\
+     -model $model \\
+     -reset\\
+     2>> $logFile
+EOF
+
+  print STDERR "$cmd\n";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
 sub runGffDump {
   my ($mgr, $species, $model, $organism) = @_;
 
