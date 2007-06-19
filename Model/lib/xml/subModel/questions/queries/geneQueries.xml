@@ -1,0 +1,1708 @@
+<wdkModel>
+
+<querySet name="GeneId">
+
+  <!------------------------------------------------------------------>
+  <!-- Locus Tag  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
+              isCacheable="true">
+        <paramRef ref="params.ds_gene_ids"/>
+        <column name="source_id"/>
+        <sql includeProjects="ToxoDB">
+             <![CDATA[
+            SELECT DISTINCT tg.source_id
+            FROM apidb.ToxodbGenes tg,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$ds_gene_ids$$
+              AND tg.source_id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+       </sql>
+        <sql excludeProjects="ToxoDB">
+             <![CDATA[
+            SELECT DISTINCT gi.gene AS source_id
+            FROM apidb.GeneId gi,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$ds_gene_ids$$
+              AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="GeneByLocusTag" includeProjects="ApiDB"
+              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.ds_gene_ids"/>
+        <paramRef ref="params.signature"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+     </wsQuery>
+
+
+  <!------------------------------------------------------------------>
+  <!-- Single locus tag  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB"
+              isCacheable="true">
+        <paramRef ref="params.locus_tag"/>
+        <column name="source_id"/>
+        <sql excludeProjects="CryptoDB">
+             <![CDATA[
+            SELECT DISTINCT gi.gene AS source_id
+            FROM apidb.GeneId gi
+            WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$locus_tag$$'),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+        </sql>
+        <sql includeProjects="CryptoDB">
+            <![CDATA[
+            SELECT g.source_id
+            FROM dots.genefeature g,
+                 dots.rnatype r,
+                 dots.transcript t
+            WHERE g.na_feature_id = r.parent_id (+)
+            AND r.na_feature_id = t.parent_id (+)
+            AND (
+                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%')))
+                OR  LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%'))) ||'%'
+            ) and g.source_id is not null
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGeneIds" displayName="by Gene IDs"
+              isCacheable="true">
+        <paramRef ref="params.ds_gene_ids"/>
+        <column name="source_id"/>
+        <sql>
+             <![CDATA[
+            SELECT DISTINCT gi.gene AS source_id
+            FROM apidb.GeneId gi, 
+                @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE gi.gene = ds.dataset_value
+                AND ds.dataset_id = $$ds_gene_ids$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByEcNumber" displayName="by EC Number" isCacheable="true">
+        <paramRef ref="params.ec_number_pattern"/>
+        <paramRef ref="params.pf_organism"/>
+        <column name="source_id"  />
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+         SELECT DISTINCT gf.source_id
+         FROM dots.GeneFeature gf, dots.ExternalNaSequence ens,
+              dots.Transcript t, dots.translatedAaFeature taf,
+              dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
+         WHERE ('$$pf_organism$$' = '-1'
+                OR ens.taxon_id in (select taxon_id from sres.taxon
+                                    connect by parent_id = prior taxon_id
+                                    start with taxon_id = '$$pf_organism$$'))
+           AND  ens.na_sequence_id = gf.na_sequence_id
+           AND gf.na_feature_id = t.parent_id
+           AND t.na_feature_id = taf.na_feature_id
+           AND taf.aa_sequence_id = asec.aa_sequence_id
+           AND asec.enzyme_class_id = ec.enzyme_class_id
+           AND ec.ec_number LIKE REPLACE(REPLACE('$$ec_number_pattern$$',' ',''),
+                                         '-', '%')
+         ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByPlasmoDbDataset" displayName="by PlasmoDB 4.4 dataset" isCacheable="true">
+        <paramRef ref="params.plasmodb_dataset"/>
+        <column name="source_id"  />
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <!-- keep order or genes but remove duplicates -->
+            <![CDATA[
+                SELECT imported.source_id FROM (
+                    SELECT ga.gene AS source_id, min(c.i) AS i
+                    FROM cache$$plasmodb_dataset$$@apidb.cbilprod c,
+                         apidb.plasmodb_genes@apidb.cbilprod pg,
+                         apidb.GeneAlias ga
+                    WHERE c.na_feature_id = pg.na_feature_id
+                      AND lower(pg.source_id) = ga.alias
+                    GROUP BY ga.gene) imported
+                ORDER BY i
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByTransmembraneDomains" displayName="With Transmembrane Domains" isCacheable="true">
+        <paramRef ref="params.min_tm"/>
+        <paramRef ref="params.max_tm"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"  />
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id
+            FROM dots.GeneFeature gf, dots.NaSequence ns,
+                 (SELECT t.parent_id, COUNT(*) AS tm_count
+                  FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
+                       dots.TransmembraneAaFeature tmaf, dots.AaLocation al
+                  WHERE t.na_feature_id = tlaf.na_feature_id
+                    AND tlaf.aa_sequence_id = tmaf.aa_sequence_id
+                    AND tmaf.aa_feature_id = al.aa_feature_id
+                  GROUP BY t.parent_id, t.na_feature_id, tlaf.aa_feature_id
+                  HAVING COUNT(*) >= $$min_tm$$ AND COUNT(*) <= $$max_tm$$) tms
+            WHERE tms.parent_id = gf.na_feature_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id IN ($$organism$$)
+            ORDER BY tm_count, gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByProteinProteinInteraction" displayName="by protein-protein interaction" isCacheable="true">
+        <paramRef ref="params.locus_tag" default="PFL0275w"/>
+        <paramRef ref="params.min_searches"/>
+        <paramRef ref="params.min_observed"/>
+        <paramRef ref="params.bait_or_prey"/>
+        <column name="source_id" />
+        <column name="gene_source_id" />
+        <column name="bait_start" />
+        <column name="bait_end" />
+        <column name="prey_start" />
+        <column name="prey_end" />
+        <column name="times_observed" />
+        <column name="number_of_searches" />
+        <column name="prey_number_of_baits" />
+        <column name="bait_number_of_preys" />
+        <column name="bait_or_prey" />
+        <sql>
+            <![CDATA[
+            SELECT * FROM
+               (SELECT pf.source_id, pf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+                       times_observed, number_of_searches,
+                       (select distinct prey_number_of_baits
+                         from apidb.geneinteraction igi
+                         where igi.bait_gene_feature_id = pf.na_feature_id) AS prey_number_of_baits,
+                       bait_number_of_preys, 'bait' as bait_or_prey
+                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                     dots.ExternalNaSequence ens, apidb.GeneInteraction gi
+                WHERE lower('$$locus_tag$$') = ga.id
+                  AND ga.gene = bf.source_id
+                  AND gi.number_of_searches >= $$min_searches$$
+                  AND gi.times_observed >= $$min_observed$$
+                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                  AND gi.prey_gene_feature_id = pf.na_feature_id
+                  AND pf.na_sequence_id = ens.na_sequence_id
+                UNION
+                SELECT bf.source_id, bf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+                       times_observed, number_of_searches, prey_number_of_baits,
+                       (select distinct bait_number_of_preys
+                         from apidb.geneinteraction igi
+                         where igi.prey_gene_feature_id = bf.na_feature_id) AS bait_number_of_preys, 'prey' as bait_or_prey
+                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                     dots.ExternalNaSequence ens,  apidb.GeneInteraction gi
+                WHERE lower('$$locus_tag$$') = ga.id
+                  AND ga.gene = pf.source_id
+                  AND gi.number_of_searches >= $$min_searches$$
+                  AND gi.times_observed >= $$min_observed$$
+                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                  AND gi.prey_gene_feature_id = pf.na_feature_id
+                  AND bf.na_sequence_id = ens.na_sequence_id)
+            WHERE ($$bait_or_prey$$ = bait_or_prey
+                   OR $$bait_or_prey$$ = 'either')
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGeneType" displayName="by Gene Type"
+              isCacheable="true">
+        <paramRef ref="params.geneType"/>
+        <paramRef ref="params.includePseudogenes"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id" />
+        <column name="is_pseudo" />
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id,decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
+            FROM dots.GeneFeature gf, dots.ExternalNaSequence ens
+            WHERE gf.sequence_ontology_id IN ($$geneType$$)
+              AND gf.na_sequence_id = ens.na_sequence_id
+              and gf.is_pseudo in ($$includePseudogenes$$)
+              AND ens.taxon_id IN ($$organism$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExpressionTiming" displayName="by Expression Timing"
+              isCacheable="true">
+        <paramRef ref="params.profileSet"/>
+        <paramRef ref="params.minOrMax"/>
+        <paramRef ref="params.maxExprHour"/>
+        <paramRef ref="params.maxPlusMinusHours"/>
+        <paramRef ref="params.minExprHour"/>
+        <paramRef ref="params.minPlusMinusHours"/>
+        <paramRef ref="params.inductionFold"/>
+        <paramRef ref="params.expressionPct"/>
+        <column name="source_id"/>
+        <sql>
+          <![CDATA[
+          SELECT DISTINCT gf.source_id
+          FROM apidb.profile pr, apidb.profileset prs,
+               dots.nafeature gf
+          WHERE (('$$minOrMax$$' = 'min')
+                 OR ((abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
+                      OR (abs($$maxExprHour$$ - pr.equiv_max) >= (48 - $$maxPlusMinusHours$$))))
+          AND (('$$minOrMax$$' = 'max')
+               OR ((abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
+                   OR (abs($$minExprHour$$ - pr.equiv_min) >= (48 -$$minPlusMinusHours$$))))
+          AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.max_percentile >= $$expressionPct$$ / 100
+          AND pr.source_id = gf.source_id
+          AND pr.profile_set_id = prs.profile_set_id
+          AND prs.name like ('$$profileSet$$')
+          ORDER BY gf.source_id
+          ]]>
+      </sql>
+    </sqlQuery>
+
+    <wsQuery name="GenesBySimilarity" displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="params.BlastQueryType"/>
+       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
+       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
+       <paramRef ref="params.BlastQuerySequence"/>
+       <paramRef ref="params.-e"/>
+       <paramRef ref="params.-v"/>
+       <paramRef ref="params.-b"/>
+       <paramRef ref="params.-filter"/>
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <wsQuery name="GenesByProfileSimilarity" displayName="Profile Similarity"
+             processName="org.plasmodb.wsfplugin.profile.ProfileSimilarityPlugin">
+       <paramRef ref="params.ProfileGeneId"/>
+       <paramRef ref="params.ProfileDistanceMethod"/>
+       <paramRef ref="params.ProfileNumToReturn"/>
+       <paramRef ref="params.ProfileProfileSet"/>
+       <paramRef ref="params.ProfileSearchGoal"/>
+       <paramRef ref="params.ProfileTimeShift"/>
+       <paramRef ref="params.ProfileScaleData"/>
+       <paramRef ref="params.ProfileMinShift"/>
+       <paramRef ref="params.ProfileMaxShift"/>
+       <wsColumn name="source_id" width="50" wsName="GeneID"/>
+       <wsColumn name="distance" wsName="Distance" width="50"/>
+       <wsColumn name="time_shift" wsName="Shift" width="50"/>
+       <wsColumn name="query_source_id" wsName="QueryGeneId" width="50"/>
+    </wsQuery>
+
+    <wsQuery name="GenesByMotifSearch" displayName="Motif Search"
+             processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
+       <paramRef ref="params.Expression"/>
+       <paramRef ref="params.Dataset"/>
+       <wsColumn name="source_id" width="32" wsName="GeneID"/>
+       <wsColumn name="Locations" width="3999"/>
+       <wsColumn name="MatchCount" width="10"/>
+       <wsColumn name="Sequence" width="3999"/>
+    </wsQuery>
+
+    <wsQuery name="GenesByTextSearch" displayName="Text term"
+             processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
+       <paramRef ref="params.text_expression"/>
+       <paramRef ref="params.case_independent"/>
+       <paramRef ref="params.whole_words"/>
+       <paramRef ref="params.max_pvalue"/>
+       <paramRef ref="params.datasets"/>
+       <paramRef ref="params.species_name"/>
+       <wsColumn name="source_id" width="32" wsName="GeneID"/>
+    </wsQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByOrthologs" displayName="by orthology"
+              isCacheable="true">
+        <description>
+            Find orthologs of the genes in an existing query result set
+        </description>
+        <paramRef ref="params.historyId"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id" />
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf2.source_id
+            FROM $$historyId$$ qr, dots.GeneFeature gf1,
+                 dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
+                 dots.GeneFeature gf2, dots.ExternalNaSequence ens,
+                 core.TableInfo ti
+            WHERE qr.source_id = gf1.source_id
+              AND gf1.na_feature_id = ssg1.sequence_id
+              AND ssg1.source_table_id = ti.table_id
+              AND ssg1.sequence_group_id = ssg2.sequence_group_id
+              AND ssg2.source_table_id = ti.table_id
+              AND ssg2.sequence_id = gf2.na_feature_id
+              AND gf2.na_sequence_id = ens.na_sequence_id
+              AND ens.taxon_id in ($$organism$$)
+              AND ti.name = 'GeneFeature'
+            GROUP BY gf2.source_id
+            ORDER BY gf2.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGoTerm" displayName="by GO term"
+              isCacheable="true">
+        <paramRef ref="params.go_term"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id" />
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id
+            FROM dots.ExternalNaSequence ens, dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf,
+                 dots.GoAssociation ga, sres.GoTerm gp,
+                 sres.GoRelationship gr, core.TableInfo ti,
+                 sres.GoRelationshipType grt
+            WHERE ens.taxon_id IN ($$organism$$)
+              AND ens.na_sequence_id = gf.na_sequence_id
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = ga.row_id
+              AND ga.table_id = ti.table_id
+              AND ti.name = 'TranslatedAASequence'
+              AND ga.go_term_id = gr.child_term_id
+              AND gr.parent_term_id = gp.go_term_id
+              AND (gp.go_id = '$$go_term$$'
+                   OR gp.name LIKE REPLACE('$$go_term$$', '*', '%'))
+              AND gr.go_relationship_type_id = grt.go_relationship_type_id
+              AND grt.name = 'closure'
+            ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByPhyleticProfile" displayName="by phyletic profile"
+              isCacheable="true">
+        <paramRef ref="params.ds_gene_ids" default="PY03942"/>
+        <paramRef ref="params.min_mutual_information_score"/>
+        <paramRef ref="params.include_only_queries"/>
+        <paramRef ref="params.min_num_query_matches"/>
+        <column name="source_id" />
+        <column name="query_ids" />
+        <column name="mutual_information_scores" />
+        <column name="num_queries" />
+        <sql>
+            <![CDATA[
+                SELECT gf2.source_id, count(*) as num_queries,
+                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                    apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
+                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                     dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'no'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = pp1.na_feature_id
+                  AND ((pp1.phylogenetic_profile_id = mis.primary_profile_id
+                  AND mis.secondary_profile_id = pp2.phylogenetic_profile_id)
+                    OR (pp1.phylogenetic_profile_id = mis.secondary_profile_id
+                  AND mis.primary_profile_id = pp2.phylogenetic_profile_id))
+                  and mis.mutual_information_score/1000 >= $$min_mutual_information_score$$
+                  AND pp2.na_feature_id = gf2.na_feature_id
+                  AND gf2.source_id != gf1.source_id
+                  group  by gf2.source_id
+                  having count(*) >= $$min_num_query_matches$$
+                UNION
+                SELECT gf2.source_id, count(*) as num_queries,
+                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                    apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
+                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                     dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'yes'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = pp1.na_feature_id
+                  AND ((pp1.phylogenetic_profile_id = mis.primary_profile_id
+                  AND mis.secondary_profile_id = pp2.phylogenetic_profile_id)
+                    OR (pp1.phylogenetic_profile_id = mis.secondary_profile_id
+                  AND mis.primary_profile_id = pp2.phylogenetic_profile_id))
+                  and mis.mutual_information_score/1000 >= $$min_mutual_information_score$$
+                  AND pp2.na_feature_id = gf2.na_feature_id
+                  AND gf2.source_id in (select intds.dataset_value as gene_id 
+                      from @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ intds
+                      where intds.dataset_id = $$ds_gene_ids$$) 
+                  AND gf2.source_id != gf1.source_id
+                  group  by gf2.source_id
+                  having count(*) >= $$min_num_query_matches$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByFunctionalInteraction" displayName="by functional interaction"
+              isCacheable="true">
+        <paramRef ref="params.ds_gene_ids" default="PF11_0344"/>
+        <paramRef ref="params.min_interaction"/>
+        <paramRef ref="params.include_only_queries"/>
+        <paramRef ref="params.min_num_query_matches"/>
+        <column name="source_id"/>
+        <column name="likelihood_scores"/>
+        <column name="query_ids" />
+        <column name="queries_matched"/>
+        <sql>
+            <![CDATA[
+                SELECT gf2.source_id, 
+                  apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                  apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
+                  count(*) as queries_matched
+                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'no'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = rnf.na_feature_id
+                  AND rnf.associated_na_feature_id = gf2.na_feature_id
+                  AND rnf.value >= '$$min_interaction$$'
+                GROUP BY gf2.source_id
+                HAVING count(*) >= $$min_num_query_matches$$
+              UNION
+                SELECT gf2.source_id, 
+                  apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                  apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
+                  count(*) as queries_matched
+                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'yes'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = rnf.na_feature_id
+                  AND rnf.associated_na_feature_id = gf2.na_feature_id
+                  AND rnf.value >= '$$min_interaction$$'
+                  AND gf2.source_id in (select intds.dataset_value as gene_id 
+                      from @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ intds
+                      where intds.dataset_id = $$ds_gene_ids$$)
+                GROUP BY gf2.source_id
+                HAVING count(*) >= $$min_num_query_matches$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesWithSignalPeptide" displayName="with signal peptide"
+              isCacheable="true">
+        <paramRef ref="params.organism"/>
+        <paramRef ref="params.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
+        <column name="source_id"/>
+        <column name="sigp_sum_score"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id,(spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) as sigp_sum_score
+            FROM dots.ExternalNaSequence ens, dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.SignalPeptideFeature spf
+            WHERE ens.taxon_id in ($$organism$$)
+              AND ens.na_sequence_id = gf.na_sequence_id
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = spf.aa_sequence_id
+              AND (spf.maxy_conclusion +
+                   spf.maxc_conclusion +
+                   spf.maxs_conclusion +
+                   spf.means_conclusion ) >= $$min_sigp_sum_score$$ 
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByIntraerythrocyticExpression" isCacheable="true">
+        <paramRef ref="params.synchronization"/>
+        <paramRef ref="params.intraerythrocytic_stages"/>
+        <paramRef ref="params.min_expression_percentile"/>
+        <paramRef ref="params.max_expression_percentile"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+            SELECT e.source_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE (e.element_order = $$intraerythrocytic_stages$$
+                   OR $$intraerythrocytic_stages$$ = 0)
+              AND e.profile_set_name in ($$synchronization$$)
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExtraerythrocyticExpression" isCacheable="true">
+        <paramRef ref="params.extraerythrocytic_stages"/>
+        <paramRef ref="params.min_expression_percentile"/>
+        <paramRef ref="params.max_expression_percentile"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+            SELECT e.source_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE e.profile_set_name in ('winzeler_cc_sorbPct', 'winzeler_cc_sporPct')
+              AND (e.element_order = $$extraerythrocytic_stages$$
+                   OR $$extraerythrocytic_stages$$ = 0)
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExpression" isCacheable="true">
+        <paramRef ref="params.min_expression_percentile"/>
+        <paramRef ref="params.max_expression_percentile"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+
+            SELECT e.source_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE e.profile_set_name
+                  in ('winzeler_cc_sorbPct', 'winzeler_cc_tempPct',
+                      'winzeler_cc_sporPct')
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByDifferentialMeanExpression" isCacheable='true'>
+       <paramRef ref="params.diffMeanExpr_reference"/>
+       <paramRef ref="params.diffMeanExpr_comparitor"/>
+       <paramRef ref="params.regulated_dir"/>
+       <paramRef ref="params.fold_change"/>
+       <column name="source_id" />
+       <column name="fold_change" />
+       <sql>
+        <![CDATA[
+           SELECT ga.gene as source_id, 
+                   to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                   THEN avg(ep1.mean)/avg(ep2.mean)
+                   ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                   END),999.9) as fold_change
+            FROM Rad.AnalysisInput ai1, Rad.Analysis a1, 
+                 Rad.ExpressionProfile ep1,  
+                 Rad.AnalysisInput ai2, Rad.Analysis a2,
+                 Rad.ExpressionProfile ep2, 
+                 Rad.Protocol p, Rad.ShortOligoFamily sof,
+                 ApiDB.GeneAlias ga
+            WHERE p.name = 'R Expression Statistics'
+             AND ai1.logical_group_id = $$diffMeanExpr_reference$$
+             AND a1.analysis_id = ai1.analysis_id
+             AND a1.protocol_id = p.protocol_id
+             AND ep1.analysis_id = a1.analysis_id
+             AND sof.composite_element_id = ep1.row_id
+             AND ai2.logical_group_id = $$diffMeanExpr_comparitor$$
+             AND a2.analysis_id = ai2.analysis_id
+             AND a2.protocol_id = p.protocol_id
+             AND ep2.analysis_id = a2.analysis_id
+             AND sof.composite_element_id = ep2.row_id
+             AND sof.source_id is not null
+             AND ga.alias = sof.source_id
+             having  case when '$$regulated_dir$$' = '-' 
+                    then avg(ep2.mean)/avg(ep1.mean)
+                     else avg(ep1.mean)/avg(ep2.mean)
+                     end > $$fold_change$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+            ]]>
+          </sql>
+    </sqlQuery>   
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExpressionPercentileA" displayName="By Expression Percentile" isCacheable='true'>
+       <paramRef ref="params.cowmanSample"/>
+       <paramRef ref="params.percentile"/>
+       <column name="source_id" />
+       <column name="percentile" />
+       <sql>
+           <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+	    SELECT 
+                 ga.gene as source_id, 
+                 max(to_char(de.percentile,'99.99')) as percentile
+            FROM RAD.ExpressionProfile de, Rad.ShortOligoFamily sof,
+                 Rad.Analysis a, Rad.AnalysisInput aia, 
+		 Rad.LogicalGroup lga,
+                 Rad.Protocol p, Rad.ProtocolParam pp, Rad.AnalysisParam ap,
+                 ApiDB.GeneAlias ga
+            WHERE sof.source_id is not null
+             AND ga.alias = sof.source_id
+             AND sof.composite_element_id = de.row_id
+             AND a.analysis_id = de.analysis_id
+             AND a.analysis_id = aia.analysis_id
+             AND aia.logical_group_id = lga.logical_group_id 
+             AND a.protocol_id = p.protocol_id
+             AND pp.protocol_id = p.protocol_id
+             AND ap.protocol_param_id = pp.protocol_param_id
+             AND ap.analysis_id = a.analysis_id
+             AND p.name = 'R Expression Statistics'
+             AND lga.logical_group_id = '$$cowmanSample$$'
+             AND de.percentile >= $$percentile$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+            ]]>
+          </sql>
+    </sqlQuery>   
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByWatersDifferentialExpression" isCacheable='true'>
+       <paramRef ref="params.confidence"/>
+       <paramRef ref="params.fold_change"/>
+       <paramRef ref="params.regulated_dir"/>
+       <column name="source_id" />
+       <column name="confidence" />
+       <column name="fold_change" />
+       <sql>
+           <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+          SELECT ga.gene as source_id,
+	      max(to_char(de.fold_change, '999.99')) as fold_change,
+              max(to_char(de.confidence,'99.99')) as confidence
+            FROM Rad.LogicalGroup lg,
+                 Rad.AnalysisInput ai,
+                 Rad.Analysis a, 
+                 RAD.DifferentialExpression de, 
+                 Rad.ShortOligoFamily sof,
+                 Rad.Protocol p, 
+                 Rad.ProtocolParam pp, 
+                 Rad.AnalysisParam ap,
+                 ApiDB.GeneAlias ga
+            WHERE lg.name = 'DOZI mutant vs. Wild Type - Loess Normalized Analyses'
+             AND ai.logical_group_id = lg.logical_group_id 
+             AND a.analysis_id = ai.analysis_id
+             AND de.analysis_id = a.analysis_id
+             AND sof.composite_element_id = de.row_id
+             AND sof.source_id is not null
+             AND ga.alias = sof.source_id
+             AND p.name = 'PaGE'
+             AND a.protocol_id = p.protocol_id
+             AND pp.protocol_id = p.protocol_id
+             AND pp.name = 'reference_condition'
+             AND ap.protocol_param_id = pp.protocol_param_id
+             AND a.analysis_id = ap.analysis_id
+             AND de.confidence >= $$confidence$$
+             AND ( $$regulated_dir$$ de.fold_change) >= $$fold_change$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+        ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="BergheiGenesByExpressionPercentile" isCacheable="true">
+        <paramRef ref="params.waters_profilesets"/>
+        <paramRef ref="params.r_min_expression_percentile"/>
+        <paramRef ref="params.r_max_expression_percentile"/>
+        <paramRef ref="params.yt_min_expression_percentile"/>
+        <paramRef ref="params.yt_max_expression_percentile"/>
+        <paramRef ref="params.ys_min_expression_percentile"/>
+        <paramRef ref="params.ys_max_expression_percentile"/>
+        <paramRef ref="params.ms_min_expression_percentile"/>
+        <paramRef ref="params.ms_max_expression_percentile"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+        SELECT DISTINCT fred.source_id from(
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'R'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$r_min_expression_percentile$$ / 100
+              AND pe.value <= $$r_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'YT'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$yt_min_expression_percentile$$ / 100
+              AND pe.value <= $$yt_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'YS'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$ys_min_expression_percentile$$ / 100
+              AND pe.value <= $$ys_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'MS'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$ms_min_expression_percentile$$ / 100
+              AND pe.value <= $$ms_max_expression_percentile$$ / 100
+          ) fred
+          ORDER BY fred.source_id
+        ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
+        <paramRef ref="params.localization"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+              SELECT DISTINCT s.source_id
+              FROM apidb.Subcellular s
+              WHERE targetting_domain = '$$localization$$'
+              ORDER BY s.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
+        <paramRef ref="params.localization"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+              SELECT DISTINCT paf.source_id
+              FROM dots.PredictedAaFeature paf
+              WHERE external_database_release_id IN (-1, $$localization$$)
+              ORDER BY paf.source_id
+           ]]>
+       </sql>
+    </sqlQuery -->
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByIsoelectricPoint"
+              displayName="by Isoelectric Point" isCacheable="true">
+        <paramRef ref="params.min_isoelectric_point"/>
+        <paramRef ref="params.max_isoelectric_point"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <column name="isoelectric_point"/>
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+            SELECT DISTINCT asa.isoelectric_point, gf.source_id
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf,
+                 apidb.AaSequenceAttribute asa,
+                 dots.NaSequence ns
+            WHERE asa.isoelectric_point BETWEEN $$min_isoelectric_point$$
+                                            AND $$max_isoelectric_point$$
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = asa.aa_sequence_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id in ($$organism$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByMolecularWeight" displayName="by Molecular Weight"
+              isCacheable="true">
+        <paramRef ref="params.min_molecular_weight"/>
+        <paramRef ref="params.max_molecular_weight"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+            SELECT DISTINCT gf.source_id
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, apidb.AaSequenceAttribute asa,
+                 dots.NaSequence ns
+            WHERE asa.min_molecular_weight <= $$max_molecular_weight$$
+              AND asa.max_molecular_weight >= $$min_molecular_weight$$
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = asa.aa_sequence_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id in ($$organism$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExonCount" displayName="by exon count" isCacheable="true">
+        <paramRef ref="params.num_exons_gte"/>
+        <paramRef ref="params.num_exons_lte"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+ <!--  try this sql when bfmv columns indexed     <sql>
+            <![CDATA[
+             SELECT source_id
+             FROM apidb.geneattributes
+             WHERE ncbi_tax_id in ($$organism$$)
+             AND exon_count  >= $$num_exons_gte$$
+             And exon_count <= $$num_exons_lte$$
+            ]]>
+       </sql>
+  -->
+       <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+            SELECT gf.source_id
+            FROM dots.geneFeature gf, dots.ExternalNaSequence ns,dots.nalocation l,
+                 (SELECT t.parent_id, count(*) AS exon_count
+                  FROM dots.Transcript t, dots.ExonFeature ef, dots.rnafeatureexon rfe
+                  WHERE t.na_feature_id = rfe.rna_feature_id
+                  and ef.na_feature_id = rfe.exon_feature_id
+                  GROUP BY t.parent_id, t.na_feature_id
+                  HAVING COUNT(*) >= $$num_exons_gte$$ and count(*) <= $$num_exons_lte$$) exons
+            WHERE exons.parent_id = gf.na_feature_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND gf.na_feature_id = l.na_feature_id
+              AND ns.taxon_id in ($$organism$$)
+            ORDER BY ns.taxon_id,ns.source_id,l.start_min
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByOrthologPattern" displayName="by Ortholog Pattern"
+              isCacheable="true">
+        <paramRef ref="params.profile_pattern"/>
+        <paramRef ref="params.included_species"/>
+        <paramRef ref="params.excluded_species"/>
+        <paramRef ref="params.phyletic_indent_map"/>
+        <paramRef ref="params.phyletic_term_map"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+            SELECT DISTINCT gf.source_id, ns.taxon_id
+            FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
+            WHERE pp.profile_string LIKE '$$profile_pattern$$'
+              AND pp.source_id = gf.source_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id in ($$organism$$)
+            ORDER BY ns.taxon_id, gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByMetabolicPathway" displayName="by Metabolic Pathway"
+              isCacheable="true">
+        <paramRef ref="params.metabolic_pathway"/>
+        <column name="source_id"/>
+        <column name="met_pathways"/>
+        <sql>
+            <![CDATA[
+              SELECT gf.source_id,
+       apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
+            FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
+              (SELECT idrnf.na_feature_id
+               FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
+               WHERE idr.primary_identifier = '$$metabolic_pathway$$'
+                 AND idrnf.db_ref_id = idr.db_ref_id) internal
+            WHERE internal.na_feature_id = drnf.na_feature_id
+            AND gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            group by gf.source_id
+           ]]>
+<!--            SELECT gf.source_id,
+                   apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
+            FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr
+            WHERE gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            AND dr.primary_identifier = '$$metabolic_pathway$$'
+            group by gf.source_id
+-->
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByProteomicsProfile" displayName="by Proteomics Profile"
+              isCacheable="true">
+        <paramRef ref="params.asexual_blood_stages_value"/>
+        <paramRef ref="params.gametocytes_value"/>
+        <paramRef ref="params.ookinetes_value"/>
+        <paramRef ref="params.oocysts_value"/>
+        <paramRef ref="params.sporozoites_value"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT pb.source_id FROM
+            (SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 1 AND ('any' = '$$asexual_blood_stages_value$$' OR
+                                           pe.value = '$$asexual_blood_stages_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 2 AND ('any' = '$$gametocytes_value$$' OR
+                                           pe.value = '$$gametocytes_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 3 AND ('any' = '$$ookinetes_value$$' OR
+                                           pe.value = '$$ookinetes_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 4 AND ('any' = '$$oocysts_value$$' OR
+                                           pe.value = '$$oocysts_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 5 AND ('any' = '$$sporozoites_value$$' OR
+                                           pe.value = '$$sporozoites_value$$'))) pb
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByMr4Reagents" displayName="by MR4 Reagents"
+              isCacheable="true">
+        <paramRef ref="params.mr4_reagent_type"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+               SELECT DISTINCT gf.source_id
+               FROM dots.GeneFeature gf,
+                dots.DbRefAaFeature df,
+                sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
+                sres.ExternalDatabase ed, dots.TranslatedAAFeature taf,
+                dots.Transcript t
+               WHERE ed.name = 'MR4DBxRefs'
+                 AND edr.external_database_id = ed.external_database_id
+                 AND dbr.external_database_release_id = edr.external_database_release_id
+                 AND (LOWER(dbr.secondary_identifier) = '$$mr4_reagent_type$$'
+                      OR '$$mr4_reagent_type$$' = 'any')
+                 AND df.db_ref_id = dbr.db_ref_id
+                 AND taf.aa_feature_id = df.aa_feature_id
+                 AND t.na_feature_id = taf.na_feature_id
+                 AND gf.na_feature_id = t.parent_id
+
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByExportPrediction" displayName="by Export Prediction"
+              isCacheable="true">
+        <paramRef ref="params.min_exportpred_score"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <column name="exportpred_score"/>
+        <sql>
+            <![CDATA[
+                SELECT gf.source_id, max(df.score) as exportpred_score
+                FROM dots.aasequence aa,dots.DomainFeature df, dots.translatedaafeature tf,
+                     dots.transcript t,dots.genefeature gf
+                WHERE  aa.taxon_id in ($$organism$$)
+                   AND aa.aa_sequence_id = df.aa_sequence_id
+                   AND df.algorithm_name = 'exportpred'
+                   AND df.score >= $$min_exportpred_score$$
+                   AND tf.aa_sequence_id = aa.aa_sequence_id
+                   AND t.na_feature_id = tf.na_feature_id
+                   AND gf.na_feature_id = t.parent_id
+                   GROUP BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByTaxon" displayName="by taxon"
+              isCacheable="true">
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+                SELECT DISTINCT gf.source_id
+                FROM DoTS.GeneFeature gf
+                WHERE gf.na_sequence_id IN
+                      (SELECT ens.na_sequence_id
+                       FROM dots.ExternalNaSequence ens
+                       WHERE ens.taxon_id in ($$organism$$))
+                  AND gf.source_id IS NOT NULL
+                ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- GeneFeatureIds.GenesWithEpitopes -->
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesWithEpitopes" displayName="By Gene ID" isCacheable='true'>
+        <paramRef ref="params.organism"/>
+        <paramRef ref="epitopeParams.confidence"/>
+        <column name="source_id" />
+        <column name="confidence" />
+        <column name="count" />
+        <sql>
+            <![CDATA[
+        SELECT gf.source_id, count(ef.source_id) AS count,
+           DECODE(
+             MAX(
+               DECODE(ef.type, 'Not Full Set Not on Blast Hit', 1,
+                      'Not Full Set On Blast Hit', 2,
+                      'Full Set Not on Blast Hit', 2,
+                      'Full Set On Blast Hit', 3,
+                       4)),
+               1, 'Low',
+               2, 'Medium',
+               3, 'High',
+               4, 'unknown epitope type') AS confidence
+        FROM dots.TranslatedAaSequence tas, dots.EpitopeFeature ef,
+             dots.AaLocation al, sres.ExternalDatabaseRelease edr,
+             sres.ExternalDatabase ed, dots.GeneFeature gf,
+             dots.TranslatedAaFeature taf, dots.Transcript t,
+             dots.MotifAaSequence mas, dots.ExternalNaSequence ens
+        WHERE tas.aa_sequence_id = ef.aa_sequence_id
+          AND ef.aa_feature_id = al.aa_feature_id
+          AND ef.motif_aa_sequence_id = mas.aa_sequence_id
+          AND tas.aa_sequence_id = taf.aa_sequence_id
+          AND taf.na_feature_id = t.na_feature_id
+          AND t.parent_id = gf.na_feature_id
+          AND gf.na_sequence_id = ens.na_sequence_id
+          AND ens.taxon_id in ($$organism$$)
+          AND ef.external_database_release_id
+              = edr.external_database_release_id
+          AND edr.external_database_id = ed.external_database_id
+          AND ed.name = 'Links to IEDB epitopes'
+          AND ef.type IN ($$confidence$$)
+        GROUP BY gf.source_id
+        ORDER BY gf.source_id
+           ]]>
+        </sql>
+    </sqlQuery>   
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByMassSpec" displayName="with mass-spec evidence"
+              isCacheable="true">
+        <paramRef ref="params.mass_spec_stage"/>
+        <paramRef ref="params.min_seq_coverage"/>
+        <paramRef ref="params.min_span_count"/>
+        <paramRef ref="params.min_spectrum_count"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+                SELECT distinct gf.source_id
+                FROM apidb.MassSpecSummary mss, dots.transcript t,
+                     dots.genefeature gf, dots.translatedAAFeature taf
+                WHERE (mss.developmental_stage = '$$mass_spec_stage$$'
+                          OR '$$mass_spec_stage$$' = 'any')
+                  AND mss.aa_seq_percent_covered >= $$min_seq_coverage$$
+                  AND mss.number_of_spans >= $$min_span_count$$
+                  AND mss.spectrum_count >= $$min_spectrum_count$$
+                  AND taf.aa_sequence_id = mss.aa_sequence_id
+                  AND t.na_feature_id = taf.na_feature_id
+                  AND gf.na_feature_id = t.parent_id
+                  ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesOrthologousToAGivenGene"
+              displayName="orthologous to a given gene"
+              isCacheable="true">
+        <paramRef ref="params.locus_tag"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+                SELECT DISTINCT gf2.source_id
+                FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
+                     dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
+                     core.TableInfo ti,apidb.GeneId gi
+                WHERE gi.id = lower('$$locus_tag$$')
+                  AND gf1.source_id = gi.gene 
+                  AND gf1.na_feature_id = ssg1.sequence_id
+                  AND ssg1.source_table_id = ti.table_id
+                  AND ssg1.sequence_group_id = ssg2.sequence_group_id
+                  AND ssg2.source_table_id = ti.table_id
+                  AND ssg2.sequence_id = gf2.na_feature_id
+                  AND ti.name = 'GeneFeature'
+                  AND gf2.source_id != gf1.source_id
+                ORDER BY gf2.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByCentromereProximity"
+              isCacheable="true">
+        <paramRef ref="params.max_centromere_distance"/>
+        <paramRef ref="params.chromosome"/>
+        <column name="source_id"/>
+        <column name="dist_centromere"/>
+        <sql>
+            <![CDATA[
+                SELECT gcd.gene AS source_id,
+                TRIM(TO_CHAR(gcd.centromere_distance,'9,999,999')) as dist_centromere
+                FROM apidb.GeneCentromereDistance gcd, apidb.GeneAttributes ga
+                WHERE gcd.gene = ga.source_id
+                  AND gcd.centromere_distance <= $$max_centromere_distance$$
+                  AND gcd.genomic_sequence in ($$chromosome$$)
+                ORDER BY gcd.genomic_sequence, ga.start_min
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByTelomereProximity"
+              isCacheable="true">
+        <paramRef ref="params.distanceFromTelomere"/>
+        <paramRef ref="params.chromosome"/>
+        <column name="source_id"/>
+        <column name="dist_telomere"/>
+        <sql>
+            <![CDATA[
+	    SELECT gf.source_id, 
+            trim(to_char(LEAST(s.length - l.end_max,l.start_min),'999,999')) as dist_telomere
+	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
+	    WHERE gf.na_sequence_id = s.na_sequence_id
+	     AND l.na_feature_id = gf.na_feature_id
+	     AND s.source_id  in ($$chromosome$$)
+	     AND (l.end_max >= s.length - $$distanceFromTelomere$$
+                                      OR l.start_min <= 1 + $$distanceFromTelomere$$)
+	     ORDER BY s.source_id,l.end_max
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGenomicRegion"
+              displayName="by genomic location" isCacheable="true">
+        <paramRef ref="params.pfGenomicSequenceOrNot"/>
+        <paramRef ref="params.genomicSequence"/>
+        <paramRef ref="params.start_point"/>
+        <paramRef ref="params.end_point"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT distinct gf.source_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND (ens.source_id = $$pfGenomicSequenceOrNot$$
+                   OR lower(ens.source_id) = lower('$$genomicSequence$$'))
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByNonnuclearGenomicRegion"
+              displayName="by non-nuclear genomic location" isCacheable="true">
+        <paramRef ref="params.pfNonnuclearSequence"/>
+        <paramRef ref="params.start_point"/>
+        <paramRef ref="params.end_point"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT distinct gf.source_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND ens.source_id IN ($$pfNonnuclearSequence$$)
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesWithStructurePrediction"
+              displayName="with Structure Predictions"
+              isCacheable="true">
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id
+            FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
+                 dots.DbRefaaFeature drnf,  sres.DbRef dr,
+                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+            WHERE gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = aaf.na_feature_id
+              AND aaf.aa_feature_id = drnf.aa_feature_id
+              AND drnf.db_ref_id = dr.db_ref_id
+              AND dr.external_database_release_id = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND ed.name = 'Predicted protein structures'
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByPdbSimilarity"
+              isCacheable="true">
+        <paramRef ref="params.clades"/>
+        <paramRef ref="params.pvalue_cutoff"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id, MAX(ens.taxon_id) AS gene_taxon_id
+            FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
+                 core.TableInfo tas_ti, dots.Similarity s,
+                 core.TableInfo eas_ti, dots.ExternalAaSequence eas,
+                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+                 dots.GeneFeature gf, dots.ExternalNaSequence ens,
+                 dots.Transcript t
+            WHERE taf.aa_sequence_id = tas.aa_sequence_id
+              AND tas_ti.name = 'TranslatedAASequence'
+              AND tas_ti.table_id = s.query_table_id
+              AND s.query_id = tas.aa_sequence_id
+              AND s.pvalue_exp < $$pvalue_cutoff$$
+              AND eas_ti.name = 'ExternalAASequence'
+              AND eas_ti.table_id = s.subject_table_id
+              AND s.subject_id = eas.aa_sequence_id
+              AND eas.external_database_release_id
+                  = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND ed.name = 'PDB protein sequences'
+              AND t.na_feature_id = taf.na_feature_id
+              AND gf.na_feature_id = t.parent_id
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND eas.taxon_id IN
+                  (SELECT taxon_id from sres.taxon
+                   CONNECT BY parent_id = PRIOR taxon_id
+                   START WITH taxon_id IN ($$clades$$))
+              AND ens.taxon_id IN ($$organism$$)
+            GROUP BY gf.source_id
+            ORDER BY MAX(ens.taxon_id), gf.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByProteinDbAccession"
+              isCacheable="true">
+        <paramRef ref="params.accession"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id
+             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                  sres.ExternalDatabase ed, dots.ExternalNaSequence ens
+             WHERE (dr.primary_identifier = '$$accession$$'
+                    OR dr.secondary_identifier = '$$accession$$')
+               AND gf.na_feature_id = drnf.na_feature_id
+               AND drnf.db_ref_id = dr.db_ref_id
+               AND dr.external_database_release_id
+                     = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+                           /*  'NRDB_pdb_dbXRefBySeqIdentity', */
+                               'NRDB_ref_dbXRefBySeqIdentity',
+                               'NRDB_sp_dbXRefBySeqIdentity',
+                               'GenBank')
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND ens.taxon_id IN ($$organism$$)
+            ORDER BY gf.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesBySnps"
+              isCacheable="true">
+        <paramRef ref="params.snp_strain_a"/>
+        <paramRef ref="params.snp_strain_b"/>
+        <paramRef ref="params.snp_stat" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.occurrences_lower" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.occurrences_upper" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.dn_ds_ratio_lower" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.dn_ds_ratio_upper" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.snp_density" groupRef="paramGroups.advancedParams"/>
+        <column name="source_id"/>
+        <column name="cds_snp_density"/>
+        <column name="dn_ds_ratio"/>
+        <column name="num_synonymous"/>
+        <column name="num_non_synonymous"/>
+        <column name="num_noncoding"/>
+        <column name="num_nonsense"/>
+        <column name="total_snps"/>
+        <sql>
+            <![CDATA[
+              SELECT source_id,
+	           round(non_synonymous / CASE synonymous
+	                      WHEN 0 THEN 1
+				  ELSE synonymous end, 2) as dn_ds_ratio,
+              non_synonymous as num_non_synonymous,synonymous as num_synonymous,
+              non_coding as num_noncoding, stop as num_nonsense,
+              cds_length,round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density,
+              total as total_snps
+	      FROM apidb.snpsummary
+	      WHERE ((strain_a = '$$snp_strain_a$$' and strain_b = '$$snp_strain_b$$' )
+                    or  (strain_a = '$$snp_strain_b$$' and strain_b = '$$snp_strain_a$$'))
+	      AND non_synonymous / CASE synonymous
+	                          WHEN 0 THEN 1
+				  ELSE synonymous end >= $$dn_ds_ratio_lower$$
+	      AND non_synonymous / CASE synonymous
+	                          WHEN 0 THEN 1
+				  ELSE synonymous end <= $$dn_ds_ratio_upper$$
+              AND $$snp_stat$$ >= $$occurrences_lower$$
+	      AND $$snp_stat$$ <= $$occurrences_upper$$
+              AND (non_synonymous + synonymous) / cds_length * 1000 >= $$snp_density$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesWithProteinLowComplexity"
+              isCacheable="true">
+        <paramRef ref="params.percentLowComplexity"/>
+        <paramRef ref="params.chromosome"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+	    select gf.source_id
+	    from Dots.LowComplexityAAFeature lc, Dots.GeneFeature gf,
+	         Dots.ExternalNASequence ens, Dots.AALocation al, 
+                 Dots.AASequence s, Dots.Transcript t, Dots.TranslatedAAFeature taf
+            where ens.source_id in ($$chromosome$$)
+            and gf.na_sequence_id = ens.na_sequence_id
+            and t.parent_id = gf.na_feature_id
+            and taf.na_feature_id = t.na_feature_id
+            and s.aa_sequence_id = taf.aa_sequence_id
+            and lc.aa_sequence_id = s.aa_sequence_id
+            and al.aa_feature_id = lc.aa_feature_id
+	    group by gf.source_id
+	    having sum(100 *(al.end_max - al.start_min)/s.length ) > $$percentLowComplexity$$
+            ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesBySecondaryStructure"
+              isCacheable="true">
+        <paramRef ref="params.min_coil"/>
+        <paramRef ref="params.max_coil"/>
+        <paramRef ref="params.min_strand"/>
+        <paramRef ref="params.max_strand"/>
+        <paramRef ref="params.min_helix"/>
+        <paramRef ref="params.max_helix"/>
+        <paramRef ref="params.organism"/>
+        <column name="source_id"/>
+        <column name="percent_coil"/>
+        <column name="percent_strand"/>
+        <column name="percent_helix"/>
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id, c.percentage as percent_coil, e.percentage as percent_strand, h.percentage as percent_helix
+            FROM dots.SecondaryStructure ss, dots.SecondaryStructureCall c, dots.SecondaryStructureCall e,
+                 dots.SecondaryStructureCall h,dots.genefeature gf,dots.transcript t, 
+                 dots.translatedaafeature tf,dots.nasequence s
+            WHERE s.na_sequence_id = gf.na_sequence_id
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = tf.na_feature_id
+              AND tf.aa_sequence_id = ss.aa_sequence_id
+              AND ss.secondary_structure_id = c.secondary_structure_id
+              AND ss.secondary_structure_id = e.secondary_structure_id
+              AND ss.secondary_structure_id = h.secondary_structure_id
+              AND c.structure_type = 'C'
+              AND e.structure_type = 'E'
+              AND h.structure_type = 'H'
+              AND c.percentage between $$min_coil$$ and $$max_coil$$
+              AND e.percentage between $$min_strand$$ and $$max_strand$$
+              AND h.percentage between $$min_helix$$ and $$max_helix$$
+              AND s.taxon_id IN ($$organism$$)
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByInterproDomain"
+              isCacheable="true">
+        <paramRef ref="params.domain_database"/>
+        <paramRef ref="params.domain_accession"/>
+        <paramRef ref="params.organism"/>
+        <!--paramRef ref="params.e_value"/-->
+        <column name="source_id"/>
+        <column name="e_value"/>
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id,avg(df.e_value) as e_value
+            FROM dots.DomainFeature df,dots.translatedaasequence tas,
+                 dots.genefeature gf, dots.transcript t, dots.TranslatedAAFeature taf,
+                 dots.DbRefAaFeature draf, sres.DbRef dr
+            WHERE tas.aa_sequence_id = df.aa_sequence_id
+              AND df.aa_feature_id = draf.aa_feature_id
+              AND draf.db_ref_id = dr.db_ref_id
+              AND dr.external_database_release_id = $$domain_database$$
+              AND dr.primary_identifier
+                  = substr('$$domain_accession$$', 1, instr('$$domain_accession$$'||':', ':')-1)
+              AND tas.taxon_id IN ($$organism$$)
+              AND tas.aa_sequence_id = taf.aa_sequence_id
+              AND taf.na_feature_id = t.na_feature_id
+              AND gf.na_feature_id = t.parent_id
+              GROUP BY gf.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGametocyteExpression"
+              isCacheable="true">
+        <paramRef ref="params.day_and_strain"/>
+        <paramRef ref="params.min_expression_percentile" default="80"/>
+        <paramRef ref="params.max_expression_percentile" default="100"/>
+        <paramRef ref="params.pf_organism"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT p.source_id
+            FROM apidb.profile p, apidb.profileElementName pen,
+                 apidb.profileElement pe
+            WHERE pe.value BETWEEN $$min_expression_percentile$$ / 100
+                               AND $$max_expression_percentile$$ / 100
+              AND pen.profile_element_name_id IN ($$day_and_strain$$)
+              AND pen.profile_set_id = p.profile_set_id
+              AND p.profile_id = pe.profile_id
+              AND pe.element_order = pen.element_order
+            ORDER by p.source_id
+            /* and don't forget $$pf_organism$$ */
+            ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- GeneFeatureIds.GenesByESTOverlap -->
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByESTOverlap" displayName="By EST Overlap" isCacheable='true'>
+       <paramRef ref="params.organism"/>
+       <paramRef ref="params.libraryId"/>
+       <paramRef ref="params.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <column name="source_id" />
+       <column name="number_of_ests" />
+       <sql>
+            <![CDATA[
+            SELECT gene as source_id,count(*) as number_of_ests
+            FROM apidb.ESTALIGNMENTGENESUMMARY
+            WHERE est_gene_overlap_length >= $$bp_overlap_gte$$
+            AND is_consistent in ($$high_confidence_only$$)
+            AND is_best_alignment in ($$best_alignment_only$$)
+            AND percent_identity >= $$min_percent_identity$$
+            AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND library_id in ($$libraryId$$)
+            AND target_taxon_id in ($$organism$$)
+            GROUP by gene
+            ]]>
+          </sql>
+    </sqlQuery>
+
+</querySet>
+</wdkModel>

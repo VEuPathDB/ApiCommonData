@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!DOCTYPE xml [
+  <!ENTITY nbsp "&#160;">
+  <!ENTITY lt   "&#60;">
+  <!ENTITY gt   "&#62;">
+]>
+
+<wdkModel>
+  <modelName includeProjects="PlasmoDB" name="PlasmoDB" displayName="PlasmoDB" 
+             version="5.3"/>
+  <modelName includeProjects="ApiDB" name="ApiDB" displayName="ApiDB"
+             version="2.2"/>
+  <modelName includeProjects="ToxoDB" name="ToxoDB" displayName="ToxoDB"
+             version="3.3"/>
+  <modelName includeProjects="CryptoDB" name="CryptoDB" displayName="CryptoDB"
+             version="11.3"/>
+
+  <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
+    <value value="P. falciparum"/>
+    <value value="P. vivax"/>
+    <value value="P. yoelii"/>
+    <value value="P. berghei"/>
+    <value value="P. chabaudi"/>
+    <value value="P. knowlesi"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="CryptoDB" name="organisms">
+    <value value="C. hominus"/>
+    <value value="C. parvum"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="ToxoDB" name="organisms">
+    <value value="T. gondii"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="ApiDB" name="organisms">
+    <value value="P. falciparum"/>
+    <value value="P. vivax"/>
+    <value value="P. yoelii"/>
+    <value value="P. berghei"/>
+    <value value="P. chabaudi"/>
+    <value value="P. knowlesi"/>
+    <value value="C. hominus"/>
+    <value value="C. parvum"/>
+    <value value="T. gondii"/>
+  </defaultPropertyList>
+
+  <propertyList includeProjects="PlasmoDB" name="default.genomes.attribution">
+     <value value="Pf Genome"/>
+     <value value="Pv Genome"/>
+     <value value="Py Genome"/>
+     <value value="Pb Genome"/>
+     <value value="Pc Genome"/>
+     <value value="Pk Genome"/>
+  </propertyList> 
+
+  <propertyList includeProjects="ToxoDB" name="default.genomes.attribution">
+     <value value="Tg Genome"/>
+  </propertyList> 
+
+  <propertyList includeProjects="CryptoDB" name="default.genomes.attribution">
+     <value value="Cp Genome"/>
+     <value value="Ch Genome"/>
+  </propertyList> 
+
+  <propertyList includeProjects="ApiDB" name="default.genomes.attribution">
+     <value value="Pf Genome"/>
+     <value value="Pv Genome"/>
+     <value value="Py Genome"/>
+     <value value="Pb Genome"/>
+     <value value="Pc Genome"/>
+     <value value="Pk Genome"/>
+     <value value="Tg Genome"/>
+     <value value="Cp Genome"/>
+     <value value="Ch Genome"/>
+  </propertyList> 
+
+  <!-- somehow include files here -->
+  <import file="submodel/questions/geneQuestions.xml"/>
+  <import file="submodel/questions/genomicQuestions.xml"/>
+  <import file="submodel/questions/estQuestions.xml"/>
+  <import file="submodel/questions/orfQuestions.xml"/>
+  <import file="submodel/questions/snpQuestions.xml"/>
+  <import file="submodel/questions/internalQuestions.xml"/>
+  <import file="submodel/questions/datadumpQuestions.xml"/>
+  <import file="submodel/questions/queries/geneQueries.xml"/>
+  <import file="submodel/questions/queries/genomicQueries.xml"/>
+  <import file="submodel/questions/queries/estQueries.xml"/>
+  <import file="submodel/questions/queries/orfQueries.xml"/>
+  <import file="submodel/questions/queries/snpQueries.xml"/> 
+  <import file="submodel/questions/queries/internalQueries.xml"/> 
+  <import file="submodel/questions/queries/datadumpQueries.xml"/> 
+  <import file="submodel/questions/queries/vocabQueries.xml"/> 
+  <import file="submodel/questions/queries/enumQueries.xml"/> 
+  <import file="submodel/questions/params/generalParams.xml"/>
+  <import file="submodel/questions/params/geneParams.xml"/>
+  <import file="submodel/questions/params/genomicParams.xml"/>
+  <import file="submodel/questions/params/estParams.xml"/>
+  <import file="submodel/questions/params/orfParams.xml"/>
+  <import file="submodel/questions/params/snpParams.xml"/>
+  <import file="submodel/records/geneRecord.xml"/>
+  <import file="submodel/records/geneTableQueries.xml"/>
+  <import file="submodel/records/genomicRecord.xml"/>
+  <import file="submodel/records/genomicTableQueries.xml"/>
+  <import file="submodel/records/snpRecord.xml"/>
+  <import file="submodel/records/snpTableQueries.xml"/>
+  <import file="submodel/records/orfRecord.xml"/>
+  <import file="submodel/records/orfTableQueries.xml"/>
+  <import file="submodel/records/estRecord.xml"/>
+  <import file="submodel/records/estTableQueries.xml"/>
+  <import file="submodel/records/arrayElementRecord.xml"/>
+  <import file="submodel/records/arrayElementTableQueries.xml"/>
+
+</wdkModel>

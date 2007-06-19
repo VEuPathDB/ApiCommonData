@@ -1,0 +1,1031 @@
+<wdkModel>
+        <stringParam name="primaryKey"
+                     prompt="Primary Key"
+                     help="primary key"/>
+
+
+<paramSet name="params">
+
+  <!------------------------------------------------------------------>
+  <!-- Locus tag -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="locus_tag"
+                     prompt="Gene ID"
+                     help="Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator. (Examples: PF11_0344, AAB36701.1, NP_701203.1)."
+                     sample="PF11_0344, PY01656, Pv092275"
+                     substitute="yes"
+                     default="PF11_0344"/>
+
+  <!------------------------------------------------------------------>
+  <!-- Mutual information score -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="min_mutual_information_score"
+                     prompt="Minimum mutual information score"
+                     help="Enter the minimum mutual information score to report similarities.  The score range is from 0.472 to 1.67"
+                     substitute="yes"
+                     default="0.47"/>
+
+        <stringParam name="min_num_query_matches"
+                     prompt="Minimum number of query matches"
+                     help="Enter the minimum number of queries you want to match to your genes.  If you input 5 genes ids for your query and enter 5 minimum number of queries then the only genes returned would be ones that all 5 queries match"
+                     substitute="yes"
+                     default="1"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="ec_number_pattern"
+                     prompt="EC Number"
+                     help="Enzyme Commission numbers describe enzymes hierarchically by the class of rections they catalize."
+                     sample="(Examples: 2.7.7.6, 3.5.1.31"
+                     substitute="yes"
+                     default="2.7.7.-"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="num_exons_gte"
+                     prompt="Exon Count >="
+                     help="Which genes in &#60;i&#62; Plasmodium &#60;/i&#62; are annotated as containing introns? One easy way to do this search is to look for genes
+with more
+than one annotated exon. Enter a minimum of exons you would like to search for as an integer, e.g. '3'."
+                     sample="(Example: 2)"
+                     substitute="yes"
+                     default="2"/>
+
+ <stringParam name="num_exons_lte"
+                     prompt="Exon Count &lt;="
+                     help="Enter a maximum number of exons you would like to search for as an integer, e.g. '3'."
+                     sample="(Example: 2)"
+                     substitute="yes"
+                     default="20"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="bp_overlap_gte"
+                     prompt="Base Overlap >="
+                     help="Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general,
+the specificity of this evidence is proportional to the overlap length."
+                     sample="(Example: 100)"
+                     substitute="yes"
+                     default="100"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="cowmanSample"
+                     prompt="Study"
+                     help="Select ..."
+                     multiPick="false"
+                     queryRef="VocabQueries.cowmanSample"/>
+
+        <flatVocabParam name="diffMeanExpr_reference"
+                     prompt="Reference study"
+                     help="Select ..."
+                     multiPick="false"
+                     queryRef="VocabQueries.cowmanSample"/>
+
+        <flatVocabParam name="diffMeanExpr_comparitor"
+                     prompt="Comparison study"
+                     help="Select ..."
+                     multiPick="false"
+                     queryRef="VocabQueries.cowmanSample"/>
+
+        <stringParam name="confidence"
+                     prompt="Confidence >= "
+                     help="" 
+                     sample="(Example: )"
+                     substitute="yes"
+                     default="0.8"/>
+
+        <stringParam name="fold_change"
+                     prompt="Fold change >="
+                     help="" 
+                     sample="(Example: )"
+                     substitute="yes"
+                     default="2"/>
+
+        <flatVocabParam name="regulated_dir"
+                     prompt="Direction"
+                     help="Select ..."
+                     multiPick="false"
+                     queryRef="VocabQueries.regulated_dir"/>
+
+        <stringParam name="percentile"
+                     prompt="Percentile >="
+                     help="" 
+                     sample="(Example: )"
+                     substitute="yes"
+                     default="90"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="min_tm"
+                     prompt="Minimum Number of Transmembrane Domains"
+                     help="Proteins may have none, one or more transmembrane domains. Please enter a minimum number of predicted transmembrane domains to start your search."
+                     sample="(Example: 2)"
+                     substitute="yes"
+                     default="2"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="min_sigp_sum_score"
+                     prompt="Minimum SignalP conclusion score"
+                     help="SignalP provides four scores and a conclusion for each such that the conclusion  is 1 if the score meets a certain criteria and 0 otherwise.  The SignalP summary conclusion is the sum of the four conclusions generated by SignalP, thus four is the highest score possible.  We consider a summary conclusion score of three to be significant"
+                     substitute="yes"
+                     default="3"/>
+
+        <stringParam name="max_tm"
+                     prompt="Maximum Number of Transmembrane Domains"
+                     help="Proteins may have none, one or more transmembrane domains. Please enter a maximum number of predicted transmembrane domains to start your search."
+                     sample="(Example: 5)"
+                     substitute="yes"
+                     default="5"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="extDbName"
+                     prompt="External Database Name"
+                     help="The name of an external database as found in GUS"/>
+
+        <stringParam name="extDbRlsVer"
+                     prompt="External Database Release Version"
+                     help="The version of an external database release as found in GUS"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="sequence"
+                     prompt="Sequence ID"
+                     help="Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are
+'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  Wild cards are permitted in this search, i.e. use MALPY* to ask for all &#60;i&#62; P.
+vivax &#60;/i&#62; sequences."
+                     sample="(Examples: MAL4, ctg_4094)"
+                     substitute="yes"
+                     default="MAL4"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="organism"
+                     prompt="Plasmodium species"
+                     help="Select one or more organisms."
+                     multiPick="true"
+                     queryRef="VocabQueries.OrganismWithGenes"/>
+
+        <flatVocabParam name="organism_with_sequences"
+                     prompt="Plasmodium species"
+                     help="Select one or more organisms."
+                     multiPick="true"
+                     queryRef="VocabQueries.OrganismWithSequences"/>
+
+        <flatVocabParam name="organism_with_ests"
+                     prompt="Plasmodium species"
+                     help="Select one or more organisms."
+                     multiPick="true"
+                     queryRef="VocabQueries.OrganismWithEsts"/>
+
+        <flatVocabParam name="pf_organism"
+                     prompt="Plasmodium species"
+                     help="Select an organism."
+                     multiPick="false"
+                     queryRef="VocabQueries.PfOrganism"/>
+
+        <flatVocabParam name="species_name"
+                     prompt="Plasmodium species"
+                     help="Select one or more organisms."
+                     multiPick="true"
+                     queryRef="VocabQueries.SpeciesName"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="libraryId"
+                     prompt="EST Library"
+                     help="Select a clone library."
+                     multiPick="true"
+                     queryRef="VocabQueries.EstLibraries"/>
+
+        <flatVocabParam name="best_alignment_only"
+                     prompt="Best alignments only"
+                     help="Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST"
+                     multiPick="false"
+                     queryRef="VocabQueries.best_alignment_only"/>
+
+        <flatVocabParam name="high_confidence_only"
+                     prompt="Consistent alignments only"
+                     help="Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query."
+                     multiPick="false"
+                     queryRef="VocabQueries.high_confidence_only"/>
+
+        <flatVocabParam name="inNotIn"
+                     prompt="EST"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.inNotIn"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="whole_words"
+                     prompt="Match only whole words?"
+                     help="Select whether to reject text matches that start or end in the middle of a word"
+                     multiPick="false"
+                     queryRef="VocabQueries.WholeWords"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="geneType"
+                     prompt="Gene type"
+                     help="Select a gene type."
+                     multiPick="true"
+                     queryRef="VocabQueries.GeneTypes"/>
+
+        <flatVocabParam name="includePseudogenes"
+                     prompt="Include Pseudogenes"
+                     help="Choose whether to include pseudogenes in your query results."
+                     multiPick="false"
+                     queryRef="VocabQueries.IncludePseudogenes"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="protein_id"
+                     prompt="NestedRecord Param"
+                     help="Only used in a nested record"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="plasmodb_dataset"
+                     visible="false"
+                     prompt="PlasmoDB dataset"
+                     help="PlasmoDB dataset"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <historyParam name="historyId"
+                     prompt="History ID"
+                     help="The number in the left column of My Query History"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="min_percent_identity"
+                     prompt="Percent identity >="
+                     default="90"
+                     help='You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity'/>
+
+        <stringParam name="min_percent_est_aligned"
+                     prompt="Percent of EST bases aligned >="
+                     default="20"
+                     help='Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.'/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="go_term"
+                     prompt="GO Term or GO ID"
+                     default="catalytic activity"
+                     help='Enter a GO ID (e.g. \"GO:0003824\") or GO Term (e.g. \"catalytic activity\").  Asterisks can be used as wildcard characters in a GO Term (e.g. \"*kinase*\"'/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <stringParam name="pfam_term"
+                     prompt="Pfam Family ID or Description"
+                     default="IMP dehydrogenase / GMP reductase domain"
+                     help='Enter a Pfam accession number (e.g. \"PF00478\") or definition (\"NPR nonapeptide repeat\") .  Asterisks can be used as wildcard characters in a Pfam definition (e.g. \"Ribosomal*\"'/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="bait_or_prey"
+                     prompt="Specified protein is bait or prey"
+                     help="Optionally specifiy whether given protein is bait or prey"
+                     multiPick="false"
+                     queryRef="VocabQueries.BaitOrPrey"/>
+
+        <stringParam name="min_observed"
+                     prompt="Restrict by the minimum number of times this interaction was found"
+                     help="Restrict by the minimum number of times this interaction was found"
+                     default="1"/>
+
+        <stringParam name="min_searches"
+                     prompt="Restrict by the minimum number of searches that found this interaction"
+                     help="Restrict by the minimum number of searches that found this interaction"
+                     default="1"/>
+
+        <stringParam name="max_results"
+                     prompt="Maximum number of results"
+                     help="Upper limit on the number of results returned by the query"
+                     default="5"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+        <flatVocabParam name="BlastQueryType"
+                     prompt="Query sequence type"
+                     help="The type of the query sequence (eg. DNA, protein)"
+                     multiPick="false"
+                     queryRef="VocabQueries.BlastQueryType"/>
+
+
+        <flatVocabParam name="BlastDatabaseType"
+                     prompt="Target"
+                     help="The type of the target database (eg CDS, translated CDS, Protein)"
+                     multiPick="false"
+                     queryRef="VocabQueries.BlastDatabaseType"/>
+
+        <flatVocabParam name="BlastDatabaseOrganism"
+                     prompt="Organism"
+                     help="Organism(s) from which the sequences in the BLAST database originated"
+                     multiPick="false"
+                     queryRef="VocabQueries.BlastDatabaseOrganism"/>
+
+        <stringParam name="BlastQuerySequence"
+                     prompt="Input Sequence"
+                     help="BLAST Input Sequence"
+                     length="4000"
+                     sample=""/>
+
+
+       <flatVocabParam name="-filter"
+                    id="-filter"
+                    prompt="Low complexity filter"
+                    queryRef="VocabQueries.Filter"
+                    help="Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise."
+                    default="yes"/>
+
+
+        <stringParam name="-e"
+                     prompt="Expectation value"
+                     help="Expected number of hits by chance"
+                     default="0.05"
+                     sample="1e-10"/>
+
+        <stringParam name="-v"
+                     prompt="Maximum descriptions (V)"
+                     help="Number of one-line descriptions to show"
+                     default="50"/>
+
+        <stringParam name="-b"
+                     prompt="Maximum alignments (B)"
+                     help="Number of alignments to show"
+                     default="50"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+       <stringParam name="dn_ds_ratio_upper"
+                     prompt="Non-synonymous / synonymous SNP ratio &lt;= "
+                     help="Upper Bound on the ratio of non-synonymous to synonymous coding snps"
+                     default="100"/>
+
+      <stringParam name="dn_ds_ratio_lower"
+                     prompt="Non-synonymous / synonymous SNP ratio >= "
+                     help="Lower Bound on the ratio of non-synonymous to synonymous coding snps"
+                     default="0"/>
+
+      <stringParam name="min_num_coding_snps"
+                     prompt="Number of coding SNPs >= "
+                     help="Lower Bound on the number of coding snps"
+                     default="0"/>
+
+       <stringParam name="occurrences_upper"
+                     prompt="Number of SNPs of above class &lt;= "
+                     help="Upper Bound on the number of SNPs of the selected class"
+                     default="1000"/>
+
+      <stringParam name="occurrences_lower"
+                     prompt="Number of SNPs of above class >= "
+                     help="Lower Bound on the number of SNPs of the selected class"
+                     default="0"/>
+
+      <stringParam name="major_allele_max"
+                     prompt="Frequency of major allele &lt;= "
+                     help="Upper Bound on the number of strains that have the major allele"
+                     default="20"/>
+
+      <stringParam name="major_allele_min"
+                     prompt="Frequency of major allele >= "
+                     help="Lower Bound on the number strains that have the major allele"
+                     default="1"/>
+
+      <stringParam name="minor_allele_max"
+                     prompt="Frequency of minor allele &lt;= "
+                     help="Upper Bound on the number of strains that have the minor allele"
+                     default="20"/>
+
+      <stringParam name="minor_allele_min"
+                     prompt="Frequency of minor allele >= "
+                     help="Lower Bound on the number of strains that have the minor allele"
+                     default="1"/>
+
+      <stringParam name="snp_density"
+                     prompt="SNPs per KB (CDS) >= "
+                     help="Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence"
+                     default="0"/>
+
+  <!------------------------------------------------------------------>
+  <!--  -->  
+  <!------------------------------------------------------------------>
+
+       <flatVocabParam name="chromosome"
+                     prompt="Chromosome"
+                     help=""
+                     multiPick="true"
+                     queryRef="VocabQueries.Chromosome"/>
+
+       <flatVocabParam name="chromosome_single"
+                     prompt="Chromosome"
+                     help="Pick a P. falciparum chromosome"
+                     multiPick="false"
+                     queryRef="VocabQueries.Chromosome"/>
+
+       <flatVocabParam name="snp_strain_a"
+		     prompt="Reference"
+                     help="Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage"
+                     multiPick="false"
+                     queryRef="VocabQueries.SnpStrainA"/>
+
+       <flatVocabParam name="snp_strain_b"
+		     prompt="Comparator"
+                     help="Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage"
+                     multiPick="false"
+                     queryRef="VocabQueries.SnpStrainB"/>
+
+       <flatVocabParam name="snp_strain_m"
+		     prompt="Comparator(s)"
+                     help="Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage"
+                     multiPick="true"
+                     queryRef="VocabQueries.SnpStrainM"/>
+
+       <flatVocabParam name="include_reichenowi"
+		     prompt="Include P. reichenowi"
+                     help="Click yes to include P. reichenowi snps in this query.  P.r snps were generated by alignment of P. reichenowi sequence with the P falciparum 3D7 reference sequence.  Note, if you want to only query reichenowi, you must click 'None' in the P. falciparum strains select list."
+                     multiPick="false"
+                     queryRef="VocabQueries.IncludeReichenowi"/>
+
+       <flatVocabParam name="include_only_queries"
+		     prompt="Restrict to queries only"
+                     help="Click yes to to restrict the results returned to only those genes which have been input as query ids.  This allows you to determine the relatedness of your query set" 
+                     multiPick="false"
+                     queryRef="VocabQueries.no_yes_list"/>
+
+       <flatVocabParam name="snp_stat"
+		     prompt="SNP Class"
+                     help="Choose the class of SNP you want to query on ... choose minumum and maximum numbers below"
+                     multiPick="false"
+                     queryRef="VocabQueries.SnpStat"/>
+
+       <flatVocabParam name="snp_order"
+		     prompt="Sort by"
+                     help="Results will be sorted on this column in descending order"
+                     multiPick="false"
+                     queryRef="VocabQueries.SnpSort"/>
+
+       <flatVocabParam name="sort_order"
+		     prompt="Sort direction"
+                     help="Results will be sorted ascending or descending order"
+                     multiPick="false"
+                     queryRef="VocabQueries.SortOrder"/>
+
+        <flatVocabParam name="profileSet"
+                     prompt="Microarray time course(s) to query"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileSet"/>
+
+        <flatVocabParam name="waters_profilesets"
+                     prompt="Microarray time course(s) to query"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.WatersProfileSets"/>
+
+        <flatVocabParam name="minOrMax"
+                     prompt="Query based on"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.MinOrMax"/>
+
+        <flatVocabParam name="maxExprHour"
+                     prompt="Timing of maximal expression"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Hours48"/>
+
+         <flatVocabParam name="maxPlusMinusHours"
+                     prompt="Maximal expression time plus or minus"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Hours24"/>
+
+        <flatVocabParam name="minExprHour"
+                     prompt="Timing of minimum expression"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Hours48"/>
+
+        <flatVocabParam name="minPlusMinusHours"
+                     prompt="Minimum expression time plus or minus"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Hours24"/>
+
+        <flatVocabParam name="inductionFold"
+                     prompt="Induction ratio cut-off"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.InductionFold"/>
+
+        <flatVocabParam name="expressionPct"
+                     prompt="Maximum percentile cut-off"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Percentile"/>
+
+        <flatVocabParam name="pfGenomicSequence"
+                     prompt="Genomic Sequence"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.PfGenomicSequence"/>
+
+        <flatVocabParam name="pfNonnuclearSequence"
+                     prompt="Genomic Sequence"
+                     help=""
+                     multiPick="true"
+                     queryRef="VocabQueries.PfNonnuclearSequence"/>
+
+        <flatVocabParam name="pfGenomicSequenceMultipick"
+                     prompt="Genomic Sequence"
+                     help=""
+                     multiPick="true"
+                     queryRef="VocabQueries.PfGenomicSequence"/>
+
+        <flatVocabParam name="pfGenomicSequenceOrNot"
+                     prompt="P. falciparum Genomic Sequence"
+                     help=""
+                     multiPick="false"
+                     default="choose one"
+                     queryRef="VocabQueries.PfGenomicSequenceOrNot"/>
+
+        <stringParam name="genomicSequence"
+                     prompt="Genomic Sequence ID"
+                     help="ID of genomic sequence to search for genes (e.g. ctg_7202)"
+                     sample="(Examples: MAL4, ctg_4094)"/>
+
+        <stringParam name="start_location"
+                     prompt="Start Location"
+                     help="Lower bound on nucleotide range to search for gene"
+                     default="1"/>
+
+        <stringParam name="end_location"
+                     prompt="End Location"
+                     help="Upper bound on nucleotide range to search for gene.  Use a number larger than the sequence length to search to the end of the sequence."
+                     default="10000000000"/>
+
+        <stringParam name="min_expression_percentile"
+                     prompt="Minimum expression percentile"
+                     help="Lower bound on expression percentile."
+                     default="50"/>
+
+        <stringParam name="max_expression_percentile"
+                     prompt="Maximum expression percentile"
+                     help="Upper bound on expression percentile."
+                     default="100"/>
+
+        <stringParam name="r_min_expression_percentile"
+                     prompt="Rings min percentile"
+                     help="Lower bound on expression percentile."
+                     default="0"/>
+
+        <stringParam name="r_max_expression_percentile"
+                     prompt="Rings max percentile"
+                     help="Upper bound on expression percentile."
+                     default="100"/>
+
+        <stringParam name="yt_min_expression_percentile"
+                     prompt="Early trophs min percentile"
+                     help="Lower bound on expression percentile."
+                     default="0"/>
+
+        <stringParam name="yt_max_expression_percentile"
+                     prompt="Early trophs max percentile"
+                     help="Upper bound on expression percentile."
+                     default="100"/>
+
+        <stringParam name="ys_min_expression_percentile"
+                     prompt="Early schizont min percentile"
+                     help="Lower bound on expression percentile."
+                     default="0"/>
+
+        <stringParam name="ys_max_expression_percentile"
+                     prompt="Early schizont max percentile"
+                     help="Upper bound on expression percentile."
+                     default="100"/>
+
+        <stringParam name="ms_min_expression_percentile"
+                     prompt="Late schizont min percentile"
+                     help="Lower bound on expression percentile."
+                     default="0"/>
+
+        <stringParam name="ms_max_expression_percentile"
+                     prompt="Late schizont max percentile"
+                     help="Upper bound on expression percentile."
+                     default="100"/>
+
+        <flatVocabParam name="extraerythrocytic_stages"
+                     prompt="Extraerythrocytic Lifecycle Stage"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.ExtraerythrocyticStages"/>
+
+        <flatVocabParam name="intraerythrocytic_stages"
+                     prompt="Intraerythrocytic Lifecycle Stage"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.IntraerythrocyticStages"/>
+
+        <flatVocabParam name="synchronization"
+                     prompt="Synchronization"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Synchronization"/>
+
+        <flatVocabParam name="localization"
+                     prompt="Localization"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Localization"/>
+
+        <stringParam name="ortholog_pattern"
+                     prompt="Ortholog pattern"
+                     help="This will be generated by clicking the species tree nodes."
+                     default=""/>
+
+        <flatVocabParam name="phyletic_indent_map"
+                     visible="false"
+                     queryRef="VocabQueries.PhyleticIndentMap"/>
+
+        <flatVocabParam name="phyletic_term_map"
+                     visible="false"
+                     queryRef="VocabQueries.PhyleticTermMap"/>
+
+        <flatVocabParam name="metabolic_pathway"
+                     prompt="Metabolic Pathway"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.MetabolicPathways"/>
+
+        <flatVocabParam name="mr4_reagent_type"
+                     prompt="Reagent Type"
+                     help="Choose a reagent type"
+                     multiPick="false"
+                     queryRef="VocabQueries.Mr4Reagents"/>
+
+        <flatVocabParam name="Dataset"
+                        prompt="Organism"
+                        help="Choose one or more organisms to search with the given motif"
+			multiPick="true"
+                        queryRef="VocabQueries.MotifDataset"/>
+
+        <stringParam name="Expression"
+                     prompt="Pattern"
+                     help="Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine."
+                     sample="(Example: CC6+RK)"
+                     default="CC6+RK"/>
+
+        <stringParam name="min_isoelectric_point"
+                     prompt="Min Isoelectric Point"
+                     help="Lower bound for the protein isoelectric point"
+                     default="6"/>
+
+        <stringParam name="max_isoelectric_point"
+                     prompt="Max Isoelectric Point"
+                     help="Upper bound for the protein isoelectric point"
+                     default="10"/>
+
+        <stringParam name="min_molecular_weight"
+                     prompt="Min Molecular Weight (Daltons)"
+                     help="Lower bound for the protein molecular weight"
+                     default="10000"/>
+
+        <stringParam name="max_molecular_weight"
+                     prompt="Max Molecular Weight (Daltons)"
+                     help="Upper bound for the protein molecular weight"
+                     default="50000"/>
+
+        <stringParam name="profile_pattern"
+                     visible="false"
+                     prompt="Profile Pattern"
+                     help="Example: '%hsa:N%pfa:Y%'"
+                     default="%hsa:N%pfa:Y%"/>
+
+        <stringParam name="included_species"
+                     prompt="Included Species"
+                     help="List of included species (for documentation only)"/>
+
+        <stringParam name="excluded_species"
+                     prompt="Excluded Species"
+                     help="List of excluded species (for documentation only)"/>
+
+        <stringParam name="min_exportpred_score"
+                     prompt="Minimum ExportPred Score"
+                     help="mininum requirement of score by ExportPred algorithm"
+                     default="10"/>
+
+        <flatVocabParam name="asexual_blood_stages_value"
+                     queryRef="VocabQueries.ObservedNotObserved"
+                     prompt="Asexual blood stages"/>
+        <flatVocabParam name="gametocytes_value"
+                     queryRef="VocabQueries.ObservedNotObserved"
+                     prompt="Gametocytes"/>
+        <flatVocabParam name="ookinetes_value"
+                     queryRef="VocabQueries.ObservedNotObserved"
+                     prompt="Ookinetes"/>
+        <flatVocabParam name="oocysts_value"
+                     queryRef="VocabQueries.ObservedNotObserved"
+                     prompt="Oocysts"/>
+        <flatVocabParam name="sporozoites_value"
+                     queryRef="VocabQueries.ObservedNotObserved"
+                     prompt="Sporozoites"/>
+        <stringParam name="min_interaction"
+                     prompt="Minimum Likelihood Score"
+                     help="Set a minimum for the likelihood of interaction"
+                     substitute="yes"
+                     default="2"/>
+
+        <flatVocabParam name="mass_spec_stage"
+                     prompt="Lifecycle Stage"
+                     help="Select a lifecycle stage from the list provided."
+                     multiPick="false"
+                     queryRef="VocabQueries.MassSpecStage"/>
+
+        <stringParam name="min_seq_coverage"
+                     prompt="Minimum Percent Sequence Coverage"
+                     help="Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%."
+                     substitute="yes"
+                     default="0"/>
+
+        <stringParam name="min_span_count"
+                     prompt="Minimum Number of Spans"
+                     help="Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned"
+                     substitute="yes"
+                     default="2"/>
+
+        <stringParam name="min_spectrum_count"
+                     prompt="Minimum Number of Spectra"
+                     help="Use this parameter to set a minimum for the number of mass spectra found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment."
+                     substitute="yes"
+                     default="1"/>
+
+        <stringParam name="genbank_accession"
+                     prompt="GenBank Accession Number"
+                     help="Enter a GenBank Accession number"
+                     substitute="yes"
+                     default="1575532"/>
+
+        <stringParam name="distanceFromTelomere"
+	             prompt="Maximum Distance from Telomere"
+		     help="Enter an upper bound on the distance."
+		     substitute="yes"
+		     default="30000"/>
+
+        <stringParam name="percentLowComplexity"
+	             prompt="Percent of Low Complexity in Protein"
+		     help="Enter an lower bound on the percent of low complexity."
+		     substitute="yes"
+		     default="30"/>
+
+        <stringParam name="max_centromere_distance"
+                     prompt="Maximum Distance from Centromere"
+                     help="Enter an upper bound on the distance"
+                     substitute="yes"
+                     default="10000"/>
+
+        <stringParam name="start_point"
+                     prompt="Start at"
+                     help="Select the distance (in nucleotides) to the start"
+                     substitute="yes"
+                     default="1"/>
+
+        <flatVocabParam name="start_from"
+                     prompt="Start Location"
+                     help="Select whether to measure the start point from the beginning or end of the sequence"
+                     multiPick="false"
+                     queryRef="VocabQueries.WhichEnd"/>
+
+        <stringParam name="end_point"
+                     prompt="End Location (0 = end)"
+                     help="Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence"
+                     substitute="yes"
+                     default="0"/>
+
+        <flatVocabParam name="end_from"
+                     prompt="From"
+                     help="Select whether to measure the end point from the beginning or end of the sequence"
+                     multiPick="false"
+                     queryRef="VocabQueries.WhichEnd2"/>
+
+        <flatVocabParam name="protein_dataset"
+                     prompt="Protein Dataset"
+                     help=""
+                     multiPick="true"
+                     queryRef="VocabQueries.ProteinDataset"/>
+
+        <stringParam name="pvalue_cutoff"
+                     prompt="BLAST P-value less than 10 to the"
+                     help="Only consider BLAST similarities with a P-value less than ten to the given power."
+                     substitute="yes"
+                     default="-20"/>
+
+        <flatVocabParam name="clades"
+                     prompt="PDB Proteins from"
+                     help="Select one or more clades."
+                     multiPick="true"
+                     queryRef="VocabQueries.Clades"/>
+
+        <stringParam name="accession"
+                     prompt="Accession number"
+                     help="Enter a GenBank, RefSeq, or SwissProt accession number"
+                     substitute="yes"
+                     default="CAD50836.1"/>
+
+        <stringParam name="min_coil"
+                     prompt="Minimum percent coil"
+                     help="Choose a lower bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of coil will be returned."
+                     substitute="yes"
+                     default="0"/>
+
+        <stringParam name="max_coil"
+                     prompt="Maximum percent coil"
+                     help="Choose a upper bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of coil will be returned."
+                     substitute="yes"
+                     default="100"/>
+
+        <stringParam name="min_strand"
+                     prompt="Minimum percent strand"
+                     help="Choose a lower bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of strand will be returned."
+                     substitute="yes"
+                     default="0"/>
+
+        <stringParam name="max_strand"
+                     prompt="Maximum percent strand"
+                     help="Choose a upper bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of strand will be returned."
+                     substitute="yes"
+                     default="100"/>
+
+        <stringParam name="min_helix"
+                     prompt="Minimum percent helix"
+                     help="Choose a lower bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of helix will be returned."
+                     substitute="yes"
+                     default="0"/>
+
+        <stringParam name="max_helix"
+                     prompt="Maximum percent helix"
+                     help="Choose a upper bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of helix will be returned."
+                     substitute="yes"
+                     default="100"/>
+
+        <stringParam name="ProfileGeneId"
+                     prompt="Gene Id"
+                     help="The Gene Id"
+                     substitute="yes"
+                     default="PF11_0344"/>
+
+        <flatVocabParam name="ProfileDistanceMethod"
+                     prompt="Distance Method"
+                     help="The method used to calculate the similarity distance"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileDistanceMethod"/>
+
+        <stringParam name="ProfileNumToReturn"
+                     prompt="# of Matches"
+                     help="The number of genes in the result"
+                     substitute="yes"
+                     default="50"/>
+
+        <flatVocabParam name="ProfileSearchGoal"
+                     prompt="Search Goal"
+                     help="The searching goal of the profile similarity query"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileSearchGoal"/>
+
+        <flatVocabParam name="ProfileProfileSet"
+                     prompt="Strain"
+                     help="Choose the strain of the profile to search against"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileProfileSet"/>
+
+        <flatVocabParam name="ProfileTimeShift"
+                     prompt="Time Shift"
+                     help="Whether to allow time shifting or not"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileTimeShift"/>
+
+        <flatVocabParam name="ProfileScaleData"
+                     prompt="Scale Result"
+                     help="Whether to scale result data into [0..1] or not"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileScaleData"/>
+
+        <flatVocabParam name="ProfileMinShift"
+                     prompt="Min Shift"
+                     help="The minimum allowed time shift"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileMinShift"/>
+
+        <flatVocabParam name="ProfileMaxShift"
+                     prompt="Max Shift"
+                     help="The maximum allowed time shift"
+                     multiPick="false"
+                     queryRef="VocabQueries.ProfileMaxShift"/>
+
+        <stringParam name="text_expression"
+                     prompt="Text term"
+                     help="Enter a regular expression describing the text term(s) to search for.  Example: membrane"
+                     sample="(Example: membrane)"
+                     default="membrane"/>
+
+        <flatVocabParam name="case_independent"
+                     prompt="Ignore capitalization?"
+                     help="Use this parameter to control whether to include text that matches except for capitalization (e.g. treat 'DNA', 'Dna', and 'dna' as all equal)."
+                     multiPick="false"
+                     queryRef="VocabQueries.CaseIndependence"/>
+
+        <flatVocabParam name="datasets"
+                     prompt="Fields"
+                     help="Choose which text fields to search."
+                     multiPick="true"
+                     queryRef="VocabQueries.TextSearchDatasets"/>
+
+        <stringParam name="max_pvalue"
+                     prompt="Max p-value exponent (BLAST Hits v. NRDB)"
+                     help="Only applicable to the 'Similar proteins' field.  Use this to filter away BLAST hits that are below a threshold of significance, so you only search the descriptions of significantly similar proteins."
+                     default="-30"/>
+
+        <stringParam name="e_value"
+                     prompt="E value &lt;="
+                     help="Enter the maximum E value allowed to report domain matches."
+                     default="0.05"/>
+
+        <flatVocabParam name="domain_database"
+                     prompt="Domain Database"
+                     help="Choose one of the constituent databases of InterPro."
+                     multiPick="false"
+                     queryRef="VocabQueries.DomainDatabase"/>
+
+        <!-- flatVocabParam name="domain_accession"
+                     prompt="Domain Accession"
+                     help="Choose an accession number from an InterPro database."
+                     multiPick="false"
+                     queryRef="VocabQueries.DomainAccession"/ -->
+
+        <stringParam name="domain_accession"
+                     prompt="Domain"
+                     help="Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed."/>
+
+        <flatVocabParam name="day_and_strain"
+                     prompt="Day of Gametocytogenesis and Strain"
+                     help="Choose one or more strain/day combination"
+                     multiPick="true"
+                     queryRef="VocabQueries.DayAndStrain"/>
+
+        <datasetParam name="ds_gene_ids"
+                     prompt="Gene id input set"
+                     help="input a comma delimited set of gene ids, or upload a file"
+                     default="PF11_0344"
+                     />
+     </paramSet>
+
+</wdkModel>

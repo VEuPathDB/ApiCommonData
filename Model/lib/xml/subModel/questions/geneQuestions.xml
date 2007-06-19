@@ -1,0 +1,1831 @@
+<wdkModel>
+
+  <questionSet name="GeneQuestions">
+
+  <!------------------------------------------------------------------>
+  <!-- Location -->  
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByLocation"
+         category="Genomic Position"
+         displayName="Chromosomal Location"
+         queryRef="GeneFeatureIds.GenesByGenomicRegion"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+ 
+       <attributesList excludeProjects="CryptoDB"
+         summary="location_text,product"
+         sorting="location_text asc"
+        />
+ 
+       <attributesList includeProjects="CryptoDB"
+         summary="organism,location_text,product,gene_type"
+         sorting="organism asc,location_text asc "
+        />
+
+        <summary>
+        Find genes that are located in a specified genomic region.
+        </summary>
+        <description includeProjects="CryptoDB">
+           <![CDATA[
+           Find genes by providing a list of IDs (Genbank locus tag). 
+           User can either enter the ID list manually, or upload a file that contains the list. 
+           IDs can be delimited by a comma, a semi colon, or any white spaces.
+           The search is case
+           insensitive. Asterisks can be used as wild cards (e.g. ' cgd6_* ').
+          ]]>
+        </description>
+        <description includeProjects="PlasmoDB">
+          <![CDATA[
+          Find genes that are located in a specified genomic region.<br><br>
+          Either select a <i>P. falciparum</i> genomic sequence from the
+          pull-down menu <i>or</i> enter a genomic sequence ID from any
+          <i>Plasmodium</i> species (if you supply both, the sequence ID will
+          be used).
+          ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+	  <![CDATA[
+	  Find genes within a given genomic region.<br>
+          Either select an organism and a genomic sequence from the
+          pull-down menu or enter a genomic sequence ID from any Crypto, 
+          Plasmo or Toxo species (e.g. "AAEL01000057", "MAL4", "Ia").
+          The Start and End locations correspond to the coordinates of 
+          the gene(s) on the chromosome.
+	  ]]>
+        </description>
+	<description includeProjects="ApiDB">
+	  <![CDATA[
+          Find genes that are located in a specified genomic region.<br><br>
+          Either select a <i>T. gondii</i> chromosome from the pull-down menu
+          <b>or</b> enter a sequence ID of a chromosome (e.g. "VIIa") or a 
+          scaffold (e.g. "TGG_995305"). <br> The Start and End locations 
+          correspond to the coordinates of the gene(s) on the chromosome.
+          ]]>
+        </description>
+        <propertyList name="attribution">
+           <import name="default.genomes.attribution"/>
+        </propertyList> 
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!-- Non-nuclear location -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByNonnuclearLocation"  excludeProjects="CryptoDB"
+         category="Genomic Position"
+         displayName="Non-nuclear Chromosomal Location"
+         queryRef="GeneFeatureIds.GenesByNonnuclearGenomicRegion"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+
+        <attributesList 
+         summary="organism,location_text,product"
+         sorting="organism,location_text asc"
+        />
+
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gondii"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ApiDB" >
+           <value value="P. falciparum"/>
+           <value value="T. gondii"/>
+        </propertyList>
+
+        <summary>
+        Find genes that are located in a specified region of the non-nuclear genome.
+        </summary>
+        <description>
+          <![CDATA[
+          Find genes that are located in a specified
+          region of the non-nuclear genome.<br><br>
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Centromere -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByCentromereProximity"
+              includeProjects="PlasmoDB, ApiDB"
+              displayName="Proximity to Centromeres"
+              category="Genomic Position"
+              queryRef="GeneFeatureIds.GenesByCentromereProximity"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList 
+              summaryAttributesList="organism,location_text,dist_centromere,product"
+              sortingAttributesList="organism,location_text asc"
+        />
+        <summary>
+          <![CDATA[
+              Find genes within a given distance from an annotated centromere location.
+          ]]>
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes within a given distance from an annotated centromere location.
+          ]]>
+        </description>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <dynamicAttributes>
+          <columnAttribute name="dist_centromere" displayName="Distance from Centromere"/>
+        </dynamicAttributes>
+        <attributesList 
+         summary="organism,location_text,product"
+         sorting="organism,location_text asc"
+        />
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Telomere -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByTelomereProximity"
+              includeProjects="PlasmoDB, ApiDB"
+              displayName="Proximity to Telomeres"
+              category="Genomic Position"
+              queryRef="GeneFeatureIds.GenesByTelomereProximity"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList
+              summaryAttributesList="organism,location_text,dist_telomere,product"
+              sortingAttributesList="organism,location_text asc"
+        />
+        <summary>
+          <![CDATA[
+              Find genes within a given distance from the start and end positions of chromosomes.Chromosome ends include telomeric repeats..
+          ]]>
+        </summary>
+        <description>
+          <![CDATA[
+	  Find genes within a given distance from a telomere.  We are using the start and end positions of chromosomes to define the location of the telomere.  Your query should take into account that the actual location of the telomere is <b>NEAR</b> the end of the chromosome.
+          ]]>
+        </description>
+        <dynamicAttributes>
+          <columnAttribute name="dist_telomere" displayName="Distance from Telomere"/>
+        </dynamicAttributes>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Type -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByGeneType"
+         category="Gene Attributes"
+         displayName="Gene Type"
+              queryRef="GeneFeatureIds.GenesByGeneType"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList
+              summaryAttributesList="organism,location_text,product,is_pseudo"
+              sortingAttributesList="organism asc,location_text asc"
+        />
+        <summary>
+           Find genes by type (eg, protein coding, tRNA, pseudogenes, etc).
+        </summary>
+        <description>
+           <![CDATA[
+          Find genes by type.
+          ]]>
+        </description>
+        <dynamicAttributes>
+          <columnAttribute name="is_pseudo" displayName="Pseudogene" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Exon count -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExonCount"
+              category="Gene Attributes"
+              displayName="Exon Count"
+              queryRef="GeneFeatureIds.GenesByExonCount"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+
+        <attributesList
+              summaryAttributesList="organism,location_text,product,exon_count"
+              sortingAttributesList="organism asc,exon_count desc,location_text asc"
+        />
+        <summary>
+        Find genes having a given number of exons.
+        </summary>
+        <description>
+           <![CDATA[
+        Find genes having the given number of exons.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Isoelectric point -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByIsoelectricPoint" excludeProjects="CryptoDB"
+         displayName="Isoelectric Point"
+         category="Predicted Proteins"
+         queryRef="GeneFeatureIds.GenesByIsoelectricPoint"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+         summaryAttributesList="organism,location_text,product,isoelectric_point"
+         sortingAttributesList="organism asc,isoelectric_point asc, location_text asc"
+        /> 
+        <summary>
+          Find genes whose protein product has an isoelectric point in a range that you specify.
+        </summary>
+        <description>
+           <![CDATA[
+             Find genes whose protein product has an isoelectric point in the specified range.
+           ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Molecular weight -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByMolecularWeight"
+         displayName="Molecular Weight"
+         category="Predicted Proteins"
+         queryRef="GeneFeatureIds.GenesByMolecularWeight"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+         summaryAttributesList="organism,location_text,product,molecular_weight"
+         sortingAttributesList="organism asc,molecular_weight asc, location_text asc"
+        /> 
+        <summary>
+          Find genes whose unmodified protein product has a molecular weight in a range that you specify.
+        </summary>
+        <description>
+           <![CDATA[
+            Find genes whose unmodified protein product has a molecular weight in a range that you specify.
+          <br><br>
+
+             Molecular weights are machine calculated from the raw translation and does not take into account any protein or residue modifications. For translations containing ambiguous amino acid codes (B, Z, X) we calculate the average of the upper and lower bound of the molecular weight.
+           ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- PDB similarity -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB"
+         displayName="PDB 3D Structures"
+         category="Predicted Proteins"
+         queryRef="GeneFeatureIds.GenesByPdbSimilarity"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+         summaryAttributesList="location_text,product"
+         sortingAttributesList="location_text asc"
+        /> 
+        <summary>
+            <![CDATA[
+            Find genes whose protein product has high BLAST similarity to a chain of a <a href="http://www.rcsb.org/pdb">Protein Data Bank (PDB)</a> structure.
+            ]]>
+        </summary>
+        <description>
+            <![CDATA[
+            Find genes whose protein product has high BLAST similarity to a chain of a <a href="http://www.rcsb.org/pdb">Protein Data Bank (PDB)</a> structure.
+            Specify one or more organisms whose genes to retrieve; one or more
+            clades of organisms whose PDB records should be considered; and a
+            p-value exponent cutoff.
+            ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Structure prediction -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesWithStructurePrediction" includeProjects="PlasmoDB,ApiDB"
+              displayName="Predicted 3D Structure"
+              category="Predicted Proteins"
+              queryRef="GeneFeatureIds.GenesWithStructurePrediction"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+              summaryAttributesList="organism,location_text,product"
+              sortingAttributesList="organism asc, location_text asc"
+        /> 
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <summary>
+          <![CDATA[
+              Find genes that have
+              computationally predicted 3D structure models.
+          ]]>
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes that have
+              computationally predicted 3D structure models.
+              <br><br>
+              The models were generated
+              computationally
+              by Dinesh Gupta at the <a href="http://icgeb.res.in/">ICGEB</a>.
+              They are seeded with experimentally-determined
+              structures of similar proteins (from <a href="http://www.rcsb.org">PDB</a>).
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Protein low complxity -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesWithProteinLowComplexity"  includeProjects="PlasmoDB,ApiDB"
+              displayName="Low Complexity Proteins"
+              category="Predicted Proteins"
+              queryRef="GeneFeatureIds.GenesWithProteinLowComplexity"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+              summaryAttributesList="product,organism"
+        /> 
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <summary>
+          <![CDATA[
+	  Find genes with low complexity amino acid sequence
+          ]]>
+        </summary>
+        <description>
+          <![CDATA[
+	  The low complexity percent was derived for <i>P. falciparum</i> genes using seg. <br></br>Wootton, J.C., Federhen, S. (1993)  Statistics of local complexity in amino acid sequences and sequence databases.  <i>Computers & Chemistry</i> 17: 149-163.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesBySecondaryStructure"
+              displayName="Protein Secondary Structure"
+              category="Predicted Proteins"
+              queryRef="GeneFeatureIds.GenesBySecondaryStructure"
+              summaryAttributesList="organism,location_text,product,percent_coil,percent_strand,percent_helix"
+              sortingAttributesList="organism asc, location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+         Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program. The percent composition is computed by counting the amino acids in which one of the three calls is given the highest confidence, and dividing by the length of the protein.  For example the percent helix is the number of amino acids in which helix has the highest confidence, divided by the length of the protein.
+
+
+              </P><PRE><B>References:</B> <BR> Jones DT. (1999) Protein secondary structure prediction<BR> based on position-specific scoring matrices<BR> <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=10493868">J Mol Biol. 1999 Sep 17;292(2):195-202</a></PRE>
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="percent_coil" displayName="Percent Coil" align="center"
+                              inReportMaker="false"/>
+             <columnAttribute name="percent_strand" displayName="Percent Strand" align="center"
+                              inReportMaker="false"/>
+             <columnAttribute name="percent_helix" displayName="Percent Helix" align="center"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesBySimilarity"
+         displayName="BLAST"
+         category="Similarity/Pattern"
+         queryRef="GeneFeatureIds.GenesBySimilarity"
+         summaryAttributesList="organism,product,Header,TabularRow,Alignment,Footer"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+         <summary>
+           Find genes that have BLAST similarity to your input sequence.
+         </summary>
+         <description>
+           <![CDATA[
+             Find genes that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+          ]]>
+         </description>
+         <dynamicAttributes>
+             <columnAttribute name="TabularRow" displayName="BLAST summary"
+                              inReportMaker="false"/>
+             <columnAttribute name="Alignment" displayName="BLAST alignment"
+                              inReportMaker="false"/>
+             <columnAttribute name="Header" displayName="BLAST header"
+                              inReportMaker="false"/>
+             <columnAttribute name="Footer" displayName="BLAST footer"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByMotifSearch"
+         displayName="Protein Motif Pattern"
+         category="Similarity/Pattern"
+         queryRef="GeneFeatureIds.GenesByMotifSearch"
+         summaryAttributesList="organism,location_text,product,Locations,MatchCount,Sequence"
+         sortingAttributesList="organism asc,MatchCount desc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+             Find genes whose protein product contains a motif pattern that
+             you specify, e.g. "two cysteines followed by one or more
+             hydrophobic amino acids, followed by arginine, then lysine".
+         </summary>
+         <description>
+           <![CDATA[
+             Find genes whose protein product contains a motif pattern that
+             you specify., e.g. "CC6+RK", which means "two cysteines followed
+             by one or more hydrophobic amino acids, followed by arginine,
+             then lysine". The pattern need not be well conserved. If 
+             you can describe it in
+             words, you can probably use this tool to create an "expression"
+             that can search other proteins for similar patterns.  
+             <br><br>
+
+             Another example is the pattern of the
+             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15591202&query_hl=2">
+             Pexel motif</a>, which can be represented as "R.L.[EQD]", meaning
+             "an arginine, then any amino acid, then a leucine, then any amino
+             acid, then either an aspartic acid, a glutamic acid, or a
+             glutamine".
+             <br><br>
+
+             The pattern need not be well conserved. If you can describe it in
+             words, you can probably use this tool to create an "expression"
+             that can search other proteins for similar patterns.
+             <br><br>
+
+             Specify the pattern with a (Perl style) "regular expression".
+             (Regular expressions are more powerful than PROSITE patterns.)
+             For a description of how to create regular expressions,
+             please see the <a href="regexp.jsp">Regular Expression Tutorial</a>.
+             <br><br>
+
+             The following codes can be used to represent classes of amino acids.
+		<table border columns=3>
+                   <TR>
+                      <TD><B>AA property</B>
+                      </TD>
+                      <TD><B>Amino acids</B>
+                      </TD>
+                      <TD><B>Code</B>
+                      </TD>
+                   </TR>
+
+                   <TR>
+                      <TD>
+                      <B>Acidic</B>
+                      </TD>
+                      <TD><B>DE</B>
+                      </TD>
+                      <TD><B>0</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Alcohol</B>
+                      </TD>
+                      <TD><B>ST</B>
+                      </TD>
+                      <TD><B>1</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Aliphatic</B>
+                      </TD>
+                      <TD><B>ILV</B>
+                      </TD>
+                      <TD><B>2</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Aromatic</B>
+                      </TD>
+                      <TD><B>FHWY</B>
+                      </TD>
+                      <TD><B>3</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Basic</B>
+                      </TD>
+                      <TD><B>KRH</B>
+                      </TD>
+                      <TD><B>4</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Charged</B>
+                      </TD>
+                      <TD><B>DEHKR</B>
+                      </TD>
+                      <TD><B>5</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Hydrophobic</B>
+                      </TD>
+                      <TD><B>AVILMFYW</B>
+                      </TD>
+                      <TD><B>6</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Hydrophilic</B>
+                      </TD>
+                      <TD><B>KRHDENQ</B>
+                      </TD>
+                      <TD><B>7</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Polar</B>
+                      </TD>
+                      <TD><B>CDEHKNQRST</B>
+                      </TD>
+                      <TD><B>8</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Small</B>
+                      </TD>
+                      <TD><B>ACDGNPSTV</B>
+                      </TD>
+                      <TD><B>9</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Tiny</B>
+                      </TD>
+                      <TD><B>AGS</B>
+                      </TD>
+                      <TD><B>B</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Turnlike</B>
+                      </TD>
+                      <TD><B>ACDEGHKNQRST</B>
+                      </TD>
+                      <TD><B>Z</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Any</B>
+                      </TD>
+                      <TD><b>ACDEFGHIKLM<br>
+                             NPQRSTVWY</b>
+                      </TD>
+                      <TD><B>.</B>
+                      </TD>
+                   </TR>
+                   </table>
+          ]]>
+         </description>
+         <dynamicAttributes>
+           <columnAttribute name="Locations" displayName="Match Locations" align="center"/>
+           <columnAttribute name="MatchCount" displayName="Match Count" align="center"/>
+           <columnAttribute name="Sequence" inReportMaker="false" truncateTo="4000"/>
+         </dynamicAttributes>
+    </question>
+
+
+    <!-- question name="GenesByPfamDomain"
+              category="Similarity/Pattern"
+              displayName="Pfam domain"
+              queryRef="GeneFeatureIds.GenesByPfamDomain"
+              summaryAttributesList="organism,product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+          Find genes containing a given Pfam domain, family or repeat.
+        </summary>
+        <description>
+            <![CDATA[
+Find genes containing a given Pfam domain, family or repeat.  Type a Pfam name, accession or description. Use the <a href="http://www.sanger.ac.uk/Software/Pfam/browse/top_twenty.shtml">Pfam browser</a> to search Pfam if you are not sure.
+            ]]>
+        </description>
+    </question -->
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByInterproDomain"
+              category="Similarity/Pattern"
+              displayName="Interpro Domain"
+              queryRef="GeneFeatureIds.GenesByInterproDomain"
+              summaryAttributesList="organism,location_text,product,e_value"
+              sortingAttributesList="organism asc,e_value asc, location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+          Find genes containing a given protein domain.
+        </summary>
+        <description>
+            <![CDATA[
+            Find genes whose predicted protein contains a domain from
+            the InterPro set of domain databases.  The domain matches are
+            identified by the InterProScan program.
+            <p>First choose a member database.
+            <p>Then begin typing the domain name, or part of it. You will
+            be prompted with all possible domains that match what you have typed.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
+	</dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesBySnps"
+              category="Population Biology"
+              displayName="SNP Characteristics"
+              queryRef="GeneFeatureIds.GenesBySnps"
+              summaryAttributesList="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
+              sortingAttributesList="total_snps desc,cds_snp_density desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+	 Find <i>P. falciparum</i> genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
+           ]]>
+        </summary>
+        <description>
+            <![CDATA[
+	     Search for <I>P. falciparum</I> genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc.
+             Note that if you don't care about one of the parameters, don't change the defaults
+             on that parameter and you will get all genes irrespective of that parameter.
+             For example, running this query
+             to compare 3D7 and Dd2 using default parameters returns 2577 genes.  Among the top 20 on the list
+             are CLAG, AMA1, chloroquine resistance marker and multiple PfEMP1 and SURFIN genes.
+             <p>Note: Due to the extreme codon bias in the falciparum genome, the ratio of non-synonymous
+             to synonymous snps per gene is much higher than expected so this should be considered when creating queries.
+             We are intending to calculate more reliable normalized Dn/Ds or Ka/Ks ratios in subsequent releases of PlasmoDB.
+
+
+             <p>SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.</p>
+	     <div align="center">
+                <img src="images/dnds_ratio.png">
+             </div>
+	     <br><br>
+            ]]>
+        </description>
+
+	<dynamicAttributes>
+	     <columnAttribute name="total_snps" displayName="Total SNPs" align="center"/> 
+	     <columnAttribute name="cds_snp_density" displayName="SNPs per Kb (CDS)" align="center"/>
+	     <columnAttribute name="dn_ds_ratio" displayName="Non-syn/syn SNP ratio" align="center"/>
+	     <columnAttribute name="num_synonymous" displayName="Synonymous SNPs" align="center"/>
+	     <columnAttribute name="num_non_synonymous" displayName="Non-synonymous SNPs" align="center"/>
+	     <columnAttribute name="num_nonsense" displayName="Nonsense SNPs" align="center"/>
+	     <columnAttribute name="num_noncoding" displayName="Non-coding SNPs" align="center"/>
+	</dynamicAttributes>
+
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByEcNumber"
+         category="Putative Function"
+         displayName="EC Number (P.f.)"
+              queryRef="GeneFeatureIds.GenesByEcNumber"
+              summaryAttributesList="organism,product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+          Find <i>P. falciparum </i> genes by assigned Enzyme Commission (EC) number.
+          ]]>
+        </summary>
+        <description>
+           <![CDATA[
+Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'.
+ For help with obtaining EC numbers, try the
+           <a href="http://ca.expasy.org/enzyme/">ExPASy-ENZYME</a>
+           browser.
+          <br><br>
+
+E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University).
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByGoTerm"
+         category="Putative Function"
+         displayName="GO Term"
+              queryRef="GeneFeatureIds.GenesByGoTerm"
+              summaryAttributesList="organism,product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+Find genes by Gene Ontology (GO) term for molecular function, biological process or subcellular localization.
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes by Gene Ontology (GO) term for molecular function,
+           biological process or subcellular localization.  The search finds
+           genes with the GO term you specify and genes with terms that are
+           specializations of your term (is-a).  For a list of GO terms, try
+           the
+           <a href="http://www.godatabase.org/cgi-bin/amigo/go.cgi">AmiGO</a>
+           browser.  For GO IDs, include the GO prefix as in "GO:0003824."
+           <br><br>
+
+           GO term annotation was provided by the sequencing and annotation
+           centers (Sanger and TIGR), and was inferred from similarity to
+           protein domains from the
+           <a href="http://www.ebi.ac.uk/interpro/">InterPro</a> databases.
+           ]]>
+       </description>
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByMetabolicPathway"
+         displayName="Metabolic Pathway (P.f.)"
+         category="Putative Function"
+         queryRef="GeneFeatureIds.GenesByMetabolicPathway"
+         summaryAttributesList="location_text,product,met_pathways"
+         sortingAttributesList="location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+        Find genes involved in a specific metabolic pathway.
+        </summary>
+        <description>
+            <![CDATA[
+        Find genes involved in a specific metabolic pathway.
+          <br><br>
+
+        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
+            <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .
+           ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="met_pathways" displayName="Metabolic Pathways"/>
+	</dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByProteinProteinInteraction"
+              displayName="Y2H Protein Interaction (P.f.)"
+              category="Putative Function"
+              queryRef="GeneFeatureIds.GenesByProteinProteinInteraction"
+              summaryAttributesList="location_text,product,bait_start,bait_end,prey_start,prey_end,times_observed,number_of_searches,preyNumberBaits,baitNumberPreys,bait_or_prey"
+              sortingAttributesList="times_observed desc, number_of_searches desc, location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+         Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
+        </summary>
+        <description>
+           <![CDATA[
+Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.  <br><br>
+        <i>Times reproduced</i> refers to the number of independent yeast two-hybrid screens in which a given interaction was found. Interactions found in two or more yeast two-hybrid screens were independently reproduced, and are thus more likely to be true yeast two-hybrid positives.
+<br><br>
+<i>Times observed</i> refers to the total number of times a given interaction was identified in all yeast two-hybrid screens.  An  interaction can be identified multiple times in the same screen for several reasons: (1) The original yeast cell containing the pair of  interacting proteins divided before being plated on selective media; (2) The same prey plasmid was present in the library multiple times  and thus gave rise to multiple positive colonies; or (3) The prey  gene was present in the library as multiple independent, overlapping  fragments, all of which interact with a given bait.  Only (3) provides independent confirmation of a putative interaction.
+<br><br>
+Protein interactions were experimentally determined using the yeast two-hybrid system as described in LaCount DJ, Vignali M, Chettier R, Phansalkar A, Bell R, Hesselberth JR, Schoenfeld LW, Ota I, Sahasrabudhe S, Kurschner C, Fields S, Hughes RE.  A protein interaction network of the malaria parasite Plasmodium falciparum. Nature. 2005 438:103-7.
+
+          ]]>
+        </description>
+        <dynamicAttributes>
+            <columnAttribute name="bait_start" displayName="Bait Start" align="center"/>
+            <columnAttribute name="bait_end" displayName="Bait End" align="center"/>
+            <columnAttribute name="prey_start" displayName="Prey Start" align="center"/>
+            <columnAttribute name="prey_end" displayName="Prey End" align="center"/>
+            <columnAttribute name="times_observed"
+                       displayName="Times Observed" align="center"/>
+            <columnAttribute name="number_of_searches"
+                       displayName="Times Reproduced" align="center"/>
+            <columnAttribute internal="true" name="prey_number_of_baits"/>
+            <columnAttribute internal="true" name="gene_source_id"/>
+            <linkAttribute name="preyNumberBaits"
+                       displayName="Baits Interacting with Found Gene" align="center"
+                       visible="$$prey_number_of_baits$$">
+                <url>
+                    <![CDATA[
+                      processQuestion.do?questionFullName=GeneQuestions.GenesByProteinProteinInteraction&locus_tag=$$gene_source_id$$&min_searches=1&min_observed=1&myPropbait_or_prey=prey&questionSubmit=Get+Answer
+                    ]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="bait_number_of_preys" internal="true"/>
+            <linkAttribute name="baitNumberPreys"
+                       displayName="Preys Interacting with Found Gene" align="center"
+                       visible="$$bait_number_of_preys$$">
+                <url>
+                    <![CDATA[
+                      processQuestion.do?questionFullName=GeneQuestions.GenesByProteinProteinInteraction&locus_tag=$$gene_source_id$$&min_searches=1&min_observed=1&myPropbait_or_prey=bait&questionSubmit=Get+Answer
+                    ]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="bait_or_prey"
+                       displayName="Query Gene Was" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByFunctionalInteraction"
+         displayName="Predicted Functional Interaction (P.f.)"
+         category="Putative Function"
+         queryRef="GeneFeatureIds.GenesByFunctionalInteraction"
+         summaryAttributesList="location_text,product,queries_matched,query_ids,likelihood_scores"
+         sortingAttributesList="queries_matched desc,likelihood_scores desc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+          Find genes of <i>P. falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
+          ]]>
+        </summary>
+        <description>
+           <![CDATA[
+Find genes of <i>Plasmodium falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
+
+<br><br>Input a gene ID and a minimum interaction likelihood score.  Scores range from 2 to 9435, and increasing scores indicate higher confidence.  Generally, a likelihood score of 10 or more indicates a high-confidence interaction.
+
+<br><br>There are 388,969 total predicted protein pairs in the result set, with likelihood scores ranging from 2 to 9435. Below a score of 2, the number of false positives exceed the number of true positives. Most protein-protein interaction pairs (~79%) have a likelihood score of below 10, while about 20% of the pairs have a likelihood score between 10 and 9435 (only 251 pairs, or about 0.06% of the total, have a likelihood score above 100).
+
+<br><br>Empirical observations of the results show that while many pairs with very low likelihood scores (say between 2-4) are biologically valid, the predicted interactions are likely to be highly accurate as the scores approach a value of 10. In the published manuscript, a score of 14 was used to isolate a high-confidence subset of interactions, where the number of true positives was about 10 times greater than the number of false positives.
+
+
+<br><br><a href="http://www.genome.org/cgi/content/abstract/gr.4573206v1">Date, S.V. & Stoeckert, C.J., Jr. Computational modeling of the <i>Plasmodium falciparum</i> interactome reveals protein function on a genome-wide scale. <i>Genome Research</i>, April 2006, doi:10.1101/gr.4573206</a>
+          ]]>
+        </description>
+        <dynamicAttributes>
+            <columnAttribute name="likelihood_scores"
+                       displayName="Likelihood Scores" align="center"/>
+            <columnAttribute name="query_ids"
+                       displayName="Query IDs"/>
+            <columnAttribute name="queries_matched"
+                       displayName="Queries matched" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByWatersDifferentialExpression"
+              category="Transcript Expression"
+              displayName="Diff. expression in DOZI mutant vs. WT (P.b.)"
+              queryRef="GeneFeatureIds.GenesByWatersDifferentialExpression" 
+              summaryAttributesList="product,fold_change,confidence"
+              sortingAttributesList="fold_change desc,confidence desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[ Find <i>P. berghei</i> genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
+        </summary>
+        <description>
+            <![CDATA[
+Find genes whose expression was found to be up-regulated or down-regulated based upon PaGE differential expression analysis in a microarray study of purified gametocytes where the PB000603.01.0 gene in P. berghei has been knocked out. It has been proposed (Mair et al. Science 2006) to name PB000603.01.0 protein "DOZI" for "development of of zygote inhibited."
+<p>
+A list of genes is returned based on the fold-change, PaGE-determined confidence (based on replicate analysis), and whether up or down regulated. For example, choosing fold change >= 2, confidence >= 0.8, and down regulated returns a list of 335 genes including PB000603.01.0 (the knocked out gene) with a fold change of -7.14.
+<p>
+For further information on the experiments, refer to:
+<p>
+Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos G, Janse CJ, Waters AP. Regulation of sexual development of Plasmodium by translational repression. Science. 2006 Aug 4;313(5787):667-9.
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
+	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByDifferentialMeanExpression"
+              category="Transcript Expression"
+              displayName="Diff. expression (fold-change) in KO vs. WT (P.f.)"
+              queryRef="GeneFeatureIds.GenesByDifferentialMeanExpression" 
+              summaryAttributesList="product,fold_change"
+              sortingAttributesList="fold_change desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[
+            Find  <i>P. falciparum</i> genes by differential expression (fold-change) in Sir2 and invasion pathway KO studies
+            ]]>
+        </summary>
+        <description>
+            <![CDATA[
+Find genes based on fold-change differences in expression by comparing assays of P. falciparum RNA when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in their associated controls. Please be aware that these are individual comparisons and not subjected to any statistical analysis.
+<p>
+The data is from a total of 17 microarray experiments (1, 2, 3) performed using an Affymetrix short oligonucleotide platform. This platform contains oligos (25-mers) derived from the predicted coding regions of the entire P. falciparum genome (4). The Sir2 Knock out (KO) experiments were designed to look at var gene silencing by Sir2 (PF13_0152). The EBA-175 (MAL7P1.176), EBA-140 (MAL13P1.60), and pfRh2b (MAL13P1.176) KOs were performed to study sialic acid-dependent versus sialic acid-independent invasion pathways. W2mef/C4/Nm is a sialic acid-independent clone. The D10 strain naturally is missing the pfRh2b and EBA-140 genes.
+<p>
+Expression values for each probe set were obtained by the gcRMA algorithm (5). Queries can be performed to retrieve genes with a fold change of expression values greater or equal to the value entered between the reference (numerator) and comparison (denominator) studies chosen. For example, choosing W2mef EBA175 KO (late T) as the reference, W2mef WT (late T) as the comparison study, down-regulated as the direction, and fold-change >= 2 returns a list of 55 genes with MAL7P1.176 (EBA175) at the top with a fold change of -4.9.
+<p>
+References:
+<p>
+(1) Duraisingh et al., Heterochromatin silencing and locus repositioning linked to regulation of virulence genes in Plasmodium falciparum. Cell. 2005 Apr 8;121(1):13-24
+<p>
+(2) Stubbs et al., Molecular mechanism for switching of P. falciparum invasion pathways into human erythrocytes. Science. 2005 Aug 26;309(5739):1384-7
+<p>
+(3) Baum et al., Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions. PLoS Pathog. 2005 Dec;1(4):e37
+<p>
+(4) Discovery of Gene Function by Expression Profiling of the Malaria Parasite Life Cycle. Karine G. Le Roch, Yingyao Zhou, Peter L. Blair, Muni Grainger, J. Kathleen Moch, J. David Haynes, Patricia De la Vega, Anthony A. Holder, Serge Batalov, Daniel J. Carucci, and Elizabeth A. Winzeler Published online July 31, 2003; 10.1126/science.1087025 (Science Express Research Articles)
+<p>
+(5) http://bioconductor.org/packages/bioc/html/gcrma.html
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="fold_change" displayName="Fold-change"/>
+	</dynamicAttributes>
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExpressionPercentileA"
+              category="Transcript Expression"
+              displayName="Expression percentile in KO and WT (P.f.)"
+              queryRef="GeneFeatureIds.GenesByExpressionPercentileA" 
+              summaryAttributesList="product,percentile"
+              sortingAttributesList="percentile desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[
+            Find  <i>P. falciparum</i> genes by expression percentile from Sir2 KO and invasion pathway KO studies 
+            ]]>
+        </summary>
+        <description>
+            <![CDATA[
+Find genes expressed when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in  their associated controls.
+<p>
+The data is from a total of 17 microarray experiments (1, 2, 3) performed using an Affymetrix short oligonucleotide platform. This platform contains oligos (25-mers) derived from the predicted coding regions of the entire P. falciparum genome (4). The Sir2 Knock out (KO) experiments were designed to look at var gene silencing by Sir2 (PF13_0152). The EBA-175 (MAL7P1.176), EBA-140 (MAL13P1.60), and pfRh2b (MAL13P1.176) KOs were performed to study sialic acid-dependent versus sialic acid-independent invasion pathways. W2mef/C4/Nm is a sialic acid-independent clone. The D10 strain naturally is missing the pfRh2b and EBA-140 genes.
+<p>
+Expression values for each probe set were obtained by the gcRMA algorithm (5). Queries can be performed to retrieve only those genes in at least the Xth percentile level, where X can be from 95 to 5. In this way it is possible to select only the most highly expressed genes, to any desired level above the 5th percentile. Genes are returned in decreasing order of their intensity.
+<p>
+References:
+<p>
+
+(1) Duraisingh et al., Heterochromatin silencing and locus repositioning linked to regulation of virulence genes in Plasmodium falciparum. Cell. 2005 Apr 8;121(1):13-24
+<p>
+
+(2) Stubbs et al., Molecular mechanism for switching of P. falciparum invasion pathways into human erythrocytes. Science. 2005 Aug 26;309(5739):1384-7
+<p>
+
+(3) Baum et al., Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions. PLoS Pathog. 2005 Dec;1(4):e37
+
+<p>
+(4) Discovery of Gene Function by Expression Profiling of the Malaria Parasite Life Cycle. Karine G. Le Roch, Yingyao Zhou, Peter L. Blair, Muni Grainger, J. Kathleen Moch, J. David Haynes, Patricia De la Vega, Anthony A. Holder, Serge Batalov, Daniel J. Carucci, and Elizabeth A. Winzeler Published online July 31, 2003; 10.1126/science.1087025 (Science Express Research Articles)
+
+<p>
+
+(5) http://bioconductor.org/packages/bioc/html/gcrma.html
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExpressionTiming"
+         displayName="Expression Timing (P.f)"
+         category="Transcript Expression"
+         queryRef="GeneFeatureIds.GenesByExpressionTiming"
+         summaryAttributesList="organism,product,derisiOverlayPct"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+          Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
+        </summary>
+        <description>
+           <![CDATA[
+              Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.  Five intraerythrocytic time courses may be
+              queried in turn (and results may be combined using the
+              <a href="showQueryHistory.do">query history</a>).  The time
+              courses are those provided by the
+               <a href="http://derisilab.ucsf.edu/">DeRisi
+              Lab</a>. They are from a
+              glass slide array and analyze HB3, 3D7, and Dd2 parasites.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByProfileSimilarity"
+         displayName="Expression Profile Similarity (P.f.)"
+         category="Transcript Expression"
+         queryRef="GeneFeatureIds.GenesByProfileSimilarity"
+         summaryAttributesList="organism,distance,time_shift,profilesGraph"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+         <summary>
+            <![CDATA[
+          Find <i>P. falciparum</i> genes that have a similar expression profile to your input gene.
+          ]]>
+         </summary>
+         <description>
+           <![CDATA[
+           Find <i>P. falciparum</i> genes that have a (glass slide) expression profile similar to that of your input gene.
+             Find genes that have similar expression profile to your input gene.
+          ]]>
+         </description>
+         <dynamicAttributes>
+             <columnAttribute name="distance" displayName="Profile Distance"
+                              inReportMaker="true"/>
+             <columnAttribute name="time_shift" displayName="Time Shift"
+                              inReportMaker="true"/>
+             <columnAttribute name="query_source_id" displayName="QueryGeneId"
+                        inReportMaker="false"/>
+             <textAttribute name="profilesGraph" displayName="Profiles"
+                        inReportMaker="false" truncateTo="100000">
+                <text>
+                   <![CDATA[
+                   <img src="@CGI_URL@/dataPlotter.pl?id=$$primaryKey$$&sid=$$query_source_id$$&type=DeRisiProfileQuery::Ver1&model=plasmo&fmt=png&thumb=1"/>
+                    ]]>
+                </text>
+             </textAttribute>
+         </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExpressionPercentile"
+         displayName="Expression Percentile (P.f.)"
+         category="Transcript Expression"
+         queryRef="GeneFeatureIds.GenesByExpression"
+         summaryAttributesList="product,winzelerPct"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+         Find <i>P. falciparum</i> genes expressed in early ring, late ring, early trophozoite, late trophozoite, early
+         schizont, late schizont, merozoite, sporozoite, or gametocyte.
+          ]]>
+        </summary>
+        <description>
+           <![CDATA[
+        Find genes expressed in
+        early ring, late ring, early trophozoite, late trophozoite, early
+        schizont, late schizont, merozoite, sporozoite, or gametocyte.
+        <br><br>
+
+        The data is from a total of 17 microarray experiments (1) performed using an
+        Affymetrix short oligonucleotide platform.  Cultures were synchronized
+        using two independent methods, 5% D-sorbitol and temperature cycling,
+        for all developmental stages except Gametocyte and Sporozoite.  This
+        platform contains oligos (25-mers) derived from the predicted coding
+        regions of the entire <I>P. falciparum</I> genome.
+        <P>Expression values for each probe set were obtained by the MOID
+        algorithm (2). Queries can be performed to retrieve only those genes
+        in at least the Xth percentile level, where X can be from 95 to 5.  In
+        this way it is possible to select only the most highly expressed
+        genes, to any desired level above the 5th percentile.  Genes are
+        returned in decreasing order of their intensity.
+        <p>However, please note that, regardless of the percentile expression
+        level selected, only genes that are above background and whose
+        observed expression level would not be expected by chance (MOID
+        expression level >10 and logP < -0.5) are included and will be
+        reported.  This means that genes that have only a single probe on the
+        array will not be reported as their logP values will always be too
+        high to satisfy the query.
+        <p><b>References:</b><br> (1) Discovery of Gene Function by Expression
+        Profiling of the Malaria Parasite Life Cycle.  Karine G. Le Roch,
+        Yingyao Zhou, Peter L. Blair, Muni Grainger, J. Kathleen Moch, J.
+        David Haynes, Patricia De la Vega, Anthony A. Holder, Serge Batalov,
+        Daniel J. Carucci, and Elizabeth A. Winzeler Published online July 31,
+        2003; 10.1126/science.1087025 (Science Express Research Articles)
+        <br>(2) Zhou Y, Abagyan R. Match-Only Integral Distribution (MOID)
+        Algorithm for high-density oligonucleotide array analysis. BMC
+        Bioinformatics. 2002;3(1):3.
+          ]]>
+        </description>
+        <dynamicAttributes>
+            <columnAttribute name="max_percentile" displayName="Max Percentile"
+                             inReportMaker="false"/>
+            <columnAttribute name="min_percentile" displayName="Min Percentile"
+                             inReportMaker="false"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByGametocyteExpression"
+         displayName="Gametocyte Expression (P.f.)"
+         category="Transcript Expression"
+         queryRef="GeneFeatureIds.GenesByGametocyteExpression"
+         summaryAttributesList="product"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[
+                Find <i>P. falciparum</i> genes by
+                percentile protein expression in gametocytes.
+           ]]>
+        </summary>
+        <description>
+            <![CDATA[
+                Find <i>Plasmodium falciparum</i> genes expressed during
+                gametocytogenesis in strain NF54, strain 3D7, or MACS-purified
+                strain 3D7. It uses data from a total of 23 microarray
+                experiments (1), as shown here for gene PFD0830w:<br><br>
+                <div align="center">
+                <img src="images/gam_pct_pfd0830w.png">
+                </div><br><br>
+                These experiments were performed using an Affymetrix short
+                oligonucleotide platform, which contains oligos (25-mers)
+                derived from the predicted coding regions of the entire <I>P.
+                falciparum</I> genome. </P> <P> Expression values for each
+                probe set were obtained by the MOID algorithm (2). Genes can
+                be found by their percentile expression in the selected set of
+                assays.<br><br>
+                However, please note that, regardless of the percentile
+                expression level selected, only genes that are above
+                background and whose observed expression level would not be
+                expected by chance (MOID expression level >10 and logP < -0.5)
+                are included and will be reported.  This means that genes that
+                have only a single probe on the array will not be reported as
+                their logP values will always be too high to satisfy the query.
+                <br><br>
+                <pre><b>References:</b><br>(1) Jason A. Young, Quinton L. Fivelman, Peter L. Blair, Patricia de la Vega,<br>Karine G. Le Roch, Yingyao Zhou, Daniel J. Carucci, David A. Baker, Elizabeth A. Winzeler<br><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=16005087&dopt=Citation">The Plasmodium falciparum sexual development transcriptome: a microarray analysis using ontology-based pattern identification</a><br>Mol Biochem Parasitol. 2005 Jul 5; <br>(2) Zhou Y, Abagyan R.<br><a href="http://www.biomedcentral.com/1471-2105/3/3">Match-Only Integral Distribution (MOID) Algorithm for high-density oligonucleotide array analysis.</a><br>BMC Bioinformatics. 2002;3(1):3.</pre>
+           ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="BergheiGenesByExpressionPercentile"
+         displayName="Expression Percentile (P.b.)"
+         category="Transcript Expression"
+         queryRef="GeneFeatureIds.BergheiGenesByExpressionPercentile"
+         summaryAttributesList="product,watersPct"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+        Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite and early schizont stages.
+         ]]>
+        </summary>
+        <description>
+           <![CDATA[
+Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite, and early schizont stages. The stages were all hybridized with late trophozoites allowing us to use late trophozoites as a reference for this query.
+<p>
+There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) and HPE is High Producer "E".  HP was mechanically passaged on a weekly basis from mouse to mouse and 10 independent experiments were set up (HPA-HPJ).  The parasites were observed, waiting for non-producing parasites to appear.  HPE was the chosen one. A deletion in HP was assumed to have created HPE (they are otherwise isogenic) and KO'd the production of gametocytes.  In such a scenario the non-producer would quickly overgrow the producer.  Both are cloned.
+      ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByMassSpec"
+         displayName="Protein Expression (P.f.)"
+         category="Protein Expression"
+         queryRef="GeneFeatureIds.GenesByMassSpec"
+         summaryAttributesList="product"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+                Find <I>P. falciparum</I> genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction of the parasite.
+          ]]>
+        </summary>
+        <description>
+            <![CDATA[
+                Find <I>P. falciparum</I> genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction. 
+                Select the stage or subcellular fraction and the 
+                threshold conditions for tandem mass spectrometry, 
+                MS/MS, evidence and only genes with mass-spec evidence will be
+                returned. A lower value for the minimum percent coverage or number of spans
+                will result in increased sensitivity and lower stringency.
+                If the minimum percent coverage is set to 0%, which is the default,
+                only genes with at least some mass-spec evidence will be returned.
+                Specifying a higher number of spectra will result in the
+                selection of proteins that are more abundant.
+                These values are not strictly quantitative
+                as the detection of proteins in MS/MS analyses is dependent on
+                solubility of the proteins and other factors.
+                <br><br>
+                <UL type='a'>Current data sets stored in PlasmoDB:
+                <LI> Florens 2002: Merozoites, Trophozoites, Sporozoites,
+                Gametocytes
+                <LI> Florens 2004: Membranes_iRBC, CompleteTrophozoiteSchizont
+                </UL>
+                Selecting "any" will result in returning genes that appear in
+                any of the available datasets.<BR>
+                Please refer to the original papers for more information
+                on the experiments and experimental conditions.
+                <PRE> <B>References:</B><BR>
+                a) Florens, L., Washburn, M.P., Raine, J.D., Anthony, R.M., Grainger, M., Haynes, J.D.,<BR>
+                Moch, J.K., Muster, N., Sacci, J.B., Tabb, D.L., Witney, A.A., Wolters, D., Wu, Y.,<BR>
+                Gardner, M.J., Holder, A.A., Sinden, R.E., Yates, J.R., Carucci, D.J. (2002)<BR>
+                A proteomic view of the <I>Plasmodium falciparum</I> life cycle. Nature 419: 520-526.<BR><BR>
+                c) Lasonder, E., Ishihama, Y., Andersen, J.S., Vermunt, A.M., Pain, A., Sauerwein, R.W.,<BR>
+                Eling, W.M., Hall, N., Waters, A.P., Stunnenberg, H.G., Mann M. (2002) Analysis of the<BR>
+                Plasmodium falciparum proteome by high-accuracy mass spectrometry. Nature. 419:537-542.<BR><BR>
+                b) Florens, L., Liu X., Wang, Y., Yang, S., Schwartz, O., Peglar, M., Carucci, D.J.,Yates,<BR>
+                J.R., Wu, Y.  Proteomics Approach Reveals Novel Proteins on the Surface of Malaria-Infected <BR>
+                Erythrocytes (in press) <BR> </PRE>
+                        ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByProteomicsProfile"
+         displayName="Protein Expression (P.b.)"
+         category="Protein Expression"
+         queryRef="GeneFeatureIds.GenesByProteomicsProfile"
+         summaryAttributesList="product"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[
+            Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.
+            ]]>
+        </summary>
+        <description>
+            <![CDATA[
+            Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.  For each life cycle stage, choose "observed", "not observed" or "do not care".   Genes are returned that have a matching expression pattern.
+            ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesBySubcellularLocalization"
+         category="Cellular Location"
+         displayName="Subcellular Localization"
+              queryRef="GeneFeatureIds.GenesBySubcellularLocalization"
+              summaryAttributesList="location_text,product"
+              sortingAttributesList="location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+               Find <i>P. falciparum</i> genes targeted to the apicoplast or the RBC membrane.
+          ]]>
+         </summary>
+        <description>
+           <![CDATA[
+               Find <i>P. falciparum</i> genes targeted to the apicoplast or the RBC membrane. Sequence motifs identified by
+               Marti and co-workers (Cowman lab),  and Hiller and co-workers
+               (Haldar lab), as being associated with  proteins targeted to
+               the human erythrocyte, are referred to as the  'Pexel' and 'HT'
+               motifs respectively.<br><br>
+               <b>References:</b><br>
+               <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12560551&dopt=Citation">Foth
+               BJ, Ralph SA, Tonkin CJ, Struck NS, Fraunholz M, Roos DS,
+               Cowman AF, McFadden GI<br>Dissecting apicoplast targeting in
+               the malaria parasite <i>Plasmodium falciparum</i><br>
+               <i>Science</i> 2003 Jan 31; <b>299</b>(5607):705-8</a>
+               <br><br>
+                <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15591203&query_hl=1">Hiller
+               NL, Bhattacharjee S, van Ooij C, Liolios K, Harrison T,
+               Lopez-Estrano C, Haldar K<br>
+               A host-targeting signal in virulence proteins reveals a
+               secretome in malarial infection<br>
+               <i>Science</i> 2004 Dec 10; <b>306</b>(5703):1897-8</a><br><br>
+               <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15591202&query_hl=2">Marti
+               M, Good RT, Rug M, Knuepfer E, Cowman AF<br>
+               Targeting malaria virulence and remodeling proteins to the host
+               erythrocyte<br>
+               <i>Science</i> 2004 Dec 10; <b>306</b>(5703):1930-3</a>
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByTransmembraneDomains"
+         category="Cellular Location"
+         displayName="Transmembrane Domain Count"
+              queryRef="GeneFeatureIds.GenesByTransmembraneDomains"
+              summaryAttributesList="organism,location_text,product,tm_count"
+              sortingAttributesList="organism asc,tm_count asc,location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           Find genes with at least a given number of transmembrane domains.
+        </summary>
+        <description>
+           <![CDATA[
+Find genes with at least a given number of transmembrane domains.
+<br><br>
+Transmembrane domains were predicted using TMHMM2.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesWithSignalPeptide"
+         displayName="Predicted Signal Peptide"
+         category="Cellular Location"
+         queryRef="GeneFeatureIds.GenesWithSignalPeptide"
+         summaryAttributesList="organism,location_text,product,sigp_sum_score"
+         sortingAttributesList="organism asc,sigp_sum_score desc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+         Find genes that are predicted to encode a signal peptide.
+        </summary>
+        <description>
+           <![CDATA[
+Find genes that are predicted to encode a signal peptide.
+          <br><br>
+
+                                                   The predictions are made with the <a href="http://www.cbs.dtu.dk/services/SignalP/">SignalP</a> program.
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="sigp_sum_score" displayName="Summary score" align="center"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesWithEpitopes" 
+              category="Other Attributes"
+              displayName="Epitope Presence"
+              queryRef="GeneFeatureIds.GenesWithEpitopes" 
+              summaryAttributesList="product,organism,location_text,count,confidence"
+        sortingAttributesList="organism desc,location_text desc, count desc, confidence asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+             <summary>
+              <![CDATA[
+                Find <i>Plasmodium</i> genes whose encoding protein has an epitope identified 
+                by the <a href="http://www.immuneepitope.org">Immune Epitope Database and Analysis Resource</a>. 
+              ]]>
+             </summary>
+              <description>
+              <![CDATA[
+                Find genes whose encoding protein has an epitope identified 
+                by the <a href="http://www.immuneepitope.org">Immune 
+                Epitope Database and Analysis Resource</a><sup>1</sup> (IEDB). <p>
+                The epitopes have been remapped from the original Epitope Source Accession Number 
+                provided by IEDB to the corresponding gene identifiers used in PlasmoDB.
+                <p><hr><p>
+                <font size='-1'>
+                <sup>1</sup>Peters B, Sidney J, Bourne P, Bui HH, Buus S, Doh G, Fleri W, 
+                Kronenberg M, Kubo R, Lund O, Nemazee D, Ponomarenko JV, Sathiamurthy M, Schoenberger S, 
+                Stewart S, Surko P, Way S, Wilson S, Sette A. 
+                <a href="http://biology.plosjournals.org/perlserv/?request=get-document&amp;doi=10.1371/journal.pbio.0030091">The immune epitope database and analysis resource: from vision to blueprint. 
+                PLoS Biol. 2005 Mar;3(3):e91</a>
+                 </font>
+              ]]>
+              </description>
+        <dynamicAttributes>
+           <columnAttribute name="count" displayName="Epitope Count" align="center"/>
+            <columnAttribute name="confidence" displayName="Confidence" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExportPrediction"
+         displayName="Exported Protein"
+         category="Cellular Location"
+         queryRef="GeneFeatureIds.GenesByExportPrediction"
+         summaryAttributesList="organism,location_text,product,exportpred_score"
+         sortingAttributesList="organism asc,exportpred_score desc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+          Find genes that are predicted by ExportPred to produce an exported protein.
+        </summary>
+        <description>
+            <![CDATA[
+            Find genes that are predicted by ExportPred to produce an exported protein.
+            ]]>
+        </description>
+         <dynamicAttributes>
+            <columnAttribute name="exportpred_score"
+                       displayName="ExportPred score" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByPhyleticProfile"
+         displayName="Homology Phylogenetic Profile (P.f. and P.y.)"
+         category="Evolution"
+         queryRef="GeneFeatureIds.GenesByPhyleticProfile"
+         summaryAttributesList="location_text,product,num_queries,query_ids,mutual_information_scores"
+         sortingAttributesList="num_queries desc,mutual_information_scores desc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           <![CDATA[
+         Find <i>P. falciparum</i> or <i>P. yoelii</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
+          ]]>
+        </summary>
+        <description>
+           <![CDATA[
+           Find <i>P. falciparum</i> or <i>P. yoelii</i> genes that have a homology-based
+           phylogenetic profile similar to a specified list of genes. This query also allows you to
+           determine how similar in terms of phylogenetic profile the members of the query list are as they
+           will hit more of the same genes the more similar the members of the query list are to one another.
+           <br><br>
+
+           The phylogenetic profile (homology-based) of a 
+           gene is a series of 164 "present" or "absent" calls reflecting the
+           presence or absence of a putative homolog in 164 completely
+           sequenced genomes. Similarity between profiles is a good indicator
+           of functional linkages between proteins (see Pellegrini M, Marcotte
+           EM, Thompson MJ, Eisenberg D, Yeates TO. Assigning protein
+           functions by comparative genome analysis: protein phylogenetic
+           profiles. Proc. Natl. Acad. Sci. USA 1999 96, 4285-4288). Data on
+           ORFs with the most similar profiles to a given query ORF is also
+           available, and can be used to establish the function of
+           uncharacterized ORFs, based on the similarity of their profiles
+           (see Date SV & Marcotte EM. Discovery of uncharacterized cellular
+           systems by genome-wide analysis of functional linkages. Nature
+           Biotechnology 2003 21:1055-1062) with ORFs of known function.
+          ]]>
+        </description>
+        <dynamicAttributes>
+            <columnAttribute name="mutual_information_scores"
+                       displayName="Mutual Information Score" align="center"/>
+            <columnAttribute name="query_ids"
+                       displayName="Query IDs"/>
+            <columnAttribute name="num_queries"
+                       displayName="Queries matched" align="center"/>
+        </dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByOrthologPattern"
+         displayName="Orthology Phylogenetic Profile"
+         category="Evolution"
+         queryRef="GeneFeatureIds.GenesByOrthologPattern"
+         summaryAttributesList="organism, location_text,product"
+         sortingAttributesList="organism asc, location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+        Find genes that have a specified orthology-based phylogenetic profile.
+        </summary>
+        <description>
+            <![CDATA[
+            Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
+           <br><br>
+
+           An <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a> analysis of the proteins of 87 species, including Plasmodia, placed each protein in an ortholog group. From a Plasmodium gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
+            <br><br>
+            Use this query to define a pattern
+            across those ortholog groups, and find genes that match that pattern.  The pattern is a
+            specification, for each species, of "include", "exclude", or "don't care."  Click on the
+            radio button next to a species to toggle through the three states.  (A
+            <img src="images/yes.gif"> means
+            "include", an <img src="images/no.gif"> means "exclude"
+            and <img src="images/dc.gif"> means "don't care".)
+            <br> <br>
+            For example, to find genes
+            that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
+            a <img src="images/yes.gif"> and click on <i>Homo
+            sapiens</i> until you see an
+            <img src="images/no.gif">.
+            <br> <br>
+            Note that this query can take some time because of the large number
+            of combinations of possible presence/absence calls (2<sup>87</sup>
+            possible combinations, of which 2,723 are associated with a total of
+            35,603 genes).
+           ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesOrthologousToAGivenGene"
+              displayName="Orthologs and Paralogs"
+              category="Evolution"
+              queryRef="GeneFeatureIds.GenesOrthologousToAGivenGene"
+              summaryAttributesList="organism,location_text,product"
+              sortingAttributesList="organism asc,location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+          <![CDATA[
+              Find genes that have been identified by the
+              <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a>
+              project as orthologous (or paralagous) to a given gene.
+          ]]>
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes that have been identified by the
+              <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a>
+              project as orthologous (or paralogous) to a given gene.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+     <question name="GeneBySingleLocusTag"
+         category="Other Attributes"
+         displayName="ID"
+              queryRef="GeneFeatureIds.GeneBySingleLocusTag"
+              summaryAttributesList="organism,location_text,product,gene_type"
+              sortingAttributesList="organism asc,location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           Find a gene by its ID.
+        </summary>
+        <description>
+           <![CDATA[
+           Find a gene by its ID. The search is case
+           insensitive. Asterisks can be used as wild cards (e.g. ' PF11_* ').
+           Genes whose IDs have changed can be found by either the old or the
+           new ID. GI numbers (e.g. 23508535), Entrez Protein Locus IDs (e.g.
+           NP_701204.1), PDB IDs (e.g. 1HN6), or GenBank IDs (e.g. AAB36701.1)
+           can also be used.
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+     <question name="GeneByLocusTag"
+         category="Other Attributes"
+         displayName="List of IDs"
+              queryRef="GeneFeatureIds.GeneByLocusTag"
+              summaryAttributesList="organism,location_text,product,gene_type"
+              sortingAttributesList="organism asc,location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+           Find a gene by its ID.
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes by a list of IDs. User can either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: "PF11_0344, PF11_0306"
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByTextSearch"
+         displayName="Keyword (search product name, notes, etc.)"
+         category="Other Attributes"
+         queryRef="GeneFeatureIds.GenesByTextSearch"
+         summaryAttributesList="organism,location_text,product"
+         sortingAttributesList="organism asc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+             Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways.
+             Find genes associated with given text.
+         </summary>
+         <description>
+           <![CDATA[
+             Find genes by searching text annotations.
+             Specify the search pattern with a "regular expression". 
+<p>Wildcards and other special characters:
+<ul>
+<li><b>.</b>  Any character
+<li><b>\s</b>  A space character
+<li><b>\w</b>  An alpha-numeric character
+<li><b>\S</b>  A non-space character
+<li><b>\W</b>  An non-alpha-numeric character
+<li><b>*</b> Zero, one or more of the preceding character
+<li><b>|</b> Or
+</ul>
+<p>Examples:
+<ul>
+<li><b>g-protein.*receptor</b>  "g-protein" and "receptor" with anything in between.
+<li><b>g-protein|receptor</b> "g-protein" or "receptor"
+<li><b>var\s|pfemp1</b> "var" (followed by a space) or "pfemp1"
+</ul>
+               For more info on regular expressions, do a web search on "Perl regex".
+          ]]>
+         </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByTaxon"
+         category="Other Attributes"
+         displayName="Taxon"
+         queryRef="GeneFeatureIds.GenesByTaxon"
+         summaryAttributesList="organism,location_text,product"
+         sortingAttributesList="organism asc,location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            Find genes from one or more Plasmodium species.
+        </summary>
+        <description>
+           <![CDATA[
+            Find genes from one or more Plasmodium species.
+          ]]>
+        </description>
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByProteinDbAccession"
+              displayName="Protein Accession"
+              category="Other Attributes"
+              queryRef="GeneFeatureIds.GenesByProteinDbAccession"
+              summaryAttributesList="product,organism"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+         Find genes mapped to a protein accession number.
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes mapped to a protein accession number.  The result set will include all genes of the specified species whose predicted protein sequence exactly matches records with the given accession number in
+              <a href="http://www.ncbi.nlm.nih.gov/Genbank">GenBank</a>,
+              <a href="http://www.ncbi.nlm.nih.gov/RefSeq">RefSeq</a>, or
+              <a href="http://www.ebi.ac.uk/swissprot">Swiss-Prot</a>
+          ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByMr4Reagents"
+         displayName="MR4 Reagents Availability (P.f.)"
+         category="Other Attributes"
+         queryRef="GeneFeatureIds.GenesByMr4Reagents"
+         summaryAttributesList="location_text,product"
+         sortingAttributesList="location_text asc"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            <![CDATA[
+                Find <i>P. falciparum</i> genes that have
+                <a href="http://www.malaria.atcc.org/">MR4</a> reagents.
+           ]]>
+        </summary>
+        <description>
+            <![CDATA[
+                Find <i>Plasmodium falciparum</i> genes that have
+                <a href="http://www.malaria.atcc.org/">MR4</a> reagents.
+                <br><br>
+                The reagents are mapped to genes using gene names and
+                GenBank/EMBL sequence similarity. An MR4
+                reagent may be linked to multiple genes when it is not clear
+                which is the correct gene or if the reagent might be considered
+                to function with either gene.
+           ]]>
+        </description>
+    </question>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByESTOverlap"
+              category="Transcript Expression"
+              displayName="EST evidence"
+              queryRef="GeneFeatureIds.GenesByESTOverlap"
+              summaryAttributesList="organism,location_text,product,number_of_ests"
+              sortingAttributesList="organism asc,number_of_ests desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+        /> 
+        <summary>
+            Find genes with evidence of expression based on expressed sequence tags (ESTs)
+        </summary>
+        <description>
+            <![CDATA[
+             Find genes with evidence of expression based on expressed sequence tags (ESTs).
+             For example:  What <i>P. falciparum</i> genes map to ESTs from the 3D7 gametocyte library?
+               NOTE: you can visualize the EST alignments by clicking on the "View this sequence in the genome browser" link and turning on the EST Alignments track.
+            ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="number_of_ests" displayName="Number of ESTs"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+</questionSet>
