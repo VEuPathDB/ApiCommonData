@@ -364,17 +364,17 @@
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Secondary structure -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesBySecondaryStructure"
+    <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
               displayName="Protein Secondary Structure"
               category="Predicted Proteins"
               queryRef="GeneFeatureIds.GenesBySecondaryStructure"
-              summaryAttributesList="organism,location_text,product,percent_coil,percent_strand,percent_helix"
-              sortingAttributesList="organism asc, location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,percent_coil,percent_strand,percent_helix"
+              sortingAttributesList="organism asc, location_text asc"
         /> 
         <summary>
          Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
@@ -398,21 +398,27 @@
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Similarity -->
   <!------------------------------------------------------------------>
 
     <question name="GenesBySimilarity"
          displayName="BLAST"
          category="Similarity/Pattern"
          queryRef="GeneFeatureIds.GenesBySimilarity"
-         summaryAttributesList="organism,product,Header,TabularRow,Alignment,Footer"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,product,Header,TabularRow,Alignment,Footer"
         /> 
          <summary>
            Find genes that have BLAST similarity to your input sequence.
          </summary>
-         <description>
+         <description includeProjects="PlasmoDB,ToxoDB">
+           <![CDATA[
+             Find genes that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+          ]]>
+         </description>
+         <description includeProjects="CryptoDB,ApiDB">
            <![CDATA[
              Find genes that have BLAST similarity to your input query sequence.
             <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
@@ -431,17 +437,17 @@
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Motif search -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByMotifSearch"
          displayName="Protein Motif Pattern"
          category="Similarity/Pattern"
          queryRef="GeneFeatureIds.GenesByMotifSearch"
-         summaryAttributesList="organism,location_text,product,Locations,MatchCount,Sequence"
-         sortingAttributesList="organism asc,MatchCount desc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,location_text,product,Locations,MatchCount,Sequence"
+         sortingAttributesList="organism asc,MatchCount desc,location_text asc"
         /> 
         <summary>
              Find genes whose protein product contains a motif pattern that
@@ -606,78 +612,74 @@
     </question>
 
 
-    <!-- question name="GenesByPfamDomain"
-              category="Similarity/Pattern"
-              displayName="Pfam domain"
-              queryRef="GeneFeatureIds.GenesByPfamDomain"
-              summaryAttributesList="organism,product"
-              recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
-        /> 
-        <summary>
-          Find genes containing a given Pfam domain, family or repeat.
-        </summary>
-        <description>
-            <![CDATA[
-Find genes containing a given Pfam domain, family or repeat.  Type a Pfam name, accession or description. Use the <a href="http://www.sanger.ac.uk/Software/Pfam/browse/top_twenty.shtml">Pfam browser</a> to search Pfam if you are not sure.
-            ]]>
-        </description>
-    </question -->
-
-
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Interpro -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByInterproDomain"
               category="Similarity/Pattern"
               displayName="Interpro Domain"
               queryRef="GeneFeatureIds.GenesByInterproDomain"
-              summaryAttributesList="organism,location_text,product,e_value"
-              sortingAttributesList="organism asc,e_value asc, location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,e_value"
+              sortingAttributesList="organism asc,e_value asc, location_text asc"
         /> 
         <summary>
           Find genes containing a given protein domain.
         </summary>
         <description>
-            <![CDATA[
+          <![CDATA[
             Find genes whose predicted protein contains a domain from
             the InterPro set of domain databases.  The domain matches are
             identified by the InterProScan program.
             <p>First choose a member database.
             <p>Then begin typing the domain name, or part of it. You will
             be prompted with all possible domains that match what you have typed.
-            ]]>
+            <p>
+             For PFAM type a Pfam name, a Pfam accession or a Pfam description. Use the 
+              <a href="http://www.sanger.ac.uk/Software/Pfam/browse/top_twenty.shtml">Pfam browser</a> to search Pfam if you are not sure. 
+              More information on Pfam is available 
+              <a href="http://www.sanger.ac.uk/Software/Pfam/">
+              here</a>.
+              ]]>
         </description>
-        <dynamicAttributes>
+       <dynamicAttributes>
 	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
 	</dynamicAttributes>
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- SNPs  -->
   <!------------------------------------------------------------------>
 
     <question name="GenesBySnps"
               category="Population Biology"
               displayName="SNP Characteristics"
               queryRef="GeneFeatureIds.GenesBySnps"
-              summaryAttributesList="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
-              sortingAttributesList="total_snps desc,cds_snp_density desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
+              sortingAttributesList="total_snps desc,cds_snp_density desc"
         /> 
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gongii"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ApiDB">
+           <value value="P. falciparum, T gondii"/>
+        </propertyList>
         <summary>
            <![CDATA[
-	 Find <i>P. falciparum</i> genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
+	 Find genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
            ]]>
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
             <![CDATA[
-	     Search for <I>P. falciparum</I> genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc.
-             Note that if you don't care about one of the parameters, don't change the defaults
+	     Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc.
+             Note that if you do not care about one of the parameters, don't change the defaults
              on that parameter and you will get all genes irrespective of that parameter.
              For example, running this query
              to compare 3D7 and Dd2 using default parameters returns 2577 genes.  Among the top 20 on the list
@@ -694,6 +696,19 @@ Find genes containing a given Pfam domain, family or repeat.  Type a Pfam name, 
 	     <br><br>
             ]]>
         </description>
+        <description includeProjects="ApiDB">
+            <![CDATA[
+	Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc. Note that if you don't care about one of the parameters, don't change the defaults on that parameter and you will get all genes irrespective of that parameter.  
+            ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+            <![CDATA[
+	     Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc. 
+             Note that if you don't care about one of the parameters, don't change the defaults
+             on that parameter and you will get all genes that contain SNPs between the reference and 
+             comparator strains irrespective of that parameter.  
+            ]]>
+        </description>
 
 	<dynamicAttributes>
 	     <columnAttribute name="total_snps" displayName="Total SNPs" align="center"/> 
@@ -708,23 +723,23 @@ Find genes containing a given Pfam domain, family or repeat.  Type a Pfam name, 
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- EC Number  -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByEcNumber"
          category="Putative Function"
-         displayName="EC Number (P.f.)"
+         displayName="EC Number"
               queryRef="GeneFeatureIds.GenesByEcNumber"
-              summaryAttributesList="organism,product"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,product"
         /> 
         <summary>
            <![CDATA[
-          Find <i>P. falciparum </i> genes by assigned Enzyme Commission (EC) number.
+          Find genes by assigned Enzyme Commission (EC) number.
           ]]>
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
            <![CDATA[
 Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'.
  For help with obtaining EC numbers, try the
@@ -734,20 +749,58 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 
 E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University).
           ]]>
+        </description includeProjects="CryptoDB">
+              <description>
+              <![CDATA[
+              Find <i>Cryptosporidium</i> genes that have been assigned a particular Enzyme Commission (EC) number. 
+              Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'. <p>
+              E.C. numbers have been assigned to <i>Cryptosporidium</i> genes by the genome annotation centers, KEGG and CryptoCyc.     
+              ]]>
+              </description>
+        <description includeProjects="ToxoDB">
+            <![CDATA[
+            Find genes by their 
+            <a href="http://www.chem.qmul.ac.uk/iubmb/enzyme/">Enzyme
+            Commission</a> (EC) number.  Use '-' in place of numbers to denote
+            partial EC Numbers, for example, '2.7.7.-'.<br><br>
+
+            E.C. number annotation for <i>Toxoplasma gondii</i> are from
+            <a href="http://www.tigr.org/~ipaulsen">Ian Paulsen</a> (TIGR)
+            ]]>
         </description>
+        <description includeProjects="ApiDB">
+              <![CDATA[
+              Find genes that have been assigned a particular Enzyme Commission (EC) number. 
+              Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'. <p>
+          For help with obtaining EC numbers, try the
+           <a href="http://ca.expasy.org/enzyme/">ExPASy-ENZYME</a>
+           browser.<p>
+              CryptoDB EC numbers have been assigned by the genome annotation centers, KEGG and CryptoCyc.
+              PlasmoDB EC numbers have been assigned to genes for <i>P. falciparum</i> by Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University). ToxoDB EC numbers have been assigned by Ian Paulsen (TIGR).
+              ]]>
+              </description>
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gongii"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ApiDB">
+           <value value="P. falciparum, T gondii"/>
+        </propertyList>
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- GO Term -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByGoTerm"
          category="Putative Function"
          displayName="GO Term"
               queryRef="GeneFeatureIds.GenesByGoTerm"
-              summaryAttributesList="organism,product"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,product"
         /> 
         <summary>
 Find genes by Gene Ontology (GO) term for molecular function, biological process or subcellular localization.
@@ -764,7 +817,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
            <br><br>
 
            GO term annotation was provided by the sequencing and annotation
-           centers (Sanger and TIGR), and was inferred from similarity to
+           centers, and was inferred from similarity to
            protein domains from the
            <a href="http://www.ebi.ac.uk/interpro/">InterPro</a> databases.
            ]]>
@@ -773,21 +826,21 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
 
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Metabolic Pathway -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByMetabolicPathway"
-         displayName="Metabolic Pathway (P.f.)"
+         displayName="Metabolic Pathway"
          category="Putative Function"
          queryRef="GeneFeatureIds.GenesByMetabolicPathway"
-         summaryAttributesList="location_text,product,met_pathways"
-         sortingAttributesList="location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="location_text,product,met_pathways"
+         sortingAttributesList="location_text asc"
         /> 
         <summary>
         Find genes involved in a specific metabolic pathway.
-        </summary>
+        </summary includeProjects="PlasmoDB">
         <description>
             <![CDATA[
         Find genes involved in a specific metabolic pathway.
@@ -796,6 +849,31 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
             <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .
            ]]>
+        </description>
+        <description includeProjects="CryptoDB">
+              <![CDATA[
+                Maps of metabolic pathways were computationally constructed for <i>C. parvum</i>
+                and <i>C. hominis</i> with 
+                the <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/18/suppl_1/S225">Pathway Tools</a> software package.
+                ]]>
+        </description>
+        <description includeProjects="ApiDB">
+            <![CDATA[
+        Find genes involved in a specific metabolic pathway. 
+          <br><br>
+
+        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
+            <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .
+           ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+            <![CDATA[
+            Find genes involved in a specific metabolic pathway.<br><br>
+
+            Metabolic Pathway Reconstruction  for <i> T. gondii</i> is
+            available on the KEGG Pathway site
+            <a href="http://roos-compbio2.bio.upenn.edu/~fengchen/pathway/">here</a>.
+            ]]>
         </description>
 	<dynamicAttributes>
 	     <columnAttribute name="met_pathways" displayName="Metabolic Pathways"/>
@@ -806,14 +884,14 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByProteinProteinInteraction"
-              displayName="Y2H Protein Interaction (P.f.)"
+    <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,ApiDB"
+              displayName="Y2H Protein Interaction"
               category="Putative Function"
               queryRef="GeneFeatureIds.GenesByProteinProteinInteraction"
-              summaryAttributesList="location_text,product,bait_start,bait_end,prey_start,prey_end,times_observed,number_of_searches,preyNumberBaits,baitNumberPreys,bait_or_prey"
-              sortingAttributesList="times_observed desc, number_of_searches desc, location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="location_text,product,bait_start,bait_end,prey_start,prey_end,times_observed,number_of_searches,preyNumberBaits,baitNumberPreys,bait_or_prey"
+              sortingAttributesList="times_observed desc, number_of_searches desc, location_text asc"
         /> 
         <summary>
          Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
