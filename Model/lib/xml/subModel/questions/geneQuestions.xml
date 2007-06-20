@@ -881,7 +881,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Y2H -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,ApiDB"
@@ -896,6 +896,9 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         <summary>
          Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
            <![CDATA[
 Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.  <br><br>
@@ -943,26 +946,29 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Functional interaction -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByFunctionalInteraction"
-         displayName="Predicted Functional Interaction (P.f.)"
+    <question name="GenesByFunctionalInteraction" includeProjects="PlasmoDB,ApiDB"
+         displayName="Predicted Functional Interaction"
          category="Putative Function"
          queryRef="GeneFeatureIds.GenesByFunctionalInteraction"
-         summaryAttributesList="location_text,product,queries_matched,query_ids,likelihood_scores"
-         sortingAttributesList="queries_matched desc,likelihood_scores desc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="location_text,product,queries_matched,query_ids,likelihood_scores"
+         sortingAttributesList="queries_matched desc,likelihood_scores desc,location_text asc"
         /> 
         <summary>
            <![CDATA[
           Find genes of <i>P. falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
           ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum HB3"/>
+        </propertyList>
         <description>
            <![CDATA[
-Find genes of <i>Plasmodium falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
+Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
 
 <br><br>Input a gene ID and a minimum interaction likelihood score.  Scores range from 2 to 9435, and increasing scores indicate higher confidence.  Generally, a likelihood score of 10 or more indicates a high-confidence interaction.
 
@@ -985,21 +991,24 @@ Find genes of <i>Plasmodium falciparum</i> (strain HB3) identified by the <a hre
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Waters Differential Expression -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByWatersDifferentialExpression"
+    <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Diff. expression in DOZI mutant vs. WT (P.b.)"
+              displayName="Diff. expression in DOZI mutant vs. WT"
               queryRef="GeneFeatureIds.GenesByWatersDifferentialExpression" 
-              summaryAttributesList="product,fold_change,confidence"
-              sortingAttributesList="fold_change desc,confidence desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,fold_change,confidence"
+              sortingAttributesList="fold_change desc,confidence desc"
         /> 
         <summary>
-            <![CDATA[ Find <i>P. berghei</i> genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
+            <![CDATA[ Find genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. berghei"/>
+        </propertyList>
         <description>
             <![CDATA[
 Find genes whose expression was found to be up-regulated or down-regulated based upon PaGE differential expression analysis in a microarray study of purified gametocytes where the PB000603.01.0 gene in P. berghei has been knocked out. It has been proposed (Mair et al. Science 2006) to name PB000603.01.0 protein "DOZI" for "development of of zygote inhibited."
@@ -1018,23 +1027,26 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Differential mean expression -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByDifferentialMeanExpression"
+    <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Diff. expression (fold-change) in KO vs. WT (P.f.)"
+              displayName="Diff. expression (fold-change) in KO vs. WT"
               queryRef="GeneFeatureIds.GenesByDifferentialMeanExpression" 
-              summaryAttributesList="product,fold_change"
-              sortingAttributesList="fold_change desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,fold_change"
+              sortingAttributesList="fold_change desc"
         /> 
         <summary>
             <![CDATA[
-            Find  <i>P. falciparum</i> genes by differential expression (fold-change) in Sir2 and invasion pathway KO studies
+            Find genes by differential expression (fold-change) in Sir2 and invasion pathway KO studies
             ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
             <![CDATA[
 Find genes based on fold-change differences in expression by comparing assays of P. falciparum RNA when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in their associated controls. Please be aware that these are individual comparisons and not subjected to any statistical analysis.
@@ -1063,23 +1075,26 @@ References:
 
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Expression percentile in KO/WT -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByExpressionPercentileA"
+    <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Expression percentile in KO and WT (P.f.)"
+              displayName="Expression percentile in KO and WT"
               queryRef="GeneFeatureIds.GenesByExpressionPercentileA" 
-              summaryAttributesList="product,percentile"
-              sortingAttributesList="percentile desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,percentile"
+              sortingAttributesList="percentile desc"
         /> 
         <summary>
             <![CDATA[
-            Find  <i>P. falciparum</i> genes by expression percentile from Sir2 KO and invasion pathway KO studies 
+            Find genes by expression percentile from Sir2 KO and invasion pathway KO studies 
             ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
             <![CDATA[
 Find genes expressed when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in  their associated controls.
@@ -1113,20 +1128,23 @@ References:
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Expression timing -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByExpressionTiming"
-         displayName="Expression Timing (P.f)"
+    <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
+         displayName="Expression Timing"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.GenesByExpressionTiming"
-         summaryAttributesList="organism,product,derisiOverlayPct"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,product,derisiOverlayPct"
         /> 
         <summary>
           Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
            <![CDATA[
               Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.  Five intraerythrocytic time courses may be
@@ -1144,22 +1162,25 @@ References:
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByProfileSimilarity"
+    <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Profile Similarity (P.f.)"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.GenesByProfileSimilarity"
-         summaryAttributesList="organism,distance,time_shift,profilesGraph"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,distance,time_shift,profilesGraph"
         /> 
          <summary>
             <![CDATA[
-          Find <i>P. falciparum</i> genes that have a similar expression profile to your input gene.
+          Find genes that have a similar expression profile to your input gene.
           ]]>
          </summary>
-         <description>
+         <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <description>
            <![CDATA[
-           Find <i>P. falciparum</i> genes that have a (glass slide) expression profile similar to that of your input gene.
+           Find genes that have a (glass slide) expression profile similar to that of your input gene.
              Find genes that have similar expression profile to your input gene.
           ]]>
          </description>
@@ -1185,20 +1206,23 @@ References:
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByExpressionPercentile"
-         displayName="Expression Percentile (P.f.)"
+    <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
+         displayName="Expression Percentile"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.GenesByExpression"
-         summaryAttributesList="product,winzelerPct"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="product,winzelerPct"
         /> 
         <summary>
            <![CDATA[
-         Find <i>P. falciparum</i> genes expressed in early ring, late ring, early trophozoite, late trophozoite, early
+         Find genes expressed in early ring, late ring, early trophozoite, late trophozoite, early
          schizont, late schizont, merozoite, sporozoite, or gametocyte.
           ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
            <![CDATA[
         Find genes expressed in
@@ -1245,23 +1269,26 @@ References:
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- GametocyteExpression -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByGametocyteExpression"
-         displayName="Gametocyte Expression (P.f.)"
+    <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,ApiDB"
+         displayName="Gametocyte Expression"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.GenesByGametocyteExpression"
-         summaryAttributesList="product"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="product"
         /> 
         <summary>
             <![CDATA[
-                Find <i>P. falciparum</i> genes by
+                Find genes by
                 percentile protein expression in gametocytes.
            ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <description>
             <![CDATA[
                 Find <i>Plasmodium falciparum</i> genes expressed during
@@ -1292,22 +1319,25 @@ References:
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Berghei expression percentile -->
   <!------------------------------------------------------------------>
 
-    <question name="BergheiGenesByExpressionPercentile"
-         displayName="Expression Percentile (P.b.)"
+    <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
+         displayName="Expression Percentile"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.BergheiGenesByExpressionPercentile"
-         summaryAttributesList="product,watersPct"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="product,watersPct"
         /> 
         <summary>
            <![CDATA[
-        Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite and early schizont stages.
+        Find genes expressed in late schizont, ring, early trophozoite and early schizont stages.
          ]]>
         </summary>
+        <propertyList name="organism">
+           <value value="P. berghei"/>
+        </propertyList>
         <description>
            <![CDATA[
 Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite, and early schizont stages. The stages were all hybridized with late trophozoites allowing us to use late trophozoites as a reference for this query.
@@ -1321,22 +1351,32 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByMassSpec"
-         displayName="Protein Expression (P.f.)"
+    <question name="GenesByMassSpec"  includeProjects="PlasmoDB,ApiDB"
+         displayName="Protein Expression"
          category="Protein Expression"
          queryRef="GeneFeatureIds.GenesByMassSpec"
-         summaryAttributesList="product"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="PlasmoDB,ApiDB"
+         summaryAttributesList="product"
+        /> 
+        <attributesList includeProjects="ToxoDB,CryptoDB"
+              summaryAttributesList="location_text,product,sum_sequence_count,sum_spectrum_count"
+              sortingAttributesList="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
         <summary>
            <![CDATA[
-                Find <I>P. falciparum</I> genes that have evidence of
+                Find genes that have evidence of
                 expression in a specific lifecycle stage
                 or within a subcellular fraction of the parasite.
           ]]>
         </summary>
-        <description>
+        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+        <description includeProjects="PlasmoDB">
             <![CDATA[
                 Find <I>P. falciparum</I> genes that have evidence of
                 expression in a specific lifecycle stage
@@ -1376,20 +1416,84 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                 Erythrocytes (in press) <BR> </PRE>
                         ]]>
         </description>
+        <description includeProjects="CryptoDB">
+              <![CDATA[
+             <p>
+             Find <i>Cryptosporidium</i> genes that have evidence of expression 
+             based on peptides identified by MS/MS analysis in a <i>C. parvum</i> sporozoite excystation or non-excystation mixture. Some contaiminating oocyst proteins may also be in the mixture. See below for additional information.<p>
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides 
+             that do not correspond to current gene models.
+             <hr>
+             <sup>&#182;</sup>
+   <%-- description by J. Wastling --%>
+<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+<br>
+Mass spectrometry data were obtained from two-dimensional gel 
+electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
+MudPIT analysis of a sporozoite/oocyst excystation mixture of 
+<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
+hits were obtained resulting in 1,252 non-redundant protein identifications.  
+In addition a further 100 hits were obtained to sequences which matched a 
+predicted open reading frame, but for which no gene model currently exists.  
+In total these protein identifications represent nearly one third of the 
+entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
+that the entire proteome from all life-stages will be expressed at any 
+one time.
+
+             <br><br>
+             <sup>&#167;</sup> <i>
+             William J. Snelling<sup>1</sup>, Qishan Lin<sup>2</sup>, 
+             John E. Moore<sup>3</sup>, B. Cherie Millar<sup>3</sup>, 
+             Fabio Tosini<sup>4</sup>, Edoardo Pozio<sup>4</sup>, 
+             James S.G. Dooley<sup>1</sup>, and Colm J. Lowery<sup>1</sup><br> 
+             <sup>1</sup>Centre for Molecular Biosciences, School of Biomedical 
+             Sciences, University of Ulster, Cromore Road, Coleraine, County 
+             Londonderry, N. Ireland, BT52 1SA. <sup>2</sup>UAlbany Proteomics 
+             Facility, Centre for Functional Genomics, University of Albany, 
+             One Discovery Drive, Rensselaer, NY 12144. <sup>3</sup>Northern 
+             Ireland Public Health Laboratory, Department of Bacteriology, 
+             Belfast City Hospital, Belfast, N. Ireland, BT9 7AD. 
+             <sup>4</sup>Department of Infectious, Parasitic, and Immunomediated 
+             Diseases, Istituto Superiore di Sanit&#224;, Rome, Italy.<br> 
+             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a>
+             ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+              <![CDATA[
+             <p>
+             Find <i>Toxoplasma</i> genes that have evidence of protein expression based on Mass Spec analyses.
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
+             <p>
+             <sup>1</sup> <i>Proteomics data from JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
+             Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
+             <p>
+             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, 
+	     DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
+	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. 
+	     PLoS Pathog <b>2</b>:121-138.</i><br>
+             1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
+             <p><p>
+             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. 
+             With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
+             ]]>
+             </description>
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Berghei protein expression  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByProteomicsProfile"
-         displayName="Protein Expression (P.b.)"
+    <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
+         displayName="Protein Expression"
          category="Protein Expression"
          queryRef="GeneFeatureIds.GenesByProteomicsProfile"
-         summaryAttributesList="product"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="product"
         /> 
+        <propertyList name="organism">
+           <value value="P. berghei"/>
+        </propertyList>
         <summary>
             <![CDATA[
             Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.
@@ -1403,26 +1507,29 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Subcellular localization -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesBySubcellularLocalization"
+    <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,ApiDB"
          category="Cellular Location"
          displayName="Subcellular Localization"
               queryRef="GeneFeatureIds.GenesBySubcellularLocalization"
-              summaryAttributesList="location_text,product"
-              sortingAttributesList="location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="location_text,product"
+              sortingAttributesList="location_text asc"
         /> 
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <summary>
            <![CDATA[
-               Find <i>P. falciparum</i> genes targeted to the apicoplast or the RBC membrane.
+               Find genes targeted to the apicoplast or the RBC membrane.
           ]]>
          </summary>
         <description>
            <![CDATA[
-               Find <i>P. falciparum</i> genes targeted to the apicoplast or the RBC membrane. Sequence motifs identified by
+               Find genes targeted to the apicoplast or the RBC membrane. Sequence motifs identified by
                Marti and co-workers (Cowman lab),  and Hiller and co-workers
                (Haldar lab), as being associated with  proteins targeted to
                the human erythrocyte, are referred to as the  'Pexel' and 'HT'
@@ -1450,17 +1557,17 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Transmembrane domains -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByTransmembraneDomains"
          category="Cellular Location"
          displayName="Transmembrane Domain Count"
               queryRef="GeneFeatureIds.GenesByTransmembraneDomains"
-              summaryAttributesList="organism,location_text,product,tm_count"
-              sortingAttributesList="organism asc,tm_count asc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,tm_count"
+              sortingAttributesList="organism asc,tm_count asc,location_text asc"
         /> 
         <summary>
            Find genes with at least a given number of transmembrane domains.
@@ -1475,17 +1582,17 @@ Transmembrane domains were predicted using TMHMM2.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Signal peptide -->
   <!------------------------------------------------------------------>
 
     <question name="GenesWithSignalPeptide"
          displayName="Predicted Signal Peptide"
          category="Cellular Location"
          queryRef="GeneFeatureIds.GenesWithSignalPeptide"
-         summaryAttributesList="organism,location_text,product,sigp_sum_score"
-         sortingAttributesList="organism asc,sigp_sum_score desc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,location_text,product,sigp_sum_score"
+         sortingAttributesList="organism asc,sigp_sum_score desc,location_text asc"
         /> 
         <summary>
          Find genes that are predicted to encode a signal peptide.
@@ -1505,21 +1612,21 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Epitopes -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesWithEpitopes" 
+    <question name="GenesWithEpitopes"  includeProjects="PlasmoDB,ApiDB"
               category="Other Attributes"
               displayName="Epitope Presence"
               queryRef="GeneFeatureIds.GenesWithEpitopes" 
-              summaryAttributesList="product,organism,location_text,count,confidence"
-        sortingAttributesList="organism desc,location_text desc, count desc, confidence asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,organism,location_text,count,confidence"
+        sortingAttributesList="organism desc,location_text desc, count desc, confidence asc"
         /> 
              <summary>
               <![CDATA[
-                Find <i>Plasmodium</i> genes whose encoding protein has an epitope identified 
+                Find genes whose encoding protein has an epitope identified 
                 by the <a href="http://www.immuneepitope.org">Immune Epitope Database and Analysis Resource</a>. 
               ]]>
              </summary>
@@ -1550,14 +1657,14 @@ Find genes that are predicted to encode a signal peptide.
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByExportPrediction"
+    <question name="GenesByExportPrediction" includeProjects="PlasmoDB,ApiDB"
          displayName="Exported Protein"
          category="Cellular Location"
          queryRef="GeneFeatureIds.GenesByExportPrediction"
-         summaryAttributesList="organism,location_text,product,exportpred_score"
-         sortingAttributesList="organism asc,exportpred_score desc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,location_text,product,exportpred_score"
+         sortingAttributesList="organism asc,exportpred_score desc,location_text asc"
         /> 
         <summary>
           Find genes that are predicted by ExportPred to produce an exported protein.
@@ -1577,18 +1684,22 @@ Find genes that are predicted to encode a signal peptide.
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByPhyleticProfile"
+    <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,ApiDB"
          displayName="Homology Phylogenetic Profile (P.f. and P.y.)"
          category="Evolution"
          queryRef="GeneFeatureIds.GenesByPhyleticProfile"
-         summaryAttributesList="location_text,product,num_queries,query_ids,mutual_information_scores"
-         sortingAttributesList="num_queries desc,mutual_information_scores desc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="location_text,product,num_queries,query_ids,mutual_information_scores"
+         sortingAttributesList="num_queries desc,mutual_information_scores desc,location_text asc"
         /> 
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+           <value value="P. yoelii"/>
+        </propertyList>
         <summary>
            <![CDATA[
-         Find <i>P. falciparum</i> or <i>P. yoelii</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
+         Find genes that have a homology-based phylogenetic profile similar to a specified list of genes.
           ]]>
         </summary>
         <description>
@@ -1633,10 +1744,10 @@ Find genes that are predicted to encode a signal peptide.
          displayName="Orthology Phylogenetic Profile"
          category="Evolution"
          queryRef="GeneFeatureIds.GenesByOrthologPattern"
-         summaryAttributesList="organism, location_text,product"
-         sortingAttributesList="organism asc, location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism, location_text,product"
+         sortingAttributesList="organism asc, location_text asc"
         /> 
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
@@ -1678,10 +1789,10 @@ Find genes that are predicted to encode a signal peptide.
               displayName="Orthologs and Paralogs"
               category="Evolution"
               queryRef="GeneFeatureIds.GenesOrthologousToAGivenGene"
-              summaryAttributesList="organism,location_text,product"
-              sortingAttributesList="organism asc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product"
+              sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
           <![CDATA[
@@ -1707,10 +1818,10 @@ Find genes that are predicted to encode a signal peptide.
          category="Other Attributes"
          displayName="ID"
               queryRef="GeneFeatureIds.GeneBySingleLocusTag"
-              summaryAttributesList="organism,location_text,product,gene_type"
-              sortingAttributesList="organism asc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,gene_type"
+              sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -1735,10 +1846,10 @@ Find genes that are predicted to encode a signal peptide.
          category="Other Attributes"
          displayName="List of IDs"
               queryRef="GeneFeatureIds.GeneByLocusTag"
-              summaryAttributesList="organism,location_text,product,gene_type"
-              sortingAttributesList="organism asc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,gene_type"
+              sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -1761,10 +1872,10 @@ Find genes that are predicted to encode a signal peptide.
          displayName="Keyword (search product name, notes, etc.)"
          category="Other Attributes"
          queryRef="GeneFeatureIds.GenesByTextSearch"
-         summaryAttributesList="organism,location_text,product"
-         sortingAttributesList="organism asc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,location_text,product"
+         sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
              Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways.
@@ -1803,10 +1914,10 @@ Find genes that are predicted to encode a signal peptide.
          category="Other Attributes"
          displayName="Taxon"
          queryRef="GeneFeatureIds.GenesByTaxon"
-         summaryAttributesList="organism,location_text,product"
-         sortingAttributesList="organism asc,location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="organism,location_text,product"
+         sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
             Find genes from one or more Plasmodium species.
@@ -1823,13 +1934,13 @@ Find genes that are predicted to encode a signal peptide.
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByProteinDbAccession"
+    <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,ApiDB"
               displayName="Protein Accession"
               category="Other Attributes"
               queryRef="GeneFeatureIds.GenesByProteinDbAccession"
-              summaryAttributesList="product,organism"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="product,organism"
         /> 
         <summary>
          Find genes mapped to a protein accession number.
@@ -1845,21 +1956,24 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- MR4 reagents  -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesByMr4Reagents"
-         displayName="MR4 Reagents Availability (P.f.)"
+    <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB"
+         displayName="MR4 Reagents Availability"
          category="Other Attributes"
          queryRef="GeneFeatureIds.GenesByMr4Reagents"
-         summaryAttributesList="location_text,product"
-         sortingAttributesList="location_text asc"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+         summaryAttributesList="location_text,product"
+         sortingAttributesList="location_text asc"
         /> 
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+        </propertyList>
         <summary>
             <![CDATA[
-                Find <i>P. falciparum</i> genes that have
+                Find genes that have
                 <a href="http://www.malaria.atcc.org/">MR4</a> reagents.
            ]]>
         </summary>
@@ -1885,10 +1999,10 @@ Find genes that are predicted to encode a signal peptide.
               category="Transcript Expression"
               displayName="EST evidence"
               queryRef="GeneFeatureIds.GenesByESTOverlap"
-              summaryAttributesList="organism,location_text,product,number_of_ests"
-              sortingAttributesList="organism asc,number_of_ests desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
+              summaryAttributesList="organism,location_text,product,number_of_ests"
+              sortingAttributesList="organism asc,number_of_ests desc"
         /> 
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
