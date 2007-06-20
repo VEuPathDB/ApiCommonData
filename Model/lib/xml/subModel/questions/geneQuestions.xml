@@ -1615,7 +1615,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Epitopes -->
   <!------------------------------------------------------------------>
 
-    <question name="GenesWithEpitopes"  includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesWithEpitopes" 
               category="Other Attributes"
               displayName="Epitope Presence"
               queryRef="GeneFeatureIds.GenesWithEpitopes" 
@@ -1654,7 +1654,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Export prediction -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByExportPrediction" includeProjects="PlasmoDB,ApiDB"
@@ -1681,11 +1681,11 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Phyletic profile -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,ApiDB"
-         displayName="Homology Phylogenetic Profile (P.f. and P.y.)"
+         displayName="Homology Phylogenetic Profile"
          category="Evolution"
          queryRef="GeneFeatureIds.GenesByPhyleticProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1704,7 +1704,7 @@ Find genes that are predicted to encode a signal peptide.
         </summary>
         <description>
            <![CDATA[
-           Find <i>P. falciparum</i> or <i>P. yoelii</i> genes that have a homology-based
+           Find genes that have a homology-based
            phylogenetic profile similar to a specified list of genes. This query also allows you to
            determine how similar in terms of phylogenetic profile the members of the query list are as they
            will hit more of the same genes the more similar the members of the query list are to one another.
@@ -1737,7 +1737,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Orthology profile -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByOrthologPattern"
@@ -1782,7 +1782,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Orthologous to a gene -->
   <!------------------------------------------------------------------>
 
     <question name="GenesOrthologousToAGivenGene"
@@ -1811,7 +1811,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Single locus tag -->
   <!------------------------------------------------------------------>
 
      <question name="GeneBySingleLocusTag"
@@ -1830,7 +1830,7 @@ Find genes that are predicted to encode a signal peptide.
            <![CDATA[
            Find a gene by its ID. The search is case
            insensitive. Asterisks can be used as wild cards (e.g. ' PF11_* ').
-           Genes whose IDs have changed can be found by either the old or the
+           Genes whose IDs have changed can be found by either  old or 
            new ID. GI numbers (e.g. 23508535), Entrez Protein Locus IDs (e.g.
            NP_701204.1), PDB IDs (e.g. 1HN6), or GenBank IDs (e.g. AAB36701.1)
            can also be used.
@@ -1839,7 +1839,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Gene locus tag -->
   <!------------------------------------------------------------------>
 
      <question name="GeneByLocusTag"
@@ -1856,7 +1856,7 @@ Find genes that are predicted to encode a signal peptide.
         </summary>
         <description>
            <![CDATA[
-           Find genes by a list of IDs. User can either enter the ID list manually, 
+           Find genes by a list of IDs. Either enter the ID list manually, 
            or upload a file that contains the list. IDs can be delimited by a comma, 
            a semi colon, or any white spaces. For example, a list can be in the
            following form: "PF11_0344, PF11_0306"
@@ -1865,7 +1865,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Text search -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByTextSearch"
@@ -1883,31 +1883,13 @@ Find genes that are predicted to encode a signal peptide.
          </summary>
          <description>
            <![CDATA[
-             Find genes by searching text annotations.
-             Specify the search pattern with a "regular expression". 
-<p>Wildcards and other special characters:
-<ul>
-<li><b>.</b>  Any character
-<li><b>\s</b>  A space character
-<li><b>\w</b>  An alpha-numeric character
-<li><b>\S</b>  A non-space character
-<li><b>\W</b>  An non-alpha-numeric character
-<li><b>*</b> Zero, one or more of the preceding character
-<li><b>|</b> Or
-</ul>
-<p>Examples:
-<ul>
-<li><b>g-protein.*receptor</b>  "g-protein" and "receptor" with anything in between.
-<li><b>g-protein|receptor</b> "g-protein" or "receptor"
-<li><b>var\s|pfemp1</b> "var" (followed by a space) or "pfemp1"
-</ul>
-               For more info on regular expressions, do a web search on "Perl regex".
+             Find genes by searching text annotations. Asterisks ("*") can be used as a wildcard, matching any sequence of characters
           ]]>
          </description>
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Taxon -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByTaxon"
@@ -1920,18 +1902,18 @@ Find genes that are predicted to encode a signal peptide.
          sortingAttributesList="organism asc,location_text asc"
         /> 
         <summary>
-            Find genes from one or more Plasmodium species.
+            Find genes from one or more species.
         </summary>
         <description>
            <![CDATA[
-            Find genes from one or more Plasmodium species.
+            Find genes from one or more species.
           ]]>
         </description>
     </question>
 
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Protein DB Accession  -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,ApiDB"
