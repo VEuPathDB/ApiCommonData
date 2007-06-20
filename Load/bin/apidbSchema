@@ -22,11 +22,11 @@ my $password = $gusconfig->getDatabasePassword();
 
 die "this script must log in to the database as apidb" if ( lc($login) ne 'apidb');
 
-my @create = qw( createDbTuning.sql
-                 createBfmv.sql
+my @create = qw( createBfmv.sql
+                 createApidbTuning.sql
 	       );
 
-my @delete = qw( dropDbTuning.sql
+my @delete = qw( 
 	       );
 
 if ($create) {
