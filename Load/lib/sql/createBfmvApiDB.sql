@@ -151,5 +151,7 @@ select count(*) from apidb.snpattributes@TOXOBLD;
 prompt *****select count(*) from apidb.snpattributes;
 select count(*) from apidb.snpattributes;
 
+----------------------------
 
+exit
 
