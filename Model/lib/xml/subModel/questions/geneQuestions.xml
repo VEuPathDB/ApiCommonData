@@ -1348,6 +1348,80 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
   <!------------------------------------------------------------------>
+  <!-- Toxo differential expression -->
+  <!------------------------------------------------------------------>
+
+    <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,ApiDB"
+              category="Transcript Expression"
+              displayName="Differential Expression"
+              queryRef="GeneFeatureIds.GenesByDifferentialExpression" 
+              summaryAttributesList="product,location_text,fold_change,confidence"
+              sortingAttributesList="fold_change desc,confidence desc,location_text asc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+            Find genes by differential expression analysis
+        </summary>
+        <description>
+            <![CDATA[
+             Find genes whose expression was found to be up-regulated or down-regulated 
+	    in a particular microarray study based upon 
+            <a href="http://www.cbil.upenn.edu/PaGE/">PaGE</a> differential expression analysis.	    
+	     <BR>&nbsp;<BR>
+	     <center>
+	     <table border="1" width="90%"
+	     <thead><tr><td><b>Experiment</b></td><td><b>Description</b></td></thead>
+	     <tr><td>Effects of Glucose Starvation in Toxoplasma gondii</td>
+	         <td>Wildtype RH tachyzoites were grown in high glucose and no glucose conditions 
+		     to determine the effects of glucose starvation on transcription.</td></tr>
+	     <tr><td>Expression profiling of three archetypal T. gondii lineages</td>
+	         <td>Determination of  strain-specific differential expression by profiling 
+		 wildtype tachyzoites from the RH, Prugniaud and CTG strains of T. gondii</td></tr>
+	     </table>
+	     </center>
+	     <BR>
+	     For further information on the strains, refer to: <BR>
+	     Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal lineages:
+	     correlation of parasite genotype with human disease. J. Infect. Dis. 172:1561-1566 
+	     <BR>&nbsp;<BR>
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
+	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!-- Toxo expression percentile -->
+  <!------------------------------------------------------------------>
+
+    <question name="GenesByExpressionPercentile" includeProjects="ToxoDB,ApiDB"
+              category="Transcript Expression"
+              displayName="Expression Percentile"
+              queryRef="GeneFeatureIds.GenesByExpressionPercentile" 
+              summaryAttributesList="product,percentile"
+              sortingAttributesList="percentile desc"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+            Find genes by expression percentile analysis
+        </summary>
+        <description>
+            <![CDATA[
+	    Find genes which are expressed over a given percentile in a particular strain.
+	     <BR>
+	     For further information on the strains, refer to: <BR>
+	     Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal lineages:
+	     correlation of parasite genotype with human disease. J. Infect. Dis. 172:1561-1566 
+	     <BR>&nbsp;<BR>
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+  <!------------------------------------------------------------------>
   <!--  -->
   <!------------------------------------------------------------------>
 
@@ -1974,7 +2048,7 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- EST overlap  -->
   <!------------------------------------------------------------------>
 
     <question name="GenesByESTOverlap"
@@ -1989,13 +2063,44 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
             <![CDATA[
              Find genes with evidence of expression based on expressed sequence tags (ESTs).
              For example:  What <i>P. falciparum</i> genes map to ESTs from the 3D7 gametocyte library?
                NOTE: you can visualize the EST alignments by clicking on the "View this sequence in the genome browser" link and turning on the EST Alignments track.
             ]]>
         </description>
+        <description includeProjects="CryptoDB">
+            <![CDATA[
+             Find genes with evidence of expression based on expressed sequence tags (ESTs).
+             For example:  What <i>T. gondii</i> genes map to ESTs from the ME49 Tachyzoite library?
+               NOTE: you can visualize the EST alignments by clicking on the 
+	       "View this sequence in the genome browser" link and turning on the EST Alignments track.
+            ]]>
+        </description>
+        <description includeProjects="ApiDB">
+              <![CDATA[
+              Find genes with evidence of expression based on expressed sequence tags (ESTs).
+              For example:  What <i>P. falciparum</i> genes map to ESTs from the 3D7 gametocyte library?<p>
+              EST overlap with an annotated gene is a useful way to verify gene predictions.  Ideally we would have EST sequences for each gene prediction, but this is not the case in <i> Cryptosporidium </i> . There are only a total of 567 ESTs for <i>Cryptosporidium parvum</i> and these ESTs represent even fewer genes because of redundancy.  Useful lengths of sequence overlap between an EST sequence and a predicted gene sequence are usually 50nt or greater. <i>C. parvum</i> ESTs were clustered against the <i>C. parvum</i> genome and cluster consensus sequences were generated. The consensus sequences have been aligned to the <i>C. parvum</i> and <i>C. hominis</i> genome. This query finds annotated genes with overlap to these sequences. Genes from the MRC-LMB sequencing of chromosome 6 are not included at this time.
+              ]]>
+              </description>
+        <description includeProjects="PlasmoDB">
+              <![CDATA[
+              Find <i>C. parvum</i> genes having overlap with an Expressed sequence tag (EST).<p>
+              EST overlap with an annotated gene is a useful way to verify gene predictions.  
+              Ideally we would have EST sequences for each gene prediction, but this is not 
+              the case in <i> Cryptosporidium </i> . There are only a total of 567 ESTs 
+              for <i>Cryptosporidium</i> and these ESTs represent even fewer genes 
+              because of redundancy.  Useful lengths of sequence overlap between an 
+              EST sequence and a predicted gene sequence are usually 50nt or greater. 
+              <i>C. parvum</i> ESTs were clustered against the <i>C. parvum</i> genome 
+              and the cluster consensus sequences are available via the graphical genome
+              browser on the gene record pages.
+              Genes from the MRC-LMB sequencing of chromosome 6 are not included at 
+              this time.
+              ]]>
+              </description>
         <dynamicAttributes>
              <columnAttribute name="number_of_ests" displayName="Number of ESTs"
                               inReportMaker="false"/>
