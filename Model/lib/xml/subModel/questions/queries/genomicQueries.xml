@@ -1,0 +1,164 @@
+<wdkModel name="SequenceId">
+    
+    <!-- ************************************************************ -->
+    <!-- SourceId -->  
+    <!-- ************************************************************ -->
+ 
+    <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
+        isCacheable="true">
+        <paramRef ref="params.sequence"/> 
+        <!-- NOTE: params.contig for C -->
+        <column name="source_id"/>
+        <sql includeProjects="CryptoDB">
+             <![CDATA[
+            SELECT enas.source_id
+            FROM dots.externalnasequence enas,
+                 sres.sequenceontology so
+            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE('$$sequence$$', '*', '%')))
+            AND enas.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name in ('contig', 'supercontig')
+           ]]>
+        </sql>
+        <sql includeProjects="PlasmoDB">
+        <![CDATA[
+            SELECT distinct source_id
+            FROM dots.externalNaSequence
+            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequence$$',' ',''), '*', '%'))
+           ]]>
+        </sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT distinct source_id
+            FROM dots.VirtualSequence
+            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequence$$',' ',''), '*', '%'))
+           ]]>
+        </sql>
+    </sqlQuery>
+    
+    <wsQuery name="SequenceBySourceId" includeProjects="ApiDB"
+        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="params.sequence"/>
+        <!-- NOTE: params.contig for A -->
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+    
+    
+    <!-- ************************************************************ -->
+    <!-- Species -->  
+    <!-- ************************************************************ -->
+
+    <sqlQuery name="SequencesByTaxon" excludeProjects="ApiDB"
+        isCacheable="true">
+        <paramRef ref="params.organism"/>
+        <!-- NOTE: params.organism_with_sequences for P -->
+        <!-- NOTE: params.allOrganisms for C -->
+        <column name="source_id"/>
+        <sql includeProjects="CryptoDB">
+            <![CDATA[
+            SELECT DISTINCT ens.source_id
+            FROM dots.externalNaSequence ens, sres.SequenceOntology so
+            WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon 
+              CONNECT BY parent_id = prior taxon_id
+              START WITH taxon_id in ($$rganisms$$))  
+            AND ens.sequence_ontology_id = so.sequence_ontology_id
+            AND (so.term_name = 'supercontig' OR so.term_name = 'contig')
+            ORDER BY ens.source_id
+           ]]>
+        </sql>
+        <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            SELECT DISTINCT ens.source_id
+            FROM dots.externalNaSequence ens, sres.SequenceOntology so
+            WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
+               CONNECT BY parent_id = prior taxon_id
+               START WITH taxon_id in ($$organism$$))
+               AND ens.sequence_ontology_id = so.sequence_ontology_id
+               AND (so.term_name = 'supercontig' OR so.term_name = 'contig')    
+            ORDER BY ens.source_id           
+           ]]>
+        </sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT DISTINCT vs.source_id
+            FROM dots.VirtualSequence vs, sres.SequenceOntology so
+            WHERE vs.taxon_id IN (SELECT taxon_id FROM sres.taxon      
+              CONNECT BY parent_id = prior taxon_id
+              START WITH taxon_id in ($$organism$$))
+              AND vs.sequence_ontology_id = so.sequence_ontology_id
+              AND (so.term_name = 'chromosome' OR so.term_name = 'supercontig')
+              ORDER BY vs.source_id
+           ]]>
+        </sql>
+    </sqlQuery>
+    
+    <wsQuery name="SequencesByTaxon" includeProjects="ApiDB"
+        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.seqorganism"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>            
+    </wsQuery>
+ 
+    
+    <!-- ************************************************************ -->
+    <!-- Similarity -->  
+    <!-- ************************************************************ -->
+    
+    <wsQuery name="SequencesBySimilarity" includeProjects="CryptoDB"
+        processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+        <paramRef ref="SequenceBlastDbParams.BlastDatabaseType"/>
+        <paramRef ref="SequenceBlastDbParams.BlastDatabaseOrganism"/>
+        <paramRef ref="params.BlastQueryType"/>
+        <paramRef ref="params.BlastQuerySequence"/>
+        <paramRef ref="params.-e"/>
+        <paramRef ref="params.-v"/>
+        <paramRef ref="params.-b"/>
+        <paramRef ref="params.-filter"/>
+        
+        <wsColumn name="source_id" width="32" wsName="Identifier"/>
+        <wsColumn name="TabularRow" width="3000"/>
+        <wsColumn name="Alignment" width="4000"/>
+        <wsColumn name="Header" width="3000"/>
+        <wsColumn name="Footer" width="4000"/>
+    </wsQuery>
+    
+    
+    <wsQuery name="SequencesBySimilarity" includeProjects="PlasmoDB,ToxoDB"
+        processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+        <paramRef ref="params.BlastQueryType"/>
+        <paramRef ref="SequenceBlastDbParams.BlastDatabaseType"/>
+        <paramRef ref="params.BlastDatabaseOrganism"/>
+        <paramRef ref="params.BlastQuerySequence"/>
+        <paramRef ref="params.-e"/>
+        <paramRef ref="params.-v"/>
+        <paramRef ref="params.-b"/>
+        <paramRef ref="params.-filter"/>
+        
+        <wsColumn name="source_id" width="32" wsName="Identifier"/>
+        <wsColumn name="TabularRow" width="3000"/>
+        <wsColumn name="Alignment" width="4000"/>
+        <wsColumn name="Header" width="3000"/>
+        <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+    
+  
+    <wsQuery name="SequencesBySimilarity" includeProjects="ApiDB" 
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.BlastDatabaseTypeGenome"/>
+        <paramRef ref="params.BlastDatabaseOrganismGenomics"/>
+        <paramRef ref="params.BlastQueryType"/>
+        <paramRef ref="params.BlastQuerySequence"/>
+        <paramRef ref="params.-e"/>
+        <paramRef ref="params.-v"/>
+        <paramRef ref="params.-b"/>
+        <paramRef ref="params.-filter"/>
+        
+        <wsColumn name="source_id" width="60" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="TabularRow" width="3000"/>
+        <wsColumn name="Alignment" width="4000"/>
+        <wsColumn name="Header" width="3000"/>
+        <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+    
+</wdkModel>
