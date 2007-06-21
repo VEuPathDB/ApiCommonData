@@ -1,0 +1,135 @@
+<wdkModel>
+
+  <questionSet name="GenomicSequenceQuestions">
+
+    <!-- ************************************************************ -->
+    <!-- SourceId -->  
+    <!-- ************************************************************ -->
+    
+    <question name="SequenceBySourceId"
+      category="Other Attributes"
+      displayName="Genomic Sequence ID"
+      queryRef="GenomicSequenceIds.SequenceBySourceId"
+      recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+         
+      <attributesList 
+        summary="organism"
+        sorting=""
+      />
+      
+      <summary>
+        Find genomic sequences by ID (GenBank Accession Number).
+      </summary>
+      <description includeProjects="CryptoDB">
+        <![CDATA[
+        Find chromosomes or contigs from one or more Cryptosporidium species.
+        ]]>
+      </description>
+      <description includeProjects="PlasmoDB">
+        <![CDATA[
+        Find chromosomes or contigs from one or more Plasmodium species.
+        ]]>
+      </description>
+      <description includeProjects="ToxoDB">
+        <![CDATA[
+        Find genomic sequence records for <i>Toxoplasma gondii</i>.
+        ]]>
+      </description>
+      <description includeProjects="ApiDB">
+        <![CDATA[
+        Find genomic sequences by GenBank Accession Number.  Examples are: AAEL010000057, AAEE01000009, BX526834, MAL4, Ia)
+        ]]>
+      </description>
+
+    </question>
+    
+    
+    <!-- ************************************************************ -->
+    <!-- Species -->  
+    <!-- ************************************************************ -->
+    
+    <question name="SequencesByTaxon"
+      category=""
+      displayName="Species"
+      queryRef="SequenceIds.SequencesByTaxon"
+      recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+      
+      <attributesList 
+        summary="organism"
+        sorting=""
+      />
+      
+      <summary>
+        Find genomic sequences of a species.
+      </summary>
+      <description includeProjects="CryptoDB">
+        <![CDATA[
+        Find chromosomes or contigs from one or more Cryptosporidium species.
+        ]]>
+      </description>
+      <description includeProjects="PlasmoDB">
+        <![CDATA[
+        Find chromosomes or contigs from one or more Plasmodium species.
+        ]]>
+      </description>
+      <description includeProjects="ToxoDB">
+        <![CDATA[
+        Find <i>T. gondiii</i> chromosomes or contigs.
+        ]]>
+      </description>
+      <description includeProjects="ApiDB">
+        <![CDATA[
+        Find chromosomes or contigs from <i>Cryptosporidium</i>, <i>Plasmodium</i> and <i>Toxoplasma</i> species.
+        ]]>
+      </description>
+    </question>
+    
+    
+    <!-- ************************************************************ -->
+    <!-- Similarity -->  
+    <!-- ************************************************************ -->
+  
+    <question name="SequencesBySimilarity"
+      category="Similarity/Pattern"
+      displayName="BLAST"
+      queryRef="SequenceIds.SequencesBySimilarity"
+      recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+      
+      <attributesList 
+        summary="organism,Header,TabularRow,Alignment,Footer"
+      />
+      
+      <summary>
+        Find genomic sequences that have BLAST similarity to your input sequence.
+      </summary>
+      <description includeProjects="CryptoDB">
+        <![CDATA[
+        This query finds <b>contigs</b> with BLAST matches to an input sequence. 
+        The <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a> program is used to 
+        search against coding nucleotide (CDS) or  protein sequence from annotatated gene models.
+        ]]>
+      </description>
+      <description includeProjects="PlasmoDB">
+        <![CDATA[
+        Find genomic sequences that have BLAST similarity to your input sequence.
+        <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+        ]]>
+      </description>
+      <description includeProjects="ToxoDB">
+        <![CDATA[
+        Find <i>Toxoplasma</i> genomic sequences that have BLAST similarity to your input sequence. 
+        The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+        ]]>
+      </description>
+      <description includeProjects="ApiDB">
+        <![CDATA[
+        This query finds <b>genomic sequences</b> with BLAST matches to an query input sequence.  
+        The <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a> program is used for the search.
+        ]]>
+      </description>
+
+    </question>
+    
+    
+  </questionSet>
+</wdkModel>
