@@ -6,8 +6,7 @@
  
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="params.sequence"/> 
-        <!-- NOTE: params.contig for C -->
+        <paramRef ref="genomicParams.sequence"/> 
         <column name="source_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
@@ -37,7 +36,7 @@
     
     <wsQuery name="SequenceBySourceId" includeProjects="ApiDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
-        <paramRef ref="params.sequence"/>
+        <paramRef ref="genomicParams.sequence"/>
         <!-- NOTE: params.contig for A -->
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -50,9 +49,7 @@
 
     <sqlQuery name="SequencesByTaxon" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="params.organism"/>
-        <!-- NOTE: params.organism_with_sequences for P -->
-        <!-- NOTE: params.allOrganisms for C -->
+        <paramRef ref="genomicParams.organism"/>
         <column name="source_id"/>
         <sql includeProjects="CryptoDB">
             <![CDATA[
@@ -94,7 +91,7 @@
     
     <wsQuery name="SequencesByTaxon" includeProjects="ApiDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.seqorganism"/>
+        <paramRef ref="genomicParams.organism"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>            
     </wsQuery>
@@ -106,8 +103,8 @@
     
     <wsQuery name="SequencesBySimilarity" includeProjects="CryptoDB"
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
-        <paramRef ref="SequenceBlastDbParams.BlastDatabaseType"/>
-        <paramRef ref="SequenceBlastDbParams.BlastDatabaseOrganism"/>
+        <paramRef ref="sequenceParams.BlastDatabaseType"/>
+        <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQueryType"/>
         <paramRef ref="params.BlastQuerySequence"/>
         <paramRef ref="params.-e"/>
@@ -125,9 +122,9 @@
     
     <wsQuery name="SequencesBySimilarity" includeProjects="PlasmoDB,ToxoDB"
         processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+        <paramRef ref="sequenceParams.BlastDatabaseType"/>
+        <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQueryType"/>
-        <paramRef ref="SequenceBlastDbParams.BlastDatabaseType"/>
-        <paramRef ref="params.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQuerySequence"/>
         <paramRef ref="params.-e"/>
         <paramRef ref="params.-v"/>
@@ -144,8 +141,8 @@
   
     <wsQuery name="SequencesBySimilarity" includeProjects="ApiDB" 
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.BlastDatabaseTypeGenome"/>
-        <paramRef ref="params.BlastDatabaseOrganismGenomics"/>
+        <paramRef ref="sequenceParams.BlastDatabaseType"/>
+        <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQueryType"/>
         <paramRef ref="params.BlastQuerySequence"/>
         <paramRef ref="params.-e"/>
