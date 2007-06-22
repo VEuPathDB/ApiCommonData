@@ -11,18 +11,18 @@ SELECT 'cryptodb' AS project_id, GeneAttributes.* FROM
 apidb.GeneAttributes@CRYPTOB
 UNION
 SELECT 'plasmodb' AS project_id, GeneAttributes.* FROM  
-apidb.GeneAttributes@PLASBLD
+apidb.GeneAttributes@PLASMO53
 UNION
 SELECT 'toxodb' AS project_id, GeneAttributes.* FROM  
-apidb.GeneAttributes@TOXOBLD
+apidb.GeneAttributes@TOXO42
 );
 
 prompt *****select count(*) from apidb.geneattributes@CRYPTOB;
 select count(*) from apidb.geneattributes@CRYPTOB;
-prompt *****select count(*) from apidb.geneattributes@PLASBLD;
-select count(*) from apidb.geneattributes@PLASBLD;
-prompt *****select count(*) from apidb.geneattributes@TOXOBLD;
-select count(*) from apidb.geneattributes@TOXOBLD;
+prompt *****select count(*) from apidb.geneattributes@PLASMO53;
+select count(*) from apidb.geneattributes@PLASMO53;
+prompt *****select count(*) from apidb.geneattributes@TOXO42;
+select count(*) from apidb.geneattributes@TOXO42;
 prompt *****select count(*) from apidb.geneattributes;
 select count(*) from apidb.geneattributes;
 
@@ -39,18 +39,18 @@ SELECT 'cryptodb' AS project_id, SequenceAttributes.* FROM
 apidb.SequenceAttributes@CRYPTOB
 UNION
 SELECT 'plasmodb' AS project_id, SequenceAttributes.* FROM  
-apidb.SequenceAttributes@PLASBLD
+apidb.SequenceAttributes@PLASMO53
 UNION
 SELECT 'toxodb' AS project_id, SequenceAttributes.* FROM  
-apidb.SequenceAttributes@TOXOBLD
+apidb.SequenceAttributes@TOXO42
 );
 
 prompt *****select count(*) from apidb.sequenceattributes@CRYPTOB;
 select count(*) from apidb.sequenceattributes@CRYPTOB;
-prompt *****select count(*) from apidb.sequenceattributes@PLASBLD;
-select count(*) from apidb.sequenceattributes@PLASBLD;
-prompt *****select count(*) from apidb.sequenceattributes@TOXOBLD;
-select count(*) from apidb.sequenceattributes@TOXOBLD;
+prompt *****select count(*) from apidb.sequenceattributes@PLASMO53;
+select count(*) from apidb.sequenceattributes@PLASMO53;
+prompt *****select count(*) from apidb.sequenceattributes@TOXO42;
+select count(*) from apidb.sequenceattributes@TOXO42;
 prompt *****select count(*) from apidb.sequenceattributes;
 select count(*) from apidb.sequenceattributes;
 
@@ -73,18 +73,18 @@ SELECT 'cryptodb' AS project_id, EstAttributes.* FROM
 apidb.EstAttributes@CRYPTOB
 UNION
 SELECT 'plasmodb' AS project_id, EstAttributes.* FROM  
-apidb.EstAttributes@PLASBLD
+apidb.EstAttributes@PLASMO53
 UNION
 SELECT 'toxodb' AS project_id, EstAttributes.* FROM  
-apidb.EstAttributes@TOXOBLD
+apidb.EstAttributes@TOXO42
 );
 
 prompt *****select count(*) from apidb.estattributes@CRYPTOB;
 select count(*) from apidb.estattributes@CRYPTOB;
-prompt *****select count(*) from apidb.estattributes@PLASBLD;
-select count(*) from apidb.estattributes@PLASBLD;
-prompt *****select count(*) from apidb.estattributes@TOXOBLD;
-select count(*) from apidb.estattributes@TOXOBLD;
+prompt *****select count(*) from apidb.estattributes@PLASMO53;
+select count(*) from apidb.estattributes@PLASMO53;
+prompt *****select count(*) from apidb.estattributes@TOXO42;
+select count(*) from apidb.estattributes@TOXO42;
 prompt *****select count(*) from apidb.estattributes;
 select count(*) from apidb.estattributes;
 
@@ -107,18 +107,18 @@ SELECT 'cryptodb' AS project_id, OrfAttributes.* FROM
 apidb.OrfAttributes@CRYPTOB
 UNION
 SELECT 'plasmodb' AS project_id, OrfAttributes.* FROM  
-apidb.OrfAttributes@PLASBLD
+apidb.OrfAttributes@PLASMO53
 UNION
 SELECT 'toxodb' AS project_id, OrfAttributes.* FROM  
-apidb.OrfAttributes@TOXOBLD
+apidb.OrfAttributes@TOXO42
 );
 
 prompt *****select count(*) from apidb.orfattributes@CRYPTOB;
 select count(*) from apidb.orfattributes@CRYPTOB;
-prompt *****select count(*) from apidb.orfattributes@PLASBLD;
-select count(*) from apidb.orfattributes@PLASBLD;
-prompt *****select count(*) from apidb.orfattributes@TOXOBLD;
-select count(*) from apidb.orfattributes@TOXOBLD;
+prompt *****select count(*) from apidb.orfattributes@PLASMO53;
+select count(*) from apidb.orfattributes@PLASMO53;
+prompt *****select count(*) from apidb.orfattributes@TOXO42;
+select count(*) from apidb.orfattributes@TOXO42;
 prompt *****select count(*) from apidb.orfattributes;
 select count(*) from apidb.orfattributes;
 
@@ -138,16 +138,16 @@ prompt *****CREATE MATERIALIZED VIEW apidb.SnpAttributes
 CREATE MATERIALIZED VIEW apidb.SnpAttributes AS
 (
 SELECT 'plasmodb' AS project_id, SnpAttributes.* FROM  
-apidb.SnpAttributes@PLASBLD
+apidb.SnpAttributes@PLASMO53
 UNION
 SELECT 'toxodb' AS project_id, SnpAttributes.* FROM  
-apidb.SnpAttributes@TOXOBLD
+apidb.SnpAttributes@TOXO42
 );
 
-prompt *****select count(*) from apidb.snpattributes@PLASBLD;
-select count(*) from apidb.snpattributes@PLASBLD;
-prompt *****select count(*) from apidb.snpattributes@TOXOBLD;
-select count(*) from apidb.snpattributes@TOXOBLD;
+prompt *****select count(*) from apidb.snpattributes@PLASMO53;
+select count(*) from apidb.snpattributes@PLASMO53;
+prompt *****select count(*) from apidb.snpattributes@TOXO42;
+select count(*) from apidb.snpattributes@TOXO42;
 prompt *****select count(*) from apidb.snpattributes;
 select count(*) from apidb.snpattributes;
 
