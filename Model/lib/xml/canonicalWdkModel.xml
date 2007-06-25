@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!DOCTYPE xml [
+  <!ENTITY nbsp "&#160;">
+  <!ENTITY lt   "&#60;">
+  <!ENTITY gt   "&#62;">
+]>
+
+<wdkModel>
+  <modelName includeProjects="PlasmoDB" name="PlasmoDB" displayName="PlasmoDB" 
+             version="5.3"/>
+  <modelName includeProjects="ApiDB" name="ApiDB" displayName="ApiDB"
+             version="2.2"/>
+  <modelName includeProjects="ToxoDB" name="ToxoDB" displayName="ToxoDB"
+             version="3.3"/>
+  <modelName includeProjects="CryptoDB" name="CryptoDB" displayName="CryptoDB"
+             version="11.3"/>
+
+  <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
+    <value value="P. falciparum"/>
+    <value value="P. vivax"/>
+    <value value="P. yoelii"/>
+    <value value="P. berghei"/>
+    <value value="P. chabaudi"/>
+    <value value="P. knowlesi"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="CryptoDB" name="organisms">
+    <value value="C. hominus"/>
+    <value value="C. parvum"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="ToxoDB" name="organisms">
+    <value value="T. gondii"/>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="ApiDB" name="organisms">
+    <value value="P. falciparum"/>
+    <value value="P. vivax"/>
+    <value value="P. yoelii"/>
+    <value value="P. berghei"/>
+    <value value="P. chabaudi"/>
+    <value value="P. knowlesi"/>
+    <value value="C. hominus"/>
+    <value value="C. parvum"/>
+    <value value="T. gondii"/>
+  </defaultPropertyList>
+
+  <!-- somehow include files here -->
+  
+  <import file="submodel/questions/geneQuestions.xml"/>
+  <import file="submodel/questions/genomicQuestions.xml"/>
+  <import file="submodel/questions/estQuestions.xml"/>
+  <import file="submodel/questions/orfQuestions.xml"/>
+  <import file="submodel/questions/snpQuestions.xml"/>
+  <import file="submodel/questions/internalQuestions.xml"/>
+  <import file="submodel/questions/datadumpQuestions.xml"/>
+  <import file="submodel/questions/queries/geneQueries.xml"/>
+  <import file="submodel/questions/queries/genomicQueries.xml"/>
+  <import file="submodel/questions/queries/estQueries.xml"/>
+  <import file="submodel/questions/queries/orfQueries.xml"/>
+  <import file="submodel/questions/queries/snpQueries.xml"/> 
+  <import file="submodel/questions/queries/internalQueries.xml"/> 
+  <import file="submodel/questions/queries/datadumpQueries.xml"/> 
+  <import file="submodel/questions/queries/vocabQueries.xml"/> 
+  <import file="submodel/questions/queries/enumQueries.xml"/> 
+  <import file="submodel/questions/params/generalParams.xml"/>
+  <import file="submodel/questions/params/geneParams.xml"/>
+  <import file="submodel/questions/params/genomicParams.xml"/>
+  <import file="submodel/questions/params/estParams.xml"/>
+  <import file="submodel/questions/params/orfParams.xml"/>
+  <import file="submodel/questions/params/snpParams.xml"/>
+  <import file="submodel/records/geneRecord.xml"/>
+  <import file="submodel/records/geneTableQueries.xml"/>
+  <import file="submodel/records/genomicRecord.xml"/>
+  <import file="submodel/records/genomicTableQueries.xml"/>
+  <import file="submodel/records/snpRecord.xml"/>
+  <import file="submodel/records/snpTableQueries.xml"/>
+  <import file="submodel/records/orfRecord.xml"/>
+  <import file="submodel/records/orfTableQueries.xml"/>
+  <import file="submodel/records/estRecord.xml"/>
+  <import file="submodel/records/estTableQueries.xml"/>
+  <import file="submodel/records/arrayElementRecord.xml"/>
+  <import file="submodel/records/arrayElementTableQueries.xml"/>
+
+
+  <!--===========================================================================-->
+  <!-- Question set  -->
+  <!--===========================================================================-->
+
+  <questionSet name="GeneQuestions">
+    <question name="GenesByLocation"
+         category="Genomic Position"
+         displayName="Chromosomal Location"
+         queryRef="GeneFeatureIds.GenesByGenomicRegion"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+ 
+       <attributesList excludeProjects="CryptoDB"
+         summary="location_text,product"
+         sorting="location_text asc"
+        />
+ 
+       <attributesList includeProjects="CryptoDB"
+         summary="organism,location_text,product,gene_type"
+         sorting="organism asc,location_text asc "
+        />
+
+        <summary>
+          <text>
+          Find genes that are located in a specified genomic region.
+          </text>
+        </summary>
+        <description includeProjects="CryptoDB">
+           <text>
+           <![CDATA[
+           Find genes by providing a list of IDs (Genbank locus tag). 
+           User can either enter the ID list manually, or upload a file that contains the list. 
+           IDs can be delimited by a comma, a semi colon, or any white spaces.
+           The search is case
+           insensitive. Asterisks can be used as wild cards (e.g. ' cgd6_* ').
+          ]]>
+          </text>
+        </description>
+        <propertyList name="organism">
+           <value value="P. falciparum"/>
+           <value value="T. gondii"/>
+        </propertyList>
+    </question>
+  </questionSet>
+
+
+
+  <!--===========================================================================-->
+  <!-- Query set  -->
+  <!--===========================================================================-->
+
+  <querySet name="GeneFeatureIds">
+
+    <!------------------------------------------------------------------>
+    <!-- Genomic region  -->
+    <!------------------------------------------------------------------>
+
+    <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
+              displayName="by genomic location" isCacheable="true">
+        <paramRef ref="params.pfGenomicSequenceOrNot"/>
+        <paramRef ref="params.genomicSequence"/>
+        <paramRef ref="params.start_point"/>
+        <paramRef ref="params.end_point"/>
+        <column name="source_id"/>
+        <sql>
+          <text>
+            <![CDATA[
+            SELECT distinct gf.source_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND (ens.source_id = $$pfGenomicSequenceOrNot$$
+                   OR lower(ens.source_id) = lower('$$genomicSequence$$'))
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+          </text>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="GenesByLocation" includeProjects="ApiDB"
+             displayName="by  genomic location" isCacheable='true' 
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+               <description>genes by genomic location</description>
+               <paramRef ref="params.genomicSequence"/>
+               <paramRef ref="params.start_point"/>
+               <paramRef ref="params.end_point"/>
+               <wsColumn name="source_id" width="32" wsName="source_id" />
+               <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+  </querySet>
+
+
+
+  <!--===========================================================================-->
+  <!-- Param set  -->
+  <!--===========================================================================-->
+
+  <paramSet name="GeneFeatureParams">
+  </paramSet>
+
+</wdkModel>
