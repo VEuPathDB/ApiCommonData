@@ -1,996 +1,2691 @@
 <wdkModel>
-        <stringParam name="primaryKey"
-                     prompt="Primary Key"
-                     help="primary key"/>
 
 
-<paramSet name="params">
 
-  <!------------------------------------------------------------------>
-  <!-- Locus tag -->  
-  <!------------------------------------------------------------------>
+  <!-- this file contains the params for gene id queries, and their associated vocab queries -->
 
-        <stringParam name="locus_tag"
-                     prompt="Gene ID"
-                     help="Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator. (Examples: PF11_0344, AAB36701.1, NP_701203.1)."
-                     sample="PF11_0344, PY01656, Pv092275"
-                     substitute="yes"
-                     default="PF11_0344"/>
 
-  <!------------------------------------------------------------------>
-  <!-- Mutual information score -->  
-  <!------------------------------------------------------------------>
 
-        <stringParam name="min_mutual_information_score"
-                     prompt="Minimum mutual information score"
-                     help="Enter the minimum mutual information score to report similarities.  The score range is from 0.472 to 1.67"
-                     substitute="yes"
-                     default="0.47"/>
 
-        <stringParam name="min_num_query_matches"
-                     prompt="Minimum number of query matches"
-                     help="Enter the minimum number of queries you want to match to your genes.  If you input 5 genes ids for your query and enter 5 minimum number of queries then the only genes returned would be ones that all 5 queries match"
-                     substitute="yes"
-                     default="1"/>
+  <!--===========================================================================-->
+  <!-- Param set  -->
+  <!--===========================================================================-->
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+  <paramSet name="geneParams">
 
-        <stringParam name="ec_number_pattern"
-                     prompt="EC Number"
-                     help="Enzyme Commission numbers describe enzymes hierarchically by the class of rections they catalize."
-                     sample="(Examples: 2.7.7.6, 3.5.1.31"
-                     substitute="yes"
-                     default="2.7.7.-"/>
+      <!---------------------------------------------------------------------------------->
+      <!-- Differential expression -->
+      <!---------------------------------------------------------------------------------->
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="num_exons_gte"
-                     prompt="Exon Count >="
-                     help="Which genes in &#60;i&#62; Plasmodium &#60;/i&#62; are annotated as containing introns? One easy way to do this search is to look for genes
-with more
-than one annotated exon. Enter a minimum of exons you would like to search for as an integer, e.g. '3'."
-                     sample="(Example: 2)"
-                     substitute="yes"
-                     default="2"/>
-
- <stringParam name="num_exons_lte"
-                     prompt="Exon Count &lt;="
-                     help="Enter a maximum number of exons you would like to search for as an integer, e.g. '3'."
-                     sample="(Example: 2)"
-                     substitute="yes"
-                     default="20"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="bp_overlap_gte"
-                     prompt="Base Overlap >="
-                     help="Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general,
-the specificity of this evidence is proportional to the overlap length."
-                     sample="(Example: 100)"
-                     substitute="yes"
-                     default="100"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <flatVocabParam name="cowmanSample"
+      <flatVocabParam name="cowmanSample"
+                     queryRef="VocabQueries.cowmanSample"
                      prompt="Study"
-                     help="Select ..."
-                     multiPick="false"
-                     queryRef="VocabQueries.cowmanSample"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Select ...
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="diffMeanExpr_reference"
+      <flatVocabParam name="diffMeanExpr_reference"
+                     queryRef="VocabQueries.cowmanSample"
                      prompt="Reference study"
-                     help="Select ..."
-                     multiPick="false"
-                     queryRef="VocabQueries.cowmanSample"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Select ...
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="diffMeanExpr_comparitor"
+      <flatVocabParam name="diffMeanExpr_comparitor"
+                     queryRef="VocabQueries.cowmanSample"
                      prompt="Comparison study"
-                     help="Select ..."
-                     multiPick="false"
-                     queryRef="VocabQueries.cowmanSample"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Select ...
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <stringParam name="confidence"
-                     prompt="Confidence >= "
-                     help="" 
-                     sample="(Example: )"
-                     substitute="yes"
-                     default="0.8"/>
-
-        <stringParam name="fold_change"
-                     prompt="Fold change >="
-                     help="" 
-                     sample="(Example: )"
-                     substitute="yes"
-                     default="2"/>
-
-        <flatVocabParam name="regulated_dir"
+      <enumParam name="regulated_dir"
                      prompt="Direction"
-                     help="Select ..."
                      multiPick="false"
-                     queryRef="VocabQueries.regulated_dir"/>
+        <help>
+           <text>
+             Select ...
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="down-regulated"
+                 internal=   "-"/>
+          <enumValue term="up-regulated"
+                 internal=   ""/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="percentile"
-                     prompt="Percentile >="
-                     help="" 
-                     sample="(Example: )"
-                     substitute="yes"
-                     default="90"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="min_tm"
-                     prompt="Minimum Number of Transmembrane Domains"
-                     help="Proteins may have none, one or more transmembrane domains. Please enter a minimum number of predicted transmembrane domains to start your search."
-                     sample="(Example: 2)"
-                     substitute="yes"
-                     default="2"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="min_sigp_sum_score"
-                     prompt="Minimum SignalP conclusion score"
-                     help="SignalP provides four scores and a conclusion for each such that the conclusion  is 1 if the score meets a certain criteria and 0 otherwise.  The SignalP summary conclusion is the sum of the four conclusions generated by SignalP, thus four is the highest score possible.  We consider a summary conclusion score of three to be significant"
-                     substitute="yes"
-                     default="3"/>
-
-        <stringParam name="max_tm"
-                     prompt="Maximum Number of Transmembrane Domains"
-                     help="Proteins may have none, one or more transmembrane domains. Please enter a maximum number of predicted transmembrane domains to start your search."
-                     sample="(Example: 5)"
-                     substitute="yes"
-                     default="5"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="extDbName"
-                     prompt="External Database Name"
-                     help="The name of an external database as found in GUS"/>
-
-        <stringParam name="extDbRlsVer"
-                     prompt="External Database Release Version"
-                     help="The version of an external database release as found in GUS"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="sequence"
-                     prompt="Sequence ID"
-                     help="Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are
-'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  Wild cards are permitted in this search, i.e. use MALPY* to ask for all &#60;i&#62; P.
-vivax &#60;/i&#62; sequences."
-                     sample="(Examples: MAL4, ctg_4094)"
-                     substitute="yes"
-                     default="MAL4"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <flatVocabParam name="organism"
+      <flatVocabParam name="organism"
+                     queryRef="VocabQueries.OrganismWithGenes"
                      prompt="Plasmodium species"
-                     help="Select one or more organisms."
-                     multiPick="true"
-                     queryRef="VocabQueries.OrganismWithGenes"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="organism_with_sequences"
+
+      <!---------------------------------------------------------------------------------->
+      <!-- Orgamism -->
+      <!---------------------------------------------------------------------------------->
+
+      <flatVocabParam name="organism_with_sequences"
+                     queryRef="VocabQueries.OrganismWithSequences"
                      prompt="Plasmodium species"
-                     help="Select one or more organisms."
-                     multiPick="true"
-                     queryRef="VocabQueries.OrganismWithSequences"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="organism_with_ests"
+      <flatVocabParam name="organism_with_ests"
+                     queryRef="VocabQueries.OrganismWithEsts"
                      prompt="Plasmodium species"
-                     help="Select one or more organisms."
-                     multiPick="true"
-                     queryRef="VocabQueries.OrganismWithEsts"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="pf_organism"
+      <flatVocabParam name="pf_organism"
+                     queryRef="VocabQueries.PfOrganism"
                      prompt="Plasmodium species"
-                     help="Select an organism."
-                     multiPick="false"
-                     queryRef="VocabQueries.PfOrganism"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Select an organism.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="species_name"
+      <flatVocabParam name="species_name"
+                     queryRef="VocabQueries.SpeciesName"
                      prompt="Plasmodium species"
-                     help="Select one or more organisms."
-                     multiPick="true"
-                     queryRef="VocabQueries.SpeciesName"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
 
-        <flatVocabParam name="libraryId"
+      <!---------------------------------------------------------------------------------->
+      <!-- EST library -->
+      <!---------------------------------------------------------------------------------->
+
+      <flatVocabParam name="libraryId"
+                     queryRef="VocabQueries.EstLibraries"
                      prompt="EST Library"
-                     help="Select a clone library."
-                     multiPick="true"
-                     queryRef="VocabQueries.EstLibraries"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select a clone library.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="best_alignment_only"
+
+      <enumParam name="best_alignment_only"
                      prompt="Best alignments only"
-                     help="Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST"
                      multiPick="false"
-                     queryRef="VocabQueries.best_alignment_only"/>
+        <help>
+           <text>
+             Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Yes"
+                 internal=   "1"/>
+          <enumValue term="No"
+                 internal=   "0,1"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="high_confidence_only"
+
+      <enumParam name="high_confidence_only"
                      prompt="Consistent alignments only"
-                     help="Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query."
                      multiPick="false"
-                     queryRef="VocabQueries.high_confidence_only"/>
+        <help>
+           <text>
+             Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="No"
+                 internal=   "0,1"/>
+          <enumValue term="Yes"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="inNotIn"
+      <enumParam name="inNotIn"
                      prompt="EST"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.inNotIn"/>
+                     help=""
+        <help>
+           <text>
+             Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="does overlap with a gene"
+                 internal=   "INTERSECT"/>
+          <enumValue term="does not overlap with a gene"
+                 internal=   "MINUS"/>
+        </enumList>
+      </enumParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
 
-        <flatVocabParam name="whole_words"
+      <!---------------------------------------------------------------------------------->
+      <!-- Text search -->
+      <!---------------------------------------------------------------------------------->
+
+      <enumParam name="whole_words"
                      prompt="Match only whole words?"
-                     help="Select whether to reject text matches that start or end in the middle of a word"
                      multiPick="false"
-                     queryRef="VocabQueries.WholeWords"/>
+        <help>
+           <text>
+             Select whether to reject text matches that start or end in the middle of a word
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="yes"
+                 internal=   "true"/>
+          <enumValue term="no"
+                 internal=   "false"/>
+        </enumList>
+      </enumParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
 
-        <flatVocabParam name="geneType"
+      <!---------------------------------------------------------------------------------->
+      <!-- Gene type -->
+      <!---------------------------------------------------------------------------------->
+
+      <flatVocabParam name="geneType"
+                     queryRef="VocabQueries.GeneTypes"
                      prompt="Gene type"
-                     help="Select a gene type."
-                     multiPick="true"
-                     queryRef="VocabQueries.GeneTypes"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select a gene type.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="includePseudogenes"
+      <enumParam name="includePseudogenes"
                      prompt="Include Pseudogenes"
-                     help="Choose whether to include pseudogenes in your query results."
                      multiPick="false"
-                     queryRef="VocabQueries.IncludePseudogenes"/>
+        <help>
+           <text>
+             Choose whether to include pseudogenes in your query results.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="No"
+                 internal=   "0"/>
+          <enumValue term="Yes"
+                 internal=   "0,1"/>
+          <enumValue term="Pseudogenes Only"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="protein_id"
-                     prompt="NestedRecord Param"
-                     help="Only used in a nested record"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="plasmodb_dataset"
-                     visible="false"
-                     prompt="PlasmoDB dataset"
-                     help="PlasmoDB dataset"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <historyParam name="historyId"
-                     prompt="History ID"
-                     help="The number in the left column of My Query History"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="min_percent_identity"
-                     prompt="Percent identity >="
-                     default="90"
-                     help='You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity'/>
-
-        <stringParam name="min_percent_est_aligned"
-                     prompt="Percent of EST bases aligned >="
-                     default="20"
-                     help='Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.'/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="go_term"
-                     prompt="GO Term or GO ID"
-                     default="catalytic activity"
-                     help='Enter a GO ID (e.g. \"GO:0003824\") or GO Term (e.g. \"catalytic activity\").  Asterisks can be used as wildcard characters in a GO Term (e.g. \"*kinase*\"'/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="pfam_term"
-                     prompt="Pfam Family ID or Description"
-                     default="IMP dehydrogenase / GMP reductase domain"
-                     help='Enter a Pfam accession number (e.g. \"PF00478\") or definition (\"NPR nonapeptide repeat\") .  Asterisks can be used as wildcard characters in a Pfam definition (e.g. \"Ribosomal*\"'/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <flatVocabParam name="bait_or_prey"
+      <enumParam name="bait_or_prey"
                      prompt="Specified protein is bait or prey"
-                     help="Optionally specifiy whether given protein is bait or prey"
                      multiPick="false"
-                     queryRef="VocabQueries.BaitOrPrey"/>
+        <help>
+           <text>
+             Optionally specifiy whether given protein is bait or prey
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="bait"
+                 internal=   "'bait'"/>
+          <enumValue term="prey"
+                 internal=   "'prey'"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="min_observed"
-                     prompt="Restrict by the minimum number of times this interaction was found"
-                     help="Restrict by the minimum number of times this interaction was found"
-                     default="1"/>
+      <enumParam name="BlastQueryType"
+                     prompt="Query sequence type"
+                     multiPick="false"
+        <help>
+           <text>
+             The type of the query sequence (eg. DNA, protein)
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="DNA"
+                 internal=   "dna"/>
+          <enumValue term="Protein"
+                 internal=   "protein"/>
+          <enumValue term="Nucleotide coding sequences (CDS)"
+                 internal=   "CDS"/>
+          <enumValue term="Proteins"
+                 internal=   "proteins"/>
+          <enumValue term="Six frame translated CDSs"
+                 internal=   "CDS Translated"/>
+          <enumValue term="Genome"
+                 internal=   "genomic"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="min_searches"
-                     prompt="Restrict by the minimum number of searches that found this interaction"
-                     help="Restrict by the minimum number of searches that found this interaction"
-                     default="1"/>
-
-        <stringParam name="max_results"
-                     prompt="Maximum number of results"
-                     help="Upper limit on the number of results returned by the query"
-                     default="5"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-
-        <flatVocabParam name="BlastDatabaseType"
+      <enumParam name="BlastDatabaseType"
                      prompt="Target"
-                     help="The type of the target database (eg CDS, translated CDS, Protein)"
                      multiPick="false"
-                     queryRef="VocabQueries.BlastDatabaseType"/>
+        <help>
+           <text>
+             The type of the target database (eg CDS, translated CDS, Protein)
+           </text>
+        </help>
+        <enumList>
+          <enumValue term=" Choose one"
+                 internal=   "Choose one"/>
+          <enumValue term="EST"
+                 internal=   "ESTs"/>
+          <enumValue term="Genome"
+                 internal=   "genomic"/>
+          <enumValue term="ORF (Protein)"
+                 internal=   "orfs"/>
+          <enumValue term="Proteins"
+                 internal=   "proteins"/>
+          <enumValue term="Transcripts"
+                 internal=   "Transcripts"/>
+          <enumValue term="Translated EST"
+                 internal=   "ESTs Translated"/>
+          <enumValue term="Translated Genome"
+                 internal=   "genomic Translated"/>
+          <enumValue term="Translated Transcripts"
+                 internal=   "Transcripts Translated"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="BlastDatabaseOrganism"
+      <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
-                     help="Organism(s) from which the sequences in the BLAST database originated"
                      multiPick="false"
-                     queryRef="VocabQueries.BlastDatabaseOrganism"/>
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="P. berghei"
+                 internal=   "Pberghei"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi"/>
+          <enumValue term="P. falciparum"
+                 internal=   "Pfalciparum"/>
+          <enumValue term="P. falciparum mitocondrial"
+                 internal=   "PfalciparumMito"/>
+          <enumValue term="P. falciparum plastid"
+                 internal=   "PfalciparumPlastid"/>
+          <enumValue term="P. gallinaceum"
+                 internal=   "Pgallinaceum"/>
+          <enumValue term="P. knowlesi"
+                 internal=   "Pknowlesi"/>
+          <enumValue term="P. reichenowi"
+                 internal=   "Preichenowi"/>
+          <enumValue term="P. vivax"
+                 internal=   "Pvivax"/>
+          <enumValue term="P. yoelii"
+                 internal=   "Pyoelii"/>
+          <enumValue term="any"
+                 internal=   "Plasmodium"/>
+        </enumList>
+      </enumParam>
 
+      <enumParam name="-filter"
+                    id="-filter"
+                    prompt="Low complexity filter"
+           <suggest default="yes"/
+        <help>
+           <text>
+             Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="yes"
+                 internal=   "yes"/>
+          <enumValue term="no"
+                 internal=   "no"/>
+        </enumList>
+      </enumParam>
 
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-       <stringParam name="dn_ds_ratio_upper"
-                     prompt="Non-synonymous / synonymous SNP ratio &lt;= "
-                     help="Upper Bound on the ratio of non-synonymous to synonymous coding snps"
-                     default="100"/>
-
-      <stringParam name="dn_ds_ratio_lower"
-                     prompt="Non-synonymous / synonymous SNP ratio >= "
-                     help="Lower Bound on the ratio of non-synonymous to synonymous coding snps"
-                     default="0"/>
-
-      <stringParam name="min_num_coding_snps"
-                     prompt="Number of coding SNPs >= "
-                     help="Lower Bound on the number of coding snps"
-                     default="0"/>
-
-       <stringParam name="occurrences_upper"
-                     prompt="Number of SNPs of above class &lt;= "
-                     help="Upper Bound on the number of SNPs of the selected class"
-                     default="1000"/>
-
-      <stringParam name="occurrences_lower"
-                     prompt="Number of SNPs of above class >= "
-                     help="Lower Bound on the number of SNPs of the selected class"
-                     default="0"/>
-
-      <stringParam name="major_allele_max"
-                     prompt="Frequency of major allele &lt;= "
-                     help="Upper Bound on the number of strains that have the major allele"
-                     default="20"/>
-
-      <stringParam name="major_allele_min"
-                     prompt="Frequency of major allele >= "
-                     help="Lower Bound on the number strains that have the major allele"
-                     default="1"/>
-
-      <stringParam name="minor_allele_max"
-                     prompt="Frequency of minor allele &lt;= "
-                     help="Upper Bound on the number of strains that have the minor allele"
-                     default="20"/>
-
-      <stringParam name="minor_allele_min"
-                     prompt="Frequency of minor allele >= "
-                     help="Lower Bound on the number of strains that have the minor allele"
-                     default="1"/>
-
-      <stringParam name="snp_density"
-                     prompt="SNPs per KB (CDS) >= "
-                     help="Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence"
-                     default="0"/>
-
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-       <flatVocabParam name="chromosome"
+      <enumParam name="chromosome"
                      prompt="Chromosome"
-                     help=""
                      multiPick="true"
-                     queryRef="VocabQueries.Chromosome"/>
+                     help=""
+        <help>
+           <text>
+             Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="chromosome 1"
+                 internal=   "'MAL1'"/>
+          <enumValue term="chromosome 2"
+                 internal=   "'MAL2'"/>
+          <enumValue term="chromosome 3"
+                 internal=   "'MAL3'"/>
+          <enumValue term="chromosome 4"
+                 internal=   "'MAL4'"/>
+          <enumValue term="chromosome 5"
+                 internal=   "'MAL5'"/>
+          <enumValue term="chromosome 6"
+                 internal=   "'MAL6'"/>
+          <enumValue term="chromosome 7"
+                 internal=   "'MAL7'"/>
+          <enumValue term="chromosome 8"
+                 internal=   "'MAL8'"/>
+          <enumValue term="chromosome 9"
+                 internal=   "'MAL9'"/>
+          <enumValue term="chromosome 10"
+                 internal=   "'MAL10'"/>
+          <enumValue term="chromosome 11"
+                 internal=   "'MAL11'"/>
+          <enumValue term="chromosome 12"
+                 internal=   "'MAL12'"/>
+          <enumValue term="chromosome 13"
+                 internal=   "'MAL13'"/>
+          <enumValue term="chromosome 14"
+                 internal=   "'MAL14'"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="chromosome_single"
+      <enumParam name="chromosome_single"
                      prompt="Chromosome"
-                     help="Pick a P. falciparum chromosome"
                      multiPick="false"
-                     queryRef="VocabQueries.Chromosome"/>
+        <help>
+           <text>
+             Pick a P. falciparum chromosome
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="chromosome 1"
+                 internal=   "'MAL1'"/>
+          <enumValue term="chromosome 2"
+                 internal=   "'MAL2'"/>
+          <enumValue term="chromosome 3"
+                 internal=   "'MAL3'"/>
+          <enumValue term="chromosome 4"
+                 internal=   "'MAL4'"/>
+          <enumValue term="chromosome 5"
+                 internal=   "'MAL5'"/>
+          <enumValue term="chromosome 6"
+                 internal=   "'MAL6'"/>
+          <enumValue term="chromosome 7"
+                 internal=   "'MAL7'"/>
+          <enumValue term="chromosome 8"
+                 internal=   "'MAL8'"/>
+          <enumValue term="chromosome 9"
+                 internal=   "'MAL9'"/>
+          <enumValue term="chromosome 10"
+                 internal=   "'MAL10'"/>
+          <enumValue term="chromosome 11"
+                 internal=   "'MAL11'"/>
+          <enumValue term="chromosome 12"
+                 internal=   "'MAL12'"/>
+          <enumValue term="chromosome 13"
+                 internal=   "'MAL13'"/>
+          <enumValue term="chromosome 14"
+                 internal=   "'MAL14'"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="snp_strain_a"
+      <flatVocabParam name="snp_strain_a"
+                     queryRef="VocabQueries.SnpStrainA"
 		     prompt="Reference"
-                     help="Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage"
-                     multiPick="false"
-                     queryRef="VocabQueries.SnpStrainA"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
+           </text>
+        </help>
+      </flatVocabParam>
 
-       <flatVocabParam name="snp_strain_b"
+      <flatVocabParam name="snp_strain_b"
+                     queryRef="VocabQueries.SnpStrainB"
 		     prompt="Comparator"
-                     help="Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage"
-                     multiPick="false"
-                     queryRef="VocabQueries.SnpStrainB"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
+           </text>
+        </help>
+      </flatVocabParam>
 
-       <flatVocabParam name="snp_strain_m"
+      <enumParam name="snp_strain_m"
 		     prompt="Comparator(s)"
-                     help="Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage"
                      multiPick="true"
-                     queryRef="VocabQueries.SnpStrainM"/>
+        <help>
+           <text>
+             Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Pf-7G8"
+                 internal=   "'7G8'"/>
+          <enumValue term="Pf-D10"
+                 internal=   "'D10'"/>
+          <enumValue term="Pf-DD2"
+                 internal=   "'DD2'"/>
+          <enumValue term="Pf-GHANA1"
+                 internal=   "'GHANA1'"/>
+          <enumValue term="Pf-HB3"
+                 internal=   "'HB3'"/>
+          <enumValue term="Pf-IT"
+                 internal=   "'IT'"/>
+          <enumValue term="P. reichenowi (vs. 3D7 only)"
+                 internal=   "'Preich'"/>
+          <enumValue term="Pf-3D7"
+                 internal=   "'3D7'"/>
+          <enumValue term="-----------"
+                 internal=   "'foobar'"/>
+          <enumValue term="Pf-106"
+                 internal=   "'106'"/>
+          <enumValue term="Pf-106/1"
+                 internal=   "'106/1'"/>
+          <enumValue term="Pf-D6"
+                 internal=   "'D6'"/>
+          <enumValue term="Pf-FCB"
+                 internal=   "'FCB'"/>
+          <enumValue term="Pf-FCC-2"
+                 internal=   "'FCC-2'"/>
+          <enumValue term="Pf-FCR3"
+                 internal=   "'FCR3'"/>
+          <enumValue term="Pf-K1"
+                 internal=   "'K1'"/>
+          <enumValue term="Pf-Malayan Camp"
+                 internal=   "'Malayan Camp'"/>
+          <enumValue term="Pf-RO33"
+                 internal=   "'RO33'"/>
+          <enumValue term="Pf-Santa Lucia"
+                 internal=   "'Santa Lucia'"/>
+          <enumValue term="Pf-Senegal 31.01"
+                 internal=   "'Senegal 31.01'"/>
+          <enumValue term="Pf-Senegal 34.04"
+                 internal=   "'Senegal 34.04'"/>
+          <enumValue term="Pf-Senegal 35.04"
+                 internal=   "'Senegal 35.04'"/>
+          <enumValue term="Pf-Senegal 51.02"
+                 internal=   "'Senegal 51.02'"/>
+          <enumValue term="Pf-VS-1"
+                 internal=   "'VS-1'"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="include_reichenowi"
+      <enumParam name="include_reichenowi"
 		     prompt="Include P. reichenowi"
-                     help="Click yes to include P. reichenowi snps in this query.  P.r snps were generated by alignment of P. reichenowi sequence with the P falciparum 3D7 reference sequence.  Note, if you want to only query reichenowi, you must click 'None' in the P. falciparum strains select list."
                      multiPick="false"
-                     queryRef="VocabQueries.IncludeReichenowi"/>
+        <help>
+           <text>
+             Click yes to include P. reichenowi snps in this query.  P.r snps were generated by alignment of P. reichenowi sequence with the P falciparum 3D7 reference sequence.  Note, if you want to only query reichenowi, you must click 'None' in the P. falciparum strains select list.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="No"
+                 internal=   "foobar"/>
+          <enumValue term="Yes"
+                 internal=   "Preich"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="include_only_queries"
+      <enumParam name="include_only_queries"
 		     prompt="Restrict to queries only"
-                     help="Click yes to to restrict the results returned to only those genes which have been input as query ids.  This allows you to determine the relatedness of your query set" 
                      multiPick="false"
-                     queryRef="VocabQueries.no_yes_list"/>
+        <help>
+           <text>
+             Click yes to to restrict the results returned to only those genes which have been input as query ids.  This allows you to determine the relatedness of your query set
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="No"
+                 internal=   "no"/>
+          <enumValue term="Yes"
+                 internal=   "yes"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="snp_stat"
+      <enumParam name="snp_stat"
 		     prompt="SNP Class"
-                     help="Choose the class of SNP you want to query on ... choose minumum and maximum numbers below"
                      multiPick="false"
-                     queryRef="VocabQueries.SnpStat"/>
+        <help>
+           <text>
+             Choose the class of SNP you want to query on ... choose minumum and maximum numbers below
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="All SNPs"
+                 internal=   "total"/>
+          <enumValue term="Coding"
+                 internal=   "non_synonymous + synonymous"/>
+          <enumValue term="Non-Coding"
+                 internal=   "non_coding"/>
+          <enumValue term="Non-Synonymous"
+                 internal=   "non_synonymous"/>
+          <enumValue term="Nonsense"
+                 internal=   "stop"/>
+          <enumValue term="Synonymous"
+                 internal=   "synonymous"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="snp_order"
+      <enumParam name="snp_order"
 		     prompt="Sort by"
-                     help="Results will be sorted on this column in descending order"
                      multiPick="false"
-                     queryRef="VocabQueries.SnpSort"/>
+        <help>
+           <text>
+             Results will be sorted on this column in descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="All SNPs"
+                 internal=   "total"/>
+          <enumValue term="Non-Coding SNPs"
+                 internal=   "non_coding"/>
+          <enumValue term="Non-Synonymous SNPs"
+                 internal=   "non_synonymous"/>
+          <enumValue term="Non-synonymous / Synonymous ratio"
+                 internal=   "dn_ds_ratio"/>
+          <enumValue term="Nonsense SNPs"
+                 internal=   "stop"/>
+          <enumValue term="SNP density in CDS"
+                 internal=   "cds_snp_density"/>
+          <enumValue term="Synonymous SNPs"
+                 internal=   "synonymous"/>
+        </enumList>
+      </enumParam>
 
-       <flatVocabParam name="sort_order"
+      <enumParam name="sort_order"
 		     prompt="Sort direction"
-                     help="Results will be sorted ascending or descending order"
                      multiPick="false"
-                     queryRef="VocabQueries.SortOrder"/>
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Descending"
+                 internal=   "DESC"/>
+          <enumValue term="Ascending"
+                 internal=   "ASC"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="profileSet"
+      <enumParam name="profileSet"
                      prompt="Microarray time course(s) to query"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileSet"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Any of the time courses"
+                 internal=   "DeRisi % Smoothed Averaged"/>
+          <enumValue term="Dev. Series 3D7 (glass slide), DeRisi"
+                 internal=   "DeRisi 3D7 Smoothed Averaged"/>
+          <enumValue term="Dev. Series Dd2 (glass slide), DeRisi"
+                 internal=   "DeRisi Dd2 Smoothed Averaged"/>
+          <enumValue term="Dev. Series HB3 (glass slide), DeRisi"
+                 internal=   "DeRisi HB3 Smoothed Averaged"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="waters_profilesets"
+      <enumParam name="waters_profilesets"
                      prompt="Microarray time course(s) to query"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.WatersProfileSets"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Either"
+                 internal=   "Waters HP% Percents Averaged"/>
+          <enumValue term="HP"
+                 internal=   "Waters HP Percents Averaged"/>
+          <enumValue term="HPE"
+                 internal=   "Waters HPE Percents Averaged"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="minOrMax"
+      <enumParam name="minOrMax"
                      prompt="Query based on"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.MinOrMax"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Timing of both max and min expression"
+                 internal=   "both"/>
+          <enumValue term="Timing of maximal expression"
+                 internal=   "max"/>
+          <enumValue term="Timing of minimal expression"
+                 internal=   "min"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="maxExprHour"
+      <enumParam name="maxExprHour"
                      prompt="Timing of maximal expression"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Hours48"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+          <enumValue term="25 hours"
+                 internal=   "25"/>
+          <enumValue term="26 hours"
+                 internal=   "26"/>
+          <enumValue term="27 hours"
+                 internal=   "27"/>
+          <enumValue term="28 hours"
+                 internal=   "28"/>
+          <enumValue term="29 hours"
+                 internal=   "29"/>
+          <enumValue term="30 hours"
+                 internal=   "30"/>
+          <enumValue term="31 hours"
+                 internal=   "31"/>
+          <enumValue term="32 hours"
+                 internal=   "32"/>
+          <enumValue term="33 hours"
+                 internal=   "33"/>
+          <enumValue term="34 hours"
+                 internal=   "34"/>
+          <enumValue term="35 hours"
+                 internal=   "35"/>
+          <enumValue term="36 hours"
+                 internal=   "36"/>
+          <enumValue term="37 hours"
+                 internal=   "37"/>
+          <enumValue term="38 hours"
+                 internal=   "38"/>
+          <enumValue term="39 hours"
+                 internal=   "39"/>
+          <enumValue term="40 hours"
+                 internal=   "40"/>
+          <enumValue term="41 hours"
+                 internal=   "41"/>
+          <enumValue term="42 hours"
+                 internal=   "42"/>
+          <enumValue term="43 hours"
+                 internal=   "43"/>
+          <enumValue term="44 hours"
+                 internal=   "44"/>
+          <enumValue term="45 hours"
+                 internal=   "45"/>
+          <enumValue term="46 hours"
+                 internal=   "46"/>
+          <enumValue term="47 hours"
+                 internal=   "47"/>
+          <enumValue term="48 hours"
+                 internal=   "48"/>
+        </enumList>
+      </enumParam>
 
-         <flatVocabParam name="maxPlusMinusHours"
+      <enumParam name="maxPlusMinusHours"
                      prompt="Maximal expression time plus or minus"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Hours24"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="minExprHour"
+      <enumParam name="minExprHour"
                      prompt="Timing of minimum expression"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Hours48"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+          <enumValue term="25 hours"
+                 internal=   "25"/>
+          <enumValue term="26 hours"
+                 internal=   "26"/>
+          <enumValue term="27 hours"
+                 internal=   "27"/>
+          <enumValue term="28 hours"
+                 internal=   "28"/>
+          <enumValue term="29 hours"
+                 internal=   "29"/>
+          <enumValue term="30 hours"
+                 internal=   "30"/>
+          <enumValue term="31 hours"
+                 internal=   "31"/>
+          <enumValue term="32 hours"
+                 internal=   "32"/>
+          <enumValue term="33 hours"
+                 internal=   "33"/>
+          <enumValue term="34 hours"
+                 internal=   "34"/>
+          <enumValue term="35 hours"
+                 internal=   "35"/>
+          <enumValue term="36 hours"
+                 internal=   "36"/>
+          <enumValue term="37 hours"
+                 internal=   "37"/>
+          <enumValue term="38 hours"
+                 internal=   "38"/>
+          <enumValue term="39 hours"
+                 internal=   "39"/>
+          <enumValue term="40 hours"
+                 internal=   "40"/>
+          <enumValue term="41 hours"
+                 internal=   "41"/>
+          <enumValue term="42 hours"
+                 internal=   "42"/>
+          <enumValue term="43 hours"
+                 internal=   "43"/>
+          <enumValue term="44 hours"
+                 internal=   "44"/>
+          <enumValue term="45 hours"
+                 internal=   "45"/>
+          <enumValue term="46 hours"
+                 internal=   "46"/>
+          <enumValue term="47 hours"
+                 internal=   "47"/>
+          <enumValue term="48 hours"
+                 internal=   "48"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="minPlusMinusHours"
+      <enumParam name="minPlusMinusHours"
                      prompt="Minimum expression time plus or minus"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Hours24"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="inductionFold"
+      <enumParam name="inductionFold"
                      prompt="Induction ratio cut-off"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.InductionFold"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="-- None --"
+                 internal=   "0"/>
+          <enumValue term=">= 2 fold induction"
+                 internal=   "2"/>
+          <enumValue term=">= 4 fold induction"
+                 internal=   "4"/>
+          <enumValue term=">= 8 fold induction"
+                 internal=   "8"/>
+          <enumValue term=">= 16 fold induction"
+                 internal=   "16"/>
+          <enumValue term=">= 32 fold induction"
+                 internal=   "32"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="expressionPct"
+      <enumParam name="expressionPct"
                      prompt="Maximum percentile cut-off"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Percentile"/>
-
-        <flatVocabParam name="pfGenomicSequence"
-                     prompt="Genomic Sequence"
                      help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="-- None --"
+                 internal=   "0"/>
+          <enumValue term=">= 10th percentile"
+                 internal=   "10"/>
+          <enumValue term=">= 20th percentile"
+                 internal=   "20"/>
+          <enumValue term=">= 30th percentile"
+                 internal=   "30"/>
+          <enumValue term=">= 40th percentile"
+                 internal=   "40"/>
+          <enumValue term=">= 50th percentile"
+                 internal=   "50"/>
+          <enumValue term=">= 60th percentile"
+                 internal=   "60"/>
+          <enumValue term=">= 70th percentile"
+                 internal=   "70"/>
+          <enumValue term=">= 80th percentile"
+                 internal=   "80"/>
+          <enumValue term=">= 90th percentile"
+                 internal=   "90"/>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="pfGenomicSequence"
+                     prompt="Genomic Sequence"
                      multiPick="false"
-                     queryRef="VocabQueries.PfGenomicSequence"/>
-
-        <flatVocabParam name="pfNonnuclearSequence"
-                     prompt="Genomic Sequence"
                      help=""
-                     multiPick="true"
-                     queryRef="VocabQueries.PfNonnuclearSequence"/>
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="chromosome 1"
+                 internal=   "'MAL1'"/>
+          <enumValue term="chromosome 2"
+                 internal=   "'MAL2'"/>
+          <enumValue term="chromosome 3"
+                 internal=   "'MAL3'"/>
+          <enumValue term="chromosome 4"
+                 internal=   "'MAL4'"/>
+          <enumValue term="chromosome 5"
+                 internal=   "'MAL5'"/>
+          <enumValue term="chromosome 6"
+                 internal=   "'MAL6'"/>
+          <enumValue term="chromosome 7"
+                 internal=   "'MAL7'"/>
+          <enumValue term="chromosome 8"
+                 internal=   "'MAL8'"/>
+          <enumValue term="chromosome 9"
+                 internal=   "'MAL9'"/>
+          <enumValue term="chromosome 10"
+                 internal=   "'MAL10'"/>
+          <enumValue term="chromosome 11"
+                 internal=   "'MAL11'"/>
+          <enumValue term="chromosome 12"
+                 internal=   "'MAL12'"/>
+          <enumValue term="chromosome 13"
+                 internal=   "'MAL13'"/>
+          <enumValue term="chromosome 14"
+                 internal=   "'MAL14'"/>
+          <enumValue term="mitochondrial genome"
+                 internal=   "'AJ276844'"/>
+          <enumValue term="plastid IR-A"
+                 internal=   "'X95275'"/>
+          <enumValue term="plastid IR-B"
+                 internal=   "'X95276'"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="pfGenomicSequenceMultipick"
+      <enumParam name="pfNonnuclearSequence"
                      prompt="Genomic Sequence"
-                     help=""
                      multiPick="true"
-                     queryRef="VocabQueries.PfGenomicSequence"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="mitochondrial genome"
+                 internal=   "'AJ276844'"/>
+          <enumValue term="plastid IR-A"
+                 internal=   "'X95275'"/>
+          <enumValue term="plastid IR-B"
+                 internal=   "'X95276'"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="pfGenomicSequenceOrNot"
+      <enumParam name="pfGenomicSequenceMultipick"
+                     prompt="Genomic Sequence"
+                     multiPick="true"
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="chromosome 1"
+                 internal=   "'MAL1'"/>
+          <enumValue term="chromosome 2"
+                 internal=   "'MAL2'"/>
+          <enumValue term="chromosome 3"
+                 internal=   "'MAL3'"/>
+          <enumValue term="chromosome 4"
+                 internal=   "'MAL4'"/>
+          <enumValue term="chromosome 5"
+                 internal=   "'MAL5'"/>
+          <enumValue term="chromosome 6"
+                 internal=   "'MAL6'"/>
+          <enumValue term="chromosome 7"
+                 internal=   "'MAL7'"/>
+          <enumValue term="chromosome 8"
+                 internal=   "'MAL8'"/>
+          <enumValue term="chromosome 9"
+                 internal=   "'MAL9'"/>
+          <enumValue term="chromosome 10"
+                 internal=   "'MAL10'"/>
+          <enumValue term="chromosome 11"
+                 internal=   "'MAL11'"/>
+          <enumValue term="chromosome 12"
+                 internal=   "'MAL12'"/>
+          <enumValue term="chromosome 13"
+                 internal=   "'MAL13'"/>
+          <enumValue term="chromosome 14"
+                 internal=   "'MAL14'"/>
+          <enumValue term="mitochondrial genome"
+                 internal=   "'AJ276844'"/>
+          <enumValue term="plastid IR-A"
+                 internal=   "'X95275'"/>
+          <enumValue term="plastid IR-B"
+                 internal=   "'X95276'"/>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="pfGenomicSequenceOrNot"
                      prompt="P. falciparum Genomic Sequence"
-                     help=""
                      multiPick="false"
                      default="choose one"
-                     queryRef="VocabQueries.PfGenomicSequenceOrNot"/>
+                     help=""
+        <help>
+           <text>
+             Results will be sorted ascending or descending order
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="choose one"
+                 internal=   "'choose one'"/>
+          <enumValue term="chromosome 1"
+                 internal=   "'MAL1'"/>
+          <enumValue term="chromosome 2"
+                 internal=   "'MAL2'"/>
+          <enumValue term="chromosome 3"
+                 internal=   "'MAL3'"/>
+          <enumValue term="chromosome 4"
+                 internal=   "'MAL4'"/>
+          <enumValue term="chromosome 5"
+                 internal=   "'MAL5'"/>
+          <enumValue term="chromosome 6"
+                 internal=   "'MAL6'"/>
+          <enumValue term="chromosome 7"
+                 internal=   "'MAL7'"/>
+          <enumValue term="chromosome 8"
+                 internal=   "'MAL8'"/>
+          <enumValue term="chromosome 9"
+                 internal=   "'MAL9'"/>
+          <enumValue term="chromosome 10"
+                 internal=   "'MAL10'"/>
+          <enumValue term="chromosome 11"
+                 internal=   "'MAL11'"/>
+          <enumValue term="chromosome 12"
+                 internal=   "'MAL12'"/>
+          <enumValue term="chromosome 13"
+                 internal=   "'MAL13'"/>
+          <enumValue term="chromosome 14"
+                 internal=   "'MAL14'"/>
+          <enumValue term="mitochondrial genome"
+                 internal=   "'AJ276844'"/>
+          <enumValue term="plastid IR-A"
+                 internal=   "'X95275'"/>
+          <enumValue term="plastid IR-B"
+                 internal=   "'X95276'"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="genomicSequence"
-                     prompt="Genomic Sequence ID"
-                     help="ID of genomic sequence to search for genes (e.g. ctg_7202)"
-                     sample="(Examples: MAL4, ctg_4094)"/>
-
-        <stringParam name="start_location"
-                     prompt="Start Location"
-                     help="Lower bound on nucleotide range to search for gene"
-                     default="1"/>
-
-        <stringParam name="end_location"
-                     prompt="End Location"
-                     help="Upper bound on nucleotide range to search for gene.  Use a number larger than the sequence length to search to the end of the sequence."
-                     default="10000000000"/>
-
-        <stringParam name="min_expression_percentile"
-                     prompt="Minimum expression percentile"
-                     help="Lower bound on expression percentile."
-                     default="50"/>
-
-        <stringParam name="max_expression_percentile"
-                     prompt="Maximum expression percentile"
-                     help="Upper bound on expression percentile."
-                     default="100"/>
-
-        <stringParam name="r_min_expression_percentile"
-                     prompt="Rings min percentile"
-                     help="Lower bound on expression percentile."
-                     default="0"/>
-
-        <stringParam name="r_max_expression_percentile"
-                     prompt="Rings max percentile"
-                     help="Upper bound on expression percentile."
-                     default="100"/>
-
-        <stringParam name="yt_min_expression_percentile"
-                     prompt="Early trophs min percentile"
-                     help="Lower bound on expression percentile."
-                     default="0"/>
-
-        <stringParam name="yt_max_expression_percentile"
-                     prompt="Early trophs max percentile"
-                     help="Upper bound on expression percentile."
-                     default="100"/>
-
-        <stringParam name="ys_min_expression_percentile"
-                     prompt="Early schizont min percentile"
-                     help="Lower bound on expression percentile."
-                     default="0"/>
-
-        <stringParam name="ys_max_expression_percentile"
-                     prompt="Early schizont max percentile"
-                     help="Upper bound on expression percentile."
-                     default="100"/>
-
-        <stringParam name="ms_min_expression_percentile"
-                     prompt="Late schizont min percentile"
-                     help="Lower bound on expression percentile."
-                     default="0"/>
-
-        <stringParam name="ms_max_expression_percentile"
-                     prompt="Late schizont max percentile"
-                     help="Upper bound on expression percentile."
-                     default="100"/>
-
-        <flatVocabParam name="extraerythrocytic_stages"
+      <flatVocabParam name="extraerythrocytic_stages"
+                     queryRef="VocabQueries.ExtraerythrocyticStages"
                      prompt="Extraerythrocytic Lifecycle Stage"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.ExtraerythrocyticStages"/>
+                     help="">
+        <help>
+           <text>
+             Upper bound on expression percentile.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="intraerythrocytic_stages"
+      <flatVocabParam name="intraerythrocytic_stages"
+                     queryRef="VocabQueries.IntraerythrocyticStages"
                      prompt="Intraerythrocytic Lifecycle Stage"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.IntraerythrocyticStages"/>
+                     help="">
+        <help>
+           <text>
+             Upper bound on expression percentile.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="synchronization"
+      <enumParam name="synchronization"
                      prompt="Synchronization"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Synchronization"/>
+                     help=""
+        <help>
+           <text>
+             Upper bound on expression percentile.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Sorbitol"
+                 internal=   "'winzeler_cc_sorbPct'"/>
+          <enumValue term="Temperature"
+                 internal=   "'winzeler_cc_tempPct'"/>
+          <enumValue term="Either"
+                 internal=   "'winzeler_cc_sorbPct', 'winzeler_cc_tempPct'"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="localization"
+      <enumParam name="localization"
                      prompt="Localization"
-                     help=""
                      multiPick="false"
-                     queryRef="VocabQueries.Localization"/>
+                     help=""
+        <help>
+           <text>
+             Upper bound on expression percentile.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Apicoplast"
+                 internal=   "apicoplast"/>
+          <enumValue term="RBC membrane (Pexel motif)"
+                 internal=   "pexel"/>
+          <enumValue term="RBC membrane (HT motif)"
+                 internal=   "ht"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="ortholog_pattern"
-                     prompt="Ortholog pattern"
-                     help="This will be generated by clicking the species tree nodes."
-                     default=""/>
-
-        <flatVocabParam name="phyletic_indent_map"
+      <enumParam name="phyletic_indent_map"
                      visible="false"
-                     queryRef="VocabQueries.PhyleticIndentMap"/>
+        <help>
+           <text>
+             This will be generated by clicking the species tree nodes.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Archaea"
+                 internal=   "0"/>
+          <enumValue term="hal"
+                 internal=   "1"/>
+          <enumValue term="mja"
+                 internal=   "1"/>
+          <enumValue term="neq"
+                 internal=   "1"/>
+          <enumValue term="sso"
+                 internal=   "1"/>
+          <enumValue term="Bacteria"
+                 internal=   "0"/>
+          <enumValue term="aae"
+                 internal=   "1"/>
+          <enumValue term="ban"
+                 internal=   "1"/>
+          <enumValue term="cpe"
+                 internal=   "1"/>
+          <enumValue term="cpn"
+                 internal=   "1"/>
+          <enumValue term="cte"
+                 internal=   "1"/>
+          <enumValue term="det"
+                 internal=   "1"/>
+          <enumValue term="dra"
+                 internal=   "1"/>
+          <enumValue term="lmo"
+                 internal=   "1"/>
+          <enumValue term="mtu"
+                 internal=   "1"/>
+          <enumValue term="rba"
+                 internal=   "1"/>
+          <enumValue term="sau"
+                 internal=   "1"/>
+          <enumValue term="spn"
+                 internal=   "1"/>
+          <enumValue term="syn"
+                 internal=   "1"/>
+          <enumValue term="tma"
+                 internal=   "1"/>
+          <enumValue term="tpa"
+                 internal=   "1"/>
+          <enumValue term="Proteobacteria"
+                 internal=   "1"/>
+          <enumValue term="atu"
+                 internal=   "2"/>
+          <enumValue term="bsu"
+                 internal=   "2"/>
+          <enumValue term="bur"
+                 internal=   "2"/>
+          <enumValue term="cbu"
+                 internal=   "2"/>
+          <enumValue term="cje"
+                 internal=   "2"/>
+          <enumValue term="eco"
+                 internal=   "2"/>
+          <enumValue term="ftu"
+                 internal=   "2"/>
+          <enumValue term="gsu"
+                 internal=   "2"/>
+          <enumValue term="rso"
+                 internal=   "2"/>
+          <enumValue term="rty"
+                 internal=   "2"/>
+          <enumValue term="sfl"
+                 internal=   "2"/>
+          <enumValue term="sty"
+                 internal=   "2"/>
+          <enumValue term="vch"
+                 internal=   "2"/>
+          <enumValue term="wsu"
+                 internal=   "2"/>
+          <enumValue term="ype"
+                 internal=   "2"/>
+          <enumValue term="Eukaryota"
+                 internal=   "0"/>
+          <enumValue term="ddi"
+                 internal=   "1"/>
+          <enumValue term="ehi"
+                 internal=   "1"/>
+          <enumValue term="gla"
+                 internal=   "1"/>
+          <enumValue term="Alveolates"
+                 internal=   "1"/>
+          <enumValue term="Ciliates"
+                 internal=   "2"/>
+          <enumValue term="tth"
+                 internal=   "3"/>
+          <enumValue term="Apicomplexa"
+                 internal=   "2"/>
+          <enumValue term="Coccidia"
+                 internal=   "3"/>
+          <enumValue term="cho"
+                 internal=   "4"/>
+          <enumValue term="cpa"
+                 internal=   "4"/>
+          <enumValue term="tgo"
+                 internal=   "4"/>
+          <enumValue term="Haemosporida"
+                 internal=   "3"/>
+          <enumValue term="pbe"
+                 internal=   "4"/>
+          <enumValue term="pch"
+                 internal=   "4"/>
+          <enumValue term="pfa"
+                 internal=   "4"/>
+          <enumValue term="pvi"
+                 internal=   "4"/>
+          <enumValue term="pyo"
+                 internal=   "4"/>
+          <enumValue term="pkn"
+                 internal=   "4"/>
+          <enumValue term="Piroplasmida"
+                 internal=   "3"/>
+          <enumValue term="the"
+                 internal=   "4"/>
+          <enumValue term="tan"
+                 internal=   "4"/>
+          <enumValue term="Kinetoplastida"
+                 internal=   "1"/>
+          <enumValue term="lma"
+                 internal=   "2"/>
+          <enumValue term="tbr"
+                 internal=   "2"/>
+          <enumValue term="tcr"
+                 internal=   "2"/>
+          <enumValue term="Plants/Algae"
+                 internal=   "1"/>
+          <enumValue term="ath"
+                 internal=   "2"/>
+          <enumValue term="cre"
+                 internal=   "2"/>
+          <enumValue term="cme"
+                 internal=   "2"/>
+          <enumValue term="gth"
+                 internal=   "2"/>
+          <enumValue term="osa"
+                 internal=   "2"/>
+          <enumValue term="ota"
+                 internal=   "2"/>
+          <enumValue term="tps"
+                 internal=   "2"/>
+          <enumValue term="Fungi"
+                 internal=   "1"/>
+          <enumValue term="ago"
+                 internal=   "2"/>
+          <enumValue term="aor"
+                 internal=   "2"/>
+          <enumValue term="cgl"
+                 internal=   "2"/>
+          <enumValue term="cne"
+                 internal=   "2"/>
+          <enumValue term="dha"
+                 internal=   "2"/>
+          <enumValue term="ecu"
+                 internal=   "2"/>
+          <enumValue term="kla"
+                 internal=   "2"/>
+          <enumValue term="ncr"
+                 internal=   "2"/>
+          <enumValue term="pha"
+                 internal=   "2"/>
+          <enumValue term="sce"
+                 internal=   "2"/>
+          <enumValue term="sma"
+                 internal=   "2"/>
+          <enumValue term="spo"
+                 internal=   "2"/>
+          <enumValue term="yli"
+                 internal=   "2"/>
+          <enumValue term="Animals"
+                 internal=   "1"/>
+          <enumValue term="Nematodes"
+                 internal=   "2"/>
+          <enumValue term="bma"
+                 internal=   "3"/>
+          <enumValue term="cel"
+                 internal=   "3"/>
+          <enumValue term="cbr"
+                 internal=   "3"/>
+          <enumValue term="Arthropoda"
+                 internal=   "2"/>
+          <enumValue term="aed"
+                 internal=   "3"/>
+          <enumValue term="aga"
+                 internal=   "3"/>
+          <enumValue term="ame"
+                 internal=   "3"/>
+          <enumValue term="dme"
+                 internal=   "3"/>
+          <enumValue term="Vertebrates"
+                 internal=   "2"/>
+          <enumValue term="Bony Fish"
+                 internal=   "3"/>
+          <enumValue term="cin"
+                 internal=   "4"/>
+          <enumValue term="dre"
+                 internal=   "4"/>
+          <enumValue term="fru"
+                 internal=   "4"/>
+          <enumValue term="tni"
+                 internal=   "4"/>
+          <enumValue term="Tetrapoda"
+                 internal=   "3"/>
+          <enumValue term="Birds"
+                 internal=   "4"/>
+          <enumValue term="gga"
+                 internal=   "5"/>
+          <enumValue term="Mammals"
+                 internal=   "4"/>
+          <enumValue term="hsa"
+                 internal=   "5"/>
+          <enumValue term="mmu"
+                 internal=   "5"/>
+          <enumValue term="rno"
+                 internal=   "5"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="phyletic_term_map"
+      <enumParam name="phyletic_term_map"
                      visible="false"
-                     queryRef="VocabQueries.PhyleticTermMap"/>
+        <help>
+           <text>
+             This will be generated by clicking the species tree nodes.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="aed"
+                 internal=   "Aedes aegypti"/>
+          <enumValue term="atu"
+                 internal=   "Agrobacterium tumefaciens C58 Uwash"/>
+          <enumValue term="aga"
+                 internal=   "Anopheles gambiae PEST"/>
+          <enumValue term="ame"
+                 internal=   "Apis mellifera"/>
+          <enumValue term="aae"
+                 internal=   "Aquifex aeolicus VF5"/>
+          <enumValue term="ath"
+                 internal=   "Arabidopsis thaliana"/>
+          <enumValue term="ago"
+                 internal=   "Ashbya gossypii"/>
+          <enumValue term="aor"
+                 internal=   "Aspergillus oryzae"/>
+          <enumValue term="ban"
+                 internal=   "Bacillus anthracis Ames"/>
+          <enumValue term="bsu"
+                 internal=   "Brucella suis 1330"/>
+          <enumValue term="bma"
+                 internal=   "Brugia malayi"/>
+          <enumValue term="bur"
+                 internal=   "Burkholderia mallei ATCC 23344"/>
+          <enumValue term="cbr"
+                 internal=   "Caenorhabditis briggsae"/>
+          <enumValue term="cel"
+                 internal=   "Caenorhabditis elegans"/>
+          <enumValue term="cje"
+                 internal=   "Campylobacter jejuni subsp. jejuni NCTC 11168"/>
+          <enumValue term="cgl"
+                 internal=   "Candida glabrate CBS138"/>
+          <enumValue term="cre"
+                 internal=   "Chlamydomonas reinhardtii"/>
+          <enumValue term="cpn"
+                 internal=   "Chlamydophila pneumoniae CWL029"/>
+          <enumValue term="cte"
+                 internal=   "Chlorobium tepidum TLS"/>
+          <enumValue term="cin"
+                 internal=   "Ciona intestinalis"/>
+          <enumValue term="cpe"
+                 internal=   "Clostridium perfringens str. 13"/>
+          <enumValue term="cbu"
+                 internal=   "Coxiella burnetii RSA 493"/>
+          <enumValue term="cne"
+                 internal=   "Cryptococcus neoformans"/>
+          <enumValue term="cho"
+                 internal=   "Cryptosporidium hominis TU502 (Type 1)"/>
+          <enumValue term="cpa"
+                 internal=   "Cryptosporidium parvum Iowa (Type2)"/>
+          <enumValue term="cme"
+                 internal=   "Cyanodioschyzon merolae 10D"/>
+          <enumValue term="dre"
+                 internal=   "Danio rerio"/>
+          <enumValue term="dha"
+                 internal=   "Debaryomyces hansenii CBS767"/>
+          <enumValue term="det"
+                 internal=   "Dehalococcoides ethenogenes 195"/>
+          <enumValue term="dra"
+                 internal=   "Deinococcus radiodurans R1"/>
+          <enumValue term="ddi"
+                 internal=   "Dictyostelium discoideum"/>
+          <enumValue term="dme"
+                 internal=   "Drosophila melanogaster"/>
+          <enumValue term="ecu"
+                 internal=   "Encephalitozoon cuniculi"/>
+          <enumValue term="ehi"
+                 internal=   "Entamoeba histolytica"/>
+          <enumValue term="eco"
+                 internal=   "Escherichia coli K12"/>
+          <enumValue term="ftu"
+                 internal=   "Francisella tularensis subsp. tularensis SCHU S4"/>
+          <enumValue term="fru"
+                 internal=   "Fugu rubripes"/>
+          <enumValue term="gga"
+                 internal=   "Gallus gallus"/>
+          <enumValue term="gsu"
+                 internal=   "Geobacter sulfurreducens PCA"/>
+          <enumValue term="gla"
+                 internal=   "Giardia lamblia ATCC 50803"/>
+          <enumValue term="gth"
+                 internal=   "Guillardia theta"/>
+          <enumValue term="hal"
+                 internal=   "Halobacterium sp. NRC-1"/>
+          <enumValue term="hsa"
+                 internal=   "Homo sapiens"/>
+          <enumValue term="kla"
+                 internal=   "Kluyveromyces lactis CLIB210"/>
+          <enumValue term="lma"
+                 internal=   "Leishmania major"/>
+          <enumValue term="lmo"
+                 internal=   "Listeria monocytogenes EGD-e"/>
+          <enumValue term="mja"
+                 internal=   "Methanococcus jannaschii DSSM 2661"/>
+          <enumValue term="mmu"
+                 internal=   "Mus musculus"/>
+          <enumValue term="mtu"
+                 internal=   "Mycobacterium tuberculosis H37Rv"/>
+          <enumValue term="neq"
+                 internal=   "Nanoarchaeum equitans Kin4-M"/>
+          <enumValue term="ncr"
+                 internal=   "Neurospora crassa OR74A"/>
+          <enumValue term="osa"
+                 internal=   "Oryza sativa"/>
+          <enumValue term="ota"
+                 internal=   "Ostreococcus tauri"/>
+          <enumValue term="pha"
+                 internal=   "Phanerochaete chrysosporium"/>
+          <enumValue term="pbe"
+                 internal=   "Plasmodium berghei"/>
+          <enumValue term="pch"
+                 internal=   "Plasmodium chabaudi"/>
+          <enumValue term="pfa"
+                 internal=   "Plasmodium falciparum 3D7"/>
+          <enumValue term="pkn"
+                 internal=   "Plasmodium knowlesi"/>
+          <enumValue term="pvi"
+                 internal=   "Plasmodium vivax"/>
+          <enumValue term="pyo"
+                 internal=   "Plasmodium yoelii 17XNL"/>
+          <enumValue term="rso"
+                 internal=   "Ralstonia solanacearum GMI1000"/>
+          <enumValue term="rno"
+                 internal=   "Rattus norvegicus"/>
+          <enumValue term="rba"
+                 internal=   "Rhodopirellula baltica SH_1"/>
+          <enumValue term="rty"
+                 internal=   "Rickettsia typhi str. Wilmington"/>
+          <enumValue term="sce"
+                 internal=   "Saccharomyces cerevisiae S288C"/>
+          <enumValue term="sty"
+                 internal=   "Salmonella enterica subsp. enterica serovar Typhi str. CT18"/>
+          <enumValue term="sma"
+                 internal=   "Schistosoma mansoni"/>
+          <enumValue term="spo"
+                 internal=   "Schizosaccharomyces pombe"/>
+          <enumValue term="sfl"
+                 internal=   "Shigella flexneri 2a str. 301"/>
+          <enumValue term="sau"
+                 internal=   "Staphylococcus aureus subsp. aureus Mu50"/>
+          <enumValue term="spn"
+                 internal=   "Streptococcus pneumoniae TIGR4"/>
+          <enumValue term="sso"
+                 internal=   "Sulfolobus solfataricus P2"/>
+          <enumValue term="syn"
+                 internal=   "Synechococcus sp. WH8102"/>
+          <enumValue term="tth"
+                 internal=   "Tetrahymena thermophila"/>
+          <enumValue term="tni"
+                 internal=   "Tetraodon nigroviridis"/>
+          <enumValue term="tps"
+                 internal=   "Thalassiosira pseudonana"/>
+          <enumValue term="tan"
+                 internal=   "Theileria annulata"/>
+          <enumValue term="the"
+                 internal=   "Theileria parva"/>
+          <enumValue term="tma"
+                 internal=   "Thermotoga maritima MSB8"/>
+          <enumValue term="tgo"
+                 internal=   "Toxoplasma gondii"/>
+          <enumValue term="tpa"
+                 internal=   "Treponema pallidum subsp. pallidum str. Nichols"/>
+          <enumValue term="tbr"
+                 internal=   "Trypanosoma brucei"/>
+          <enumValue term="tcr"
+                 internal=   "Trypanosoma cruzi"/>
+          <enumValue term="vch"
+                 internal=   "Vibrio cholerae O1 biovar eltor str. N16961"/>
+          <enumValue term="wsu"
+                 internal=   "Wolinella succinogenes DSM 1740"/>
+          <enumValue term="yli"
+                 internal=   "Yarrowia lipolytica CLIB99"/>
+          <enumValue term="ype"
+                 internal=   "Yersinia pestis CO92"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="metabolic_pathway"
+      <flatVocabParam name="metabolic_pathway"
+                     queryRef="VocabQueries.MetabolicPathways"
                      prompt="Metabolic Pathway"
                      help=""
-                     multiPick="false"
-                     queryRef="VocabQueries.MetabolicPathways"/>
+                     multiPick="false">
+        <help>
+           <text>
+             This will be generated by clicking the species tree nodes.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="mr4_reagent_type"
+      <flatVocabParam name="mr4_reagent_type"
+                     queryRef="VocabQueries.Mr4Reagents"
                      prompt="Reagent Type"
-                     help="Choose a reagent type"
-                     multiPick="false"
-                     queryRef="VocabQueries.Mr4Reagents"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Choose a reagent type
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <flatVocabParam name="Dataset"
+      <enumParam name="Dataset"
                         prompt="Organism"
-                        help="Choose one or more organisms to search with the given motif"
 			multiPick="true"
-                        queryRef="VocabQueries.MotifDataset"/>
+        <help>
+           <text>
+             Choose one or more organisms to search with the given motif
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="P. falciparum"
+                 internal=   "Pfalciparum/PfalciparumAnnotatedProteins_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. vivax"
+                 internal=   "Pvivax/PvivaxAnnotatedProteins_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. yoelii"
+                 internal=   "Pyoelii/PyoeliiAnnotatedProteins_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. berghei"
+                 internal=   "Pberghei/PbergheiAnnotatedProteins_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi/PchabaudiAnnotatedProteins_plasmoDB-5.3.fasta"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="Expression"
-                     prompt="Pattern"
-                     help="Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine."
-                     sample="(Example: CC6+RK)"
-                     default="CC6+RK"/>
+      <enumParam name="asexual_blood_stages_value"
+                     prompt="Asexual blood stages"
+        <help>
+           <text>
+             mininum requirement of score by ExportPred algorithm
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="do not care"
+                 internal=   "any"/>
+          <enumValue term="not observed"
+                 internal=   "0"/>
+          <enumValue term="observed"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="min_isoelectric_point"
-                     prompt="Min Isoelectric Point"
-                     help="Lower bound for the protein isoelectric point"
-                     default="6"/>
+      <enumParam name="gametocytes_value"
+                     prompt="Gametocytes"
+        <help>
+           <text>
+             mininum requirement of score by ExportPred algorithm
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="do not care"
+                 internal=   "any"/>
+          <enumValue term="not observed"
+                 internal=   "0"/>
+          <enumValue term="observed"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="max_isoelectric_point"
-                     prompt="Max Isoelectric Point"
-                     help="Upper bound for the protein isoelectric point"
-                     default="10"/>
+      <enumParam name="ookinetes_value"
+                     prompt="Ookinetes"
+        <help>
+           <text>
+             mininum requirement of score by ExportPred algorithm
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="do not care"
+                 internal=   "any"/>
+          <enumValue term="not observed"
+                 internal=   "0"/>
+          <enumValue term="observed"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="min_molecular_weight"
-                     prompt="Min Molecular Weight (Daltons)"
-                     help="Lower bound for the protein molecular weight"
-                     default="10000"/>
+      <enumParam name="oocysts_value"
+                     prompt="Oocysts"
+        <help>
+           <text>
+             mininum requirement of score by ExportPred algorithm
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="do not care"
+                 internal=   "any"/>
+          <enumValue term="not observed"
+                 internal=   "0"/>
+          <enumValue term="observed"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="max_molecular_weight"
-                     prompt="Max Molecular Weight (Daltons)"
-                     help="Upper bound for the protein molecular weight"
-                     default="50000"/>
+      <enumParam name="sporozoites_value"
+                     prompt="Sporozoites"
+        <help>
+           <text>
+             mininum requirement of score by ExportPred algorithm
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="do not care"
+                 internal=   "any"/>
+          <enumValue term="not observed"
+                 internal=   "0"/>
+          <enumValue term="observed"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="profile_pattern"
-                     visible="false"
-                     prompt="Profile Pattern"
-                     help="Example: '%hsa:N%pfa:Y%'"
-                     default="%hsa:N%pfa:Y%"/>
-
-        <stringParam name="included_species"
-                     prompt="Included Species"
-                     help="List of included species (for documentation only)"/>
-
-        <stringParam name="excluded_species"
-                     prompt="Excluded Species"
-                     help="List of excluded species (for documentation only)"/>
-
-        <stringParam name="min_exportpred_score"
-                     prompt="Minimum ExportPred Score"
-                     help="mininum requirement of score by ExportPred algorithm"
-                     default="10"/>
-
-        <flatVocabParam name="asexual_blood_stages_value"
-                     queryRef="VocabQueries.ObservedNotObserved"
-                     prompt="Asexual blood stages"/>
-        <flatVocabParam name="gametocytes_value"
-                     queryRef="VocabQueries.ObservedNotObserved"
-                     prompt="Gametocytes"/>
-        <flatVocabParam name="ookinetes_value"
-                     queryRef="VocabQueries.ObservedNotObserved"
-                     prompt="Ookinetes"/>
-        <flatVocabParam name="oocysts_value"
-                     queryRef="VocabQueries.ObservedNotObserved"
-                     prompt="Oocysts"/>
-        <flatVocabParam name="sporozoites_value"
-                     queryRef="VocabQueries.ObservedNotObserved"
-                     prompt="Sporozoites"/>
-        <stringParam name="min_interaction"
-                     prompt="Minimum Likelihood Score"
-                     help="Set a minimum for the likelihood of interaction"
-                     substitute="yes"
-                     default="2"/>
-
-        <flatVocabParam name="mass_spec_stage"
+      <enumParam name="mass_spec_stage"
                      prompt="Lifecycle Stage"
-                     help="Select a lifecycle stage from the list provided."
                      multiPick="false"
-                     queryRef="VocabQueries.MassSpecStage"/>
+        <help>
+           <text>
+             Select a lifecycle stage from the list provided.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="any"
+                 internal=   "any"/>
+          <enumValue term="Troph/Schizont"
+                 internal=   "FWTrophSchizont"/>
+          <enumValue term="iRBC Membrane"
+                 internal=   "iRBCmembrane"/>
+          <enumValue term="Gametocyte"
+                 internal=   "gametocyte"/>
+          <enumValue term="Merozoite"
+                 internal=   "merozoite"/>
+          <enumValue term="Sporozoite"
+                 internal=   "sporozoite"/>
+          <enumValue term="Trophozoite"
+                 internal=   "trophozoite"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="min_seq_coverage"
-                     prompt="Minimum Percent Sequence Coverage"
-                     help="Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%."
-                     substitute="yes"
-                     default="0"/>
-
-        <stringParam name="min_span_count"
-                     prompt="Minimum Number of Spans"
-                     help="Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned"
-                     substitute="yes"
-                     default="2"/>
-
-        <stringParam name="min_spectrum_count"
-                     prompt="Minimum Number of Spectra"
-                     help="Use this parameter to set a minimum for the number of mass spectra found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment."
-                     substitute="yes"
-                     default="1"/>
-
-        <stringParam name="genbank_accession"
-                     prompt="GenBank Accession Number"
-                     help="Enter a GenBank Accession number"
-                     substitute="yes"
-                     default="1575532"/>
-
-        <stringParam name="distanceFromTelomere"
-	             prompt="Maximum Distance from Telomere"
-		     help="Enter an upper bound on the distance."
-		     substitute="yes"
-		     default="30000"/>
-
-        <stringParam name="percentLowComplexity"
-	             prompt="Percent of Low Complexity in Protein"
-		     help="Enter an lower bound on the percent of low complexity."
-		     substitute="yes"
-		     default="30"/>
-
-        <stringParam name="max_centromere_distance"
-                     prompt="Maximum Distance from Centromere"
-                     help="Enter an upper bound on the distance"
-                     substitute="yes"
-                     default="10000"/>
-
-        <stringParam name="start_point"
-                     prompt="Start at"
-                     help="Select the distance (in nucleotides) to the start"
-                     substitute="yes"
-                     default="1"/>
-
-        <flatVocabParam name="start_from"
+      <enumParam name="start_from"
                      prompt="Start Location"
-                     help="Select whether to measure the start point from the beginning or end of the sequence"
                      multiPick="false"
-                     queryRef="VocabQueries.WhichEnd"/>
+        <help>
+           <text>
+             Select whether to measure the start point from the beginning or end of the sequence
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="beginning"
+                 internal=   "beginning"/>
+          <enumValue term="end"
+                 internal=   "end"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="end_point"
-                     prompt="End Location (0 = end)"
-                     help="Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence"
-                     substitute="yes"
-                     default="0"/>
-
-        <flatVocabParam name="end_from"
+      <enumParam name="end_from"
                      prompt="From"
-                     help="Select whether to measure the end point from the beginning or end of the sequence"
                      multiPick="false"
-                     queryRef="VocabQueries.WhichEnd2"/>
+        <help>
+           <text>
+             Select whether to measure the end point from the beginning or end of the sequence
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="end"
+                 internal=   "end"/>
+          <enumValue term="beginning"
+                 internal=   "beginning"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="protein_dataset"
+      <enumParam name="protein_dataset"
                      prompt="Protein Dataset"
+                     multiPick="true"
                      help=""
-                     multiPick="true"
-                     queryRef="VocabQueries.ProteinDataset"/>
+        <help>
+           <text>
+             Select whether to measure the end point from the beginning or end of the sequence
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="GenBank"
+                 internal=   "'NRDB_gb_dbXRefBySeqIdentity'"/>
+          <enumValue term="RefSeq"
+                 internal=   "'NRDB_ref_dbXRefBySeqIdentity'"/>
+          <enumValue term="Swiss-Prot"
+                 internal=   "'NRDB_sp_dbXRefBySeqIdentity'"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="pvalue_cutoff"
-                     prompt="BLAST P-value less than 10 to the"
-                     help="Only consider BLAST similarities with a P-value less than ten to the given power."
-                     substitute="yes"
-                     default="-20"/>
-
-        <flatVocabParam name="clades"
+      <flatVocabParam name="clades"
+                     queryRef="VocabQueries.Clades"
                      prompt="PDB Proteins from"
-                     help="Select one or more clades."
-                     multiPick="true"
-                     queryRef="VocabQueries.Clades"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more clades.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <stringParam name="accession"
-                     prompt="Accession number"
-                     help="Enter a GenBank, RefSeq, or SwissProt accession number"
-                     substitute="yes"
-                     default="CAD50836.1"/>
-
-        <stringParam name="min_coil"
-                     prompt="Minimum percent coil"
-                     help="Choose a lower bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of coil will be returned."
-                     substitute="yes"
-                     default="0"/>
-
-        <stringParam name="max_coil"
-                     prompt="Maximum percent coil"
-                     help="Choose a upper bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of coil will be returned."
-                     substitute="yes"
-                     default="100"/>
-
-        <stringParam name="min_strand"
-                     prompt="Minimum percent strand"
-                     help="Choose a lower bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of strand will be returned."
-                     substitute="yes"
-                     default="0"/>
-
-        <stringParam name="max_strand"
-                     prompt="Maximum percent strand"
-                     help="Choose a upper bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of strand will be returned."
-                     substitute="yes"
-                     default="100"/>
-
-        <stringParam name="min_helix"
-                     prompt="Minimum percent helix"
-                     help="Choose a lower bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of helix will be returned."
-                     substitute="yes"
-                     default="0"/>
-
-        <stringParam name="max_helix"
-                     prompt="Maximum percent helix"
-                     help="Choose a upper bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of helix will be returned."
-                     substitute="yes"
-                     default="100"/>
-
-        <stringParam name="ProfileGeneId"
-                     prompt="Gene Id"
-                     help="The Gene Id"
-                     substitute="yes"
-                     default="PF11_0344"/>
-
-        <flatVocabParam name="ProfileDistanceMethod"
+      <enumParam name="ProfileDistanceMethod"
                      prompt="Distance Method"
-                     help="The method used to calculate the similarity distance"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileDistanceMethod"/>
+        <help>
+           <text>
+             The method used to calculate the similarity distance
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Euclidean Distance"
+                 internal=   "euclidean_distance"/>
+          <enumValue term="Pearson Correlation"
+                 internal=   "pearson_correlation"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="ProfileNumToReturn"
-                     prompt="# of Matches"
-                     help="The number of genes in the result"
-                     substitute="yes"
-                     default="50"/>
-
-        <flatVocabParam name="ProfileSearchGoal"
+      <enumParam name="ProfileSearchGoal"
                      prompt="Search Goal"
-                     help="The searching goal of the profile similarity query"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileSearchGoal"/>
+        <help>
+           <text>
+             The searching goal of the profile similarity query
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="most similar"
+                 internal=   "similar"/>
+          <enumValue term="least similar"
+                 internal=   "dissimilar"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="ProfileProfileSet"
+      <enumParam name="ProfileProfileSet"
                      prompt="Strain"
-                     help="Choose the strain of the profile to search against"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileProfileSet"/>
+        <help>
+           <text>
+             Choose the strain of the profile to search against
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="3D7"
+                 internal=   "DeRisi 3D7 Smoothed Averaged"/>
+          <enumValue term="Dd2"
+                 internal=   "DeRisi Dd2 Smoothed Averaged"/>
+          <enumValue term="HB3"
+                 internal=   "DeRisi HB3 Smoothed Averaged"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="ProfileTimeShift"
+      <enumParam name="ProfileTimeShift"
                      prompt="Time Shift"
-                     help="Whether to allow time shifting or not"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileTimeShift"/>
+        <help>
+           <text>
+             Whether to allow time shifting or not
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="not allow"
+                 internal=   "0"/>
+          <enumValue term="allow"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="ProfileScaleData"
+      <enumParam name="ProfileScaleData"
                      prompt="Scale Result"
-                     help="Whether to scale result data into [0..1] or not"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileScaleData"/>
+        <help>
+           <text>
+             Whether to scale result data into [0..1] or not
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="not scale"
+                 internal=   "0"/>
+          <enumValue term="scale to [0..1]"
+                 internal=   "1"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="ProfileMinShift"
+      <enumParam name="ProfileMinShift"
                      prompt="Min Shift"
-                     help="The minimum allowed time shift"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileMinShift"/>
+        <help>
+           <text>
+             The minimum allowed time shift
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="0 hour"
+                 internal=   "0"/>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+          <enumValue term="25 hours"
+                 internal=   "25"/>
+          <enumValue term="26 hours"
+                 internal=   "26"/>
+          <enumValue term="27 hours"
+                 internal=   "27"/>
+          <enumValue term="28 hours"
+                 internal=   "28"/>
+          <enumValue term="29 hours"
+                 internal=   "29"/>
+          <enumValue term="30 hours"
+                 internal=   "30"/>
+          <enumValue term="31 hours"
+                 internal=   "31"/>
+          <enumValue term="32 hours"
+                 internal=   "32"/>
+          <enumValue term="33 hours"
+                 internal=   "33"/>
+          <enumValue term="34 hours"
+                 internal=   "34"/>
+          <enumValue term="35 hours"
+                 internal=   "35"/>
+          <enumValue term="36 hours"
+                 internal=   "36"/>
+          <enumValue term="37 hours"
+                 internal=   "37"/>
+          <enumValue term="38 hours"
+                 internal=   "38"/>
+          <enumValue term="39 hours"
+                 internal=   "39"/>
+          <enumValue term="40 hours"
+                 internal=   "40"/>
+          <enumValue term="41 hours"
+                 internal=   "41"/>
+          <enumValue term="42 hours"
+                 internal=   "42"/>
+          <enumValue term="43 hours"
+                 internal=   "43"/>
+          <enumValue term="44 hours"
+                 internal=   "44"/>
+          <enumValue term="45 hours"
+                 internal=   "45"/>
+          <enumValue term="46 hours"
+                 internal=   "46"/>
+          <enumValue term="47 hours"
+                 internal=   "47"/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="ProfileMaxShift"
+      <enumParam name="ProfileMaxShift"
                      prompt="Max Shift"
-                     help="The maximum allowed time shift"
                      multiPick="false"
-                     queryRef="VocabQueries.ProfileMaxShift"/>
+        <help>
+           <text>
+             The maximum allowed time shift
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="0 hour"
+                 internal=   "0"/>
+          <enumValue term="1 hour"
+                 internal=   "1"/>
+          <enumValue term="2 hours"
+                 internal=   "2"/>
+          <enumValue term="3 hours"
+                 internal=   "3"/>
+          <enumValue term="4 hours"
+                 internal=   "4"/>
+          <enumValue term="5 hours"
+                 internal=   "5"/>
+          <enumValue term="6 hours"
+                 internal=   "6"/>
+          <enumValue term="7 hours"
+                 internal=   "7"/>
+          <enumValue term="8 hours"
+                 internal=   "8"/>
+          <enumValue term="9 hours"
+                 internal=   "9"/>
+          <enumValue term="10 hours"
+                 internal=   "10"/>
+          <enumValue term="11 hours"
+                 internal=   "11"/>
+          <enumValue term="12 hours"
+                 internal=   "12"/>
+          <enumValue term="13 hours"
+                 internal=   "13"/>
+          <enumValue term="14 hours"
+                 internal=   "14"/>
+          <enumValue term="15 hours"
+                 internal=   "15"/>
+          <enumValue term="16 hours"
+                 internal=   "16"/>
+          <enumValue term="17 hours"
+                 internal=   "17"/>
+          <enumValue term="18 hours"
+                 internal=   "18"/>
+          <enumValue term="19 hours"
+                 internal=   "19"/>
+          <enumValue term="20 hours"
+                 internal=   "20"/>
+          <enumValue term="21 hours"
+                 internal=   "21"/>
+          <enumValue term="22 hours"
+                 internal=   "22"/>
+          <enumValue term="23 hours"
+                 internal=   "23"/>
+          <enumValue term="24 hours"
+                 internal=   "24"/>
+          <enumValue term="25 hours"
+                 internal=   "25"/>
+          <enumValue term="26 hours"
+                 internal=   "26"/>
+          <enumValue term="27 hours"
+                 internal=   "27"/>
+          <enumValue term="28 hours"
+                 internal=   "28"/>
+          <enumValue term="29 hours"
+                 internal=   "29"/>
+          <enumValue term="30 hours"
+                 internal=   "30"/>
+          <enumValue term="31 hours"
+                 internal=   "31"/>
+          <enumValue term="32 hours"
+                 internal=   "32"/>
+          <enumValue term="33 hours"
+                 internal=   "33"/>
+          <enumValue term="34 hours"
+                 internal=   "34"/>
+          <enumValue term="35 hours"
+                 internal=   "35"/>
+          <enumValue term="36 hours"
+                 internal=   "36"/>
+          <enumValue term="37 hours"
+                 internal=   "37"/>
+          <enumValue term="38 hours"
+                 internal=   "38"/>
+          <enumValue term="39 hours"
+                 internal=   "39"/>
+          <enumValue term="40 hours"
+                 internal=   "40"/>
+          <enumValue term="41 hours"
+                 internal=   "41"/>
+          <enumValue term="42 hours"
+                 internal=   "42"/>
+          <enumValue term="43 hours"
+                 internal=   "43"/>
+          <enumValue term="44 hours"
+                 internal=   "44"/>
+          <enumValue term="45 hours"
+                 internal=   "45"/>
+          <enumValue term="46 hours"
+                 internal=   "46"/>
+          <enumValue term="47 hours"
+                 internal=   "47"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="text_expression"
-                     prompt="Text term"
-                     help="Enter a regular expression describing the text term(s) to search for.  Example: membrane"
-                     sample="(Example: membrane)"
-                     default="membrane"/>
-
-        <flatVocabParam name="case_independent"
+      <enumParam name="case_independent"
                      prompt="Ignore capitalization?"
-                     help="Use this parameter to control whether to include text that matches except for capitalization (e.g. treat 'DNA', 'Dna', and 'dna' as all equal)."
                      multiPick="false"
-                     queryRef="VocabQueries.CaseIndependence"/>
+        <help>
+           <text>
+             Use this parameter to control whether to include text that matches except for capitalization (e.g. treat 'DNA', 'Dna', and 'dna' as all equal).
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="yes"
+                 internal=   "-i"/>
+          <enumValue term="no"
+                 internal=   " "/>
+        </enumList>
+      </enumParam>
 
-        <flatVocabParam name="datasets"
+      <enumParam name="datasets"
                      prompt="Fields"
-                     help="Choose which text fields to search."
                      multiPick="true"
-                     queryRef="VocabQueries.TextSearchDatasets"/>
+        <help>
+           <text>
+             Choose which text fields to search.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Gene product"
+                 internal=   "PlasmoDB_product.txt"/>
+          <enumValue term="Gene notes"
+                 internal=   "PlasmoDB_notes.txt"/>
+          <enumValue term="User comments"
+                 internal=   "PlasmoDB_comments.txt"/>
+          <enumValue term="Protein domain names and descriptions"
+                 internal=   "PlasmoDB_interpro.txt"/>
+          <enumValue term="Similar proteins (BLAST hits v. NRDB)"
+                 internal=   "PlasmoDB_blast.txt"/>
+          <enumValue term="EC descriptions"
+                 internal=   "PlasmoDB_ec.txt"/>
+          <enumValue term="GO terms and definitions"
+                 internal=   "PlasmoDB_go.txt"/>
+          <enumValue term="Metabolic pathway names and descriptions"
+                 internal=   "PlasmoDB_metpaths.txt"/>
+        </enumList>
+      </enumParam>
 
-        <stringParam name="max_pvalue"
-                     prompt="Max p-value exponent (BLAST Hits v. NRDB)"
-                     help="Only applicable to the 'Similar proteins' field.  Use this to filter away BLAST hits that are below a threshold of significance, so you only search the descriptions of significantly similar proteins."
-                     default="-30"/>
-
-        <stringParam name="e_value"
-                     prompt="E value &lt;="
-                     help="Enter the maximum E value allowed to report domain matches."
-                     default="0.05"/>
-
-        <flatVocabParam name="domain_database"
+      <flatVocabParam name="domain_database"
+                     queryRef="VocabQueries.DomainDatabase"
                      prompt="Domain Database"
-                     help="Choose one of the constituent databases of InterPro."
-                     multiPick="false"
-                     queryRef="VocabQueries.DomainDatabase"/>
+                     multiPick="false">
+        <help>
+           <text>
+             Choose one of the constituent databases of InterPro.
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <!-- flatVocabParam name="domain_accession"
-                     prompt="Domain Accession"
-                     help="Choose an accession number from an InterPro database."
-                     multiPick="false"
-                     queryRef="VocabQueries.DomainAccession"/ -->
-
-        <stringParam name="domain_accession"
-                     prompt="Domain"
-                     help="Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed."/>
-
-        <flatVocabParam name="day_and_strain"
+      <flatVocabParam name="day_and_strain"
+                     queryRef="VocabQueries.DayAndStrain"
                      prompt="Day of Gametocytogenesis and Strain"
-                     help="Choose one or more strain/day combination"
-                     multiPick="true"
-                     queryRef="VocabQueries.DayAndStrain"/>
+                     multiPick="true">
+        <help>
+           <text>
+             Choose one or more strain/day combination
+           </text>
+        </help>
+      </flatVocabParam>
 
-        <datasetParam name="ds_gene_ids"
-                     prompt="Gene id input set"
-                     help="input a comma delimited set of gene ids, or upload a file"
-                     default="PF11_0344"
-                     />
-     </paramSet>
+  </paramSet>
+
+
+
+  <!--===========================================================================-->
+  <!-- Query set  -->
+  <!--===========================================================================-->
+
+   <querySet name="VocabQueries">
+
+        <sqlQuery name="OrganismWithGenes">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
+                    FROM sres.taxon
+                    CONNECT BY prior taxon_id = parent_id
+                    START WITH taxon_id = orgs.internal_tax) as internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                      AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species' 
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="OrganismWithSequences">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="OrganismWithEsts">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.Est e
+                              WHERE e.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="SpeciesName">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, tn.name AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="PfOrganism">
+            <column name="internal"/>
+            <column name="term"/>
+            <column name="idx"/>
+            <sql>
+            SELECT tn.name AS term, t.taxon_id AS internal,
+                   rownum AS idx
+            FROM sres.TaxonName tn, sres.taxon t
+            WHERE tn.name_class='scientific name'
+              AND t.taxon_id = tn.taxon_id
+              AND t.rank = 'species'
+              AND t.taxon_id in
+                  (SELECT taxon_id
+                   FROM sres.taxon
+                   CONNECT BY taxon_id = prior parent_id
+                   START WITH taxon_id IN
+                   (SELECT taxon_id
+                    FROM dots.ExternalNaSequence))
+              AND tn.name LIKE '%falciparum%'
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="GeneTypes">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+              SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
+                   sequence_ontology_id AS internal
+              FROM sres.SequenceOntology
+              WHERE term_name IN ('protein_coding',
+                                  'rRNA_encoding',
+                                  'snRNA_encoding',
+                                  'tRNA_encoding',
+                                  'non_protein_coding')
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="EstLibraries">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT REPLACE(dbest_name, ',', ' - ') AS term,
+                       library_id AS internal
+                FROM dots.library
+                ORDER BY dbest_name
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="SnpStrainA">
+          <column name="internal"/>
+          <column name="term"/>
+          <sql>
+	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_a in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_b in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_a not like '%-NIH'
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_b not like '%-NIH'
+            union
+            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
+	    order by ord,internal
+          </sql>
+        </sqlQuery>
+
+        <sqlQuery name="SnpStrainB">
+          <column name="internal"/>
+          <column name="term"/>
+          <sql>
+	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_a not like '%-NIH'
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_b not like '%-NIH'
+            union
+            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
+	    order by ord,internal
+          </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="ExtraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, element_order AS internal
+                FROM apidb.profileElementName
+                WHERE name IN
+                     ('Sporozoite', 'Gametocyte')
+                UNION SELECT 'Either' AS term, 0 as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="IntraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, element_order AS internal
+                FROM apidb.profileElementName
+                WHERE name IN
+                     ('Early Ring', 'Late Ring', 'Early Schizogony', 'Late Schizogony',
+                     'Early Trophozoite', 'Late Trophozoite', 'Merozoite')
+                UNION SELECT 'Any' AS term, 0 as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="MetabolicPathways">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+             SELECT DISTINCT dr.primary_identifier AS internal,
+                    TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
+             FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+             WHERE dr.external_database_release_id = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name = 'Links to Pathway Maps'
+               AND dr.primary_identifier != 'qualityControl'
+             ORDER BY term
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Mr4Reagents">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT term, internal FROM
+                  (SELECT reagent_type AS term, reagent_type AS internal,
+                          rownum AS ord
+                   FROM
+                     (SELECT DISTINCT lower(dr.secondary_identifier)
+                                AS reagent_type
+                      FROM sres.DbRef dr,
+                           sres.ExternalDatabaseRelease edr,
+                           sres.ExternalDatabase ed
+                      WHERE dr.external_database_release_id
+                            = edr.external_database_release_id
+                        AND edr.external_database_id = ed.external_database_id
+                        AND ed.name = 'MR4DBxRefs'
+                      ORDER BY lower(dr.secondary_identifier))
+                      UNION SELECT 'any' AS term, 'any' AS internal, 0 AS ord
+                            FROM dual)
+                ORDER BY ord
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="Clades">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT tn.name AS term, taxon_id AS internal
+                FROM sres.taxonname tn
+                WHERE tn.name IN
+                      ('Archaea', 'Eukaryota', 'Apicomplexa', 'Chordata',
+                       'Bacteria')
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="DomainDatabase">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            SELECT DISTINCT ed.name AS term,
+                            edr.external_database_release_id AS internal
+            FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase ed
+            WHERE dr.external_database_release_id
+                  = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND dr.db_ref_id IN
+                  (SELECT draf.db_ref_id
+                   FROM dots.DomainFeature df, dots.DbRefAaFeature draf,
+                        core.AlgorithmInvocation ainv,
+                        core.AlgorithmImplementation aimp
+                   WHERE df.aa_feature_id = draf.aa_feature_id
+                     AND df.row_alg_invocation_id = ainv.algorithm_invocation_id
+                     AND ainv.algorithm_implementation_id
+                         = aimp.algorithm_implementation_id
+                     AND aimp.executable
+                         = 'ApiCommonData::Load::Plugin::InsertInterproscanResults')
+            UNION
+              SELECT ' Choose one:' AS term, -1 AS internal
+              FROM dual
+            ORDER BY term
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="DayAndStrain">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            SELECT pen.profile_element_name_id AS internal,
+                   DECODE(ps.name, 'winzeler_NF54_pct', 'Strain NF54',
+                                   'winzeler_3D7_pct', 'Strain 3D7',
+                                   'winzeler_3D7_MACpct', 'Strain 3D7 (MACS-purified)',
+                          ps.name)
+                   ||  REPLACE(pen.name, 'Day', ' Day ') AS term
+            FROM apidb.profileSet ps, apidb.profileElementName pen
+            WHERE ps.name IN ('winzeler_3D7_MACpct', 'winzeler_3D7_pct','winzeler_NF54_pct')
+              AND ps.profile_set_id = pen.profile_set_id
+            ORDER BY ps.name, pen.element_order
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="cowmanSample">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+SELECT distinct lg.name AS term, 
+   lg.logical_group_id AS internal 
+  FROM STUDY.Study s, RAD.StudyAssay sa, RAD.AssayAnalysis aa, RAD.analysis a,
+      RAD.Protocol p, RAD.AnalysisInput ai, RAD.LogicalGroup lg
+  WHERE s.name in ('Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes',
+            'P.falciparum strain 3D7, SIR2 knockout',
+            'Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions')
+  AND p.name = 'R Expression Statistics'
+  AND sa.study_id = s.study_id
+  AND aa.assay_id = sa.assay_id
+  AND a.analysis_id = aa.analysis_id
+  AND a.protocol_id = p.protocol_id
+  AND ai.analysis_id = a.analysis_id
+  AND lg.logical_group_id = ai.logical_group_id
+            </sql>
+        </sqlQuery>
+
+
+   </querySet>
 
 </wdkModel>
