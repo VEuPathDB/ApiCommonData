@@ -1,4 +1,14 @@
+<wdkModel>
+
+
+
+
+  <!--===========================================================================-->
+  <!-- Params  -->
+  <!--===========================================================================-->
+
   <paramSet name="params">
+
   <!------------------------------------------------------------------>
   <!-- Locus tag -->  
   <!------------------------------------------------------------------>
@@ -2904,3 +2914,415 @@
         </help>
       </flatVocabParam>
      </paramSet>
+
+
+
+
+
+  <!--===========================================================================-->
+  <!-- Vocab queries  -->
+  <!--===========================================================================-->
+
+    <querySet name="VocabQueries">
+
+        <!-- sqlQuery name="Organism">
+            <column name="internal"/>
+            <column name="term"/>
+            <column name="idx"/>
+            <sql>
+            SELECT * FROM
+               (SELECT tn.name AS term, t.taxon_id AS internal,
+                       rownum AS idx
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id in
+                      (SELECT taxon_id
+                       FROM sres.taxon
+                       CONNECT BY taxon_id = prior parent_id
+                       START WITH taxon_id IN
+                       (SELECT ens.taxon_id
+                        FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                        WHERE gf.na_sequence_id = ens.na_sequence_id))
+                UNION
+                SELECT 'any' as term, -1 as internal,
+                       0 as idx
+                FROM dual)
+            ORDER BY idx
+            </sql>
+        </sqlQuery -->
+
+        <sqlQuery name="OrganismWithGenes">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
+                    FROM sres.taxon
+                    CONNECT BY prior taxon_id = parent_id
+                    START WITH taxon_id = orgs.internal_tax) as internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                      AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species' 
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="OrganismWithSequences">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="OrganismWithEsts">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.Est e
+                              WHERE e.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="SpeciesName">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, tn.name AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="PfOrganism">
+            <column name="internal"/>
+            <column name="term"/>
+            <column name="idx"/>
+            <sql>
+            SELECT tn.name AS term, t.taxon_id AS internal,
+                   rownum AS idx
+            FROM sres.TaxonName tn, sres.taxon t
+            WHERE tn.name_class='scientific name'
+              AND t.taxon_id = tn.taxon_id
+              AND t.rank = 'species'
+              AND t.taxon_id in
+                  (SELECT taxon_id
+                   FROM sres.taxon
+                   CONNECT BY taxon_id = prior parent_id
+                   START WITH taxon_id IN
+                   (SELECT taxon_id
+                    FROM dots.ExternalNaSequence))
+              AND tn.name LIKE '%falciparum%'
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="GeneTypes">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+              SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
+                   sequence_ontology_id AS internal
+              FROM sres.SequenceOntology
+              WHERE term_name IN ('protein_coding',
+                                  'rRNA_encoding',
+                                  'snRNA_encoding',
+                                  'tRNA_encoding',
+                                  'non_protein_coding')
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="EstLibraries">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT REPLACE(dbest_name, ',', ' - ') AS term,
+                       library_id AS internal
+                FROM dots.library
+                ORDER BY dbest_name
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="SnpStrainA">
+          <column name="internal"/>
+          <column name="term"/>
+          <sql>
+	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_a in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_b in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_a not like '%-NIH'
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_b not like '%-NIH'
+            union
+            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
+	    order by ord,internal
+          </sql>
+        </sqlQuery>
+
+        <sqlQuery name="SnpStrainB">
+          <column name="internal"/>
+          <column name="term"/>
+          <sql>
+	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
+	    from apidb.snpsummary
+            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            union
+            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_a not like '%-NIH'
+            union
+	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+	    from apidb.snpsummary
+            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            and strain_b not like '%-NIH'
+            union
+            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
+	    order by ord,internal
+          </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="ExtraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, element_order AS internal
+                FROM apidb.profileElementName
+                WHERE name IN
+                     ('Sporozoite', 'Gametocyte')
+                UNION SELECT 'Either' AS term, 0 as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="IntraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, element_order AS internal
+                FROM apidb.profileElementName
+                WHERE name IN
+                     ('Early Ring', 'Late Ring', 'Early Schizogony', 'Late Schizogony',
+                     'Early Trophozoite', 'Late Trophozoite', 'Merozoite')
+                UNION SELECT 'Any' AS term, 0 as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="MetabolicPathways">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+             SELECT DISTINCT dr.primary_identifier AS internal,
+                    TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
+             FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+             WHERE dr.external_database_release_id = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name = 'Links to Pathway Maps'
+               AND dr.primary_identifier != 'qualityControl'
+             ORDER BY term
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Mr4Reagents">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT term, internal FROM
+                  (SELECT reagent_type AS term, reagent_type AS internal,
+                          rownum AS ord
+                   FROM
+                     (SELECT DISTINCT lower(dr.secondary_identifier)
+                                AS reagent_type
+                      FROM sres.DbRef dr,
+                           sres.ExternalDatabaseRelease edr,
+                           sres.ExternalDatabase ed
+                      WHERE dr.external_database_release_id
+                            = edr.external_database_release_id
+                        AND edr.external_database_id = ed.external_database_id
+                        AND ed.name = 'MR4DBxRefs'
+                      ORDER BY lower(dr.secondary_identifier))
+                      UNION SELECT 'any' AS term, 'any' AS internal, 0 AS ord
+                            FROM dual)
+                ORDER BY ord
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="Clades">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT tn.name AS term, taxon_id AS internal
+                FROM sres.taxonname tn
+                WHERE tn.name IN
+                      ('Archaea', 'Eukaryota', 'Apicomplexa', 'Chordata',
+                       'Bacteria')
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="DomainDatabase">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            SELECT DISTINCT ed.name AS term,
+                            edr.external_database_release_id AS internal
+            FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase ed
+            WHERE dr.external_database_release_id
+                  = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND dr.db_ref_id IN
+                  (SELECT draf.db_ref_id
+                   FROM dots.DomainFeature df, dots.DbRefAaFeature draf,
+                        core.AlgorithmInvocation ainv,
+                        core.AlgorithmImplementation aimp
+                   WHERE df.aa_feature_id = draf.aa_feature_id
+                     AND df.row_alg_invocation_id = ainv.algorithm_invocation_id
+                     AND ainv.algorithm_implementation_id
+                         = aimp.algorithm_implementation_id
+                     AND aimp.executable
+                         = 'ApiCommonData::Load::Plugin::InsertInterproscanResults')
+            UNION
+              SELECT ' Choose one:' AS term, -1 AS internal
+              FROM dual
+            ORDER BY term
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="DayAndStrain">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            SELECT pen.profile_element_name_id AS internal,
+                   DECODE(ps.name, 'winzeler_NF54_pct', 'Strain NF54',
+                                   'winzeler_3D7_pct', 'Strain 3D7',
+                                   'winzeler_3D7_MACpct', 'Strain 3D7 (MACS-purified)',
+                          ps.name)
+                   ||  REPLACE(pen.name, 'Day', ' Day ') AS term
+            FROM apidb.profileSet ps, apidb.profileElementName pen
+            WHERE ps.name IN ('winzeler_3D7_MACpct', 'winzeler_3D7_pct','winzeler_NF54_pct')
+              AND ps.profile_set_id = pen.profile_set_id
+            ORDER BY ps.name, pen.element_order
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="cowmanSample">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+SELECT distinct lg.name AS term, 
+   lg.logical_group_id AS internal 
+  FROM STUDY.Study s, RAD.StudyAssay sa, RAD.AssayAnalysis aa, RAD.analysis a,
+      RAD.Protocol p, RAD.AnalysisInput ai, RAD.LogicalGroup lg
+  WHERE s.name in ('Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes',
+            'P.falciparum strain 3D7, SIR2 knockout',
+            'Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions')
+  AND p.name = 'R Expression Statistics'
+  AND sa.study_id = s.study_id
+  AND aa.assay_id = sa.assay_id
+  AND a.analysis_id = aa.analysis_id
+  AND a.protocol_id = p.protocol_id
+  AND ai.analysis_id = a.analysis_id
+  AND lg.logical_group_id = ai.logical_group_id
+            </sql>
+        </sqlQuery>
+
+
+     </querySet>
+
+</wdkModel>
