@@ -123,6 +123,19 @@ sub initPlasmoAnalysis {
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+sub initAmitoAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Glamblia,Tvaginalis';
+
+  my $taxId = ["Glamblia:184922","Tvaginalis:36329"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
 
 sub initOrthomclAnalysis {
   my ($propertyFile, $optionalArgs) = @_;
