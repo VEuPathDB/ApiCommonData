@@ -2,6 +2,14 @@
 
 <querySet name="GeneId">
 
+  <!-- notes: -->
+  <!-- - need new parameter "EcOrganism" for GenesByEcNumber -->
+  <!-- - assuming that references to apidb.ToxodbGenes can be changed to apidb.GeneId -->
+  <!-- - assuming that references to genomic-sequence records
+         in dots.ExternalNaSequence or dots.VirtualSequence can be changed to
+         apidb.GenomicSequence ->
+  <!-- -->
+
   <!------------------------------------------------------------------>
   <!-- Locus Tag  -->
   <!------------------------------------------------------------------>
@@ -11,7 +19,7 @@
         <paramRef ref="params.ds_gene_ids"/>
         <column name="source_id"/>
         <sql includeProjects="ToxoDB">
-             <![CDATA[
+            <![CDATA[
             SELECT DISTINCT tg.source_id
             FROM apidb.ToxodbGenes tg,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE ds.dataset_id = $$ds_gene_ids$$
@@ -50,13 +58,13 @@
         <paramRef ref="params.locus_tag"/>
         <column name="source_id"/>
         <sql excludeProjects="CryptoDB">
-             <![CDATA[
+            <![CDATA[
             SELECT DISTINCT gi.gene AS source_id
             FROM apidb.GeneId gi
             WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$locus_tag$$'),
                                                        '*', '%'),
                                                '[[:space:]]', '')
-           ]]>
+            ]]>
         </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
@@ -68,71 +76,62 @@
             AND r.na_feature_id = t.parent_id (+)
             AND (
                 LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%')))
-                OR  LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%'))) ||'%'
+                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%'))) ||'%'
             ) and g.source_id is not null
            ]]>
        </sql>
     </sqlQuery>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- EC number -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByGeneIds" displayName="by Gene IDs"
-              isCacheable="true">
-        <paramRef ref="params.ds_gene_ids"/>
-        <column name="source_id"/>
-        <sql>
-             <![CDATA[
-            SELECT DISTINCT gi.gene AS source_id
-            FROM apidb.GeneId gi, 
-                @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
-            WHERE gi.gene = ds.dataset_value
-                AND ds.dataset_id = $$ds_gene_ids$$
-           ]]>
-       </sql>
-    </sqlQuery>
-
-  <!------------------------------------------------------------------>
-  <!--  -->
-  <!------------------------------------------------------------------>
-
-    <sqlQuery name="GenesByEcNumber" displayName="by EC Number" isCacheable="true">
+    <sqlQuery name="GenesByEcNumber" displayName="by EC Number"
+              excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="params.ec_number_pattern"/>
-        <paramRef ref="params.pf_organism"/>
+        <paramRef ref="params.ec_organism"/>
         <column name="source_id"  />
         <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-         SELECT DISTINCT gf.source_id
-         FROM dots.GeneFeature gf, dots.ExternalNaSequence ens,
-              dots.Transcript t, dots.translatedAaFeature taf,
-              dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-         WHERE ('$$pf_organism$$' = '-1'
-                OR ens.taxon_id in (select taxon_id from sres.taxon
-                                    connect by parent_id = prior taxon_id
-                                    start with taxon_id = '$$pf_organism$$'))
-           AND  ens.na_sequence_id = gf.na_sequence_id
-           AND gf.na_feature_id = t.parent_id
-           AND t.na_feature_id = taf.na_feature_id
-           AND taf.aa_sequence_id = asec.aa_sequence_id
-           AND asec.enzyme_class_id = ec.enzyme_class_id
-           AND ec.ec_number LIKE REPLACE(REPLACE('$$ec_number_pattern$$',' ',''),
-                                         '-', '%')
-         ORDER BY gf.source_id
+            SELECT DISTINCT gf.source_id
+            FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
+                 dots.Transcript t, dots.translatedAaFeature taf,
+                 dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
+            WHERE ('$$ec_organism$$' = '-1'
+                   OR gs.taxon_id in (select taxon_id from sres.taxon
+                                      connect by parent_id = prior taxon_id
+                                      start with taxon_id = '$$ec_organism$$'))
+              AND gs.na_sequence_id = gf.na_sequence_id
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = asec.aa_sequence_id
+              AND asec.enzyme_class_id = ec.enzyme_class_id
+              AND ec.ec_number LIKE REPLACE(REPLACE('$$ec_number_pattern$$',' ',''),
+                                            '-', '%')
+            ORDER BY gf.source_id
            ]]>
        </sql>
     </sqlQuery>
 
+    <wsQuery name="GenesByEcNumber" displayName="by EC Number"
+             isCacheable='true' includeProjects="ApiDB"
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.ecorganism"/>
+        <paramRef ref="params.ec_number_pattern"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+    </wsQuery>
+
+
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!--  plasmoDB dataset-->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByPlasmoDbDataset" displayName="by PlasmoDB 4.4 dataset" isCacheable="true">
+    <sqlQuery name="GenesByPlasmoDbDataset" isCacheable="true"
+              displayName="by PlasmoDB 4.4 dataset" includeProjects="PlasmoDB">
         <paramRef ref="params.plasmodb_dataset"/>
         <column name="source_id"  />
         <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <!-- keep order or genes but remove duplicates -->
             <![CDATA[
                 SELECT imported.source_id FROM (
@@ -149,10 +148,12 @@
     </sqlQuery>
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- transmembrane domains -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByTransmembraneDomains" displayName="With Transmembrane Domains" isCacheable="true">
+    <sqlQuery name="GenesByTransmembraneDomains"
+              displayName="With Transmembrane Domains"
+              isCacheable="true" includeProjects="PlasmoDB">
         <paramRef ref="params.min_tm"/>
         <paramRef ref="params.max_tm"/>
         <paramRef ref="params.organism"/>
@@ -176,6 +177,74 @@
            ]]>
        </sql>
     </sqlQuery>
+
+    <sqlQuery name="GenesByTransmembraneDomains" isCacheable="true"
+              displayName="With Transmembrane Domains"
+              includeProjects="ToxoDB">
+        <description>
+            Find genes whose proteins are predicted to include a transmembrane domain
+        </description>
+        <paramRef ref="params.min_tm"/>
+        <paramRef ref="params.max_tm"/>
+        <column name="source_id"  />
+        <sql>
+            <![CDATA[
+            SELECT tg.source_id
+            FROM apidb.ToxodbGenes tg, dots.NaSequence ns,
+                 (SELECT t.parent_id, COUNT(*) AS tm_count 
+                  FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
+                       dots.TransmembraneAaFeature tmaf, dots.AaLocation al
+                  WHERE t.na_feature_id = tlaf.na_feature_id
+                    AND tlaf.aa_sequence_id = tmaf.aa_sequence_id
+                    AND tmaf.aa_feature_id = al.aa_feature_id 
+                  GROUP BY t.parent_id, t.na_feature_id, tlaf.aa_feature_id
+                  HAVING COUNT(*) >= $$min_tm$$ AND COUNT(*) <= $$max_tm$$) tms
+            WHERE tms.parent_id = tg.na_feature_id
+              AND tg.na_sequence_id = ns.na_sequence_id
+            ORDER BY tm_count, tg.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <sqlQuery name="GenesByTransmembraneDomains" includeProjects="CryptoDB"
+              displayName="With Transmembrane Domains" isCacheable='true'>
+        <paramRef ref="params.organism"/>
+        <paramRef ref="params.min_tm"/>
+        <paramRef ref="params.max_tm"/>
+        <column name="source_id" />
+        <column name="predicted_helices" />
+        <sql>
+            <![CDATA[
+            SELECT g.source_id, tmf.predicted_helices
+            FROM dots.genefeature g,
+                 dots.transcript t,
+                 dots.translatedaafeature taaf,
+                 dots.TransmembraneAAFeature tmf,
+                 dots.NAsequence enas,
+                 core.algorithm alg
+            WHERE g.na_feature_id = t.parent_id
+              AND t.na_feature_id = taaf.na_feature_id
+              AND taaf.aa_sequence_id = tmf.aa_sequence_id
+              AND tmf.predicted_helices >= $$min_tm$$
+              AND tmf.predicted_helices <= $$max_tm$$
+              AND enas.taxon_id IN ($$organism$$)
+              AND t.na_sequence_id = enas.na_sequence_id
+              AND tmf.prediction_algorithm_id = alg.algorithm_id
+              AND alg.name = 'TMHMM'
+            ORDER BY tmf.predicted_helices 
+            ]]>
+          </sql>
+    </sqlQuery>   
+
+    <wsQuery name="GenesByTransmembraneDomains" includeProjects="ApiDB"
+             displayName="With Transmembrane Domains" isCacheable='true'
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.organism"/>
+        <paramRef ref="params.num_tm_gte"/>
+        <paramRef ref="params.num_tm_lte"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>   
 
   <!------------------------------------------------------------------>
   <!--  -->
@@ -436,7 +505,7 @@
         <sql>
             <![CDATA[
                 SELECT gf2.source_id, count(*) as num_queries,
-                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids,
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
                 FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
                      dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
@@ -704,7 +773,6 @@
        <column name="source_id" />
        <column name="percentile" />
        <sql>
-           <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
 	    SELECT 
                  ga.gene as source_id, 
@@ -745,7 +813,6 @@
        <column name="confidence" />
        <column name="fold_change" />
        <sql>
-           <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
           SELECT ga.gene as source_id,
 	      max(to_char(de.fold_change, '999.99')) as fold_change,
@@ -901,7 +968,6 @@
         <column name="source_id"/>
         <column name="isoelectric_point"/>
         <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
             SELECT DISTINCT asa.isoelectric_point, gf.source_id
             FROM dots.GeneFeature gf, dots.Transcript t,
@@ -930,7 +996,6 @@
         <paramRef ref="params.organism"/>
         <column name="source_id"/>
         <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
             SELECT DISTINCT gf.source_id
             FROM dots.GeneFeature gf, dots.Transcript t,
@@ -967,7 +1032,6 @@
        </sql>
   -->
        <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
             SELECT gf.source_id
             FROM dots.geneFeature gf, dots.ExternalNaSequence ns,dots.nalocation l,
@@ -1000,7 +1064,6 @@
         <paramRef ref="params.organism"/>
         <column name="source_id"/>
         <sql>
-            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
             SELECT DISTINCT gf.source_id, ns.taxon_id
             FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
