@@ -16,7 +16,7 @@
   <modelName includeProjects="CryptoDB" name="CryptoDB" displayName="CryptoDB"
              version="11.3"/>
 
-  <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
+  <defaultPropertyList includeProjects="PlasmoDB" name="organism">
     <value value="P. falciparum"/>
     <value value="P. vivax"/>
     <value value="P. yoelii"/>
@@ -25,16 +25,16 @@
     <value value="P. knowlesi"/>
   </defaultPropertyList>
 
-  <defaultPropertyList includeProjects="CryptoDB" name="organisms">
+  <defaultPropertyList includeProjects="CryptoDB" name="organism">
     <value value="C. hominus"/>
     <value value="C. parvum"/>
   </defaultPropertyList>
 
-  <defaultPropertyList includeProjects="ToxoDB" name="organisms">
+  <defaultPropertyList includeProjects="ToxoDB" name="organism">
     <value value="T. gondii"/>
   </defaultPropertyList>
 
-  <defaultPropertyList includeProjects="ApiDB" name="organisms">
+  <defaultPropertyList includeProjects="ApiDB" name="organism">
     <value value="P. falciparum"/>
     <value value="P. vivax"/>
     <value value="P. yoelii"/>
@@ -46,7 +46,6 @@
     <value value="T. gondii"/>
   </defaultPropertyList>
 
-  <!-- somehow include files here -->
   
   <import file="submodel/questions/geneQuestions.xml"/>
   <import file="submodel/questions/genomicQuestions.xml"/>
@@ -108,7 +107,8 @@
         <summary>
           <text>
           Find genes that are located in a specified genomic region.
-          </text>
+          </text>           <value value="C. parvum"/>
+
         </summary>
 
         <description includeProjects="CryptoDB">
@@ -123,9 +123,34 @@
           </text>
         </description>
 
-        <propertyList name="organism">
+        <description excludeProjects="CryptoDB">
+           <text>
+           <![CDATA[
+           Find genes by providing a list of IDs (Genbank locus tag). 
+           User can either enter the ID list manually, or upload a file that contains the list. 
+           IDs can be delimited by a comma, a semi colon, or any white spaces.
+           The search is case
+           insensitive. Asterisks can be used as wild cards (e.g. ' cgd6_* ').
+          ]]>
+          </text>
+        </description>
+
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value value="P. falciparum"/>
+        </propertyList>
+
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gondii"/>
+        </propertyList>
+
+        <propertyList name="organism" includeProjects="CryptoDB">
+           <value value="C. parvum"/>
+        </propertyList>
+
+        <propertyList name="organism" includeProjects="ApiDB">
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
+           <value value="C. parvum"/>
         </propertyList>
 
     </question>
@@ -138,14 +163,14 @@
   <!-- Query set  -->
   <!--===========================================================================-->
 
-  <querySet name="GeneFeatureIds">
+  <querySet name="GeneIds">
 
     <!------------------------------------------------------------------>
     <!-- Genomic region  -->
     <!------------------------------------------------------------------>
 
     <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
-              displayName="by genomic location" isCacheable="true">
+              isCacheable="true">
         <paramRef ref="params.pfGenomicSequenceOrNot"/>
         <paramRef ref="params.genomicSequence"/>
         <paramRef ref="params.start_point"/>
@@ -192,9 +217,8 @@
 
       <enumParam name="pfGenomicSequenceOrNot"
                      prompt="P. falciparum Genomic Sequence"
-                     multiPick="false"
-                     default="choose one"
-                     help=""
+                     multiPick="false">
+
         <help>
            <text>
              Results will be sorted ascending or descending order
@@ -202,7 +226,7 @@
         </help>
         <enumList>
           <enumValue term="choose one"
-                 internal=   "'choose one'"/>
+                 internal=   "'choose one'"  default="true"/>
           <enumValue term="chromosome 1"
                  internal=   "'MAL1'"/>
           <enumValue term="chromosome 2"
@@ -244,6 +268,9 @@
                      queryRef="VocabQueries.DayAndStrain"
                      prompt="Day of Gametocytogenesis and Strain"
                      multiPick="true">
+
+        <suggest default="one,seven,nine"/>
+
         <help>
            <text>
              Choose one or more strain/day combination
@@ -283,7 +310,7 @@
                </text>
             </help>
 
-            <suggest default="10000000000"/>
+            <suggest default="10000000000" sample="200"/>
         </stringParam>
 
 
