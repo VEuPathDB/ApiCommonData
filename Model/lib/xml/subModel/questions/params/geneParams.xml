@@ -1,6 +1,10 @@
 <wdkModel>
 
+<!-- notes
 
+  * need to correct OrganismWithEC cv query
+
+-->
 
 
   <!--===========================================================================-->
@@ -48,14 +52,15 @@
              <suggest default="1"/>
 
         </stringParam>
+
   <!------------------------------------------------------------------>
-  <!--  -->  
+  <!-- EC Number -->  
   <!------------------------------------------------------------------>
 
         <stringParam name="ec_number_pattern"
                      prompt="EC Number"
                      substitute="yes">
-            <help>Enzyme Commission numbers describe enzymes hierarchically by the class of rections they catalize. Use '-' as a wildcard in place of numbers to denote partial EC Numbers</help>
+            <help>Enzyme Commission numbers describe enzymes hierarchically by the class of rections they catalize.  Use '-' as a wildcard in place of numbers to denote partial EC Numbers.</help>
             <suggest sample="2.7.7.6, 3.5.1.31"
                      default="2.7.7.-"/>
         </stringParam>
@@ -219,13 +224,14 @@
             <suggest sample="(Examples: MAL4, ctg_4094)"
                      default="MAL4"/>
         </stringParam>
+
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
 
       <flatVocabParam name="organism"
                      queryRef="VocabQueries.OrganismWithGenes"
-                     prompt="Plasmodium species"
+                     prompt="Organism"
                      multiPick="true">
         <help>
            <text>
@@ -236,7 +242,7 @@
 
       <flatVocabParam name="organism_with_sequences"
                      queryRef="VocabQueries.OrganismWithSequences"
-                     prompt="Plasmodium species"
+                     prompt="Organism"
                      multiPick="true">
         <help>
            <text>
@@ -247,7 +253,7 @@
 
       <flatVocabParam name="organism_with_ests"
                      queryRef="VocabQueries.OrganismWithEsts"
-                     prompt="Plasmodium species"
+                     prompt="Organism"
                      multiPick="true">
         <help>
            <text>
@@ -256,9 +262,9 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="pf_organism"
-                     queryRef="VocabQueries.PfOrganism"
-                     prompt="Plasmodium species"
+      <flatVocabParam name="organism_with_ec" excludeProjects="ApiDB"
+                     queryRef="VocabQueries.OrganismWithEC"
+                     prompt="Organism"
                      multiPick="false">
         <help>
            <text>
@@ -266,6 +272,27 @@
            </text>
         </help>
       </flatVocabParam>
+
+      <enumParam name="organism_with_ec" includeProjects="ApiDB"
+                     prompt="Organism"
+                     multiPick="false">
+        <help>
+           <text>
+             Select an organism.
+           </text>
+        </help>
+
+        <enumList>
+          <enumValue term="Cryptosporidium hominis"
+                 internal=   "C. hominis"/>
+          <enumValue term="Cryptosporidium parvum"
+                 internal=   "C. parvum"/>
+          <enumValue term="Plasmodium falciparum"
+                 internal=   "Plasmodium falciparum"/>
+          <enumValue term="Toxoplasma gondii"
+                 internal=   "Toxoplasma gondii"/>
+        </enumList>
+      </enumParam>
 
       <flatVocabParam name="species_name"
                      queryRef="VocabQueries.SpeciesName"
@@ -398,15 +425,17 @@
                      prompt="NestedRecord Param">
             <help>Only used in a nested record</help>
         </stringParam>
+
   <!------------------------------------------------------------------>
-  <!--  -->  
+  <!-- plasmodb 4.4 dataset -->  
   <!------------------------------------------------------------------>
 
-        <stringParam name="plasmodb_dataset"
+        <stringParam name="plasmodb_4.4_dataset"
                      visible="false"
-                     prompt="PlasmoDB dataset">
-            <help>PlasmoDB dataset"
+                     prompt="PlasmoDB 4.4 dataset">
+            <help>PlasmoDB 4.4 dataset"</help>
         </stringParam>
+
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -3059,7 +3088,8 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="PfOrganism">
+       <!-- THIS NEEDS TO BE WRITTEN -->
+        <sqlQuery name="OrganismWithEC">
             <column name="internal"/>
             <column name="term"/>
             <column name="idx"/>

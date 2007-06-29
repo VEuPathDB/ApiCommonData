@@ -55,13 +55,13 @@
 
     <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="params.locus_tag"/>
+        <paramRef ref="params.single_gene_id"/>
         <column name="source_id"/>
         <sql excludeProjects="CryptoDB">
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id
             FROM apidb.GeneId gi
-            WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$locus_tag$$'),
+            WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$single_gene_id$$'),
                                                        '*', '%'),
                                                '[[:space:]]', '')
             ]]>
@@ -75,8 +75,8 @@
             WHERE g.na_feature_id = r.parent_id (+)
             AND r.na_feature_id = t.parent_id (+)
             AND (
-                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%')))
-                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$locus_tag$$', '*', '%'))) ||'%'
+                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE('$$single_gene_id$$', '*', '%')))
+                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$single_gene_id$$', '*', '%'))) ||'%'
             ) and g.source_id is not null
            ]]>
        </sql>
@@ -89,7 +89,7 @@
     <sqlQuery name="GenesByEcNumber" displayName="by EC Number"
               excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="params.ec_number_pattern"/>
-        <paramRef ref="params.ec_organism"/>
+        <paramRef ref="params.organism_with_ec"/>
         <column name="source_id"  />
         <sql>
             <![CDATA[
@@ -97,10 +97,10 @@
             FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE ('$$ec_organism$$' = '-1'
+            WHERE ('$$organism_with_ec$$' = '-1'
                    OR gs.taxon_id in (select taxon_id from sres.taxon
                                       connect by parent_id = prior taxon_id
-                                      start with taxon_id = '$$ec_organism$$'))
+                                      start with taxon_id = '$$organism_with_ec$$'))
               AND gs.na_sequence_id = gf.na_sequence_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
@@ -116,7 +116,7 @@
     <wsQuery name="GenesByEcNumber" displayName="by EC Number"
              isCacheable='true' includeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.ecorganism"/>
+        <paramRef ref="params.organism_with_ec"/>
         <paramRef ref="params.ec_number_pattern"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -124,19 +124,19 @@
 
 
   <!------------------------------------------------------------------>
-  <!--  plasmoDB dataset-->
+  <!--  plasmoDB 4.4 dataset-->
   <!------------------------------------------------------------------>
 
     <sqlQuery name="GenesByPlasmoDbDataset" isCacheable="true"
-              displayName="by PlasmoDB 4.4 dataset" includeProjects="PlasmoDB">
-        <paramRef ref="params.plasmodb_dataset"/>
+              includeProjects="PlasmoDB">
+        <paramRef ref="params.plasmodb_4.4_dataset"/>
         <column name="source_id"  />
         <sql>
             <!-- keep order or genes but remove duplicates -->
             <![CDATA[
                 SELECT imported.source_id FROM (
                     SELECT ga.gene AS source_id, min(c.i) AS i
-                    FROM cache$$plasmodb_dataset$$@apidb.cbilprod c,
+                    FROM cache$$plasmodb_4.4_dataset$$@apidb.cbilprod c,
                          apidb.plasmodb_genes@apidb.cbilprod pg,
                          apidb.GeneAlias ga
                     WHERE c.na_feature_id = pg.na_feature_id
@@ -251,7 +251,7 @@
   <!------------------------------------------------------------------>
 
     <sqlQuery name="GenesByProteinProteinInteraction" displayName="by protein-protein interaction" isCacheable="true">
-        <paramRef ref="params.locus_tag" default="PFL0275w"/>
+        <paramRef ref="params.single_gene_id" default="PFL0275w"/>
         <paramRef ref="params.min_searches"/>
         <paramRef ref="params.min_observed"/>
         <paramRef ref="params.bait_or_prey"/>
@@ -277,7 +277,7 @@
                        bait_number_of_preys, 'bait' as bait_or_prey
                 FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.ExternalNaSequence ens, apidb.GeneInteraction gi
-                WHERE lower('$$locus_tag$$') = ga.id
+                WHERE lower('$$single_gene_id$$') = ga.id
                   AND ga.gene = bf.source_id
                   AND gi.number_of_searches >= $$min_searches$$
                   AND gi.times_observed >= $$min_observed$$
@@ -292,7 +292,7 @@
                          where igi.prey_gene_feature_id = bf.na_feature_id) AS bait_number_of_preys, 'prey' as bait_or_prey
                 FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.ExternalNaSequence ens,  apidb.GeneInteraction gi
-                WHERE lower('$$locus_tag$$') = ga.id
+                WHERE lower('$$single_gene_id$$') = ga.id
                   AND ga.gene = pf.source_id
                   AND gi.number_of_searches >= $$min_searches$$
                   AND gi.times_observed >= $$min_observed$$
@@ -1334,7 +1334,7 @@
     <sqlQuery name="GenesOrthologousToAGivenGene"
               displayName="orthologous to a given gene"
               isCacheable="true">
-        <paramRef ref="params.locus_tag"/>
+        <paramRef ref="params.single_gene_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
@@ -1342,7 +1342,7 @@
                 FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                      dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                      core.TableInfo ti,apidb.GeneId gi
-                WHERE gi.id = lower('$$locus_tag$$')
+                WHERE gi.id = lower('$$single_gene_id$$')
                   AND gf1.source_id = gi.gene 
                   AND gf1.na_feature_id = ssg1.sequence_id
                   AND ssg1.source_table_id = ti.table_id
@@ -1712,12 +1712,13 @@
   <!--  -->
   <!------------------------------------------------------------------>
 
+   <!-- got rid of the unused pr_organism parameter -->
+
     <sqlQuery name="GenesByGametocyteExpression"
               isCacheable="true">
         <paramRef ref="params.day_and_strain"/>
         <paramRef ref="params.min_expression_percentile" default="80"/>
         <paramRef ref="params.max_expression_percentile" default="100"/>
-        <paramRef ref="params.pf_organism"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
@@ -1731,7 +1732,6 @@
               AND p.profile_id = pe.profile_id
               AND pe.element_order = pen.element_order
             ORDER by p.source_id
-            /* and don't forget $$pf_organism$$ */
             ]]>
        </sql>
     </sqlQuery>
