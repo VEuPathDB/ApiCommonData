@@ -100,7 +100,7 @@
   <!------------------------------------------------------------------>
 
       <flatVocabParam name="cowmanSample"
-                     queryRef="VocabQueries.cowmanSample"
+                     queryRef="GeneVocabQueries.cowmanSample"
                      prompt="Study"
                      multiPick="false">
         <help>
@@ -111,7 +111,7 @@
       </flatVocabParam>
 
       <flatVocabParam name="diffMeanExpr_reference"
-                     queryRef="VocabQueries.cowmanSample"
+                     queryRef="GeneVocabQueries.cowmanSample"
                      prompt="Reference study"
                      multiPick="false">
         <help>
@@ -122,7 +122,7 @@
       </flatVocabParam>
 
       <flatVocabParam name="diffMeanExpr_comparitor"
-                     queryRef="VocabQueries.cowmanSample"
+                     queryRef="GeneVocabQueries.cowmanSample"
                      prompt="Comparison study"
                      multiPick="false">
         <help>
@@ -231,41 +231,8 @@
   <!-- Organism -->  
   <!------------------------------------------------------------------>
 
-      <flatVocabParam name="organism"
-                     queryRef="VocabQueries.OrganismWithGenes"
-                     prompt="Organism"
-                     multiPick="true">
-        <help>
-           <text>
-             Select one or more organisms.
-           </text>
-        </help>
-      </flatVocabParam>
-
-      <flatVocabParam name="organism_with_sequences"
-                     queryRef="VocabQueries.OrganismWithSequences"
-                     prompt="Organism"
-                     multiPick="true">
-        <help>
-           <text>
-             Select one or more organisms.
-           </text>
-        </help>
-      </flatVocabParam>
-
-      <flatVocabParam name="organism_with_ests"
-                     queryRef="VocabQueries.OrganismWithEsts"
-                     prompt="Organism"
-                     multiPick="true">
-        <help>
-           <text>
-             Select one or more organisms.
-           </text>
-        </help>
-      </flatVocabParam>
-
       <flatVocabParam name="organism_with_ec" excludeProjects="ApiDB"
-                     queryRef="VocabQueries.OrganismWithEC"
+                     queryRef="GeneVocabQueries.OrganismWithEC"
                      prompt="Organism"
                      multiPick="false">
         <help>
@@ -296,23 +263,12 @@
         </enumList>
       </enumParam>
 
-      <flatVocabParam name="species_name"
-                     queryRef="VocabQueries.SpeciesName"
-                     prompt="Plasmodium species"
-                     multiPick="true">
-        <help>
-           <text>
-             Select one or more organisms.
-           </text>
-        </help>
-      </flatVocabParam>
-
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
 
       <flatVocabParam name="libraryId"
-                     queryRef="VocabQueries.EstLibraries"
+                     queryRef="GeneVocabQueries.EstLibraries"
                      prompt="EST Library"
                      multiPick="true">
         <help>
@@ -393,7 +349,7 @@
   <!------------------------------------------------------------------>
 
       <flatVocabParam name="geneType"
-                     queryRef="VocabQueries.GeneTypes"
+                     queryRef="GeneVocabQueries.GeneTypes"
                      prompt="Gene type"
                      multiPick="true">
         <help>
@@ -792,7 +748,7 @@
       </enumParam>
 
       <flatVocabParam name="snp_strain_a"
-                     queryRef="VocabQueries.SnpStrainA"
+                     queryRef="GeneVocabQueries.SnpStrainA"
 		     prompt="Reference"
                      multiPick="false">
         <help>
@@ -803,7 +759,7 @@
       </flatVocabParam>
 
       <flatVocabParam name="snp_strain_b"
-                     queryRef="VocabQueries.SnpStrainB"
+                     queryRef="GeneVocabQueries.SnpStrainB"
 		     prompt="Comparator"
                      multiPick="false">
         <help>
@@ -1660,7 +1616,7 @@
         </stringParam>
 
       <flatVocabParam name="extraerythrocytic_stages"
-                     queryRef="VocabQueries.ExtraerythrocyticStages"
+                     queryRef="GeneVocabQueries.ExtraerythrocyticStages"
                      prompt="Extraerythrocytic Lifecycle Stage"
                      multiPick="false">
         <help>
@@ -1671,7 +1627,7 @@
       </flatVocabParam>
 
       <flatVocabParam name="intraerythrocytic_stages"
-                     queryRef="VocabQueries.IntraerythrocyticStages"
+                     queryRef="GeneVocabQueries.IntraerythrocyticStages"
                      prompt="Intraerythrocytic Lifecycle Stage"
                      multiPick="false">
         <help>
@@ -2136,7 +2092,7 @@
       </enumParam>
 
       <flatVocabParam name="metabolic_pathway"
-                     queryRef="VocabQueries.MetabolicPathways"
+                     queryRef="GeneVocabQueries.MetabolicPathways"
                      prompt="Metabolic Pathway"
                      multiPick="false">
         <help>
@@ -2147,7 +2103,7 @@
       </flatVocabParam>
 
       <flatVocabParam name="mr4_reagent_type"
-                     queryRef="VocabQueries.Mr4Reagents"
+                     queryRef="GeneVocabQueries.Mr4Reagents"
                      prompt="Reagent Type"
                      multiPick="false">
         <help>
@@ -2482,7 +2438,7 @@
         </stringParam>
 
       <flatVocabParam name="clades"
-                     queryRef="VocabQueries.Clades"
+                     queryRef="GeneVocabQueries.Clades"
                      prompt="PDB Proteins from"
                      multiPick="true">
         <help>
@@ -2926,7 +2882,7 @@
         </stringParam>
 
       <flatVocabParam name="domain_database"
-                     queryRef="VocabQueries.DomainDatabase"
+                     queryRef="GeneVocabQueries.DomainDatabase"
                      prompt="Domain Database"
                      multiPick="false">
         <help>
@@ -2942,7 +2898,7 @@
         </stringParam>
 
       <flatVocabParam name="day_and_strain"
-                     queryRef="VocabQueries.DayAndStrain"
+                     queryRef="GeneVocabQueries.DayAndStrain"
                      prompt="Day of Gametocytogenesis and Strain"
                      multiPick="true">
         <help>
@@ -2961,149 +2917,8 @@
   <!-- Vocab queries  -->
   <!--===========================================================================-->
 
-    <querySet name="VocabQueries">
+    <querySet name="GeneVocabQueries">
 
-        <!-- sqlQuery name="Organism">
-            <column name="internal"/>
-            <column name="term"/>
-            <column name="idx"/>
-            <sql>
-            SELECT * FROM
-               (SELECT tn.name AS term, t.taxon_id AS internal,
-                       rownum AS idx
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND t.taxon_id in
-                      (SELECT taxon_id
-                       FROM sres.taxon
-                       CONNECT BY taxon_id = prior parent_id
-                       START WITH taxon_id IN
-                       (SELECT ens.taxon_id
-                        FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
-                        WHERE gf.na_sequence_id = ens.na_sequence_id))
-                UNION
-                SELECT 'any' as term, -1 as internal,
-                       0 as idx
-                FROM dual)
-            ORDER BY idx
-            </sql>
-        </sqlQuery -->
-
-        <sqlQuery name="OrganismWithGenes">
-            <column name="internal"/>
-            <column name="term"/>
-             <sql>
-                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
-                    FROM sres.taxon
-                    CONNECT BY prior taxon_id = parent_id
-                    START WITH taxon_id = orgs.internal_tax) as internal
-                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                      AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species' 
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="OrganismWithSequences">
-            <column name="internal"/>
-            <column name="term"/>
-             <sql>
-                SELECT orgs.term, orgs.internal
-                FROM (SELECT tn.name AS term, t.taxon_id AS internal
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                        AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species'
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="OrganismWithEsts">
-            <column name="internal"/>
-            <column name="term"/>
-             <sql>
-                SELECT orgs.term, orgs.internal
-                FROM (SELECT tn.name AS term, t.taxon_id AS internal
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                        AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species'
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens, dots.Est e
-                              WHERE e.na_sequence_id = ens.na_sequence_id))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="SpeciesName">
-            <column name="internal"/>
-            <column name="term"/>
-             <sql>
-                SELECT orgs.term, orgs.internal
-                FROM (SELECT tn.name AS term, tn.name AS internal
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                        AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species'
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
-            </sql>
-        </sqlQuery>
 
        <!-- THIS NEEDS TO BE WRITTEN -->
         <sqlQuery name="OrganismWithEC">
