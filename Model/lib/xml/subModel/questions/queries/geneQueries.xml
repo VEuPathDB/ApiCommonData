@@ -20,6 +20,10 @@
      - motif_organism
      - motif_expression
 
+   * text search needs a clean up.  all four sites have differences.
+
+   * assuming all sites have pathway info, which we should be getting from pathtools.
+
   -->
 
   <!------------------------------------------------------------------>
@@ -40,7 +44,8 @@
                                                '[[:space:]]', '')
            ]]>
        </sql>
-        <sql excludeProjects="ToxoDB">
+
+       <sql excludeProjects="ToxoDB">
              <![CDATA[
             SELECT DISTINCT gi.gene AS source_id
             FROM apidb.GeneId gi,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
@@ -489,22 +494,62 @@
     </wsQuery>
                                                     
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Text Search (needs to be better unified) -->
   <!------------------------------------------------------------------>
 
-    <wsQuery name="GenesByTextSearch" displayName="Text term"
+    <wsQuery name="GenesByTextSearch"
              processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="geneParams.text_expression"/>
-       <paramRef ref="geneParams.case_independent"/>
-       <paramRef ref="geneParams.whole_words"/>
-       <paramRef ref="geneParams.max_pvalue"/>
+       <paramRef ref="geneParams.case_independent" groupRef="paramGroups.advancedParams/>
+       <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams/>
+       <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.datasets"/>
        <paramRef ref="geneParams.species_name"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
     </wsQuery>
 
+    <wsQuery name="GenesByAnnotatedKeyword"
+               isCacheable='true' 
+               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+            <paramRef ref="params.organism"/>
+            <paramRef ref="params.datasets"/>
+            <paramRef ref="params.text_expression"/>
+            <paramRef ref="params.max_pvalue" groupRef="paramGroups.advancedParams"/>
+            <paramRef ref="params.case_independent" groupRef="paramGroups.advancedParams"/>
+            <paramRef ref="params.whole_words" groupRef="paramGroups.advancedParams"/>
+            <wsColumn name="project_id" width="32" wsName="project_id"/>
+            <wsColumn name="source_id" width="32" wsName="source_id"/>
+    </wsQuery>
+
+  <!-- why is this different than then others? -->
+ <wsQuery name="GenesByAnnotatedKeyword" 
+          displayName="By Annotated Keywords" 
+          isCacheable='true' 
+          processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
+       <paramRef ref="params.text_expression"/>
+  <!--     <paramRef ref="params.case_independent" />   -->
+       <paramRef ref="params.whole_words" />
+       <paramRef ref="params.max_pvalue"/>
+       <paramRef ref="params.datasets" default="Gene product, Gene notes, User comments, Protein domain names and descriptions, EC descriptions, GO terms and definitions"/>
+       <paramRef ref="params.organism" default="C. parvum,C. hominis"/>
+       <wsColumn name="source_id" width="32" wsName="GeneID"/>
+       <wsColumn name="Fields" width="64" wsName="Datasets"/>
+    </wsQuery>  
+
+    <wsQuery name="GenesByTextSearch" displayName="Text term"
+             processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
+       <paramRef ref="params.text_expression"/>
+       <paramRef ref="params.case_independent"/>
+       <paramRef ref="params.whole_words"/>
+       <paramRef ref="params.max_pvalue"/>
+       <paramRef ref="params.datasets"/>
+       <!-- not for toxo: paramRef ref="params.species_name"/ -->
+       <wsColumn name="source_id" width="32" wsName="GeneID"/>
+    </wsQuery>
+
+
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Orthologs -->
   <!------------------------------------------------------------------>
 
     <sqlQuery name="GenesByOrthologs" displayName="by orthology"
@@ -512,10 +557,12 @@
         <description>
             Find orthologs of the genes in an existing query result set
         </description>
-        <paramRef ref="geneParams.historyId"/>
+        <paramRef ref="generalParams.historyId"/>
         <paramRef ref="generalParams.organism"/>
         <column name="source_id" />
-        <sql>
+        <column name="project_id" includeProjects="ApiDB"/>
+
+        <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id
             FROM $$historyId$$ qr, dots.GeneFeature gf1,
@@ -533,6 +580,30 @@
               AND ti.name = 'GeneFeature'
             GROUP BY gf2.source_id
             ORDER BY gf2.source_id
+           ]]>
+       </sql>
+
+       <sql includeProjects="ApiDB">
+            <![CDATA[
+
+SELECT DISTINCT sns2.source_id, ext.name as project_id 
+FROM $$historyId$$ qr, dots.splicednasequence sns1, dots.sequencesequencegroup ssg1, dots.splicednasequence sns2, dots.sequencesequencegroup ssg2, core.tableinfo ti ,    sres.ExternalDatabaseRelease extr,  sres.ExternalDatabase ext 
+WHERE qr.source_id = sns1.source_id 
+AND sns1.na_sequence_id = ssg1.sequence_id 
+AND ssg1.source_table_id = ti.table_id 
+AND ssg1.sequence_group_id = ssg2.sequence_group_id 
+AND ssg2.source_table_id = ti.table_id 
+AND ssg2.sequence_id = sns2.na_sequence_id 
+AND sns2.taxon_id IN
+       (select taxon_id from sres.taxon
+       connect by parent_id = prior taxon_id
+       start with taxon_id in ($$localorganism$$)) 
+AND ti.name = 'SplicedNASequence'  
+AND sns2.external_database_release_id=extr.external_database_release_id 
+AND extr.external_database_id=ext.external_database_id  
+order by project_id,sns2.source_id
+
+
            ]]>
        </sql>
     </sqlQuery>
