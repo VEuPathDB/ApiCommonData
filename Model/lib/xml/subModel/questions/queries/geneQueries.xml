@@ -2,13 +2,25 @@
 
 <querySet name="GeneId">
 
-  <!-- notes: -->
-  <!-- - need new parameter "EcOrganism" for GenesByEcNumber -->
-  <!-- - assuming that references to apidb.ToxodbGenes can be changed to apidb.GeneId -->
-  <!-- - assuming that references to genomic-sequence records
-         in dots.ExternalNaSequence or dots.VirtualSequence can be changed to
-         apidb.GenomicSequence ->
-  <!-- -->
+  <!-- notes: 
+ 
+   * tmhmm ws needs to use new tm_max/min params 
+
+   * lose pforganism param from apidb ws queries:
+        - proteinprotein interaction
+        - profile similarity
+
+   * assuming that references to dots.ExternalNaSequence or dots.VirtualSequence 
+     can be changed to dots.NaSequence (search for "dots.NaSequence)
+
+   * retiring apidb.ToxodbGenes by joining to GeneAttributes from genefeature.source_id
+     (which filters away gene predictions)
+
+   * motif search new param names:
+     - motif_organism
+     - motif_expression
+
+  -->
 
   <!------------------------------------------------------------------>
   <!-- Locus Tag  -->
@@ -148,12 +160,11 @@
     </sqlQuery>
 
   <!------------------------------------------------------------------>
-  <!-- transmembrane domains -->
+  <!-- Transmembrane domains -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByTransmembraneDomains"
-              displayName="With Transmembrane Domains"
-              isCacheable="true" includeProjects="PlasmoDB">
+    <sqlQuery name="GenesByTransmembraneDomains" includeProjects="PlasmoDB,ToxoDB"
+              isCacheable="true">
         <paramRef ref="params.min_tm"/>
         <paramRef ref="params.max_tm"/>
         <paramRef ref="params.organism"/>
@@ -161,7 +172,7 @@
         <sql>
             <![CDATA[
             SELECT gf.source_id
-            FROM dots.GeneFeature gf, dots.NaSequence ns,
+            FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga
                  (SELECT t.parent_id, COUNT(*) AS tm_count
                   FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
                        dots.TransmembraneAaFeature tmaf, dots.AaLocation al
@@ -173,41 +184,14 @@
             WHERE tms.parent_id = gf.na_feature_id
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id IN ($$organism$$)
+              AND gf.source_id = ga.source_id
             ORDER BY tm_count, gf.source_id
            ]]>
        </sql>
     </sqlQuery>
 
-    <sqlQuery name="GenesByTransmembraneDomains" isCacheable="true"
-              displayName="With Transmembrane Domains"
-              includeProjects="ToxoDB">
-        <description>
-            Find genes whose proteins are predicted to include a transmembrane domain
-        </description>
-        <paramRef ref="params.min_tm"/>
-        <paramRef ref="params.max_tm"/>
-        <column name="source_id"  />
-        <sql>
-            <![CDATA[
-            SELECT tg.source_id
-            FROM apidb.ToxodbGenes tg, dots.NaSequence ns,
-                 (SELECT t.parent_id, COUNT(*) AS tm_count 
-                  FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
-                       dots.TransmembraneAaFeature tmaf, dots.AaLocation al
-                  WHERE t.na_feature_id = tlaf.na_feature_id
-                    AND tlaf.aa_sequence_id = tmaf.aa_sequence_id
-                    AND tmaf.aa_feature_id = al.aa_feature_id 
-                  GROUP BY t.parent_id, t.na_feature_id, tlaf.aa_feature_id
-                  HAVING COUNT(*) >= $$min_tm$$ AND COUNT(*) <= $$max_tm$$) tms
-            WHERE tms.parent_id = tg.na_feature_id
-              AND tg.na_sequence_id = ns.na_sequence_id
-            ORDER BY tm_count, tg.source_id
-           ]]>
-       </sql>
-    </sqlQuery>
-
     <sqlQuery name="GenesByTransmembraneDomains" includeProjects="CryptoDB"
-              displayName="With Transmembrane Domains" isCacheable='true'>
+              isCacheable='true'>
         <paramRef ref="params.organism"/>
         <paramRef ref="params.min_tm"/>
         <paramRef ref="params.max_tm"/>
@@ -237,20 +221,21 @@
     </sqlQuery>   
 
     <wsQuery name="GenesByTransmembraneDomains" includeProjects="ApiDB"
-             displayName="With Transmembrane Domains" isCacheable='true'
+             isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="params.organism"/>
-        <paramRef ref="params.num_tm_gte"/>
-        <paramRef ref="params.num_tm_lte"/>
+        <paramRef ref="params.tm_min"/>
+        <paramRef ref="params.tm_max"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>   
 
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Y2H Protein protein interaction -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByProteinProteinInteraction" displayName="by protein-protein interaction" isCacheable="true">
+    <sqlQuery name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB"
+         isCacheable="true">
         <paramRef ref="params.single_gene_id" default="PFL0275w"/>
         <paramRef ref="params.min_searches"/>
         <paramRef ref="params.min_observed"/>
@@ -305,11 +290,33 @@
        </sql>
     </sqlQuery>
 
+   <wsQuery name="GenesByProteinProteinInteraction"  includeProjects="ApiDB"
+                        isCacheable="true" 
+                        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="params.single_gene_id" default="PFL0275w"/>
+        <paramRef ref="params.min_searches"/>
+        <paramRef ref="params.min_observed"/>
+        <paramRef ref="params.bait_or_prey"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="gene_source_id" width="32" wsName="gene_source_id"/>
+        <wsColumn name="bait_start" width="32"/>
+        <wsColumn name="bait_end" width="32"/>
+        <wsColumn name="prey_start" width="32"/>
+        <wsColumn name="prey_end" width="32"/>
+        <wsColumn name="times_observed" width="32"/>
+        <wsColumn name="number_of_searches" width="32"/>
+        <wsColumn name="prey_number_of_baits" width="32"/>
+        <wsColumn name="bait_number_of_preys" width="32"/>
+        <wsColumn name="bait_or_prey" width="32"/>
+     </wsQuery>
+
+
   <!------------------------------------------------------------------>
-  <!--  -->
+  <!-- Gene type -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByGeneType" displayName="by Gene Type"
+    <sqlQuery name="GenesByGeneType" excludeProjects="ApiDB" 
               isCacheable="true">
         <paramRef ref="params.geneType"/>
         <paramRef ref="params.includePseudogenes"/>
@@ -319,20 +326,31 @@
         <sql>
             <![CDATA[
             SELECT gf.source_id,decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
-            FROM dots.GeneFeature gf, dots.ExternalNaSequence ens
+            FROM dots.GeneFeature gf, dots.NaSequence ens, apidb.GeneAttributes ga
             WHERE gf.sequence_ontology_id IN ($$geneType$$)
               AND gf.na_sequence_id = ens.na_sequence_id
               and gf.is_pseudo in ($$includePseudogenes$$)
               AND ens.taxon_id IN ($$organism$$)
+              AND gf.source_id = ga.source_id
            ]]>
        </sql>
     </sqlQuery>
+
+    <wsQuery name="GenesByGeneType" includeProjects="ApiDB"
+         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="params.organism"/>
+       <paramRef ref="params.includePseudogenes"/>
+       <paramRef ref="params.geneType"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="source_id" width="60" wsName="source_id"/>
+       <wsColumn name="is_pseudo" width="32" wsName="is_pseudo"/>
+    </wsQuery>
 
   <!------------------------------------------------------------------>
   <!--  -->
   <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByExpressionTiming" displayName="by Expression Timing"
+    <sqlQuery name="GenesByExpressionTiming" 
               isCacheable="true">
         <paramRef ref="params.profileSet"/>
         <paramRef ref="params.minOrMax"/>
@@ -364,7 +382,11 @@
       </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesBySimilarity" displayName="BLAST"
+  <!------------------------------------------------------------------>
+  <!-- BLAST -->
+  <!------------------------------------------------------------------>
+
+    <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="params.BlastQueryType"/>
        <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
@@ -381,7 +403,30 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
-    <wsQuery name="GenesByProfileSimilarity" displayName="Profile Similarity"
+    <wsQuery name="GenesBySimilarity" includeProjects="ApiDB" 
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
+       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
+       <paramRef ref="params.BlastQueryType"/>      
+       <paramRef ref="params.BlastQuerySequence"/> 
+       <paramRef ref="params.-e"/>
+       <paramRef ref="params.-v"/>
+       <paramRef ref="params.-b"/>
+       <paramRef ref="params.-filter"/>
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+                     
+             
+  <!------------------------------------------------------------------>
+  <!-- Expression profile similarity -->
+  <!------------------------------------------------------------------>
+
+    <wsQuery name="GenesByProfileSimilarity" includeProjects="PlasmoDB"  
              processName="org.plasmodb.wsfplugin.profile.ProfileSimilarityPlugin">
        <paramRef ref="params.ProfileGeneId"/>
        <paramRef ref="params.ProfileDistanceMethod"/>
@@ -398,15 +443,54 @@
        <wsColumn name="query_source_id" wsName="QueryGeneId" width="50"/>
     </wsQuery>
 
-    <wsQuery name="GenesByMotifSearch" displayName="Motif Search"
+    <wsQuery name="GenesByProfileSimilarity" includeProjects="ApiDB"  
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="params.ProfileGeneId"/>
+       <paramRef ref="params.ProfileDistanceMethod"/>
+       <paramRef ref="params.ProfileNumToReturn"/>
+       <paramRef ref="params.ProfileProfileSet"/>
+       <paramRef ref="params.ProfileSearchGoal"/>
+       <paramRef ref="params.ProfileTimeShift"/>
+       <paramRef ref="params.ProfileScaleData"/>
+       <paramRef ref="params.ProfileMinShift"/>
+       <paramRef ref="params.ProfileMaxShift"/>
+       <wsColumn name="source_id" width="50" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="distance" wsName="distance" width="50"/>
+       <wsColumn name="time_shift" wsName="time_shift" width="50"/>
+       <wsColumn name="query_source_id" wsName="query_source_id" width="50"/>
+    </wsQuery>
+
+  <!------------------------------------------------------------------>
+  <!-- Motif search -->
+  <!------------------------------------------------------------------>
+
+    <wsQuery name="GenesByMotifSearch" excludeProjects="ApiDB"  
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
-       <paramRef ref="params.Expression"/>
-       <paramRef ref="params.Dataset"/>
+       <paramRef ref="params.motif_expression"/>
+       <paramRef ref="params.motif_organism"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="3999"/>
     </wsQuery>
+
+    <wsQuery name="GenesByMotifSearch" includeProjects="ApiDB"  
+              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="params.motif_organism"/>
+       <paramRef ref="params.motif_expression"/>
+
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+
+       <wsColumn name="Locations" width="4000"/>
+       <wsColumn name="MatchCount" width="10"/>
+       <wsColumn name="Sequence" width="4000"/>
+    </wsQuery>
+                                                    
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
 
     <wsQuery name="GenesByTextSearch" displayName="Text term"
              processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">

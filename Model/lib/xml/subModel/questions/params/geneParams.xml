@@ -182,6 +182,15 @@
             <suggest sample="(Example: 2)"
                      default="2"/>
         </stringParam>
+
+         <stringParam name="max_tm"
+                     prompt="Maximum Number of Transmembrane Domains"
+                     substitute="yes">
+            <help>Proteins may have none, one or more transmembrane domains. Please enter a maximum number of predicted transmembrane domains to start your search.</help>
+            <suggest sample="(Example: 5)"
+                     default="5"/>
+        </stringParam>
+
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -193,13 +202,6 @@
             <suggest default="3"/>
         </stringParam>
 
-        <stringParam name="max_tm"
-                     prompt="Maximum Number of Transmembrane Domains"
-                     substitute="yes">
-            <help>Proteins may have none, one or more transmembrane domains. Please enter a maximum number of predicted transmembrane domains to start your search.</help>
-            <suggest sample="(Example: 5)"
-                     default="5"/>
-        </stringParam>
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -226,7 +228,7 @@
         </stringParam>
 
   <!------------------------------------------------------------------>
-  <!--  -->  
+  <!-- Organism -->  
   <!------------------------------------------------------------------>
 
       <flatVocabParam name="organism"
@@ -304,6 +306,7 @@
            </text>
         </help>
       </flatVocabParam>
+
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -475,8 +478,9 @@
             <suggest default="IMP dehydrogenase / GMP reductase domain"
 />
         </stringParam>
+
   <!------------------------------------------------------------------>
-  <!--  -->  
+  <!-- Protein protein interaction -->  
   <!------------------------------------------------------------------>
 
       <enumParam name="bait_or_prey"
@@ -512,8 +516,9 @@
             <help>Upper limit on the number of results returned by the query"
             <suggest default="5"/>
         </stringParam>
+
   <!------------------------------------------------------------------>
-  <!--  -->  
+  <!-- BLAST -->  
   <!------------------------------------------------------------------>
 
       <enumParam name="BlastQueryType"
@@ -521,7 +526,7 @@
                      multiPick="false">
         <help>
            <text>
-             The type of the query sequence (eg. DNA, protein)
+             The type of your query sequence (eg. DNA, protein)
            </text>
         </help>
         <enumList>
@@ -529,14 +534,6 @@
                  internal=   "dna"/>
           <enumValue term="Protein"
                  internal=   "protein"/>
-          <enumValue term="Nucleotide coding sequences (CDS)"
-                 internal=   "CDS"/>
-          <enumValue term="Proteins"
-                 internal=   "proteins"/>
-          <enumValue term="Six frame translated CDSs"
-                 internal=   "CDS Translated"/>
-          <enumValue term="Genome"
-                 internal=   "genomic"/>
         </enumList>
       </enumParam>
 
@@ -646,6 +643,7 @@
             <help>Number of alignments to show</help>
             <suggest default="50"/>
         </stringParam>
+
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -2159,7 +2157,11 @@
         </help>
       </flatVocabParam>
 
-      <enumParam name="GeneDataset"
+  <!------------------------------------------------------------------>
+  <!-- Motif search -->
+  <!------------------------------------------------------------------>
+
+      <enumParam name="motif_organism"
                         prompt="Organism"
 			multiPick="true">
         <help>
@@ -2178,15 +2180,21 @@
                  internal=   "Pberghei/PbergheiAnnotatedProteins_plasmoDB-5.3.fasta"/>
           <enumValue term="P. chabaudi"
                  internal=   "Pchabaudi/PchabaudiAnnotatedProteins_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi/PchabaudiAnnotatedProteins_plasmoDB-5.3.fasta"/>
         </enumList>
       </enumParam>
 
-        <stringParam name="Expression"
+        <stringParam name="motif_expression"
                      prompt="Pattern">
             <help>Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine.</help>
             <suggest sample="(Example: CC6+RK)"
                      default="CC6+RK"/>
         </stringParam>
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
 
         <stringParam name="min_isoelectric_point"
                      prompt="Min Isoelectric Point">
@@ -2533,6 +2541,10 @@
             <suggest default="100"/>
         </stringParam>
 
+  <!------------------------------------------------------------------>
+  <!-- Expression profile similarity  -->
+  <!------------------------------------------------------------------>
+
         <stringParam name="ProfileGeneId"
                      prompt="Gene Id"
                      substitute="yes">
@@ -2844,6 +2856,11 @@
                  internal=   "47"/>
         </enumList>
       </enumParam>
+
+
+  <!------------------------------------------------------------------>
+  <!--  -->
+  <!------------------------------------------------------------------>
 
         <stringParam name="text_expression"
                      prompt="Text term">
