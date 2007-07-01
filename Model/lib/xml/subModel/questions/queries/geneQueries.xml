@@ -173,8 +173,9 @@
         <paramRef ref="geneParams.min_tm"/>
         <paramRef ref="geneParams.max_tm"/>
         <paramRef ref="generalParams.organism"/>
-        <column name="source_id"  />
-        <sql>
+        <column name="source_id"/>
+        <column name="predicted_helices" includeProjects="CryptoDB"/>
+        <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             SELECT gf.source_id
             FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga
@@ -192,17 +193,8 @@
               AND gf.source_id = ga.source_id
             ORDER BY tm_count, gf.source_id
            ]]>
-       </sql>
-    </sqlQuery>
-
-    <sqlQuery name="GenesByTransmembraneDomains" includeProjects="CryptoDB"
-              isCacheable='true'>
-        <paramRef ref="generalParams.organism"/>
-        <paramRef ref="geneParams.min_tm"/>
-        <paramRef ref="geneParams.max_tm"/>
-        <column name="source_id" />
-        <column name="predicted_helices" />
-        <sql>
+        </sql>
+        <sql includeProjects="CryptoDB">
             <![CDATA[
             SELECT g.source_id, tmf.predicted_helices
             FROM dots.genefeature g,
@@ -223,7 +215,7 @@
             ORDER BY tmf.predicted_helices 
             ]]>
           </sql>
-    </sqlQuery>   
+    </sqlQuery>
 
     <wsQuery name="GenesByTransmembraneDomains" includeProjects="ApiDB"
              isCacheable='true'
