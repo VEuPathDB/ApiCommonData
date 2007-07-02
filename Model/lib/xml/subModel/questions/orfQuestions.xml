@@ -329,15 +329,25 @@ one time.
          recordClassRef="OrfRecordClasses.OrfRecordClass">
 
       <attributeList
-         summary="organism,Header,TabularRow,Alignment,Footer"
-         sorting="organism asc"
+         summary="Header,TabularRow,Alignment,Footer"
       />
 
-         <description>
+        <summary>
+           Find ORFs that have BLAST similarity to your input sequence.
+        </summary>
+        <description includeProjects="PlasmoDB,ToxoDB">
            <![CDATA[
-             This query finds <b>Open Reading Frames (ORFs)</b> with BLAST matches to an input sequence.  The <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a> program is used to search against coding nucleotide (CDS) or  protein
-sequence from annotatated gene models.]]>
-         </description>
+             Find ORFs that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+          ]]>
+        </description>
+        <description includeProjects="CryptoDB,ApiDB">
+           <![CDATA[
+             Find ORFs that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.
+          ]]>
+        </description>
+
 
          <dynamicAttributes>
              <columnAttribute name="TabularRow" displayName="Blast summary"
