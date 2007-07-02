@@ -1,0 +1,360 @@
+<wdkModel>
+
+   <questionSet name="OrfQuestions"
+
+
+<!--================================================-->
+<!-- Location  -->
+<!--===============================================-->
+
+ <question name="OrfsByLocation"
+              category="Genomic Position"
+              displayName="Chromosomal Location"
+              queryRef="OrfIds.OrfsByLocation"
+              recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+      <attributeList includeProjects="CryptoDB,ApiDB"
+             summary="organism"
+             sorting="organism asc"
+      />
+
+      <attributeList includeProjects="ToxoDB"
+             summary="orf_location_text,length"
+             sorting="orf_location_text asc"
+      />
+
+      <attributeList includeProjects="PlasmoDB"
+             summary="formatted_organism,orf_location_text,length"
+             sorting="formatted_organism,orf_location_text asc"
+      />
+     
+             <summary>
+                 Find Orfs that are located in a specified region.
+             </summary>
+
+             <description includeProjects="CryptoDB,ApiDB" >
+                 <![CDATA[
+                 Find genes within a given genomic region.<br>
+                 Enter the name of a contig (e.g. "AAEL01000057"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+                 ]]>
+            </description>
+
+             <description includeProjects="ToxoDB" >
+                 <![CDATA[
+                 Find genes within a given genomic region.<br>
+                 Enter the name of a chromosome (e.g."VIIa") or a scaffold (e.g. "TGG_995305"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+                 ]]>
+            </description>
+
+             <description includeProjects="PlasmoDB" >
+                 <![CDATA[
+                 Find genes within a given genomic region.<br>
+                 Enter the name of a chromosome (e.g. "Chromosome 1") or a contig (e.g. "MAL4"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+                 ]]>
+            </description>
+    </question>
+
+<!--================================================-->
+<!-- Id -->
+<!--===============================================-->
+
+ <question name="OrfByOrfId" 
+              displayName="Orfs by ID"
+              queryRef="OrfIds.OrfsByOrfId" 
+              summaryAttributesList="organism"
+              recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+             <attributeList 
+               summary="organism"
+               sorting="organism asc"
+             />
+             <summary>
+             Find Orfs by Source Id.
+             </summary>
+             <description>
+             <![CDATA[
+             Find Orfs by Source Id.
+             ]]>
+             </description>
+    </question>
+
+<!--================================================-->
+<!-- Mass Spec -->
+<!--===============================================-->
+
+
+    <!-- OrfQuestions.OrfsByMassSpec -->
+    <question name="OrfsByMassSpec"
+              category="Other Attributes"
+              displayName="Mass Spec. Evidence"
+              queryRef="OrfIds.OrfsByMassSpec" 
+              recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+          <atrributeList excludeProjects="ApiDB"
+              summary="orf_location_text,sum_sequence_count,sum_spectrum_count"
+              sorting="sum_sequence_count desc,sum_spectrum_count desc"
+          />
+
+          <atrributeList includeProjects="ApiDB"
+              summary="organism"
+              sorting="organism asc"
+          />
+
+              <summary>
+              Find open reading frames that have evidence of expression 
+             based on peptides identified in sporozoites by MS/MS analysis.
+              </summary>
+
+              <description includeProjects="CryptoDB">
+              <![CDATA[
+             Find <i>Cryptosporidium</i> open reading frames that have evidence of expression 
+             based on peptides identified by MS/MS analysis in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture.<p>
+            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
+            <p>
+             <sup>&#182;</sup>
+   <%-- description by J. Wastling --%>
+<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+<br>
+Mass spectrometry data were obtained from two-dimensional gel 
+electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
+MudPIT analysis of a sporozoite/oocyst excystation mixture of 
+<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
+hits were obtained resulting in 1,252 non-redundant protein identifications.  
+In addition a further 100 hits were obtained to sequences which matched a 
+predicted open reading frame, but for which no gene model currently exists.  
+In total these protein identifications represent nearly one third of the 
+entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
+that the entire proteome from all life-stages will be expressed at any 
+one time.
+             ]]>
+             </description>
+
+              <description includeProjects="ToxoDB">
+              <![CDATA[
+             Find <i>Toxoplasma</i> open reading frames that have evidence of expression 
+             based on peptides identified by MS/MS analysis in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture.<p>
+            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
+            <p>
+             <sup>&#182;</sup>
+   <%-- description by J. Wastling --%>
+<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+<br>
+Mass spectrometry data were obtained from two-dimensional gel 
+electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
+MudPIT analysis of a sporozoite/oocyst excystation mixture of 
+<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
+hits were obtained resulting in 1,252 non-redundant protein identifications.  
+In addition a further 100 hits were obtained to sequences which matched a 
+predicted open reading frame, but for which no gene model currently exists.  
+In total these protein identifications represent nearly one third of the 
+entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
+that the entire proteome from all life-stages will be expressed at any 
+one time.
+             ]]>
+             </description>
+
+	<dynamicAttributes>
+	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
+	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+
+<!--================================================-->
+<!-- Motif Search  -->
+<!--===============================================-->
+
+
+<question name="OrfsByMotifSearch"
+         displayName="ORFs by Protein Motif Search"
+         category="Text Search"
+         queryRef="OrfIds.OrfsByMotifSearch"
+         recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+      <attributeList
+         summary="organism,Locations,MatchCount,Sequence"
+         sorting="orgmanism asc"
+      />
+
+         <description>
+           <![CDATA[
+
+ Find genes whose protein product contains a motif pattern that 
+           you specify.
+
+           Specify the pattern with a (Perl style) "regular expression".
+           (Regular expressions are more powerful than PROSITE patterns.) For
+           a description of how to create regular expressions, please see 
+           the  <a href="regexp.jsp">Regular Expression
+           Tutorial</a>.
+            <br><br>
+             The following codes can be used to represent classes of amino acids.
+        <table border columns=3>
+                   <TR>
+                      <TD><B>AA property</B>
+                      </TD>
+                      <TD><B>Amino acids</B>
+                      </TD>
+                      <TD><B>Code</B>
+                      </TD>
+                   </TR>
+
+                   <TR>
+                      <TD>
+                      <B>Acidic</B>
+                      </TD>
+                      <TD><B>DE</B>
+                      </TD>
+                      <TD><B>0</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Alcohol</B>
+                      </TD>
+                      <TD><B>ST</B>
+                      </TD>
+                      <TD><B>1</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Aliphatic</B>
+                      </TD>
+                      <TD><B>ILV</B>
+                      </TD>
+                      <TD><B>2</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Aromatic</B>
+                      </TD>
+                      <TD><B>FHWY</B>
+                      </TD>
+                      <TD><B>3</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Basic</B>
+                      </TD>
+                      <TD><B>KRH</B>
+                      </TD>
+                      <TD><B>4</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Charged</B>
+                      </TD>
+                      <TD><B>DEHKR</B>
+                      </TD>
+                      <TD><B>5</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Hydrophobic</B>
+                      </TD>
+                      <TD><B>AVILMFYW</B>
+                      </TD>
+                      <TD><B>6</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Hydrophilic</B>
+                      </TD>
+                      <TD><B>KRHDENQ</B>
+                      </TD>
+                      <TD><B>7</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Polar</B>
+                      </TD>
+                      <TD><B>CDEHKNQRST</B>
+                      </TD>
+                      <TD><B>8</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Small</B>
+                      </TD>
+                      <TD><B>ACDGNPSTV</B>
+                      </TD>
+                      <TD><B>9</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Tiny</B>
+                      </TD>
+                      <TD><B>AGS</B>
+                      </TD>
+                      <TD><B>B</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Turnlike</B>
+                      </TD>
+                      <TD><B>ACDEGHKNQRST</B>
+                      </TD>
+                      <TD><B>Z</B>
+                      </TD>
+                   </TR>
+                   <TR>
+                      <TD><B>Any</B>
+                      </TD>
+                      <TD><b>ACDEFGHIKLM<br>
+                             NPQRSTVWY</b>
+                      </TD>
+                      <TD><B>.</B>
+                      </TD>
+                   </TR>
+                   </table>
+
+          ]]>
+         </description>
+         <dynamicAttributes>
+           <columnAttribute name="Locations" inReportMaker="false"/>
+           <columnAttribute name="MatchCount" displayName="Match Count"
+                            inReportMaker="false"/>
+           <columnAttribute name="Sequence" inReportMaker="false" truncateTo="4000"/>
+         </dynamicAttributes>
+    </question>
+
+
+<!--================================================-->
+<!-- BLAST Similarity -->
+<!--===============================================-->
+
+
+<question name="OrfsBySimilarity"
+         displayName="ORFs by BLAST Similarity"
+         queryRef="OrfIds.OrfsBySimilarity"
+         recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+      <attributeList
+         summary="organism,Header,TabularRow,Alignment,Footer"
+         sorting="organism asc"
+      />
+
+         <description>
+           <![CDATA[
+             This query finds <b>Open Reading Frames (ORFs)</b> with BLAST matches to an input sequence.  The <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a> program is used to search against coding nucleotide (CDS) or  protein
+sequence from annotatated gene models.]]>
+         </description>
+
+         <dynamicAttributes>
+             <columnAttribute name="TabularRow" displayName="Blast summary"
+                              inReportMaker="false"/>
+             <columnAttribute name="Alignment" displayName="Blast alignment"
+                              inReportMaker="false"/>
+             <columnAttribute name="Header" displayName="Blast header"
+                              inReportMaker="false"/>
+             <columnAttribute name="Footer" displayName="Blast footer"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+
+    
+</questionSet>
+
+
+
+</wdkModel>
