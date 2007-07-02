@@ -1,0 +1,158 @@
+<wdkModel>
+
+  <questionSet name="EstQuestions">
+
+  <!------------------------------------------------------------------>
+  <!-- By Id -->
+  <!------------------------------------------------------------------>
+
+  <question name="EstBySourceId"
+	      displayName="ID"
+	      queryRef="EstIds.EstBySourceId"
+	      summaryAttributesList="organism,dbest_name"
+	      recordClassRef="EstRecordClasses.EstRecordClass">
+
+
+
+
+        <summary>
+	Find ESTs by ID
+	</summary>
+
+	<description>
+	  <![CDATA[
+	    Find ESTs by ID
+	  ]]>
+	</description>
+
+  </question>
+
+
+
+  <!------------------------------------------------------------------>
+  <!-- BLAST Similarity -->
+  <!------------------------------------------------------------------>
+
+  <question name="EstsBySimilarity"
+         displayName="BLAST"
+         category="Similarity/Pattern"
+         queryRef="EstIds.EstsBySimilarity"
+         summaryAttributesList="Header,TabularRow,Alignment,Footer"
+         recordClassRef="EstRecordClasses.EstRecordClass">
+
+        <attributesList
+           summaryAttributesList="Header,TabularRow,Alignment,Footer"
+        /> 
+
+        <summary>
+           Find ESTs that have BLAST similarity to your input sequence.
+        </summary>
+        <description includeProjects="PlasmoDB,ToxoDB">
+           <![CDATA[
+             Find ESTs that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+          ]]>
+        </description>
+        <description includeProjects="CryptoDB,ApiDB">
+           <![CDATA[
+             Find ESTs that have BLAST similarity to your input query sequence.
+            <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.
+          ]]>
+        </description>
+
+        <dynamicAttributes>
+             <columnAttribute name="TabularRow" displayName="Blast summary"
+                              inReportMaker="false"/>
+             <columnAttribute name="Alignment" displayName="Blast alignment"
+                              inReportMaker="false"/>
+             <columnAttribute name="Header" displayName="Blast header"
+                              inReportMaker="false"/>
+             <columnAttribute name="Footer" displayName="Blast footer"
+                              inReportMaker="false"/>
+        </dynamicAttributes>
+  </question>
+
+  <!------------------------------------------------------------------>
+  <!-- Location -->
+  <!------------------------------------------------------------------>
+
+  <question name="EstsByLocation"
+              category="Genomic Position"
+              displayName="Chromosomal Location"
+              queryRef="EstIds.EstsByLocation"
+              summaryAttributesList="organism"
+              recordClassRef="EstRecordClasses.EstRecordClass">
+
+
+
+
+
+        <summary>
+            Find ESTs that are located in a specified genomic region.
+        </summary>
+	<description>
+            <![CDATA[
+	    Find ESTs within a given genomic region.<br>
+            Enter the name of a chromosome (e.g. "VIIa") or a scaffold (e.g.
+            "TGG_995305"). The Start and End locations correspond to the
+            coordinates of the EST(s) on the chromosome.
+            ]]>
+        </description>
+
+
+
+    </question>
+
+
+  <!------------------------------------------------------------------>
+  <!-- By Library -->
+  <!------------------------------------------------------------------>
+
+  <question name="EstsByLibrary"
+              category="Transcript Expression"
+              displayName="Library"
+              queryRef="EstIds.EstsByLibrary"
+              summaryAttributesList="organism"
+              recordClassRef="EstRecordClasses.EstRecordClass">
+
+
+
+
+
+        <description>Find ESTs by Library Name</description>
+
+
+
+  </question>
+
+
+  <!------------------------------------------------------------------>
+  <!-- With Gene Overlap -->
+  <!------------------------------------------------------------------>
+
+
+    <question name="EstsWithGeneOverlap"
+         displayName="Extent of Gene Overlap"
+         queryRef="EstIds.EstsWithGeneOverlap"
+         summaryAttributesList="organism"
+         sortingAttributesList="organism asc"
+         recordClassRef="EstRecordClasses.EstRecordClass">
+
+
+
+
+
+        <description>Find ESTs that Overlap a Gene..</description>
+<!--        <dynamicAttributes>
+            <columnAttribute name="est_locations" displayName="EST location(s)"/>
+            <columnAttribute name="gene_ids" displayName="Gene(s)"/>
+        </dynamicAttributes>
+-->
+    </question>
+
+
+
+
+  </questionSet>
+
+</wdkModel>
