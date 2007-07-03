@@ -9,6 +9,8 @@
  
       - we should redefine the bfmv to include only columns that all projects have, moving
         the other stuff into auxiliary tables.  this way the sql for the bfmv can be shared.
+
+      - what does api's <projectParamRef> do?
    -->
    
     <recordClassSet name="GeneRecordClasses">
@@ -26,15 +28,18 @@
            attributeOrdering="dnaContext"
            aliasQueryRef="GeneAttributes.GeneAlias">
 
-          <!------------------------------------------------------------------>
-          <!-- Reporters -->  
-          <!------------------------------------------------------------------>
+          <projectParamRef ref="params.Project"/>
+
+      <!-- =============================================================== -->
+      <!--   Reporters -->  
+      <!-- =============================================================== -->
 
           <reporter name="tabular" displayName="Summary - tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
 
           <reporter name="gff3" displayName="Summary - GFF3"
-                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"
+                    excludeProjects="ApiDB"/>
 
           <reporter name="fullRecord" displayName="Detailed - text"
                     implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
@@ -42,6 +47,10 @@
           <reporter name="srt" displayName="Sequence - configurable FASTA"
                     implementation=""/>
 
+
+       <!-- =================================================================== -->
+       <!--  Attributes  ---------->
+       <!-- =================================================================== -->
 
           <!------------------------------------------------------------------>
           <!-- BFMV attributes -->  
@@ -59,16 +68,16 @@
             </textAttribute>
 
             <columnAttribute name="strand" displayName="Gene Strand" internal="false"/>
-            <columnAttribute displayName="Gene Type" name="gene_type" internal="false"/>
+            <columnAttribute name="gene_type" displayName="Gene Type" internal="false"/>
             <columnAttribute name="exon_count" displayName="# Exons" internal="false"
                              inReportMaker="true"/>
-            <columnAttribute displayName="Transcript Length" name="transcript_length" internal="false"/>
-            <columnAttribute displayName="CDS Length" name="cds_length" internal="false"/>
+            <columnAttribute name="transcript_length" displayName="Transcript Length" internal="false"/>
+            <columnAttribute name="cds_length" displayName="CDS Length" internal="false"/>
             <columnAttribute name="product" displayName="Product Description" internal="false"/>
-            <columnAttribute displayName="Protein Length" name="protein_length" internal="false"/>
-            <columnAttribute displayName="# TM Domains" internal="false"
-                             inReportMaker="true" name="tm_count" align="center"/>
-            <columnAttribute displayName="Molecular Weight" name="molecular_weight" align="center"/>
+            <columnAttribute name="protein_length" displayName="Protein Length" internal="false"/>
+            <columnAttribute name="tm_count" displayName="# TM Domains" internal="false"
+                             inReportMaker="true" align="center"/>
+            <columnAttribute name="molecular_weight" displayName="Molecular Weight" align="center"/>
             <columnAttribute name="isoelectric_point" displayName="Isoelectric Point" align="center"/>
 
             <columnAttribute name="ec_numbers_string" displayName="EC Numbers"/>
@@ -150,27 +159,31 @@
             <columnAttribute name="hydropathicity_gravy_score" displayName="Hydropathicity Gravy Score" internal="true" inReportMaker="false"/>
             <columnAttribute name="aromaticity_score" displayName="Aromaticity" internal="true" inReportMaker="false"/>
             <columnAttribute name="species" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Start Location" name="start_min" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Start Location" name="start_min_text" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="End Location" name="end_max" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="End Location" name="end_max_text" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Strand" name="strand_plus_minus" internal="true" inReportMaker="false"/>
+            <columnAttribute name="start_min" displayName="Start Location" internal="true" inReportMaker="false"/>
+            <columnAttribute name="start_min_text" displayName="Start Location" internal="true" inReportMaker="false"/>
+            <columnAttribute name="end_max" displayName="End Location" internal="true" inReportMaker="false"/>
+            <columnAttribute name="end_max_text" displayName="End Location" internal="true" inReportMaker="false"/>
+            <columnAttribute name="strand_plus_minus" displayName="Strand" internal="true" inReportMaker="false"/>
             <columnAttribute name="context_start" internal="true" inReportMaker="false"/>
             <columnAttribute name="context_end" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Organism" name="organism_full" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Organism" name="organism" internal="false" inReportMaker="true"/>
-            <columnAttribute displayName="genus_species" name="genus_species" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="Taxonomy Id" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="PlasmoCYC DB Name" name="cyc_db" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
-            <columnAttribute displayName="PlasmoCYC Gene ID" name="cyc_gene_id" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
-            <columnAttribute displayName="ToxoCYC DB Name" name=cyc_db" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
-            <columnAttribute displayName="ToxoCYC Gene ID" name="cyc_gene_id" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
-            <columnAttribute displayName="External DB Version" name="external_db_version" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="SO Id" name="so_id" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="SO Term Name" name="so_term_name" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="SO Term Definition" internal="true" name="so_term_definition" inReportMaker="false"/>
-            <columnAttribute displayName="Ontology Name" name="ontology_name" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="SO Version" name="so_version" internal="true" inReportMaker="false"/>
+            <columnAttribute name="organism_full" displayName="Organism" internal="true" inReportMaker="false"/>
+            <columnAttribute name="organism" displayName="Organism" internal="false" inReportMaker="true"/>
+            <columnAttribute name="genus_species" displayName="genus_species" internal="true" inReportMaker="false"/>
+            <columnAttribute name="ncbi_tax_id" displayName="Taxonomy Id" internal="true" inReportMaker="false"/>
+            <columnAttribute name="cyc_db" displayName="PlasmoCYC DB Name" internal="true" 
+                 inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
+            <columnAttribute name="cyc_gene_id" displayName="PlasmoCYC Gene ID" name="cyc_gene_id" 
+                 internal="true" inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
+            <columnAttribute name=cyc_db" displayName="ToxoCYC DB Name" internal="true" 
+                 inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute name="cyc_gene_id" displayName="ToxoCYC Gene ID" internal="true" 
+                 inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute name="external_db_version" displayName="External DB Version" internal="true" inReportMaker="false"/>
+            <columnAttribute name="so_id" displayName="SO Id" internal="true" inReportMaker="false"/>
+            <columnAttribute name="so_term_name" displayName="SO Term Name" internal="true" inReportMaker="false"/>
+            <columnAttribute name="so_term_definition" displayName="SO Term Definition" internal="true" inReportMaker="false"/>
+            <columnAttribute name="ontology_name" displayName="Ontology Name" internal="true" inReportMaker="false"/>
+            <columnAttribute name="so_version" displayName="SO Version" internal="true" inReportMaker="false"/>
             <columnAttribute name="anticodon" displayName="Anticodon" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
 
@@ -230,7 +243,7 @@
           <!-- data dump attributes -->  
           <!------------------------------------------------------------------>
 
-          <attributeQueryRef ref="DataDumpQueries.GeneGffAttrs">
+          <attributeQueryRef ref="DataDumpQueries.GeneGffAttrs" excludeProjects="ApiDB">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -247,11 +260,15 @@
           </attributeQueryRef>
 
          
+       <!-- =================================================================== -->
+       <!-- Tables ---------->
+       <!-- =================================================================== -->
+
           <!------------------------------------------------------------------>
           <!-- SNPs table -->  
           <!------------------------------------------------------------------>
 
-         <table name="SNPs"
+         <table name="SNPs" excludeProjects="ApiDB"
                  displayName="SNPs Summary"
                  queryRef="GeneTables.SNPs">
             <columnAttribute internal="true" name="strain_a_query"/>
@@ -285,7 +302,7 @@
           <!-- Notes table -->  
           <!------------------------------------------------------------------>
 
-          <table name="Notes"
+          <table name="Notes" excludeProjects="ApiDB"
                  displayName="Notes"
                  queryRef="GeneTables.Notes">
             <columnAttribute displayName="Note" name="comment_string"/>
@@ -295,7 +312,7 @@
           <!-- User Comments table -->  
           <!------------------------------------------------------------------>
 
-          <table name="UserComments"
+          <table name="UserComments" excludeProjects="ApiDB"
                  displayName="User Comments"
                  queryRef="GeneTables.UserComments">
 		    <columnAttribute name="comment_id" internal="true"/>
@@ -317,7 +334,7 @@
           <!-- EC number table -->  
           <!------------------------------------------------------------------>
 
-          <table name="EcNumber"
+          <table name="EcNumber" excludeProjects="ApiDB"
                  displayName="EC Number"
                  queryRef="GeneTables.EcNumber">
             <columnAttribute name="ec_number" internal="true"/>
@@ -373,7 +390,7 @@
           <!-- GO term table -->  
           <!------------------------------------------------------------------>
 
-          <table name="GoTerms"
+          <table name="GoTerms" excludeProjects="ApiDB"
                  displayName="GO Terms"
                  queryRef="GeneTables.GoTerms">
             <columnAttribute displayName="Is Not" name="is_not"/>
@@ -446,7 +463,7 @@
           <!-- Orthologs table -->  
           <!------------------------------------------------------------------>
 
-          <table name="Orthologs"
+          <table name="Orthologs" excludeProjects="ApiDB"
                  displayName="Paralogs and In-genera Orthologs"
                  queryRef="GeneTables.Orthologs">
             <columnAttribute name="source_id" internal="true"/>
@@ -464,7 +481,7 @@
           <!-- Pathways table -->  
           <!------------------------------------------------------------------>
 
-          <table name="MetabolicPathways"
+          <table name="MetabolicPathways" excludeProjects="ApiDB"
                  displayName="Metabolic Pathways"
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
@@ -642,7 +659,7 @@
           <!-- Epitpotes table -->  
           <!------------------------------------------------------------------>
 
-          <table name="Epitopes"
+          <table name="Epitopes" excludeProjects="ApiDB"
                  displayName="Epitopes from IEDB"
                  queryRef="GeneTables.Epitopes">
             <columnAttribute name="iedb_id" internal="true"/>
@@ -664,7 +681,7 @@
           <!-- GFF Gene DB xrefs  table -->  
           <!------------------------------------------------------------------>
 
-          <table name="gff_GeneDbxrefs"
+          <table name="gff_GeneDbxrefs" excludeProjects="ApiDB"
                  displayName="Gene Exons"
                  queryRef="DataDumpQueries.GeneGffDbxrefs" inReportMaker="false">
 
@@ -675,7 +692,7 @@
           <!-- GFF Gene RNAs table -->  
           <!------------------------------------------------------------------>
 
-          <table name="gff_GeneRnas"
+          <table name="gff_GeneRnas" excludeProjects="ApiDB"
                  displayName="Gene RNAs"
                  queryRef="DataDumpQueries.GeneRnas" internal="true" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
@@ -699,7 +716,7 @@
           <!-- GFF Gene CDSs table -->  
           <!------------------------------------------------------------------>
 
-          <table name="gff_GeneCdss"
+          <table name="gff_GeneCdss" excludeProjects="ApiDB"
                  displayName="Gene CDSs"
                  queryRef="DataDumpQueries.GeneCdss" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
@@ -724,7 +741,7 @@
           <!-- GFF Gene exons table -->  
           <!------------------------------------------------------------------>
 
-          <table name="gff_GeneExons"
+          <table name="gff_GeneExons" excludeProjects="ApiDB"
                  displayName="Gene Exons"
                  queryRef="DataDumpQueries.GeneExons" inReportMaker="false">
 
@@ -783,7 +800,7 @@
           <!-- Text  attributes -->  
           <!------------------------------------------------------------------>
 
-          <textAttribute name="overview" displayName="Overview"
+          <textAttribute name="overview" displayName="Overview" excludeProjects="ApiDB"
                          internal="true" inReportMaker="false">
              <text>
                   <![CDATA[
@@ -792,7 +809,8 @@
              </text>
          </textAttribute>
 
-         <textAttribute name="dnaContext" displayName="Genomic Context" internal="true" inReportMaker="false">
+         <textAttribute name="dnaContext" displayName="Genomic Context"  excludeProjects="ApiDB"
+               internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs;options=CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
@@ -807,7 +825,7 @@
 
          
 
-         <textAttribute name="gbrowseLink" internal="true" inReportMaker="false">
+         <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" excludeProjects="ApiDB">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
                 @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
@@ -820,7 +838,7 @@
             </text>
          </textAttribute>
 
-         <textAttribute name="proteinFeatures" displayName="Protein Features"
+         <textAttribute name="proteinFeatures" displayName="Protein Features" excludeProjects="ApiDB"
                         internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
