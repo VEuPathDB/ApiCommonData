@@ -1,5 +1,11 @@
     <querySet name="GeneAttributes">
 
+
+
+       <!------------------------------------------------------------------>
+       <!-- Gene alias -->  
+       <!------------------------------------------------------------------>
+
         <sqlQuery name="GeneAlias" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
             <column name="source_id"/>
@@ -11,6 +17,11 @@
             ]]>
             </sql>
         </sqlQuery>
+
+
+       <!------------------------------------------------------------------>
+       <!--  -->  
+       <!------------------------------------------------------------------>
 
         <sqlQuery name="Bfmv" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
@@ -28,8 +39,8 @@
             <column name="context_end" sortingTable="apidb.geneattributes"/>
             <column name="strand_plus_minus" sortingTable="apidb.geneattributes" sortingColumn="strand"/>
             <column name="sequence_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
-            <column name="plasmocyc_db" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
-            <column name="plasmocyc_gene_id" sortingTable="apidb.geneattributes" sortingColumn="source_id"/>
+            <column name="cyc_db" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="cyc_gene_id" sortingTable="apidb.geneattributes" sortingColumn="source_id"/>
             <column name="tm_count" sortingTable="apidb.geneattributes"/>
             <column name="so_id" sortingTable="apidb.geneattributes"/>
             <column name="so_term_name" sortingTable="apidb.geneattributes"/>
@@ -59,18 +70,23 @@
             <column name="pred_go_component" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_component"/>
             <column name="pred_go_process" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_process"/>
             <column name="pred_go_function" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_function"/>
-            <column name="der_min_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_level"/>
-            <column name="der_max_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_level"/>
-            <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing"/>
-            <column name="der_max_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_timing"/>
-            <column name="der_max_pct" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_pct"/>
-            <column name="winz_min_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_level"/>
-            <column name="winz_max_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_level"/>
-            <column name="winz_min_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_timing"/>
-            <column name="winz_max_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_timing"/>
-            <column name="winz_max_pct" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_pct"/>
+            <column name="der_min_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_level" includeProjects="PlasmoDB"/>
+            <column name="der_max_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_level" includeProjects="PlasmoDB"/>
+            <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing" includeProjects="PlasmoDB"/>
+            <column name="der_max_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_timing" includeProjects="PlasmoDB"/>
+            <column name="der_max_pct" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_pct" includeProjects="PlasmoDB"/>
+            <column name="winz_min_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_level" includeProjects="PlasmoDB"/>
+            <column name="winz_max_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_level" includeProjects="PlasmoDB"/>
+            <column name="winz_min_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_timing" includeProjects="PlasmoDB"/>
+            <column name="winz_max_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_timing" includeProjects="PlasmoDB"/>
+            <column name="winz_max_pct" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_pct" includeProjects="PlasmoDB"/>
 
-            <sql>
+            <column name="pru" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <column name="veg" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <column name="rh"  sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <column name="rh_no_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <column name="rh_high_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <sql includeProjects="PlasmoDB">
             <![CDATA[
             SELECT bfmv.source_id, bfmv.gene_type, bfmv.product,
                    start_min, end_max,
@@ -94,8 +110,8 @@
                           INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
                    DECODE(bfmv.organism,
                           'Plasmodium falciparum 3D7', 'PLASMO', null)
-                   AS plasmocyc_db,
-                   UPPER(bfmv.source_id) AS plasmocyc_gene_id,
+                   AS cyc_db,
+                   UPPER(bfmv.source_id) AS cyc_gene_id,
                    bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
                    bfmv.annotated_go_component as ann_go_component,
                    bfmv.annotated_go_function as ann_go_function,
@@ -117,7 +133,53 @@
                WHERE bfmv.source_id='$$primaryKey$$'
             ]]>
             </sql>
+
+            <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product,
+                   start_min, end_max,
+                   trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
+                   trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
+                   decode(strand,'forward','+','reverse','-',null) as strand_plus_minus,
+                   bfmv.cds_length, bfmv.protein_length, bfmv.transcript_length,
+                   bfmv.context_start, bfmv.context_end, 
+                   bfmv.sequence_id, bfmv.organism as organism_full, bfmv.tm_count, bfmv.so_id,
+                   bfmv.so_term_name, bfmv.so_term_definition,
+                   bfmv.ontology_name, bfmv.so_version, bfmv.anticodon,
+                   bfmv.molecular_weight, bfmv.isoelectric_point,
+                   bfmv.min_molecular_weight, bfmv.max_molecular_weight,
+                   bfmv.hydropathicity_gravy_score, bfmv.aromaticity_score,
+                   bfmv.external_db_name, bfmv.external_db_version,
+                   bfmv.exon_count, bfmv.ncbi_tax_id,
+                   SUBSTR(bfmv.organism, 1,
+                          INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1)
+                     AS genus_species,
+                   REPLACE(bfmv.organism,'Toxoplasma','T.') as organism,
+                   SUBSTR(bfmv.organism,
+                          INSTR(bfmv.organism, ' ') + 1,
+                          INSTR(bfmv.organism || '  ', ' ', 1, 2)
+                          - INSTR(bfmv.organism, ' ') - 1) AS species,
+                   'TOXO' AS cyc_db,
+                   UPPER(bfmv.source_id) AS cyc_gene_id,
+                   bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
+                   bfmv.annotated_go_component as ann_go_component,
+                   bfmv.annotated_go_function as ann_go_function,
+                   bfmv.annotated_go_process as ann_go_process,
+                   bfmv.predicted_go_component as pred_go_component,
+                   bfmv.predicted_go_function as pred_go_function,
+                   bfmv.predicted_go_process as pred_go_process,
+                   bfmv.pru, bfmv.veg, bfmv.rh, bfmv.rh_no_glucose,
+                   bfmv.rh_high_glucose
+            FROM apidb.GeneAttributes bfmv
+               WHERE bfmv.source_id='$$primaryKey$$'
+            ]]>
+            </sql>
         </sqlQuery>
+
+
+       <!------------------------------------------------------------------>
+       <!-- protein sequence  -->  
+       <!------------------------------------------------------------------>
 
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
@@ -137,6 +199,11 @@
             </sql>
         </sqlQuery>
 
+
+       <!------------------------------------------------------------------>
+       <!-- transcript sequence -->  
+       <!------------------------------------------------------------------>
+
         <sqlQuery name="TranscriptSequence" isCacheable="false"
                        displayName="RNA Sequence">
             <paramRef ref="params.primaryKey"/>
@@ -152,6 +219,11 @@
             ]]>
             </sql>
         </sqlQuery>
+
+
+       <!------------------------------------------------------------------>
+       <!-- cds sequence -->  
+       <!------------------------------------------------------------------>
 
         <sqlQuery name="CDS" isCacheable="false"
                        displayName="RNA Sequence">
@@ -175,7 +247,12 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ExpressionGraphs" isCacheable="false">
+
+       <!------------------------------------------------------------------>
+       <!-- plasmo expression graphs -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="source_id"/>
             <column name="graph_derisi_winzeler" />

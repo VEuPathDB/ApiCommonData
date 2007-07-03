@@ -6,7 +6,9 @@
         up to date.
 
       - in the GFF tables there were a few slightly not minor changes, and i kept the plasmo version
-
+ 
+      - we should redefine the bfmv to include only columns that all projects have, moving
+        the other stuff into auxiliary tables.  this way the sql for the bfmv can be shared.
    -->
    
     <recordClassSet name="GeneRecordClasses">
@@ -159,10 +161,10 @@
             <columnAttribute displayName="Organism" name="organism" internal="false" inReportMaker="true"/>
             <columnAttribute displayName="genus_species" name="genus_species" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="Taxonomy Id" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
-            <columnAttribute displayName="PlasmoCYC DB Name" name="plasmocyc_db" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
-            <columnAttribute displayName="PlasmoCYC Gene ID" name="plasmocyc_gene_id" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
-            <columnAttribute displayName="ToxoCYC DB Name" name="toxocyc_db" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
-            <columnAttribute displayName="ToxoCYC Gene ID" name="toxocyc_gene_id" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute displayName="PlasmoCYC DB Name" name="cyc_db" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
+            <columnAttribute displayName="PlasmoCYC Gene ID" name="cyc_gene_id" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
+            <columnAttribute displayName="ToxoCYC DB Name" name=cyc_db" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute displayName="ToxoCYC Gene ID" name="cyc_gene_id" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
             <columnAttribute displayName="External DB Version" name="external_db_version" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="SO Id" name="so_id" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="SO Term Name" name="so_term_name" internal="true" inReportMaker="false"/>
@@ -762,7 +764,7 @@
                         includeProjects="PlasmoDB">
             <url>
                <![CDATA[
-                     http://apicyc.apidb.org/$$plasmocyc_db$$/NEW-IMAGE?type=NIL&object=$$plasmocyc_gene_id$$
+                     http://apicyc.apidb.org/$$cyc_db$$/NEW-IMAGE?type=NIL&object=$$cyc_gene_id$$
                      ]]>
             </url>
          </linkAttribute>
@@ -772,7 +774,7 @@
                         includeProjects="ToxoDB">
             <url>
                <![CDATA[
-                     http://apicyc.apidb.org/$$toxocyc_db$$/NEW-IMAGE?type=GENE&object=$$toxocyc_gene_id$$
+                     http://apicyc.apidb.org/$$cyc_db$$/NEW-IMAGE?type=GENE&object=$$cyc_gene_id$$
                      ]]>
             </url>
          </linkAttribute>
