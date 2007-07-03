@@ -1,43 +1,20 @@
+<wdkModel>
+
+<!-- notes
+
+  - so far this is only a unification of p and t.  crypto seemed pretty different
+
+  - the pathways query is diff between t and p, but shouldn't be.  one is wrong.
+
+--> 
+
+
   <querySet name="GeneTables">
 
-    <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false'>
-       <paramRef ref="params.primaryKey"/>
-       <column name="studyName" />
-       <column name="fold_change" />
-       <column name="confidence" />
-       <sql>
-           <!-- use CDATA because query includes angle brackets -->
-            <![CDATA[
-          SELECT lg.name as studyName,
-	      max(to_char(de.fold_change, '999.99')) as fold_change,
-              max(to_char(de.confidence,'99.99')) as confidence
-            FROM Rad.LogicalGroup lg,
-                 Rad.AnalysisInput ai,
-                 Rad.Analysis a, 
-                 RAD.DifferentialExpression de, 
-                 Rad.ShortOligoFamily sof,
-                 Rad.Protocol p, 
-                 Rad.ProtocolParam pp, 
-                 Rad.AnalysisParam ap,
-                 ApiDB.GeneAlias ga
-            WHERE lg.name = 'DOZI mutant vs. Wild Type - Loess Normalized Analyses'
-             AND ai.logical_group_id = lg.logical_group_id 
-             AND a.analysis_id = ai.analysis_id
-             AND de.analysis_id = a.analysis_id
-             AND sof.composite_element_id = de.row_id
-             AND sof.source_id is not null
-             AND ga.gene = '$$primaryKey$$'
-             AND ga.alias = sof.source_id
-             AND p.name = 'PaGE'
-             AND a.protocol_id = p.protocol_id
-             AND pp.protocol_id = p.protocol_id
-             AND pp.name = 'reference_condition'
-             AND ap.protocol_param_id = pp.protocol_param_id
-             AND a.analysis_id = ap.analysis_id
-             GROUP BY lg.name
-        ]]>
-       </sql>
-    </sqlQuery>
+
+       <!------------------------------------------------------------------>
+       <!-- SNPs -->  
+       <!------------------------------------------------------------------>
 
         <sqlQuery name="SNPs" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
@@ -53,7 +30,7 @@
             <column name="cds_snp_density"/>
             <column name="num_total"/>
 
-            <sql>
+            <sql includeProjects="PlasmoDB">
             <![CDATA[
               SELECT
               source_id as gene_source_id,
@@ -73,9 +50,37 @@
               ORDER BY ord desc
             ]]>
             </sql>
+
+            <sql includeProjects="ToxoDB">
+            <![CDATA[
+              SELECT  strain_a as strain_a_disp, 
+              strain_b as strain_b_disp, 
+              CASE WHEN strain_a = 'ME49' THEN 'ME49 (type II)' 
+              WHEN strain_a = 'RH' THEN 'RH'
+              WHEN strain_a = 'VEG' THEN 'VEG (type III)'
+              WHEN strain_a = 'GT1' THEN 'GT1 (type I)' END as strain_a_query,
+              CASE WHEN strain_b = 'ME49' THEN 'ME49 (type II)' 
+              WHEN strain_b = 'RH' THEN 'RH'
+              WHEN strain_b = 'VEG' THEN 'VEG (type III)'
+              WHEN strain_b = 'GT1' THEN 'GT1 (type I)' END as strain_b_query,
+              cds_length,source_id as gene_source_id,                
+              round(non_synonymous / CASE synonymous WHEN 0 THEN 1  ELSE synonymous end, 2) as dn_ds_ratio,              
+              non_synonymous as num_non_synonymous,synonymous as num_synonymous,              
+              stop as num_nonsense,non_coding as num_non_coding,total as num_total,              
+              round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density             
+              FROM apidb.SnpSummary ss
+              WHERE ss.source_id = '$$primaryKey$$' 
+              ORDER BY num_total desc
+            ]]>
+            </sql>
         </sqlQuery>
 
-        <sqlQuery name="Notes" displayName="Notes" isCacheable="false">
+
+       <!------------------------------------------------------------------>
+       <!-- Notes -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Notes" displayName="Notes" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
             <column name="comment_string"/>
             <sql>
@@ -88,10 +93,15 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="UserComments" displayName="User Comments" isCacheable="false">
+
+       <!------------------------------------------------------------------>
+       <!-- User Comments -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="UserComments" displayName="User Comments" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
-			<column name="comment_id"/>
-			<column name="stable_id"/>
+            <column name="comment_id"/>
+            <column name="stable_id"/>
             <column name="headline"/>
             <column name="user_name"/>
             <column name="organization"/>
@@ -110,12 +120,19 @@
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = gf.source_id
                     AND gf.source_id = '$$primaryKey$$'
-			  ORDER BY c.comment_date DESC
+                    AND c.review_status_id != 'rejected'
+                    AND c.review_status_id != 'task'
+              ORDER BY c.comment_date DESC
             ]]>
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="EcNumber" displayName="EC Numbers" isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- EC number -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="EcNumber" displayName="EC Numbers" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
             <column name="ec_number" />
             <column name="source"/>
@@ -146,7 +163,158 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="Aliases" isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- GO terms -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="GoTerms" displayName="GO Terms" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="is_not"/>
+            <column name="go_id"/>
+            <column name="ontology"/>
+            <column name="go_term_name"/>
+            <column name="source"/>
+            <column name="evidence_code"/>
+            <column name="lowercase_evidence_code"/>
+            <sql>
+            <![CDATA[
+            SELECT gts.is_not, gts.go_id, gts.ontology, gts.go_term_name,
+                    gts.source, gts.evidence_code,
+                    lower(gts.evidence_code) AS lowercase_evidence_code
+            FROM apidb.GoTermSummary gts
+            WHERE gts.source_id = '$$primaryKey$$'
+            ORDER BY gts.ontology, gts.go_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+ 
+       <!------------------------------------------------------------------>
+       <!-- Pathways -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="MetabolicPathways" displayName="Metabolic Pathways"
+                  isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="pathway_id"/>
+            <column name="pathway_name"/>
+            <column name="activity"/>
+
+            <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            SELECT DISTINCT dr.primary_identifier AS pathway_id,
+                            decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
+                            dr.remark as activity
+            FROM dots.GeneFeature gf,
+                 dots.DbRefNaFeature drnf,
+                 sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase ed
+            WHERE gf.source_id = '$$primaryKey$$'
+            AND gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            AND dr.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = 'Links to Pathway Maps'
+            ORDER BY dr.primary_identifier
+            ]]>
+            </sql>
+
+            <sql includeProjects="ToxoDB">
+            <![CDATA[
+	    SELECT DISTINCT dr.primary_identifier AS pathway_id,
+                   decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
+                   dr.remark as activity
+	    FROM dots.GeneFeature gf,dots.Transcript t, dots.DbRefaaFeature draf, 
+	         sres.DbRef dr, dots.TranslatedAaFeature taf,
+		 sres.ExternalDatabaseRelease edr,
+		 sres.ExternalDatabase ed
+            WHERE gf.source_id = '$$primaryKey$$'
+	    AND gf.na_feature_id = t.parent_id
+	    AND t.na_feature_id = taf.na_feature_id
+            AND taf.aa_feature_id = draf.aa_feature_id
+            AND draf.db_ref_id = dr.db_ref_id
+	    AND dr.external_database_release_id = edr.external_database_release_id
+	    AND edr.external_database_id = ed.external_database_id
+	    AND ed.name = 'Links to Pathway Maps'
+	    ORDER BY dr.primary_identifier
+            ]]>
+            </sql>
+        </sqlQuery>
+
+ 
+       <!------------------------------------------------------------------>
+       <!-- Orthologs -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Orthologs" displayName="Plasmodium Orthologs"
+                  isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id" />
+            <column name="species"/>
+            <column name="product"/>
+            <sql>
+            <![CDATA[
+            SELECT DISTINCT gf2.source_id, tn.name as species, gf2.product
+            FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
+                 dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
+                 dots.ExternalNaSequence ens, core.TableInfo ti,
+                 sres.TaxonName tn
+            WHERE gf1.source_id = '$$primaryKey$$'
+              AND gf1.na_feature_id = ssg1.sequence_id
+              AND ssg1.source_table_id = ti.table_id
+              AND ssg1.sequence_group_id = ssg2.sequence_group_id
+              AND ssg2.source_table_id = ti.table_id
+              AND ssg2.sequence_id = gf2.na_feature_id
+              AND gf2.na_sequence_id = ens.na_sequence_id
+              AND ens.taxon_id = tn.taxon_id
+              AND tn.name_class = 'scientific name'
+              AND ti.name = 'GeneFeature'
+              AND gf2.source_id != gf1.source_id
+            ORDER BY tn.name, gf2.source_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+ 
+       <!------------------------------------------------------------------>
+       <!-- Epitopes -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Epitopes"
+                  isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="iedb_id"/>
+            <column name="location"/>
+            <column name="sequence"/>
+            <column name="name"/>
+            <column name="confidence"/>
+            <sql>
+            <![CDATA[
+                SELECT es.iedb_id, es.location, es.sequence, es.name,
+                       es.confidence
+                FROM apidb.EpitopeSummary es
+                WHERE es.source_id = '$$primaryKey$$'
+                ORDER BY DECODE(es.confidence, 'Low', 1,
+                              'Medium', 2,
+                              'High', 3,
+                              4) desc,es.location
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
+
+  <!--===========================================================================-->
+  <!-- PlasmoDB exclusives  -->
+  <!--===========================================================================-->
+
+ 
+       <!------------------------------------------------------------------>
+       <!-- Aliases -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="alias"/>
             <sql>
@@ -160,8 +328,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="InteractionsAsPrey" isCacheable="false"
-                  displayName="Gene As Prey">
+ 
+       <!------------------------------------------------------------------>
+       <!-- Interactions as prey -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="InteractionsAsPrey" isCacheable="false"
+                  displayName="Gene As Prey" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="source_id"/>
             <column name="bait_start"/>
@@ -185,8 +358,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="InteractionsAsBait" isCacheable="false"
-                  displayName="Gene As Bait">
+ 
+       <!------------------------------------------------------------------>
+       <!-- Interactions as bait -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="InteractionsAsBait" isCacheable="false"
+                  displayName="Gene As Bait" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="source_id"/>
             <column name="bait_start"/>
@@ -210,8 +388,13 @@
             </sql>
         </sqlQuery>
 
-    <sqlQuery name="Y2hInteractions" isCacheable="false"
-              displayName="Y2H Protein Interaction Data">
+ 
+       <!------------------------------------------------------------------>
+       <!-- Y2H interactions -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Y2hInteractions" isCacheable="false"
+              displayName="Y2H Protein Interaction Data" includeProjects="PlasmoDB">
         <paramRef ref="params.primaryKey"/>
         <column name="source_id"/>
         <column name="bait_start"/>
@@ -245,113 +428,16 @@
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND bf.na_sequence_id = ens.na_sequence_id
            ]]>
-       </sql>
-    </sqlQuery>
+        </sql>
+      </sqlQuery>
 
-        <sqlQuery name="GoTerms" displayName="GO Terms" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="is_not"/>
-            <column name="go_id"/>
-            <column name="ontology"/>
-            <column name="go_term_name"/>
-            <column name="source"/>
-            <column name="evidence_code"/>
-            <column name="lowercase_evidence_code"/>
-            <sql>
-            <![CDATA[
-            SELECT gts.is_not, gts.go_id, gts.ontology, gts.go_term_name,
-                    gts.source, gts.evidence_code,
-                    lower(gts.evidence_code) AS lowercase_evidence_code
-            FROM apidb.GoTermSummary gts
-            WHERE gts.source_id = '$$primaryKey$$'
-            ORDER BY gts.ontology, gts.go_id
-            ]]>
-            </sql>
-        </sqlQuery>
 
-        <!-- sqlQuery name="PhyleticProfiles" isCacheable="false"
-                  displayName="Phyletic Profiles">
-            <paramRef ref="params.primaryKey"/>
-            <linkColumn name="profile_link" displayName="Gene"
-                           visible="$$source_id$$">
-                 <url>
-                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$source_id$$]]>
-                 </url>
-            </linkColumn>
-            <column name="source_id" internal="true"/>
-            <column name="product" displayName="Product"/>
-            <column name="mutual_information_score"
-            <sql>
-            <![CDATA[
-            SELECT gf2.source_id, gf2.product,
-                   mis.mutual_information_score/10000 as mutual_information_score
-            from dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
-                 dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
-                 dots.GeneFeature gf2
-            where gf1.source_id = '$$primaryKey$$'
-              and gf1.na_feature_id = pp1.na_feature_id
-              and pp1.phylogenetic_profile_id = mis.primary_profile_id
-              and mis.secondary_profile_id = pp2.phylogenetic_profile_id
-              and pp2.na_feature_id = gf2.na_feature_id
-            order by mis.mutual_information_score desc
-            ]]>
-            </sql>
-        </sqlQuery -->
+       <!------------------------------------------------------------------>
+       <!-- Array elements -->  
+       <!------------------------------------------------------------------>
 
-        <sqlQuery name="Orthologs" displayName="Plasmodium Orthologs"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="source_id" />
-            <column name="species"/>
-            <column name="product"/>
-            <sql>
-            <![CDATA[
-            SELECT DISTINCT gf2.source_id, tn.name as species, gf2.product
-            FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
-                 dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
-                 dots.ExternalNaSequence ens, core.TableInfo ti,
-                 sres.TaxonName tn
-            WHERE gf1.source_id = '$$primaryKey$$'
-              AND gf1.na_feature_id = ssg1.sequence_id
-              AND ssg1.source_table_id = ti.table_id
-              AND ssg1.sequence_group_id = ssg2.sequence_group_id
-              AND ssg2.source_table_id = ti.table_id
-              AND ssg2.sequence_id = gf2.na_feature_id
-              AND gf2.na_sequence_id = ens.na_sequence_id
-              AND ens.taxon_id = tn.taxon_id
-              AND tn.name_class = 'scientific name'
-              AND ti.name = 'GeneFeature'
-              AND gf2.source_id != gf1.source_id
-            ORDER BY tn.name, gf2.source_id
-            ]]>
-            </sql>
-        </sqlQuery>
-
-<!-- replaced by ProteinDatabase
-        <sqlQuery name="Genbank" displayName="GenBank Records"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="genbank_accession"/>
-            <sql>
-            <![CDATA[
-            SELECT DISTINCT dr.primary_identifier AS genbank_accession
-            FROM dots.SplicedNaSequence sns, dots.dbrefNaSequence drns,
-                 sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-                  sres.ExternalDatabase ed
-            WHERE sns.source_id = '$$primaryKey$$'
-              AND sns.na_sequence_id = drns.na_sequence_id
-              AND drns.db_ref_id = dr.db_ref_id
-              AND dr.external_database_release_id = edr.external_database_release_id
-              AND edr.external_database_id = ed.external_database_id
-              AND ed.name = 'GenBank'
-            ORDER BY dr.primary_identifier
-            ]]>
-            </sql>
-        </sqlQuery>
--->
-
-        <sqlQuery name="ArrayElements" displayName="Mapped Array Elements"
-                  isCacheable="false">
+       <sqlQuery name="ArrayElements" displayName="Mapped Array Elements"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="array_source_id"/>
             <column name="array_provider"/>
@@ -379,35 +465,13 @@
         </sqlQuery>
 
 
-        <sqlQuery name="MetabolicPathways" displayName="Metabolic Pathways"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="pathway_id"/>
-            <column name="pathway_name"/>
-            <column name="activity"/>
-            <sql>
-            <![CDATA[
-            SELECT DISTINCT dr.primary_identifier AS pathway_id,
-                            decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
-                            dr.remark as activity
-            FROM dots.GeneFeature gf,
-                 dots.DbRefNaFeature drnf,
-                 sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-                 sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
-            AND gf.na_feature_id = drnf.na_feature_id
-            AND drnf.db_ref_id = dr.db_ref_id
-            AND dr.external_database_release_id = edr.external_database_release_id
-            AND edr.external_database_id = ed.external_database_id
-            AND ed.name = 'Links to Pathway Maps'
-            ORDER BY dr.primary_identifier
-            ]]>
-            </sql>
+ 
+       <!------------------------------------------------------------------>
+       <!-- Protein expression -->  
+       <!------------------------------------------------------------------>
 
-        </sqlQuery>
-
-        <sqlQuery name="ProteinExpression" displayName="Protein Expression Profile"
-                  isCacheable="false">
+       <sqlQuery name="ProteinExpression" displayName="Protein Expression Profile"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="profile_element"/>
             <column name="element_value"/>
@@ -430,8 +494,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="Mr4Reagents" displayName="MR4 Reagents"
-                  isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- MR4 reagents -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="Mr4Reagents" displayName="MR4 Reagents"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="atcc_number"/>
             <column name="reagent_type"/>
@@ -461,8 +530,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
-                  isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- Mass spec -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="developmental_stage"/>
             <column name="algorithm"/>
@@ -487,8 +561,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ProteinDatabase" displayName="Protein Database"
-                  isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- protein database links -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="ProteinDatabase" displayName="Protein Database"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="accession"/>
             <column name="gi"/>
@@ -550,8 +629,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="3dPreds" displayName="Protein Structure Predictions"
-                  isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- 3-D structure predictions -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="3dPreds" displayName="Protein Structure Predictions"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="search_term"/>
             <column name="pdb_template"/>
@@ -573,55 +657,14 @@
             </sql>
         </sqlQuery>
 
-        <!-- sqlQuery name="PdbSimilarities"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="pdb_chain"/>
-            <column name="pdb_id"/>
-            <column name="pvalue_mant"/>
-            <column name="pvalue_exp"/>
-            <column name="taxon"/>
-            <column name="pdb_title"/>
-            <column name="percent_identity"/>
-            <column name="percent_plasmo_coverage"/>
-            <sql>
-            <![CDATA[
-                SELECT eas.source_id AS pdb_chain, eas.description AS pdb_title,
-                       substr(eas.source_id, 1,
-                              instr(eas.source_id, '_', -1) - 1)
-                         AS pdb_id,
-                       s.pvalue_mant, s.pvalue_exp, tn.name AS taxon,
-                    ROUND( (s.number_identical / s.total_match_length) * 100)
-                        AS percent_identity,
-                    ROUND( (s.total_match_length / tas.length) * 100)
-                        AS percent_plasmo_coverage
-                FROM dots.TranslatedAaFeature taf,
-                     dots.TranslatedAaSequence tas, core.TableInfo tas_ti,
-                     dots.Similarity s, core.TableInfo eas_ti,
-                     dots.ExternalAaSequence eas,
-                     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-                     sres.TaxonName tn
-                WHERE taf.aa_sequence_id = tas.aa_sequence_id
-                  AND tas_ti.name = 'TranslatedAASequence'
-                  AND tas_ti.table_id = s.query_table_id
-                  AND s.query_id = tas.aa_sequence_id
-                  AND eas_ti.name = 'ExternalAASequence'
-                  AND eas_ti.table_id = s.subject_table_id
-                  AND s.subject_id = eas.aa_sequence_id
-                  AND eas.external_database_release_id
-                      = edr.external_database_release_id
-                  AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = 'PDB protein sequences'
-                  AND taf.source_id = '$$primaryKey$$'
-                  AND eas.taxon_id = tn.taxon_id
-                  AND tn.name_class = 'scientific name'
-                ORDER BY s.score DESC
-            ]]>
-            </sql>
-        </sqlQuery -->
 
-        <sqlQuery name="PdbSimilarities"
-                  isCacheable="false">
+ 
+       <!------------------------------------------------------------------>
+       <!-- PDB similarities -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="PdbSimilarities"
+                  isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="params.primaryKey"/>
             <column name="pdb_chain"/>
             <column name="pdb_id"/>
@@ -643,76 +686,105 @@
             </sql>
         </sqlQuery>
 
-<!--
-        <sqlQuery name="Epitopes"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="iedb_id"/>
-            <column name="location"/>
-            <column name="sequence"/>
-            <column name="name"/>
-            <column name="confidence"/>
-            <sql>
-            <![CDATA[
-                SELECT dr.primary_identifier AS iedb_id,
-                        al.start_min||'-'||al.end_max AS location,
-                        mas.sequence, tn.name,
-                 DECODE(ef.type, 'Not Full Set Not on Blast Hit', 'Low',
-                              'Not Full Set On Blast Hit', 'Medium',
-                              'Full Set Not on Blast Hit', 'Medium',
-                              'Full Set On Blast Hit', 'High',
-                              'unknown epitope type') AS confidence
-                FROM dots.GeneFeature gf, dots.Transcript t,
-                     dots.TranslatedAaFeature taf, dots.MotifAaSequence mas,
-                     dots.TranslatedAaSequence tas, dots.EpitopeFeature ef,
-                     dots.AaLocation al, dots.AaSequenceDbRef asdr,
-                     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-                     sres.ExternalDatabase ed, Sres.TaxonName tn
-                WHERE gf.source_id = '$$primaryKey$$'
-                  AND t.parent_id = gf.na_feature_id
-                  AND taf.na_feature_id = t.na_feature_id
-                  AND taf.aa_sequence_id = tas.aa_sequence_id
-                  AND tas.aa_sequence_id = ef.aa_sequence_id
-                  AND ef.aa_feature_id = al.aa_feature_id
-                  AND ef.motif_aa_sequence_id = mas.aa_sequence_id
-                  AND mas.aa_sequence_id = asdr.aa_sequence_id
-                  AND asdr.db_ref_id = dr.db_ref_id
-                  AND mas.taxon_id = tn.taxon_id
-                  AND tn.name_class = 'scientific name'
-                  AND ef.external_database_release_id
-                      = edr.external_database_release_id
-                  AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = 'Links to IEDB epitopes'
-                ORDER BY DECODE(ef.type, 'Not Full Set Not on Blast Hit', 1,
-                              'Not Full Set On Blast Hit', 2,
-                              'Full Set Not on Blast Hit', 2,
-                              'Full Set On Blast Hit', 3,
-                              4) desc,start_min, end_max
-            ]]>
-            </sql>
-        </sqlQuery>
--->
+ 
+       <!------------------------------------------------------------------>
+       <!-- two channel diff expr -->  
+       <!------------------------------------------------------------------>
 
-        <sqlQuery name="Epitopes"
-                  isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <column name="iedb_id"/>
-            <column name="location"/>
-            <column name="sequence"/>
-            <column name="name"/>
-            <column name="confidence"/>
-            <sql>
+      <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB">
+       <paramRef ref="params.primaryKey"/>
+       <column name="studyName" />
+       <column name="fold_change" />
+       <column name="confidence" />
+       <sql>
+           <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-                SELECT es.iedb_id, es.location, es.sequence, es.name,
-                       es.confidence
-                FROM apidb.EpitopeSummary es
-                WHERE es.source_id = '$$primaryKey$$'
-                ORDER BY DECODE(es.confidence, 'Low', 1,
-                              'Medium', 2,
-                              'High', 3,
-                              4) desc,es.location
-            ]]>
+          SELECT lg.name as studyName,
+	      max(to_char(de.fold_change, '999.99')) as fold_change,
+              max(to_char(de.confidence,'99.99')) as confidence
+            FROM Rad.LogicalGroup lg,
+                 Rad.AnalysisInput ai,
+                 Rad.Analysis a, 
+                 RAD.DifferentialExpression de, 
+                 Rad.ShortOligoFamily sof,
+                 Rad.Protocol p, 
+                 Rad.ProtocolParam pp, 
+                 Rad.AnalysisParam ap,
+                 ApiDB.GeneAlias ga
+            WHERE lg.name = 'DOZI mutant vs. Wild Type - Loess Normalized Analyses'
+             AND ai.logical_group_id = lg.logical_group_id 
+             AND a.analysis_id = ai.analysis_id
+             AND de.analysis_id = a.analysis_id
+             AND sof.composite_element_id = de.row_id
+             AND sof.source_id is not null
+             AND ga.gene = '$$primaryKey$$'
+             AND ga.alias = sof.source_id
+             AND p.name = 'PaGE'
+             AND a.protocol_id = p.protocol_id
+             AND pp.protocol_id = p.protocol_id
+             AND pp.name = 'reference_condition'
+             AND ap.protocol_param_id = pp.protocol_param_id
+             AND a.analysis_id = ap.analysis_id
+             GROUP BY lg.name
+        ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--===========================================================================-->
+  <!-- ToxoDB exclusives  -->
+  <!--===========================================================================-->
+
+ 
+       <!------------------------------------------------------------------>
+       <!-- Task comments -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="TaskComments" displayName="TASK Comments"
+                  isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="params.primaryKey"/>
+            <column name="comment_string"/>
+            <sql>
+			<![CDATA[
+			SELECT content AS comment_string
+			FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
+			WHERE c.stable_id = '$$primaryKey$$'
+				AND c.review_status_id = 'task'
+			]]>
             </sql>
         </sqlQuery>
 
-    </querySet>
+ 
+       <!------------------------------------------------------------------>
+       <!-- Pfam domains -->  
+       <!------------------------------------------------------------------>
+
+       <sqlQuery name="PfamDomains" displayName="Pfam Domains"
+                  isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="params.primaryKey"/>
+            <column name="definition"/>
+            <column name="start_min"/>
+            <column name="end_max"/>
+            <column name="accession" />
+            <column name="accession_base"/>
+            <sql>
+            <![CDATA[
+            SELECT pe.definition, pe.accession,
+                   SUBSTR(pe.accession, 1, INSTR(pe.accession, '.', 1, 1) -1)
+                       AS accession_base,
+                   al.start_min, al.end_max
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.DomainFeature df,
+                 dots.AaLocation al, dots.PfamEntry pe
+            WHERE gf.source_id = '$$primaryKey$$'
+              AND gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = df.aa_sequence_id
+              AND df.aa_feature_id = al.aa_feature_id
+              AND df.pfam_entry_id = pe.pfam_entry_id
+              AND df.e_value <= 0.05
+              GROUP BY pe.definition, pe.accession, al.start_min, al.end_max
+            ]]>
+            </sql>
+        </sqlQuery>
+
+  </querySet>
