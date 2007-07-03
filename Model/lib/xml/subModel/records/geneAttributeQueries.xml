@@ -1,0 +1,206 @@
+    <querySet name="GeneAttributes">
+
+        <sqlQuery name="GeneAlias" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id"/>
+            <sql>
+            <![CDATA[
+                SELECT gene as source_id
+                FROM apidb.GeneAlias
+                WHERE alias = '$$primaryKey$$'
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Bfmv" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
+            <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
+            <column name="product" sortingTable="apidb.geneattributes" lowerCase="true"/>
+            <column name="start_min" sortingTable="apidb.geneattributes"/>
+            <column name="end_max" sortingTable="apidb.geneattributes"/>
+            <column name="start_min_text" sortingTable="apidb.geneattributes" sortingColumn="start_min"/>
+            <column name="end_max_text" sortingTable="apidb.geneattributes" sortingColumn="end_max"/>
+            <column name="transcript_length" sortingTable="apidb.geneattributes"/>
+            <column name="cds_length" sortingTable="apidb.geneattributes"/>
+            <column name="protein_length" sortingTable="apidb.geneattributes"/>
+            <column name="context_start" sortingTable="apidb.geneattributes"/>
+            <column name="context_end" sortingTable="apidb.geneattributes"/>
+            <column name="strand_plus_minus" sortingTable="apidb.geneattributes" sortingColumn="strand"/>
+            <column name="sequence_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
+            <column name="plasmocyc_db" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="plasmocyc_gene_id" sortingTable="apidb.geneattributes" sortingColumn="source_id"/>
+            <column name="tm_count" sortingTable="apidb.geneattributes"/>
+            <column name="so_id" sortingTable="apidb.geneattributes"/>
+            <column name="so_term_name" sortingTable="apidb.geneattributes"/>
+            <column name="so_term_definition" sortingTable="apidb.geneattributes"/>
+            <column name="ontology_name" sortingTable="apidb.geneattributes"/>
+            <column name="so_version" sortingTable="apidb.geneattributes"/>
+            <column name="anticodon" sortingTable="apidb.geneattributes"/>
+            <column name="molecular_weight" sortingTable="apidb.geneattributes"/>
+            <column name="isoelectric_point" sortingTable="apidb.geneattributes"/>
+            <column name="min_molecular_weight" sortingTable="apidb.geneattributes"/>
+            <column name="max_molecular_weight" sortingTable="apidb.geneattributes"/>
+            <column name="hydropathicity_gravy_score" sortingTable="apidb.geneattributes"/>
+            <column name="aromaticity_score" sortingTable="apidb.geneattributes"/>
+            <column name="external_db_name" sortingTable="apidb.geneattributes"/>
+            <column name="external_db_version" sortingTable="apidb.geneattributes"/>
+            <column name="ncbi_tax_id" sortingTable="apidb.geneattributes"/>
+            <column name="species" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="genus_species" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="organism_full" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="organism" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
+            <column name="exon_count" sortingTable="apidb.geneattributes"/>
+            <column name="strand" sortingTable="apidb.geneattributes"/>
+            <column name="ec_numbers_string" sortingTable="apidb.geneattributes" sortingColumn="ec_numbers"/>
+            <column name="ann_go_component" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_component"/>
+            <column name="ann_go_process" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_process"/>
+            <column name="ann_go_function" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_function"/>
+            <column name="pred_go_component" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_component"/>
+            <column name="pred_go_process" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_process"/>
+            <column name="pred_go_function" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_function"/>
+            <column name="der_min_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_level"/>
+            <column name="der_max_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_level"/>
+            <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing"/>
+            <column name="der_max_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_timing"/>
+            <column name="der_max_pct" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_pct"/>
+            <column name="winz_min_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_level"/>
+            <column name="winz_max_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_level"/>
+            <column name="winz_min_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_timing"/>
+            <column name="winz_max_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_timing"/>
+            <column name="winz_max_pct" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_pct"/>
+
+            <sql>
+            <![CDATA[
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product,
+                   start_min, end_max,
+                   trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
+                   trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
+                   decode(strand,'forward','+','reverse','-',null) as strand_plus_minus,
+                   bfmv.cds_length, bfmv.protein_length, bfmv.transcript_length,
+                   bfmv.context_start, bfmv.context_end, 
+                   bfmv.sequence_id, bfmv.organism as organism_full, bfmv.tm_count, bfmv.so_id,
+                   bfmv.so_term_name, bfmv.so_term_definition,
+                   bfmv.ontology_name, bfmv.so_version, bfmv.anticodon,
+                   bfmv.molecular_weight, bfmv.isoelectric_point,
+                   bfmv.min_molecular_weight, bfmv.max_molecular_weight,
+                   bfmv.hydropathicity_gravy_score, bfmv.aromaticity_score,
+                   bfmv.external_db_name, bfmv.external_db_version,
+                   bfmv.exon_count, bfmv.ncbi_tax_id,
+                   SUBSTR(bfmv.organism, 1, INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1) AS genus_species,
+                   REPLACE(bfmv.organism,'Plasmodium','P.') as organism,
+                   SUBSTR(bfmv.organism,
+                          INSTR(bfmv.organism, ' ') + 1,
+                          INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'PLASMO', null)
+                   AS plasmocyc_db,
+                   UPPER(bfmv.source_id) AS plasmocyc_gene_id,
+                   bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
+                   bfmv.annotated_go_component as ann_go_component,
+                   bfmv.annotated_go_function as ann_go_function,
+                   bfmv.annotated_go_process as ann_go_process,
+                   bfmv.predicted_go_component as pred_go_component,
+                   bfmv.predicted_go_function as pred_go_function,
+                   bfmv.predicted_go_process as pred_go_process,
+                   bfmv.derisi_max_level as der_max_level,
+                   bfmv.derisi_min_level as der_min_level,
+                   bfmv.derisi_min_timing as der_min_timing,
+                   bfmv.derisi_max_timing as der_max_timing,
+                   TO_CHAR(bfmv.derisi_max_pct * 100, '99.9') as der_max_pct,
+                   bfmv.winzeler_max_level as winz_max_level,
+                   bfmv.winzeler_min_level as winz_min_level,
+                   bfmv.winzeler_min_timing as winz_min_timing,
+                   bfmv.winzeler_max_timing as winz_max_timing,
+                   TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct
+            FROM apidb.GeneAttributes bfmv
+               WHERE bfmv.source_id='$$primaryKey$$'
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id"/>
+            <column name="protein_sequence"/>
+            <sql>
+            <![CDATA[
+            SELECT gf.source_id,
+                   tas.sequence AS protein_sequence
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
+            WHERE gf.source_id='$$primaryKey$$'
+              AND t.parent_id = gf.na_feature_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = tas.aa_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="TranscriptSequence" isCacheable="false"
+                       displayName="RNA Sequence">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id"/>
+            <column name="transcript_sequence"/>
+            <sql>
+            <![CDATA[
+              select gf.source_id, s.sequence as transcript_sequence
+              from dots.genefeature gf, dots.transcript t, dots.splicednasequence s
+              where gf.source_id = '$$primaryKey$$'
+              and t.parent_id = gf.na_feature_id
+              and s.na_sequence_id = t.na_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="CDS" isCacheable="false"
+                       displayName="RNA Sequence">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id"/>
+            <column name="cds"/>
+            <sql>
+            <![CDATA[
+              SELECT gf.source_id,
+                     SUBSTR(s.sequence,
+                            tf.translation_start,
+                            tf.translation_stop - tf.translation_start + 1)
+                       AS cds
+              FROM dots.genefeature gf, dots.transcript t,
+                   dots.splicednasequence s, dots.TranslatedAaFeature tf
+              WHERE gf.source_id = '$$primaryKey$$'
+                AND t.parent_id = gf.na_feature_id
+                AND s.na_sequence_id = t.na_sequence_id
+                AND t.na_feature_id = tf.na_feature_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="ExpressionGraphs" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id"/>
+            <column name="graph_derisi_winzeler" />
+            <column name="graph_winzeler" />
+            <column name="graph_3d7" />
+            <column name="graph_hb3" />
+            <column name="graph_dd2" />
+            <column name="graph_waters"/>
+            <column name="graph_gametocyte"/>
+            <column name="graph_cowman"/>
+            <sql>
+            <![CDATA[
+               SELECT '$$primaryKey$$' AS source_id,
+                      NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
+                      NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
+                      NVL(MAX(graph_3d7), 0) AS graph_3d7,
+                      NVL(MAX(graph_hb3), 0) AS graph_hb3,
+                      NVL(MAX(graph_dd2), 0) AS graph_dd2,
+                      NVL(MAX(graph_waters), 0) AS graph_waters,
+                      NVL(MAX(graph_gametocyte), 0) AS graph_gametocyte,
+                      NVL(MAX(graph_cowman), 0) AS graph_cowman
+               FROM apidb.ExpressionGraphSummary egs
+               WHERE egs.source_id = '$$primaryKey$$'
+            ]]>
+            </sql>
+        </sqlQuery>
+
+    </querySet>

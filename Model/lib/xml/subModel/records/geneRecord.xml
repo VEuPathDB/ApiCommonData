@@ -1,0 +1,841 @@
+<wdkModel>
+
+   <!-- notes
+
+      - in general, with minor differences, i kept plasmo on the theory that it is slightly more
+        up to date.
+
+      - in the GFF tables there were a few slightly not minor changes, and i kept the plasmo version
+
+   -->
+   
+    <recordClassSet name="GeneRecordClasses">
+
+
+  <!------------------------------------------------------------------>
+  <!------------------------------------------------------------------>
+  <!-- Gene Record -->  
+  <!------------------------------------------------------------------>
+  <!------------------------------------------------------------------>
+
+        <recordClass idPrefix=""
+           name="GeneRecordClass" 
+           type="Gene"
+           attributeOrdering="dnaContext"
+           aliasQueryRef="GeneAttributes.GeneAlias">
+
+          <!------------------------------------------------------------------>
+          <!-- Reporters -->  
+          <!------------------------------------------------------------------>
+
+          <reporter name="tabular" displayName="Summary - tab delimited"
+                    implementation="org.gusdb.wdk.model.report.TabularReporter"/>
+
+          <reporter name="gff3" displayName="Summary - GFF3"
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
+
+          <reporter name="fullRecord" displayName="Detailed - text"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
+
+          <reporter name="srt" displayName="Sequence - configurable FASTA"
+                    implementation=""/>
+
+
+          <!------------------------------------------------------------------>
+          <!-- BFMV attributes -->  
+          <!------------------------------------------------------------------>
+
+          <attributeQueryRef ref="GeneAttributes.Bfmv">
+            <columnAttribute displayName="Data Source" name="external_db_name"/>
+            <columnAttribute displayName="Genomic Sequence ID" name="sequence_id"/>
+             <textAttribute name="location_text" displayName="Genomic Location">
+              <text>
+                  <![CDATA[
+                  $$sequence_id$$: $$start_min_text$$ - $$end_max_text$$ ($$strand_plus_minus$$)
+                  ]]>
+              </text>
+            </textAttribute>
+
+            <columnAttribute name="strand" displayName="Gene Strand" internal="false"/>
+            <columnAttribute displayName="Gene Type" name="gene_type" internal="false"/>
+            <columnAttribute name="exon_count" displayName="# Exons" internal="false"
+                             inReportMaker="true"/>
+            <columnAttribute displayName="Transcript Length" name="transcript_length" internal="false"/>
+            <columnAttribute displayName="CDS Length" name="cds_length" internal="false"/>
+            <columnAttribute name="product" displayName="Product Description" internal="false"/>
+            <columnAttribute displayName="Protein Length" name="protein_length" internal="false"/>
+            <columnAttribute displayName="# TM Domains" internal="false"
+                             inReportMaker="true" name="tm_count" align="center"/>
+            <columnAttribute displayName="Molecular Weight" name="molecular_weight" align="center"/>
+            <columnAttribute name="isoelectric_point" displayName="Isoelectric Point" align="center"/>
+
+            <columnAttribute name="ec_numbers_string" displayName="EC Numbers"/>
+            <columnAttribute name="ann_go_function" displayName="Annotated GO Function"/>
+            <columnAttribute name="ann_go_process" displayName="Annotated GO Process"/>
+            <columnAttribute name="ann_go_component" displayName="Annotated GO Component"/>
+            <columnAttribute name="pred_go_function" displayName="Predicted GO Function"/>
+            <columnAttribute name="pred_go_process" displayName="Predicted GO Process"/>
+            <columnAttribute name="pred_go_component" displayName="Predicted GO Component"/>
+            <columnAttribute name="der_min_level" displayName="Pf-iRBC min expr ratio (GS array)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="der_min_timing" displayName="Pf-iRBC min expr time (GS array)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="der_max_level" displayName="Pf-iRBC max expr ratio (GS array)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="der_max_pct" displayName="Pf-iRBC max expr %ile (GS array)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="der_max_timing" displayName="Pf-iRBC max expr time (GS array)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="winz_min_level" displayName="Pf-iRBC+Spz+Gam min expr level (Affy)" align="center"/>
+            <columnAttribute name="winz_min_timing" displayName="Pf-iRBC+Spz+Gam min expr stage (Affy)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="winz_max_level" displayName="Pf-iRBC+Spz+Gam max expr level (Affy)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="winz_max_pct" displayName="Pf-iRBC+Spz+Gam max expr %ile (Affy)" align="center" includeProjects="PlasmoDB"/>
+            <columnAttribute name="winz_max_timing" displayName="Pf-iRBC+Spz+Gam max expr stage (Affy)" align="center" includeProjects="PlasmoDB"/>
+
+            <textAttribute name="derisiOverlayPct" displayName="Pf-iRBC expr profile graph (GS array)"
+                           inReportMaker="false" truncateTo="100000" sortable="false"
+                           includeProjects="PlasmoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND"/>
+                ]]>
+            </text>
+         </textAttribute>
+
+            <textAttribute name="winzelerPct" displayName="Pf-iRBC+Spz+Gam expr profile graph (Affy)"
+                        inReportMaker="false" truncateTo="100000" sortable="false"
+                        includeProjects="PlasmoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                ]]>
+            </text>
+         </textAttribute>
+
+         <textAttribute name="watersPct" displayName="Pb-iRBC expr profile graph (GS array)"
+                        inReportMaker="false" truncateTo="100000" sortable="false"
+                        includeProjects="PlasmoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                ]]>
+            </text>
+         </textAttribute>
+
+
+            <columnAttribute name="pru" displayName="Pru strain expression" includeProjects="ToxoDB"/>
+            <columnAttribute name="veg" displayName="VEG strain expression" includeProjects="ToxoDB"/>
+            <columnAttribute name="rh" displayName="RH strain expression" includeProjects="ToxoDB"/>
+            <columnAttribute name="rh_no_glucose" displayName="No-glucose expression" includeProjects="ToxoDB"/>
+            <columnAttribute name="rh_high_glucose" displayName="High-glucose expression" includeProjects="ToxoDB"/>
+
+            <textAttribute name="rhGlucose" displayName="RH in Glucose expr profile graph"
+                           inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::RHinGlucose::Ver1&id=$$primaryKey$$&model=toxo&fmt=png&thumb=1"/>
+                ]]>
+            </text>
+            </textAttribute>
+
+            <textAttribute name="3strains" displayName="3 Clonal Lineages expr profile graph"
+                        inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ThreeClonalStrains::Ver1&id=$$primaryKey$$&model=toxo&fmt=png&thumb=1"/>
+                ]]>
+            </text>
+            </textAttribute>
+
+            <!-- internal=true atts -->
+            <columnAttribute name="min_molecular_weight" displayName="Min Molecular Wt" internal="true" inReportMaker="false"/>
+            <columnAttribute name="max_molecular_weight" displayName="Max Molecular Wt" internal="true" inReportMaker="false"/>
+            <columnAttribute name="hydropathicity_gravy_score" displayName="Hydropathicity Gravy Score" internal="true" inReportMaker="false"/>
+            <columnAttribute name="aromaticity_score" displayName="Aromaticity" internal="true" inReportMaker="false"/>
+            <columnAttribute name="species" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Start Location" name="start_min" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Start Location" name="start_min_text" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="End Location" name="end_max" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="End Location" name="end_max_text" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Strand" name="strand_plus_minus" internal="true" inReportMaker="false"/>
+            <columnAttribute name="context_start" internal="true" inReportMaker="false"/>
+            <columnAttribute name="context_end" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Organism" name="organism_full" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Organism" name="organism" internal="false" inReportMaker="true"/>
+            <columnAttribute displayName="genus_species" name="genus_species" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="Taxonomy Id" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="PlasmoCYC DB Name" name="plasmocyc_db" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
+            <columnAttribute displayName="PlasmoCYC Gene ID" name="plasmocyc_gene_id" internal="true" inReportMaker="false" includeProjects="PlasmoDB"/>
+            <columnAttribute displayName="ToxoCYC DB Name" name="toxocyc_db" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute displayName="ToxoCYC Gene ID" name="toxocyc_gene_id" internal="true" inReportMaker="false" includeProjects="ToxoDB"/>
+            <columnAttribute displayName="External DB Version" name="external_db_version" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="SO Id" name="so_id" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="SO Term Name" name="so_term_name" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="SO Term Definition" internal="true" name="so_term_definition" inReportMaker="false"/>
+            <columnAttribute displayName="Ontology Name" name="ontology_name" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName="SO Version" name="so_version" internal="true" inReportMaker="false"/>
+            <columnAttribute name="anticodon" displayName="Anticodon" internal="true" inReportMaker="false"/>
+          </attributeQueryRef>
+
+
+          <!------------------------------------------------------------------>
+          <!-- Plasmo Expression attributes -->  
+          <!------------------------------------------------------------------>
+
+          <attributeQueryRef ref="GeneAttributes.ExpressionGraphs" includeProjects="PlasmoDB">
+            <columnAttribute name="graph_derisi_winzeler" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_winzeler" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_3d7" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_hb3" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_dd2" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_waters" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_gametocyte" internal="true"
+                             inReportMaker="false"/>
+            <columnAttribute name="graph_cowman" internal="true"
+                             inReportMaker="false"/>
+          </attributeQueryRef>
+
+          <!------------------------------------------------------------------>
+          <!-- protein sequence attributes -->  
+          <!------------------------------------------------------------------>
+
+          <attributeQueryRef ref="GeneAttributes.ProteinSequence">
+            <columnAttribute displayName="Predicted Protein Sequence"
+                             name="protein_sequence" internal="true"/>
+          </attributeQueryRef>
+
+          <!------------------------------------------------------------------>
+          <!-- transcript sequence attributes -->  
+          <!------------------------------------------------------------------>
+
+          <attributeQueryRef ref="GeneAttributes.TranscriptSequence">
+            <columnAttribute displayName="Predicted RNA/mRNA Sequence (introns spliced out)"
+                             name="transcript_sequence" internal="true" inReportMaker="true"/>
+          </attributeQueryRef>
+
+          <!------------------------------------------------------------------>
+          <!-- CDS sequence attributes -->  
+          <!------------------------------------------------------------------>
+
+         <attributeQueryRef ref="GeneAttributes.CDS">
+            <columnAttribute displayName="Coding Sequence" internal="true"
+                    name="cds"/>
+          </attributeQueryRef>
+
+
+          <!------------------------------------------------------------------>
+          <!-- data dump attributes -->  
+          <!------------------------------------------------------------------>
+
+          <attributeQueryRef ref="DataDumpQueries.GeneGffAttrs">
+              <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Start" name="gff_fstart" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Start" name="gff_fend" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Score" name="gff_score" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Strand" name="gff_strand" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reading Frame" name="gff_phase" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
+          </attributeQueryRef>
+
+         
+          <!------------------------------------------------------------------>
+          <!-- SNPs table -->  
+          <!------------------------------------------------------------------>
+
+         <table name="SNPs"
+                 displayName="SNPs Summary"
+                 queryRef="GeneTables.SNPs">
+            <columnAttribute internal="true" name="strain_a_query"/>
+            <columnAttribute internal="true" name="strain_b_query"/>
+            <columnAttribute internal="true" name="strain_a_disp"/>
+            <columnAttribute internal="true" name="strain_b_disp"/>
+            <columnAttribute internal="true" name="gene_source_id"/>
+            <linkAttribute name="LinkForStrainComparison"
+                           displayName="Strains"
+                           visible="$$strain_a_disp$$ vs $$strain_b_disp$$">
+                 <url>
+                    <![CDATA[
+                      processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=$$strain_a_query$$&myMultiProp%28snp_strain_m%29=$$strain_b_query$$&questionSubmit=Get+Answer
+                    ]]>
+                 </url>
+            </linkAttribute>
+
+
+            <columnAttribute displayName="CDS SNP Density"
+                             name="cds_snp_density"/>
+            <columnAttribute displayName="Non-synonymous"
+                             name="num_non_synonymous"/>
+            <columnAttribute displayName="Synonymous" name="num_synonymous"/>
+            <columnAttribute displayName="Nonsense" name="num_nonsense"/>
+            <columnAttribute displayName="Non-coding" name="num_non_coding"/>
+            <columnAttribute displayName="Total" name="num_total"/>
+          </table>
+
+
+          <!------------------------------------------------------------------>
+          <!-- Notes table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Notes"
+                 displayName="Notes"
+                 queryRef="GeneTables.Notes">
+            <columnAttribute displayName="Note" name="comment_string"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- User Comments table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="UserComments"
+                 displayName="User Comments"
+                 queryRef="GeneTables.UserComments">
+		    <columnAttribute name="comment_id" internal="true"/>
+		    <columnAttribute name="stable_id" internal="true"/>
+            <columnAttribute name="headline" internal="true"/>
+			<linkAttribute name="headline_link"
+							displayName="Headline"
+							visible="$$headline$$">
+				<url>
+				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.GeneCommentsClass&project_id=&primary_key=$$stable_id$$#$$comment_id$$]]>
+				</url>
+			</linkAttribute>
+            <columnAttribute name="user_name" displayName="Made by"/>
+            <columnAttribute name="organization" displayName="Affiliation"/>
+            <columnAttribute name="comment_date" displayName="Date"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- EC number table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="EcNumber"
+                 displayName="EC Number"
+                 queryRef="GeneTables.EcNumber">
+            <columnAttribute name="ec_number" internal="true"/>
+            <linkAttribute name="ec_number_link"
+                           displayName="EC Number"
+                           visible="$$ec_number$$">
+                 <url>
+                    <![CDATA[$$expasy_url$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute displayName="Source" name="source"/>
+            <columnAttribute displayName="EC Description"
+                             name="ec_description"/>
+            <columnAttribute name="expasy_url" internal="true"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Mass spec table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
+                 queryRef="GeneTables.MassSpec" includeProjects="PlasmoDB">
+            <columnAttribute name="developmental_stage" displayName="Lifecycle Stage"/>
+            <columnAttribute name="algorithm" displayName="Algorithm"/>
+            <columnAttribute name="seq_coverage" displayName="Coverage"/>
+            <columnAttribute name="number_of_spans" displayName="Spans"/>
+            <columnAttribute name="sequence_count" displayName="Sequences"/>
+            <columnAttribute name="spectrum_count" displayName="Spectra"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- PFam domains table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="PfamDomains"
+                 displayName="Pfam Domains"
+                 queryRef="GeneTables.PfamDomains"
+                 includeProjects="ToxoDB">
+            <linkAttribute name="pfam_link" displayName="Accession"
+                           visible="$$accession$$">
+                 <url>
+                    <![CDATA[http://www.sanger.ac.uk/cgi-bin/Pfam/getacc?$$accession_base$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute displayName="Definition" name="definition"/>
+            <columnAttribute displayName="Start" name="start_min"/>
+            <columnAttribute displayName="End" name="end_max"/>
+            <columnAttribute name="accession" internal="true"/>
+            <columnAttribute name="accession_base" internal="true"/>
+          </table>
+          
+          <!------------------------------------------------------------------>
+          <!-- GO term table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="GoTerms"
+                 displayName="GO Terms"
+                 queryRef="GeneTables.GoTerms">
+            <columnAttribute displayName="Is Not" name="is_not"/>
+            <columnAttribute name="go_id" internal="true"/>
+            <columnAttribute displayName="Ontology" name="ontology"/>
+            <linkAttribute name="go_id_link" displayName="GO ID" visible="$$go_id$$">
+                 <url>
+                    <![CDATA[http://www.godatabase.org/cgi-bin/amigo/go.cgi?action=query&view=query&query=+$$go_id$$&search_constraint=terms]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute displayName="GO Term Name" name="go_term_name"/>
+            <columnAttribute displayName="Source" name="source"/>
+            <columnAttribute name="evidence_code" internal="true"/>
+            <columnAttribute name="lowercase_evidence_code" internal="true"/>
+            <linkAttribute name="evidence_code_link"
+                           displayName="Evidence Code"
+                           visible="$$evidence_code$$">
+                 <url>
+                    <![CDATA[http://www.geneontology.org/GO.evidence.shtml#$$lowercase_evidence_code$$]]>
+                 </url>
+            </linkAttribute>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- aliases table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Aliases"
+                 displayName="Aliases"
+                 queryRef="GeneTables.Aliases" includeProjects="PlasmoDB">
+            <columnAttribute displayName="Alias" name="alias"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Y2H interactions table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Y2hInteractions"
+                 displayName="Y2H Interactions"
+                 queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB">
+              <columnAttribute name="source_id" internal="true"/>
+              <linkAttribute name="geneLink" displayName="Gene"
+                       visible="$$source_id$$">
+                   <url>
+                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$source_id$$]]>
+                   </url>
+              </linkAttribute>
+              <columnAttribute name="bait_start" displayName="Bait Start"
+                               internal="false"/>
+              <columnAttribute name="bait_end" displayName="Bait End"
+                               internal="false"/>
+              <columnAttribute name="prey_start" displayName="Prey Start"
+                               internal="false"/>
+              <columnAttribute name="prey_end" displayName="Prey End"
+                               internal="false"/>
+              <columnAttribute name="times_observed" internal="false"
+                               displayName="Times Observed"/>
+              <columnAttribute name="number_of_searches" internal="false"
+                               displayName="Times Reproduced"/>
+              <columnAttribute name="prey_number_of_baits" internal="false"
+                               displayName="Baits Interacting with Found Gene"/>
+              <columnAttribute name="bait_number_of_preys" internal="false"
+                               displayName="Prey Interacting with Found Gene"/>
+              <columnAttribute name="bait_or_prey" internal="false"
+                               displayName="Query Gene Was:"/>
+          </table>
+
+
+          <!------------------------------------------------------------------>
+          <!-- Orthologs table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Orthologs"
+                 displayName="Paralogs and In-genera Orthologs"
+                 queryRef="GeneTables.Orthologs">
+            <columnAttribute name="source_id" internal="true"/>
+            <linkAttribute name="gene" displayName="Gene" visible="$$source_id$$">
+                 <url>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$source_id$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute displayName="Species" name="species"/>
+            <columnAttribute displayName="Product" name="product"/>
+          </table>
+
+
+          <!------------------------------------------------------------------>
+          <!-- Pathways table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="MetabolicPathways"
+                 displayName="Metabolic Pathways"
+                 queryRef="GeneTables.MetabolicPathways">
+            <columnAttribute name="pathway_id" internal="true"/>
+            <columnAttribute name="pathway_name" internal="true"/>
+            <linkAttribute name="pathway" displayName="Pathway"
+                        visible="$$pathway_name$$">
+                 <url includeProjects="PlasmoDB">
+                    <![CDATA[http://sites.huji.ac.il/malaria/maps/$$pathway_id$$.html]]>
+                 </url>
+                 <url includeProjects="ToxoDB">
+                    <![CDATA[http://roos-compbio2.bio.upenn.edu/~fengchen/pathway/$$pathway_id$$.html]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="activity"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Toxo Task Comments table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="TaskComments"
+                 displayName="Toxoplasma Genome Sequencing Project Annotation"
+                 queryRef="GeneTables.TaskComments"
+                 includeProjects="ToxoDB">
+            <columnAttribute name="comment_string" displayName="TASK Annotation"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Array elements table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="ArrayElements"
+                 displayName="Mapped Array Elements"
+                 queryRef="GeneTables.ArrayElements"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="array_source_id" internal="true"/>
+            <columnAttribute name="array_provider" displayName="Provider"
+                             internal="false"/>
+            <linkAttribute name="element_link" displayName="Array Element"
+                        visible="$$array_source_id$$">
+                 <url>
+                    <![CDATA[showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$$array_source_id$$]]>
+                 </url>
+            </linkAttribute>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Two channel differential expression table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="TwoChannelDiffExpr"
+                 displayName="Two Channel Differential Expression"
+                 queryRef="GeneTables.TwoChannelDifferentialExpression"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="studyName" displayName="Study"/>
+            <columnAttribute name="fold_change" displayName="Fold change"/>
+            <columnAttribute name="confidence" displayName="Confidence"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- protein expression table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="ProteinExpression"
+                 displayName="Protein Expression"
+                 queryRef="GeneTables.ProteinExpression"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="profile_element" displayName="Life Cycle Stage"/>
+            <columnAttribute name="element_value" displayName="Observed?"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- MR4 reagents table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Mr4Reagents"
+                 displayName="MR4 Reagents"
+                 queryRef="GeneTables.Mr4Reagents"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="atcc_number" internal="true"/>
+            <linkAttribute name="atcc_link" displayName="ATCC Number"
+                        visible="$$atcc_number$$">
+                 <url>
+                    <![CDATA[http://google.com/search?q=$$atcc_number$$+site%3Amr4.org&btnI=I]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="reagent_type" displayName="Reagent Type"/>
+            <columnAttribute name="remark" displayName="Remark"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Protein linkouts table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="ProteinDatabase"
+                 displayName="Protein Linkouts"
+                 queryRef="GeneTables.ProteinDatabase"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="dataset" displayName="Database"/>
+            <columnAttribute name="accession" internal="true"/>
+            <columnAttribute name="gi" internal="true"/>
+            <columnAttribute name="accession_url" internal="true"/>
+            <columnAttribute name="gi_url" internal="true"/>
+            <linkAttribute name="accession_link" displayName="Accession"
+                        visible="$$accession$$">
+                 <url>$$accession_url$$</url>
+            </linkAttribute>
+            <linkAttribute name="gi_link" displayName="GI"
+                        visible="$$gi$$">
+                 <url>$$gi_url$$</url>
+            </linkAttribute>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- 3-D structure predictions table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="3dPreds"
+                 displayName="3D Structure Predictions"
+                 queryRef="GeneTables.3dPreds"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="search_term" internal="true"/>
+            <columnAttribute name="pdb_template" internal="true"/>
+            <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB"
+                        visible="$$search_term$$-$$pdb_template$$">
+                 <url>
+                     http://bioinfo.icgeb.res.in/codes/model_simple.php?search_term=$$search_term$$
+                 </url>
+            </linkAttribute>
+            <linkAttribute name="pdb_link" displayName="PDB Template"
+                        visible="$$pdb_template$$">
+                 <url>http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId=$$pdb_template$$</url>
+            </linkAttribute>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- PDB similarities table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="PdbSimilarities"
+                 displayName="Similarities to Protein Data Bank (PDB) Chains"
+                 queryRef="GeneTables.PdbSimilarities"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="pdb_chain" internal="true"/>
+            <columnAttribute name="pdb_id" internal="true"/>
+            <columnAttribute name="pvalue_mant" internal="true"/>
+            <columnAttribute name="pvalue_exp" internal="true"/>
+            <linkAttribute name="pdb_link" displayName="PDB Structure"
+                        visible="$$pdb_chain$$">
+                <url>
+                    http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId=$$pdb_id$$
+                </url>
+            </linkAttribute>
+            <columnAttribute name="pdb_title" displayName="PDB Molecular Description"/>
+            <columnAttribute name="taxon" internal="true"/>
+            <textAttribute name="italicized_taxon" displayName="Taxon">
+                <text>
+                    <![CDATA[
+                    <i>$$taxon$$</i>
+                    ]]>
+                </text>
+            </textAttribute>
+            <columnAttribute name="percent_plasmo_coverage" displayName="% of PlasmoDB Protein Covered"/>
+            <columnAttribute name="percent_identity" displayName="% Identity"/>
+            <textAttribute name="Pvalue" displayName="P-value">
+                <text>
+                    <![CDATA[
+                    $$pvalue_mant$$ x 10<sup>$$pvalue_exp$$</sup>
+                    ]]>
+                </text>
+            </textAttribute>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- Epitpotes table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="Epitopes"
+                 displayName="Epitopes from IEDB"
+                 queryRef="GeneTables.Epitopes">
+            <columnAttribute name="iedb_id" internal="true"/>
+            <linkAttribute name="iedb_link" displayName="Epitope"
+                        visible="$$iedb_id$$">
+                <url>
+                    <![CDATA[
+                    http://www.immuneepitope.org/httpQuery.do?dispatch=runquery&eid=$$iedb_id$$
+                    ]]>
+                </url>
+            </linkAttribute>
+            <columnAttribute name="sequence" displayName="Sequence"/>
+            <columnAttribute name="location" displayName="Location on Protein"/>
+             <columnAttribute name="name" displayName="Strain"/>
+            <columnAttribute name="confidence" displayName="Confidence"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- GFF Gene DB xrefs  table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="gff_GeneDbxrefs"
+                 displayName="Gene Exons"
+                 queryRef="DataDumpQueries.GeneGffDbxrefs" inReportMaker="false">
+
+              <columnAttribute displayName="Dbxref" name="gff_dbxref"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- GFF Gene RNAs table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="gff_GeneRnas"
+                 displayName="Gene RNAs"
+                 queryRef="DataDumpQueries.GeneRnas" internal="true" inReportMaker="false">
+              <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Start" name="gff_fstart" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="End" name="gff_fend" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Score" name="gff_score" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Strand" name="gff_strand" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reading Frame" name="gff_phase" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Transcript Sequence" name="gff_transcript_sequence" internal="true" inReportMaker="false"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- GFF Gene CDSs table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="gff_GeneCdss"
+                 displayName="Gene CDSs"
+                 queryRef="DataDumpQueries.GeneCdss" inReportMaker="false">
+              <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Start" name="gff_fstart" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="End" name="gff_fend" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Score" name="gff_score" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Strand" name="gff_strand" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reading Frame" name="gff_phase" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Coding Sequence" name="gff_coding_sequence" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Protein Sequence" name="gff_protein_sequence" internal="true" inReportMaker="false"/>
+          </table>
+
+          <!------------------------------------------------------------------>
+          <!-- GFF Gene exons table -->  
+          <!------------------------------------------------------------------>
+
+          <table name="gff_GeneExons"
+                 displayName="Gene Exons"
+                 queryRef="DataDumpQueries.GeneExons" inReportMaker="false">
+
+              <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Start" name="gff_fstart" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="End" name="gff_fend" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Score" name="gff_score" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Strand" name="gff_strand" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reading Frame" name="gff_phase" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
+          </table>
+
+
+          <!------------------------------------------------------------------>
+          <!-- Link attributes -->  
+          <!------------------------------------------------------------------>
+
+         <linkAttribute name="Publications" visible="View"
+                        internal="true" inReportMaker="false"
+                        includeProjects="PlasmoDB">
+            <url>
+               <![CDATA[
+                     @PUBLICATIONS_URL@$$primaryKey$$
+                     ]]>
+            </url>
+         </linkAttribute>
+
+         <linkAttribute name="PlasmoCyc" visible="View"
+                        internal="true" inReportMaker="false"
+                        includeProjects="PlasmoDB">
+            <url>
+               <![CDATA[
+                     http://apicyc.apidb.org/$$plasmocyc_db$$/NEW-IMAGE?type=NIL&object=$$plasmocyc_gene_id$$
+                     ]]>
+            </url>
+         </linkAttribute>
+
+         <linkAttribute name="ToxoCyc" visible="View"
+                        internal="true" inReportMaker="false"
+                        includeProjects="ToxoDB">
+            <url>
+               <![CDATA[
+                     http://apicyc.apidb.org/$$toxocyc_db$$/NEW-IMAGE?type=GENE&object=$$toxocyc_gene_id$$
+                     ]]>
+            </url>
+         </linkAttribute>
+
+          <!------------------------------------------------------------------>
+          <!-- Text  attributes -->  
+          <!------------------------------------------------------------------>
+
+          <textAttribute name="overview" displayName="Overview"
+                         internal="true" inReportMaker="false">
+             <text>
+                  <![CDATA[
+                     $$organism$$ $$gene_type$$ on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
+                  ]]>
+             </text>
+         </textAttribute>
+
+         <textAttribute name="dnaContext" displayName="Genomic Context" internal="true" inReportMaker="false">
+            <text includeProjects="PlasmoDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs;options=CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                ]]>
+            </text>
+            <text includeProjects="ToxooDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+AlignmentSNPs;options=AlignmentSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
+
+         
+
+         <textAttribute name="gbrowseLink" internal="true" inReportMaker="false">
+            <text includeProjects="PlasmoDB">
+                 <![CDATA[
+                @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
+                ]]>
+            </text>
+            <text includeProjects="ToxooDB">
+                 <![CDATA[
+                @CGI_URL@/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
+                ]]>
+            </text>
+         </textAttribute>
+
+         <textAttribute name="proteinFeatures" displayName="Protein Features"
+                        internal="true" inReportMaker="false">
+            <text includeProjects="PlasmoDB">
+                 <![CDATA[
+                 @CGI_URL@/gbrowse_img/plasmodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
+                 ]]>
+            </text>
+            <text includeProjects="ToxooDB">
+                 <![CDATA[
+                 @CGI_URL@/gbrowse_img/toxodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap;base=@CGI_URL@/gbrowse
+                 ]]>
+            </text>
+         </textAttribute>
+
+
+
+
+        </recordClass>
+
+    </recordClassSet>
+</wdkModel>
