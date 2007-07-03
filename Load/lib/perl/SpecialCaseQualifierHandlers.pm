@@ -50,6 +50,7 @@ sub undoAll{
 
   $self->_undoFunction();
   $self->_undoProduct();
+  $self->_undoSecondaryId();
   $self->_undoGene();
   $self->_undoECNumber();
   $self->_undoAnticodon();
@@ -292,9 +293,30 @@ sub product {
 # nothing special to do
 sub _undoProduct{
   my ($self) = @_;
-
 }
 
+sub setSecondaryId {
+  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+
+  #get AA Sequence
+  my @transcripts = $geneFeature->getChildren("DoTS::Transcript");
+  foreach my $transcript (@transcripts) {
+    my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+    if ($translatedAAFeat) {
+      my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+      if ($aaSeq) {
+	$aaSeq->setSecondaryIdentifier($tagValues[0]);
+      }
+    }
+  }
+
+  return [];
+}
+
+sub _undoSecondaryId{
+  my ($self) = @_;
+}
 
 ################ Gene ###############################3
 # we wrap these methods so that we don't call the standard SCQH directly, to
