@@ -50,55 +50,111 @@
         </help>
       </flatVocabParam>
 
+
   <!------------------------------------------------------------------>
   <!-- BLAST -->  
   <!------------------------------------------------------------------>
 
-        <flatVocabParam name="BlastQueryType"
-            prompt="Query sequence type"
-            help="The type of the query sequence (eg. DNA, protein)"
-            multiPick="false"
-            queryRef="GeneralVocabQueries.BlastQueryType"/>
-        
+      <enumParam name="BlastDatabaseOrganism"
+                     prompt="Organism"
+                     multiPick="false">
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="P. berghei"
+                 internal=   "Pberghei"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi"/>
+          <enumValue term="P. falciparum"
+                 internal=   "Pfalciparum"/>
+          <enumValue term="P. falciparum mitocondrial"
+                 internal=   "PfalciparumMito"/>
+          <enumValue term="P. falciparum plastid"
+                 internal=   "PfalciparumPlastid"/>
+          <enumValue term="P. gallinaceum"
+                 internal=   "Pgallinaceum"/>
+          <enumValue term="P. knowlesi"
+                 internal=   "Pknowlesi"/>
+          <enumValue term="P. reichenowi"
+                 internal=   "Preichenowi"/>
+          <enumValue term="P. vivax"
+                 internal=   "Pvivax"/>
+          <enumValue term="P. yoelii"
+                 internal=   "Pyoelii"/>
+          <enumValue term="any"
+                 internal=   "Plasmodium"/>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="BlastQueryType"
+                     prompt="Query sequence type"
+                     multiPick="false">
+        <help>
+           <text>
+             The type of your query sequence (eg. DNA, protein)
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="DNA"
+                 internal=   "dna"/>
+          <enumValue term="Protein"
+                 internal=   "protein"/>
+        </enumList>
+      </enumParam>
+
         <stringParam name="BlastQuerySequence"
-            id="BlastQuerySequence"
-            prompt="BLAST input sequence"
-            help="Blast Input Sequence"
-            length="4000"
-            sample="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAAC"/>
-        
-        <stringParam name="-e" 
-            prompt="Expectation value" 
-            help="Expected number of hits by chance" 
-            default="0.05"
-            sample="1e-10"/>
-        
- 
-        <stringParam name="-b" 
-            prompt="Maximum alignments (B)" 
-            help="Number of alignments to show" 
-            default="50"/>   
-        
-        <stringParam name="-v" 
-            prompt="Maximum descriptions (V)" 
-            help="Number of one-line descriptions to show" 
-            default="50"/>
-        
-        <flatVocabParam name="-filter"
-            id="-filter"
-            prompt="Low complexity filter"
-            queryRef="GeneralVocabQueries.Filter"
-            help="Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise."
-            default="yes"/>
+                     prompt="Input Sequence"
+                     length="4000">
+            <help>BLAST Input Sequence</help>
+            <suggest sample=""/>
+        </stringParam>
+
+      <enumParam name="-filter"
+                    id="-filter"
+                    prompt="Low complexity filter">
+           <suggest default="yes"/>
+        <help>
+           <text>
+             Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="yes"
+                 internal=   "yes"/>
+          <enumValue term="no"
+                 internal=   "no"/>
+        </enumList>
+      </enumParam>
+
+        <stringParam name="-e"
+                     prompt="Expectation value">
+            <help>Expected number of hits by chance</help>
+            <suggest default="0.05"
+                     sample="1e-10"/>
+        </stringParam>
+
+        <stringParam name="-v"
+                     prompt="Maximum descriptions (V)">
+            <help>Number of one-line descriptions to show</help>
+            <suggest default="50"/>
+
+        <stringParam name="-b"
+                     prompt="Maximum alignments (B)">
+            <help>Number of alignments to show</help>
+            <suggest default="50"/>
+        </stringParam>
     
     <!------------------------------------------------------------------>
     <!-- History -->  
     <!------------------------------------------------------------------>
 
         <historyParam name="historyId"
-                     prompt="History ID"
-                     help="The number in the left column of My Query History"/>
-
+              prompt="History ID">
+              <help>The number in the left column of My Query History</help>
+        </historyParam>
         
     </paramSet>
 

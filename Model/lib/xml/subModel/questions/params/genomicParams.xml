@@ -2,6 +2,24 @@
     
     <paramSet name="genomicParams">
 
+      <enumParam name="BlastDatabaseType"
+                     prompt="Target"
+                     translated CDS, Protein)" multiPick="false"
+                     help="The type of the target database (eg CDS,
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="Genome"
+                 internal=   "genomic"/>
+          <enumValue term="Translated Genome"
+                 internal=   "genomic Translated"/>
+        </enumList>
+      </enumParam>
+
+
         <stringParam name="sequence" includeProjects="CryptoDB"
             prompt="Contig ID" 
             help="Enter an identifier for a genomic contig. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Contig ID's from &lt;i&gt; C. parvum &lt;/i&gt; whole genome sequencing project begin with 'AAEE' and contig ID's for &lt;i&gt; C. hominis &lt;/i&gt; begin with 'AAEL'. The &lt;i&gt; C. parvum &lt;/i&gt; Chromosome 6 independently sequenced at MRC-LMB  before the whole genome project was completed is 'BX526834 '. Wild cards are permitted in this search, i.e. use AAEE* to ask for all &lt;i&gt; C. 

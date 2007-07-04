@@ -1,0 +1,54 @@
+        <stringParam name="orf_id"
+                     prompt="ORF ID"
+                     help="Enter an ORF ID"
+                     substitute="yes"
+            <suggest sample="MAL1-1-10639-11520, MAL1-1-105160-105438"
+                     default="MAL1-1-10639-11520"/>
+        </stringParam>
+
+
+
+      <enumParam name="BlastDatabaseType"
+                     prompt="Target"
+                     translated CDS, Protein)" multiPick="false"
+                     help="The type of the target database (eg CDS,
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="ORF (Protein)"
+                 internal=   "orfs"/>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="Dataset"
+                        prompt="Organism"
+			multiPick="true"
+        <help>
+           <text>
+             Choose one or more organisms to search with the given motif
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="P. falciparum"
+                 internal=   "Pfalciparum/PfalciparumOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. vivax"
+                 internal=   "Pvivax/PvivaxOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. yoelii"
+                 internal=   "Pyoelii/PyoeliiOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. berghei"
+                 internal=   "Pberghei/PbergheiOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi/PchabaudiOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. gallinaceum"
+                 internal=   "Pgallinaceum/PgallinaceumOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. knowlesi"
+                 internal=   "Pknowlesi/PknowlesiOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue term="P. reichenowi"
+                 internal=   "Preichenowi/PreichenowiOrfs_plasmoDB-5.3.fasta"/>
+        </enumList>
+      </enumParam>
+
+

@@ -1,0 +1,35 @@
+
+        <stringParam name="est_id"
+                     prompt="EST ID"
+                     help="Enter an EST ID (Accession Number)"
+                     substitute="yes"
+            <suggest sample="AU087658, BQ739759, N98084"
+                     default="AU087658"/>
+        </stringParam>
+
+
+
+
+          <enumValue term="'C. muris'"
+                 internal=        'Cmuris'"/> 
+          <enumValue term="'C. parvum EST'"
+                 internal=        'CparvumEST'"/> 
+
+    <paramSet name="EstBlastDbParams">
+
+      <enumParam name="BlastDatabaseType"
+                     prompt="Target"
+                     translated CDS, Protein)" multiPick="false"
+                     help="The type of the target database (eg CDS,
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="EST"
+                 internal=   "ESTs"/>
+          <enumValue term="Translated EST"
+                 internal=   "ESTs Translated"/>
+        </enumList>
+      </enumParam>
