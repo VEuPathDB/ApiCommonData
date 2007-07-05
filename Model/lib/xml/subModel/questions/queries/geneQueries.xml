@@ -385,14 +385,14 @@
 
     <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
-       <paramRef ref="geneParams.BlastQueryType"/>
        <paramRef ref="geneParams.BlastDatabaseType"/>
-       <paramRef ref="geneParams.BlastDatabaseOrganism"/>
-       <paramRef ref="geneParams.BlastQuerySequence"/>
-       <paramRef ref="geneParams.-e"/>
-       <paramRef ref="geneParams.-v"/>
-       <paramRef ref="geneParams.-b"/>
-       <paramRef ref="geneParams.-filter"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganismAnnotated"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
@@ -402,14 +402,14 @@
 
     <wsQuery name="GenesBySimilarity" includeProjects="ApiDB" 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
-       <paramRef ref="geneParams.BlastQueryType"/>      
-       <paramRef ref="geneParams.BlastQuerySequence"/> 
-       <paramRef ref="geneParams.-e"/>
-       <paramRef ref="geneParams.-v"/>
-       <paramRef ref="geneParams.-b"/>
-       <paramRef ref="geneParams.-filter"/>
+       <paramRef ref="geneParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganismAnnotated"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>      
+       <paramRef ref="sharedParams.BlastQuerySequence"/> 
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="TabularRow" width="3000"/>

@@ -1,7 +1,7 @@
 <querySet name="OrfIds">
 
     <sqlQuery name="OrfByOrfId" displayName="ID" isCacheable="true">
-        <paramRef ref="idQueryParams.orf_id"/>
+        <paramRef ref="orfParams.orf_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
@@ -15,10 +15,10 @@
     </sqlQuery>
 
     <sqlQuery name="OrfsByLocation" displayName="ORFs by  genomic location" isCacheable="true">
-        <paramRef ref="params.chromosomeOptional"/>
-        <paramRef ref="params.genomicSequence"/>
-        <paramRef ref="params.start_point"/>
-        <paramRef ref="params.end_point"/>
+        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
         <column name="source_id"/>
         <column name="orf_location"/>
         <sql>
@@ -43,8 +43,8 @@
 
     <wsQuery name="OrfsByMotifSearch" displayName="Motif Search"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
-       <paramRef ref="geneParams.motif_expression"/>
-       <paramRef ref="OrfMotifSearchParams.Dataset"/>
+       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="orfParams.motif_organism"/>
        <wsColumn name="source_id" width="60" wsName="GeneID"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
@@ -54,13 +54,13 @@
     <wsQuery name="OrfsBySimilarity" displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
-       <paramRef ref="params.BlastDatabaseOrganism"/>
-       <paramRef ref="params.BlastQueryType"/>
-       <paramRef ref="params.BlastQuerySequence"/>
-       <paramRef ref="params.-e"/>
-       <paramRef ref="params.-v"/>
-       <paramRef ref="params.-b"/>
-       <paramRef ref="params.-filter"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
 
        <wsColumn name="source_id" width="60" wsName="Identifier"/>
        <wsColumn name="TabularRow" width="3000"/>

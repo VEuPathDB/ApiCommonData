@@ -1,5 +1,9 @@
 <wdkModel>
 
+  <!--===========================================================================-->
+  <!-- Gene ID questions (public)  -->
+  <!--===========================================================================-->
+
   <questionSet name="GeneQuestions">
 
   <!------------------------------------------------------------------>
@@ -2186,4 +2190,155 @@ Find genes that are predicted to encode a signal peptide.
          </dynamicAttributes>
     </question>
 
-</questionSet>
+  </questionSet>
+
+
+  <!--===========================================================================-->
+  <!-- Gene ID questions (inernal)  -->
+  <!--===========================================================================-->
+
+  <questionSet name="InternalQuestions"
+             displayName="Internal Questions"
+             internal="yes">
+
+     <question name="GenesByOrthologs"
+         displayName="Genes Orthologous to Genes in a Query Result"
+              queryRef="GeneFeatureIds.GenesByOrthologs"
+              summaryAttributesList="organism,product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+           <![CDATA[
+Find the Plasmodium genes that are orthologs (or paralogs) of the genes in a Query History result.
+
+The typical use of this query is to begin by having an interesting <i>P. falciparum</i> result in My Query History.  Then, come here to find orthologs of those genes in the less well-annotated species.  In general, use this query to transform sets of genes from one species to others.
+
+Ortholog groups were generated from 61 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL DB site</a> plus <i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin).  The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
+          ]]>
+        </description>
+    </question>
+
+    <question name="GenesByPlasmoDbDataset"
+         displayName="Genes imported from PlasmoDB 4.4"
+              queryRef="GeneFeatureIds.GenesByPlasmoDbDataset"
+              summaryAttributesList="organism,product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+           <![CDATA[
+        Find genes by importing a PlasmoDB 4.4 query result. The Query History page at the PlasmoDB version 4.4 site (http://plasmodb.org) now contains a column called "Dataset." To import any of the queries run at the PlasmoDB 4.4 site, cut and paste the Dataset identifier from the PlasmoDB Query History page.
+          ]]>
+        </description>
+    </question>
+
+    <question name="GenesByIntraerythrocyticExpression" displayName="Asexual"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              summaryAttributesList="product,winzelerPct"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Asexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExtraerythrocyticExpression" displayName="Sexual"
+              queryRef="GeneFeatureIds.GenesByExtraerythrocyticExpression"
+              summaryAttributesList="product,winzelerPct"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Sexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExpression" displayName="All"
+              queryRef="GeneFeatureIds.GenesByExpression"
+              summaryAttributesList="product,winzelerPct"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Gene Expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByMicroarrayEvidence" displayName="Microarray evidence"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+           <![CDATA[
+           Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
+            ]]>
+        </description>
+    </question>
+
+    <question name="GenesByMassSpecEvidence" displayName="Mass spectrometry evidence"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+           <![CDATA[
+           Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on protein expression data from mass spectrometry experiments.
+            ]]>
+        </description>
+    </question>
+
+    <question name="GenesByProteinStructure" displayName="Protein structure"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+           Find genes based on secondary and 3-D protein structure.
+        </description>
+    </question>
+
+    <!-- this is NOT a gene query.  it belongs in a "universalQuestions" query set.  here for bkwd compat -->
+    <!-- should invent a dummy record class for the return type -->
+    <question name="UnifiedBlast"
+         displayName="BLAST"
+         queryRef="UniversalIds.Blast"
+         summaryAttributesList="organism,Header,TabularRow,Alignment,Footer"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <summary>
+           <![CDATA[
+             Search any type of subject with BLAST.
+            ]]>
+        </summary>
+         <description>
+           <![CDATA[
+             Find genes, genomic sequences, ESTs, or ORFs that have BLAST
+             similarity to your input sequence.
+             <p>
+             (<b>Note:</b> not all species have Genes or ESTs available.)
+             <p>The search uses
+             <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
+             <p><b>Note:</b> If you get <b>0 Results</b> it may be because
+             not all <i>Targets</i> are available for all
+             Plasmodium species.  <i>PlasmoDB does not contain any Genes or ESTs
+             for P.gallinacium, P.knowlesi, P.reichenowi.</i>
+          ]]>
+         </description>
+         <dynamicAttributes>
+             <columnAttribute name="TabularRow" displayName="BLAST summary"
+                              inReportMaker="false"/>
+             <columnAttribute name="Alignment" displayName="BLAST alignment"
+                              inReportMaker="false"/>
+             <columnAttribute name="Header" displayName="BLAST header"
+                              inReportMaker="false"/>
+             <columnAttribute name="Footer" displayName="BLAST footer"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+  </questionSet>
+</wdkModel>

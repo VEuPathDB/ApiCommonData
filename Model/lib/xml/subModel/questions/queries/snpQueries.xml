@@ -12,9 +12,9 @@
       </sqlQuery>
 
       <sqlQuery name="SnpsByGeneId" displayName="SNPs by Gene ID" isCacheable="true">
-        <paramRef ref="params.ds_gene_ids"/>
-        <paramRef ref="params.snp_strain_a"/>
-        <paramRef ref="params.snp_strain_m"/>
+        <paramRef ref="sharedParams.ds_gene_ids"/>
+        <paramRef ref="sharedParams.snp_strain_a"/>
+        <paramRef ref="sharedParams.snp_strain_m"/>
         <column name="source_id"/>
         <column name="snp_location"/>
         <column name="ref_strain"/>
@@ -76,11 +76,11 @@ group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     </sqlQuery>
 
        <sqlQuery name="SnpsByLocation" displayName="SNPs by chromosomal location" isCacheable="true">
-          <paramRef ref="params.chromosome" multipPick="false"/>
-          <paramRef ref="params.start_point"/>
-          <paramRef ref="params.end_point"/>
-          <paramRef ref="params.snp_strain_a"/>
-          <paramRef ref="params.snp_strain_m"/>
+          <paramRef ref="sharedParams.chromosome" multipPick="false"/>
+          <paramRef ref="sharedParams.start_point"/>
+          <paramRef ref="sharedParams.end_point"/>
+          <paramRef ref="sharedParams.snp_strain_a"/>
+          <paramRef ref="sharedParams.snp_strain_m"/>
           <column name="source_id"/>
           <column name="gene"/>
           <column name="snp_location"/>
@@ -142,10 +142,10 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
     </sqlQuery>
 
  <sqlQuery name="SnpsByAlleleFrequency" displayName="SNPs by chromosomal location" isCacheable="true">
-        <paramRef ref="params.major_allele_min"/>
-        <paramRef ref="params.major_allele_max"/>
-        <paramRef ref="params.minor_allele_min"/>
-        <paramRef ref="params.minor_allele_max"/>
+        <paramRef ref="snpParams.major_allele_min"/>
+        <paramRef ref="snpParams.major_allele_max"/>
+        <paramRef ref="snpParams.minor_allele_min"/>
+        <paramRef ref="snpParams.minor_allele_max"/>
         <column name="source_id"/>
         <column name="minor_alleles"/>
         <column name="minor_products"/>

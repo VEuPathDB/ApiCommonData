@@ -31,15 +31,15 @@
   <!--   -->
   <!------------------------------------------------------------------>
     <sqlQuery name="EstsByLocation" displayName="Genomic Location" isCacheable="true">
-        <paramRef ref="params.chromosome"/>
-        <paramRef ref="params.genomicSequence"/>
-        <paramRef ref="params.start_point"/>
-        <paramRef ref="params.end_point"/>
-        <paramRef ref="params.libraryId"/>
-        <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="params.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.chromosome"/>
+        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="sharedParams.libraryId"/>
+        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
         <column name="source_id"/>
         <column name="est_location"/>
         <sql>
@@ -65,7 +65,7 @@
   <!--   -->
   <!------------------------------------------------------------------>
     <sqlQuery name="EstsByLibrary" displayName="Library Name" isCacheable='true'>
-        <paramRef ref="params.libraryId"/>
+        <paramRef ref="sharedParams.libraryId"/>
         <column name="source_id" />
         <sql>
             <!-- use CDATA because query includes angle brackets -->
@@ -82,13 +82,13 @@
   <!--   -->
   <!------------------------------------------------------------------>
     <sqlQuery name="EstsWithGeneOverlap" displayName="ESTs that overlap genes" isCacheable='true'>
-       <paramRef ref="params.libraryId"/>
-       <paramRef ref="params.bp_overlap_gte"/>
-       <paramRef ref="params.inNotIn"/>
-       <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="params.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.bp_overlap_gte"/>
+       <paramRef ref="sharedParams.inNotIn"/>
+       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
        <column name="source_id" />
        <column name="est_locations" />
        <column name="genes" />
@@ -126,14 +126,14 @@
   <!------------------------------------------------------------------>
     <wsQuery name="EstsBySimilarity" displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
-       <paramRef ref="params.BlastQueryType"/>
-       <paramRef ref="EstBlastDbParams.BlastDatabaseType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
-       <paramRef ref="params.BlastQuerySequence"/>
-       <paramRef ref="params.-e"/>
-       <paramRef ref="params.-v"/>
-       <paramRef ref="params.-b"/>
-       <paramRef ref="params.-filter"/>
+       <paramRef ref="estParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganismAnnotated"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
 
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
        <wsColumn name="TabularRow" width="3000"/>
@@ -143,25 +143,5 @@
     </wsQuery>
 
 
-  <!------------------------------------------------------------------>
-  <!--   -->
-  <!------------------------------------------------------------------>
-    <wsQuery name="UnifiedBlast" displayName="BLAST"
-             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
-       <paramRef ref="params.BlastQueryType"/>
-       <paramRef ref="params.BlastDatabaseType"/>
-       <paramRef ref="params.BlastDatabaseOrganism"/>
-       <paramRef ref="params.BlastQuerySequence"/>
-       <paramRef ref="params.-e"/>
-       <paramRef ref="params.-v"/>
-       <paramRef ref="params.-b"/>
-       <paramRef ref="params.-filter"/>
-
-       <wsColumn name="source_id" width="32" wsName="Identifier"/>
-       <wsColumn name="TabularRow" width="3000"/>
-       <wsColumn name="Alignment" width="4000"/>
-       <wsColumn name="Header" width="3000"/>
-       <wsColumn name="Footer" width="3000"/>
-    </wsQuery>
 
 </querySet>

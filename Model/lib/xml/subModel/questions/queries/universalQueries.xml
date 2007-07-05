@@ -1,0 +1,27 @@
+<wdkModel>
+
+  <querySet name="UniversalIds">
+
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
+    <wsQuery name="Blast" displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="sharedParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+  </querySet>
+</wdkModel
