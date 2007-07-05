@@ -18,7 +18,8 @@
 <introduction>
            <![CDATA[
     <font size="-1">
-    This site uses <b>WDK 1.13</b> and the <b>apiB</b> instance on <b>pitaya UGA</b>. 
+    This site uses <b>WDK 1.13</b> and <b>ApiCommonWebsite june2007</b> branch.<br>
+    It uses the <b>apiB</b> instance on <b>pitaya UGA</b>.
     apiB uses Oracle dbLinks to access <b>cryptoB</b> in UGA (3.5), <b>plas53p</b> and <b>toxo42p</b>
     instances on Upenn for Federation.</font>
           ]]>
@@ -54,7 +55,7 @@ user interface to present the enclosed questions in one choice box.
               category="Other Attributes"
               displayName="Keyword (search product, notes,etc)"
               queryRef="GeneFeatureIds.GenesByAnnotatedKeyword"
-              summaryAttributesList="organism,location_text,product"
+              summaryAttributesList="organism,location_text,product,Fields"
               sortingAttributesList="organism asc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
               <summary>
@@ -66,6 +67,10 @@ user interface to present the enclosed questions in one choice box.
              Find genes by searching text annotations. The search is case insensitive, for example both 'ACTIN' and 'actin' will work. The fields must contain your text exactly. Use '*' as a wildcard. The wildcard can span several words. For example: "red*ase" will find "reductase" and "predicted lactate dehydrogenase".
               ]]>
               </description>
+        <dynamicAttributes>
+            <columnAttribute name="Fields"
+                       displayName="Found in" align="center"/>
+        </dynamicAttributes>
     </question>
 
 <question name="GeneByLocusTag"
@@ -589,7 +594,6 @@ Find genes whose protein product contains a motif pattern that
          Either select an organism and a genomic sequence from the
           pull-down menu or enter a genomic sequence ID from any Crypto, Plasmo or Toxo species (e.g.
 	 "AAEL01000057", "MAL4", "Ia").
-         The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
 	 ]]>
     </description>
 </question>
@@ -804,7 +808,7 @@ Find genes whose protein product contains a motif pattern that
 
 
 <question name="GenesByPhyleticProfile"
-         displayName="Homology Phylogenetic Profile (P.f. and P.v.)"
+         displayName="Homology Phylogenetic Profile (P.f. and P.y.)"
          category="Evolution"
          queryRef="GeneFeatureIds.GenesByPhyleticProfile"
          summaryAttributesList="organism,location_text,product,num_queries,query_ids,mutual_information_scores"
@@ -812,12 +816,12 @@ Find genes whose protein product contains a motif pattern that
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
            <![CDATA[
-         Find <i>P. falciparum</i> and/or <i>P. vivax</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
+         Find <i>P. falciparum</i> and/or <i>P. yoelii</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
           ]]>
         </summary>
         <description>
            <![CDATA[
-            Find <i>P. falciparum</i> and/or <i>P. vivax</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
+            Find <i>P. falciparum</i> and/or <i>P. yoelii</i> genes that have a homology-based phylogenetic profile similar to a specified list of genes.
            <br><br>
 
            The phylogenetic profile (homology-based) of a 
@@ -1325,9 +1329,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
  <question name="GenesByMassSpecCrypto"
               category="Protein Expression"
-              displayName="Cryptosporidium"
+              displayName="Cryptosporidium parvum"
               queryRef="GeneFeatureIds.GenesByMassSpecCrypto" 
-              summaryAttributesList="product,organism"
+              summaryAttributesList="product,organism,sum_spectrum_count"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
               <summary>
               Find &lt;i&gt;Cryptosporidium&lt;/i&gt; genes that have evidence of expression 
@@ -1349,6 +1353,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
              Crown Street, Liverpool, United Kingdom L69 7ZJ</i>
              ]]>
              </description>
+             <dynamicAttributes>
+                  <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+             </dynamicAttributes>
     </question>
 
     <question name="GenesByProteomicsProfile"
@@ -1475,27 +1482,27 @@ References:
               category="Transcript Expression"
               displayName="Differential Expression (T.g.)"
               queryRef="GeneFeatureIds.GenesByDifferentialExpression" 
-              summaryAttributesList="product,fold_change,confidence"
-              sortingAttributesList="fold_change desc,confidence desc"
+              summaryAttributesList="product,location_text,fold_change,confidence"
+              sortingAttributesList="fold_change desc,confidence desc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
             Find genes by differential expression analysis
         </summary>
         <description>
             <![CDATA[
-             Find genes whose expression was found to be up-regulated or down-regulated 
+ Find genes whose expression was found to be up-regulated or down-regulated 
 	    in a particular microarray study based upon 
             <a href="http://www.cbil.upenn.edu/PaGE/">PaGE</a> differential expression analysis.	    
 	     <BR>&nbsp;<BR>
 	     <center>
 	     <table border="1" width="90%"
 	     <thead><tr><td><b>Experiment</b></td><td><b>Description</b></td></thead>
+	     <tr><td>Effects of Glucose Starvation in Toxoplasma gondii</td>
+	         <td>Wildtype RH tachyzoites were grown in high glucose and no glucose conditions 
+		     to determine the effects of glucose starvation on transcription.</td></tr>
 	     <tr><td>Expression profiling of three archetypal T. gondii lineages</td>
 	         <td>Determination of  strain-specific differential expression by profiling 
 		 wildtype tachyzoites from the RH, Prugniaud and CTG strains of T. gondii</td></tr>
-	     <tr><td colspan=2> For the other experiment, click 
-	     <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByDifferentialExpression2"> 
-	     here </a>.</td></tr>
 	     </table>
 	     </center>
 	     <BR>
@@ -1503,6 +1510,7 @@ References:
 	     Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal lineages:
 	     correlation of parasite genotype with human disease. J. Infect. Dis. 172:1561-1566 
 	     <BR>&nbsp;<BR>
+
             ]]>
         </description>
 	<dynamicAttributes>
@@ -1545,7 +1553,7 @@ Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal li
               recordClassRef="GeneRecordClasses.GeneRecordClass">
              <summary>
               <![CDATA[
-                Find <i>Plasmodium</i> genes whose encoding protein has an epitope identified 
+                Find genes whose encoding protein has an epitope identified 
                 by the <a href="http://www.immuneepitope.org">Immune Epitope Database and Analysis Resource</a>. 
               ]]>
              </summary>
@@ -1598,7 +1606,60 @@ Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal li
     </question>
 
 
+
+
+<question name="GenesByIntraerythrocyticExpression" displayName="Asexual"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Asexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExtraerythrocyticExpression" displayName="Sexual"
+              queryRef="GeneFeatureIds.GenesByExtraerythrocyticExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Sexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExpression" displayName="All"
+              queryRef="GeneFeatureIds.GenesByExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Gene Expression on Affy chips, from the Winzeler lab
+        </description>
+   <!--      <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>-->
+    </question>
+
+
+
+
 </questionSet>
+
+
+
 <!-- questions for internal use -->
 <questionSet name="InternalQuestions"
              displayName="Internal Questions"
@@ -1628,15 +1689,21 @@ The typical use of this query starts by having an interesting set of genes in a 
 <question name="GenesByMicroarrayEvidence" displayName="Microarray evidence"              queryRef="GeneFeatureIds.GenesByExportPrediction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
-           Find P.f. and P.b. genes based on transcript expression data from microarray experiments.
+ <![CDATA[
+           Find <i>P.falciparum, P.berghei</i> and <i>T. gondii</i> genes based on transcript expression data from microarray experiments.
+ ]]>
         </description>
     </question>
 
 
- <question name="GenesByMassSpecEvidence" displayName="Mass spectrometry evidence"              queryRef="GeneFeatureIds.GenesByExportPrediction"
+ <question name="GenesByMassSpecEvidence" 
+              displayName="Mass spectrometry evidence"              
+              queryRef="GeneFeatureIds.GenesByExportPrediction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
-           Find P.f. and P.b. genes based on protein expression data from mass spectrometry experiments.
+ <![CDATA[
+           Find <i>P.f., P.b., C.p.</i> and <i>T.g.</i> genes based on protein expression data from mass spectrometry experiments.
+ ]]>
         </description>
     </question>
 
@@ -1647,6 +1714,55 @@ The typical use of this query starts by having an interesting set of genes in a 
            Find genes based on secondary and 3-D protein structure.
         </description>
     </question>
+
+
+
+<question name="GenesByIntraerythrocyticExpression" displayName="Asexual"
+              queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Asexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExtraerythrocyticExpression" displayName="Sexual"
+              queryRef="GeneFeatureIds.GenesByExtraerythrocyticExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Sexual cycle expression on Affy chips, from the Winzeler lab
+        </description>
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+    <question name="GenesByExpression" displayName="All"
+              queryRef="GeneFeatureIds.GenesByExpression"
+              summaryAttributesList="product"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Gene Expression on Affy chips, from the Winzeler lab
+        </description>
+   <!--      <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>-->
+    </question>
+
+
 
 
 
@@ -1751,6 +1867,24 @@ The typical use of this query starts by having an interesting set of genes in a 
     </description>
     
 
+
+<question name="EstBySourceId"
+	      displayName="ID"
+	      queryRef="EstIds.EstBySourceId"
+	      summaryAttributesList="organism,dbest_name"
+	      recordClassRef="EstRecordClasses.EstRecordClass">
+        <summary>
+	Find ESTs by ID
+	</summary>
+
+	<description>
+	  <![CDATA[
+	    Find ESTs by ID
+	  ]]>
+	</description>
+    </question>
+
+
 <question name="EstsBySimilarity"
          displayName="BLAST Similarity"
          category="Similarity/Pattern"
@@ -1834,6 +1968,22 @@ The typical use of this query starts by having an interesting set of genes in a 
       Find ORFs
     </description>
 
+ <question name="OrfByOrfId"
+              displayName="ID"
+              queryRef="OrfIds.OrfByOrfId"
+              summaryAttributesList=""
+              recordClassRef="OrfRecordClasses.OrfRecordClass">
+
+        <summary>
+        Find ORFs by locus tags
+        </summary>
+
+        <description>
+            <![CDATA[
+            Find ORFs by locus tags
+            ]]>
+        </description>
+    </question>
 
 <question name="OrfsByLocation"
               category="Genomic Position"
@@ -2042,26 +2192,46 @@ The typical use of this query starts by having an interesting set of genes in a 
               summaryAttributesList="organism"
               recordClassRef="OrfRecordClasses.OrfRecordClass">
               <summary>
-              Find &lt;i&gt;Toxoplasma&lt;/i&gt; open reading frames that have evidence of expression 
-             <!--based on peptides identified in sporozoites by MS/MS analysis-->.
+ <![CDATA[
+              Find <i>C. parvum</i> and <i>T. gondii</i> open reading frames that have evidence of expression.
+
+   ]]>
               </summary>
               <description>
-              <![CDATA[
-             Find <i>Cryptosporidium</i> open reading frames that have evidence of expression 
-             based on peptides identified by MS/MS analysis
-<!-- in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture-->.<p>
-            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
+ <![CDATA[
+
+             Find  <i>C. parvum</i> and <i>T. gondii</i> open reading frames that have evidence of expression based on peptides identified by MS/MS analysis. <br>See the related <a href="showQuestion.do?questionFullName=InternalQuestions.GenesByMassSpecEvidence"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
             <p>
-             <!--sup>1</sup><i>J.M. Wastling, S. Sanderson, D. Xia and A.Z. Siddiki.              Departments of Pre-Clinical Veterinary Science & Veterinary Pathology<br>University of Liverpool,              Crown Street, Liverpool, United Kingdom L69 7ZJ</i>-->
-             <sup>2</sup><i>Hu K, Johnson J, Florens L, Franholz M, Suravajjala S, 
+<!-- crypto -->
+<sup>&#182;</sup>Data available for <i>C. parvum</i> and <i>C. hominis</i>. In the case of <i>C. hominis</i>, the 
+             spectra obtained from the analysis of <i>C. parvum</i> extracts were searched against <i>C. hominis</i> protein sequences.<br>
+   <!-- description by J. Wastling -->
+Mass spectrometry data were obtained from two-dimensional gel electrophoretic protein separations, one-dimensional gel LC-MS/MS and MudPIT analysis of a sporozoite/oocyst excystation mixture of <i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein hits were obtained resulting in 1,252 non-redundant protein identifications.  In addition a further 100 hits were obtained to sequences which matched a predicted open reading frame, but for which no gene model currently exists.  In total these protein identifications represent nearly one third of the entire predicted proteome of <i>C. parvum</i>, although it is unlikely that the entire proteome from all life-stages will be expressed at any one time.
+<br>
+Proteomics data provided by <i>JM Wastling, SJ Sanderson, D Xia, H Prieto, J Yates, AMM Siddiki. <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+
+<!-- toxo -->
+<br><br><sup>1</sup> <i>Proteomics data from JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
+             Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
+             <p>
+             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, 
 	     DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
 	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. 
-	     PLoS Pathog <b>2</b>:e13.</i>             ]]>
+	     PLoS Pathog <b>2</b>:121-138.</i><br>
+             1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
+             <p><p>
+             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. 
+             With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
+
+ ]]>
              </description>
     </question>
 
 
 </questionSet>
+
+
+<!-- //////////  SNP QUESTIONS  //////////// -->
 
 <questionSet name="SnpQuestions"
              displayName="Find SNPs by">
@@ -2070,7 +2240,7 @@ The typical use of this query starts by having an interesting set of genes in a 
      </description>
 
 
-<!--
+
      <question name="SnpBySourceId"
                displayName="ID"
                queryRef="SnpsBy.SnpBySourceId"
@@ -2085,7 +2255,7 @@ The typical use of this query starts by having an interesting set of genes in a 
 	    ]]>
 	  </description>
       </question>
--->
+
 
       <question name="SnpsByGeneId"
               category="Gene"
@@ -2099,8 +2269,7 @@ The typical use of this query starts by having an interesting set of genes in a 
         </summary>
 	<description>
             <![CDATA[
-              Find SNPs that are contained within a gene.
-              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+              Find SNPs that are contained within a gene. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.<br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
             ]]>
         </description>
         <dynamicAttributes>
@@ -2122,12 +2291,11 @@ The typical use of this query starts by having an interesting set of genes in a 
               sortingAttributesList="snp_location asc"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
         <summary>
-            Find P.f. SNPs by chromosomal location
+            Find SNPs by chromosomal location
         </summary>
 	<description>
             <![CDATA[
-              Find SNPs by chromosomal location relative to P. falciparum.
-              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+              Find SNPs by chromosomal location. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>. <br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
             ]]>
         </description>
         <dynamicAttributes>
@@ -2145,7 +2313,7 @@ The typical use of this query starts by having an interesting set of genes in a 
               category="Other Attributes"
               displayName="Allele Frequency"
               queryRef="SnpsBy.SnpsByAlleleFrequency"
-              summaryAttributesList="major_strains"
+              summaryAttributesList="organism"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
         <summary>
             Find P.f. SNPs by the frequency of the major and minor alleles
@@ -2153,12 +2321,12 @@ The typical use of this query starts by having an interesting set of genes in a 
 	<description>
             <![CDATA[
               Find SNPs by specifying the frequency of the major and minor alleles.
-              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+              SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
             ]]>
         </description>
-        <dynamicAttributes>
+      <!--  <dynamicAttributes>
 	     <columnAttribute name="major_strains" displayName="Major Strains"/>
-	</dynamicAttributes>
+	</dynamicAttributes>-->
     </question>
 
 </questionSet>
@@ -2185,14 +2353,15 @@ The typical use of this query starts by having an interesting set of genes in a 
 
     <!-- GeneFeatureIds.GenesByAnnotatedKeyword -->
     <wsQuery name="GenesByAnnotatedKeyword" displayName="By Annotated Keywords" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-            <paramRef ref="params.organism"/>
-            <paramRef ref="params.datasets"/>
+            <paramRef ref="params.organism" default="Cryptosporidium hominis,Cryptosporidium parvum,Plasmodium berghei,Plasmodium chabaudi,Plasmodium falciparum,Plasmodium knowlesi,Plasmodium vivax,Plasmodium yoelii,Toxoplasma gondii"/>
+            <paramRef ref="params.datasets" default="Gene product,Gene notes,User comments,Protein domain names and descriptions,EC descriptions,GO terms and definitions,Metabolic pathway names and descriptions"/>
             <paramRef ref="params.text_expression"/>
             <paramRef ref="params.max_pvalue" groupRef="paramGroups.advancedParams"/>
-            <paramRef ref="params.case_independent" groupRef="paramGroups.advancedParams"/>
+     <!--       <paramRef ref="params.case_independent" groupRef="paramGroups.advancedParams"/>   -->
             <paramRef ref="params.whole_words" groupRef="paramGroups.advancedParams"/>
             <wsColumn name="project_id" width="32" wsName="project_id"/>
             <wsColumn name="source_id" width="32" wsName="source_id"/>
+            <wsColumn name="Fields" width="64" wsName="Fields"/>
     </wsQuery>
 
 
@@ -2270,6 +2439,7 @@ The typical use of this query starts by having an interesting set of genes in a 
                     <paramRef ref="params.organism"/>
                     <paramRef ref="params.phyletic_indent_map"/>
                     <paramRef ref="params.internal_phyletic_indent_map"/>
+                    <paramRef ref="params.internal_phyletic_term_map"/>
                     <paramRef ref="params.phyletic_term_map"/>
                     <wsColumn name="source_id" width="32" wsName="source_id"/>
                     <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -2351,7 +2521,7 @@ order by project_id,sns2.source_id
 <wsQuery name="GenesByLocation"  displayName="by  genomic location" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                <description>genes by genomic location</description>
                <paramRef ref="params.stoxopforganism"/>
-               <paramRef ref="params.stringChromosome"/>
+               <paramRef ref="params.geneOrfChromosome"/>
                <paramRef ref="params.genomicSequence"/>
                <paramRef ref="params.start_location"/>
                <paramRef ref="params.end_location"/>
@@ -2427,9 +2597,9 @@ order by project_id,sns2.source_id
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
 
-       <wsColumn name="Locations" width="4000"/>
+       <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
-       <wsColumn name="Sequence" width="4000"/>
+       <wsColumn name="Sequence" width="3999"/>
     </wsQuery>
                                                     
 
@@ -2723,12 +2893,13 @@ order by project_id,sns2.source_id
  </wsQuery>
 
  <wsQuery name="GenesByMassSpecCrypto" displayName="By Mass Spec. Evidence" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.cryptoorganism"/>
+        <paramRef ref="params.cryptoparvumorganism"/>
         <paramRef ref="params.c_ms_assay"/>
         <paramRef ref="params.min_sequence_count"/>
         <paramRef ref="params.min_spectrum_count"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="sum_spectrum_count" width="32"/>
  </wsQuery>
 
 
@@ -2813,6 +2984,30 @@ order by project_id,sns2.source_id
        <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
+
+    <wsQuery name="GenesByIntraerythrocyticExpression" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.pforganism"/>
+        <paramRef ref="params.synchronization"/>
+        <paramRef ref="params.intraerythrocytic_stages"/>
+        <paramRef ref="params.min_expression_percentile"/>
+        <paramRef ref="params.max_expression_percentile"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="max_percentile"/>
+        <wsColumn name="min_percentile"/>
+    </wsQuery>
+
+    <wsQuery name="GenesByExtraerythrocyticExpression" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.pforganism"/>
+        <paramRef ref="params.extraerythrocytic_stages"/>
+        <paramRef ref="params.min_expression_percentile"/>
+        <paramRef ref="params.max_expression_percentile"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="max_percentile"/>
+        <wsColumn name="min_percentile"/>
+    </wsQuery>
+
 </querySet>
 
 
@@ -2866,6 +3061,17 @@ order by project_id,sns2.source_id
 <querySet name="EstIds">
 
 
+ <wsQuery name="EstBySourceId" 
+          displayName="ID" 
+          isCacheable='true' 
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="params.est_id"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>   
+
+
+
 <wsQuery name="EstsBySimilarity" displayName="BLAST ESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="params.BlastDatabaseTypeEST"/>
        <paramRef ref="params.BlastDatabaseOrganismEST"/>
@@ -2889,10 +3095,11 @@ order by project_id,sns2.source_id
 
  <wsQuery name="EstsByLocation" displayName="ESTs by  genomic location" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="params.stoxopforganism"/>
-        <paramRef ref="params.stringChromosome"/>
+        <paramRef ref="params.estChromosome"/>
         <paramRef ref="params.genomicSequence"/>
         <paramRef ref="params.start_point"/>
         <paramRef ref="params.end_point"/>
+        <paramRef ref="params.libraryId"/>
         <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
@@ -2926,9 +3133,20 @@ order by project_id,sns2.source_id
 
 <!-- Querys that return Orf primary keys (for use in questions). -->
 <querySet name="OrfIds">
+
+ <wsQuery name="OrfByOrfId" 
+          displayName="ID" 
+          isCacheable='true' 
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="params.orf_id"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>   
+
+
      <wsQuery name="OrfsByLocation" displayName="ORFs by  genomic location" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="params.stoxopforganism"/>
-        <paramRef ref="params.stringChromosome"/>
+        <paramRef ref="params.geneOrfChromosome"/>
         <paramRef ref="params.genomicSequence"/>
         <paramRef ref="params.start_location"/>
         <paramRef ref="params.end_location"/>
@@ -2968,14 +3186,14 @@ order by project_id,sns2.source_id
        <wsColumn name="source_id" width="60" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
 
-       <wsColumn name="Locations" width="4000"/>
+       <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
-       <wsColumn name="Sequence" width="4000"/>
+       <wsColumn name="Sequence" width="3999"/>
     </wsQuery>
 
 
 <wsQuery name="OrfsByMassSpec" displayName="By Mass Spec. Evidence" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.cryptotoxoorganism"/>
+        <paramRef ref="params.cryptoparvumtoxoorganism"/>
         <paramRef ref="params.ms_assay"/>
         <paramRef ref="params.min_sequence_count"/>
         <paramRef ref="params.min_spectrum_count"/>
@@ -2992,20 +3210,23 @@ order by project_id,sns2.source_id
 <querySet name="SnpsBy">
  
 
-<!-- IS IT BEING USED?
-     <wsQuery name="SnpBySourceId" displayName="ID" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
+     <wsQuery name="SnpBySourceId" 
+              displayName="ID" 
+              isCacheable="true" 
+              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
           <paramRef ref="params.snp_id"/>
-	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="source_id" width="50" wsName="source_id"/>
           <wsColumn name="project_id" width="32" wsName="project_id"/>
       </wsQuery>
--->
+
 
       <wsQuery name="SnpsByGeneId" displayName="SNPs by Gene ID" isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.ds_gene_ids"/>
+        <paramRef ref="params.ds_gene_ids"  default="PF11_0344"/>
         <paramRef ref="params.snp_strain_a"/>
         <paramRef ref="params.snp_strain_m"/>
         <paramRef ref="params.signature"/>
-        <wsColumn name="source_id" wsName="source_id"/>
+        <wsColumn name="source_id"  width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="snp_location" width="32"/>
         <wsColumn name="ref_strain" width="32"/>
@@ -3049,7 +3270,7 @@ order by project_id,sns2.source_id
         <paramRef ref="params.minor_allele_max"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-        <wsColumn name="major_strains" width="200"/>
+<!--        <wsColumn name="major_strains" width="200"/>-->
     </wsQuery>
 
 </querySet>
@@ -3108,20 +3329,19 @@ order by project_id,sns2.source_id
 	
    <reporter name="tabular" displayName="Summary - TAB Delimited"
                       implementation="org.gusdb.wdk.model.report.TabularReporter" />
-            <reporter name="fullRecord" displayName="Detailed"
-                      implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
-             <reporter name="srt" displayName="FASTA"
+    <reporter name="srt" displayName="FASTA"
                     implementation=""/>
+
 
             <attributeQueryRef ref="OrfAttributes.Bfmv">
                 <columnAttribute name="nas_id" displayName="Sequence ID" internal="false"/>
                 <!--columnAttribute name="orf_id" displayName="ORF ID" internal="false"/-->
                 <columnAttribute name="orf_start" internal="true"/>
                 <columnAttribute name="orf_end" internal="true"/>
-                <columnAttribute name="orf_start_text" displayName="Start" internal="false"/>
-                <columnAttribute name="orf_end_text" displayName="End" internal="false"/>
-                <columnAttribute name="orf_strand" displayName="Strand" internal="false"/>
-                <columnAttribute name="length" displayName="Length" internal="false"/>
+                <columnAttribute name="orf_start_text" displayName="Start" internal="false" align="center"/>
+                <columnAttribute name="orf_end_text" displayName="End" internal="false" align="center"/>
+                <columnAttribute name="orf_strand" displayName="Strand" internal="false" align="center"/>
+                <columnAttribute name="length" displayName="Length" internal="false" align="center"/>
                 <columnAttribute name="organism" displayName="Organism" internal="false" inReportMaker="false"/>
                 <columnAttribute name="formatted_organism" displayName="Organism" internal="false"/>
             </attributeQueryRef>
@@ -3138,7 +3358,7 @@ order by project_id,sns2.source_id
                     ]]>
                </text>
            </textAttribute>           
-
+<!--
             <textAttribute name="overview" displayName="Overview"
                            internal="true" inReportMaker="false">
                <text>
@@ -3148,6 +3368,7 @@ order by project_id,sns2.source_id
                     ]]>
                </text>
            </textAttribute>
+-->
         
         </recordClass>
  </recordClassSet>
@@ -3166,8 +3387,6 @@ order by project_id,sns2.source_id
  
           <reporter name="tabular" displayName="Summary - Tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="fullRecord" displayName="Detailed"
-                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
           <reporter name="srt" displayName="FASTA"
                     implementation=""/>
 
@@ -3212,42 +3431,24 @@ order by project_id,sns2.source_id
 
   <reporter name="tabular" displayName="Summary - Tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="fullRecord" displayName="Detailed"
-                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
-          <reporter name="srt" displayName="FASTA"
-                    implementation=""/>
+
 
    <attributeQueryRef ref="EstAttributes.Bfmv">
-                <columnAttribute name="source_id"   inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="a_count"     inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="c_count"     inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="g_count"     inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="t_count"     inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="other_count" inReportMaker="false"
-                                 internal="true"/>
-                <columnAttribute name="length"      displayName="length"
-                                internal="true"/>
-                <columnAttribute name="primer"      inReportMaker="false"
-                                internal="true"/>
-                <columnAttribute name="dbest_name"  displayName="Library"
-                                internal="true"/>
-                <columnAttribute name="vector"      displayName="Vector"
-                                internal="true"/>
-                <columnAttribute name="stage"       displayName="Stage"
-                                internal="true"/>
-                <columnAttribute name="organism"    displayName="Organism"
-                                internal="false"/>
-                <columnAttribute name="formatted_organism"    displayName="Organism"
-                                internal="true"/>
-                <columnAttribute name="ncbi_tax_id" displayName="Stage"
-                                internal="true"/>
-                <columnAttribute name="external_db_name"   inReportMaker="false"
-                                internal="true"/>
+                <columnAttribute name="source_id"   inReportMaker="false"    internal="true"/>
+                <columnAttribute name="a_count"     inReportMaker="false"    internal="true"/>
+                <columnAttribute name="c_count"     inReportMaker="false"    internal="true"/>
+                <columnAttribute name="g_count"     inReportMaker="false"    internal="true"/>
+                <columnAttribute name="t_count"     inReportMaker="false"    internal="true"/>
+                <columnAttribute name="other_count" inReportMaker="false"    internal="true"/>
+                <columnAttribute name="length"      displayName="length"     internal="false"/>
+                <columnAttribute name="primer"      inReportMaker="false"    internal="true"/>
+                <columnAttribute name="dbest_name"  displayName="Library"    internal="false"/>
+                <columnAttribute name="vector"      displayName="Vector"     internal="false"/>
+                <columnAttribute name="stage"       displayName="Stage"      internal="false"/>
+                <columnAttribute name="organism"    displayName="Organism"   internal="true"/>
+                <columnAttribute name="formatted_organism"    displayName="Organism"   internal="false"/>
+                <columnAttribute name="ncbi_tax_id" displayName="Stage"      internal="true"/>
+                <columnAttribute name="external_db_name"   inReportMaker="false"       internal="true"/>
             </attributeQueryRef>
 
 
@@ -3272,10 +3473,7 @@ order by project_id,sns2.source_id
 
           <reporter name="tabular" displayName="Summary - TAB Delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="fullRecord" displayName="Detailed"
-                    implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
- <reporter name="srt" displayName="FASTA"
-                    implementation=""/>
+
 
 
         <attributeQueryRef ref="SnpAttributes.Bfmv">
@@ -3284,14 +3482,17 @@ order by project_id,sns2.source_id
               <columnAttribute displayName="Dataset_hidden"
                                name="dataset_hidden" internal="true"
                                inReportMaker="false"/>
+
+<!--
                <linkAttribute inReportMaker="false" displayName="SNP provider"
                               name="provider_link" visible="$$dataset$$">
                  <url>
                     <![CDATA[
-                       showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=$$dataset_hidden$$&title=SNPs%20Summary
+                       http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=$$dataset_hidden$$&title=SNPs%20Summary
                         ]]>
                  </url>
               </linkAttribute>
+-->
 
               <columnAttribute displayName="Chromosome" name="seq_source_id" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Location" name="snp_location"/>
@@ -3305,14 +3506,20 @@ order by project_id,sns2.source_id
               <columnAttribute displayName="Right Flank" name="rflank"/>
               <columnAttribute inReportMaker="true" displayName="Gene ID"
                                name="gene_source_id" internal="true"/>
+
+<!-- apidb should link to our sumary page -->
                <linkAttribute inReportMaker="false" displayName="Gene ID"
                               name="linkedGeneId" visible="$$gene_source_id$$">
                  <url>
                     <![CDATA[
-                       showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$gene_source_id$$
+
+                     showSummary.do?questionFullName=GeneQuestions.GeneBySingleLocusTag&myProp%28locus_tag%29=$$gene_source_id$$
+
                         ]]>
                  </url>
               </linkAttribute>
+
+
               <columnAttribute displayName="Gene strand" name="gene_strand"/>
               <columnAttribute displayName="Coding" name="is_coding" align="center"/>
               <columnAttribute displayName="Position in CDS" name="position_in_CDS" align="center"/>
@@ -3329,7 +3536,7 @@ order by project_id,sns2.source_id
               <columnAttribute displayName="Major Product" name="major_product" align="center"/>
               <columnAttribute displayName="Minor Product" name="minor_product" align="center"/>
               <columnAttribute displayName="Organism" name="organism" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Organism" name="formatted_organism" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Organism" name="formatted_organism" inReportMaker="false" internal="false"/>
               <columnAttribute displayName="NCBI Taxon ID" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
         </attributeQueryRef>
 
@@ -3393,8 +3600,6 @@ order by project_id,sns2.source_id
 
           <reporter name="tabular" displayName="Summary - tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="fullRecord" displayName="Detailed - text"
-                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
           <reporter name="srt" displayName="Sequence - configurable FASTA"
                     implementation=""/>
 
@@ -3440,6 +3645,7 @@ order by project_id,sns2.source_id
             <columnAttribute name="winz_max_pct" displayName="Pf-iRBC+Spz max expr %ile (Affy array)" align="center"/>
             <columnAttribute name="winz_max_timing" displayName="Pf-iRBC+Spz max expr stage (Affy array)" align="center"/>
 
+<!--
             <textAttribute name="derisiOverlayPct" displayName="Pf-iRBC expr profile graph (GS array)"
                            inReportMaker="false" truncateTo="100000">
             <text>
@@ -3466,6 +3672,7 @@ order by project_id,sns2.source_id
                 ]]>
             </text>
          </textAttribute>
+-->
 
             <!-- internal=true atts -->
             <columnAttribute name="min_molecular_weight" displayName="Min Molecular Wt" internal="true" inReportMaker="false"/>
@@ -3563,6 +3770,20 @@ order by project_id,sns2.source_id
                 <columnAttribute name="system_date" internal="true" />
                 <columnAttribute name="login" internal="true" />
             </attributeQueryRef>
+    
+            <attributeQueryRef ref="UtilityQueries.CacheState">
+                <columnAttribute name="cache_count" internal="true" />
+            </attributeQueryRef>
+    
+            <table name="AllDbLinks" displayName="All DBLinks"
+                   queryRef="UtilityQueries.AllDbLinks">
+                <columnAttribute name="owner"      displayName="owner" />
+                <columnAttribute name="db_link"   displayName="db_link" />
+                <columnAttribute name="username"  displayName="username" />
+                <columnAttribute name="host"      displayName="host" />
+                <columnAttribute name="created"   displayName="created" />
+            </table>
+
         </recordClass>
 
  </recordClassSet>
@@ -3628,6 +3849,13 @@ order by project_id,sns2.source_id
         <recordClass idPrefix="" name="Plasmo_ChromosomeTermClass" type="Ontology">
             <table name="Chromosomes" displayName="Chromosome Terms" 
                    queryRef="UtilityTables.PF_Chromosomes">
+                <columnAttribute name="internal"/>
+                <columnAttribute name="term"/>
+            </table>
+        </recordClass>
+        <recordClass idPrefix="" name="PlasmoEstSnp_ChromosomeTermClass" type="Ontology">
+            <table name="Chromosomes" displayName="Chromosome Terms" 
+                   queryRef="UtilityTables.est_Snp_PF_Chromosomes">
                 <columnAttribute name="internal"/>
                 <columnAttribute name="term"/>
             </table>
@@ -4149,14 +4377,6 @@ UNION ALL
 
 
 
-
-
-
-
-
-
-
-
     <querySet name="GeneAttributes">
 
 
@@ -4478,6 +4698,36 @@ UNION ALL
            </sql>
         </sqlQuery>
         
+        <!-- UtilityQueries.CacheState -->
+        <sqlQuery name="CacheState" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="cache_count" />
+           <sql> 
+            <![CDATA[           
+            select count(*) as cache_count
+             from queryinstance
+             ]]>
+           </sql>
+        </sqlQuery>
+        
+        <!-- UtilityQueries.AllDbLinks -->
+        <sqlQuery name="AllDbLinks" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="owner" />
+            <column name="db_link" />
+            <column name="username" />
+            <column name="host" />
+            <column name="created" />
+           <sql> 
+            <![CDATA[           
+            select 
+            lower(owner) owner, lower(db_link) db_link, 
+            lower(username) username, lower(host) host, created
+            from  all_db_links
+            ]]>
+           </sql>
+        </sqlQuery>
+
      </querySet>
 <!-- ////////// END UTILITY //////////// -->
 
@@ -4486,6 +4736,53 @@ UNION ALL
 <!-- //////////  VOCABULARY //////////// -->
 
     <querySet name="VocabQueries">
+
+
+<sqlQuery name="ExtraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, name AS internal
+                FROM apidb.profileElementName@PLASMO_DBLINK@
+                WHERE name IN
+                     ('Sporozoite', 'Gametocyte')
+                UNION SELECT 'Either' AS term, 'Either' as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="IntraerythrocyticStages">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT name AS term, name AS internal
+                FROM apidb.profileElementName@PLASMO_DBLINK@
+                WHERE name IN
+                     ('Early Ring', 'Late Ring', 'Early Schizogony', 'Late Schizogony',
+                     'Early Trophozoite', 'Late Trophozoite', 'Merozoite')
+                UNION SELECT 'Any' AS term, 'Any' as internal FROM dual
+                ORDER BY internal
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Synchronization">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            SELECT internal, term FROM (
+               SELECT 'Sorbitol' AS term,
+                      'Sorbitol' AS internal, 1 AS ord FROM dual
+               UNION
+               SELECT 'Temperature' AS term,
+                      'Temperature' AS internal, 2 AS ord FROM dual
+               UNION
+               SELECT 'Either' AS term,
+                      'Either' AS internal,
+                      3 AS ord
+               FROM dual)
+            ORDER BY ord
+            </sql>
+        </sqlQuery>
 
 
 <sqlQuery name="Confidence">
@@ -4552,10 +4849,10 @@ SELECT distinct lg.name AS term, lg.name AS internal
             <column name="idx"/>
             <sql>
             SELECT * FROM (
-               SELECT 'up-regulated' as term, 'up-regulated' as internal, 1 as idx
+               SELECT 'up-regulated' as term, 'up-regulated' as internal, 2 as idx
                FROM dual
             UNION
-                SELECT 'down-regulated' as term, 'down-regulated' as internal, 2 as idx
+                SELECT 'down-regulated' as term, 'down-regulated' as internal, 1 as idx
                 FROM dual
             ) 
             ORDER BY idx
@@ -5749,64 +6046,105 @@ SELECT distinct lg.name AS term, lg.name AS internal
           <column name="internal"/>
           <column name="term"/>
           <sql>
-	    select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord  
+	    select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, 
+                            CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord  
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_a in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord 
+
+            UNION
+
+	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, 
+                            CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord 
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_b in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-            select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord  
+
+            UNION
+
+            select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, 
+                            CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord  
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_a not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_a not like '%-NIH'
-            union
-	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+
+            UNION
+
+	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, 
+                            CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_b not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_b not like '%-NIH'
-            union
+ 
+            UNION
+
             select '-----------' as internal, '-----------' as term, 2 as ord from dual@PLASMO_DBLINK@
-            union
-            select 'ME49 (type II)' as internal, 'ME49 (type II)' as term, 2 as ord from dual
-	    union
-	    select 'VEG (type III)' as internal, 'VEG (type III)' as term, 3 as ord from dual
-            union
-	    select 'GT1 (type I)' as internal, 'GT1 (type I)' as term, 1 as ord from dual
+
+            UNION
+
+            select 'ME49 (type II)' as internal, 'ME49 (type II)' as term, 4 as ord from dual
+
+	    UNION
+
+	    select 'VEG (type III)' as internal, 'VEG (type III)' as term, 5 as ord from dual
+
+            UNION
+
+	    select 'GT1 (type I)' as internal, 'GT1 (type I)' as term, 6 as ord from dual
+
 	    order by ord,internal
           </sql>
         </sqlQuery>
+
+
+
 
         <sqlQuery name="SnpStrainB">
           <column name="internal"/>
           <column name="term"/>
           <sql>
-	    select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord  
+	    select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, 
+                            CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord  
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@
             where strain_a in ('Preich', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord 
+
+            UNION
+
+	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, 
+                            CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord 
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_b in ('Preich', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-            select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord  
+
+            UNION
+
+            select distinct CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as internal, 
+                            CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord  
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_a not in ('Preich','3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_a not like '%-NIH'
-            union
-	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
+
+            UNION
+
+	    select distinct CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as internal, 
+                            CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
 	    from apidb.SNPSUMMARY@PLASMO_DBLINK@ 
             where strain_b not in ('Preich','3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_b not like '%-NIH'
-            union
+
+            UNION
+
             select '-----------' as internal, '-----------' as term, 2 as ord from dual@PLASMO_DBLINK@
-            union
-            select 'RH (type I; chr IA and IB only)' as internal,'RH (type I; chr IA and IB only)' as term, 5 as ord from dual
-	    union
+
+            UNION
+
+            select 'RH (type I; chr IA and IB only)' as internal,'RH (type I; chr IA and IB only)' as term, 4 as ord from dual
+
+            UNION
+
 	    select 'ME49 (type II)' as internal,'ME49 (type II)' as term, 5 as ord from dual
-	    union
-	    select 'VEG (type III)' as internal,'VEG (type III)' as term, 5 as ord from dual
+
+            UNION
+
+	    select 'VEG (type III)' as internal,'VEG (type III)' as term, 6 as ord from dual
+
             order by ord,internal
           </sql>
         </sqlQuery>
@@ -6068,6 +6406,20 @@ SELECT distinct lg.name AS term, lg.name AS internal
                </sql>
           </sqlQuery>
 
+<sqlQuery name="CryptoParvumOrganisms">
+               <column name="internal"/>
+              <column name="term"/>
+              <column name="idx"/>
+              <sql>
+                 
+                 (SELECT 'C. parvum' AS internal, 'Cryptosporidium parvum' AS term, 2 AS idx
+                  FROM dual
+                 )
+
+               </sql>
+          </sqlQuery>
+
+
  <sqlQuery name="CryptoToxoOrganisms">
                <column name="internal"/>
               <column name="term"/>
@@ -6085,6 +6437,23 @@ SELECT distinct lg.name AS term, lg.name AS internal
 
                </sql>
           </sqlQuery>
+
+<sqlQuery name="CryptoParvumToxoOrganisms">
+               <column name="internal"/>
+              <column name="term"/>
+              <column name="idx"/>
+              <sql>
+                 
+                 (SELECT 'C. parvum' AS internal, 'Cryptosporidium parvum' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Toxoplasma gondii' AS internal, 'Toxoplasma gondii' AS term, 3 AS idx
+                  FROM dual
+                 )
+
+               </sql>
+          </sqlQuery>
+
 
 <sqlQuery name="ToxoOrganisms">
                <column name="internal"/>
@@ -6275,6 +6644,46 @@ SELECT distinct lg.name AS term, lg.name AS internal
                </sql>
           </sqlQuery>
 
+<sqlQuery name="AllOrganisms">
+               <column name="internal"/>
+              <column name="term"/>
+              <column name="idx"/>
+              <sql>
+
+                 (SELECT 'C. hominis' AS internal, 'Cryptosporidium hominis' AS term, 1 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'C. parvum' AS internal, 'Cryptosporidium parvum' AS term, 1 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'C. muris' AS internal, 'Cryptosporidium muris' AS term, 1 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium falciparum' AS internal, 'Plasmodium falciparum' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium vivax' AS internal, 'Plasmodium vivax' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium yoelii' AS internal, 'Plasmodium yoelii' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium berghei' AS internal, 'Plasmodium berghei' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium chabaudi' AS internal, 'Plasmodium chabaudi' AS term, 2 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'Plasmodium knowlesi' AS internal, 'Plasmodium knowlesi' AS term, 2 AS idx
+                  FROM dual 
+                 )UNION ALL
+                 (SELECT 'Toxoplasma gondii' AS internal, 'Toxoplasma gondii' AS term, 3 AS idx
+                  FROM dual
+                 )
+
+               </sql>
+          </sqlQuery>
+
 <!--<sqlQuery name="ExonOrganisms">
                <column name="internal"/>
               <column name="term"/>
@@ -6322,6 +6731,9 @@ SELECT distinct lg.name AS term, lg.name AS internal
                   FROM dual
                  )UNION ALL
                  (SELECT 'C. parvum' AS internal, 'Cryptosporidium parvum' AS term, 1 AS idx
+                  FROM dual
+                 )UNION ALL
+                 (SELECT 'C. muris' AS internal, 'Cryptosporidium muris' AS term, 1 AS idx
                   FROM dual
                  )UNION ALL
                  (SELECT 'Plasmodium falciparum' AS internal, 'Plasmodium falciparum' AS term, 2 AS idx
@@ -6379,6 +6791,7 @@ SELECT distinct lg.name AS term, lg.name AS internal
             <column name="internal"/>
             <column name="term"/>
             <sql>
+
              <!-- SELECT distinct
                      (CASE so.term_name
                         WHEN 'transcript' THEN 'misc RNA'
@@ -6412,6 +6825,7 @@ SELECT distinct lg.name AS term, lg.name AS internal
               from  sres.sequenceontology so
               WHERE so.term_name IN ('mRNA','rRNA','snoRNA','tRNA','transcript','pseudogene')
 -->
+<!--
  SELECT distinct
                      (CASE so.term_name
                         WHEN 'transcript' THEN 'misc RNA'
@@ -6425,6 +6839,19 @@ SELECT distinct lg.name AS term, lg.name AS internal
                       END )as internal
               from  sres.sequenceontology so
               WHERE so.term_name IN ('mRNA','rRNA','snoRNA','tRNA','transcript')
+-->
+SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
+       REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ') AS internal
+              FROM sres.SequenceOntology
+              WHERE term_name IN ('protein_coding',
+                                  'rRNA_encoding',
+                                  'snoRNA_encoding',
+                                  'snRNA_encoding',
+                                  'tRNA_encoding',
+                                  'non_protein_coding')
+
+
+
              </sql>
         </sqlQuery>
 
@@ -7011,58 +7438,7 @@ SELECT internal, term FROM (
    SELECT 'Metazoa' AS term, 'Metazoa' AS internal, 57 AS ord from dual
    UNION
      SELECT 'Arthropoda' AS term, 'Arthropoda' AS internal, 58 AS ord from dual
-     UNION
-       SELECT 'dme' AS term, 'dme' AS internal, 59 AS ord from dual
-       UNION
-       SELECT 'aga' AS term, 'aga' AS internal, 60 AS ord from dual
-       UNION
-     SELECT 'Deuterostomia' AS term, 'Deuterostomia' AS internal, 61 AS ord from dual
-     UNION
-       SELECT 'Bony Fish' AS term, 'Bony Fish' AS internal, 62 AS ord from dual
-       UNION
-         SELECT 'fru' AS term, 'fru' AS internal, 63 AS ord from dual
-         UNION
-         SELECT 'tni' AS term, 'tni' AS internal, 64 AS ord from dual
-         UNION
-         SELECT 'dre' AS term, 'dre' AS internal, 65 AS ord from dual
-         UNION
-       SELECT 'Tetrapoda' AS term, 'Tetrapoda' AS internal, 66 AS ord from dual
-       UNION
-         SELECT 'Mammals' AS term, 'Mammals' AS internal, 67 AS ord from dual
-         UNION
-           SELECT 'Primates' AS term, 'Primates' AS internal, 68 AS ord from dual
-           UNION
-             SELECT 'hsa' AS term, 'hsa' AS internal, 69 AS ord from dual
-             UNION
-           SELECT 'Other Mammals' AS term, 'Other Mammals' AS internal, 70 AS ord from dual
-           UNION
-             SELECT 'mmu' AS term, 'mmu' AS internal, 71 AS ord from dual
-             UNION
-             SELECT 'rno' AS term, 'rno' AS internal, 72 AS ord from dual
-             UNION
- SELECT 'Other Tetrapoda' AS term, 'Other Tetrapoda' AS internal, 73 AS ord from dual
-         UNION
-           SELECT 'gga' AS term, 'gga' AS internal, 74 AS ord from dual
-           UNION
-       SELECT 'Other Deuterostomia' AS term, 'Other Deuterostomia' AS internal, 75 AS ord from dual
-       UNION
-         SELECT 'cin' AS term, 'cin' AS internal, 76 AS ord from dual
-         UNION
-     SELECT 'Other Metazoa' AS term, 'Other Metazoa' AS internal, 77 AS ord from dual
-     UNION
-       SELECT 'cel' AS term, 'cel' AS internal, 78 AS ord from dual
-       UNION
-       SELECT 'cbr' AS term, '3' AS internal, 79 AS ord from dual
-       UNION
-   SELECT 'Other Eukaryota' AS term, 'Other Eukaryota' AS internal, 80 AS ord from dual
-   UNION
-     SELECT 'ehi' AS term, 'ehi' AS internal, 81 AS ord from dual
-     UNION
-     SELECT 'ddi' AS term, 'ddi' AS internal, 82 AS ord from dual
-)
-            ORDER BY ord 
-]]>-->
-
+-->
             </sql>
         </sqlQuery>
 
@@ -7250,7 +7626,15 @@ SELECT * FROM (
    UNION
  SELECT 'ype' as internal, 'ype' as term FROM dual)
  
-<!-- NEW TERM MAP
+ </sql>
+        </sqlQuery>
+
+<!-- VocabQueries.ApiDB_PhyleticTermMap -->
+        <sqlQuery name="ApiDB_PhyleticTermMap">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+
 SELECT * FROM (
  SELECT 'Halobacterium sp. NRC-1' as internal, 'hal' as term FROM dual
    UNION
@@ -7425,7 +7809,7 @@ SELECT * FROM (
  SELECT 'Vibrio cholerae O1 biovar eltor str. N16961' as internal, 'vch' as term FROM dual
    UNION
  SELECT 'Yersinia pestis CO92' as internal, 'ype' as term FROM dual)
--->
+
 
            </sql>
         </sqlQuery>
@@ -7777,27 +8161,31 @@ SELECT * FROM (
                  UNION
                 SELECT 'P. berghei' AS internal,
                        'P. berghei annotated proteins' AS term,
-                       7 AS idx from dual
+                       4 AS idx from dual
                UNION
                 SELECT 'P. chabaudi' AS internal,
                        'P. chabaudi annotated proteins' AS term,
-                       8 AS idx from dual
+                       5 AS idx from dual
                UNION
                 SELECT 'P. falciparum' AS internal,
                        'P. falciparum annotated proteins' AS term,
-                       4 AS idx from dual
+                       6 AS idx from dual
                 UNION
+                SELECT 'P. knowlesi' AS internal,
+                       'P. knowlesi' AS term,
+                       7 AS idx FROM dual 
+               UNION
                SELECT 'P. vivax' AS internal,
                        'P. vivax annotated proteins' AS term,
-                       5 AS idx from dual
+                       8 AS idx from dual
                UNION
                 SELECT 'P. yoelii' AS internal,
                        'P. yoelii annotated proteins' AS term,
-                       6 AS idx from dual
+                       9 AS idx from dual
                UNION
                 SELECT 'T. gondii annotated proteins' AS internal,
                        'T. gondii annotated proteins' AS term,
-                       9 AS idx from dual
+                       10 AS idx from dual
                  )
             ORDER BY idx
             </sql>
@@ -7831,35 +8219,35 @@ SELECT * FROM (
                        'C. parvum ESTs ORF 50' AS term,
                        5 AS idx from dual
                 UNION
-                SELECT 'P. berghei ORFs' AS internal,
+                SELECT 'P. berghei' AS internal,
                        'P. berghei ORFs' AS term,
                        6 AS idx from dual
                UNION
-                SELECT 'P. chabaudi ORFs' AS internal,
+                SELECT 'P. chabaudi' AS internal,
                        'P. chabaudi ORFs' AS term,
                        7 AS idx from dual
                UNION
-                SELECT 'P. falciparum ORFs' AS internal,
+                SELECT 'P. falciparum' AS internal,
                        'P. falciparum ORFs' AS term,
                        8 AS idx from dual
  UNION
-                SELECT 'P. gallinaceum ORFs' AS internal,
+                SELECT 'P. gallinaceum' AS internal,
                        'P. gallinaceum ORFs' AS term,
                        9 AS idx from dual
                UNION
-                SELECT 'P. knowlesi ORFs' AS internal,
+                SELECT 'P. knowlesi' AS internal,
                        'P. knowlesi ORFs' AS term,
                        10 AS idx from dual
                UNION
-                SELECT 'P. reichenowi ORFs' AS internal,
+                SELECT 'P. reichenowi' AS internal,
                        'P. reichenowi ORFs' AS term,
                        11 AS idx from dual
                UNION
-                SELECT 'P. vivax ORFs' AS internal,
+                SELECT 'P. vivax' AS internal,
                        'P. vivax ORFs' AS term,
                        12 AS idx from dual
                UNION
-                SELECT 'P. yoelii ORFs' AS internal,
+                SELECT 'P. yoelii' AS internal,
                        'P. yoelii ORFs' AS term,
                        13 AS idx from dual
                 UNION
@@ -8228,6 +8616,58 @@ SELECT * FROM (
             </sql>
         </sqlQuery>
 
+<sqlQuery name="est_Snp_PF_Chromosomes">
+          <paramRef ref="params.primaryKey"/> 
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+               SELECT term, internal FROM (
+               SELECT 'chromosome 1' as term, 1 as ord,
+                      'chromosome 1' as internal FROM dual
+               UNION
+               SELECT 'chromosome 2' as term, 2 as ord,
+                      'chromosome 2' as internal FROM dual
+               UNION
+               SELECT 'chromosome 3' as term, 3 as ord,
+                      'chromosome 3' as internal FROM dual
+               UNION
+               SELECT 'chromosome 4' as term, 4 as ord,
+                      'chromosome 4' as internal FROM dual
+               UNION
+               SELECT 'chromosome 5' as term, 5 as ord,
+                      'chromosome 5' as internal FROM dual
+               UNION
+               SELECT 'chromosome 6' as term, 6 as ord,
+                      'chromosome 6' as internal FROM dual
+               UNION
+               SELECT 'chromosome 7' as term, 7 as ord,
+                      'chromosome 7' as internal FROM dual
+               UNION
+               SELECT 'chromosome 8' as term, 8 as ord,
+                      'chromosome 8' as internal FROM dual
+               UNION
+               SELECT 'chromosome 9' as term, 9 as ord,
+                      'chromosome 9' as internal FROM dual
+               UNION
+               SELECT 'chromosome 10' as term, 10 as ord,
+                      'chromosome 10' as internal FROM dual
+               UNION
+               SELECT 'chromosome 11' as term, 11 as ord,
+                      'chromosome 11' as internal FROM dual
+               UNION
+               SELECT 'chromosome 12' as term, 12 as ord,
+                      'chromosome 12' as internal FROM dual
+               UNION
+               SELECT 'chromosome 13' as term, 13 as ord,
+                      'chromosome 13' as internal FROM dual
+               UNION
+               SELECT 'chromosome 14' as term, 14 as ord,
+                      'chromosome 14' as internal FROM dual
+               )
+            ORDER BY ord
+            </sql>
+        </sqlQuery>
+
 <sqlQuery name="TG_Chromosomes">
           <paramRef ref="params.primaryKey"/> 
             <column name="internal"/>
@@ -8347,6 +8787,27 @@ SELECT * FROM (
     <!-- parameters used by queries -->
     <paramSet name="params">
 
+
+        <flatVocabParam name="extraerythrocytic_stages"
+                     prompt="Extraerythrocytic Lifecycle Stage"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.ExtraerythrocyticStages"/>
+
+        <flatVocabParam name="intraerythrocytic_stages"
+                     prompt="Intraerythrocytic Lifecycle Stage"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.IntraerythrocyticStages"/>
+
+        <flatVocabParam name="synchronization"
+                     prompt="Synchronization"
+                     help=""
+                     multiPick="false"
+                     queryRef="VocabQueries.Synchronization"/>
+
+
+
         <flatVocabParam name="epitopes_confidence"
                         prompt="Confidence"
                         help="Epitopes are assigned a confidence level when they are mapped to genes in PlasmoDB.  Choose one or more assigned confidence levels to search for epitopes in."
@@ -8452,6 +8913,20 @@ SELECT * FROM (
                      default="1"/>
 
 
+<stringParam name="est_id"
+                     prompt="EST ID"
+                     help="Enter an EST ID"
+                     sample="AU087658, BQ739759, N98084"
+                     substitute="yes"
+                     default="AU087658"/>
+
+     <stringParam name="orf_id"
+                     prompt="ORF ID"
+                     help="Enter an ORF ID"
+                     sample="MAL1-1-10639-11520, MAL1-1-105160-105438"
+                     substitute="yes"
+                     default="MAL1-1-10639-11520"/>
+
 
 <stringParam name="snp_id"
                      prompt="SNP ID"
@@ -8534,7 +9009,13 @@ SELECT * FROM (
                      visible="false"/>
 
 
-<stringParam name="stringChromosome" 
+<stringParam name="geneOrfChromosome" 
+                     prompt="Chromosome"
+                     help="Used to add default to the plasmo Location Queries"
+                     default="chromosome 1"
+                     visible="true"/>
+
+<stringParam name="estChromosome" 
                      prompt="Chromosome"
                      help="Used to add default to the plasmo Location Queries"
                      default="chromosome 1"
@@ -9172,12 +9653,28 @@ SELECT * FROM (
               multiPick="true"
               queryRef="VocabQueries.CryptoOrganisms"/>
 
+<!-- params.cryptoparvumorganism -->
+        <flatVocabParam name="cryptoparvumorganism"
+              prompt="Organism"
+              help="You can select one or more organisms by checking the box next to the one(s) that you wish to use."
+              multiPick="true"
+              queryRef="VocabQueries.CryptoParvumOrganisms"/>
+
+
 <!-- params.cryptotoxoorganism -->
         <flatVocabParam name="cryptotoxoorganism"
               prompt="Organism"
               help="You can select one or more organisms by checking the box next to the one(s) that you wish to use."
               multiPick="true"
               queryRef="VocabQueries.CryptoToxoOrganisms"/>
+
+<!-- params.cryptoparvumtoxoorganism -->
+        <flatVocabParam name="cryptoparvumtoxoorganism"
+              prompt="Organism"
+              help="You can select one or more organisms by checking the box next to the one(s) that you wish to use."
+              multiPick="true"
+              queryRef="VocabQueries.CryptoParvumToxoOrganisms"/>
+
 
  <!-- params.pborganism -->
         <flatVocabParam name="pborganism"
@@ -9223,6 +9720,14 @@ SELECT * FROM (
               queryRef="VocabQueries.Organisms"/>
 
 
+        <!-- params.allorganisms -->
+        <flatVocabParam name="allorganism"
+              prompt="Organism"
+              help="You can select one or more organisms by checking the box next to the one(s) that you wish to use."
+              multiPick="true"
+              queryRef="VocabQueries.AllOrganisms"/>
+
+
        <!-- params.nonchorganism -->
         <flatVocabParam name="nonchorganism"
               prompt="Organism"
@@ -9263,13 +9768,11 @@ SELECT * FROM (
         <!-- params.included_species -->
         <stringParam name="included_species"
                      prompt="Included Species"
-                     default="P. falciparum"
                      help="List of included species (for documentation only)"/>
                                                                                                                              
         <!-- params.excluded_species -->
         <stringParam name="excluded_species"
                      prompt="Excluded Species"
-                     default="H. sapiens"
                      help="List of excluded species (for documentation only)"/>
                                                                                                                              
         <!-- params.phyletic_indent_map -->
@@ -9282,6 +9785,11 @@ SELECT * FROM (
         <flatVocabParam name="internal_phyletic_indent_map"
                      visible="false"
                      queryRef="VocabQueries.ApiDB_PhyleticIndentMap"/>  
+
+        <!-- params.internal_phyletic_term_map -->
+        <flatVocabParam name="internal_phyletic_term_map"
+                     visible="false"
+                     queryRef="VocabQueries.ApiDB_PhyleticTermMap"/>  
                                                                         
         <!-- params.phyletic_term_map -->
         <flatVocabParam name="phyletic_term_map"
@@ -9622,10 +10130,12 @@ SELECT * FROM (
         	delimiter="@">
             <xmlAttribute name="title"/>
             <xmlAttribute name="description"/>
-            <xmlAttribute name="projects"/>
-            <xmlAttribute name="fileName"/>
-            <xmlAttribute name="duration"/>
-            <xmlAttribute name="size"/>
+            <xmlTable name="files">
+              <xmlAttribute name="projects"/>
+              <xmlAttribute name="fileName"/>
+              <xmlAttribute name="duration"/>
+              <xmlAttribute name="size"/>
+            </xmlTable>
         </xmlRecordClass>
 
 
