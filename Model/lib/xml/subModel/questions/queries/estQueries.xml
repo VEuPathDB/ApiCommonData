@@ -1,0 +1,139 @@
+<wdkModel>
+
+  <querySet name="EstIds">
+
+    <sqlQuery name="EstBySourceId" displayName="ID" isCacheable="true">
+        <paramRef ref="idQueryParams.est_id"/>
+        <column name="source_id"/>
+        <sql>
+          <![CDATA[
+            SELECT est.accession AS source_id
+            FROM dots.Est est
+            WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
+          ]]>
+    </sql>
+    </sqlQuery>
+
+    <sqlQuery name="EstsByLocation" displayName="Genomic Location" isCacheable="true">
+        <paramRef ref="params.chromosome"/>
+        <paramRef ref="params.genomicSequence"/>
+        <paramRef ref="params.start_point"/>
+        <paramRef ref="params.end_point"/>
+        <paramRef ref="params.libraryId"/>
+        <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="params.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+        <column name="source_id"/>
+        <column name="est_location"/>
+        <sql>
+            <![CDATA[
+            SELECT accession as source_id,
+                   apidb.tab_to_string(CAST(COLLECT(target_sequence_source_id || ':' || trim(to_char(target_start,'999,999,999')) || '-' || trim(to_char(target_end,'999,999,999')) || '(' || decode(is_reversed,0,'+',1,'-',null) || ')') AS apidb.varchartab), ', ') AS est_location
+	    FROM  apidb.ESTALIGNMENTGENESUMMARY
+            WHERE (target_sequence_source_id IN ($$chromosome$$)
+                   OR lower(target_sequence_source_id) = lower('$$genomicSequence$$'))
+            AND target_start >= $$start_point$$
+            AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
+            AND   is_consistent in ($$high_confidence_only$$)
+            AND   is_best_alignment in ($$best_alignment_only$$)
+            AND   percent_identity >= $$min_percent_identity$$
+            AND   percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND   library_id in ($$libraryId$$)
+	    GROUP BY accession
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- EstIds.EstsByLibrary -->
+    <sqlQuery name="EstsByLibrary" displayName="Library Name" isCacheable='true'>
+        <paramRef ref="params.libraryId"/>
+        <column name="source_id" />
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+            SELECT enas.source_id
+            FROM dots.externalnasequence enas, dots.est e
+            WHERE enas.na_sequence_id = e.na_sequence_id
+            AND e.library_id in ($$libraryId$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- EstIds.EstsWithGeneOverlap -->
+    <sqlQuery name="EstsWithGeneOverlap" displayName="ESTs that overlap genes" isCacheable='true'>
+       <paramRef ref="params.libraryId"/>
+       <paramRef ref="params.bp_overlap_gte"/>
+       <paramRef ref="params.inNotIn"/>
+       <paramRef ref="params.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="params.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <column name="source_id" />
+       <column name="est_locations" />
+       <column name="genes" />
+        <sql>
+            <![CDATA[
+              SELECT accession as source_id,
+                  apidb.tab_to_string(CAST(COLLECT(target_sequence_source_id || ':' || trim(to_char(target_start,'999,999,999')) || '-' || trim(to_char(target_end,'999,999,999')) || '(' || decode(is_reversed,0,'+',1,'-',null) || ')') AS apidb.varchartab), ', ') AS est_locations,
+                  apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') as genes
+	    FROM (
+                SELECT accession,gene ,target_start,target_end, is_reversed, target_sequence_source_id
+                FROM apidb.ESTALIGNMENTGENESUMMARY
+                WHERE is_consistent in ($$high_confidence_only$$)
+                AND is_best_alignment in ($$best_alignment_only$$)
+                AND percent_identity >= $$min_percent_identity$$
+                AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
+                AND library_id in ($$libraryId$$)
+             $$inNotIn$$                    
+               SELECT i.accession,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
+                FROM apidb.ESTALIGNMENTGENESUMMARY i
+                WHERE i.est_gene_overlap_length >= $$bp_overlap_gte$$
+                AND is_consistent in ($$high_confidence_only$$)
+                AND is_best_alignment in ($$best_alignment_only$$)
+                AND percent_identity >= $$min_percent_identity$$
+                AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
+                AND library_id in ($$libraryId$$)
+            )          
+            GROUP BY accession
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="EstsBySimilarity" displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="params.BlastQueryType"/>
+       <paramRef ref="EstBlastDbParams.BlastDatabaseType"/>
+       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
+       <paramRef ref="params.BlastQuerySequence"/>
+       <paramRef ref="params.-e"/>
+       <paramRef ref="params.-v"/>
+       <paramRef ref="params.-b"/>
+       <paramRef ref="params.-filter"/>
+
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <wsQuery name="UnifiedBlast" displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="params.BlastQueryType"/>
+       <paramRef ref="params.BlastDatabaseType"/>
+       <paramRef ref="params.BlastDatabaseOrganism"/>
+       <paramRef ref="params.BlastQuerySequence"/>
+       <paramRef ref="params.-e"/>
+       <paramRef ref="params.-v"/>
+       <paramRef ref="params.-b"/>
+       <paramRef ref="params.-filter"/>
+
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+</querySet>
