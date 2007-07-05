@@ -1,4 +1,12 @@
 <wdkModel name="SequenceId">
+
+   <!-- notes
+
+      - changeed 'sequence' param to 'sequenceId'
+
+      - assumes that NAsequence table has source_id
+
+   -->
     
     <!-- ************************************************************ -->
     <!-- SourceId -->  
@@ -6,37 +14,30 @@
  
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="genomicParams.sequence"/> 
+        <paramRef ref="genomicParams.sequenceId"/> 
         <column name="source_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
             SELECT enas.source_id
             FROM dots.externalnasequence enas,
                  sres.sequenceontology so
-            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE('$$sequence$$', '*', '%')))
+            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE('$$sequenceId$$', '*', '%')))
             AND enas.sequence_ontology_id = so.sequence_ontology_id
             AND so.term_name in ('contig', 'supercontig')
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB">
         <![CDATA[
             SELECT distinct source_id
-            FROM dots.externalNaSequence
-            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequence$$',' ',''), '*', '%'))
-           ]]>
-        </sql>
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT distinct source_id
-            FROM dots.VirtualSequence
-            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequence$$',' ',''), '*', '%'))
+            FROM dots.NaSequence
+            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequenceId$$',' ',''), '*', '%'))
            ]]>
         </sql>
     </sqlQuery>
     
     <wsQuery name="SequenceBySourceId" includeProjects="ApiDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
-        <paramRef ref="genomicParams.sequence"/>
+        <paramRef ref="genomicParams.sequenceId"/>
         <!-- NOTE: params.contig for A -->
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -103,8 +104,8 @@
     
     <wsQuery name="SequencesBySimilarity" includeProjects="CryptoDB"
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
-        <paramRef ref="sequenceParams.BlastDatabaseType"/>
-        <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
+        <paramRef ref="generalParams.BlastDatabaseType"/>
+        <paramRef ref="generalParams.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQueryType"/>
         <paramRef ref="params.BlastQuerySequence"/>
         <paramRef ref="params.-e"/>

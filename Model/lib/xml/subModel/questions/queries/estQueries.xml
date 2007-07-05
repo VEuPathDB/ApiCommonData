@@ -2,8 +2,13 @@
 
   <querySet name="EstIds">
 
-    <sqlQuery name="EstBySourceId" displayName="ID" isCacheable="true">
-        <paramRef ref="idQueryParams.est_id"/>
+
+  <!------------------------------------------------------------------>
+  <!-- Source id  -->
+  <!------------------------------------------------------------------>
+    <sqlQuery name="EstBySourceId" excludeProjects="ApiDB"
+         isCacheable="true">
+        <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
         <sql>
           <![CDATA[
@@ -11,9 +16,20 @@
             FROM dots.Est est
             WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
           ]]>
-    </sql>
+       </sql>
     </sqlQuery>
 
+    <wsQuery name="EstBySourceId"  excludeProjects="ApiDB"
+          isCacheable='true' 
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="estParams.est_id"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>   
+
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
     <sqlQuery name="EstsByLocation" displayName="Genomic Location" isCacheable="true">
         <paramRef ref="params.chromosome"/>
         <paramRef ref="params.genomicSequence"/>
@@ -45,7 +61,9 @@
        </sql>
     </sqlQuery>
 
-    <!-- EstIds.EstsByLibrary -->
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
     <sqlQuery name="EstsByLibrary" displayName="Library Name" isCacheable='true'>
         <paramRef ref="params.libraryId"/>
         <column name="source_id" />
@@ -60,7 +78,9 @@
        </sql>
     </sqlQuery>
 
-    <!-- EstIds.EstsWithGeneOverlap -->
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
     <sqlQuery name="EstsWithGeneOverlap" displayName="ESTs that overlap genes" isCacheable='true'>
        <paramRef ref="params.libraryId"/>
        <paramRef ref="params.bp_overlap_gte"/>
@@ -100,6 +120,10 @@
        </sql>
     </sqlQuery>
 
+
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
     <wsQuery name="EstsBySimilarity" displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="params.BlastQueryType"/>
@@ -118,6 +142,10 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
+
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
     <wsQuery name="UnifiedBlast" displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="params.BlastQueryType"/>

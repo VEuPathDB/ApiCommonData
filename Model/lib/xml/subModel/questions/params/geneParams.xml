@@ -20,18 +20,11 @@
         <stringParam name="single_gene_id"
                      prompt="Gene ID"
                      substitute="yes">
-            <help>Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator. (Examples: PF11_0344, AAB36701.1, NP_701203.1).</help>
+            <help>Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator.</help>
            <suggest sample="PF11_0344, PY01656, Pv092275"
                     default="PF11_0344"/>
         </stringParam>
 
-        <datasetParam name="ds_gene_ids"
-                     prompt="Gene ID input set"
-            <help>input a comma delimited set of gene ids, or upload a file">
-                     default="PF11_0344"
-           <suggest sample="PF11_0344, PY01656, Pv092275"
-                    default="PF11_0344"/>
-        </datasetParam>
 
   <!------------------------------------------------------------------>
   <!-- Mutual information score -->  
@@ -88,17 +81,6 @@
   <!--  -->  
   <!------------------------------------------------------------------>
 
-        <stringParam name="bp_overlap_gte"
-                     prompt="Base Overlap >="
-                     substitute="yes">
-            <help>Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general, the specificity of this evidence is proportional to the overlap length."
-            <suggest sample="(Example: 100)"
-                     default="100"/>
-        </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
       <flatVocabParam name="cowmanSample"
                      queryRef="GeneVocabQueries.cowmanSample"
                      prompt="Study"
@@ -135,7 +117,7 @@
         <stringParam name="confidence"
                      prompt="Confidence >= "
                      substitute="yes">
-            <help>"</help> 
+            <help></help> 
             <suggest sample="(Example: )"
                      default="0.8"/>
         </stringParam>
@@ -143,7 +125,7 @@
         <stringParam name="fold_change"
                      prompt="Fold change >="
                      substitute="yes">
-            <help>"</help> 
+            <help></help> 
             <suggest sample="(Example: )"
                      default="2"/>
         </stringParam>
@@ -167,7 +149,7 @@
         <stringParam name="percentile"
                      prompt="Percentile >="
                      substitute="yes">
-            <help>"</help> 
+            <help></help> 
             <suggest sample="(Example: )"
                      default="90"/>
         </stringParam>
@@ -231,6 +213,18 @@
   <!-- Organism -->  
   <!------------------------------------------------------------------>
 
+      <flatVocabParam name="organism"
+                     queryRef="GeneVocabQueries.Organism"
+                     prompt="Organism"
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
+
+
       <flatVocabParam name="organism_with_ec" excludeProjects="ApiDB"
                      queryRef="GeneVocabQueries.OrganismWithEC"
                      prompt="Organism"
@@ -263,68 +257,6 @@
         </enumList>
       </enumParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-      <flatVocabParam name="libraryId"
-                     queryRef="GeneVocabQueries.EstLibraries"
-                     prompt="EST Library"
-                     multiPick="true">
-        <help>
-           <text>
-             Select a clone library.
-           </text>
-        </help>
-      </flatVocabParam>
-
-      <enumParam name="best_alignment_only"
-                     prompt="Best alignments only"
-                     multiPick="false">
-        <help>
-           <text>
-             Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="Yes"
-                 internal=   "1"/>
-          <enumValue term="No"
-                 internal=   "0,1"/>
-        </enumList>
-      </enumParam>
-
-      <enumParam name="high_confidence_only"
-                     prompt="Consistent alignments only"
-                     multiPick="false">
-        <help>
-           <text>
-             Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="No"
-                 internal=   "0,1"/>
-          <enumValue term="Yes"
-                 internal=   "1"/>
-        </enumList>
-      </enumParam>
-
-      <enumParam name="inNotIn"
-                     prompt="EST"
-                     multiPick="false">
-        <help>
-           <text>
-             Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="does overlap with a gene"
-                 internal=   "INTERSECT"/>
-          <enumValue term="does not overlap with a gene"
-                 internal=   "MINUS"/>
-        </enumList>
-      </enumParam>
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -392,28 +324,9 @@
         <stringParam name="plasmodb_4.4_dataset"
                      visible="false"
                      prompt="PlasmoDB 4.4 dataset">
-            <help>PlasmoDB 4.4 dataset"</help>
+            <help>PlasmoDB 4.4 dataset</help>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
-
-        <stringParam name="min_percent_identity"
-                     prompt="Percent identity >=">
-            <help>You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity</help>           
-            <suggest default="90"/>
-        </stringParam>
-
-        <stringParam name="min_percent_est_aligned"
-                     prompt="Percent of EST bases aligned >=">
-            <help>Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.</help>
-            <suggest default="20"
-                          />
-        </stringParam>
   <!------------------------------------------------------------------>
   <!--  -->  
   <!------------------------------------------------------------------>
@@ -469,7 +382,7 @@
 
         <stringParam name="max_results"
                      prompt="Maximum number of results">
-            <help>Upper limit on the number of results returned by the query"
+            <help>Upper limit on the number of results returned by the query</help>
             <suggest default="5"/>
         </stringParam>
 
@@ -612,188 +525,13 @@
             <suggest default="1"/>
         </stringParam>
 
-      <stringParam name="minor_allele_max"
-                     prompt="Frequency of minor allele &lt;= ">
-            <help>Upper Bound on the number of strains that have the minor allele</help>
-            <suggest default="20"/>
-        </stringParam>
-
-      <stringParam name="minor_allele_min"
-                     prompt="Frequency of minor allele >= ">
-            <help>Lower Bound on the number of strains that have the minor allele</help>
-            <suggest default="1"/>
-        </stringParam>
-
       <stringParam name="snp_density"
                      prompt="SNPs per KB (CDS) >= ">
             <help>Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence</help>
             <suggest default="0"/>
         </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
 
-      <enumParam name="chromosome"
-                     prompt="Chromosome"
-                     multiPick="true">
-        <help>
-           <text>
-             Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-        </enumList>
-      </enumParam>
 
-      <enumParam name="chromosome_single"
-                     prompt="Chromosome"
-                     multiPick="false">
-        <help>
-           <text>
-             Pick a P. falciparum chromosome
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-        </enumList>
-      </enumParam>
-
-      <flatVocabParam name="snp_strain_a"
-                     queryRef="GeneVocabQueries.SnpStrainA"
-		     prompt="Reference"
-                     multiPick="false">
-        <help>
-           <text>
-             Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
-        </help>
-      </flatVocabParam>
-
-      <flatVocabParam name="snp_strain_b"
-                     queryRef="GeneVocabQueries.SnpStrainB"
-		     prompt="Comparator"
-                     multiPick="false">
-        <help>
-           <text>
-             Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
-        </help>
-      </flatVocabParam>
-
-      <enumParam name="snp_strain_m"
-		     prompt="Comparator(s)"
-                     multiPick="true">
-        <help>
-           <text>
-             Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="Pf-7G8"
-                 internal=   "'7G8'"/>
-          <enumValue term="Pf-D10"
-                 internal=   "'D10'"/>
-          <enumValue term="Pf-DD2"
-                 internal=   "'DD2'"/>
-          <enumValue term="Pf-GHANA1"
-                 internal=   "'GHANA1'"/>
-          <enumValue term="Pf-HB3"
-                 internal=   "'HB3'"/>
-          <enumValue term="Pf-IT"
-                 internal=   "'IT'"/>
-          <enumValue term="P. reichenowi (vs. 3D7 only)"
-                 internal=   "'Preich'"/>
-          <enumValue term="Pf-3D7"
-                 internal=   "'3D7'"/>
-          <enumValue term="-----------"
-                 internal=   "'foobar'"/>
-          <enumValue term="Pf-106"
-                 internal=   "'106'"/>
-          <enumValue term="Pf-106/1"
-                 internal=   "'106/1'"/>
-          <enumValue term="Pf-D6"
-                 internal=   "'D6'"/>
-          <enumValue term="Pf-FCB"
-                 internal=   "'FCB'"/>
-          <enumValue term="Pf-FCC-2"
-                 internal=   "'FCC-2'"/>
-          <enumValue term="Pf-FCR3"
-                 internal=   "'FCR3'"/>
-          <enumValue term="Pf-K1"
-                 internal=   "'K1'"/>
-          <enumValue term="Pf-Malayan Camp"
-                 internal=   "'Malayan Camp'"/>
-          <enumValue term="Pf-RO33"
-                 internal=   "'RO33'"/>
-          <enumValue term="Pf-Santa Lucia"
-                 internal=   "'Santa Lucia'"/>
-          <enumValue term="Pf-Senegal 31.01"
-                 internal=   "'Senegal 31.01'"/>
-          <enumValue term="Pf-Senegal 34.04"
-                 internal=   "'Senegal 34.04'"/>
-          <enumValue term="Pf-Senegal 35.04"
-                 internal=   "'Senegal 35.04'"/>
-          <enumValue term="Pf-Senegal 51.02"
-                 internal=   "'Senegal 51.02'"/>
-          <enumValue term="Pf-VS-1"
-                 internal=   "'VS-1'"/>
-        </enumList>
-      </enumParam>
 
       <enumParam name="include_reichenowi"
 		     prompt="Include P. reichenowi"
@@ -916,7 +654,6 @@
       <enumParam name="waters_profilesets"
                      prompt="Microarray time course(s) to query"
                      multiPick="false">
-            <help>"
         <help>
            <text>
              Results will be sorted ascending or descending order
@@ -935,8 +672,7 @@
       <enumParam name="minOrMax"
                      prompt="Query based on"
                      multiPick="false">
-            <help>"
-        <help>
+            <help>     <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
@@ -954,8 +690,7 @@
       <enumParam name="maxExprHour"
                      prompt="Timing of maximal expression"
                      multiPick="false">
-            <help>"
-        <help>
+            <help><help>
            <text>
              Results will be sorted ascending or descending order
            </text>
@@ -1407,107 +1142,6 @@
                  internal=   "'X95276'"/>
         </enumList>
       </enumParam>
-
-      <enumParam name="pfGenomicSequenceMultipick"
-                     prompt="Genomic Sequence"
-                     multiPick="true">
-        <help>
-           <text>
-             Results will be sorted ascending or descending order
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-          <enumValue term="mitochondrial genome"
-                 internal=   "'AJ276844'"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "'X95275'"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "'X95276'"/>
-        </enumList>
-      </enumParam>
-
-      <enumParam name="geneOrfChromosome"
-                     prompt="P. falciparum Genomic Sequence"
-                     multiPick="false"
-                     default="choose one">
-        <help>
-           <text>
-             Results will be sorted ascending or descending order
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="choose one"
-                 internal=   "'choose one'"/>
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-          <enumValue term="mitochondrial genome"
-                 internal=   "'AJ276844'"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "'X95275'"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "'X95276'"/>
-        </enumList>
-      </enumParam>
-
-        <stringParam name="genomicSequence"
-                     prompt="Genomic Sequence ID">
-            <help>ID of genomic sequence to search for genes (e.g. ctg_7202)</help>
-            <suggest sample="(Examples: MAL4, ctg_4094)"/>
-        </stringParam>
 
         <stringParam name="start_location"
                      prompt="Start Location">
@@ -2120,12 +1754,6 @@
         </enumList>
       </enumParam>
 
-        <stringParam name="motif_expression"
-                     prompt="Pattern">
-            <help>Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine.</help>
-            <suggest sample="(Example: CC6+RK)"
-                     default="CC6+RK"/>
-        </stringParam>
 
   <!------------------------------------------------------------------>
   <!--  -->
@@ -2333,7 +1961,7 @@
 
         <stringParam name="percentLowComplexity"
 	             prompt="Percent of Low Complexity in Protein">
-            <help>"Enter an lower bound on the percent of low complexity.</help>
+            <help>Enter an lower bound on the percent of low complexity.</help>
             <suggest substitute="yes"
 		     default="30"/>
         </stringParam>
@@ -2343,13 +1971,6 @@
                      substitute="yes">
             <help>Enter an upper bound on the distance</help>
             <suggest default="10000"/>
-        </stringParam>
-
-        <stringParam name="start_point"
-                     prompt="Start at"
-                     substitute="yes">
-            <help>Select the distance (in nucleotides) to the start</help>
-            <suggest default="1"/>
         </stringParam>
 
       <enumParam name="start_from"
@@ -2367,13 +1988,6 @@
                  internal=   "end"/>
         </enumList>
       </enumParam>
-
-        <stringParam name="end_point"
-                     prompt="End Location (0 = end)"
-                     substitute="yes">
-            <help>Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence</help>
-            <suggest default="0"/>
-        </stringParam>
 
       <enumParam name="end_from"
                      prompt="From"
@@ -2949,61 +2563,6 @@
         </sqlQuery>
 
 
-        <sqlQuery name="SnpStrainA">
-          <column name="internal"/>
-          <column name="term"/>
-          <sql>
-	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
-	    from apidb.snpsummary
-            where strain_a in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
-	    from apidb.snpsummary
-            where strain_b in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
-	    from apidb.snpsummary
-            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
-            and strain_a not like '%-NIH'
-            union
-	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
-	    from apidb.snpsummary
-            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
-            and strain_b not like '%-NIH'
-            union
-            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
-	    order by ord,internal
-          </sql>
-        </sqlQuery>
-
-        <sqlQuery name="SnpStrainB">
-          <column name="internal"/>
-          <column name="term"/>
-          <sql>
-	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
-	    from apidb.snpsummary
-            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
-	    from apidb.snpsummary
-            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
-            union
-            select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
-	    from apidb.snpsummary
-            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
-            and strain_a not like '%-NIH'
-            union
-	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
-	    from apidb.snpsummary
-            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
-            and strain_b not like '%-NIH'
-            union
-            select 'foobar' as internal, '-----------' as term, 2 as ord from dual
-	    order by ord,internal
-          </sql>
-        </sqlQuery>
-
-
         <sqlQuery name="ExtraerythrocyticStages">
             <column name="internal"/>
             <column name="term"/>
@@ -3036,6 +2595,7 @@
             <column name="internal"/>
             <column name="term"/>
             <sql>
+           <![CDATA[
              SELECT DISTINCT dr.primary_identifier AS internal,
                     TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
@@ -3045,7 +2605,9 @@
                AND ed.name = 'Links to Pathway Maps'
                AND dr.primary_identifier != 'qualityControl'
              ORDER BY term
+           ]]>
             </sql>
+
         </sqlQuery>
 
         <sqlQuery name="Mr4Reagents">
@@ -3154,6 +2716,39 @@ SELECT distinct lg.name AS term,
   AND lg.logical_group_id = ai.logical_group_id
             </sql>
         </sqlQuery>
+
+    <!-- don't think this is in use  -->
+        <sqlQuery name="OrganismWithGenes">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
+                    FROM sres.taxon
+                    CONNECT BY prior taxon_id = parent_id
+                    START WITH taxon_id = orgs.internal_tax) as internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                      AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species' 
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
 
 
      </querySet>

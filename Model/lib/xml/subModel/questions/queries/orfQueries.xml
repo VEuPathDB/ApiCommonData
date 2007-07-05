@@ -1,0 +1,73 @@
+<querySet name="OrfIds">
+
+    <sqlQuery name="OrfByOrfId" displayName="ID" isCacheable="true">
+        <paramRef ref="idQueryParams.orf_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+                SELECT DISTINCT m.source_id
+                FROM dots.Miscellaneous m, sres.sequenceontology so
+                WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$orf_id$$',' ',''), '*', '%'))
+                AND m.sequence_ontology_id= so.sequence_ontology_id
+                AND so.term_name='ORF'
+            ]]>
+        </sql>
+    </sqlQuery>
+
+    <sqlQuery name="OrfsByLocation" displayName="ORFs by  genomic location" isCacheable="true">
+        <paramRef ref="params.chromosomeOptional"/>
+        <paramRef ref="params.genomicSequence"/>
+        <paramRef ref="params.start_point"/>
+        <paramRef ref="params.end_point"/>
+        <column name="source_id"/>
+        <column name="orf_location"/>
+        <sql>
+            <![CDATA[
+	    SELECT t.source_id,
+                  enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
+	    FROM  dots.externalNASequence enas,
+	          dots.nafeature t,
+	          sres.sequenceontology so,
+	          dots.nalocation nal
+	    WHERE enas.na_sequence_id = t.na_sequence_id
+	      AND t.sequence_ontology_id = so.sequence_ontology_id
+	      AND so.term_name = 'ORF'
+	      AND t.na_feature_id = nal.na_feature_id
+	      AND (enas.source_id = $$pfGenomicSequenceOrNot$$
+                   OR lower(enas.source_id) = lower('$$genomicSequence$$'))
+              AND nal.end_max >= $$start_point$$ 
+              AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="OrfsByMotifSearch" displayName="Motif Search"
+             processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
+       <paramRef ref="geneParams.motif_expression"/>
+       <paramRef ref="OrfMotifSearchParams.Dataset"/>
+       <wsColumn name="source_id" width="60" wsName="GeneID"/>
+       <wsColumn name="Locations" width="3999"/>
+       <wsColumn name="MatchCount" width="10"/>
+       <wsColumn name="Sequence" width="3999"/>
+    </wsQuery>
+
+    <wsQuery name="OrfsBySimilarity" displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="orfParams.BlastDatabaseType"/>
+       <paramRef ref="params.BlastDatabaseOrganism"/>
+       <paramRef ref="params.BlastQueryType"/>
+       <paramRef ref="params.BlastQuerySequence"/>
+       <paramRef ref="params.-e"/>
+       <paramRef ref="params.-v"/>
+       <paramRef ref="params.-b"/>
+       <paramRef ref="params.-filter"/>
+
+       <wsColumn name="source_id" width="60" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+</querySet>
+

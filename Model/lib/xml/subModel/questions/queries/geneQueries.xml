@@ -11,7 +11,7 @@
         - profile similarity
 
    * assuming that references to dots.ExternalNaSequence or dots.VirtualSequence 
-     can be changed to dots.NaSequence (search for "dots.NaSequence)
+     can be changed to dots.NaSequence (search for "dots.NaSequence")
 
    * retiring apidb.ToxodbGenes by joining to GeneAttributes from genefeature.source_id
      (which filters away gene predictions)
@@ -386,8 +386,8 @@
     <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="geneParams.BlastQueryType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
+       <paramRef ref="geneParams.BlastDatabaseType"/>
+       <paramRef ref="geneParams.BlastDatabaseOrganism"/>
        <paramRef ref="geneParams.BlastQuerySequence"/>
        <paramRef ref="geneParams.-e"/>
        <paramRef ref="geneParams.-v"/>

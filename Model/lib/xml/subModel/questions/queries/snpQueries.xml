@@ -1,0 +1,189 @@
+<querySet name="SnpsBy">
+      <sqlQuery name="SnpBySourceId" displayName="ID" isCacheable="true">
+          <paramRef ref="snpParams.snp_id"/>
+	  <column name="source_id"/>
+	  <sql>
+	    <![CDATA[
+	      SELECT sf.source_id AS source_id
+	      FROM dots.SnpFeature sf
+	      WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$snp_id$$',' ',''), '*', '%'))
+	    ]]>
+	  </sql>
+      </sqlQuery>
+
+      <sqlQuery name="SnpsByGeneId" displayName="SNPs by Gene ID" isCacheable="true">
+        <paramRef ref="params.ds_gene_ids"/>
+        <paramRef ref="params.snp_strain_a"/>
+        <paramRef ref="params.snp_strain_m"/>
+        <column name="source_id"/>
+        <column name="snp_location"/>
+        <column name="ref_strain"/>
+        <column name="comp_strains"/>
+        <column name="ref_allele"/>
+        <column name="comp_alleles"/>
+        <column name="phenotype"/>
+        <column name="prot_pos"/>
+        <column name="ref_product"/>
+        <column name="comp_products"/>
+        <sql>
+            <![CDATA[
+select snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a = snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as ref_strain,              
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as comp_strains 
+from                 
+  (select hits.source_id as source_id,nas.source_id || ':' || trim(to_char(l.start_min,'999,999,999')) as snp_location,                               
+    sva.strain as ref_strain, svb.strain as comp_strain,                               
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele)                                  
+    ELSE sva.allele END as ref_allele,                 
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(svb.allele)                                 
+    ELSE svb.allele END as comp_all,                 
+    CASE WHEN sva.product = svb.product then 'syn' WHEN sva.product != svb.product then 'non-syn' ELSE 'non-coding' END as phenotype,                               
+    sva.product as ref_product, svb.product as comp_product,                           
+    hits.position_in_protein as prot_pos,
+    sva.allele as allele_a, svb.allele as allele_b, svb.strain as strain_b
+  from   dots.SEQVARIATION sva, dots.seqvariation svb, dots.nalocation l,                               
+    dots.externalnasequence nas,dots.nalocation gene_loc,
+    (select distinct gf.na_feature_id as gene_na_feature_id, gf.na_sequence_id, sf.na_feature_id as snp_na_feature_id,
+      sf.position_in_protein,sf.source_id
+     from dots.genefeature gf, dots.snpfeature sf, dots.SEQVARIATION isva, dots.seqvariation isvb, 
+        sres.externaldatabase ed,sres.EXTERNALDATABASERELEASE edr,apidb.GeneId gi, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+      WHERE ds.dataset_id = $$ds_gene_ids$$
+      AND gi.id = lower(ds.dataset_value)
+      AND gf.source_id = gi.gene 
+      and gf.na_feature_id = sf.parent_id                               
+      and edr.external_database_release_id = sf.external_database_release_id                               
+      and edr.external_database_id = ed.external_database_id                               
+      and ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')                               
+      and sf.na_feature_id = isva.parent_id                               
+      and sf.na_feature_id = isvb.parent_id                               
+      and isva.strain = '$$snp_strain_a$$'                               
+      and isvb.strain in ($$snp_strain_m$$)
+      and isva.allele != isvb.allele ) hits
+  where hits.na_sequence_id = nas.na_sequence_id
+    and hits.gene_na_feature_id = gene_loc.na_feature_id
+    and hits.snp_na_feature_id = l.na_feature_id
+    and hits.snp_na_feature_id = sva.parent_id 
+    and hits.snp_na_feature_id = svb.parent_id 
+    and sva.strain = '$$snp_strain_a$$'                               
+    and svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)                             
+    ) snpq                              
+group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+           ]]>
+       </sql>
+    </sqlQuery>
+
+       <sqlQuery name="SnpsByLocation" displayName="SNPs by chromosomal location" isCacheable="true">
+          <paramRef ref="params.chromosome" multipPick="false"/>
+          <paramRef ref="params.start_point"/>
+          <paramRef ref="params.end_point"/>
+          <paramRef ref="params.snp_strain_a"/>
+          <paramRef ref="params.snp_strain_m"/>
+          <column name="source_id"/>
+          <column name="gene"/>
+          <column name="snp_location"/>
+          <column name="ref_strain"/>
+          <column name="comp_strains"/>
+          <column name="ref_allele"/>
+          <column name="comp_alleles"/>
+          <column name="phenotype"/>
+          <column name="prot_pos"/>
+          <column name="ref_product"/>
+          <column name="comp_products"/>
+        <sql>
+            <![CDATA[
+select snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a = snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as ref_strain,              
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as comp_strains 
+from                 
+  (select hits.source_id as source_id,hits.seq_source_id || ':' || trim(to_char(hits.start_min,'999,999,999')) as snp_location,                               
+    sva.strain as ref_strain, svb.strain as comp_strain,                               
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele)                                  
+    ELSE sva.allele END as ref_allele,                 
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(svb.allele)                                 
+    ELSE svb.allele END as comp_all,                 
+    CASE WHEN sva.product = svb.product then 'syn' WHEN sva.product != svb.product then 'non-syn' ELSE 'non-coding' END as phenotype,                               
+    sva.product as ref_product, svb.product as comp_product,                           
+    hits.position_in_protein as prot_pos,
+    sva.allele as allele_a, svb.allele as allele_b, svb.strain as strain_b, gf.source_id as gene
+  from   dots.SEQVARIATION sva, dots.seqvariation svb, dots.nalocation gene_loc, dots.genefeature gf,
+    (select distinct isf.na_feature_id as na_feature_id, isf.source_id, isf.parent_id,
+      nas.source_id as seq_source_id,l.start_min,isf.position_in_protein
+     from sres.externaldatabase ed,sres.EXTERNALDATABASERELEASE edr,dots.SEQVARIATION isva, dots.nalocation l,
+          dots.externalnasequence nas, dots.seqvariation isvb, dots.snpfeature isf    
+     where nas.source_id = $$chromosome_single$$   
+      and isf.na_sequence_id = nas.na_sequence_id
+      and edr.external_database_release_id = isf.external_database_release_id
+      and edr.external_database_id = ed.external_database_id   
+      and ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')
+      and isf.na_feature_id = l.na_feature_id
+      AND l.end_max >= $$start_point$$
+      AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+      and isf.na_feature_id = isva.parent_id                               
+      and isf.na_feature_id = isvb.parent_id                               
+      and isva.strain = '$$snp_strain_a$$'                               
+      and isvb.strain in ($$snp_strain_m$$)
+      and isva.allele != isvb.allele ) hits 
+  where  hits.parent_id = gf.na_feature_id(+)
+    and gf.na_feature_id = gene_loc.na_feature_id(+)    
+    and hits.na_feature_id = sva.parent_id 
+    and hits.na_feature_id = svb.parent_id 
+    and sva.strain = '$$snp_strain_a$$'
+    and svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)
+    ) snpq                              
+group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+           ]]>
+       </sql>
+    </sqlQuery>
+
+ <sqlQuery name="SnpsByAlleleFrequency" displayName="SNPs by chromosomal location" isCacheable="true">
+        <paramRef ref="params.major_allele_min"/>
+        <paramRef ref="params.major_allele_max"/>
+        <paramRef ref="params.minor_allele_min"/>
+        <paramRef ref="params.minor_allele_max"/>
+        <column name="source_id"/>
+        <column name="minor_alleles"/>
+        <column name="minor_products"/>
+        <column name="minor_strains"/>
+        <column name="major_strains"/>
+        <sql>
+            <![CDATA[
+select snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count,
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.allele END) AS apidb.varchartab), ', ') as minor_alleles,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.product END) AS apidb.varchartab), ', ') as minor_products,
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele != snpq.major_allele THEN snpq.strain END) AS apidb.varchartab), ', ') as minor_strains,
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele = snpq.major_allele THEN snpq.strain END) AS apidb.varchartab), ', ') as major_strains              
+FROM
+  (select sf.source_id,gf.source_id as gene, nas.source_id || ':' || l.start_min as snp_location,
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sf.major_allele) ELSE sf.major_allele END as major_allele,
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele) ELSE sva.allele END as allele,   
+    sf.major_allele_count, sf.minor_allele_count,
+    sf.major_product, sf.position_in_protein as prot_pos, sva.product, sva.strain
+  from dots.genefeature gf, dots.snpfeature sf, dots.nalocation l, dots.nalocation gene_loc,
+    sres.externaldatabase ed,sres.EXTERNALDATABASERELEASE edr,dots.externalnasequence nas,
+    dots.SEQVARIATION sva
+  where sf.na_sequence_id = nas.na_sequence_id
+    and sf.parent_id = gf.na_feature_id(+)
+    and gf.na_feature_id = gene_loc.na_feature_id(+)
+    and edr.external_database_release_id = sf.external_database_release_id
+    and edr.external_database_id = ed.external_database_id
+    and ed.name = 'PlasmoDB combined SNPs'
+    and l.na_feature_id = sf.na_feature_id
+    and sf.minor_allele_count >= $$minor_allele_min$$
+    and sf.minor_allele_count <= $$minor_allele_max$$
+    and sf.major_allele_count >= $$major_allele_min$$
+    and sf.major_allele_count <= $$major_allele_max$$
+    and sf.major_allele is not null
+    and sf.minor_allele is not null
+    and sf.na_feature_id = sva.parent_id ) snpq 
+group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count
+           ]]>
+       </sql>
+    </sqlQuery>
+
+</querySet>

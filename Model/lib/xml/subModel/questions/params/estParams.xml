@@ -1,8 +1,33 @@
+<wdkModel>
 
+  <!--===========================================================================-->
+  <!-- Params  -->
+  <!--===========================================================================-->
+
+    <paramSet name="EstParams">
+
+    <!------------------------------------------------------------------>
+    <!-- Organism  -->
+    <!------------------------------------------------------------------>
+      <flatVocabParam name="organism"
+                     queryRef="EstVocabQueries.Organism"
+                     prompt="Organism"
+                     multiPick="true">
+        <help>
+           <text>
+             Select one or more organisms.
+           </text>
+        </help>
+      </flatVocabParam>
+
+
+  <!------------------------------------------------------------------>
+  <!--   -->
+  <!------------------------------------------------------------------>
         <stringParam name="est_id"
                      prompt="EST ID"
-                     help="Enter an EST ID (Accession Number)"
-                     substitute="yes"
+                     substitute="yes">
+            <help>Enter an EST ID (Accession Number)</help>
             <suggest sample="AU087658, BQ739759, N98084"
                      default="AU087658"/>
         </stringParam>
@@ -15,15 +40,16 @@
           <enumValue term="'C. parvum EST'"
                  internal=        'CparvumEST'"/> 
 
-    <paramSet name="EstBlastDbParams">
 
+  <!------------------------------------------------------------------>
+  <!-- Blast database type  -->
+  <!------------------------------------------------------------------>
       <enumParam name="BlastDatabaseType"
                      prompt="Target"
-                     translated CDS, Protein)" multiPick="false"
-                     help="The type of the target database (eg CDS,
+                     multiPick="false">
         <help>
            <text>
-             Organism(s) from which the sequences in the BLAST database originated
+             The type of sequence you want to BLAST against (the subject)
            </text>
         </help>
         <enumList>
@@ -33,3 +59,44 @@
                  internal=   "ESTs Translated"/>
         </enumList>
       </enumParam>
+  </paramSet>
+
+
+  <!--===========================================================================-->
+  <!-- Vocab Queries  -->
+  <!--===========================================================================-->
+
+  <querySet name="EstVocabQueries">
+
+
+        <sqlQuery name="OrganismWithEsts">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                SELECT orgs.term, orgs.internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                        AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species'
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.Est e
+                              WHERE e.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
+
+  </querySet>
+
+</wdkModel>
