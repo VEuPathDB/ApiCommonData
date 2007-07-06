@@ -1,0 +1,104 @@
+<questionSet name="SnpQuestions"
+             displayName="Find SNPs by">
+     <description>
+         "Find SNPs"
+     </description>
+
+     <question name="SnpBySourceId"
+               displayName="ID"
+               queryRef="SnpsBy.SnpBySourceId"
+	       summaryAttributesList=""
+	       recordClassRef="SnpRecordClasses.SnpRecordClass">
+          <summary>
+            Find SNPs by ID
+          </summary>
+	  <description>
+	    <![CDATA[
+              Find SNPs by ID
+	    ]]>
+	  </description>
+      </question>
+
+      <question name="SnpsByGeneId"
+              category="Gene"
+              displayName="Gene ID"
+              queryRef="SnpsBy.SnpsByGeneId"
+              summaryAttributesList="snp_location,linkedGeneId, ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
+              sortingAttributesList="snp_location asc"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <summary>
+            Find SNPs that are located in a specified gene.
+        </summary>
+	<description>
+            <![CDATA[
+              Find SNPs that are contained within a gene.
+              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="ref_strain" displayName="Like Reference" align="center"/>
+	     <columnAttribute name="comp_strains" displayName="SNP Strains" align="center"/>
+	     <columnAttribute name="ref_allele" displayName="Reference allele" align="center"/>
+	     <columnAttribute name="comp_alleles" displayName="SNP allele" align="center"/>
+	     <columnAttribute name="comp_products" displayName="SNP Product" align="center"/>
+	     <columnAttribute name="ref_product" displayName="Reference Product" align="center"/>
+	     <columnAttribute name="phenotype" displayName="Phenotype" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+    <question name="SnpsByLocation"
+              category="Genomic Position"
+              displayName="Chromosomal Location"
+              queryRef="SnpsBy.SnpsByLocation"
+              summaryAttributesList="snp_location,linkedGeneId,ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
+              sortingAttributesList="snp_location asc"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <summary>
+            <![CDATA[
+            Find <i>P. falciparum</i> SNPs by chromosomal location
+          ]]>
+        </summary>
+	<description>
+            <![CDATA[
+              Find <i>P. falciparum</i> SNPs by chromosomal location relative to P. falciparum.
+              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="ref_strain" displayName="Like Reference" align="center"/>
+	     <columnAttribute name="comp_strains" displayName="SNP Strains" align="center"/>
+	     <columnAttribute name="ref_allele" displayName="Reference allele" align="center"/>
+	     <columnAttribute name="comp_alleles" displayName="SNP allele" align="center"/>
+	     <columnAttribute name="comp_products" displayName="SNP Product" align="center"/>
+	     <columnAttribute name="ref_product" displayName="Reference Product" align="center"/>
+	     <columnAttribute name="phenotype" displayName="Phenotype" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+    <question name="SnpsByAlleleFrequency"
+              category="Other Attributes"
+              displayName="Allele Frequency"
+              queryRef="SnpsBy.SnpsByAlleleFrequency"
+              summaryAttributesList="snp_location,major_allele_count,major_strains,major_allele,major_product,minor_allele_count,minor_strains,minor_alleles,minor_products,linkedGeneId,position_in_protein"
+              sortingAttributesList="snp_location asc"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <summary>
+            <![CDATA[
+            Find <i>P. falciparum</i> SNPs by the frequency of the major and minor alleles
+            ]]>
+        </summary>
+	<description>
+            <![CDATA[
+              Find SNPs by specifying the frequency of the major and minor alleles.
+              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="major_strains" displayName="Major Strains"/>
+	     <columnAttribute name="minor_strains" displayName="Minor Strains"/>
+	     <columnAttribute name="minor_alleles" displayName="Minor Alleles" align="center"/>
+	     <columnAttribute name="minor_products" displayName="Minor Products" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+</questionSet>
