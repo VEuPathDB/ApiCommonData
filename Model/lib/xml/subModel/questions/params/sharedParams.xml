@@ -340,11 +340,44 @@
         </enumList>
       </enumParam>
 
-        <stringParam name="genomicSequence"
-                     prompt="Genomic Sequence ID">
-            <help>ID of genomic sequence to search for genes</help>
-            <suggest sample="MAL4, ctg_4094"/>
-        </stringParam>
+    <!------------------------------------------------------------------>
+    <!-- Sequence Id -->  
+    <!------------------------------------------------------------------>
+
+    <stringParam name="genomicSequence"
+            prompt="Genomic sequence ID" 
+            substitute="yes">
+        <suggest includeProjects="CryptoDB"
+            sample="(Examples: AAEL01000057, AAEE01000009, BX526834)"
+            default="(Example: AAEE01000006)"/>
+        <suggest includeProjects="ApiDB"
+            sample="AAEL010000057, AAEE01000009, BX526834"
+            default="AAEL01000057"/>
+        <suggest includeProjects="ToxoDB"
+            sample="Ia, VIIb, XI"
+            default="Ia"/>
+        <suggest includeProjects="PlasmoDB"
+            sample="(Examples: MAL4, ctg_4094)"
+            default="MAL4"/>     
+        <help includeProjects="ApiDB">
+          Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in this search, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs.
+        <help includeProjects="CrptoDB">
+            Enter an identifier for a genomic contig. The IDs
+            correspond to the accession numbers in the GenBank records
+            supplied by the sequencing centers. Contig ID's from
+            &lt;i&gt; C. parvum &lt;/i&gt; whole genome sequencing
+            project begin with 'AAEE' and contig ID's for &lt;i&gt;
+            C. hominis &lt;/i&gt; begin with 'AAEL'. The &lt;i&gt;
+            C. parvum &lt;/i&gt; Chromosome 6 independently sequenced
+            at MRC-LMB  before the whole genome project was completed
+            is 'BX526834 '. Wild cards are permitted in this search,
+            i.e. use AAEE* to ask for all &lt;i&gt; C. parvum
+            &lt;/i&gt; contigs.
+        </help>
+        <help includeProjects="PlasmoDB">
+            Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  Wild cards are permitted in this search, i.e. use MALPY* to ask for all &#60;i&#62; P.vivax &#60;/i&#62; sequences.
+        </help>
+    </stringParam>    
 
         <stringParam name="start_point"
                      prompt="Start at"

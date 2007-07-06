@@ -2,7 +2,7 @@
 
    <!-- notes
 
-      - changeed 'sequence' param to 'sequenceId'
+      - changeed 'sequence' param to 'sharedParams.genomicSequence'
 
       - assumes that NAsequence table has source_id
 
@@ -14,7 +14,7 @@
  
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="genomicParams.sequenceId"/> 
+        <paramRef ref="sharedParams.genomicSequence"/> 
         <column name="source_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
