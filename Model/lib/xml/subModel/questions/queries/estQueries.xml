@@ -1,11 +1,19 @@
 <wdkModel>
 
+  <!-- notes
+
+    - assume: can use default attribute on query ref for enum params
+
+
+  -->
+
   <querySet name="EstIds">
 
 
     <!------------------------------------------------------------------>
     <!-- Source id  -->
     <!------------------------------------------------------------------>
+
     <sqlQuery name="EstBySourceId" excludeProjects="ApiDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
@@ -19,7 +27,7 @@
        </sql>
     </sqlQuery>
 
-    <wsQuery name="EstBySourceId"  excludeProjects="ApiDB"
+    <wsQuery name="EstBySourceId" includeProjects="ApiDB"
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="estParams.est_id"/>
@@ -27,25 +35,35 @@
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>   
 
+
     <!------------------------------------------------------------------>
-    <!--   -->
+    <!-- Location  -->
     <!------------------------------------------------------------------>
-    <sqlQuery name="EstsByLocation" displayName="Genomic Location" isCacheable="true">
-        <paramRef ref="sharedParams.chromosome"/>
+
+    <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
+          displayName="Genomic Location" isCacheable="true">
+        <paramRef ref="sharedParams.chromosome" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
-        <paramRef ref="sharedParams.libraryId"/>
+        <paramRef ref="sharedParams.libraryId" excludeProjects="CryptoDB"/>
         <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
         <column name="source_id"/>
-        <column name="est_location"/>
-        <sql>
+        <column name="est_location" excludeProjects="CryptoDB"/>
+
+        <sql excludeProjects="CryptoDB">
             <![CDATA[
             SELECT accession as source_id,
-                   apidb.tab_to_string(CAST(COLLECT(target_sequence_source_id || ':' || trim(to_char(target_start,'999,999,999')) || '-' || trim(to_char(target_end,'999,999,999')) || '(' || decode(is_reversed,0,'+',1,'-',null) || ')') AS apidb.varchartab), ', ') AS est_location
+                   apidb.tab_to_string(
+                     CAST(
+                       COLLECT(target_sequence_source_id || ':'
+                       || trim(to_char(target_start,'999,999,999'))
+                       || '-' || trim(to_char(target_end,'999,999,999'))
+                       || '(' || decode(is_reversed,0,'+',1,'-',null)
+                       || ')') AS apidb.varchartab), ', ') AS est_location
 	    FROM  apidb.ESTALIGNMENTGENESUMMARY
             WHERE (target_sequence_source_id IN ($$chromosome$$)
                    OR lower(target_sequence_source_id) = lower('$$genomicSequence$$'))
@@ -58,46 +76,107 @@
             AND   library_id in ($$libraryId$$)
 	    GROUP BY accession
            ]]>
-       </sql>
-    </sqlQuery>
+        </sql>
 
-
-  <!------------------------------------------------------------------>
-  <!--   -->
-  <!------------------------------------------------------------------>
-    <sqlQuery name="EstsByLibrary" displayName="Library Name" isCacheable='true'>
-        <paramRef ref="sharedParams.libraryId"/>
-        <column name="source_id" />
-        <sql>
-            <!-- use CDATA because query includes angle brackets -->
+        <sql includeProjects="CryptoDB">
             <![CDATA[
-            SELECT enas.source_id
-            FROM dots.externalnasequence enas, dots.est e
-            WHERE enas.na_sequence_id = e.na_sequence_id
-            AND e.library_id in ($$libraryId$$)
+           SELECT est.accession as source_id
+	    FROM  dots.BlatAlignment blat,
+	          dots.AssemblySequence asbl,
+		  dots.Est est,
+		  dots.ExternalNASequence etn
+            WHERE blat.query_na_sequence_id = asbl.na_sequence_id
+	    AND   blat.target_na_sequence_id = etn.na_sequence_id
+	    AND   est.na_sequence_id = blat.query_na_sequence_id
+            AND   blat.target_end >= $$start_location$$ 
+            AND   (blat.target_start <= $$end_location$$ OR $$end_location$$ = 0)
+	    AND   etn.external_database_release_id = blat.target_external_db_release_id
+            AND   blat.max_target_gap < 10000
+	    AND   (etn.source_id = '$$parvum_chromosome$$'
+                   OR lower(etn.source_id) = lower('$$contig$$'))
+            AND blat.target_start >= $$start_location$$ 
+            AND (blat.target_end <= $$end_location$$ OR $$end_location$$ = 0)
+	    GROUP BY est.accession
            ]]>
        </sql>
     </sqlQuery>
 
-  <!------------------------------------------------------------------>
-  <!--   -->
-  <!------------------------------------------------------------------>
-    <sqlQuery name="EstsWithGeneOverlap" displayName="ESTs that overlap genes" isCacheable='true'>
+    <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
+          displayName="ESTs by genomic location" 
+          isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="sharedParams.stoxopforganism"/>
+        <paramRef ref="sharedParams.chromosome" default="chromosome 1"/>
+        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="sharedParams.libraryId"/>
+        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+        <wsColumn name="source_id" width="60" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
+    <!------------------------------------------------------------------>
+    <!-- Library  -->
+    <!------------------------------------------------------------------>
+
+    <sqlQuery name="EstsByLibrary" excludeProjects="ApiDB" 
+              displayName="Library Name" isCacheable='true'>
+        <paramRef ref="sharedParams.libraryId"/>
+        <column name="source_id" />
+        <sql>
+            SELECT enas.source_id
+            FROM dots.externalnasequence enas, dots.est e
+            WHERE enas.na_sequence_id = e.na_sequence_id
+            AND e.library_id in ($$libraryId$$)
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="EstsByLibrary" includeProjects="ApiDB" 
+             displayName="Library Name" isCacheable='true' 
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
+        <paramRef ref="estParams.organism" />
+        <paramRef ref="sharedParams.libraryId"/>
+        <wsColumn name="source_id" width="60" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
+    <!------------------------------------------------------------------>
+    <!--   -->
+    <!------------------------------------------------------------------>
+
+    <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
+          displayName="ESTs that overlap genes" isCacheable='true'>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="sharedParams.inNotIn"/>
-       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.best_alignment_only" excludeProjects="CryptoDB"
+             groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.high_confidence_only" excludeProjects="CryptoDB"
+             groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_identity" excludeProjects="CryptoDB"
+             groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_est_aligned" excludeProjects="CryptoDB"
+             groupRef="paramGroups.advancedParams"/>
        <column name="source_id" />
-       <column name="est_locations" />
-       <column name="genes" />
-        <sql>
+       <column name="est_locations"  excludeProjects="CryptoDB"/>
+       <column name="genes"  excludeProjects="CryptoDB"/>
+       <sql excludeProjects="CryptoDB">
             <![CDATA[
               SELECT accession as source_id,
-                  apidb.tab_to_string(CAST(COLLECT(target_sequence_source_id || ':' || trim(to_char(target_start,'999,999,999')) || '-' || trim(to_char(target_end,'999,999,999')) || '(' || decode(is_reversed,0,'+',1,'-',null) || ')') AS apidb.varchartab), ', ') AS est_locations,
-                  apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') as genes
+                  apidb.tab_to_string(
+                    CAST(
+                      COLLECT(target_sequence_source_id || ':'
+                      || trim(to_char(target_start,'999,999,999'))
+                      || '-' || trim(to_char(target_end,'999,999,999'))
+                      || '(' || decode(is_reversed,0,'+',1,'-',null) || ')')
+                    AS apidb.varchartab), ', ') AS est_locations,
+                  apidb.tab_to_string(CAST(COLLECT(gene) 
+                                      AS apidb.varchartab), ', ') as genes
 	    FROM (
                 SELECT accession,gene ,target_start,target_end, is_reversed, target_sequence_source_id
                 FROM apidb.ESTALIGNMENTGENESUMMARY
@@ -119,13 +198,51 @@
             GROUP BY accession
            ]]>
        </sql>
+
+        <sql includeProjects="CryptoDB">
+            <!-- query result includes 11 ests that have no genomic alignment -->
+            <![CDATA[
+            SELECT accession as source_id FROM dots.est where est_id $$inNotIn$$ (
+                SELECT distinct(e.est_id)
+                FROM dots.genefeature gf, core.tableinfo info,
+                dots.nalocation nal, dots.blatalignment blat, 
+                dots.est e, dots.externalnasequence enas2 
+                WHERE gf.na_feature_id = nal.na_feature_id 
+                AND gf.na_sequence_id = enas2.na_sequence_id 
+                AND enas2.na_sequence_id = blat.target_na_sequence_id 
+                AND e.na_sequence_id = blat.QUERY_NA_SEQUENCE_ID 
+                AND (blat.TARGET_END - nal.start_max) >= $$bp_overlap_gte$$  
+                AND (nal.end_min - blat.TARGET_START) >= $$bp_overlap_gte$$  
+                AND (query_end - query_start) >= $$bp_overlap_gte$$  
+                AND blat.max_target_gap < 10000 
+                AND blat.is_best_alignment = 1
+                AND blat.query_table_id = info.table_id
+                AND info.name = 'AssemblySequence'
+                AND e.library_id in ($$libraryId$$)
+            ) 
+            AND library_id in ($$libraryId$$)
+           ]]>
+       </sql>
     </sqlQuery>
 
 
+    <wsQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
+       displayName="ESTs that overlap genes" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="estParams.organism"/>
+       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.bp_overlap_gte"/>
+       <paramRef ref="sharedParams.inNotIn"/>
+       <wsColumn name="source_id" width="60" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
     <!------------------------------------------------------------------>
-    <!--   -->
+    <!-- BLAST  -->
     <!------------------------------------------------------------------>
-    <wsQuery name="EstsBySimilarity" displayName="BLAST"
+
+    <wsQuery name="EstsBySimilarity" excludeProjects="ApiDB"
+             displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="estParams.BlastDatabaseType"/>
        <paramRef ref="estParams.BlastDatabaseOrganism"/>
@@ -143,6 +260,24 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
+    <wsQuery name="EstsBySimilarity" includeProjects="ApiDB"
+         displayName="BLAST ESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="estParams.BlastDatabaseType"/>
+       <paramRef ref="estParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+
+       <wsColumn name="source_id" width="60" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
 
 
 </querySet>

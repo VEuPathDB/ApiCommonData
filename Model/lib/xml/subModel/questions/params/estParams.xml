@@ -9,7 +9,7 @@
       <!------------------------------------------------------------------>
       <!-- Organism  -->
       <!------------------------------------------------------------------>
-      <flatVocabParam name="organism"
+      <flatVocabParam name="organism" excludeProjects="ApiDB"
                      queryRef="EstVocabQueries.Organism"
                      prompt="Organism"
                      multiPick="true">
@@ -20,16 +20,45 @@
         </help>
       </flatVocabParam>
 
+      <enumParam name="organism" includeProjects="ApiDB"
+        <enumList>
+          <enumValue term="C. hominis" 
+                 internal=   "Chominis"/> 
+          <enumValue term="C. parvum" 
+                 internal=   "Cparvum"/> 
+          <enumValue term="P. berghei"
+                 internal=   "Pberghei"/>
+          <enumValue term="P. chabaudi"
+                 internal=   "Pchabaudi"/>
+          <enumValue term="P. falciparum"
+                 internal=   "Pfalciparum"/>
+          <enumValue term="P. knowlesi" 
+                 internal=   "Pknowlesi"/>
+          <enumValue term="P. vivax" 
+                 internal=   "Pvivax"/>
+          <enumValue term="P. yoelii"
+                 internal=   "Pyoelii"/>
+          <enumValue term="T. gondii" 
+                 internal=   "Tgondii"/> 
+        </enumList>
+
 
       <!------------------------------------------------------------------>
-      <!--   -->
+      <!-- EST ID  -->
       <!------------------------------------------------------------------>
       <stringParam name="est_id"
                      prompt="EST ID"
                      substitute="yes">
             <help>Enter an EST ID (Accession Number)</help>
-            <suggest sample="AU087658, BQ739759, N98084"
-                     default="AU087658"/>
+            <suggest includeProject="PlasmoDB"
+               sample="AU087658, BQ739759, N98084"
+               default="AU087658"/>
+            <suggest  includeProject="ToxoDB"
+               sample="AA009308, AA011973, W99666"
+               default="AA009308"/>
+            <suggest includeProject="ApiDB"
+               sample="AU087658, N98084,AA009308, AA011973"
+               default="AU087658"/>
       </stringParam>
 
 
