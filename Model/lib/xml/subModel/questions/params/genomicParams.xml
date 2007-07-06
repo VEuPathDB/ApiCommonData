@@ -3,25 +3,21 @@
   <!-- ==================================================================== -->
   <!-- Params  -->
   <!-- ==================================================================== -->
-    <paramSet name="genomicParams">
+  <paramSet name="genomicParams">
 
-  <!------------------------------------------------------------------>
-  <!-- Organism -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Organism -->  
+    <!------------------------------------------------------------------>
       <flatVocabParam name="organism"
                      queryRef="GenomicVocabQueries.Organism"
                      prompt="Organism"
                      multiPick="true">
-        <help>
-           <text>
-             Select one or more organisms.
-           </text>
-        </help>
       </flatVocabParam>
 
-  <!------------------------------------------------------------------>
-  <!-- Blast database type -->  
-  <!------------------------------------------------------------------>
+
+    <!------------------------------------------------------------------>
+    <!-- Blast database type -->  
+    <!------------------------------------------------------------------>
       <enumParam name="BlastDatabaseType"
                      prompt="Target"
                      multiPick="false">
@@ -37,11 +33,11 @@
       </enumParam>
 
 
-  <!------------------------------------------------------------------>
-  <!-- Sequence Id -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Sequence Id -->  
+    <!------------------------------------------------------------------>
 
-   <stringParam name="sequenceid"
+    <stringParam name="sequenceid"
             prompt="Contig ID" 
             substitute="yes">
         <suggest includeProjects="CryptoDB"
@@ -76,19 +72,7 @@
         </help>
     </stringParam>    
  
-
-    <flatVocabParam name="organism" excludeProjects="ToxoDB"
-            prompt="species"
-            help="Select one or more organisms."
-            multiPick="true"
-            queryRef="VocabQueries.OrganismWithSequences"/>
-        <flatVocabParam name="organism" includeProjects="ToxoDB"
-            prompt="Organism"
-            help="Select an organism."
-            multiPick="false"
-            queryRef="VocabQueries.Organism"/>
-
-    </paramSet>
+  </paramSet>
     
   <!--===========================================================================-->
   <!-- Vocab queries  -->
@@ -121,7 +105,6 @@
                   ORDER BY partial_order.rank
             </sql>
         </sqlQuery>
-
 
     </querySet>
 

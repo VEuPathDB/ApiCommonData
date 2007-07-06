@@ -13,9 +13,9 @@
 
   <paramSet name="params">
 
-  <!------------------------------------------------------------------>
-  <!-- Gene Id -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Gene Id -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="single_gene_id"
                      prompt="Gene ID"
@@ -26,9 +26,9 @@
         </stringParam>
 
 
-  <!------------------------------------------------------------------>
-  <!-- Mutual information score -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Mutual information score -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="min_mutual_information_score"
                      prompt="Minimum mutual information score"
@@ -46,9 +46,9 @@
 
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- EC Number -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- EC Number -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="ec_number_pattern"
                      prompt="EC Number"
@@ -58,9 +58,9 @@
                      default="2.7.7.-"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="num_exons_gte"
                      prompt="Exon Count >="
@@ -77,9 +77,9 @@
             <suggest sample="(Example: 2)"
                      default="20"/>
         </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
       <flatVocabParam name="cowmanSample"
                      queryRef="GeneVocabQueries.cowmanSample"
@@ -153,9 +153,9 @@
             <suggest sample="(Example: )"
                      default="90"/>
         </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="min_tm"
                      prompt="Minimum Number of Transmembrane Domains"
@@ -173,9 +173,9 @@
                      default="5"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="min_sigp_sum_score"
                      prompt="Minimum SignalP conclusion score"
@@ -184,9 +184,9 @@
             <suggest default="3"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="extDbName"
                      prompt="External Database Name">
@@ -197,9 +197,9 @@
                      prompt="External Database Release Version">
             <help>The version of an external database release as found in GUS</help>
         </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="sequence"
                      prompt="Sequence ID"
@@ -209,9 +209,9 @@
                      default="MAL4"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- Organism -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Organism -->  
+    <!------------------------------------------------------------------>
 
       <flatVocabParam name="organism"
                      queryRef="GeneVocabQueries.Organism"
@@ -224,6 +224,10 @@
         </help>
       </flatVocabParam>
 
+
+    <!------------------------------------------------------------------>
+    <!-- Organism with EC -->  
+    <!------------------------------------------------------------------>
 
       <flatVocabParam name="organism_with_ec" excludeProjects="ApiDB"
                      queryRef="GeneVocabQueries.OrganismWithEC"
@@ -257,9 +261,61 @@
         </enumList>
       </enumParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- BLAST database organism  -->  
+    <!------------------------------------------------------------------>
+      <enumParam name="BlastDatabaseOrganism"
+                     prompt="Organism"
+                     multiPick="false"
+        <help>
+           <text>
+             Organism(s) from which the sequences in the BLAST database originated
+           </text>
+        </help>
+        <enumList>
+          <enumValue term="P. berghei" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pberghei"/>
+          <enumValue term="P. chabaudi" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pchabaudi"/>
+          <enumValue term="P. falciparum" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pfalciparum"/>
+          <enumValue term="P. falciparum mitocondrial" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "PfalciparumMito"/>
+          <enumValue term="P. falciparum plastid" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "PfalciparumPlastid"/>
+          <enumValue term="P. knowlesi" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pknowlesi"/>
+          <enumValue term="P. vivax" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pvivax"/>
+          <enumValue term="P. yoelii" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Pyoelii"/>
+          <enumValue term="any" includeProjects="ApiDB,PlasmoDB"
+                 internal=   "Plasmodium"/>
+
+          <enumValue term="T. gondii ME49"  includeProjects="ApiDB,ToxoDB"
+                 internal=   "Tgondii"/> 
+          <enumValue term="T. gondi apicoplast" includeProjects="ApiDB,ToxoDB"
+                 internal=   "TgondiiApicoplast"/>
+          <enumValue term="T. gondii GT1"  includeProjects="ApiDB,ToxoDB"
+                 internal=   "TgondiiGT1"/> 
+          <enumValue term="T. gondii RH (chr Ia, Ib)"  includeProjects="ApiDB,ToxoDB"
+                 internal=   "TgondiiRH"/> 
+          <enumValue term="T. gondii VEG"  includeProjects="ApiDB,ToxoDB"
+                 internal=   "TgondiiVeg"/> 
+
+          <enumValue term="C. hominis" includeProjects="ApiDB,CryptoDB"
+                 internal=   "Chominis"/> 
+          <enumValue term="C. parvum" includeProjects="ApiDB,CryptoDB"
+                 internal=   "Cparvum"/> 
+          <enumValue term="C. parvum Chr6" includeProjects="ApiDB,CryptoDB"
+                 internal=   "CparvumChr6"/> 
+
+        </enumList>
+      </enumParam>
+
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
       <enumParam name="whole_words"
                      prompt="Match only whole words?"
@@ -276,9 +332,9 @@
                  internal=   "false"/>
         </enumList>
       </enumParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
       <flatVocabParam name="geneType"
                      queryRef="GeneVocabQueries.GeneTypes"
@@ -308,18 +364,18 @@
                  internal=   "1"/>
         </enumList>
       </enumParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="protein_id"
                      prompt="NestedRecord Param">
             <help>Only used in a nested record</help>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- plasmodb 4.4 dataset -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- plasmodb 4.4 dataset -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="plasmodb_4.4_dataset"
                      visible="false"
@@ -327,9 +383,9 @@
             <help>PlasmoDB 4.4 dataset</help>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="go_term"
                      prompt="GO Term or GO ID">
@@ -337,9 +393,9 @@
             <suggest default="catalytic activity</help>
                      />
         </stringParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
         <stringParam name="pfam_term"
                      prompt="Pfam Family ID or Description">
@@ -348,9 +404,9 @@
 />
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- Protein protein interaction -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Protein protein interaction -->  
+    <!------------------------------------------------------------------>
 
       <enumParam name="bait_or_prey"
                      prompt="Specified protein is bait or prey"
@@ -386,9 +442,9 @@
             <suggest default="5"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- BLAST -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- BLAST -->  
+    <!------------------------------------------------------------------>
 
       <enumParam name="BlastDatabaseType"
                      prompt="Target"
@@ -409,9 +465,9 @@
       </enumParam>
 
 
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
      <enumParam name="epitope_confidence"
                         prompt="Confidence"
@@ -430,9 +486,9 @@
                  internal=   "'Full Set Not on Blast Hit','Not Full Set On Blast Hit'"/>
         </enumList>
       </enumParam>
-  <!------------------------------------------------------------------>
-  <!--  -->  
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->  
+    <!------------------------------------------------------------------>
 
        <stringParam name="dn_ds_ratio_upper"
                      prompt="Non-synonymous / synonymous SNP ratio &lt;= ">
@@ -1664,9 +1720,9 @@
         </help>
       </flatVocabParam>
 
-  <!------------------------------------------------------------------>
-  <!-- Motif search -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Motif search -->
+    <!------------------------------------------------------------------>
 
       <enumParam name="motif_organism"
                         prompt="Organism"
@@ -1706,9 +1762,9 @@
       </enumParam>
 
 
-  <!------------------------------------------------------------------>
-  <!--  -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->
+    <!------------------------------------------------------------------>
 
         <stringParam name="min_isoelectric_point"
                      prompt="Min Isoelectric Point">
@@ -2041,9 +2097,9 @@
             <suggest default="100"/>
         </stringParam>
 
-  <!------------------------------------------------------------------>
-  <!-- Expression profile similarity  -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Expression profile similarity  -->
+    <!------------------------------------------------------------------>
 
         <stringParam name="ProfileGeneId"
                      prompt="Gene Id"
@@ -2358,9 +2414,9 @@
       </enumParam>
 
 
-  <!------------------------------------------------------------------>
-  <!--  -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--  -->
+    <!------------------------------------------------------------------>
 
         <stringParam name="text_expression"
                      prompt="Text term">
@@ -2385,7 +2441,7 @@
         </enumList>
       </enumParam>
 
-      <enumParam name="datasets"
+      <enumParam name="text_fields"
                      prompt="Fields"
                      multiPick="true">
         <help>
@@ -2455,14 +2511,44 @@
 
 
 
-  <!--===========================================================================-->
-  <!-- Vocab queries  -->
-  <!--===========================================================================-->
+    <!--===========================================================================-->
+    <!-- Vocab queries  -->
+    <!--===========================================================================-->
 
     <querySet name="GeneVocabQueries">
 
+        <sqlQuery name="OrganismWithGenes">
+            <column name="internal"/>
+            <column name="term"/>
+             <sql>
+                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
+                    FROM sres.taxon
+                    CONNECT BY prior taxon_id = parent_id
+                    START WITH taxon_id = orgs.internal_tax) as internal
+                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
+                      FROM sres.TaxonName tn, sres.taxon t
+                      WHERE tn.name_class='scientific name'
+                      AND t.taxon_id = tn.taxon_id
+                        AND t.rank = 'species' 
+                        AND t.taxon_id in
+                            (SELECT taxon_id
+                             FROM sres.taxon
+                             CONNECT BY taxon_id = prior parent_id
+                             START WITH taxon_id IN
+                             (SELECT ens.taxon_id
+                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
+                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
+                      UNION
+                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
+                  WHERE orgs.term = partial_order.term(+)
+                  ORDER BY partial_order.rank
+            </sql>
+        </sqlQuery>
 
-       <!-- THIS NEEDS TO BE WRITTEN -->
+         <!-- THIS NEEDS TO BE WRITTEN -->
         <sqlQuery name="OrganismWithEC">
             <column name="internal"/>
             <column name="term"/>
@@ -2525,26 +2611,6 @@
                 UNION SELECT 'Any' AS term, 0 as internal FROM dual
                 ORDER BY internal
             </sql>
-        </sqlQuery>
-
-
-        <sqlQuery name="MetabolicPathways">
-            <column name="internal"/>
-            <column name="term"/>
-            <sql>
-           <![CDATA[
-             SELECT DISTINCT dr.primary_identifier AS internal,
-                    TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
-                           dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
-             FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-             WHERE dr.external_database_release_id = edr.external_database_release_id
-               AND edr.external_database_id = ed.external_database_id
-               AND ed.name = 'Links to Pathway Maps'
-               AND dr.primary_identifier != 'qualityControl'
-             ORDER BY term
-           ]]>
-            </sql>
-
         </sqlQuery>
 
         <sqlQuery name="Mr4Reagents">
@@ -2654,39 +2720,29 @@ SELECT distinct lg.name AS term,
             </sql>
         </sqlQuery>
 
-    <!-- don't think this is in use  -->
-        <sqlQuery name="OrganismWithGenes">
+
+
+        <!-- keep this one at the end of the file because it's embedded quote mark throughs off
+             emac's syntax highlighting
+        -->
+        <sqlQuery name="MetabolicPathways">
             <column name="internal"/>
             <column name="term"/>
-             <sql>
-                  SELECT orgs.term, (select apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id))) AS apidb.varchartab), ', ') as internal
-                    FROM sres.taxon
-                    CONNECT BY prior taxon_id = parent_id
-                    START WITH taxon_id = orgs.internal_tax) as internal
-                FROM (SELECT tn.name AS term, t.taxon_id AS internal_tax
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                      AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species' 
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
+            <sql>
+           <![CDATA[
+             SELECT DISTINCT dr.primary_identifier AS internal,
+                    TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
+             FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+             WHERE dr.external_database_release_id = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name = 'Links to Pathway Maps'
+               AND dr.primary_identifier != 'qualityControl'
+             ORDER BY term
+           ]]>
             </sql>
+
         </sqlQuery>
-
-
 
      </querySet>
 

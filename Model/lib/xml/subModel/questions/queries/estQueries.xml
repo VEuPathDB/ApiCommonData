@@ -3,9 +3,9 @@
   <querySet name="EstIds">
 
 
-  <!------------------------------------------------------------------>
-  <!-- Source id  -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!-- Source id  -->
+    <!------------------------------------------------------------------>
     <sqlQuery name="EstBySourceId" excludeProjects="ApiDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
@@ -27,9 +27,9 @@
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>   
 
-  <!------------------------------------------------------------------>
-  <!--   -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--   -->
+    <!------------------------------------------------------------------>
     <sqlQuery name="EstsByLocation" displayName="Genomic Location" isCacheable="true">
         <paramRef ref="sharedParams.chromosome"/>
         <paramRef ref="sharedParams.genomicSequence"/>
@@ -60,6 +60,7 @@
            ]]>
        </sql>
     </sqlQuery>
+
 
   <!------------------------------------------------------------------>
   <!--   -->
@@ -121,13 +122,13 @@
     </sqlQuery>
 
 
-  <!------------------------------------------------------------------>
-  <!--   -->
-  <!------------------------------------------------------------------>
+    <!------------------------------------------------------------------>
+    <!--   -->
+    <!------------------------------------------------------------------>
     <wsQuery name="EstsBySimilarity" displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="estParams.BlastDatabaseType"/>
-       <paramRef ref="sharedParams.BlastDatabaseOrganismAnnotated"/>
+       <paramRef ref="estParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>

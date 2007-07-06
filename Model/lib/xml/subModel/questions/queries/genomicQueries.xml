@@ -104,8 +104,8 @@
     
     <wsQuery name="SequencesBySimilarity" includeProjects="CryptoDB"
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
-        <paramRef ref="generalParams.BlastDatabaseType"/>
-        <paramRef ref="generalParams.BlastDatabaseOrganism"/>
+        <paramRef ref="sharedParams.BlastDatabaseType"/>
+        <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
         <paramRef ref="params.BlastQueryType"/>
         <paramRef ref="params.BlastQuerySequence"/>
         <paramRef ref="params.-e"/>
@@ -125,12 +125,12 @@
         processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
         <paramRef ref="sequenceParams.BlastDatabaseType"/>
         <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
-        <paramRef ref="params.BlastQueryType"/>
-        <paramRef ref="params.BlastQuerySequence"/>
-        <paramRef ref="params.-e"/>
-        <paramRef ref="params.-v"/>
-        <paramRef ref="params.-b"/>
-        <paramRef ref="params.-filter"/>
+        <paramRef ref="sharedParams.BlastQueryType"/>
+        <paramRef ref="sharedParams.BlastQuerySequence"/>
+        <paramRef ref="sharedParams.-e"/>
+        <paramRef ref="sharedParams.-v"/>
+        <paramRef ref="sharedParams.-b"/>
+        <paramRef ref="sharedParams.-filter"/>
         
         <wsColumn name="source_id" width="32" wsName="Identifier"/>
         <wsColumn name="TabularRow" width="3000"/>
@@ -144,12 +144,12 @@
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sequenceParams.BlastDatabaseType"/>
         <paramRef ref="sequenceParams.BlastDatabaseOrganism"/>
-        <paramRef ref="params.BlastQueryType"/>
-        <paramRef ref="params.BlastQuerySequence"/>
-        <paramRef ref="params.-e"/>
-        <paramRef ref="params.-v"/>
-        <paramRef ref="params.-b"/>
-        <paramRef ref="params.-filter"/>
+        <paramRef ref="sharedParams.BlastQueryType"/>
+        <paramRef ref="sharedParams.BlastQuerySequence"/>
+        <paramRef ref="sharedParams.-e"/>
+        <paramRef ref="sharedParams.-v"/>
+        <paramRef ref="sharedParams.-b"/>
+        <paramRef ref="sharedParams.-filter"/>
         
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
