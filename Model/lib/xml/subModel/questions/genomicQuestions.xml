@@ -14,33 +14,21 @@
          
       <attributesList 
         summary="organism"
-        sorting=""
       />
       
       <summary>
-        Find genomic sequences by ID (GenBank Accession Number).
+        Find genomic sequences by ID.
       </summary>
-      <description includeProjects="CryptoDB">
-        <![CDATA[
-        Find chromosomes or contigs from one or more Cryptosporidium species.
-        ]]>
-      </description>
-      <description includeProjects="PlasmoDB">
-        <![CDATA[
-        Find chromosomes or contigs from one or more Plasmodium species.
-        ]]>
-      </description>
-      <description includeProjects="ToxoDB">
-        <![CDATA[
-        Find genomic sequence records for <i>Toxoplasma gondii</i>.
-        ]]>
-      </description>
-      <description includeProjects="ApiDB">
-        <![CDATA[
-        Find genomic sequences by GenBank Accession Number.  Examples are: AAEL010000057, AAEE01000009, BX526834, MAL4, Ia)
-        ]]>
-      </description>
 
+      <description includeProjects="CryptoDB">
+        Find genomic sequences (contigs) by ID.
+      </description>
+      <description includeProjects="PlasmoDB,ToxoDB,ApiDB">
+        Find genomic sequences (chromosomes or contigs) by ID.
+      </description>
+      <suggest includeProjects="ApiDB"
+        sample="AAEL010000057, AAEE01000009, BX526834, MAL4, Ia"
+      />
     </question>
     
     
@@ -62,25 +50,12 @@
       <summary>
         Find genomic sequences of a species.
       </summary>
+
       <description includeProjects="CryptoDB">
-        <![CDATA[
-        Find chromosomes or contigs from one or more Cryptosporidium species.
-        ]]>
+        Find genomic sequences (contigs) for one or more species.
       </description>
-      <description includeProjects="PlasmoDB">
-        <![CDATA[
-        Find chromosomes or contigs from one or more Plasmodium species.
-        ]]>
-      </description>
-      <description includeProjects="ToxoDB">
-        <![CDATA[
-        Find <i>T. gondiii</i> chromosomes or contigs.
-        ]]>
-      </description>
-      <description includeProjects="ApiDB">
-        <![CDATA[
-        Find chromosomes or contigs from <i>Cryptosporidium</i>, <i>Plasmodium</i> and <i>Toxoplasma</i> species.
-        ]]>
+      <description includeProjects="PlasmoDB,ToxoDB,ApiDB">
+        Find genomic sequences (chromosomes or contigs) for one or more species.
       </description>
     </question>
     

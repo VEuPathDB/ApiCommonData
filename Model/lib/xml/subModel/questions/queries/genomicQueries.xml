@@ -2,7 +2,9 @@
 
    <!-- notes
 
-      - changeed 'sequence' param to 'sharedParams.genomicSequence'
+      - in SourceId query changed 'sequence' and 'contig' param to 'sharedParams.genomicSequence'
+
+      - in taxon query changed apidb's seqorganism to organism
 
       - assumes that NAsequence table has source_id
 
@@ -37,8 +39,7 @@
     
     <wsQuery name="SequenceBySourceId" includeProjects="ApiDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
-        <paramRef ref="genomicParams.sequenceId"/>
-        <!-- NOTE: params.contig for A -->
+        <paramRef ref="sharedParams.sgenomicSequence"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
@@ -52,40 +53,18 @@
         isCacheable="true">
         <paramRef ref="genomicParams.organism"/>
         <column name="source_id"/>
-        <sql includeProjects="CryptoDB">
+        <sql excludeProjects="ApiDB">
             <![CDATA[
             SELECT DISTINCT ens.source_id
-            FROM dots.externalNaSequence ens, sres.SequenceOntology so
-            WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon 
-              CONNECT BY parent_id = prior taxon_id
-              START WITH taxon_id in ($$rganisms$$))  
-            AND ens.sequence_ontology_id = so.sequence_ontology_id
-            AND (so.term_name = 'supercontig' OR so.term_name = 'contig')
-            ORDER BY ens.source_id
-           ]]>
-        </sql>
-        <sql includeProjects="PlasmoDB">
-            <![CDATA[
-            SELECT DISTINCT ens.source_id
-            FROM dots.externalNaSequence ens, sres.SequenceOntology so
+            FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
                CONNECT BY parent_id = prior taxon_id
                START WITH taxon_id in ($$organism$$))
                AND ens.sequence_ontology_id = so.sequence_ontology_id
-               AND (so.term_name = 'supercontig' OR so.term_name = 'contig')    
+              AND (so.term_name = 'chromosome' 
+                   OR so.term_name = 'supercontig'
+                   OR so.term_name = 'contig')
             ORDER BY ens.source_id           
-           ]]>
-        </sql>
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT DISTINCT vs.source_id
-            FROM dots.VirtualSequence vs, sres.SequenceOntology so
-            WHERE vs.taxon_id IN (SELECT taxon_id FROM sres.taxon      
-              CONNECT BY parent_id = prior taxon_id
-              START WITH taxon_id in ($$organism$$))
-              AND vs.sequence_ontology_id = so.sequence_ontology_id
-              AND (so.term_name = 'chromosome' OR so.term_name = 'supercontig')
-              ORDER BY vs.source_id
            ]]>
         </sql>
     </sqlQuery>
