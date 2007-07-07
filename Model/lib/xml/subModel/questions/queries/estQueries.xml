@@ -42,7 +42,7 @@
 
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           displayName="Genomic Location" isCacheable="true">
-        <paramRef ref="sharedParams.chromosome" default="chromosome 1"/>
+        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -65,7 +65,7 @@
                        || '(' || decode(is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS est_location
 	    FROM  apidb.ESTALIGNMENTGENESUMMARY
-            WHERE (target_sequence_source_id IN ($$chromosome$$)
+            WHERE (target_sequence_source_id IN ($$chromosomeOptional$$)
                    OR lower(target_sequence_source_id) = lower('$$genomicSequence$$'))
             AND target_start >= $$start_point$$
             AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
@@ -104,8 +104,8 @@
     <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
           displayName="ESTs by genomic location" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sharedParams.stoxopforganism"/>
-        <paramRef ref="sharedParams.chromosome" default="chromosome 1"/>
+        <paramRef ref="estParams.estOrganism"/>
+        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>

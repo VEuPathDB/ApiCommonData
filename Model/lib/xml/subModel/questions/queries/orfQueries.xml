@@ -5,8 +5,20 @@
       
       - why is there no orfs by location query? 
 
+      - orfOrganism: punting for now... (help!!)  (used to be the mysterious stoxopforganism)
+
+      - also punting on organism for mass spec.
+
+      - changed ms_assay param names
+
     -->
-    <sqlQuery name="OrfByOrfId" displayName="ID" isCacheable="true">
+    
+    <!-- ************************************************************ -->
+    <!-- ORF ID -->  
+    <!-- ************************************************************ -->
+ 
+    <sqlQuery name="OrfByOrfId" excludeProjects="ApiDB"
+              displayName="ID" isCacheable="true">
         <paramRef ref="orfParams.orf_id"/>
         <column name="source_id"/>
         <sql>
@@ -20,14 +32,29 @@
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="OrfsByLocation" displayName="ORFs by  genomic location" isCacheable="true">
+    <wsQuery name="OrfByOrfId" includeProjects="ApiDB"
+          displayName="ID" 
+          isCacheable='true' 
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="orfParams.orf_id"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>   
+
+    
+    <!-- ************************************************************ -->
+    <!-- Location -->  
+    <!-- ************************************************************ -->
+ 
+    <sqlQuery name="OrfsByLocation" excludeProjects="ApiDB"
+               isCacheable="true">
         <paramRef ref="sharedParams.chromosomeOptional"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <column name="source_id"/>
         <column name="orf_location"/>
-        <sql>
+        <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
 	    SELECT t.source_id,
                   enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
@@ -39,15 +66,53 @@
 	      AND t.sequence_ontology_id = so.sequence_ontology_id
 	      AND so.term_name = 'ORF'
 	      AND t.na_feature_id = nal.na_feature_id
-	      AND (enas.source_id = $$pfGenomicSequenceOrNot$$
+	      AND (enas.source_id = $$chromosomeOptional$$
                    OR lower(enas.source_id) = lower('$$genomicSequence$$'))
               AND nal.end_max >= $$start_point$$ 
               AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
-    </sqlQuery>
+        <sql includeProjects="ToxoDB"> <!-- not clear to me why this uses taaf -sdf -->
+            <![CDATA[
+	    SELECT m.source_id,
+	       vs.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
+	    FROM dots.VirtualSequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
+	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
+                 apidb.GenomicSequence gs
+	    WHERE m.na_feature_id = taaf.na_feature_id
+	    AND taaf.aa_sequence_id = tas.aa_sequence_id
+	    AND vs.na_sequence_id = m.na_sequence_id
+	    AND vs.source_id = gs.source_id
+	    AND (gs.source_id = '$$chromosomeOptional$$'
+                   OR gs.lowercase_source_id = lower('$$genomic_sequence$$'))
+	    AND m.sequence_ontology_id = so.sequence_ontology_id
+	    AND m.na_feature_id = nal.na_feature_id
+	    AND so.term_name = 'ORF'
+	    AND nal.end_max >= $$start_point$$  
+	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
 
-    <wsQuery name="OrfsByMotifSearch" displayName="Motif Search"
+           ]]>
+       </sql>
+     </sqlQuery>
+
+     <wsQuery name="OrfsByLocation" includeProjects="ApiDB"
+              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="orfParams.organism"/>
+        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
+        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="orf_location" width="32"/>
+    </wsQuery>
+
+
+    <!-- ************************************************************ -->
+    <!-- Motif search -->  
+    <!-- ************************************************************ -->
+ 
+    <wsQuery name="OrfsByMotifSearch" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression"/>
        <paramRef ref="orfParams.motif_organism"/>
@@ -57,7 +122,24 @@
        <wsColumn name="Sequence" width="3999"/>
     </wsQuery>
 
-    <wsQuery name="OrfsBySimilarity" displayName="BLAST"
+    <wsQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
+                processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="orfParams.motif_organism"/>
+
+       <wsColumn name="source_id" width="60" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+
+       <wsColumn name="Locations" width="3999"/>
+       <wsColumn name="MatchCount" width="10"/>
+       <wsColumn name="Sequence" width="3999"/>
+    </wsQuery>
+
+    <!-- ************************************************************ -->
+    <!-- BLAST -->  
+    <!-- ************************************************************ -->
+ 
+    <wsQuery name="OrfsBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
@@ -67,12 +149,150 @@
        <paramRef ref="sharedParams.-v"/>
        <paramRef ref="sharedParams.-b"/>
        <paramRef ref="sharedParams.-filter"/>
-
        <wsColumn name="source_id" width="60" wsName="Identifier"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <wsQuery name="OrfsBySimilarity" includeProjects="ApiDB"
+           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="orfParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+       <wsColumn name="source_id" width="60" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <!-- ************************************************************ -->
+    <!-- Mass Spec. -->  
+    <!-- ************************************************************ -->
+   
+    <!-- I GOT STUCK HERE  -->
+
+    <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB" 
+              isCacheable='true'>
+        <paramRef ref="orfParams.organism_with_ms"/>
+        <paramRef ref="orfParams.orf_ms_assay_1"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <column name="source_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+                select distinct misc.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
+                 dots.miscellaneous misc, sres.sequenceontology o,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$orf_ms_assay_1$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$orf_ms_assay_1$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = misc.na_feature_id
+            and misc.sequence_ontology_id = o.sequence_ontology_id
+            and o.term_name = 'ORF'
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+            ]]>
+       </sql>
+        <sql includeProjects="CryptoDB">
+            <![CDATA[
+                select distinct misc.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
+                 dots.miscellaneous misc, sres.sequenceontology o,
+                 dots.nasequence nas,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$orf_ms_assay_1$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$orf_ms_assay_1$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = misc.na_feature_id
+            and misc.sequence_ontology_id = o.sequence_ontology_id
+            and o.term_name = 'ORF'
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+            and misc.na_sequence_id = nas.na_sequence_id
+            and nas.taxon_id in 
+            (select taxon_id from sres.taxon
+             connect by parent_id = prior taxon_id
+             start with taxon_id in ($$parvumOrganism$$))
+            and misc.source_id not in 
+            ('AAEE01000003-2-916100-917650',
+             'AAEE01000002-1-148078-149013',
+             'AAEE01000002-1-1046305-1047540',
+             'AAEE01000003-3-881301-881756',
+             'AAEE01000001-3-426675-427121',
+             'AAEE01000004-3-483288-483752',
+             'AAEE01000003-2-1036973-1038130',
+             'AAEE01000001-1-392320-392592',
+             'AAEE01000009-1-131134-131337')
+           ]]>
+       </sql>
+    </sqlQuery>   
+
+    <wsQuery name="OrfsByMassSpec" includeProjects="ApiDB"
+             isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.cryptoparvumtoxoorganism"/>
+        <paramRef ref="orfParams.orf_ms_assay_1"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+       <wsColumn name="source_id" width="50" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
   </querySet>

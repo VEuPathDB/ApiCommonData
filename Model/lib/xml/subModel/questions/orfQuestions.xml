@@ -1,13 +1,12 @@
 <wdkModel>
 
-   <questionSet name="OrfQuestions">
+  <questionSet name="OrfQuestions">
 
+    <!--================================================-->
+    <!-- Location  -->
+    <!--===============================================-->
 
-<!--================================================-->
-<!-- Location  -->
-<!--===============================================-->
-
- <question name="OrfsByLocation"
+    <question name="OrfsByLocation"
               category="Genomic Position"
               displayName="Chromosomal Location"
               queryRef="OrfIds.OrfsByLocation"
@@ -28,37 +27,38 @@
              sorting="formatted_organism,orf_location_text asc"
       />
      
-             <summary>
-                 Find Orfs that are located in a specified region.
-             </summary>
+      <summary>
+          Find Orfs that are located in a specified genomic region.
+      </summary>
 
-             <description includeProjects="CryptoDB,ApiDB" >
-                 <![CDATA[
-                 Find genes within a given genomic region.<br>
-                 Enter the name of a contig (e.g. "AAEL01000057"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
-                 ]]>
-            </description>
+      <description includeProjects="CryptoDB,ApiDB" >
+       Find Orfs that are located in a specified genomic region.<p>
+       Enter the ID of a genomic sequence and start and end locations on that sequence.
+      </description>
 
-             <description includeProjects="ToxoDB" >
-                 <![CDATA[
-                 Find genes within a given genomic region.<br>
-                 Enter the name of a chromosome (e.g."VIIa") or a scaffold (e.g. "TGG_995305"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
-                 ]]>
-            </description>
+      <suggest includeProjects="ToxoDB"
+                sample="VIIa, TGG_995305"
+      />
 
-             <description includeProjects="PlasmoDB" >
-                 <![CDATA[
-                 Find genes within a given genomic region.<br>
-                 Enter the name of a chromosome (e.g. "Chromosome 1") or a contig (e.g. "MAL4"). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
-                 ]]>
-            </description>
+      <suggest includeProjects="PlasmoDB"
+                sample="Chromosome 1, MAL4, MALPY00019"
+      />
+
+      <suggest includeProjects="CryptoDB"
+                sample="AAEL01000057"
+      />
+
+      <suggest includeProjects="ApiDB"
+                sample="MAL4, MALPY00019, VIIa, TGG_995305, AAEL01000057"
+      />
     </question>
 
-<!--================================================-->
-<!-- Id -->
-<!--===============================================-->
 
- <question name="OrfByOrfId" 
+    <!--================================================-->
+    <!-- Id -->
+    <!--===============================================-->
+
+    <question name="OrfByOrfId" 
               displayName="Orfs by ID"
               queryRef="OrfIds.OrfsByOrfId" 
               summaryAttributesList="organism"
@@ -69,12 +69,11 @@
                sorting="organism asc"
              />
              <summary>
-             Find Orfs by Source Id.
+             Find ORFs by ID.
              </summary>
              <description>
-             <![CDATA[
-             Find Orfs by Source Id.
-             ]]>
+             Find open reading frames (ORFs) by ID.  The IDs are generated based on the order of the ORF on the
+             genomic sequence.  The ORF IDs are not reliable from release to release.
              </description>
     </question>
 
@@ -101,7 +100,7 @@
           />
 
               <summary>
-              Find open reading frames that have evidence of expression 
+             Find open reading frames that have evidence of expression 
              based on peptides identified in sporozoites by MS/MS analysis.
               </summary>
 
@@ -179,8 +178,7 @@ one time.
          <description>
            <![CDATA[
 
- Find genes whose protein product contains a motif pattern that 
-           you specify.
+         Find genes whose protein product contains a motif pattern that you specify.<p>
 
            Specify the pattern with a (Perl style) "regular expression".
            (Regular expressions are more powerful than PROSITE patterns.) For

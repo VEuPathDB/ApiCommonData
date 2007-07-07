@@ -1457,9 +1457,9 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByMassSpec" displayName="with mass-spec evidence"
               isCacheable="true">
         <paramRef ref="geneParams.mass_spec_stage"/>
-        <paramRef ref="geneParams.min_seq_coverage"/>
-        <paramRef ref="geneParams.min_span_count"/>
-        <paramRef ref="geneParams.min_spectrum_count"/>
+        <paramRef ref="sharedParams.min_seq_coverage"/>
+        <paramRef ref="sharedParams.min_span_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[

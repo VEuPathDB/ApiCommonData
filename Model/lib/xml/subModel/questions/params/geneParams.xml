@@ -1922,27 +1922,6 @@
         </enumList>
       </enumParam>
 
-        <stringParam name="min_seq_coverage"
-                     prompt="Minimum Percent Sequence Coverage"
-                     substitute="yes">
-            <help>Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%.</help>
-            <suggest default="0"/>
-        </stringParam>
-
-        <stringParam name="min_span_count"
-                     prompt="Minimum Number of Spans"
-                     substitute="yes">
-            <help>Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned</help>
-            <suggest default="2"/>
-        </stringParam>
-
-        <stringParam name="min_spectrum_count"
-                     prompt="Minimum Number of Spectra"
-                     substitute="yes">
-            <help>Use this parameter to set a minimum for the number of mass spectra found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
-            <suggest default="1"/>
-        </stringParam>
-
         <stringParam name="genbank_accession"
                      prompt="GenBank Accession Number"
                      substitute="yes">
