@@ -1,67 +1,87 @@
-<questionSet name="SnpQuestions"
-             displayName="Find SNPs by">
-     <description>
-         "Find SNPs"
-     </description>
+<wdkModel>
 
-     <question name="SnpBySourceId"
+  <questionSet name="SnpQuestions">
+
+    <!---------------------------------------------------->
+    <!-- ID -->
+    <!---------------------------------------------------->
+     <question name="SnpBySourceId" includeProjects="ApiDB,PlasmoDB,ToxoDB"
                displayName="ID"
                queryRef="SnpsBy.SnpBySourceId"
-	       summaryAttributesList=""
 	       recordClassRef="SnpRecordClasses.SnpRecordClass">
           <summary>
             Find SNPs by ID
           </summary>
+
 	  <description>
-	    <![CDATA[
-              Find SNPs by ID
-	    ]]>
+              Find SNPs by ID. 
 	  </description>
+
+          <suggest includeProjects="ApiDB"
+              sample="SNP_Ia_17864,CombinedSNP.MAL11.3002"
+          />
+          <suggest includeProjects="ToxoDB"
+              sample="SNP_Ia_17864"
+          />
+          <suggest includeProjects="PlasmoDB" 
+              sample="CombinedSNP.MAL11.3002"
+          />
+
+         <propertyList name="organism" includeProjects="PlasmoDB">
+             <value value="P. falciparum"/>
+         </propertyList>
+         <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gondii"/>
+         </propertyList>
+         <propertyList name="organism" includeProjects="ApiDB" >
+           <value value="P. falciparum"/>
+           <value value="T. gondii"/>
+         </propertyList>
       </question>
 
-      <question name="SnpsByGeneId"
+    <!---------------------------------------------------->
+    <!-- Gene ID -->
+    <!---------------------------------------------------->
+      <question name="SnpsByGeneId" includeProjects="ApiDB,PlasmoDB,ToxoDB"
               category="Gene"
               displayName="Gene ID"
               queryRef="SnpsBy.SnpsByGeneId"
-              summaryAttributesList="snp_location,linkedGeneId, ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
-              sortingAttributesList="snp_location asc"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,linkedGeneId, ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
+              sorting="snp_location asc"
+        />   
+
+        <propertyList name="organism" includeProjects="PlasmoDB">
+             <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gondii"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ApiDB" >
+           <value value="P. falciparum"/>
+           <value value="T. gondii"/>
+        </propertyList>
+
         <summary>
             Find SNPs that are located in a specified gene.
         </summary>
-	<description>
+
+	<description includeProjects="PlasmoDB">
             <![CDATA[
               Find SNPs that are contained within a gene.
               SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
             ]]>
         </description>
-        <dynamicAttributes>
-	     <columnAttribute name="ref_strain" displayName="Like Reference" align="center"/>
-	     <columnAttribute name="comp_strains" displayName="SNP Strains" align="center"/>
-	     <columnAttribute name="ref_allele" displayName="Reference allele" align="center"/>
-	     <columnAttribute name="comp_alleles" displayName="SNP allele" align="center"/>
-	     <columnAttribute name="comp_products" displayName="SNP Product" align="center"/>
-	     <columnAttribute name="ref_product" displayName="Reference Product" align="center"/>
-	     <columnAttribute name="phenotype" displayName="Phenotype" align="center"/>
-	</dynamicAttributes>
-    </question>
-
-    <question name="SnpsByLocation"
-              category="Genomic Position"
-              displayName="Chromosomal Location"
-              queryRef="SnpsBy.SnpsByLocation"
-              summaryAttributesList="snp_location,linkedGeneId,ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
-              sortingAttributesList="snp_location asc"
-              recordClassRef="SnpRecordClasses.SnpRecordClass">
-        <summary>
+	<description includeProjects="ApiDB">
             <![CDATA[
-            Find <i>P. falciparum</i> SNPs by chromosomal location
-          ]]>
-        </summary>
-	<description>
+              Find SNPs that are contained within a gene. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.<br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
+            ]]>
+        </description>
+	<description includeProjects="ToxoDB">
             <![CDATA[
-              Find <i>P. falciparum</i> SNPs by chromosomal location relative to P. falciparum.
-              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+              Find SNPs between any two strains that are contained within a gene.
+	      <br> SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
             ]]>
         </description>
         <dynamicAttributes>
@@ -75,18 +95,85 @@
 	</dynamicAttributes>
     </question>
 
-    <question name="SnpsByAlleleFrequency"
+    <!---------------------------------------------------->
+    <!-- Location  -->
+    <!---------------------------------------------------->
+    <question name="SnpsByLocation" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+              category="Genomic Position"
+              displayName="Chromosomal Location"
+              queryRef="SnpsBy.SnpsByLocation"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,linkedGeneId,ref_strain,ref_allele,ref_product,comp_strains,comp_alleles,comp_products,position_in_protein,phenotype"
+              sorting="snp_location asc"
+        />
+        <summary>
+            <![CDATA[
+            Find SNPs by chromosomal location
+          ]]>
+        </summary>
+
+        <propertyList name="organism" includeProjects="PlasmoDB">
+             <value value="P. falciparum"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value value="T. gondii"/>
+        </propertyList>
+        <propertyList name="organism" includeProjects="ApiDB" >
+           <value value="P. falciparum"/>
+           <value value="T. gondii"/>
+        </propertyList>
+
+	<description includeProjects="PlasmoDB">
+            <![CDATA[
+              Find <i>P. falciparum</i> SNPs by chromosomal location relative to P. falciparum.
+              SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
+            ]]>
+        </description>
+	<description includeProjects="ToxoDB">
+            <![CDATA[
+              Find SNPs between any two strains by chromosomal location.
+	      <br> SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
+            ]]>
+        </description>
+	<description includeProjects="ApiDB">
+            <![CDATA[
+              Find SNPs by chromosomal location. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>. <br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="ref_strain" displayName="Like Reference" align="center"/>
+	     <columnAttribute name="comp_strains" displayName="SNP Strains" align="center"/>
+	     <columnAttribute name="ref_allele" displayName="Reference allele" align="center"/>
+	     <columnAttribute name="comp_alleles" displayName="SNP allele" align="center"/>
+	     <columnAttribute name="comp_products" displayName="SNP Product" align="center"/>
+	     <columnAttribute name="ref_product" displayName="Reference Product" align="center"/>
+	     <columnAttribute name="phenotype" displayName="Phenotype" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+    <!---------------------------------------------------->
+    <!--  -->
+    <!---------------------------------------------------->
+    <question name="SnpsByAlleleFrequency" includeProjects="ApiDB,PlasmoDB"
               category="Other Attributes"
               displayName="Allele Frequency"
               queryRef="SnpsBy.SnpsByAlleleFrequency"
-              summaryAttributesList="snp_location,major_allele_count,major_strains,major_allele,major_product,minor_allele_count,minor_strains,minor_alleles,minor_products,linkedGeneId,position_in_protein"
-              sortingAttributesList="snp_location asc"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,major_allele_count,major_strains,major_allele,major_product,minor_allele_count,minor_strains,minor_alleles,minor_products,linkedGeneId,position_in_protein"
+              sorting="snp_location asc"
+        />
         <summary>
             <![CDATA[
-            Find <i>P. falciparum</i> SNPs by the frequency of the major and minor alleles
+            Find SNPs by the frequency of the major and minor alleles
             ]]>
         </summary>
+
+        <propertyList name="organism">
+             <value value="P. falciparum"/>
+        </propertyList>
+
 	<description>
             <![CDATA[
               Find SNPs by specifying the frequency of the major and minor alleles.
