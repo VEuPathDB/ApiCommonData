@@ -2055,6 +2055,23 @@ sub calculateExpressionStats {
 
 }
 
+sub InsertOntologyEntryFromMO {
+  my ($mgr, $extDbName, $extDbRlsVer) = @_;
+
+  my $signal = "loadOntologyEntryFrom" . $extDbName;
+  $signal =~ s/[\s\(\)]//g;
+
+  return if $mgr->startStep("Loading Study.OntologyEntry from:  $extDbName", $signal);
+
+  my $args = "--externalDatabase $extDbName --externalDatabaseRls $extDbRlsVer";
+
+  $mgr->runPlugin($signal,
+                  "GUS::Community::Plugin::LoadOntologyEntryFromMO",
+                  $args, 
+                  "Loading Study.OntologyEntry from:  $extDbName");
+}
+
+
 sub InsertExpressionProfileFromProcessedResult {
   my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc) = @_;
 
