@@ -1,5 +1,17 @@
-<querySet name="SnpsBy">
-      <sqlQuery name="SnpBySourceId" displayName="ID" isCacheable="true">
+<wdkModel>
+
+  <!--  notes
+
+    - have to deal w/ organism param
+
+  -->
+
+  <querySet name="SnpsBy">
+
+    <!---------------------------------------------------->
+    <!-- ID -->
+    <!---------------------------------------------------->
+      <sqlQuery name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB"  isCacheable="true">
           <paramRef ref="snpParams.snp_id"/>
 	  <column name="source_id"/>
 	  <sql>
@@ -11,7 +23,20 @@
 	  </sql>
       </sqlQuery>
 
-      <sqlQuery name="SnpsByGeneId" displayName="SNPs by Gene ID" isCacheable="true">
+     <wsQuery name="SnpBySourceId" includeProjects="ApiDB" 
+              displayName="ID" 
+              isCacheable="true" 
+              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+          <paramRef ref="snpParams.snp_id"/>
+	  <wsColumn name="source_id" width="50" wsName="source_id"/>
+          <wsColumn name="project_id" width="32" wsName="project_id"/>
+      </wsQuery>
+
+    <!---------------------------------------------------->
+    <!-- Gene ID -->
+    <!---------------------------------------------------->
+      <sqlQuery name="SnpsByGeneId"  includeProjects="PlasmoDB,ToxoDB"
+             isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <paramRef ref="sharedParams.snp_strain_a"/>
         <paramRef ref="sharedParams.snp_strain_m"/>
@@ -25,7 +50,56 @@
         <column name="prot_pos"/>
         <column name="ref_product"/>
         <column name="comp_products"/>
-        <sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+SELECT snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a = snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as ref_strain,              
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as comp_strains 
+FROM                 
+  (SELECT hits.source_id as source_id,nas.source_id || ':' || trim(to_char(l.start_min,'999,999,999')) as snp_location,                               
+    sva.strain as ref_strain, svb.strain as comp_strain,                               
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele)                                  
+    ELSE sva.allele END as ref_allele,                 
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(svb.allele)                                 
+    ELSE svb.allele END as comp_all,                 
+    CASE WHEN sva.product = svb.product then 'syn' WHEN sva.product != svb.product then 'non-syn' ELSE 'non-coding' END as phenotype,                               
+    sva.product as ref_product, svb.product as comp_product,                           
+    hits.position_in_protein as prot_pos,
+    sva.allele as allele_a, svb.allele as allele_b, svb.strain as strain_b
+  FROM   dots.SeqVariation sva, dots.SeqVariation svb, dots.NALocation l,                               
+    dots.VirtualSequence nas,dots.NALocation gene_loc,
+    (SELECT distinct gf.na_feature_id as gene_na_feature_id, gf.na_sequence_id, sf.na_feature_id as snp_na_feature_id,
+      sf.position_in_protein,sf.source_id
+     FROM dots.GeneFeature gf, dots.SnpFeature sf, dots.SeqVariation isva, dots.SeqVariation isvb, 
+        sres.ExternalDatabase ed,sres.ExternalDatabaseRelease edr,apidb.GeneId gi, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+      WHERE ds.dataset_id = $$ds_gene_ids$$
+      AND gi.id = lower(ds.dataset_value)
+      AND gf.source_id = gi.gene 
+      AND gf.na_feature_id = sf.parent_id                               
+      AND edr.external_database_release_id = sf.external_database_release_id                               
+      AND edr.external_database_id = ed.external_database_id                               
+      AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford') 
+      AND sf.na_feature_id = isva.parent_id                               
+      AND sf.na_feature_id = isvb.parent_id                               
+      AND isva.strain = '$$snp_strain_a$$'                               
+      AND isvb.strain in ($$snp_strain_m$$)
+      AND isva.allele != isvb.allele ) hits
+  WHERE hits.na_sequence_id = nas.na_sequence_id
+    AND hits.gene_na_feature_id = gene_loc.na_feature_id
+    AND hits.snp_na_feature_id = l.na_feature_id
+    AND hits.snp_na_feature_id = sva.parent_id 
+    AND hits.snp_na_feature_id = svb.parent_id 
+    AND sva.strain = '$$snp_strain_a$$'                               
+    AND svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)                             
+    ) snpq                              
+GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+           ]]>
+       </sql>
+
+        <sql includeProjects="PlasmoDB">
             <![CDATA[
 select snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
@@ -75,8 +149,30 @@ group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-       <sqlQuery name="SnpsByLocation" displayName="SNPs by chromosomal location" isCacheable="true">
-          <paramRef ref="sharedParams.chromosome" multipPick="false"/>
+    <wsQuery name="SnpsByGeneId" includeProjects="ApiDB" 
+             isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.ds_gene_ids"  default="PF11_0344"/>
+        <paramRef ref="params.snp_strain_a"/>
+        <paramRef ref="params.snp_strain_m"/>
+        <paramRef ref="params.signature"/>
+        <wsColumn name="source_id"  width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="snp_location" width="32"/>
+        <wsColumn name="ref_strain" width="32"/>
+        <wsColumn name="comp_strains" width="32"/>
+        <wsColumn name="ref_allele" width="32"/>
+        <wsColumn name="comp_alleles" width="32"/>
+        <wsColumn name="phenotype" width="32"/>
+        <wsColumn name="prot_pos" width="32"/>
+        <wsColumn name="ref_product" width="32"/>
+        <wsColumn name="comp_products" width="32"/> 
+    </wsQuery>
+
+    <!---------------------------------------------------->
+    <!-- Location -->
+    <!---------------------------------------------------->
+    <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB" isCacheable="true">
+          <paramRef ref="sharedParams.chromosome" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
           <paramRef ref="sharedParams.snp_strain_a"/>
@@ -92,7 +188,54 @@ group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
           <column name="prot_pos"/>
           <column name="ref_product"/>
           <column name="comp_products"/>
-        <sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+SELECT snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
+  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a = snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as ref_strain,              
+  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as comp_strains 
+FROM                 
+  (SELECT hits.source_id as source_id,hits.seq_source_id || ':' || trim(to_char(hits.start_min,'999,999,999')) as snp_location,                               
+    sva.strain as ref_strain, svb.strain as comp_strain,                               
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele)                                  
+    ELSE sva.allele END as ref_allele,                 
+    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(svb.allele)                                 
+    ELSE svb.allele END as comp_all,                 
+    CASE WHEN sva.product = svb.product then 'syn' WHEN sva.product != svb.product then 'non-syn' ELSE 'non-coding' END as phenotype,                               
+    sva.product as ref_product, svb.product as comp_product,                           
+    hits.position_in_protein as prot_pos,
+    sva.allele as allele_a, svb.allele as allele_b, svb.strain as strain_b, gf.source_id as gene
+  FROM  dots.SeqVariation sva, dots.SeqVariation svb, dots.NALocation gene_loc, dots.GeneFeature gf,
+    (SELECT distinct isf.na_feature_id as na_feature_id, isf.source_id, isf.parent_id,
+      nas.source_id as seq_source_id,l.start_min,isf.position_in_protein
+     FROM sres.ExternalDatabase ed,sres.ExternalDatabaseRelease edr,dots.SeqVariation isva, dots.NALocation l,
+          dots.VirtualSequence nas, dots.SeqVariation isvb, dots.SnpFeature isf    
+     WHERE nas.source_id = '$$chromosome_single$$'
+      AND isf.na_sequence_id = nas.na_sequence_id
+      AND edr.external_database_release_id = isf.external_database_release_id
+      AND edr.external_database_id = ed.external_database_id   
+      AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford')
+      AND isf.na_feature_id = l.na_feature_id
+      AND l.end_max >= $$start_point$$
+      AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+      AND isf.na_feature_id = isva.parent_id                               
+      AND isf.na_feature_id = isvb.parent_id                               
+      AND isva.strain = '$$snp_strain_a$$'                               
+      AND isvb.strain in ($$snp_strain_m$$)
+      AND isva.allele != isvb.allele ) hits 
+  WHERE  hits.parent_id = gf.na_feature_id(+)
+    AND gf.na_feature_id = gene_loc.na_feature_id(+)    
+    AND hits.na_feature_id = sva.parent_id 
+    AND hits.na_feature_id = svb.parent_id 
+    AND sva.strain = '$$snp_strain_a$$'
+    AND svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)
+    ) snpq                              
+GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+           ]]>
+       </sql>
+        <sql includeProjects="PlasmoDB">
             <![CDATA[
 select snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
@@ -141,7 +284,34 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
        </sql>
     </sqlQuery>
 
- <sqlQuery name="SnpsByAlleleFrequency" displayName="SNPs by chromosomal location" isCacheable="true">
+    <wsQuery name="SnpsByLocation" includeProjects="ApiDB"
+             isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
+         <!-- <paramRef ref="params.chromosome_single"/>--> 
+          <paramRef ref="params.toxopforganism"/>
+          <paramRef ref="sharedParams.chromosome" multiPick="false"/>
+          <paramRef ref="sharedParams.start_point"/>
+          <paramRef ref="sharedParams.end_point"/>
+          <paramRef ref="sharedParams.snp_strain_a"/>
+          <paramRef ref="sharedParams.snp_strain_m"/>
+          <wsColumn name="source_id" width="50" wsName="source_id"/>
+          <wsColumn name="project_id" width="32" wsName="project_id"/>
+          <wsColumn name="gene" width="32"/>
+          <wsColumn name="snp_location" width="32"/>
+          <wsColumn name="ref_strain" width="32"/>
+          <wsColumn name="comp_strains" width="32"/>
+          <wsColumn name="ref_allele" width="32"/>
+          <wsColumn name="comp_alleles" width="32"/>
+          <wsColumn name="phenotype" width="32"/>
+          <wsColumn name="prot_pos" width="32"/>
+          <wsColumn name="ref_product" width="32"/>
+          <wsColumn name="comp_products" width="32"/>
+      </wsQuery>
+
+    <!---------------------------------------------------->
+    <!-- ID -->
+    <!---------------------------------------------------->
+    <sqlQuery name="SnpsByAlleleFrequency" includeProjects="PlasmoDB" 
+          isCacheable="true">
         <paramRef ref="snpParams.major_allele_min"/>
         <paramRef ref="snpParams.major_allele_max"/>
         <paramRef ref="snpParams.minor_allele_min"/>
@@ -186,4 +356,18 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
        </sql>
     </sqlQuery>
 
-</querySet>
+    <wsQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
+             isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="params.pforganism"/>
+        <paramRef ref="params.major_allele_min"/>
+        <paramRef ref="params.major_allele_max"/>
+        <paramRef ref="params.minor_allele_min"/>
+        <paramRef ref="params.minor_allele_max"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+<!--        <wsColumn name="major_strains" width="200"/>-->
+    </wsQuery>
+
+  </querySet>
+
+</wdkModel>
