@@ -1,0 +1,25 @@
+<wdkModel>
+
+  <paramSet> 
+      <flatVocabParam name="organism"
+                     queryRef="organismVQ.all"
+                     prompt="Organism"
+                     multiPick="false">
+      </flatVocabParam>
+  </paramSet> 
+
+  <querySet name="organismVQ">
+    <sqlQuery name="withChromosomes" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="withChromosomes" includeProjects="ApiDB">
+    </sqlQuery>
+
+    <sqlQuery name="crypto-toxo" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="crypto-toxo" includeProjects="ApiDB">
+    </sqlQuery>
+
+  </querySet>
+</wdkModel>

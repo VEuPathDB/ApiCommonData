@@ -9,7 +9,6 @@
 
   <querySet name="EstIds">
 
-
     <!------------------------------------------------------------------>
     <!-- Source id  -->
     <!------------------------------------------------------------------>
@@ -41,7 +40,7 @@
     <!------------------------------------------------------------------>
 
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
-          displayName="Genomic Location" isCacheable="true">
+          isCacheable="true">
         <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -102,9 +101,8 @@
     </sqlQuery>
 
     <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
-          displayName="ESTs by genomic location" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="estParams.estOrganism"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
         <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -124,7 +122,7 @@
     <!------------------------------------------------------------------>
 
     <sqlQuery name="EstsByLibrary" excludeProjects="ApiDB" 
-              displayName="Library Name" isCacheable='true'>
+             isCacheable='true'>
         <paramRef ref="sharedParams.libraryId"/>
         <column name="source_id" />
         <sql>
@@ -138,7 +136,7 @@
     <wsQuery name="EstsByLibrary" includeProjects="ApiDB" 
              displayName="Library Name" isCacheable='true' 
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
-        <paramRef ref="estParams.organism" />
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
         <paramRef ref="sharedParams.libraryId"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -150,7 +148,7 @@
     <!------------------------------------------------------------------>
 
     <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
-          displayName="ESTs that overlap genes" isCacheable='true'>
+            isCacheable='true'>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="sharedParams.inNotIn"/>
@@ -227,8 +225,8 @@
 
 
     <wsQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
-       displayName="ESTs that overlap genes" isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="estParams.organism"/>
+       isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="sharedParams.inNotIn"/>
@@ -245,7 +243,7 @@
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="estParams.BlastDatabaseType"/>
-       <paramRef ref="estParams.BlastDatabaseOrganism"/>
+       <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>
@@ -263,7 +261,7 @@
     <wsQuery name="EstsBySimilarity" includeProjects="ApiDB"
          displayName="BLAST ESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="estParams.BlastDatabaseType"/>
-       <paramRef ref="estParams.BlastDatabaseOrganism"/>
+       <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>

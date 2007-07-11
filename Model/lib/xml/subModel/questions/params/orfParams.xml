@@ -1,5 +1,11 @@
 <wdkModel>
 
+  <!-- notes
+
+     - should ms_assay param be a controlled vocab pulled from the database?
+
+  -->
+
   <paramSet name="orfParams">
 
     <!---------------------------------------------------->
@@ -29,13 +35,13 @@
     <!---------------------------------------------------->
       <enumParam name="BlastDatabaseType"
                      prompt="Target"
-                     translated CDS, Protein)" multiPick="false"
-                     help="The type of the target database (eg CDS,
+                     multiPick="false">
         <help>
            <text>
              Organism(s) from which the sequences in the BLAST database originated
            </text>
         </help>
+        <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumList>
           <enumValue term="ORF (Protein)"
                  internal=   "orfs"/>
@@ -43,35 +49,65 @@
       </enumParam>
 
     <!---------------------------------------------------->
-    <!-- motif organism -->
+    <!-- mass spec assay -->
     <!---------------------------------------------------->
-      <enumParam name="motif_organism"
-                        prompt="Organism"
-			multiPick="true"
-        <help>
-           <text>
-             Choose one or more organisms to search with the given motif
-           </text>
-        </help>
+    <enumParam name="ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB"
+             prompt="Assay Type"
+             multiPick="true"
+             visible="true">
+        <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumList>
-          <enumValue term="P. falciparum"
-                 internal=   "Pfalciparum/PfalciparumOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. vivax"
-                 internal=   "Pvivax/PvivaxOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. yoelii"
-                 internal=   "Pyoelii/PyoeliiOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. berghei"
-                 internal=   "Pberghei/PbergheiOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. chabaudi"
-                 internal=   "Pchabaudi/PchabaudiOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. gallinaceum"
-                 internal=   "Pgallinaceum/PgallinaceumOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. knowlesi"
-                 internal=   "Pknowlesi/PknowlesiOrfs_plasmoDB-5.3.fasta"/>
-          <enumValue term="P. reichenowi"
-                 internal=   "Preichenowi/PreichenowiOrfs_plasmoDB-5.3.fasta"/>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <term><![CDATA[1D Gel LC-MS/MS<sup>&#182;</sup> (C.p.)]]></term>
+            <internal>'Wastling MassSpec 1D Gel LC-MS/MS'</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <term><![CDATA[2D Gel LC-MS/MS<sup>&#182;</sup> (C.p.)]]></term>
+            <internal>'Wastling MassSpec 2D Gel LC-MS/MS'</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <term><![CDATA[MudPit Soluble fractions<sup>&#182;</sup> (C.p.)]]></term>
+            <internal>'Wastling MassSpec MudPit Soluble'</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <term><![CDATA[MudPit Insoluble fractions<sup>&#182;</sup> (C.p.)]]></term>
+            <internal>'Wastling MassSpec MudPit Insoluble'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[1-D SDS PAGE<sup>1</sup> (T.g)]]></term>
+            <internal>'Wastling 1-D SDS PAGE'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[1-D SDS PAGE Soluble Fraction<sup>1</sup> (T.g)]]></term>
+            <internal>'Wastling 1-D SDS PAGE Soluble'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[1-D SDS PAGE Insoluble Fraction<sup>1</sup> (T.g)]]></term>
+            <internal>'Wastling 1-D SDS PAGE Insoluble'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[MudPIT Insoluble Fraction<sup>1</sup> (T.g)]]></term>
+            <internal>'Wastling MudPIT Soluble'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[MudPIT Soluble Fraction<sup>1</sup> (T.g)]]></term>
+            <internal>'Wastling MudPIT Soluble'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[Rhoptry Fraction<sup>1*</sup> (T.g)]]></term>
+            <internal>'Wastling Rhoptry''<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[Conoid-enriched Fraction<sup>2</sup> (T.g)]]></term>
+            <internal>'Murray Conoid-enriched Fraction'<internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <term><![CDATA[Conoid-depleted Fraction<sup>2</sup> (T.g)]]></term>
+            <internal>'Murray Conoid-depleted Fraction'<internal>
+          </enumValue>
         </enumList>
       </enumParam>
+
   </paramSet>
 </wdkModel>
 

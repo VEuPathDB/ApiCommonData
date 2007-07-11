@@ -5,10 +5,6 @@
       
       - why is there no orfs by location query? 
 
-      - orfOrganism: punting for now... (help!!)  (used to be the mysterious stoxopforganism)
-
-      - also punting on organism for mass spec.
-
       - changed ms_assay param names
 
     -->
@@ -97,7 +93,7 @@
 
      <wsQuery name="OrfsByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="orfParams.organism"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
         <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -115,7 +111,7 @@
     <wsQuery name="OrfsByMotifSearch" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression"/>
-       <paramRef ref="orfParams.motif_organism"/>
+       <paramRef ref="orfSimilarityParams.motif_organism"/>
        <wsColumn name="source_id" width="60" wsName="GeneID"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
@@ -125,7 +121,7 @@
     <wsQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
                 processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.motif_expression"/>
-       <paramRef ref="orfParams.motif_organism"/>
+       <paramRef ref="orfSimilarityParams.motif_organism"/>
 
        <wsColumn name="source_id" width="60" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -142,7 +138,7 @@
     <wsQuery name="OrfsBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
-       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>
@@ -159,7 +155,7 @@
     <wsQuery name="OrfsBySimilarity" includeProjects="ApiDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
-       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>
@@ -178,11 +174,9 @@
     <!-- Mass Spec. -->  
     <!-- ************************************************************ -->
    
-    <!-- I GOT STUCK HERE  -->
-
     <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB" 
               isCacheable='true'>
-        <paramRef ref="orfParams.organism_with_ms"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.crypto-toxo"/>
         <paramRef ref="orfParams.orf_ms_assay_1"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
@@ -287,7 +281,7 @@
 
     <wsQuery name="OrfsByMassSpec" includeProjects="ApiDB"
              isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.cryptoparvumtoxoorganism"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.crypto-toxo"/>
         <paramRef ref="orfParams.orf_ms_assay_1"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
