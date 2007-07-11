@@ -1988,12 +1988,12 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByESTOverlap" 
 			excludeProjects="ApiDB">
        <paramRef ref="generalParams.organism"/>
-       <paramRef ref="geneParams.libraryId"/>
-       <paramRef ref="geneParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
        <column name="source_id" />
        <column name="number_of_ests" />
        <sql>
@@ -2017,12 +2017,12 @@ order by project_id,sns2.source_id
 				processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"
 				includeProjects="ApiDB">
 	       <paramRef ref="generalParams.organism"/>
-	       <paramRef ref="geneParams.libraryId"/>
-	       <paramRef ref="geneParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="geneParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="geneParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="geneParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="geneParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+	       <paramRef ref="sharedParams.libraryId"/>
+	       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
+	       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+	       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+	       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+	       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
 	       <wsColumn name="source_id" width="32" wsName="source_id"/>
 	     <wsColumn name="project_id" width="32" wsName="project_id"/>
 	<wsColumn name="number_of_ests" width="32" wsName="number_of_ests"/>
