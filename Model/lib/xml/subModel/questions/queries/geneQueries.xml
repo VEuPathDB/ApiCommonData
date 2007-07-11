@@ -32,7 +32,7 @@
 
     <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="geneParams.ds_gene_ids"/>
+        <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
         <sql includeProjects="ToxoDB">
             <![CDATA[
@@ -59,8 +59,8 @@
 
     <wsQuery name="GeneByLocusTag" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.ds_gene_ids"/>
-        <paramRef ref="geneParams.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids"/>
+        <paramRef ref="sharedParams.signature"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
      </wsQuery>
@@ -229,8 +229,8 @@
              isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="generalParams.organism"/>
-        <paramRef ref="geneParams.tm_min"/>
-        <paramRef ref="geneParams.tm_max"/>
+        <paramRef ref="geneParams.min_tm"/>
+        <paramRef ref="geneParams.max_tm"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>   
@@ -393,14 +393,14 @@
 
     <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
-       <paramRef ref="geneParams.BlastQueryType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
-       <paramRef ref="geneParams.BlastQuerySequence"/>
-       <paramRef ref="geneParams.-e"/>
-       <paramRef ref="geneParams.-v"/>
-       <paramRef ref="geneParams.-b"/>
-       <paramRef ref="geneParams.-filter"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="geneParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
@@ -410,14 +410,14 @@
 
     <wsQuery name="GenesBySimilarity" includeProjects="ApiDB" 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseType"/>
-       <paramRef ref="GeneBlastDbParams.BlastDatabaseOrganism"/>
-       <paramRef ref="geneParams.BlastQueryType"/>      
-       <paramRef ref="geneParams.BlastQuerySequence"/> 
-       <paramRef ref="geneParams.-e"/>
-       <paramRef ref="geneParams.-v"/>
-       <paramRef ref="geneParams.-b"/>
-       <paramRef ref="geneParams.-filter"/>
+       <paramRef ref="geneParams.BlastDatabaseType"/>
+       <paramRef ref="generalParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>      
+       <paramRef ref="sharedParams.BlastQuerySequence"/> 
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="TabularRow" width="3000"/>
@@ -472,8 +472,8 @@
 
     <wsQuery name="GenesByMotifSearch" excludeProjects="ApiDB"  
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
-       <paramRef ref="geneParams.motif_expression"/>
-       <paramRef ref="geneParams.motif_organism"/>
+       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="generalParams.organism"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
@@ -482,12 +482,10 @@
 
     <wsQuery name="GenesByMotifSearch" includeProjects="ApiDB"  
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.motif_organism"/>
-       <paramRef ref="geneParams.motif_expression"/>
-
+       <paramRef ref="generalParams.motif_organism"/>
+       <paramRef ref="sharedParams.motif_expression"/>
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
-
        <wsColumn name="Locations" width="4000"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="4000"/>
@@ -501,7 +499,6 @@
      		processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin"
 			excludeProjects="ApiDB">
        <paramRef ref="geneParams.text_expression"/>
-       <paramRef ref="geneParams.case_independent" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.datasets"/>
@@ -516,7 +513,6 @@
             <paramRef ref="geneParams.datasets"/>
             <paramRef ref="geneParams.text_expression"/>
             <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
-            <paramRef ref="geneParams.case_independent" groupRef="paramGroups.advancedParams"/>
             <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
             <wsColumn name="project_id" width="32" wsName="project_id"/>
             <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -572,7 +568,7 @@ AND ssg2.sequence_id = sns2.na_sequence_id
 AND sns2.taxon_id IN
        (select taxon_id from sres.taxon
        connect by parent_id = prior taxon_id
-       start with taxon_id in ($$localorganism$$)) 
+       start with taxon_id in ($$organism$$)) 
 AND ti.name = 'SplicedNASequence'  
 AND sns2.external_database_release_id=extr.external_database_release_id 
 AND extr.external_database_id=ext.external_database_id  
@@ -1613,7 +1609,7 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
               displayName="by genomic location" isCacheable="true">
-        <paramRef ref="geneParams.enum_Chromosome"/>
+        <paramRef ref="sharedParams.chromosome"/>
         <paramRef ref="geneParams.genomicSequence"/>
         <paramRef ref="geneParams.start_point"/>
         <paramRef ref="geneParams.end_point"/>

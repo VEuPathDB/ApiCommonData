@@ -21,8 +21,18 @@
                      prompt="Gene ID"
                      substitute="yes">
             <help>Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator.</help>
-           <suggest sample="PF11_0344, PY01656, Pv092275"
+           <suggest includeProjects="PlasmoDB"
+					sample="PF11_0344, PY01656, Pv092275"
                     default="PF11_0344"/>
+           <suggest includeProjects="CryptoDB"
+					sample="cgd6_690"
+                    default="cgd6_690"/>
+           <suggest includeProjects="ToxoDB"
+					sample="49.m00014,65.m01111"
+                    default="49.m00014"/>
+           <suggest includeProjects="ApiDB"
+					sample="PF11_0344, cgd6_690, 65.m01111"
+                    default="cgd6_690"/>
         </stringParam>
 
 
@@ -65,7 +75,7 @@
         <stringParam name="num_exons_gte"
                      prompt="Exon Count >="
                      substitute="yes">
-            <help>Which genes in &#60;i&#62; Plasmodium &#60;/i&#62; are annotated as containing introns? One easy way to do this search is to look for genes with more than one annotated exon. Enter a minimum of exons you would like to search for as an integer, e.g. '3'.</help>
+            <help>Which genes are annotated as containing introns? One easy way to do this search is to look for genes with more than one annotated exon. Enter a minimum of exons you would like to search for as an integer, e.g. '3'.</help>
             <suggest sample="(Example: 2)"
                      default="2"/>
         </stringParam>
@@ -74,7 +84,7 @@
                      prompt="Exon Count &lt;="
                      substitute="yes">
             <help>Enter a maximum number of exons you would like to search for as an integer, e.g. '3'.</help>
-            <suggest sample="(Example: 2)"
+            <suggest sample="(Example: 20)"
                      default="20"/>
         </stringParam>
     <!------------------------------------------------------------------>
@@ -153,8 +163,9 @@
             <suggest sample="(Example: )"
                      default="90"/>
         </stringParam>
+
     <!------------------------------------------------------------------>
-    <!--  -->  
+    <!-- Transmembrane parameters -->  
     <!------------------------------------------------------------------>
 
         <stringParam name="min_tm"
@@ -271,8 +282,9 @@
                  internal=   "false"/>
         </enumList>
       </enumParam>
+
     <!------------------------------------------------------------------>
-    <!--  -->  
+    <!--  Gene Type Parameters-->  
     <!------------------------------------------------------------------>
 
       <flatVocabParam name="geneType"
@@ -303,6 +315,7 @@
                  internal=   "1"/>
         </enumList>
       </enumParam>
+
     <!------------------------------------------------------------------>
     <!--  -->  
     <!------------------------------------------------------------------>
@@ -323,13 +336,13 @@
         </stringParam>
 
     <!------------------------------------------------------------------>
-    <!--  -->  
+    <!-- Go Term Parameter -->  
     <!------------------------------------------------------------------>
 
         <stringParam name="go_term"
                      prompt="GO Term or GO ID">
             <help>Enter a GO ID (e.g. \"GO:0003824\") or GO Term (e.g. \"catalytic activity\").  Asterisks can be used as wildcard characters in a GO Term (e.g. \"*kinase*\""
-            <suggest default="catalytic activity</help>
+            <suggest default="catalytic activity"</help>
                      />
         </stringParam>
 
@@ -376,11 +389,13 @@
             <suggest default="1"/>
         </stringParam>
 
+<!-- Does not appear to belong to this query
         <stringParam name="max_results"
                      prompt="Maximum number of results">
             <help>Upper limit on the number of results returned by the query</help>
             <suggest default="5"/>
         </stringParam>
+-->
 
     <!------------------------------------------------------------------>
     <!-- BLAST -->  
@@ -1023,52 +1038,6 @@
                  internal=   "80"/>
           <enumValue term=">= 90th percentile"
                  internal=   "90"/>
-        </enumList>
-      </enumParam>
-
-      <enumParam name="pfGenomicSequence"
-                     prompt="Genomic Sequence"
-                     multiPick="false">
-        <help>
-           <text>
-             Results will be sorted ascending or descending order
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-          <enumValue term="mitochondrial genome"
-                 internal=   "'AJ276844'"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "'X95275'"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "'X95276'"/>
         </enumList>
       </enumParam>
 
@@ -2334,7 +2303,7 @@
 
 
     <!------------------------------------------------------------------>
-    <!--  -->
+    <!-- Text Expression Parameter -->
     <!------------------------------------------------------------------>
 
         <stringParam name="text_expression"
@@ -2343,22 +2312,6 @@
             <suggest sample="(Example: membrane)"
                      default="membrane"/>
         </stringParam>
-
-      <enumParam name="case_independent"
-                     prompt="Ignore capitalization?"
-                     multiPick="false">
-        <help>
-           <text>
-             Use this parameter to control whether to include text that matches except for capitalization (e.g. treat 'DNA', 'Dna', and 'dna' as all equal).
-           </text>
-        </help>
-        <enumList>
-          <enumValue term="yes"
-                 internal=   "-i"/>
-          <enumValue term="no"
-                 internal=   " "/>
-        </enumList>
-      </enumParam>
 
       <enumParam name="text_fields"
                      prompt="Fields"
@@ -2370,21 +2323,22 @@
         </help>
         <enumList>
           <enumValue term="Gene product"
-                 internal=   "PlasmoDB_product.txt"/>
+                 internal=   "product.txt"/>
           <enumValue term="Gene notes"
-                 internal=   "PlasmoDB_notes.txt"/>
+                 internal=   "notes.txt"/>
           <enumValue term="User comments"
-                 internal=   "PlasmoDB_comments.txt"/>
+                 internal=   "comments.txt"/>
           <enumValue term="Protein domain names and descriptions"
-                 internal=   "PlasmoDB_interpro.txt"/>
+                 internal=   "interpro.txt"/>
           <enumValue term="Similar proteins (BLAST hits v. NRDB)"
-                 internal=   "PlasmoDB_blast.txt"/>
+                 internal=   "blast.txt"/>
           <enumValue term="EC descriptions"
-                 internal=   "PlasmoDB_ec.txt"/>
+                 internal=   "ec.txt"/>
           <enumValue term="GO terms and definitions"
-                 internal=   "PlasmoDB_go.txt"/>
-          <enumValue term="Metabolic pathway names and descriptions"
-                 internal=   "PlasmoDB_metpaths.txt"/>
+                 internal=   "go.txt"/>
+          <enumValue excludeProjects="CryptoDB" 
+				 term="Metabolic pathway names and descriptions"
+                 internal=   "metpaths.txt"/>
         </enumList>
       </enumParam>
 
