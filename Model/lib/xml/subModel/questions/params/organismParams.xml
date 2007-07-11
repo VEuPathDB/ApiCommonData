@@ -5,7 +5,7 @@
   <!--===========================================================================-->
   <paramSet> 
       <flatVocabParam name="organism"
-                     queryRef="organismVQ.all"
+                     queryRef="organismVQ.withGenes"
                      prompt="Organism"
                      multiPick="true">
       </flatVocabParam>
@@ -62,20 +62,29 @@
     <!-- crypto toxo -->  
     <!------------------------------------------------------------------>
 
-    <sqlQuery name="crypto-toxo" excludeProjects="ApiDB">
+    <sqlQuery name="cp-tg" excludeProjects="ApiDB">
+       <sql includeProjects="PlasmoDB">
+        <!-- return no rows -->
+       </sql>
+       <sql inlcudeProjects="CryptoDB">
+         <!-- return one crypto row -->
+       </sql>
+       <sql inlcudeProjects="ToxoDB">
+         <!-- return one toxo row -->
+       </sql>
     </sqlQuery>
 
-    <wsQuery name="crypto-toxo" includeProjects="ApiDB">
+    <wsQuery name="cp-tg" includeProjects="ApiDB">
     </sqlQuery>
 
     <!------------------------------------------------------------------>
-    <!-- plasmo -->  
+    <!-- plasmoWithGenes  -->  
     <!------------------------------------------------------------------>
 
-    <sqlQuery name="plasmo" excludeProjects="ApiDB">
+    <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB">
     </sqlQuery>
 
-    <wsQuery name="plasmo" includeProjects="ApiDB">
+    <wsQuery name="withPlasmoGenes" includeProjects="ApiDB">
     </sqlQuery>
 
     <!------------------------------------------------------------------>
@@ -96,6 +105,16 @@
     </sqlQuery>
 
     <wsQuery name="pf" includeProjects="ApiDB">
+    </sqlQuery>
+
+    <!------------------------------------------------------------------>
+    <!-- pb -->  
+    <!------------------------------------------------------------------>
+
+    <sqlQuery name="pb" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="pb" includeProjects="ApiDB">
     </sqlQuery>
 
   </querySet>

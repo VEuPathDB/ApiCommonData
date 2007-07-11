@@ -2,9 +2,6 @@
 
   <!-- notes
 
-    - assume: can use default attribute on query ref for enum params
-
-
   -->
 
   <querySet name="EstIds">
@@ -136,7 +133,6 @@
     <wsQuery name="EstsByLibrary" includeProjects="ApiDB" 
              displayName="Library Name" isCacheable='true' 
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
         <paramRef ref="sharedParams.libraryId"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -226,7 +222,6 @@
 
     <wsQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="sharedParams.inNotIn"/>
