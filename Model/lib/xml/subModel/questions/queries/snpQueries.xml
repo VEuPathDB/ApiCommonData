@@ -1,11 +1,5 @@
 <wdkModel>
 
-  <!--  notes
-
-    - have to deal w/ organism param
-
-  -->
-
   <querySet name="SnpsBy">
 
     <!---------------------------------------------------->
@@ -286,7 +280,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
     <wsQuery name="SnpsByLocation" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
          <!-- <paramRef ref="params.chromosome_single"/>--> 
-          <paramRef ref="params.toxopforganism"/>
+          <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
           <paramRef ref="sharedParams.chromosome" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
@@ -357,6 +351,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
 
     <wsQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="params.pforganism"/>
         <paramRef ref="params.major_allele_min"/>
         <paramRef ref="params.major_allele_max"/>

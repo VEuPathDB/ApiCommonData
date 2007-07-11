@@ -1,12 +1,35 @@
 <wdkModel>
 
+  <!--===========================================================================-->
+  <!-- Params  -->
+  <!--===========================================================================-->
   <paramSet> 
       <flatVocabParam name="organism"
                      queryRef="organismVQ.all"
                      prompt="Organism"
-                     multiPick="false">
+                     multiPick="true">
       </flatVocabParam>
   </paramSet> 
+
+
+  <!--===========================================================================-->
+  <!-- Vocab queries  -->
+  <!--===========================================================================-->
+
+    <!------------------------------------------------------------------>
+    <!-- with genome -->  
+    <!------------------------------------------------------------------>
+
+
+
+
+
+
+
+
+
+
+
 
   <querySet name="organismVQ">
     <sqlQuery name="withChromosomes" excludeProjects="ApiDB">
@@ -15,11 +38,28 @@
     <wsQuery name="withChromosomes" includeProjects="ApiDB">
     </sqlQuery>
 
+    <sqlQuery name="withGenomicSeq" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="withGenomicSeq" includeProjects="ApiDB">
+    </sqlQuery>
+
     <sqlQuery name="crypto-toxo" excludeProjects="ApiDB">
     </sqlQuery>
 
     <wsQuery name="crypto-toxo" includeProjects="ApiDB">
     </sqlQuery>
 
+    <sqlQuery name="tg-pf" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="tg-pf" includeProjects="ApiDB">
+    </sqlQuery>
+
+    <sqlQuery name="pf" excludeProjects="ApiDB">
+    </sqlQuery>
+
+    <wsQuery name="pf" includeProjects="ApiDB">
+    </sqlQuery>
   </querySet>
 </wdkModel>
