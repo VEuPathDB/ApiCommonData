@@ -71,7 +71,7 @@ sub init {
   my $mgr = GUS::Pipeline::Manager->new($myPipelineDir, $propertySet,
 					$propertiesFile, $cluster,
 					$propertySet->getProp('testNextPlugin'),
-					$optionalArgs->{printXml},
+					$optionalArgs->{printXML},
 					$optionalArgs->{skipCleanup},
 				       );
 
