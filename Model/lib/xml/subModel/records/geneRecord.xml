@@ -59,7 +59,7 @@
           <attributeQueryRef ref="GeneAttributes.Bfmv">
             <columnAttribute displayName="Data Source" name="external_db_name"/>
             <columnAttribute displayName="Genomic Sequence ID" name="sequence_id"/>
-             <textAttribute name="location_text" displayName="Genomic Location">
+            <textAttribute name="location_text" displayName="Genomic Location">
               <text>
                   <![CDATA[
                   $$sequence_id$$: $$start_min_text$$ - $$end_max_text$$ ($$strand_plus_minus$$)
@@ -98,37 +98,36 @@
             <columnAttribute name="winz_max_pct" displayName="Pf-iRBC+Spz+Gam max expr %ile (Affy)" align="center" includeProjects="PlasmoDB"/>
             <columnAttribute name="winz_max_timing" displayName="Pf-iRBC+Spz+Gam max expr stage (Affy)" align="center" includeProjects="PlasmoDB"/>
 
-            <textAttribute name="derisiOverlayPct" displayName="Pf-iRBC expr profile graph (GS array)"
+            <textAttribute name="derisiOverlayPct"
+                            displayName="Pf-iRBC expr profile graph (GS array)"
                            inReportMaker="false" truncateTo="100000" sortable="false"
                            includeProjects="PlasmoDB">
-            <text>
+              <text>
                 <![CDATA[
                 <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND"/>
                 ]]>
-            </text>
-         </textAttribute>
+              </text>
+            </textAttribute>
 
             <textAttribute name="winzelerPct" displayName="Pf-iRBC+Spz+Gam expr profile graph (Affy)"
                         inReportMaker="false" truncateTo="100000" sortable="false"
                         includeProjects="PlasmoDB">
-            <text>
+              <text>
                 <![CDATA[
                 <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
                 ]]>
-            </text>
-         </textAttribute>
+              </text>
+            </textAttribute>
 
-         <textAttribute name="watersPct" displayName="Pb-iRBC expr profile graph (GS array)"
+            <textAttribute name="watersPct" displayName="Pb-iRBC expr profile graph (GS array)"
                         inReportMaker="false" truncateTo="100000" sortable="false"
                         includeProjects="PlasmoDB">
-            <text>
+              <text>
                 <![CDATA[
                 <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
                 ]]>
-            </text>
-         </textAttribute>
-
-
+              </text>
+            </textAttribute>
             <columnAttribute name="pru" displayName="Pru strain expression" includeProjects="ToxoDB"/>
             <columnAttribute name="veg" displayName="VEG strain expression" includeProjects="ToxoDB"/>
             <columnAttribute name="rh" displayName="RH strain expression" includeProjects="ToxoDB"/>
@@ -137,11 +136,11 @@
 
             <textAttribute name="rhGlucose" displayName="RH in Glucose expr profile graph"
                            inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
-            <text>
+              <text>
                 <![CDATA[
                 <img src="@CGI_URL@/dataPlotter.pl?type=Roos::RHinGlucose::Ver1&id=$$primaryKey$$&model=toxo&fmt=png&thumb=1"/>
                 ]]>
-            </text>
+              </text>
             </textAttribute>
 
             <textAttribute name="3strains" displayName="3 Clonal Lineages expr profile graph"
@@ -174,7 +173,7 @@
                  inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
             <columnAttribute name="cyc_gene_id" displayName="PlasmoCYC Gene ID" name="cyc_gene_id" 
                  internal="true" inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
-            <columnAttribute name=cyc_db" displayName="ToxoCYC DB Name" internal="true" 
+            <columnAttribute name="cyc_db" displayName="ToxoCYC DB Name" internal="true" 
                  inReportMaker="false" includeProjects="ToxoDB"/>
             <columnAttribute name="cyc_gene_id" displayName="ToxoCYC Gene ID" internal="true" 
                  inReportMaker="false" includeProjects="ToxoDB"/>
