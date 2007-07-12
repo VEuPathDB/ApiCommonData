@@ -100,6 +100,12 @@ my $argsDeclaration =
 	       reqd => 0,
 	       default => 0
 	   }),
+   integerArg({ descr          => 'used if the data is logged and you want to UNLOG it.  ex. log2, log10, ...',
+                name           => 'baseX',
+                isList         => 0,
+                reqd           => 0,
+                constraintFunc => sub {CfIsPositive(@_) },
+              }),
   ];
 
 sub new {
@@ -253,12 +259,18 @@ WHERE s.external_database_release_id = $extDbRlsId
 sub makeSourceIdRow {
   my ($self, $sourceId, $sourceIdRowHash, $header) = @_;
 
+  my $baseX = $self->getArg('baseX');
+
   my $row = [$sourceId];
   foreach my $quantName (@$header) {
     my $count = scalar(@{$sourceIdRowHash->{$quantName}});
     my $avg;
     foreach my $val (@{$sourceIdRowHash->{$quantName}}) {
-      $avg += $val/$count;
+
+      # Unlog it if the user set the baseX arg
+      my $finalValue = $baseX ? $val = $baseX ** $val : $val;
+
+      $avg += $finalValue/$count;
     }
     push(@$row, $avg);
   }
