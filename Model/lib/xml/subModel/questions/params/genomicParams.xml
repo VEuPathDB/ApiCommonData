@@ -29,33 +29,6 @@
   <!--===========================================================================-->
 
     <querySet name="GenomicVocabQueries">
-        <sqlQuery name="Organism">
-            <column name="internal"/>
-            <column name="term"/>
-             <sql>
-                SELECT orgs.term, orgs.internal
-                FROM (SELECT tn.name AS term, t.taxon_id AS internal
-                      FROM sres.TaxonName tn, sres.taxon t
-                      WHERE tn.name_class='scientific name'
-                        AND t.taxon_id = tn.taxon_id
-                        AND t.rank = 'species'
-                        AND t.taxon_id in
-                            (SELECT taxon_id
-                             FROM sres.taxon
-                             CONNECT BY taxon_id = prior parent_id
-                             START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.ExternalNaSequence ens))) orgs,
-                     (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
-                      UNION
-                      SELECT 'Plasmodium yoelii' AS term, 3 as rank from dual) partial_order
-                  WHERE orgs.term = partial_order.term(+)
-                  ORDER BY partial_order.rank
-            </sql>
-        </sqlQuery>
-
     </querySet>
 
 </wdkModel>

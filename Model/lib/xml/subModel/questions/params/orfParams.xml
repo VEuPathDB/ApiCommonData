@@ -14,7 +14,7 @@
         <stringParam name="orf_id"
                      prompt="ORF ID"
                      help="Enter an ORF ID.  Wildcards (*) are allowed."
-                     substitute="yes"
+                     substitute="yes">
             <suggest includeProjects="PlasmoDB"
                      sample="MAL1-1-10639-11520, MAL1-1-105160-105438"
                      default="MAL1-1-10639-11520"/>
@@ -37,9 +37,7 @@
                      prompt="Target"
                      multiPick="false">
         <help>
-           <text>
              Organism(s) from which the sequences in the BLAST database originated
-           </text>
         </help>
         <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumList>
