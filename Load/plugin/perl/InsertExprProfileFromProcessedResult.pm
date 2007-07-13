@@ -104,7 +104,6 @@ my $argsDeclaration =
                 name           => 'baseX',
                 isList         => 0,
                 reqd           => 0,
-                constraintFunc => sub {CfIsPositive(@_) },
               }),
   ];
 
