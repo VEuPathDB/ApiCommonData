@@ -104,6 +104,7 @@ my $argsDeclaration =
                 name           => 'baseX',
                 isList         => 0,
                 reqd           => 0,
+                constraintFunc => undef,
               }),
   ];
 
