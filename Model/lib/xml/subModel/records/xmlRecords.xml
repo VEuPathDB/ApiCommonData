@@ -1,0 +1,218 @@
+<wdkModel>
+
+    <xmlRecordClassSet name="XmlRecordClasses">
+
+  <!------------------------------------------------------------------>
+  <!-- News -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass
+        	name="NewsRecord"
+        	type="News"
+        	idPrefix="NEWS."
+        	delimiter="@">
+            <xmlAttribute name="headline"/>
+            <xmlAttribute name="date"/>
+            <xmlAttribute name="item"/>
+            <xmlAttribute name="tag"/>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- Coming soon -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass
+        	name="ComingSoonRecord"
+        	type="ComingSoon"
+        	idPrefix="CS."
+        	delimiter="@">
+            <xmlAttribute name="title"/>
+            <xmlAttribute name="tag"/>
+            <xmlTable name="list">
+              <xmlAttribute name="headline"/>
+              <xmlAttribute name="item"/>
+            </xmlTable>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- Methods -->
+  <!------------------------------------------------------------------>
+
+         <xmlRecordClass
+        	name="Methods"
+        	type="Methods"
+        	idPrefix="MTHD."
+        	delimiter="@">
+             <xmlAttribute name="name" displayName="Method"/>
+             <xmlAttribute name="input" displayName="Input"/>
+             <xmlAttribute name="output" displayName="Output"/>
+             <xmlAttribute name="descrip" displayName="Details"/>
+             <xmlTable name="tools" displayName="Tools">
+                 <xmlAttribute name="name" displayName="Tool"/>
+                 <xmlAttribute name="version" displayName="Version"/>
+                 <xmlAttribute name="params" displayName="Parameters"/>
+                 <xmlAttribute name="url" displayName="URL"/>
+                 <xmlAttribute name="pubmedIds" displayName="PubMed&nbsp;IDs"/>
+                 <xmlAttribute name="credits" displayName="Credits"/>
+             </xmlTable>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- Data sources -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass name="DataSourcesRecord"
+        	type="Data Source"
+        	idPrefix="DS."
+        	delimiter="@">
+            <xmlAttribute name="resource"/>
+            <xmlAttribute name="version"/>
+            <xmlAttribute name="publicUrl"/>
+            <xmlAttribute name="organisms"/>
+            <xmlAttribute name="category"/>
+            <xmlAttribute name="description"/>
+            <xmlAttribute name="display"/>
+            <xmlTable name="publications">
+               <xmlAttribute name="pmid"/>
+               <xmlAttribute name="pmauthors"/>
+               <xmlAttribute name="pmtitle"/>
+               <xmlAttribute name="pmdetails"/>
+            </xmlTable>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- About -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass
+        	name="AboutRecord"
+        	type="About"
+        	idPrefix="ABOUT."
+        	delimiter="@">
+            <xmlAttribute name="title"/>
+            <xmlAttribute name="text"/>
+            <xmlAttribute name="tag"/>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- FAQ -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass
+        	name="FAQRecord"
+        	type="FAQ"
+        	idPrefix="FAQ."
+        	delimiter="@">
+            <xmlAttribute name="didYouKnow"/>
+            <xmlAttribute name="question"/>
+            <xmlAttribute name="answer"/>
+            <xmlAttribute name="tag"/>
+            <xmlAttribute name="category"/>
+         </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- Tutorials -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass
+        	name="TutorialsRecord"
+        	type="Tutorial"
+        	idPrefix="Tut."
+        	delimiter="@">
+            <xmlAttribute name="title"/>
+            <xmlAttribute name="description"/>
+            <xmlAttribute name="projects"/>
+            <xmlAttribute name="fileName"/>
+            <xmlAttribute name="duration"/>
+            <xmlAttribute name="size"/>
+        </xmlRecordClass>
+
+  <!------------------------------------------------------------------>
+  <!-- External links -->
+  <!------------------------------------------------------------------>
+
+        <xmlRecordClass includeProjects="PlasmoDB"
+        	name="ExternalLinksRecord"
+        	type="ExternalLinks"
+        	idPrefix="EL."
+        	delimiter="@">
+            <xmlTable name="relatedLinks" displayName="Related Links">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="generalInfo" displayName="General Information">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="chromosomeMaps" displayName="Chromosome Maps">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="blastTools" displayName="BLAST Tools">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="otherDbSearches" displayName="Other database searches">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="pfSeqCenters" displayName="Plasmodium falciparum Sequencing Centers">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="otherSeqCenters" displayName="Other Plasmodium spp. Sequencing Centers">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="plasmoDbs" displayName="Plasmodium Sequence Databases">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="vectorDbs" displayName="Vector Databases">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="malariaBio" displayName="Malaria Biology">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="malariaGeneral" displayName="Malaria General">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="funding" displayName="Funding">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+         </xmlRecordClass>
+
+        <xmlRecordClass includeProjects="ToxoDB"
+        	name="ExternalLinksRecord"
+        	type="ExternalLinks"
+        	idPrefix="EL."
+        	delimiter="@">
+            <xmlTable name="relatedLinks" displayName="Related Links">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="tgSeqCenters" displayName="Toxoplasma Sequencing Centers">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="toxoDbs" displayName="Toxoplasma Sequence Databases">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="toxoBiology" displayName="Toxoplasma Biology">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+            <xmlTable name="funding" displayName="Funding">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+         </xmlRecordClass>
+
+    </xmlRecordClassSet>
+
+</wdkModel>
