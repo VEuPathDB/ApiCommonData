@@ -1,103 +1,174 @@
 <wdkModel>
-    <xmlQuestionSet name="XmlQuestions"
-                 displayName="Data contents from XML data sources">
 
-        <description>
-          Data contents from XML data sources
-        </description>
+  <!-- notes
 
-        <xmlQuestion name="ComingSoon"
+   - a lot of these could be further unified if the different sites used generic file names
+     and if we had a macro for the site name
+
+  -->
+
+    <xmlQuestionSet name="XmlQuestions">
+
+  <!------------------------------------------------------------------>
+  <!-- Coming soon -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="ComingSoon" includeProjects="PlasmoDB"
                   displayName="PlasmoDB Upcoming Features"
                   recordClassRef="XmlRecordClasses.ComingSoonRecord"
                   xmlDataURL="plasmodbComingSoon.xml">
-            <description>
-                Coming soon.
-            </description>
         </xmlQuestion>
 
 
-        <xmlQuestion name="News"
+  <!------------------------------------------------------------------>
+  <!-- News -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="News" include="PlasmoDB"
                   displayName="PlasmoDB News"
                   recordClassRef="XmlRecordClasses.NewsRecord"
                   xmlDataURL="plasmodbNews.xml">
-            <description>
-                Retrieve news from XML data source
-            </description>
         </xmlQuestion>
 
-        <xmlQuestion name="NewsRss"
+        <xmlQuestion name="News" include="ApiDB"
+                  displayName="ApiDB News"
+                  recordClassRef="XmlRecordClasses.NewsRecord"
+                  xmlDataURL="apidbNews.xml">
+        </xmlQuestion>
+
+        <xmlQuestion name="News" include="ToxoDB"
+                  displayName="ToxoDB News"
+                  recordClassRef="XmlRecordClasses.NewsRecord"
+                  xmlDataURL="toxodbNews.xml">
+        </xmlQuestion>
+
+        <xmlQuestion name="News" include="CryptoDB"
+                  displayName="CryptoDB News"
+                  recordClassRef="XmlRecordClasses.NewsRecord"
+                  xmlDataURL="cryptodbNews.xml">
+        </xmlQuestion>
+
+
+  <!------------------------------------------------------------------>
+  <!-- News RSS -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="NewsRss" includeProjects="PlasmoDB"
                   displayName="PlasmoDB News RSS Feed"
                   recordClassRef="XmlRecordClasses.NewsRecord"
                   xmlDataURL="plasmodbNews.xml">
-            <description>
-                Retrieve news from XML data source and feed to RSS
-            </description>
         </xmlQuestion>
 
-<!--
-        <xmlQuestion name="DidYouKnow"
-                  displayName="Did you know..."
-                  recordClassRef="XmlRecordClasses.DidYouKnowRecord"
-                  xmlDataURL="plasmodbDidYouKnow.xml">
-            <description>
-                Did you knows of the PlasmoDB website
-            </description>
+        <xmlQuestion name="NewsRss" includeProjects="CryptoDB"
+                  displayName="CryptoDB News"
+                  recordClassRef="XmlRecordClasses.NewsRecord"
+                  xmlDataURL="cryptodbNews.xml">
         </xmlQuestion>
--->
 
-        <xmlQuestion name="Methods"
+        <xmlQuestion name="NewsRss" includeProjects="ApiDB"
+                  displayName="ApiDB News"
+                  recordClassRef="XmlRecordClasses.NewsRecord"
+                  xmlDataURL="apidbNews.xml">
+        </xmlQuestion>
+
+  <!------------------------------------------------------------------>
+  <!-- Methods -->
+  <!------------------------------------------------------------------>
+
+       <xmlQuestion name="Methods" includeProjects="PlasmoDB"
                   displayName="Methods"
                   recordClassRef="XmlRecordClasses.Methods"
                   xmlDataURL="plasmodbMethods.xml">
-            <description>
-                Methods used by PlasmoDB
-            </description>
         </xmlQuestion>
 
-        <xmlQuestion name="DataSources"
+        <xmlQuestion name="Methods" includeProjects="ToxoDB"
+                  displayName="Methods"
+                  recordClassRef="XmlRecordClasses.Methods"
+                  xmlDataURL="toxodbMethods.xml">
+        </xmlQuestion>
+
+  <!------------------------------------------------------------------>
+  <!-- Data sources -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="DataSources" includeProjects="PlasmoDB"
                   displayName="Data Sources for PlasmoDB"
                   recordClassRef="XmlRecordClasses.DataSourcesRecord"
                   xmlDataURL="plasmoResources-pubmed.xml"
                   xslURL="resources2records.xsl">
-            <description>
-                Data sources of PlasmoDB.
-            </description>
         </xmlQuestion>
 
-        <xmlQuestion name="About"
+        <xmlQuestion name="DataSources" includeProjects="ToxoDB"
+                  displayName="Data Sources for ToxoDB"
+                  recordClassRef="XmlRecordClasses.DataSourcesRecord"
+                  xmlDataURL="toxoResources-pubmed.xml"
+                  xslURL="resources2records.xsl">
+        </xmlQuestion>
+
+        <xmlQuestion name="DataSources" includeProjects="CryptoDB"
+                  displayName="Data Sources for CryptoDB"
+                  recordClassRef="XmlRecordClasses.DataSourcesRecord"
+                  xmlDataURL="cryptoResources-pubmed.xml"
+                  xslURL="resources2records.xsl">
+        </xmlQuestion>
+
+  <!------------------------------------------------------------------>
+  <!-- About -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="About" includeProjects="PlasoDB"
                   displayName="More About PlasmoDB"
                   recordClassRef="XmlRecordClasses.AboutPlasmoDBRecord"
                   xmlDataURL="plasmodbAbout.xml">
-            <description>
-                Things one might want to know about PlasmoDB.
-            </description>
         </xmlQuestion>
 
-        <xmlQuestion name="FAQ"
+        <xmlQuestion name="About" includeProjects="ToxoDB"
+                  displayName="More About ToxoDB"
+                  recordClassRef="XmlRecordClasses.AboutToxoDBRecord"
+                  xmlDataURL="toxodbAbout.xml">
+        </xmlQuestion>
+
+  <!------------------------------------------------------------------>
+  <!-- FAQ -->
+  <!------------------------------------------------------------------>
+
+       <xmlQuestion name="FAQ" includeProjects="PlasmoDB"
                   displayName="Frequently Asked Questions (FAQ)"
                   recordClassRef="XmlRecordClasses.FAQRecord"
                   xmlDataURL="plasmodbFAQ.xml">
-            <description>
-                Frequently asked questions.
-            </description>
         </xmlQuestion>
 
-        <xmlQuestion name="Tutorials"
+        <xmlQuestion name="FAQ" includeProjects="ToxoDB"
+                  displayName="Frequently Asked Questions (FAQ)"
+                  recordClassRef="XmlRecordClasses.FAQRecord"
+                  xmlDataURL="toxodbFAQ.xml">
+        </xmlQuestion>
+
+  <!------------------------------------------------------------------>
+  <!-- Tutorials -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="Tutorials" 
                   displayName="Tutorials"
                   recordClassRef="XmlRecordClasses.TutorialsRecord"
                   xmlDataURL="tutorials.xml">
-            <description>
-                Tutorials.
-            </description>
+        </xmlQuestion>
         </xmlQuestion>
 
-        <xmlQuestion name="ExternalLinks"
+  <!------------------------------------------------------------------>
+  <!-- External links -->
+  <!------------------------------------------------------------------>
+
+        <xmlQuestion name="ExternalLinks" includeProjects="PlasmoDB"
                   displayName="Useful Links"
                   recordClassRef="XmlRecordClasses.ExternalLinksRecord"
                   xmlDataURL="plasmodbExternalLinks.xml">
-            <description>
-               Related Sites
-            </description>
+        </xmlQuestion>
+
+        <xmlQuestion name="ExternalLinks" includeProjects="ToxoDB"
+                  displayName="Useful Links"
+                  recordClassRef="XmlRecordClasses.ExternalLinksRecord"
+                  xmlDataURL="toxodbExternalLinks.xml">
         </xmlQuestion>
 
     </xmlQuestionSet>
