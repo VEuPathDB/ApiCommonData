@@ -1,0 +1,51 @@
+<wdkModel>
+    <querySet name="SequenceTables">
+
+        <sqlQuery name="Centromere" includeProjects="PlasmoDB"
+               isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="start_min" />
+            <column name="end_max" />
+            <sql>
+            <![CDATA[
+            SELECT nl.start_min, nl.end_max
+            FROM dots.NaSequence ens, dots.Miscellaneous m,
+                 dots.NaLocation nl, sres.SequenceOntology so
+            WHERE ens.source_id = '$$primaryKey$$'
+              AND ens.na_sequence_id = m.na_sequence_id
+              AND m.na_feature_id = nl.na_feature_id
+              AND m.sequence_ontology_id = so.sequence_ontology_id
+              AND so.term_name = 'centromere'
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
+               isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="comment_id"/>
+            <column name="stable_id"/>
+            <column name="headline"/>
+            <column name="user_name"/>
+            <column name="organization"/>
+            <column name="comment_date"/>
+            <sql>
+            <![CDATA[
+              SELECT DISTINCT c.comment_id, c.stable_id,
+                     NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
+                     (u.first_name || ' ' || u.last_name) AS user_name,
+					 u.organization,
+                     c.comment_date
+              FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   dots.NaSequence ens
+              WHERE u.email = c.email
+                    AND c.comment_target_id = 'genome'
+                    AND c.stable_id = ens.source_id
+                    AND ens.source_id = '$$primaryKey$$'
+            ]]>
+            </sql>
+        </sqlQuery>
+
+    </querySet>
+</wdkModel>

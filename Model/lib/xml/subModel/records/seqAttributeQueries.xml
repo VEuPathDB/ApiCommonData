@@ -1,0 +1,176 @@
+<wdkModel>
+
+  <!-- notes
+
+   - attribute queries on the component sites will now need projectId param so the sql can be
+     shared with the portal
+
+   - crypto and api have to adjust to a new set name (old is 'ContigAttributes')
+
+  -->
+
+    <querySet name="SequenceAttributes">
+
+       <!------------------------------------------------------------------>
+       <!-- BFMV -->  
+       <!------------------------------------------------------------------>
+        <sqlQuery name="Bfmv" isCacheable="false" excludeProjects="CryptoDB">
+            <paramRef ref="params.primaryKey"/>
+            <column name="source_id" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="a_count" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="c_count" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="g_count" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="t_count" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="other_count" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="length" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="at_percent" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="organism" sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="formatted_organism"
+                    sortingTable="apidb.SequenceAttributes"
+                    sortingColumn="organism" lowerCase="true"/>
+            <column name="sequence_description"
+                    sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <column name="genbank_accession"
+                    sortingTable="apidb.SequenceAttributes"
+                    lowerCase="true"/>
+            <sql>
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.a_count, bfmv.c_count,
+                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
+                    bfmv.length, bfmv.at_percent, bfmv.organism,
+                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                   chr(38) || 'nbsp;') || '</i>'
+                      AS formatted_organism,
+                    bfmv.ncbi_tax_id, bfmv.sequence_description,
+                    bfmv.genbank_accession, bfmv.database_name,
+                    bfmv.database_version
+              FROM apidb.SequenceAttributes bfmv
+              WHERE bfmv.source_id = '$$primaryKey$$'
+                AND '$$projectId$$' = bfmv.project_id
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <sqlQuery name="ContigAttrs" isCacheable='true' includeProjects="CryptoDB">
+            <paramRef ref="params.primaryKey"/> 
+            <column name="source_id" />
+            <column name="sequence" />
+            <column name="a_count" />
+            <column name="c_count" />
+            <column name="g_count" />
+            <column name="t_count" />
+            <column name="other_count" />
+            <column name="length" />
+            <column name="secondary_identifier" />
+            <column name="chromosomemappingtext" />
+            <column name="organism" />
+            <column name="cryptocyc_db" />
+            <column name="extdbname" />
+            <sql> 
+            <![CDATA[           
+            SELECT enas.sequence, 
+            enas.source_id, 
+            enas.source_id as secondary_identifier, 
+            DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
+            'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
+            enas.a_count, 
+            enas.c_count, 
+            enas.g_count, 
+            enas.t_count, 
+            (length - (a_count + c_count + g_count + t_count)) as other_count, 
+            enas.length, 
+            '<i>' || SUBSTR(tn.name, 1, 1) || '.&nbsp;' || 
+                 SUBSTR(tn.name, INSTR(tn.name, ' ', 1, 1) +1) || '</i>' as organism,
+            DECODE(
+              substr(
+                tn.name, 
+                instr(ltrim(tn.name), ' ', 1, 1)+1, 
+                instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
+              ),
+              'parvum', 'cparvum', 'hominis') as cryptocyc_db,
+            ed.name as extdbname
+            FROM dots.externalnasequence enas, 
+            dots.source src, 
+            sres.taxonname tn,
+            sres.externaldatabaserelease edr,
+            sres.externaldatabase ed
+            WHERE enas.na_sequence_id = src.na_sequence_id (+)
+            AND enas.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND enas.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND enas.source_id = '$$primaryKey$$'
+             ]]>
+           </sql>
+        </sqlQuery>
+
+
+       <!------------------------------------------------------------------>
+       <!--  -->  
+       <!------------------------------------------------------------------>
+
+        <sqlQuery name="Attribution" isCacheable="false" includeProject="PlasmoDB">
+            <paramRef ref="params.primaryKey"/>
+            <column name="short_name"/>
+            <sql>
+            <![CDATA[
+                SELECT ens.source_id,
+                       decode(ed.name,
+                              'Jane Carlton P. vivax chromosomes', 'TIGR',
+                              'Sanger P. reichenowi contigs', 'Sanger',
+                              'Jane Carlton P. yoelii chromosomes', 'TIGR',
+                              'P. berghei genome', 'Sanger',
+                              'Sanger P. gallinaceum contigs', 'Sanger',
+                              'Sanger P. falciparum chromosomes', 'Sanger',
+                              'Sanger P. knowlesi contigs', 'Sanger',
+                              'P. chabaudi genome', 'Sanger',
+                              'P. falciparum mitochondrial genome', 'LSHTM',
+                              'P. falciparum plastid-like DNA', 'NIMR',
+                              ed.name) AS short_name
+                FROM dots.ExternalNaSequence ens,
+                     sres.ExternalDatabaseRelease edr,
+                     sres.ExternalDatabase ed
+                WHERE ens.source_id = '$$primaryKey$$'
+                  AND ens.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+             ]]>
+           </sql>
+
+        </sqlQuery>
+
+
+       <!------------------------------------------------------------------>
+       <!-- External DB info -->  
+       <!------------------------------------------------------------------>
+
+        <sqlQuery name="ExternalDbInfo" isCacheable="false" includeProjects="CryptoDB">
+            <paramRef ref="params.primaryKey"/>
+            <column name="externalDbName"/>
+            <column name="externalDbVersion"/>
+            <sql>
+              <![CDATA[
+              SELECT ed.name AS externalDbName, edr.version AS externalDbVersion
+              FROM dots.externalnasequence enas, 
+                      sres.externaldatabase ed, 
+                      sres.externaldatabaserelease edr
+              WHERE enas.external_database_release_id = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+                  AND source_id = '$$primaryKey$$' 
+              ]]>
+            </sql>
+        </sqlQuery>
+
+    </querySet>
+<wdkModel>
