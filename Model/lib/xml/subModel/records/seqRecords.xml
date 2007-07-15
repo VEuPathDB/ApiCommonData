@@ -1,0 +1,289 @@
+<wdkModel>
+
+  <!--
+
+   - CryptoDB is gonna have to change to "SequenceRecordClasses" from "ContigRecordClasses"
+ 
+   - it seems cryptodb is not using the bfmv?
+
+   - the bfmv should only include shared attributes so its sql can be identical across projects.
+     the rest can be factored into associated attribute queries
+  -->
+
+
+    <recordClassSet name="SequenceRecordClasses">
+
+        <recordClass idPrefix=""
+          name="SequenceRecordClass" type="Genomic Sequence"
+          attributeOrdering="overview,otherInfo,dnaContext">
+
+      <!-- =============================================================== -->
+      <!--   Reporters -->  
+      <!-- =============================================================== -->
+
+          <reporter name="tabular" displayName="Summary - Tab delimited"
+                    implementation="org.gusdb.wdk.model.report.TabularReporter"/>
+          <reporter name="gff3" displayName="Summary - GFF3"
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
+          <reporter name="fullRecord" displayName="Detailed"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
+          <reporter name="srt" displayName="FASTA"
+                    implementation=""/>
+
+
+       <!-- =================================================================== -->
+       <!--  Attributes  ---------->
+       <!-- =================================================================== -->
+
+          <!------------------------------------------------------------------>
+          <!-- BFMV attributes -->  
+          <!------------------------------------------------------------------>
+
+        <attributeQueryRef ref="SequenceAttributes.Bfmv" includeProjects="PlasmoDB,ToxoDB">
+            <columnAttribute displayName="A Count" name="a_count"/>
+            <columnAttribute displayName="C Count" name="c_count"/>
+            <columnAttribute displayName="G Count" name="g_count"/>
+            <columnAttribute displayName="T Count" name="t_count"/>
+            <columnAttribute displayName="Other Count" name="other_count"/>
+            <columnAttribute displayName="Length" name="length"/>
+            <columnAttribute displayName="AT Percent" name="at_percent"/>
+            <columnAttribute displayName="Organism" name="organism" internal="true"/>
+
+            <columnAttribute displayName="Organism" includeProjects="PlasmoDB"
+                             name="formatted_organism" inReportMaker="false"/>
+            <columnAttribute displayName="Description" includeProjects="PlasmoDB"
+                             name="sequence_description"/>
+            <columnAttribute name="genbank_accession"  includeProjects="PlasmoDB" 
+                             displayName="GenBank" internal="true"/>
+
+            <columnAttribute displayName="External DB Name" includeProjects="ToxoDB"
+                             internal="true"
+                             name="externalDbName" inReportMaker="false"/>
+            <columnAttribute displayName="External DB Version" includeProjects="ToxoDB" 
+                             internal="true"
+                             name="externalDbVersion" inReportMaker="false"/>
+        </attributeQueryRef>
+
+        <attributeQueryRef ref="ContigAttributes.ContigAttrs" includeProjects="CryptoDB">
+            <columnAttribute displayName="Sequence"   name="sequence" />
+            <columnAttribute inReportMaker="false"    name="source_id"   internal="true" />
+            <columnAttribute inReportMaker="false"    name="a_count"     internal="true" />
+            <columnAttribute inReportMaker="false"    name="c_count"     internal="true" />
+            <columnAttribute inReportMaker="false"    name="g_count"     internal="true" />
+            <columnAttribute inReportMaker="false"    name="t_count"     internal="true" />
+            <columnAttribute inReportMaker="false"    name="other_count" internal="true" />
+            <columnAttribute displayName="length"     name="length"      internal="true" />
+            <columnAttribute inReportMaker="false"    name="secondary_identifier"  internal="true" />
+            <columnAttribute inReportMaker="false"    name="chromosomemappingtext" internal="true" />
+            <columnAttribute displayName="Species"    name="organism"     internal="true" />
+            <columnAttribute inReportMaker="false"    name="cryptocyc_db" internal="true" />
+            <columnAttribute inReportMaker="false"    name="extdbname"    internal="true" />
+        </attributeQueryRef>
+                
+        <attributeQueryRef ref="ContigAttributes.ExternalDbInfo" includeProjects="CryptoDB">
+           <columnAttribute displayName="External DB Name" name="externalDbName"
+                                 inReportMaker="false"
+                                 internal="true"/>
+           <columnAttribute displayName="External DB Version" name="externalDbVersion"
+                                 inReportMaker="false"
+                                 internal="true"/>
+        </attributeQueryRef>
+
+        <!------------------------------------------------------------------>
+        <!-- data dump attributes -->  
+        <!------------------------------------------------------------------>
+          <attributeQueryRef ref="DataDumpQueries.SequenceGffAttrs">
+              <columnAttribute displayName="SeqId" name="gff_seqid" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Data Source" name="gff_source" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Feature Type" name="gff_type" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Start" name="gff_fstart" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="End" name="gff_fend" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Score" name="gff_score" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Strand" name="gff_strand" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Reading Frame" name="gff_phase" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="ID" name="gff_attr_id" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Name" name="gff_attr_name" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="description" name="gff_attr_description" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Locus tag" name="gff_attr_locus_tag" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Molecule type" name="gff_attr_molecule_type" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Organism name" name="gff_attr_organism_name" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Translation table" name="gff_attr_translation_table" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Topology" name="gff_attr_topology" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Localization" name="gff_attr_localization" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Genome Size" name="gff_attr_size" inReportMaker="false" internal="true"/>
+              <columnAttribute displayName="Sequence" name="gff_sequence" inReportMaker="false" internal="true"/>
+          </attributeQueryRef>
+
+
+      <!-- =================================================================== -->
+      <!--  Link Attributes  ---------->
+      <!-- =================================================================== -->
+
+        <!------------------------------------------------------------------>
+        <!-- Genbank record -->  
+        <!------------------------------------------------------------------>
+
+         <linkAttribute name="GenbankRecord" includeProjects="PlasmoDB,ToxoDB"
+                        visible="$$genbank_accession$$"
+                        inReportMaker="false">
+            <url>
+               <![CDATA[http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=$$genbank_accession$$]]>
+            </url>
+         </linkAttribute>
+
+
+      <!-- =================================================================== -->
+      <!--  Text Attributes  ---------->
+      <!-- =================================================================== -->
+
+        <!------------------------------------------------------------------>
+        <!-- overview -->  
+        <!------------------------------------------------------------------>
+         <textAttribute name="overview" displayName="Overview"
+                         inReportMaker="false">
+           <text includeProjects="PlasmoDB,ToxoDB">
+              <![CDATA[
+                  Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$,
+                  <b>C</b>:$$c_count$$, <b>G</b>:$$g_count$$,
+                  <b>other</b>:$$other_count$$<br>
+                  Length: $$length$$<br>
+                  AT content: $$at_percent$$ percent
+              ]]>
+           </text>
+           <text includeProjects="CryptoDB">
+                <![CDATA[
+                Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$, 
+                <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
+                Length: $$length$$<br>
+                $$chromosomemappingtext$$
+              ]]>
+           </text>
+         </textAttribute>
+
+        <!------------------------------------------------------------------>
+        <!-- DNA Context -->  
+        <!------------------------------------------------------------------>
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB"
+                       displayName="Features"
+                       inReportMaker="false">
+           <text includeProjects="PlasmoDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/plasmodb/?name=$$primaryKey$$;embed=1;type=GeneDensity;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+           <text includeProjects="ToxoDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$primaryKey$$;embed=1;type=AnnotatedGenes;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+        </textAttribute>
+
+        <!------------------------------------------------------------------>
+        <!-- GBrowse -->  
+        <!------------------------------------------------------------------>
+        <textAttribute name="gbrowseLink"  includeProjects="PlasmoDB"
+            inReportMaker="false">
+           <text>
+                <![CDATA[
+                @CGI_URL@/gbrowse/plasmodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes
+                ]]>
+           </text>
+        </textAttribute>
+
+        <textAttribute name="gbrowseLink" includeProjects="ToxoDB" 
+            inReportMaker="false" internal="true">
+           <text>
+                <![CDATA[
+                @CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes
+                ]]>
+           </text>
+        </textAttribute>
+
+        <textAttribute name="GBrowse" includeProjects="CryptoDB" 
+             inReportMaker="false">
+            <text>
+                 <![CDATA[
+                <a href="/@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
+                ]]>
+            </text>
+         </textAttribute>
+
+        <!------------------------------------------------------------------>
+        <!-- Other info -->  
+        <!------------------------------------------------------------------>
+         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB"
+            displayName="Links to Other Web Pages" inReportMaker="false">
+           <text>
+                <![CDATA[
+                    <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
+                    <form action="@CGI_URL@/contigSrt" method="get">
+                    <table border="0" cellpadding="5" cellspacing="1">
+                      <tr class="secondary3"><td>
+                        <table border="0" cellpadding="0">
+                        <tr><td colspan="2"><b>Retrieve this sequence</b>
+                                <input name='ids' value='$$primaryKey$$' size='20' type='hidden' />
+                            </td></tr>
+                        <tr><td colspan="2">Nucleotide positions:
+                                from <input type="text" name="start" value="1" maxlength="7" size="8"/>
+                                to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
+                            </td></tr>
+                       <tr><td align="left"><input type="checkbox" name="revComp">Reverse complement</td>
+                           <td align="right"><input type="submit" name='go' value='Go' /></td></tr>
+                    </table>
+                    </td></tr></table>
+                    </form>
+                ]]>
+           </text>
+        </textAttribute>
+
+
+      <!-- =================================================================== -->
+      <!-- Tables ---------->
+      <!-- =================================================================== -->
+
+        <!------------------------------------------------------------------>
+        <!-- centromere -->  
+        <!------------------------------------------------------------------>
+
+        <table name="Centromere" includeProjects="PlasmoDB"
+               displayName="Centromere"
+               queryRef="SequenceTables.Centromere">
+            <columnAttribute name="start_min" displayName="Centromere Start"/>
+            <columnAttribute name="end_max" displayName="Centromere End"/>
+        </table>
+
+        <!------------------------------------------------------------------>
+        <!-- comments -->  
+        <!------------------------------------------------------------------>
+
+        <table name="SequenceComments" excludeProjects="ApiDB"
+                 displayName="User Comments"
+                 queryRef="SequenceTables.SequenceComments">
+            <columnAttribute name="comment_id" internal="true"/>
+            <columnAttribute name="stable_id" internal="true"/>
+            <columnAttribute name="headline" internal="true"/>
+			<linkAttribute name="headline_link"
+							displayName="Headline"
+							visible="$$headline$$">
+				<url>
+				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.SequenceCommentsClass&project_id=&primary_key=$$stable_id$$#$$comment_id$$]]>
+				</url>
+			</linkAttribute>
+            <columnAttribute name="user_name" displayName="Made by"/>
+            <columnAttribute name="organization" displayName="Affiliation"/>
+            <columnAttribute name="comment_date" displayName="Date"/>
+         </table>
+
+        <!------------------------------------------------------------------>
+        <!-- data dump table -->  
+        <!------------------------------------------------------------------>
+
+          <table name="SequenceGffDbxrefs" excludeProjects="ApiDB"
+                 displayName="Sequence DbXrefs"
+                 queryRef="DataDumpQueries.SequenceGffDbxrefs" inReportMaker="false">
+              <columnAttribute displayName="Dbxref" name="gff_dbxref"/>
+          </table>
+
+       </recordClass>
+    </recordClassSet>
+</wdkModel>
