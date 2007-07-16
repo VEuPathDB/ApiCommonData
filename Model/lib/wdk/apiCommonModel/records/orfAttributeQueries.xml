@@ -35,8 +35,6 @@
 	<sqlQuery name="Sequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
-            <column name="source_id"/>
-            <column name="project_id"/>
             <column name="sequence"/>
             <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
@@ -48,7 +46,7 @@
                  AND ts.aa_sequence_id = tf.aa_sequence_id
             ]]>
            </sql>
-            <sql includeProjects="ApiDB,CryptoDB">
+            <sql includeProjects="ApiDB,CryptoDB,ToxoDB">
 		SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
                 	  from dots.TranslatedAASequence taas,
                       	 sres.SequenceOntology s,
