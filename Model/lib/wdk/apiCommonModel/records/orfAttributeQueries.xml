@@ -2,8 +2,8 @@
     <querySet name="OrfAttributes">
 
         <sqlQuery name="Bfmv" isCacheable='true'>
-            <paramRef ref="params.primaryKey"/>
-            <paramRef ref="params.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="nas_id" sortingTable="apidb.OrfAttributes" />
             <!--column name="orf_id" sortingTable="apidb.OrfAttributes" sortingColumn="source_id" /-->
             <column name="length" sortingTable="apidb.OrfAttributes" />
@@ -33,8 +33,8 @@
         </sqlQuery>
 
 	<sqlQuery name="Sequence" isCacheable='true'>
-            <paramRef ref="params.projectId"/>
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence"/>

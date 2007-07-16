@@ -8,7 +8,7 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="GeneAlias" includeProjects="PlasmoDB" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <sql>
             <![CDATA[
@@ -25,8 +25,8 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="Bfmv" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
-            <paramRef ref="params.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
@@ -268,7 +268,7 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="protein_sequence"/>
             <sql>
@@ -292,7 +292,7 @@
 
         <sqlQuery name="TranscriptSequence" isCacheable="false"
                        displayName="RNA Sequence">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="transcript_sequence"/>
             <sql>
@@ -313,7 +313,7 @@
 
         <sqlQuery name="CDS" isCacheable="false"
                        displayName="RNA Sequence">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="cds"/>
             <sql>
@@ -339,7 +339,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="graph_derisi_winzeler" />
             <column name="graph_winzeler" />
