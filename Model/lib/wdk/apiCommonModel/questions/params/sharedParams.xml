@@ -50,12 +50,14 @@
              Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
            </text>
         </help>
-        <enumList>
-          <enumValue term="Yes"
-                 internal=   "1"/>
-          <enumValue term="No"
-                 internal=   "0,1"/>
-        </enumList>
+        <enumValue>
+          <term>Yes</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>No</term>
+          <internal>0,1</internal>
+        </enumValue>
       </enumParam>
 
 
@@ -70,12 +72,14 @@
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
            </text>
         </help>
-        <enumList>
-          <enumValue term="No"
-                 internal=   "0,1"/>
-          <enumValue term="Yes"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>No</term>
+          <internal>0,1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -121,12 +125,14 @@
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
            </text>
         </help>
-        <enumList>
-          <enumValue term="does overlap with a gene"
-                 internal=   "INTERSECT"/>
-          <enumValue term="does not overlap with a gene"
-                 internal=   "MINUS"/>
-        </enumList>
+        <enumValue>
+          <term>does overlap with a gene</term>
+          <internal>INTERSECT</internal>
+        </enumValue>
+        <enumValue>
+          <term>does not overlap with a gene</term>
+          <internal>MINUS</internal>
+        </enumValue>
       </enumParam>
 
 
@@ -147,27 +153,43 @@
              The type of the subject database.
            </text>
         </help>
-        <enumList>
-          <enumValue term=" Choose one"
-                 internal="Choose one"/>
-          <enumValue term="Transcripts"
-                 internal=   "Transcripts"/>
-          <enumValue term="Translated Transcripts"
-                 internal=   "Transcripts Translated"/>
-          <enumValue term="Proteins"
-                 internal=   "proteins"/>
-          <enumValue term="Genome"
-                 internal="genomic"/>
-          <enumValue term="Translated Genome"
-                 internal="genomic Translated"/>
-          <enumValue term="ORF (Protein)"
-                 internal="orfs"/>
-          <enumValue term="EST"
-                 internal="ESTs"/>
-          <enumValue term="Translated EST"
-                 internal="ESTs Translated"/>
+        <enumValue>
+          <term> Choose one</term>
+          <internal>Choose one</internal>
+        </enumValue>
+        <enumValue>
+          <term>Transcripts</term>
+          <internal>Transcripts</internal>
+        </enumValue>
+        <enumValue>
+          <term>Translated Transcripts</term>
+          <internal>Transcripts Translated</internal>
+        </enumValue>
+        <enumValue>
+          <term>Proteins</term>
+          <internal>proteins</internal>
+        </enumValue>
+        <enumValue>
+          <term>Genome</term>
+          <internal>genomic</internal>
+        </enumValue>
+        <enumValue>
+          <term>Translated Genome</term>
+          <internal>genomic Translated</internal>
+        </enumValue>
+        <enumValue>
+          <term>ORF (Protein)</term>
+          <internal>orfs</internal>
+        </enumValue>
+        <enumValue>
+          <term>EST</term>
+          <internal>ESTs</internal>
+        </enumValue>
+        <enumValue>
+          <term>Translated EST</term>
+          <internal>ESTs Translated</internal>
+        </enumValue>
 
-        </enumList>
       </enumParam>
 
       <enumParam name="BlastDatabaseOrganism"
@@ -178,48 +200,84 @@
              Organism(s) from which the sequences in the BLAST database originated
            </text>
         </help>
-        <enumList>
-          <enumValue term="P. berghei" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pberghei"/>
-          <enumValue term="P. chabaudi" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pchabaudi"/>
-          <enumValue term="P. falciparum" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pfalciparum"/>
-          <enumValue term="P. falciparum mitocondrial" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "PfalciparumMito"/>
-          <enumValue term="P. falciparum plastid" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "PfalciparumPlastid"/>
-          <enumValue term="P. gallinaceum" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pgallinaceum"/>
-          <enumValue term="P. knowlesi" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pknowlesi"/>
-          <enumValue term="P. reichenowi" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Preichenowi"/>
-          <enumValue term="P. vivax" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pvivax"/>
-          <enumValue term="P. yoelii" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Pyoelii"/>
-          <enumValue term="any" includeProjects="ApiDB,PlasmoDB"
-                 internal=   "Plasmodium"/>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. berghei</term>
+          <internal>Pberghei</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. chabaudi</term>
+          <internal>Pchabaudi</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. falciparum</term>
+          <internal>Pfalciparum</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. falciparum mitocondrial</term>
+          <internal>PfalciparumMito</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. falciparum plastid</term>
+          <internal>PfalciparumPlastid</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. gallinaceum</term>
+          <internal>Pgallinaceum</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. knowlesi</term>
+          <internal>Pknowlesi</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. reichenowi</term>
+          <internal>Preichenowi</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. vivax</term>
+          <internal>Pvivax</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>P. yoelii</term>
+          <internal>Pyoelii</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <term>any</term>
+          <internal>Plasmodium</internal>
+        </enumValue>
 
-          <enumValue term="T. gondii ME49"  includeProjects="ApiDB,ToxoDB"
-                 internal=   "Tgondii"/> 
-          <enumValue term="T. gondi apicoplast" includeProjects="ApiDB,ToxoDB"
-                 internal=   "TgondiiApicoplast"/>
-          <enumValue term="T. gondii GT1"  includeProjects="ApiDB,ToxoDB"
-                 internal=   "TgondiiGT1"/> 
-          <enumValue term="T. gondii RH (chr Ia, Ib)"  includeProjects="ApiDB,ToxoDB"
-                 internal=   "TgondiiRH"/> 
-          <enumValue term="T. gondii VEG"  includeProjects="ApiDB,ToxoDB"
-                 internal=   "TgondiiVeg"/> 
+        <enumValue includeProjects="ApiDB,ToxoDB">
+          <term>T. gondii ME49</term>
+          <internal>Tgondii</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,ToxoDB">
+          <term>T. gondi apicoplast</term>
+          <internal>TgondiiApicoplast</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,ToxoDB">
+          <term>T. gondii GT1</term>
+          <internal>TgondiiGT1</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,ToxoDB">
+          <term>T. gondii RH (chr Ia, Ib)</term>
+          <internal>TgondiiRH</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,ToxoDB">
+          <term>T. gondii VEG</term>
+          <internal>TgondiiVeg</internal>
+        </enumValue>
 
-          <enumValue term="C. hominis" includeProjects="ApiDB,CryptoDB"
-                 internal=   "Chominis"/> 
-          <enumValue term="C. parvum" includeProjects="ApiDB,CryptoDB"
-                 internal=   "Cparvum"/> 
-          <enumValue term="C. parvum Chr6" includeProjects="ApiDB,CryptoDB"
-                 internal=   "CparvumChr6"/> 
-        </enumList>
+        <enumValue includeProjects="ApiDB,CryptoDB">
+          <term>C. hominis</term>
+          <internal>Chominis</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,CryptoDB">
+          <term>C. parvum</term>
+          <internal>Cparvum</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,CryptoDB">
+          <term>C. parvum Chr6</term>
+          <internal>CparvumChr6</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="BlastQueryType"
@@ -230,12 +288,14 @@
              The type of your query sequence
            </text>
         </help>
-        <enumList>
-          <enumValue term="DNA"
-                 internal=   "dna"/>
-          <enumValue term="Protein"
-                 internal=   "protein"/>
-        </enumList>
+        <enumValue>
+          <term>DNA</term>
+          <internal>dna</internal>
+        </enumValue>
+        <enumValue>
+          <term>Protein</term>
+          <internal>protein</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="BlastQuerySequence"
@@ -254,12 +314,14 @@
              Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
            </text>
         </help>
-        <enumList>
-          <enumValue term="yes"
-                 internal=   "yes"/>
-          <enumValue term="no"
-                 internal=   "no"/>
-        </enumList>
+        <enumValue>
+          <term>yes</term>
+          <internal>yes</internal>
+        </enumValue>
+        <enumValue>
+          <term>no</term>
+          <internal>no</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="-e"
@@ -290,36 +352,62 @@
                      multiPick="true">
         <help>
         </help>
-        <enumList>
-          <enumValue term="chromosome 1"
-                 internal=   "MAL1"/>
-          <enumValue term="chromosome 2"
-                 internal=   "MAL2"/>
-          <enumValue term="chromosome 3"
-                 internal=   "MAL3"/>
-          <enumValue term="chromosome 4"
-                 internal=   "MAL4"/>
-          <enumValue term="chromosome 5"
-                 internal=   "MAL5"/>
-          <enumValue term="chromosome 6"
-                 internal=   "MAL6"/>
-          <enumValue term="chromosome 7"
-                 internal=   "MAL7"/>
-          <enumValue term="chromosome 8"
-                 internal=   "MAL8"/>
-          <enumValue term="chromosome 9"
-                 internal=   "MAL9"/>
-          <enumValue term="chromosome 10"
-                 internal=   "MAL10"/>
-          <enumValue term="chromosome 11"
-                 internal=   "MAL11"/>
-          <enumValue term="chromosome 12"
-                 internal=   "MAL12"/>
-          <enumValue term="chromosome 13"
-                 internal=   "MAL13"/>
-          <enumValue term="chromosome 14"
-                 internal=   "MAL14"/>
-        </enumList>
+        <enumValue>
+          <term>chromosome 1</term>
+          <internal>MAL1</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 2</term>
+          <internal>MAL2</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 3</term>
+          <internal>MAL3</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 4</term>
+          <internal>MAL4</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 5</term>
+          <internal>MAL5</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 6</term>
+          <internal>MAL6</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 7</term>
+          <internal>MAL7</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 8</term>
+          <internal>MAL8</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 9</term>
+          <internal>MAL9</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 10</term>
+          <internal>MAL10</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 11</term>
+          <internal>MAL11</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 12</term>
+          <internal>MAL12</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 13</term>
+          <internal>MAL13</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 14</term>
+          <internal>MAL14</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="chromosomeOptional"
@@ -331,44 +419,78 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="choose one"
-                 internal=   "choose one"/>
-          <enumValue term="chromosome 1"
-                 internal=   "MAL1"/>
-          <enumValue term="chromosome 2"
-                 internal=   "MAL2"/>
-          <enumValue term="chromosome 3"
-                 internal=   "MAL3"/>
-          <enumValue term="chromosome 4"
-                 internal=   "MAL4"/>
-          <enumValue term="chromosome 5"
-                 internal=   "MAL5"/>
-          <enumValue term="chromosome 6"
-                 internal=   "MAL6"/>
-          <enumValue term="chromosome 7"
-                 internal=   "MAL7"/>
-          <enumValue term="chromosome 8"
-                 internal=   "MAL8"/>
-          <enumValue term="chromosome 9"
-                 internal=   "MAL9"/>
-          <enumValue term="chromosome 10"
-                 internal=   "MAL10"/>
-          <enumValue term="chromosome 11"
-                 internal=   "MAL11"/>
-          <enumValue term="chromosome 12"
-                 internal=   "MAL12"/>
-          <enumValue term="chromosome 13"
-                 internal=   "MAL13"/>
-          <enumValue term="chromosome 14"
-                 internal=   "MAL14"/>
-          <enumValue term="mitochondrial genome"
-                 internal=   "AJ276844"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "X95275"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "X95276"/>
-        </enumList>
+        <enumValue>
+          <term>choose one</term>
+          <internal>choose one</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 1</term>
+          <internal>MAL1</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 2</term>
+          <internal>MAL2</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 3</term>
+          <internal>MAL3</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 4</term>
+          <internal>MAL4</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 5</term>
+          <internal>MAL5</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 6</term>
+          <internal>MAL6</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 7</term>
+          <internal>MAL7</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 8</term>
+          <internal>MAL8</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 9</term>
+          <internal>MAL9</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 10</term>
+          <internal>MAL10</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 11</term>
+          <internal>MAL11</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 12</term>
+          <internal>MAL12</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 13</term>
+          <internal>MAL13</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 14</term>
+          <internal>MAL14</internal>
+        </enumValue>
+        <enumValue>
+          <term>mitochondrial genome</term>
+          <internal>AJ276844</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-A</term>
+          <internal>X95275</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-B</term>
+          <internal>X95276</internal>
+        </enumValue>
       </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -465,56 +587,102 @@
              Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
            </text>
         </help>
-        <enumList>
-          <enumValue term="Pf-7G8"
-                 internal=   "7G8"/>
-          <enumValue term="Pf-D10"
-                 internal=   "D10"/>
-          <enumValue term="Pf-DD2"
-                 internal=   "DD2"/>
-          <enumValue term="Pf-GHANA1"
-                 internal=   "GHANA1"/>
-          <enumValue term="Pf-HB3"
-                 internal=   "HB3"/>
-          <enumValue term="Pf-IT"
-                 internal=   "IT"/>
-          <enumValue term="P. reichenowi (vs. 3D7 only)"
-                 internal=   "Preich"/>
-          <enumValue term="Pf-3D7"
-                 internal=   "3D7"/>
-          <enumValue term="-----------"
-                 internal=   "foobar"/>
-          <enumValue term="Pf-106"
-                 internal=   "106"/>
-          <enumValue term="Pf-106/1"
-                 internal=   "106/1"/>
-          <enumValue term="Pf-D6"
-                 internal=   "D6"/>
-          <enumValue term="Pf-FCB"
-                 internal=   "FCB"/>
-          <enumValue term="Pf-FCC-2"
-                 internal=   "FCC-2"/>
-          <enumValue term="Pf-FCR3"
-                 internal=   "FCR3"/>
-          <enumValue term="Pf-K1"
-                 internal=   "K1"/>
-          <enumValue term="Pf-Malayan Camp"
-                 internal=   "Malayan Camp"/>
-          <enumValue term="Pf-RO33"
-                 internal=   "RO33"/>
-          <enumValue term="Pf-Santa Lucia"
-                 internal=   "Santa Lucia"/>
-          <enumValue term="Pf-Senegal 31.01"
-                 internal=   "Senegal 31.01"/>
-          <enumValue term="Pf-Senegal 34.04"
-                 internal=   "Senegal 34.04"/>
-          <enumValue term="Pf-Senegal 35.04"
-                 internal=   "Senegal 35.04"/>
-          <enumValue term="Pf-Senegal 51.02"
-                 internal=   "Senegal 51.02"/>
-          <enumValue term="Pf-VS-1"
-                 internal=   "VS-1"/>
-        </enumList>
+        <enumValue>
+          <term>Pf-7G8</term>
+          <internal>7G8</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-D10</term>
+          <internal>D10</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-DD2</term>
+          <internal>DD2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-GHANA1</term>
+          <internal>GHANA1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-HB3</term>
+          <internal>HB3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-IT</term>
+          <internal>IT</internal>
+        </enumValue>
+        <enumValue>
+          <term>P. reichenowi (vs. 3D7 only)</term>
+          <internal>Preich</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-3D7</term>
+          <internal>3D7</internal>
+        </enumValue>
+        <enumValue>
+          <term>-----------</term>
+          <internal>foobar</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-106</term>
+          <internal>106</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-106/1</term>
+          <internal>106/1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-D6</term>
+          <internal>D6</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCB</term>
+          <internal>FCB</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCC-2</term>
+          <internal>FCC-2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCR3</term>
+          <internal>FCR3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-K1</term>
+          <internal>K1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Malayan Camp</term>
+          <internal>Malayan Camp</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-RO33</term>
+          <internal>RO33</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Santa Lucia</term>
+          <internal>Santa Lucia</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 31.01</term>
+          <internal>Senegal 31.01</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 34.04</term>
+          <internal>Senegal 34.04</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 35.04</term>
+          <internal>Senegal 35.04</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 51.02</term>
+          <internal>Senegal 51.02</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-VS-1</term>
+          <internal>VS-1</internal>
+        </enumValue>
       </enumParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -583,115 +751,209 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList includeProjects="PlasmoDB">
-          <enumValue term="chromosome 1"
-                 internal=   "'MAL1'"/>
-          <enumValue term="chromosome 2"
-                 internal=   "'MAL2'"/>
-          <enumValue term="chromosome 3"
-                 internal=   "'MAL3'"/>
-          <enumValue term="chromosome 4"
-                 internal=   "'MAL4'"/>
-          <enumValue term="chromosome 5"
-                 internal=   "'MAL5'"/>
-          <enumValue term="chromosome 6"
-                 internal=   "'MAL6'"/>
-          <enumValue term="chromosome 7"
-                 internal=   "'MAL7'"/>
-          <enumValue term="chromosome 8"
-                 internal=   "'MAL8'"/>
-          <enumValue term="chromosome 9"
-                 internal=   "'MAL9'"/>
-          <enumValue term="chromosome 10"
-                 internal=   "'MAL10'"/>
-          <enumValue term="chromosome 11"
-                 internal=   "'MAL11'"/>
-          <enumValue term="chromosome 12"
-                 internal=   "'MAL12'"/>
-          <enumValue term="chromosome 13"
-                 internal=   "'MAL13'"/>
-          <enumValue term="chromosome 14"
-                 internal=   "'MAL14'"/>
-          <enumValue term="mitochondrial genome"
-                 internal=   "'AJ276844'"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "'X95275'"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "'X95276'"/>
-        </enumList>
+        <enumValue>
+          <term>chromosome 1</term>
+          <internal>'MAL1'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 2</term>
+          <internal>'MAL2'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 3</term>
+          <internal>'MAL3'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 4</term>
+          <internal>'MAL4'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 5</term>
+          <internal>'MAL5'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 6</term>
+          <internal>'MAL6'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 7</term>
+          <internal>'MAL7'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 8</term>
+          <internal>'MAL8'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 9</term>
+          <internal>'MAL9'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 10</term>
+          <internal>'MAL10'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 11</term>
+          <internal>'MAL11'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 12</term>
+          <internal>'MAL12'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 13</term>
+          <internal>'MAL13'</internal>
+        </enumValue>
+        <enumValue>
+          <term>chromosome 14</term>
+          <internal>'MAL14'</internal>
+        </enumValue>
+        <enumValue>
+          <term>mitochondrial genome</term>
+          <internal>'AJ276844'</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-A</term>
+          <internal>'X95275'</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-B</term>
+          <internal>'X95276'</internal>
+        </enumValue>
 		
-        <enumList includeProjects="ToxoDB">
-          <enumValue term="Ia"
-                 internal=   "Ia"/>
-          <enumValue term="Ib"
-                 internal=   "Ib"/>
-          <enumValue term="II"
-                 internal=   "II"/>
-          <enumValue term="III"
-                 internal=   "III"/>
-          <enumValue term="IV"
-                 internal=   "IV"/>
-          <enumValue term="V"
-                 internal=   "V"/>
-          <enumValue term="VI"
-                 internal=   "VI"/>
-          <enumValue term="VIIa"
-                 internal=   "VIIa"/>
-          <enumValue term="VIIb"
-                 internal=   "VIIb"/>
-          <enumValue term="VIII"
-                 internal=   "VIII"/>
-          <enumValue term="IX"
-                 internal=   "IX"/>
-          <enumValue term="X"
-                 internal=   "X"/>
-          <enumValue term="XI"
-                 internal=   "XI"/>
-          <enumValue term="XII"
-                 internal=   "XII"/>
-        </enumList>
+        <enumValue>
+          <term>Ia</term>
+          <internal>Ia</internal>
+        </enumValue>
+        <enumValue>
+          <term>Ib</term>
+          <internal>Ib</internal>
+        </enumValue>
+        <enumValue>
+          <term>II</term>
+          <internal>II</internal>
+        </enumValue>
+        <enumValue>
+          <term>III</term>
+          <internal>III</internal>
+        </enumValue>
+        <enumValue>
+          <term>IV</term>
+          <internal>IV</internal>
+        </enumValue>
+        <enumValue>
+          <term>V</term>
+          <internal>V</internal>
+        </enumValue>
+        <enumValue>
+          <term>VI</term>
+          <internal>VI</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIIa</term>
+          <internal>VIIa</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIIb</term>
+          <internal>VIIb</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIII</term>
+          <internal>VIII</internal>
+        </enumValue>
+        <enumValue>
+          <term>IX</term>
+          <internal>IX</internal>
+        </enumValue>
+        <enumValue>
+          <term>X</term>
+          <internal>X</internal>
+        </enumValue>
+        <enumValue>
+          <term>XI</term>
+          <internal>XI</internal>
+        </enumValue>
+        <enumValue>
+          <term>XII</term>
+          <internal>XII</internal>
+        </enumValue>
 
 		
-        <enumList includeProjects="CryptoDB">
-          <enumValue term="AAEE01000006 (Chromosome 1)"
-                 internal=   "AAEE01000006"/>
-          <enumValue term="AAEE01000005 (Chromosome 2)"
-                 internal=   "AAEE01000005"/>
-          <enumValue term="AAEE01000013 (Chromosome 2)"
-                 internal=   "AAEE01000013"/>
-          <enumValue term="AAEE01000004 (Chromosome 3)"
-                 internal=   "AAEE01000004"/>
-          <enumValue term="AAEE01000015 (Chromosome 3)"
-                 internal=   "AAEE01000015"/>
-          <enumValue term="AAEE01000008 (Chromosome 4)"
-                 internal=   "AAEE01000008"/>
-          <enumValue term="AAEE01000009 (Chromosome 4)"
-                 internal=   "AAEE01000009"/>
-          <enumValue term="AAEE01000012 (Chromosome 4)"
-                 internal=   "AAEE01000012"/>
-          <enumValue term="AAEE01000007 (Chromosome 5)"
-                 internal=   "AAEE01000007"/>
-          <enumValue term="AAEE01000018 (Chromosome 5)"
-                 internal=   "AAEE01000018"/>
-          <enumValue term="AAEE01000017 (Chromosome 5)"
-                 internal=   "AAEE01000017"/>
-          <enumValue term="AAEE01000010 (Chromosome 5)"
-                 internal=   "AAEE01000010"/>
-          <enumValue term="AAEE01000002 (Chromosome 6)"
-                 internal=   "AAEE01000002"/>
-          <enumValue term="AAEE01000014 (Chromosome 6)"
-                 internal=   "AAEE01000014"/>
-          <enumValue term="BX526834 (Chromosome 6)"
-		         internal=   "BX526834"/>
-		  <enumValue term="AAEE01000016 (Chromosome 6)"
-                 internal=   "AAEE01000016"/>
-          <enumValue term="AAEE01000001 (Chromosome 7)"
-                 internal=   "AAEE01000001"/>
-          <enumValue term="AAEE01000003 (Chromosome 8)"
-                 internal=   "AAEE01000003"/>
-		  <enumValue term="AAEE01000011 (Chromosome 8)"
-		         internal=   "AAEE01000011"/>
-        </enumList>
+        <enumValue>
+          <term>AAEE01000006 (Chromosome 1)</term>
+          <internal>AAEE01000006</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000005 (Chromosome 2)</term>
+          <internal>AAEE01000005</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000013 (Chromosome 2)</term>
+          <internal>AAEE01000013</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000004 (Chromosome 3)</term>
+          <internal>AAEE01000004</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000015 (Chromosome 3)</term>
+          <internal>AAEE01000015</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000008 (Chromosome 4)</term>
+          <internal>AAEE01000008</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000009 (Chromosome 4)</term>
+          <internal>AAEE01000009</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000012 (Chromosome 4)</term>
+          <internal>AAEE01000012</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000007 (Chromosome 5)</term>
+          <internal>AAEE01000007</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000018 (Chromosome 5)</term>
+          <internal>AAEE01000018</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000017 (Chromosome 5)</term>
+          <internal>AAEE01000017</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000010 (Chromosome 5)</term>
+          <internal>AAEE01000010</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000002 (Chromosome 6)</term>
+          <internal>AAEE01000002</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000014 (Chromosome 6)</term>
+          <internal>AAEE01000014</internal>
+        </enumValue>
+        <enumValue>
+          <term>BX526834 (Chromosome 6)</term>
+          <internal>BX526834</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000016 (Chromosome 6)</term>
+          <internal>AAEE01000016</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000001 (Chromosome 7)</term>
+          <internal>AAEE01000001</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000003 (Chromosome 8)</term>
+          <internal>AAEE01000003</internal>
+        </enumValue>
+        <enumValue>
+          <term>AAEE01000011 (Chromosome 8)</term>
+          <internal>AAEE01000011</internal>
+        </enumValue>
 
 
       </enumParam>

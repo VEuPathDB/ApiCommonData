@@ -148,12 +148,14 @@
              Select ...
            </text>
         </help>
-        <enumList>
-          <enumValue term="down-regulated"
-                 internal=   "-"/>
-          <enumValue term="up-regulated"
-                 internal=   ""/>
-        </enumList>
+        <enumValue>
+          <term>down-regulated</term>
+          <internal>-</internal>
+        </enumValue>
+        <enumValue>
+          <term>up-regulated</term>
+          <internal></internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="percentile"
@@ -221,12 +223,14 @@
              Select whether to reject text matches that start or end in the middle of a word
            </text>
         </help>
-        <enumList>
-          <enumValue term="yes"
-                 internal=   "true"/>
-          <enumValue term="no"
-                 internal=   "false"/>
-        </enumList>
+        <enumValue>
+          <term>yes</term>
+          <internal>true</internal>
+        </enumValue>
+        <enumValue>
+          <term>no</term>
+          <internal>false</internal>
+        </enumValue>
       </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -252,14 +256,18 @@
              Choose whether to include pseudogenes in your query results.
            </text>
         </help>
-        <enumList>
-          <enumValue term="No"
-                 internal=   "0"/>
-          <enumValue term="Yes"
-                 internal=   "0,1"/>
-          <enumValue term="Pseudogenes Only"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>No</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>0,1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pseudogenes Only</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -315,12 +323,14 @@
              Optionally specifiy whether given protein is bait or prey
            </text>
         </help>
-        <enumList>
-          <enumValue term="bait"
-                 internal=   "'bait'"/>
-          <enumValue term="prey"
-                 internal=   "'prey'"/>
-        </enumList>
+        <enumValue>
+          <term>bait</term>
+          <internal>'bait'</internal>
+        </enumValue>
+        <enumValue>
+          <term>prey</term>
+          <internal>'prey'</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="min_observed"
@@ -355,14 +365,18 @@
              The type of the target database (eg CDS, translated CDS, Protein)
            </text>
         </help>
-        <enumList>
-          <enumValue term="Proteins"
-                 internal=   "proteins"/>
-          <enumValue term="Transcripts"
-                 internal=   "Transcripts"/>
-          <enumValue term="Translated Transcripts"
-                 internal=   "Transcripts Translated"/>
-        </enumList>
+        <enumValue>
+          <term>Proteins</term>
+          <internal>proteins</internal>
+        </enumValue>
+        <enumValue>
+          <term>Transcripts</term>
+          <internal>Transcripts</internal>
+        </enumValue>
+        <enumValue>
+          <term>Translated Transcripts</term>
+          <internal>Transcripts Translated</internal>
+        </enumValue>
       </enumParam>
 
 
@@ -378,14 +392,18 @@
              Epitopes are mapped to genes in PlasmoDB using high quality BLAST similarities (percent identity >= 97%) between the GenBank proteins listed on IEDB and the proteins found in PlasmoDB, and exact string matching.  Confidence levels are assigned to each set of epitopes based on the quality of this mapping.  A high confidence is assigned to a set where all of the epitopes are found on a given BLAST hit.  A medium confidence is assigned to a set where either some, but not all, of the epitopes in a set are found on a given BLAST hit, or where all of the epitopes in a set are found in a given protein, but the protein was not identified as a match by BLAST.  A low confidence is assigned to sets where some, but not all, of the epitopes are found in a given protein, but the protein was not identified by BLAST.  Choose one or more assigned confidence levels to search for epitopes in.
            </text>
         </help>
-        <enumList>
-          <enumValue term="High"
-                 internal=   "'Full Set On Blast Hit'"/>
-          <enumValue term="Low"
-                 internal=   "'Not Full Set Not on Blast Hit'"/>
-          <enumValue term="Medium"
-                 internal=   "'Full Set Not on Blast Hit','Not Full Set On Blast Hit'"/>
-        </enumList>
+       <enumValue>
+         <term>High</term>
+         <internal>'Full Set On Blast Hit'</internal>
+       </enumValue>
+       <enumValue>
+         <term>Low</term>
+         <internal>'Not Full Set Not on Blast Hit'</internal>
+       </enumValue>
+       <enumValue>
+         <term>Medium</term>
+         <internal>'Full Set Not on Blast Hit','Not Full Set On Blast Hit'</internal>
+       </enumValue>
       </enumParam>
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
@@ -449,12 +467,14 @@
              Click yes to include P. reichenowi snps in this query.  P.r snps were generated by alignment of P. reichenowi sequence with the P falciparum 3D7 reference sequence.  Note, if you want to only query reichenowi, you must click 'None' in the P. falciparum strains select list.
            </text>
         </help>
-        <enumList>
-          <enumValue term="No"
-                 internal=   "foobar"/>
-          <enumValue term="Yes"
-                 internal=   "Preich"/>
-        </enumList>
+        <enumValue>
+          <term>No</term>
+          <internal>foobar</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>Preich</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="include_only_queries"
@@ -465,12 +485,14 @@
              Click yes to to restrict the results returned to only those genes which have been input as query ids.  This allows you to determine the relatedness of your query set
            </text>
         </help>
-        <enumList>
-          <enumValue term="No"
-                 internal=   "no"/>
-          <enumValue term="Yes"
-                 internal=   "yes"/>
-        </enumList>
+        <enumValue>
+          <term>No</term>
+          <internal>no</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>yes</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="snp_stat"
@@ -481,20 +503,30 @@
              Choose the class of SNP you want to query on ... choose minumum and maximum numbers below
            </text>
         </help>
-        <enumList>
-          <enumValue term="All SNPs"
-                 internal=   "total"/>
-          <enumValue term="Coding"
-                 internal=   "non_synonymous + synonymous"/>
-          <enumValue term="Non-Coding"
-                 internal=   "non_coding"/>
-          <enumValue term="Non-Synonymous"
-                 internal=   "non_synonymous"/>
-          <enumValue term="Nonsense"
-                 internal=   "stop"/>
-          <enumValue term="Synonymous"
-                 internal=   "synonymous"/>
-        </enumList>
+        <enumValue>
+          <term>All SNPs</term>
+          <internal>total</internal>
+        </enumValue>
+        <enumValue>
+          <term>Coding</term>
+          <internal>non_synonymous + synonymous</internal>
+        </enumValue>
+        <enumValue>
+          <term>Non-Coding</term>
+          <internal>non_coding</internal>
+        </enumValue>
+        <enumValue>
+          <term>Non-Synonymous</term>
+          <internal>non_synonymous</internal>
+        </enumValue>
+        <enumValue>
+          <term>Nonsense</term>
+          <internal>stop</internal>
+        </enumValue>
+        <enumValue>
+          <term>Synonymous</term>
+          <internal>synonymous</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="snp_order"
@@ -505,22 +537,34 @@
              Results will be sorted on this column in descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="All SNPs"
-                 internal=   "total"/>
-          <enumValue term="Non-Coding SNPs"
-                 internal=   "non_coding"/>
-          <enumValue term="Non-Synonymous SNPs"
-                 internal=   "non_synonymous"/>
-          <enumValue term="Non-synonymous / Synonymous ratio"
-                 internal=   "dn_ds_ratio"/>
-          <enumValue term="Nonsense SNPs"
-                 internal=   "stop"/>
-          <enumValue term="SNP density in CDS"
-                 internal=   "cds_snp_density"/>
-          <enumValue term="Synonymous SNPs"
-                 internal=   "synonymous"/>
-        </enumList>
+        <enumValue>
+          <term>All SNPs</term>
+          <internal>total</internal>
+        </enumValue>
+        <enumValue>
+          <term>Non-Coding SNPs</term>
+          <internal>non_coding</internal>
+        </enumValue>
+        <enumValue>
+          <term>Non-Synonymous SNPs</term>
+          <internal>non_synonymous</internal>
+        </enumValue>
+        <enumValue>
+          <term>Non-synonymous / Synonymous ratio</term>
+          <internal>dn_ds_ratio</internal>
+        </enumValue>
+        <enumValue>
+          <term>Nonsense SNPs</term>
+          <internal>stop</internal>
+        </enumValue>
+        <enumValue>
+          <term>SNP density in CDS</term>
+          <internal>cds_snp_density</internal>
+        </enumValue>
+        <enumValue>
+          <term>Synonymous SNPs</term>
+          <internal>synonymous</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="sort_order"
@@ -531,12 +575,14 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Descending"
-                 internal=   "DESC"/>
-          <enumValue term="Ascending"
-                 internal=   "ASC"/>
-        </enumList>
+        <enumValue>
+          <term>Descending</term>
+          <internal>DESC</internal>
+        </enumValue>
+        <enumValue>
+          <term>Ascending</term>
+          <internal>ASC</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="profileSet"
@@ -547,16 +593,22 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Any of the time courses"
-                 internal=   "DeRisi % Smoothed Averaged"/>
-          <enumValue term="Dev. Series 3D7 (glass slide), DeRisi"
-                 internal=   "DeRisi 3D7 Smoothed Averaged"/>
-          <enumValue term="Dev. Series Dd2 (glass slide), DeRisi"
-                 internal=   "DeRisi Dd2 Smoothed Averaged"/>
-          <enumValue term="Dev. Series HB3 (glass slide), DeRisi"
-                 internal=   "DeRisi HB3 Smoothed Averaged"/>
-        </enumList>
+        <enumValue>
+          <term>Any of the time courses</term>
+          <internal>DeRisi % Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>Dev. Series 3D7 (glass slide), DeRisi</term>
+          <internal>DeRisi 3D7 Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>Dev. Series Dd2 (glass slide), DeRisi</term>
+          <internal>DeRisi Dd2 Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>Dev. Series HB3 (glass slide), DeRisi</term>
+          <internal>DeRisi HB3 Smoothed Averaged</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="waters_profilesets"
@@ -567,14 +619,18 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Either"
-                 internal=   "Waters HP% Percents Averaged"/>
-          <enumValue term="HP"
-                 internal=   "Waters HP Percents Averaged"/>
-          <enumValue term="HPE"
-                 internal=   "Waters HPE Percents Averaged"/>
-        </enumList>
+        <enumValue>
+          <term>Either</term>
+          <internal>Waters HP% Percents Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>HP</term>
+          <internal>Waters HP Percents Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>HPE</term>
+          <internal>Waters HPE Percents Averaged</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="minOrMax"
@@ -585,14 +641,18 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Timing of both max and min expression"
-                 internal=   "both"/>
-          <enumValue term="Timing of maximal expression"
-                 internal=   "max"/>
-          <enumValue term="Timing of minimal expression"
-                 internal=   "min"/>
-        </enumList>
+        <enumValue>
+          <term>Timing of both max and min expression</term>
+          <internal>both</internal>
+        </enumValue>
+        <enumValue>
+          <term>Timing of maximal expression</term>
+          <internal>max</internal>
+        </enumValue>
+        <enumValue>
+          <term>Timing of minimal expression</term>
+          <internal>min</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="maxExprHour"
@@ -603,104 +663,198 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-          <enumValue term="25 hours"
-                 internal=   "25"/>
-          <enumValue term="26 hours"
-                 internal=   "26"/>
-          <enumValue term="27 hours"
-                 internal=   "27"/>
-          <enumValue term="28 hours"
-                 internal=   "28"/>
-          <enumValue term="29 hours"
-                 internal=   "29"/>
-          <enumValue term="30 hours"
-                 internal=   "30"/>
-          <enumValue term="31 hours"
-                 internal=   "31"/>
-          <enumValue term="32 hours"
-                 internal=   "32"/>
-          <enumValue term="33 hours"
-                 internal=   "33"/>
-          <enumValue term="34 hours"
-                 internal=   "34"/>
-          <enumValue term="35 hours"
-                 internal=   "35"/>
-          <enumValue term="36 hours"
-                 internal=   "36"/>
-          <enumValue term="37 hours"
-                 internal=   "37"/>
-          <enumValue term="38 hours"
-                 internal=   "38"/>
-          <enumValue term="39 hours"
-                 internal=   "39"/>
-          <enumValue term="40 hours"
-                 internal=   "40"/>
-          <enumValue term="41 hours"
-                 internal=   "41"/>
-          <enumValue term="42 hours"
-                 internal=   "42"/>
-          <enumValue term="43 hours"
-                 internal=   "43"/>
-          <enumValue term="44 hours"
-                 internal=   "44"/>
-          <enumValue term="45 hours"
-                 internal=   "45"/>
-          <enumValue term="46 hours"
-                 internal=   "46"/>
-          <enumValue term="47 hours"
-                 internal=   "47"/>
-          <enumValue term="48 hours"
-                 internal=   "48"/>
-        </enumList>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
+        <enumValue>
+          <term>25 hours</term>
+          <internal>25</internal>
+        </enumValue>
+        <enumValue>
+          <term>26 hours</term>
+          <internal>26</internal>
+        </enumValue>
+        <enumValue>
+          <term>27 hours</term>
+          <internal>27</internal>
+        </enumValue>
+        <enumValue>
+          <term>28 hours</term>
+          <internal>28</internal>
+        </enumValue>
+        <enumValue>
+          <term>29 hours</term>
+          <internal>29</internal>
+        </enumValue>
+        <enumValue>
+          <term>30 hours</term>
+          <internal>30</internal>
+        </enumValue>
+        <enumValue>
+          <term>31 hours</term>
+          <internal>31</internal>
+        </enumValue>
+        <enumValue>
+          <term>32 hours</term>
+          <internal>32</internal>
+        </enumValue>
+        <enumValue>
+          <term>33 hours</term>
+          <internal>33</internal>
+        </enumValue>
+        <enumValue>
+          <term>34 hours</term>
+          <internal>34</internal>
+        </enumValue>
+        <enumValue>
+          <term>35 hours</term>
+          <internal>35</internal>
+        </enumValue>
+        <enumValue>
+          <term>36 hours</term>
+          <internal>36</internal>
+        </enumValue>
+        <enumValue>
+          <term>37 hours</term>
+          <internal>37</internal>
+        </enumValue>
+        <enumValue>
+          <term>38 hours</term>
+          <internal>38</internal>
+        </enumValue>
+        <enumValue>
+          <term>39 hours</term>
+          <internal>39</internal>
+        </enumValue>
+        <enumValue>
+          <term>40 hours</term>
+          <internal>40</internal>
+        </enumValue>
+        <enumValue>
+          <term>41 hours</term>
+          <internal>41</internal>
+        </enumValue>
+        <enumValue>
+          <term>42 hours</term>
+          <internal>42</internal>
+        </enumValue>
+        <enumValue>
+          <term>43 hours</term>
+          <internal>43</internal>
+        </enumValue>
+        <enumValue>
+          <term>44 hours</term>
+          <internal>44</internal>
+        </enumValue>
+        <enumValue>
+          <term>45 hours</term>
+          <internal>45</internal>
+        </enumValue>
+        <enumValue>
+          <term>46 hours</term>
+          <internal>46</internal>
+        </enumValue>
+        <enumValue>
+          <term>47 hours</term>
+          <internal>47</internal>
+        </enumValue>
+        <enumValue>
+          <term>48 hours</term>
+          <internal>48</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="maxPlusMinusHours"
@@ -711,56 +865,102 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-        </enumList>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="minExprHour"
@@ -771,104 +971,198 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-          <enumValue term="25 hours"
-                 internal=   "25"/>
-          <enumValue term="26 hours"
-                 internal=   "26"/>
-          <enumValue term="27 hours"
-                 internal=   "27"/>
-          <enumValue term="28 hours"
-                 internal=   "28"/>
-          <enumValue term="29 hours"
-                 internal=   "29"/>
-          <enumValue term="30 hours"
-                 internal=   "30"/>
-          <enumValue term="31 hours"
-                 internal=   "31"/>
-          <enumValue term="32 hours"
-                 internal=   "32"/>
-          <enumValue term="33 hours"
-                 internal=   "33"/>
-          <enumValue term="34 hours"
-                 internal=   "34"/>
-          <enumValue term="35 hours"
-                 internal=   "35"/>
-          <enumValue term="36 hours"
-                 internal=   "36"/>
-          <enumValue term="37 hours"
-                 internal=   "37"/>
-          <enumValue term="38 hours"
-                 internal=   "38"/>
-          <enumValue term="39 hours"
-                 internal=   "39"/>
-          <enumValue term="40 hours"
-                 internal=   "40"/>
-          <enumValue term="41 hours"
-                 internal=   "41"/>
-          <enumValue term="42 hours"
-                 internal=   "42"/>
-          <enumValue term="43 hours"
-                 internal=   "43"/>
-          <enumValue term="44 hours"
-                 internal=   "44"/>
-          <enumValue term="45 hours"
-                 internal=   "45"/>
-          <enumValue term="46 hours"
-                 internal=   "46"/>
-          <enumValue term="47 hours"
-                 internal=   "47"/>
-          <enumValue term="48 hours"
-                 internal=   "48"/>
-        </enumList>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
+        <enumValue>
+          <term>25 hours</term>
+          <internal>25</internal>
+        </enumValue>
+        <enumValue>
+          <term>26 hours</term>
+          <internal>26</internal>
+        </enumValue>
+        <enumValue>
+          <term>27 hours</term>
+          <internal>27</internal>
+        </enumValue>
+        <enumValue>
+          <term>28 hours</term>
+          <internal>28</internal>
+        </enumValue>
+        <enumValue>
+          <term>29 hours</term>
+          <internal>29</internal>
+        </enumValue>
+        <enumValue>
+          <term>30 hours</term>
+          <internal>30</internal>
+        </enumValue>
+        <enumValue>
+          <term>31 hours</term>
+          <internal>31</internal>
+        </enumValue>
+        <enumValue>
+          <term>32 hours</term>
+          <internal>32</internal>
+        </enumValue>
+        <enumValue>
+          <term>33 hours</term>
+          <internal>33</internal>
+        </enumValue>
+        <enumValue>
+          <term>34 hours</term>
+          <internal>34</internal>
+        </enumValue>
+        <enumValue>
+          <term>35 hours</term>
+          <internal>35</internal>
+        </enumValue>
+        <enumValue>
+          <term>36 hours</term>
+          <internal>36</internal>
+        </enumValue>
+        <enumValue>
+          <term>37 hours</term>
+          <internal>37</internal>
+        </enumValue>
+        <enumValue>
+          <term>38 hours</term>
+          <internal>38</internal>
+        </enumValue>
+        <enumValue>
+          <term>39 hours</term>
+          <internal>39</internal>
+        </enumValue>
+        <enumValue>
+          <term>40 hours</term>
+          <internal>40</internal>
+        </enumValue>
+        <enumValue>
+          <term>41 hours</term>
+          <internal>41</internal>
+        </enumValue>
+        <enumValue>
+          <term>42 hours</term>
+          <internal>42</internal>
+        </enumValue>
+        <enumValue>
+          <term>43 hours</term>
+          <internal>43</internal>
+        </enumValue>
+        <enumValue>
+          <term>44 hours</term>
+          <internal>44</internal>
+        </enumValue>
+        <enumValue>
+          <term>45 hours</term>
+          <internal>45</internal>
+        </enumValue>
+        <enumValue>
+          <term>46 hours</term>
+          <internal>46</internal>
+        </enumValue>
+        <enumValue>
+          <term>47 hours</term>
+          <internal>47</internal>
+        </enumValue>
+        <enumValue>
+          <term>48 hours</term>
+          <internal>48</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="minPlusMinusHours"
@@ -879,56 +1173,102 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-        </enumList>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="inductionFold"
@@ -939,20 +1279,30 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="-- None --"
-                 internal=   "0"/>
-          <enumValue term=">= 2 fold induction"
-                 internal=   "2"/>
-          <enumValue term=">= 4 fold induction"
-                 internal=   "4"/>
-          <enumValue term=">= 8 fold induction"
-                 internal=   "8"/>
-          <enumValue term=">= 16 fold induction"
-                 internal=   "16"/>
-          <enumValue term=">= 32 fold induction"
-                 internal=   "32"/>
-        </enumList>
+        <enumValue>
+          <term>-- None --</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 2 fold induction</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 4 fold induction</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 8 fold induction</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 16 fold induction</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 32 fold induction</term>
+          <internal>32</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="expressionPct"
@@ -963,28 +1313,46 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="-- None --"
-                 internal=   "0"/>
-          <enumValue term=">= 10th percentile"
-                 internal=   "10"/>
-          <enumValue term=">= 20th percentile"
-                 internal=   "20"/>
-          <enumValue term=">= 30th percentile"
-                 internal=   "30"/>
-          <enumValue term=">= 40th percentile"
-                 internal=   "40"/>
-          <enumValue term=">= 50th percentile"
-                 internal=   "50"/>
-          <enumValue term=">= 60th percentile"
-                 internal=   "60"/>
-          <enumValue term=">= 70th percentile"
-                 internal=   "70"/>
-          <enumValue term=">= 80th percentile"
-                 internal=   "80"/>
-          <enumValue term=">= 90th percentile"
-                 internal=   "90"/>
-        </enumList>
+        <enumValue>
+          <term>-- None --</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 10th percentile</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 20th percentile</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 30th percentile</term>
+          <internal>30</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 40th percentile</term>
+          <internal>40</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 50th percentile</term>
+          <internal>50</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 60th percentile</term>
+          <internal>60</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 70th percentile</term>
+          <internal>70</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 80th percentile</term>
+          <internal>80</internal>
+        </enumValue>
+        <enumValue>
+          <term>>= 90th percentile</term>
+          <internal>90</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="pfNonnuclearSequence"
@@ -995,14 +1363,18 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="mitochondrial genome"
-                 internal=   "'AJ276844'"/>
-          <enumValue term="plastid IR-A"
-                 internal=   "'X95275'"/>
-          <enumValue term="plastid IR-B"
-                 internal=   "'X95276'"/>
-        </enumList>
+        <enumValue>
+          <term>mitochondrial genome</term>
+          <internal>'AJ276844'</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-A</term>
+          <internal>'X95275'</internal>
+        </enumValue>
+        <enumValue>
+          <term>plastid IR-B</term>
+          <internal>'X95276'</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="start_location"
@@ -1107,14 +1479,18 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Sorbitol"
-                 internal=   "'winzeler_cc_sorbPct'"/>
-          <enumValue term="Temperature"
-                 internal=   "'winzeler_cc_tempPct'"/>
-          <enumValue term="Either"
-                 internal=   "'winzeler_cc_sorbPct', 'winzeler_cc_tempPct'"/>
-        </enumList>
+        <enumValue>
+          <term>Sorbitol</term>
+          <internal>'winzeler_cc_sorbPct'</internal>
+        </enumValue>
+        <enumValue>
+          <term>Temperature</term>
+          <internal>'winzeler_cc_tempPct'</internal>
+        </enumValue>
+        <enumValue>
+          <term>Either</term>
+          <internal>'winzeler_cc_sorbPct', 'winzeler_cc_tempPct'</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="localization"
@@ -1125,14 +1501,18 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Apicoplast"
-                 internal=   "apicoplast"/>
-          <enumValue term="RBC membrane (Pexel motif)"
-                 internal=   "pexel"/>
-          <enumValue term="RBC membrane (HT motif)"
-                 internal=   "ht"/>
-        </enumList>
+        <enumValue>
+          <term>Apicoplast</term>
+          <internal>apicoplast</internal>
+        </enumValue>
+        <enumValue>
+          <term>RBC membrane (Pexel motif)</term>
+          <internal>pexel</internal>
+        </enumValue>
+        <enumValue>
+          <term>RBC membrane (HT motif)</term>
+          <internal>ht</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="ortholog_pattern"
@@ -1148,224 +1528,438 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="Archaea"
-                 internal=   "0"/>
-          <enumValue term="hal"
-                 internal=   "1"/>
-          <enumValue term="mja"
-                 internal=   "1"/>
-          <enumValue term="neq"
-                 internal=   "1"/>
-          <enumValue term="sso"
-                 internal=   "1"/>
-          <enumValue term="Bacteria"
-                 internal=   "0"/>
-          <enumValue term="aae"
-                 internal=   "1"/>
-          <enumValue term="ban"
-                 internal=   "1"/>
-          <enumValue term="cpe"
-                 internal=   "1"/>
-          <enumValue term="cpn"
-                 internal=   "1"/>
-          <enumValue term="cte"
-                 internal=   "1"/>
-          <enumValue term="det"
-                 internal=   "1"/>
-          <enumValue term="dra"
-                 internal=   "1"/>
-          <enumValue term="lmo"
-                 internal=   "1"/>
-          <enumValue term="mtu"
-                 internal=   "1"/>
-          <enumValue term="rba"
-                 internal=   "1"/>
-          <enumValue term="sau"
-                 internal=   "1"/>
-          <enumValue term="spn"
-                 internal=   "1"/>
-          <enumValue term="syn"
-                 internal=   "1"/>
-          <enumValue term="tma"
-                 internal=   "1"/>
-          <enumValue term="tpa"
-                 internal=   "1"/>
-          <enumValue term="Proteobacteria"
-                 internal=   "1"/>
-          <enumValue term="atu"
-                 internal=   "2"/>
-          <enumValue term="bsu"
-                 internal=   "2"/>
-          <enumValue term="bur"
-                 internal=   "2"/>
-          <enumValue term="cbu"
-                 internal=   "2"/>
-          <enumValue term="cje"
-                 internal=   "2"/>
-          <enumValue term="eco"
-                 internal=   "2"/>
-          <enumValue term="ftu"
-                 internal=   "2"/>
-          <enumValue term="gsu"
-                 internal=   "2"/>
-          <enumValue term="rso"
-                 internal=   "2"/>
-          <enumValue term="rty"
-                 internal=   "2"/>
-          <enumValue term="sfl"
-                 internal=   "2"/>
-          <enumValue term="sty"
-                 internal=   "2"/>
-          <enumValue term="vch"
-                 internal=   "2"/>
-          <enumValue term="wsu"
-                 internal=   "2"/>
-          <enumValue term="ype"
-                 internal=   "2"/>
-          <enumValue term="Eukaryota"
-                 internal=   "0"/>
-          <enumValue term="ddi"
-                 internal=   "1"/>
-          <enumValue term="ehi"
-                 internal=   "1"/>
-          <enumValue term="gla"
-                 internal=   "1"/>
-          <enumValue term="Alveolates"
-                 internal=   "1"/>
-          <enumValue term="Ciliates"
-                 internal=   "2"/>
-          <enumValue term="tth"
-                 internal=   "3"/>
-          <enumValue term="Apicomplexa"
-                 internal=   "2"/>
-          <enumValue term="Coccidia"
-                 internal=   "3"/>
-          <enumValue term="cho"
-                 internal=   "4"/>
-          <enumValue term="cpa"
-                 internal=   "4"/>
-          <enumValue term="tgo"
-                 internal=   "4"/>
-          <enumValue term="Haemosporida"
-                 internal=   "3"/>
-          <enumValue term="pbe"
-                 internal=   "4"/>
-          <enumValue term="pch"
-                 internal=   "4"/>
-          <enumValue term="pfa"
-                 internal=   "4"/>
-          <enumValue term="pvi"
-                 internal=   "4"/>
-          <enumValue term="pyo"
-                 internal=   "4"/>
-          <enumValue term="pkn"
-                 internal=   "4"/>
-          <enumValue term="Piroplasmida"
-                 internal=   "3"/>
-          <enumValue term="the"
-                 internal=   "4"/>
-          <enumValue term="tan"
-                 internal=   "4"/>
-          <enumValue term="Kinetoplastida"
-                 internal=   "1"/>
-          <enumValue term="lma"
-                 internal=   "2"/>
-          <enumValue term="tbr"
-                 internal=   "2"/>
-          <enumValue term="tcr"
-                 internal=   "2"/>
-          <enumValue term="Plants/Algae"
-                 internal=   "1"/>
-          <enumValue term="ath"
-                 internal=   "2"/>
-          <enumValue term="cre"
-                 internal=   "2"/>
-          <enumValue term="cme"
-                 internal=   "2"/>
-          <enumValue term="gth"
-                 internal=   "2"/>
-          <enumValue term="osa"
-                 internal=   "2"/>
-          <enumValue term="ota"
-                 internal=   "2"/>
-          <enumValue term="tps"
-                 internal=   "2"/>
-          <enumValue term="Fungi"
-                 internal=   "1"/>
-          <enumValue term="ago"
-                 internal=   "2"/>
-          <enumValue term="aor"
-                 internal=   "2"/>
-          <enumValue term="cgl"
-                 internal=   "2"/>
-          <enumValue term="cne"
-                 internal=   "2"/>
-          <enumValue term="dha"
-                 internal=   "2"/>
-          <enumValue term="ecu"
-                 internal=   "2"/>
-          <enumValue term="kla"
-                 internal=   "2"/>
-          <enumValue term="ncr"
-                 internal=   "2"/>
-          <enumValue term="pha"
-                 internal=   "2"/>
-          <enumValue term="sce"
-                 internal=   "2"/>
-          <enumValue term="sma"
-                 internal=   "2"/>
-          <enumValue term="spo"
-                 internal=   "2"/>
-          <enumValue term="yli"
-                 internal=   "2"/>
-          <enumValue term="Animals"
-                 internal=   "1"/>
-          <enumValue term="Nematodes"
-                 internal=   "2"/>
-          <enumValue term="bma"
-                 internal=   "3"/>
-          <enumValue term="cel"
-                 internal=   "3"/>
-          <enumValue term="cbr"
-                 internal=   "3"/>
-          <enumValue term="Arthropoda"
-                 internal=   "2"/>
-          <enumValue term="aed"
-                 internal=   "3"/>
-          <enumValue term="aga"
-                 internal=   "3"/>
-          <enumValue term="ame"
-                 internal=   "3"/>
-          <enumValue term="dme"
-                 internal=   "3"/>
-          <enumValue term="Vertebrates"
-                 internal=   "2"/>
-          <enumValue term="Bony Fish"
-                 internal=   "3"/>
-          <enumValue term="cin"
-                 internal=   "4"/>
-          <enumValue term="dre"
-                 internal=   "4"/>
-          <enumValue term="fru"
-                 internal=   "4"/>
-          <enumValue term="tni"
-                 internal=   "4"/>
-          <enumValue term="Tetrapoda"
-                 internal=   "3"/>
-          <enumValue term="Birds"
-                 internal=   "4"/>
-          <enumValue term="gga"
-                 internal=   "5"/>
-          <enumValue term="Mammals"
-                 internal=   "4"/>
-          <enumValue term="hsa"
-                 internal=   "5"/>
-          <enumValue term="mmu"
-                 internal=   "5"/>
-          <enumValue term="rno"
-                 internal=   "5"/>
-        </enumList>
+        <enumValue>
+          <term>Archaea</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>hal</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>mja</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>neq</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>sso</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Bacteria</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>aae</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>ban</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpe</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpn</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>cte</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>det</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>dra</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>lmo</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>mtu</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>rba</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>sau</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>spn</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>syn</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>tma</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>tpa</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Proteobacteria</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>atu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>bsu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>bur</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cbu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cje</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>eco</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>ftu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>gsu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>rso</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>rty</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>sfl</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>sty</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>vch</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>wsu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>ype</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Eukaryota</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>ddi</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>ehi</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>gla</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Alveolates</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Ciliates</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>tth</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Apicomplexa</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Coccidia</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>cho</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpa</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>tgo</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>Haemosporida</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>pbe</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>pch</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>pfa</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>pvi</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>pyo</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>pkn</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>Piroplasmida</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>the</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>tan</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>Kinetoplastida</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>lma</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>tbr</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>tcr</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Plants/Algae</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>ath</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cre</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cme</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>gth</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>osa</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>ota</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>tps</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Fungi</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>ago</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>aor</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cgl</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>cne</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>dha</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>ecu</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>kla</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>ncr</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>pha</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>sce</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>sma</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>spo</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>yli</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Animals</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Nematodes</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>bma</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>cel</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>cbr</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Arthropoda</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>aed</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>aga</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>ame</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>dme</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Vertebrates</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Bony Fish</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>cin</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>dre</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>fru</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>tni</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>Tetrapoda</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Birds</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>gga</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>Mammals</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>hsa</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>mmu</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>rno</term>
+          <internal>5</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="phyletic_term_map"
@@ -1375,182 +1969,354 @@
              Results will be sorted ascending or descending order
            </text>
         </help>
-        <enumList>
-          <enumValue term="aed"
-                 internal=   "Aedes aegypti"/>
-          <enumValue term="atu"
-                 internal=   "Agrobacterium tumefaciens C58 Uwash"/>
-          <enumValue term="aga"
-                 internal=   "Anopheles gambiae PEST"/>
-          <enumValue term="ame"
-                 internal=   "Apis mellifera"/>
-          <enumValue term="aae"
-                 internal=   "Aquifex aeolicus VF5"/>
-          <enumValue term="ath"
-                 internal=   "Arabidopsis thaliana"/>
-          <enumValue term="ago"
-                 internal=   "Ashbya gossypii"/>
-          <enumValue term="aor"
-                 internal=   "Aspergillus oryzae"/>
-          <enumValue term="ban"
-                 internal=   "Bacillus anthracis Ames"/>
-          <enumValue term="bsu"
-                 internal=   "Brucella suis 1330"/>
-          <enumValue term="bma"
-                 internal=   "Brugia malayi"/>
-          <enumValue term="bur"
-                 internal=   "Burkholderia mallei ATCC 23344"/>
-          <enumValue term="cbr"
-                 internal=   "Caenorhabditis briggsae"/>
-          <enumValue term="cel"
-                 internal=   "Caenorhabditis elegans"/>
-          <enumValue term="cje"
-                 internal=   "Campylobacter jejuni subsp. jejuni NCTC 11168"/>
-          <enumValue term="cgl"
-                 internal=   "Candida glabrate CBS138"/>
-          <enumValue term="cre"
-                 internal=   "Chlamydomonas reinhardtii"/>
-          <enumValue term="cpn"
-                 internal=   "Chlamydophila pneumoniae CWL029"/>
-          <enumValue term="cte"
-                 internal=   "Chlorobium tepidum TLS"/>
-          <enumValue term="cin"
-                 internal=   "Ciona intestinalis"/>
-          <enumValue term="cpe"
-                 internal=   "Clostridium perfringens str. 13"/>
-          <enumValue term="cbu"
-                 internal=   "Coxiella burnetii RSA 493"/>
-          <enumValue term="cne"
-                 internal=   "Cryptococcus neoformans"/>
-          <enumValue term="cho"
-                 internal=   "Cryptosporidium hominis TU502 (Type 1)"/>
-          <enumValue term="cpa"
-                 internal=   "Cryptosporidium parvum Iowa (Type2)"/>
-          <enumValue term="cme"
-                 internal=   "Cyanodioschyzon merolae 10D"/>
-          <enumValue term="dre"
-                 internal=   "Danio rerio"/>
-          <enumValue term="dha"
-                 internal=   "Debaryomyces hansenii CBS767"/>
-          <enumValue term="det"
-                 internal=   "Dehalococcoides ethenogenes 195"/>
-          <enumValue term="dra"
-                 internal=   "Deinococcus radiodurans R1"/>
-          <enumValue term="ddi"
-                 internal=   "Dictyostelium discoideum"/>
-          <enumValue term="dme"
-                 internal=   "Drosophila melanogaster"/>
-          <enumValue term="ecu"
-                 internal=   "Encephalitozoon cuniculi"/>
-          <enumValue term="ehi"
-                 internal=   "Entamoeba histolytica"/>
-          <enumValue term="eco"
-                 internal=   "Escherichia coli K12"/>
-          <enumValue term="ftu"
-                 internal=   "Francisella tularensis subsp. tularensis SCHU S4"/>
-          <enumValue term="fru"
-                 internal=   "Fugu rubripes"/>
-          <enumValue term="gga"
-                 internal=   "Gallus gallus"/>
-          <enumValue term="gsu"
-                 internal=   "Geobacter sulfurreducens PCA"/>
-          <enumValue term="gla"
-                 internal=   "Giardia lamblia ATCC 50803"/>
-          <enumValue term="gth"
-                 internal=   "Guillardia theta"/>
-          <enumValue term="hal"
-                 internal=   "Halobacterium sp. NRC-1"/>
-          <enumValue term="hsa"
-                 internal=   "Homo sapiens"/>
-          <enumValue term="kla"
-                 internal=   "Kluyveromyces lactis CLIB210"/>
-          <enumValue term="lma"
-                 internal=   "Leishmania major"/>
-          <enumValue term="lmo"
-                 internal=   "Listeria monocytogenes EGD-e"/>
-          <enumValue term="mja"
-                 internal=   "Methanococcus jannaschii DSSM 2661"/>
-          <enumValue term="mmu"
-                 internal=   "Mus musculus"/>
-          <enumValue term="mtu"
-                 internal=   "Mycobacterium tuberculosis H37Rv"/>
-          <enumValue term="neq"
-                 internal=   "Nanoarchaeum equitans Kin4-M"/>
-          <enumValue term="ncr"
-                 internal=   "Neurospora crassa OR74A"/>
-          <enumValue term="osa"
-                 internal=   "Oryza sativa"/>
-          <enumValue term="ota"
-                 internal=   "Ostreococcus tauri"/>
-          <enumValue term="pha"
-                 internal=   "Phanerochaete chrysosporium"/>
-          <enumValue term="pbe"
-                 internal=   "Plasmodium berghei"/>
-          <enumValue term="pch"
-                 internal=   "Plasmodium chabaudi"/>
-          <enumValue term="pfa"
-                 internal=   "Plasmodium falciparum 3D7"/>
-          <enumValue term="pkn"
-                 internal=   "Plasmodium knowlesi"/>
-          <enumValue term="pvi"
-                 internal=   "Plasmodium vivax"/>
-          <enumValue term="pyo"
-                 internal=   "Plasmodium yoelii 17XNL"/>
-          <enumValue term="rso"
-                 internal=   "Ralstonia solanacearum GMI1000"/>
-          <enumValue term="rno"
-                 internal=   "Rattus norvegicus"/>
-          <enumValue term="rba"
-                 internal=   "Rhodopirellula baltica SH_1"/>
-          <enumValue term="rty"
-                 internal=   "Rickettsia typhi str. Wilmington"/>
-          <enumValue term="sce"
-                 internal=   "Saccharomyces cerevisiae S288C"/>
-          <enumValue term="sty"
-                 internal=   "Salmonella enterica subsp. enterica serovar Typhi str. CT18"/>
-          <enumValue term="sma"
-                 internal=   "Schistosoma mansoni"/>
-          <enumValue term="spo"
-                 internal=   "Schizosaccharomyces pombe"/>
-          <enumValue term="sfl"
-                 internal=   "Shigella flexneri 2a str. 301"/>
-          <enumValue term="sau"
-                 internal=   "Staphylococcus aureus subsp. aureus Mu50"/>
-          <enumValue term="spn"
-                 internal=   "Streptococcus pneumoniae TIGR4"/>
-          <enumValue term="sso"
-                 internal=   "Sulfolobus solfataricus P2"/>
-          <enumValue term="syn"
-                 internal=   "Synechococcus sp. WH8102"/>
-          <enumValue term="tth"
-                 internal=   "Tetrahymena thermophila"/>
-          <enumValue term="tni"
-                 internal=   "Tetraodon nigroviridis"/>
-          <enumValue term="tps"
-                 internal=   "Thalassiosira pseudonana"/>
-          <enumValue term="tan"
-                 internal=   "Theileria annulata"/>
-          <enumValue term="the"
-                 internal=   "Theileria parva"/>
-          <enumValue term="tma"
-                 internal=   "Thermotoga maritima MSB8"/>
-          <enumValue term="tgo"
-                 internal=   "Toxoplasma gondii"/>
-          <enumValue term="tpa"
-                 internal=   "Treponema pallidum subsp. pallidum str. Nichols"/>
-          <enumValue term="tbr"
-                 internal=   "Trypanosoma brucei"/>
-          <enumValue term="tcr"
-                 internal=   "Trypanosoma cruzi"/>
-          <enumValue term="vch"
-                 internal=   "Vibrio cholerae O1 biovar eltor str. N16961"/>
-          <enumValue term="wsu"
-                 internal=   "Wolinella succinogenes DSM 1740"/>
-          <enumValue term="yli"
-                 internal=   "Yarrowia lipolytica CLIB99"/>
-          <enumValue term="ype"
-                 internal=   "Yersinia pestis CO92"/>
-        </enumList>
+        <enumValue>
+          <term>aed</term>
+          <internal>Aedes aegypti</internal>
+        </enumValue>
+        <enumValue>
+          <term>atu</term>
+          <internal>Agrobacterium tumefaciens C58 Uwash</internal>
+        </enumValue>
+        <enumValue>
+          <term>aga</term>
+          <internal>Anopheles gambiae PEST</internal>
+        </enumValue>
+        <enumValue>
+          <term>ame</term>
+          <internal>Apis mellifera</internal>
+        </enumValue>
+        <enumValue>
+          <term>aae</term>
+          <internal>Aquifex aeolicus VF5</internal>
+        </enumValue>
+        <enumValue>
+          <term>ath</term>
+          <internal>Arabidopsis thaliana</internal>
+        </enumValue>
+        <enumValue>
+          <term>ago</term>
+          <internal>Ashbya gossypii</internal>
+        </enumValue>
+        <enumValue>
+          <term>aor</term>
+          <internal>Aspergillus oryzae</internal>
+        </enumValue>
+        <enumValue>
+          <term>ban</term>
+          <internal>Bacillus anthracis Ames</internal>
+        </enumValue>
+        <enumValue>
+          <term>bsu</term>
+          <internal>Brucella suis 1330</internal>
+        </enumValue>
+        <enumValue>
+          <term>bma</term>
+          <internal>Brugia malayi</internal>
+        </enumValue>
+        <enumValue>
+          <term>bur</term>
+          <internal>Burkholderia mallei ATCC 23344</internal>
+        </enumValue>
+        <enumValue>
+          <term>cbr</term>
+          <internal>Caenorhabditis briggsae</internal>
+        </enumValue>
+        <enumValue>
+          <term>cel</term>
+          <internal>Caenorhabditis elegans</internal>
+        </enumValue>
+        <enumValue>
+          <term>cje</term>
+          <internal>Campylobacter jejuni subsp. jejuni NCTC 11168</internal>
+        </enumValue>
+        <enumValue>
+          <term>cgl</term>
+          <internal>Candida glabrate CBS138</internal>
+        </enumValue>
+        <enumValue>
+          <term>cre</term>
+          <internal>Chlamydomonas reinhardtii</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpn</term>
+          <internal>Chlamydophila pneumoniae CWL029</internal>
+        </enumValue>
+        <enumValue>
+          <term>cte</term>
+          <internal>Chlorobium tepidum TLS</internal>
+        </enumValue>
+        <enumValue>
+          <term>cin</term>
+          <internal>Ciona intestinalis</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpe</term>
+          <internal>Clostridium perfringens str. 13</internal>
+        </enumValue>
+        <enumValue>
+          <term>cbu</term>
+          <internal>Coxiella burnetii RSA 493</internal>
+        </enumValue>
+        <enumValue>
+          <term>cne</term>
+          <internal>Cryptococcus neoformans</internal>
+        </enumValue>
+        <enumValue>
+          <term>cho</term>
+          <internal>Cryptosporidium hominis TU502 (Type 1)</internal>
+        </enumValue>
+        <enumValue>
+          <term>cpa</term>
+          <internal>Cryptosporidium parvum Iowa (Type2)</internal>
+        </enumValue>
+        <enumValue>
+          <term>cme</term>
+          <internal>Cyanodioschyzon merolae 10D</internal>
+        </enumValue>
+        <enumValue>
+          <term>dre</term>
+          <internal>Danio rerio</internal>
+        </enumValue>
+        <enumValue>
+          <term>dha</term>
+          <internal>Debaryomyces hansenii CBS767</internal>
+        </enumValue>
+        <enumValue>
+          <term>det</term>
+          <internal>Dehalococcoides ethenogenes 195</internal>
+        </enumValue>
+        <enumValue>
+          <term>dra</term>
+          <internal>Deinococcus radiodurans R1</internal>
+        </enumValue>
+        <enumValue>
+          <term>ddi</term>
+          <internal>Dictyostelium discoideum</internal>
+        </enumValue>
+        <enumValue>
+          <term>dme</term>
+          <internal>Drosophila melanogaster</internal>
+        </enumValue>
+        <enumValue>
+          <term>ecu</term>
+          <internal>Encephalitozoon cuniculi</internal>
+        </enumValue>
+        <enumValue>
+          <term>ehi</term>
+          <internal>Entamoeba histolytica</internal>
+        </enumValue>
+        <enumValue>
+          <term>eco</term>
+          <internal>Escherichia coli K12</internal>
+        </enumValue>
+        <enumValue>
+          <term>ftu</term>
+          <internal>Francisella tularensis subsp. tularensis SCHU S4</internal>
+        </enumValue>
+        <enumValue>
+          <term>fru</term>
+          <internal>Fugu rubripes</internal>
+        </enumValue>
+        <enumValue>
+          <term>gga</term>
+          <internal>Gallus gallus</internal>
+        </enumValue>
+        <enumValue>
+          <term>gsu</term>
+          <internal>Geobacter sulfurreducens PCA</internal>
+        </enumValue>
+        <enumValue>
+          <term>gla</term>
+          <internal>Giardia lamblia ATCC 50803</internal>
+        </enumValue>
+        <enumValue>
+          <term>gth</term>
+          <internal>Guillardia theta</internal>
+        </enumValue>
+        <enumValue>
+          <term>hal</term>
+          <internal>Halobacterium sp. NRC-1</internal>
+        </enumValue>
+        <enumValue>
+          <term>hsa</term>
+          <internal>Homo sapiens</internal>
+        </enumValue>
+        <enumValue>
+          <term>kla</term>
+          <internal>Kluyveromyces lactis CLIB210</internal>
+        </enumValue>
+        <enumValue>
+          <term>lma</term>
+          <internal>Leishmania major</internal>
+        </enumValue>
+        <enumValue>
+          <term>lmo</term>
+          <internal>Listeria monocytogenes EGD-e</internal>
+        </enumValue>
+        <enumValue>
+          <term>mja</term>
+          <internal>Methanococcus jannaschii DSSM 2661</internal>
+        </enumValue>
+        <enumValue>
+          <term>mmu</term>
+          <internal>Mus musculus</internal>
+        </enumValue>
+        <enumValue>
+          <term>mtu</term>
+          <internal>Mycobacterium tuberculosis H37Rv</internal>
+        </enumValue>
+        <enumValue>
+          <term>neq</term>
+          <internal>Nanoarchaeum equitans Kin4-M</internal>
+        </enumValue>
+        <enumValue>
+          <term>ncr</term>
+          <internal>Neurospora crassa OR74A</internal>
+        </enumValue>
+        <enumValue>
+          <term>osa</term>
+          <internal>Oryza sativa</internal>
+        </enumValue>
+        <enumValue>
+          <term>ota</term>
+          <internal>Ostreococcus tauri</internal>
+        </enumValue>
+        <enumValue>
+          <term>pha</term>
+          <internal>Phanerochaete chrysosporium</internal>
+        </enumValue>
+        <enumValue>
+          <term>pbe</term>
+          <internal>Plasmodium berghei</internal>
+        </enumValue>
+        <enumValue>
+          <term>pch</term>
+          <internal>Plasmodium chabaudi</internal>
+        </enumValue>
+        <enumValue>
+          <term>pfa</term>
+          <internal>Plasmodium falciparum 3D7</internal>
+        </enumValue>
+        <enumValue>
+          <term>pkn</term>
+          <internal>Plasmodium knowlesi</internal>
+        </enumValue>
+        <enumValue>
+          <term>pvi</term>
+          <internal>Plasmodium vivax</internal>
+        </enumValue>
+        <enumValue>
+          <term>pyo</term>
+          <internal>Plasmodium yoelii 17XNL</internal>
+        </enumValue>
+        <enumValue>
+          <term>rso</term>
+          <internal>Ralstonia solanacearum GMI1000</internal>
+        </enumValue>
+        <enumValue>
+          <term>rno</term>
+          <internal>Rattus norvegicus</internal>
+        </enumValue>
+        <enumValue>
+          <term>rba</term>
+          <internal>Rhodopirellula baltica SH_1</internal>
+        </enumValue>
+        <enumValue>
+          <term>rty</term>
+          <internal>Rickettsia typhi str. Wilmington</internal>
+        </enumValue>
+        <enumValue>
+          <term>sce</term>
+          <internal>Saccharomyces cerevisiae S288C</internal>
+        </enumValue>
+        <enumValue>
+          <term>sty</term>
+          <internal>Salmonella enterica subsp. enterica serovar Typhi str. CT18</internal>
+        </enumValue>
+        <enumValue>
+          <term>sma</term>
+          <internal>Schistosoma mansoni</internal>
+        </enumValue>
+        <enumValue>
+          <term>spo</term>
+          <internal>Schizosaccharomyces pombe</internal>
+        </enumValue>
+        <enumValue>
+          <term>sfl</term>
+          <internal>Shigella flexneri 2a str. 301</internal>
+        </enumValue>
+        <enumValue>
+          <term>sau</term>
+          <internal>Staphylococcus aureus subsp. aureus Mu50</internal>
+        </enumValue>
+        <enumValue>
+          <term>spn</term>
+          <internal>Streptococcus pneumoniae TIGR4</internal>
+        </enumValue>
+        <enumValue>
+          <term>sso</term>
+          <internal>Sulfolobus solfataricus P2</internal>
+        </enumValue>
+        <enumValue>
+          <term>syn</term>
+          <internal>Synechococcus sp. WH8102</internal>
+        </enumValue>
+        <enumValue>
+          <term>tth</term>
+          <internal>Tetrahymena thermophila</internal>
+        </enumValue>
+        <enumValue>
+          <term>tni</term>
+          <internal>Tetraodon nigroviridis</internal>
+        </enumValue>
+        <enumValue>
+          <term>tps</term>
+          <internal>Thalassiosira pseudonana</internal>
+        </enumValue>
+        <enumValue>
+          <term>tan</term>
+          <internal>Theileria annulata</internal>
+        </enumValue>
+        <enumValue>
+          <term>the</term>
+          <internal>Theileria parva</internal>
+        </enumValue>
+        <enumValue>
+          <term>tma</term>
+          <internal>Thermotoga maritima MSB8</internal>
+        </enumValue>
+        <enumValue>
+          <term>tgo</term>
+          <internal>Toxoplasma gondii</internal>
+        </enumValue>
+        <enumValue>
+          <term>tpa</term>
+          <internal>Treponema pallidum subsp. pallidum str. Nichols</internal>
+        </enumValue>
+        <enumValue>
+          <term>tbr</term>
+          <internal>Trypanosoma brucei</internal>
+        </enumValue>
+        <enumValue>
+          <term>tcr</term>
+          <internal>Trypanosoma cruzi</internal>
+        </enumValue>
+        <enumValue>
+          <term>vch</term>
+          <internal>Vibrio cholerae O1 biovar eltor str. N16961</internal>
+        </enumValue>
+        <enumValue>
+          <term>wsu</term>
+          <internal>Wolinella succinogenes DSM 1740</internal>
+        </enumValue>
+        <enumValue>
+          <term>yli</term>
+          <internal>Yarrowia lipolytica CLIB99</internal>
+        </enumValue>
+        <enumValue>
+          <term>ype</term>
+          <internal>Yersinia pestis CO92</internal>
+        </enumValue>
       </enumParam>
 
       <flatVocabParam name="metabolic_pathway"
@@ -1634,14 +2400,18 @@
              Choose one or more organisms to search with the given motif
            </text>
         </help>
-        <enumList>
-          <enumValue term="do not care"
-                 internal=   "any"/>
-          <enumValue term="not observed"
-                 internal=   "0"/>
-          <enumValue term="observed"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>do not care</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>not observed</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>observed</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="gametocytes_value"
@@ -1651,14 +2421,18 @@
              Choose one or more organisms to search with the given motif
            </text>
         </help>
-        <enumList>
-          <enumValue term="do not care"
-                 internal=   "any"/>
-          <enumValue term="not observed"
-                 internal=   "0"/>
-          <enumValue term="observed"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>do not care</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>not observed</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>observed</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ookinetes_value"
@@ -1668,14 +2442,18 @@
              Choose one or more organisms to search with the given motif
            </text>
         </help>
-        <enumList>
-          <enumValue term="do not care"
-                 internal=   "any"/>
-          <enumValue term="not observed"
-                 internal=   "0"/>
-          <enumValue term="observed"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>do not care</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>not observed</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>observed</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="oocysts_value"
@@ -1685,14 +2463,18 @@
              Choose one or more organisms to search with the given motif
            </text>
         </help>
-        <enumList>
-          <enumValue term="do not care"
-                 internal=   "any"/>
-          <enumValue term="not observed"
-                 internal=   "0"/>
-          <enumValue term="observed"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>do not care</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>not observed</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>observed</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="sporozoites_value"
@@ -1702,14 +2484,18 @@
              Choose one or more organisms to search with the given motif
            </text>
         </help>
-        <enumList>
-          <enumValue term="do not care"
-                 internal=   "any"/>
-          <enumValue term="not observed"
-                 internal=   "0"/>
-          <enumValue term="observed"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>do not care</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>not observed</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>observed</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="min_interaction"
@@ -1727,22 +2513,34 @@
              Select a lifecycle stage from the list provided.
            </text>
         </help>
-        <enumList>
-          <enumValue term="any"
-                 internal=   "any"/>
-          <enumValue term="Troph/Schizont"
-                 internal=   "FWTrophSchizont"/>
-          <enumValue term="iRBC Membrane"
-                 internal=   "iRBCmembrane"/>
-          <enumValue term="Gametocyte"
-                 internal=   "gametocyte"/>
-          <enumValue term="Merozoite"
-                 internal=   "merozoite"/>
-          <enumValue term="Sporozoite"
-                 internal=   "sporozoite"/>
-          <enumValue term="Trophozoite"
-                 internal=   "trophozoite"/>
-        </enumList>
+        <enumValue>
+          <term>any</term>
+          <internal>any</internal>
+        </enumValue>
+        <enumValue>
+          <term>Troph/Schizont</term>
+          <internal>FWTrophSchizont</internal>
+        </enumValue>
+        <enumValue>
+          <term>iRBC Membrane</term>
+          <internal>iRBCmembrane</internal>
+        </enumValue>
+        <enumValue>
+          <term>Gametocyte</term>
+          <internal>gametocyte</internal>
+        </enumValue>
+        <enumValue>
+          <term>Merozoite</term>
+          <internal>merozoite</internal>
+        </enumValue>
+        <enumValue>
+          <term>Sporozoite</term>
+          <internal>sporozoite</internal>
+        </enumValue>
+        <enumValue>
+          <term>Trophozoite</term>
+          <internal>trophozoite</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="genbank_accession"
@@ -1781,12 +2579,14 @@
              Select whether to measure the start point from the beginning or end of the sequence
            </text>
         </help>
-        <enumList>
-          <enumValue term="beginning"
-                 internal=   "beginning"/>
-          <enumValue term="end"
-                 internal=   "end"/>
-        </enumList>
+        <enumValue>
+          <term>beginning</term>
+          <internal>beginning</internal>
+        </enumValue>
+        <enumValue>
+          <term>end</term>
+          <internal>end</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="end_from"
@@ -1797,12 +2597,14 @@
              Select whether to measure the end point from the beginning or end of the sequence
            </text>
         </help>
-        <enumList>
-          <enumValue term="end"
-                 internal=   "end"/>
-          <enumValue term="beginning"
-                 internal=   "beginning"/>
-        </enumList>
+        <enumValue>
+          <term>end</term>
+          <internal>end</internal>
+        </enumValue>
+        <enumValue>
+          <term>beginning</term>
+          <internal>beginning</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="protein_dataset"
@@ -1813,14 +2615,18 @@
              Select whether to measure the end point from the beginning or end of the sequence
            </text>
         </help>
-        <enumList>
-          <enumValue term="GenBank"
-                 internal=   "'NRDB_gb_dbXRefBySeqIdentity'"/>
-          <enumValue term="RefSeq"
-                 internal=   "'NRDB_ref_dbXRefBySeqIdentity'"/>
-          <enumValue term="Swiss-Prot"
-                 internal=   "'NRDB_sp_dbXRefBySeqIdentity'"/>
-        </enumList>
+        <enumValue>
+          <term>GenBank</term>
+          <internal>'NRDB_gb_dbXRefBySeqIdentity'</internal>
+        </enumValue>
+        <enumValue>
+          <term>RefSeq</term>
+          <internal>'NRDB_ref_dbXRefBySeqIdentity'</internal>
+        </enumValue>
+        <enumValue>
+          <term>Swiss-Prot</term>
+          <internal>'NRDB_sp_dbXRefBySeqIdentity'</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="pvalue_cutoff"
@@ -1909,12 +2715,14 @@
              The method used to calculate the similarity distance
            </text>
         </help>
-        <enumList>
-          <enumValue term="Euclidean Distance"
-                 internal=   "euclidean_distance"/>
-          <enumValue term="Pearson Correlation"
-                 internal=   "pearson_correlation"/>
-        </enumList>
+        <enumValue>
+          <term>Euclidean Distance</term>
+          <internal>euclidean_distance</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pearson Correlation</term>
+          <internal>pearson_correlation</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="ProfileNumToReturn"
@@ -1932,12 +2740,14 @@
              The searching goal of the profile similarity query
            </text>
         </help>
-        <enumList>
-          <enumValue term="most similar"
-                 internal=   "similar"/>
-          <enumValue term="least similar"
-                 internal=   "dissimilar"/>
-        </enumList>
+        <enumValue>
+          <term>most similar</term>
+          <internal>similar</internal>
+        </enumValue>
+        <enumValue>
+          <term>least similar</term>
+          <internal>dissimilar</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ProfileProfileSet"
@@ -1948,14 +2758,18 @@
              Choose the strain of the profile to search against
            </text>
         </help>
-        <enumList>
-          <enumValue term="3D7"
-                 internal=   "DeRisi 3D7 Smoothed Averaged"/>
-          <enumValue term="Dd2"
-                 internal=   "DeRisi Dd2 Smoothed Averaged"/>
-          <enumValue term="HB3"
-                 internal=   "DeRisi HB3 Smoothed Averaged"/>
-        </enumList>
+        <enumValue>
+          <term>3D7</term>
+          <internal>DeRisi 3D7 Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>Dd2</term>
+          <internal>DeRisi Dd2 Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue>
+          <term>HB3</term>
+          <internal>DeRisi HB3 Smoothed Averaged</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ProfileTimeShift"
@@ -1966,12 +2780,14 @@
              Whether to allow time shifting or not
            </text>
         </help>
-        <enumList>
-          <enumValue term="not allow"
-                 internal=   "0"/>
-          <enumValue term="allow"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>not allow</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>allow</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ProfileScaleData"
@@ -1982,12 +2798,14 @@
              Whether to scale result data into [0..1] or not
            </text>
         </help>
-        <enumList>
-          <enumValue term="not scale"
-                 internal=   "0"/>
-          <enumValue term="scale to [0..1]"
-                 internal=   "1"/>
-        </enumList>
+        <enumValue>
+          <term>not scale</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>scale to [0..1]</term>
+          <internal>1</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ProfileMinShift"
@@ -1998,104 +2816,198 @@
              The minimum allowed time shift
            </text>
         </help>
-        <enumList>
-          <enumValue term="0 hour"
-                 internal=   "0"/>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-          <enumValue term="25 hours"
-                 internal=   "25"/>
-          <enumValue term="26 hours"
-                 internal=   "26"/>
-          <enumValue term="27 hours"
-                 internal=   "27"/>
-          <enumValue term="28 hours"
-                 internal=   "28"/>
-          <enumValue term="29 hours"
-                 internal=   "29"/>
-          <enumValue term="30 hours"
-                 internal=   "30"/>
-          <enumValue term="31 hours"
-                 internal=   "31"/>
-          <enumValue term="32 hours"
-                 internal=   "32"/>
-          <enumValue term="33 hours"
-                 internal=   "33"/>
-          <enumValue term="34 hours"
-                 internal=   "34"/>
-          <enumValue term="35 hours"
-                 internal=   "35"/>
-          <enumValue term="36 hours"
-                 internal=   "36"/>
-          <enumValue term="37 hours"
-                 internal=   "37"/>
-          <enumValue term="38 hours"
-                 internal=   "38"/>
-          <enumValue term="39 hours"
-                 internal=   "39"/>
-          <enumValue term="40 hours"
-                 internal=   "40"/>
-          <enumValue term="41 hours"
-                 internal=   "41"/>
-          <enumValue term="42 hours"
-                 internal=   "42"/>
-          <enumValue term="43 hours"
-                 internal=   "43"/>
-          <enumValue term="44 hours"
-                 internal=   "44"/>
-          <enumValue term="45 hours"
-                 internal=   "45"/>
-          <enumValue term="46 hours"
-                 internal=   "46"/>
-          <enumValue term="47 hours"
-                 internal=   "47"/>
-        </enumList>
+        <enumValue>
+          <term>0 hour</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
+        <enumValue>
+          <term>25 hours</term>
+          <internal>25</internal>
+        </enumValue>
+        <enumValue>
+          <term>26 hours</term>
+          <internal>26</internal>
+        </enumValue>
+        <enumValue>
+          <term>27 hours</term>
+          <internal>27</internal>
+        </enumValue>
+        <enumValue>
+          <term>28 hours</term>
+          <internal>28</internal>
+        </enumValue>
+        <enumValue>
+          <term>29 hours</term>
+          <internal>29</internal>
+        </enumValue>
+        <enumValue>
+          <term>30 hours</term>
+          <internal>30</internal>
+        </enumValue>
+        <enumValue>
+          <term>31 hours</term>
+          <internal>31</internal>
+        </enumValue>
+        <enumValue>
+          <term>32 hours</term>
+          <internal>32</internal>
+        </enumValue>
+        <enumValue>
+          <term>33 hours</term>
+          <internal>33</internal>
+        </enumValue>
+        <enumValue>
+          <term>34 hours</term>
+          <internal>34</internal>
+        </enumValue>
+        <enumValue>
+          <term>35 hours</term>
+          <internal>35</internal>
+        </enumValue>
+        <enumValue>
+          <term>36 hours</term>
+          <internal>36</internal>
+        </enumValue>
+        <enumValue>
+          <term>37 hours</term>
+          <internal>37</internal>
+        </enumValue>
+        <enumValue>
+          <term>38 hours</term>
+          <internal>38</internal>
+        </enumValue>
+        <enumValue>
+          <term>39 hours</term>
+          <internal>39</internal>
+        </enumValue>
+        <enumValue>
+          <term>40 hours</term>
+          <internal>40</internal>
+        </enumValue>
+        <enumValue>
+          <term>41 hours</term>
+          <internal>41</internal>
+        </enumValue>
+        <enumValue>
+          <term>42 hours</term>
+          <internal>42</internal>
+        </enumValue>
+        <enumValue>
+          <term>43 hours</term>
+          <internal>43</internal>
+        </enumValue>
+        <enumValue>
+          <term>44 hours</term>
+          <internal>44</internal>
+        </enumValue>
+        <enumValue>
+          <term>45 hours</term>
+          <internal>45</internal>
+        </enumValue>
+        <enumValue>
+          <term>46 hours</term>
+          <internal>46</internal>
+        </enumValue>
+        <enumValue>
+          <term>47 hours</term>
+          <internal>47</internal>
+        </enumValue>
       </enumParam>
 
       <enumParam name="ProfileMaxShift"
@@ -2106,104 +3018,198 @@
              The maximum allowed time shift
            </text>
         </help>
-        <enumList>
-          <enumValue term="0 hour"
-                 internal=   "0"/>
-          <enumValue term="1 hour"
-                 internal=   "1"/>
-          <enumValue term="2 hours"
-                 internal=   "2"/>
-          <enumValue term="3 hours"
-                 internal=   "3"/>
-          <enumValue term="4 hours"
-                 internal=   "4"/>
-          <enumValue term="5 hours"
-                 internal=   "5"/>
-          <enumValue term="6 hours"
-                 internal=   "6"/>
-          <enumValue term="7 hours"
-                 internal=   "7"/>
-          <enumValue term="8 hours"
-                 internal=   "8"/>
-          <enumValue term="9 hours"
-                 internal=   "9"/>
-          <enumValue term="10 hours"
-                 internal=   "10"/>
-          <enumValue term="11 hours"
-                 internal=   "11"/>
-          <enumValue term="12 hours"
-                 internal=   "12"/>
-          <enumValue term="13 hours"
-                 internal=   "13"/>
-          <enumValue term="14 hours"
-                 internal=   "14"/>
-          <enumValue term="15 hours"
-                 internal=   "15"/>
-          <enumValue term="16 hours"
-                 internal=   "16"/>
-          <enumValue term="17 hours"
-                 internal=   "17"/>
-          <enumValue term="18 hours"
-                 internal=   "18"/>
-          <enumValue term="19 hours"
-                 internal=   "19"/>
-          <enumValue term="20 hours"
-                 internal=   "20"/>
-          <enumValue term="21 hours"
-                 internal=   "21"/>
-          <enumValue term="22 hours"
-                 internal=   "22"/>
-          <enumValue term="23 hours"
-                 internal=   "23"/>
-          <enumValue term="24 hours"
-                 internal=   "24"/>
-          <enumValue term="25 hours"
-                 internal=   "25"/>
-          <enumValue term="26 hours"
-                 internal=   "26"/>
-          <enumValue term="27 hours"
-                 internal=   "27"/>
-          <enumValue term="28 hours"
-                 internal=   "28"/>
-          <enumValue term="29 hours"
-                 internal=   "29"/>
-          <enumValue term="30 hours"
-                 internal=   "30"/>
-          <enumValue term="31 hours"
-                 internal=   "31"/>
-          <enumValue term="32 hours"
-                 internal=   "32"/>
-          <enumValue term="33 hours"
-                 internal=   "33"/>
-          <enumValue term="34 hours"
-                 internal=   "34"/>
-          <enumValue term="35 hours"
-                 internal=   "35"/>
-          <enumValue term="36 hours"
-                 internal=   "36"/>
-          <enumValue term="37 hours"
-                 internal=   "37"/>
-          <enumValue term="38 hours"
-                 internal=   "38"/>
-          <enumValue term="39 hours"
-                 internal=   "39"/>
-          <enumValue term="40 hours"
-                 internal=   "40"/>
-          <enumValue term="41 hours"
-                 internal=   "41"/>
-          <enumValue term="42 hours"
-                 internal=   "42"/>
-          <enumValue term="43 hours"
-                 internal=   "43"/>
-          <enumValue term="44 hours"
-                 internal=   "44"/>
-          <enumValue term="45 hours"
-                 internal=   "45"/>
-          <enumValue term="46 hours"
-                 internal=   "46"/>
-          <enumValue term="47 hours"
-                 internal=   "47"/>
-        </enumList>
+        <enumValue>
+          <term>0 hour</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <term>1 hour</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>2 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>3 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>4 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>5 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>6 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>7 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>8 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>9 hours</term>
+          <internal>9</internal>
+        </enumValue>
+        <enumValue>
+          <term>10 hours</term>
+          <internal>10</internal>
+        </enumValue>
+        <enumValue>
+          <term>11 hours</term>
+          <internal>11</internal>
+        </enumValue>
+        <enumValue>
+          <term>12 hours</term>
+          <internal>12</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>13</internal>
+        </enumValue>
+        <enumValue>
+          <term>14 hours</term>
+          <internal>14</internal>
+        </enumValue>
+        <enumValue>
+          <term>15 hours</term>
+          <internal>15</internal>
+        </enumValue>
+        <enumValue>
+          <term>16 hours</term>
+          <internal>16</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>17</internal>
+        </enumValue>
+        <enumValue>
+          <term>18 hours</term>
+          <internal>18</internal>
+        </enumValue>
+        <enumValue>
+          <term>19 hours</term>
+          <internal>19</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>20</internal>
+        </enumValue>
+        <enumValue>
+          <term>21 hours</term>
+          <internal>21</internal>
+        </enumValue>
+        <enumValue>
+          <term>22 hours</term>
+          <internal>22</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>23</internal>
+        </enumValue>
+        <enumValue>
+          <term>24 hours</term>
+          <internal>24</internal>
+        </enumValue>
+        <enumValue>
+          <term>25 hours</term>
+          <internal>25</internal>
+        </enumValue>
+        <enumValue>
+          <term>26 hours</term>
+          <internal>26</internal>
+        </enumValue>
+        <enumValue>
+          <term>27 hours</term>
+          <internal>27</internal>
+        </enumValue>
+        <enumValue>
+          <term>28 hours</term>
+          <internal>28</internal>
+        </enumValue>
+        <enumValue>
+          <term>29 hours</term>
+          <internal>29</internal>
+        </enumValue>
+        <enumValue>
+          <term>30 hours</term>
+          <internal>30</internal>
+        </enumValue>
+        <enumValue>
+          <term>31 hours</term>
+          <internal>31</internal>
+        </enumValue>
+        <enumValue>
+          <term>32 hours</term>
+          <internal>32</internal>
+        </enumValue>
+        <enumValue>
+          <term>33 hours</term>
+          <internal>33</internal>
+        </enumValue>
+        <enumValue>
+          <term>34 hours</term>
+          <internal>34</internal>
+        </enumValue>
+        <enumValue>
+          <term>35 hours</term>
+          <internal>35</internal>
+        </enumValue>
+        <enumValue>
+          <term>36 hours</term>
+          <internal>36</internal>
+        </enumValue>
+        <enumValue>
+          <term>37 hours</term>
+          <internal>37</internal>
+        </enumValue>
+        <enumValue>
+          <term>38 hours</term>
+          <internal>38</internal>
+        </enumValue>
+        <enumValue>
+          <term>39 hours</term>
+          <internal>39</internal>
+        </enumValue>
+        <enumValue>
+          <term>40 hours</term>
+          <internal>40</internal>
+        </enumValue>
+        <enumValue>
+          <term>41 hours</term>
+          <internal>41</internal>
+        </enumValue>
+        <enumValue>
+          <term>42 hours</term>
+          <internal>42</internal>
+        </enumValue>
+        <enumValue>
+          <term>43 hours</term>
+          <internal>43</internal>
+        </enumValue>
+        <enumValue>
+          <term>44 hours</term>
+          <internal>44</internal>
+        </enumValue>
+        <enumValue>
+          <term>45 hours</term>
+          <internal>45</internal>
+        </enumValue>
+        <enumValue>
+          <term>46 hours</term>
+          <internal>46</internal>
+        </enumValue>
+        <enumValue>
+          <term>47 hours</term>
+          <internal>47</internal>
+        </enumValue>
       </enumParam>
 
 
@@ -2226,25 +3232,38 @@
              Choose which text fields to search.
            </text>
         </help>
-        <enumList>
-          <enumValue term="Gene product"
-                 internal=   "product.txt"/>
-          <enumValue term="Gene notes"
-                 internal=   "notes.txt"/>
-          <enumValue term="User comments"
-                 internal=   "comments.txt"/>
-          <enumValue term="Protein domain names and descriptions"
-                 internal=   "interpro.txt"/>
-          <enumValue term="Similar proteins (BLAST hits v. NRDB)"
-                 internal=   "blast.txt"/>
-          <enumValue term="EC descriptions"
-                 internal=   "ec.txt"/>
-          <enumValue term="GO terms and definitions"
-                 internal=   "go.txt"/>
-          <enumValue excludeProjects="CryptoDB" 
-				 term="Metabolic pathway names and descriptions"
-                 internal=   "metpaths.txt"/>
-        </enumList>
+        <enumValue>
+          <term>Gene product</term>
+          <internal>product.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>Gene notes</term>
+          <internal>notes.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>User comments</term>
+          <internal>comments.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>Protein domain names and descriptions</term>
+          <internal>interpro.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>Similar proteins (BLAST hits v. NRDB)</term>
+          <internal>blast.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>EC descriptions</term>
+          <internal>ec.txt</internal>
+        </enumValue>
+        <enumValue>
+          <term>GO terms and definitions</term>
+          <internal>go.txt</internal>
+        </enumValue>
+        <enumValue excludeProjects="CryptoDB">
+          <term>Metabolic pathway names and descriptions</term>
+          <internal>metpaths.txt</internal>
+        </enumValue>
       </enumParam>
 
         <stringParam name="max_pvalue"
