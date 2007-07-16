@@ -40,12 +40,12 @@
             <column name="sequence"/>
             <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
-               select nf.source_id,ts.sequence
-               from dots.translatedaasequence ts, dots.translatedaafeature tf, dots.nafeature nf
-               where nf.source_id = '$$primaryKey$$'
-               and nf.na_feature_id = tf.na_feature_id
-               and ts.aa_sequence_id = tf.aa_sequence_id
-               AND ext.name='$$projectId$$'
+               SELECT nf.source_id,ts.sequence
+               FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
+                    dots.NaFeature nf
+               WHERE nf.source_id = '$$primaryKey$$'
+                 AND nf.na_feature_id = tf.na_feature_id
+                 AND ts.aa_sequence_id = tf.aa_sequence_id
             ]]>
            </sql>
             <sql includeProjects="ApiDB,CryptoDB">
