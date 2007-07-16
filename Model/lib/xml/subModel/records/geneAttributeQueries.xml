@@ -1,3 +1,4 @@
+<wdkModel>
     <querySet name="GeneAttributes">
 
 
@@ -6,7 +7,7 @@
        <!-- Gene alias -->  
        <!------------------------------------------------------------------>
 
-        <sqlQuery name="GeneAlias" isCacheable="false">
+        <sqlQuery name="GeneAlias" includeProjects="PlasmoDB" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
             <column name="source_id"/>
             <sql>
@@ -25,6 +26,8 @@
 
         <sqlQuery name="Bfmv" isCacheable="false">
             <paramRef ref="params.primaryKey"/>
+            <paramRef ref="params.projectId"/>
+            <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="product" sortingTable="apidb.geneattributes" lowerCase="true"/>
@@ -174,6 +177,89 @@
                WHERE bfmv.source_id='$$primaryKey$$'
             ]]>
             </sql>
+            <sql includeProjects="ApiDB">
+            <![CDATA[
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
+                   start_min, end_max,
+                   trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
+                   trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
+                   decode(strand,'forward','+','reverse','-',null) as strand_plus_minus,
+                   bfmv.cds_length, bfmv.protein_length, bfmv.transcript_length,
+                   bfmv.context_start, bfmv.context_end, 
+                   bfmv.sequence_id, 
+                   bfmv.organism  as organism_full, 
+                   bfmv.tm_count, bfmv.so_id,
+                   bfmv.so_term_name, bfmv.so_term_definition,
+                   bfmv.ontology_name, bfmv.so_version, bfmv.anticodon,
+                   bfmv.molecular_weight, bfmv.isoelectric_point,
+                   bfmv.min_molecular_weight, bfmv.max_molecular_weight,
+                   bfmv.hydropathicity_gravy_score, bfmv.aromaticity_score,
+                   bfmv.external_db_name, bfmv.external_db_version,
+                   bfmv.exon_count, bfmv.ncbi_tax_id,
+                   SUBSTR(bfmv.organism, 1, INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1) AS genus_species,
+                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.&nbsp;' || 
+                       SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ', 1, 1) +1) || '</i>' as organism,
+                   SUBSTR(bfmv.organism,
+                          INSTR(bfmv.organism, ' ') + 1,
+                          INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'PLASMO', null)
+                   AS plasmocyc_db,
+                   UPPER(bfmv.source_id) AS plasmocyc_gene_id,
+                   bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
+                   bfmv.annotated_go_component as ann_go_component,
+                   bfmv.annotated_go_function as ann_go_function,
+                   bfmv.annotated_go_process as ann_go_process,
+                   bfmv.predicted_go_component as pred_go_component,
+                   bfmv.predicted_go_function as pred_go_function,
+                   bfmv.predicted_go_process as pred_go_process,
+                   bfmv.derisi_max_level as der_max_level,
+                   bfmv.derisi_min_level as der_min_level,
+                   bfmv.derisi_min_timing as der_min_timing,
+                   bfmv.derisi_max_timing as der_max_timing,
+                   bfmv.derisi_max_pct as der_max_pct,
+                   bfmv.winzeler_max_level as winz_max_level,
+                   bfmv.winzeler_min_level as winz_min_level,
+                   bfmv.winzeler_min_timing as winz_min_timing,
+                   bfmv.winzeler_max_timing as winz_max_timing,
+                   bfmv.winzeler_max_pct as winz_max_pct
+            FROM apidb.GeneAttributes bfmv
+               WHERE bfmv.source_id='$$primaryKey$$'
+ AND '$$projectId$$' = bfmv.project_id
+            ]]>
+            </sql>
+            <sql includeProject="CryptoDB">
+            <![CDATA[
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product,
+                   start_min, end_max,
+                   trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
+                   trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
+                   decode(strand,'forward','+','reverse','-',null) as strand_plus_minus,
+                   bfmv.cds_length, bfmv.protein_length, bfmv.transcript_length,
+                   bfmv.context_start, bfmv.context_end, bfmv.strand,
+                   bfmv.sequence_id,
+                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.&nbsp;' || 
+                       SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ', 1, 1) +1) || '</i>' as organism,
+                   bfmv.tm_count, bfmv.so_id,
+                   bfmv.so_term_name, bfmv.so_term_definition,
+                   bfmv.ontology_name, bfmv.so_version, bfmv.anticodon,
+                   bfmv.molecular_weight, bfmv.isoelectric_point,
+                   bfmv.min_molecular_weight, bfmv.max_molecular_weight,
+                   bfmv.hydropathicity_gravy_score, bfmv.aromaticity_score,
+                   bfmv.external_db_name, bfmv.external_db_version,
+                   bfmv.exon_count, bfmv.ncbi_tax_id,
+                   SUBSTR(bfmv.organism, 1, INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1) AS genus_species,
+                   SUBSTR(bfmv.organism,
+                          INSTR(bfmv.organism, ' ') + 1,
+                          INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'PLASMO', null)
+                   AS plasmocyc_db,
+                   UPPER(bfmv.source_id) AS plasmocyc_gene_id
+            FROM apidb.GeneAttributes bfmv
+               WHERE bfmv.source_id='$$primaryKey$$'
+            ]]>
+            </sql>
         </sqlQuery>
 
 
@@ -281,3 +367,4 @@
         </sqlQuery>
 
     </querySet>
+</wdkModel>
