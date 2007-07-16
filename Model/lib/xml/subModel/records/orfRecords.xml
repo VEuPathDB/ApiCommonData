@@ -1,0 +1,80 @@
+<wdkModel>
+    <recordClassSet name="OrfRecordClasses">
+
+        <recordClass idPrefix=""
+          name="OrfRecordClass" type="ORF">
+
+      <!-- =============================================================== -->
+      <!--   Reporters -->  
+      <!-- =============================================================== -->
+
+            <reporter name="tabular" displayName="Summary - TAB Delimited"
+                      implementation="org.gusdb.wdk.model.report.TabularReporter" />
+          <reporter name="gff3" displayName="Summary - GFF3"
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
+            <reporter name="fullRecord" displayName="Detailed"
+                      implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+       <!-- =================================================================== -->
+       <!--  Attributes  ---------->
+       <!-- =================================================================== -->
+
+          <!------------------------------------------------------------------>
+          <!-- BFMV attributes -->  
+          <!------------------------------------------------------------------>
+
+            <attributeQueryRef ref="OrfAttributes.Bfmv">
+                <columnAttribute name="nas_id" displayName="Sequence ID" internal="false"/>
+                <!--columnAttribute name="orf_id" displayName="ORF ID" internal="false"/-->
+                <columnAttribute name="orf_start" internal="true"/>
+                <columnAttribute name="orf_end" internal="true"/>
+                <columnAttribute name="orf_start_text" displayName="Start" internal="false" align="center"/>
+                <columnAttribute name="orf_end_text" displayName="End" internal="false" align="center"/>
+                <columnAttribute name="orf_strand" displayName="Strand" internal="false" align="center"/>
+                <columnAttribute name="length" displayName="Length" internal="false" align="center"/>
+                <columnAttribute name="organism" displayName="Organism" internal="true" inReportMaker="true"/>
+                <columnAttribute name="formatted_organism" displayName="Organism" internal="false" inReportMaker="false"/>
+            </attributeQueryRef>
+
+          <!------------------------------------------------------------------>
+          <!-- sequence attributes -->  
+          <!------------------------------------------------------------------>
+
+            <attributeQueryRef ref="OrfAttributes.Sequence">
+                <columnAttribute name="sequence" displayName="Sequence" internal="true" />
+            </attributeQueryRef>
+
+      <!-- =================================================================== -->
+      <!--  Text Attributes  ---------->
+      <!-- =================================================================== -->
+
+        <!------------------------------------------------------------------>
+        <!-- overview -->  
+        <!------------------------------------------------------------------>
+            <textAttribute name="orf_location_text" displayName="Location"
+                           internal="false" inReportMaker="true">
+                <text>
+                    <![CDATA[
+                       $$nas_id$$: $$orf_start_text$$ - $$orf_end_text$$ ($$orf_strand$$)
+                    ]]>
+               </text>
+           </textAttribute>           
+
+        <!------------------------------------------------------------------>
+        <!-- overview -->  
+        <!------------------------------------------------------------------>
+            <textAttribute name="overview" displayName="Overview"
+                           internal="true" inReportMaker="false">
+               <text>
+                    <![CDATA[
+                    Open Reading Frame $$primaryKey$$ from $$nas_id$$.<br>
+                    Organism: <i>$$organism$$</i>
+                    ]]>
+               </text>
+           </textAttribute>
+
+        </recordClass>
+
+    </recordClassSet>
+</wdkModel>
+
