@@ -2,9 +2,9 @@
 
   <querySet name="SnpsBy">
 
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
       <sqlQuery name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB"  isCacheable="true">
           <paramRef ref="snpParams.snp_id"/>
 	  <column name="source_id"/>
@@ -25,9 +25,9 @@
           <wsColumn name="project_id" width="32" wsName="project_id"/>
       </wsQuery>
 
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
       <sqlQuery name="SnpsByGeneId"  includeProjects="PlasmoDB,ToxoDB"
              isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
@@ -161,9 +161,9 @@ group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="comp_products" width="32"/> 
     </wsQuery>
 
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location -->
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB" isCacheable="true">
           <paramRef ref="sharedParams.chromosome" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
@@ -300,9 +300,9 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
           <wsColumn name="comp_products" width="32"/>
       </wsQuery>
 
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
-    <!---------------------------------------------------->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByAlleleFrequency" includeProjects="PlasmoDB" 
           isCacheable="true">
         <paramRef ref="snpParams.major_allele_min"/>
