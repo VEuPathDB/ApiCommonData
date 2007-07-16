@@ -14,14 +14,15 @@
     <sqlQuery name="OrfByOrfId" excludeProjects="ApiDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="orfParams.orf_id"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT m.source_id
-                FROM dots.Miscellaneous m, sres.sequenceontology so
-                WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$orf_id$$',' ',''), '*', '%'))
-                AND m.sequence_ontology_id= so.sequence_ontology_id
-                AND so.term_name='ORF'
+                SELECT DISTINCT oa.project_id, oa.source_id
+                FROM apidb.OrfAttributes oa
+                WHERE oa.lowercase_source_id
+                      LIKE LOWER(REPLACE(REPLACE('$$orf_id$$',' ',''),
+                                                 '*', '%'))
             ]]>
         </sql>
     </sqlQuery>
