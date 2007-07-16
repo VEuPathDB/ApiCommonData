@@ -47,16 +47,18 @@
         <paramRef ref="sharedParams.genomicSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="orf_location"/>
         <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
-	    SELECT t.source_id,
+	    SELECT oa.project_id, t.source_id,
                   enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM  dots.externalNASequence enas,
 	          dots.nafeature t,
 	          sres.sequenceontology so,
-	          dots.nalocation nal
+	          dots.nalocation nal,
+                  apidb.OrfAttributes oa
 	    WHERE enas.na_sequence_id = t.na_sequence_id
 	      AND t.sequence_ontology_id = so.sequence_ontology_id
 	      AND so.term_name = 'ORF'
@@ -65,15 +67,16 @@
                    OR lower(enas.source_id) = lower('$$genomicSequence$$'))
               AND nal.end_max >= $$start_point$$ 
               AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND t.source_id = oa.source_id
            ]]>
        </sql>
         <sql includeProjects="ToxoDB"> <!-- not clear to me why this uses taaf -sdf -->
             <![CDATA[
-	    SELECT m.source_id,
+	    SELECT oa.project_id, m.source_id,
 	       vs.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM dots.VirtualSequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
-                 apidb.GenomicSequence gs
+                 apidb.GenomicSequence gs, apidb.OrfAttributes oa
 	    WHERE m.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
 	    AND vs.na_sequence_id = m.na_sequence_id
@@ -85,7 +88,7 @@
 	    AND so.term_name = 'ORF'
 	    AND nal.end_max >= $$start_point$$  
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
-
+            AND m.source_id = oa.source_id
            ]]>
        </sql>
      </sqlQuery>
@@ -179,14 +182,17 @@
         <paramRef ref="orfParams.orf_ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
+        <column name="project_id" />
         <column name="source_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
         <sql includeProjects="ToxoDB">
             <![CDATA[
-                select distinct misc.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            select distinct oa.project_id, misc.source_id,
+                            seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
+                 apidb.OrfAttributes oa
             (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
               from (select mss.aa_sequence_id, count(*) as sum_seq_ct
                 from apidb.massspecsummary mss,
@@ -219,11 +225,13 @@
             and o.term_name = 'ORF'
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
+            and misc.source_id = oa.source_id
             ]]>
        </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-                select distinct misc.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+                select distinct oa.project_id, misc.source_id,
+                       seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
                  dots.nasequence nas,
@@ -274,6 +282,7 @@
              'AAEE01000003-2-1036973-1038130',
              'AAEE01000001-1-392320-392592',
              'AAEE01000009-1-131134-131337')
+            and misc.source_id = oa.source_id
            ]]>
        </sql>
     </sqlQuery>   
