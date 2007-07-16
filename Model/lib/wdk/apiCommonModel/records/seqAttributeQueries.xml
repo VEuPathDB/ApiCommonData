@@ -15,7 +15,7 @@
        <!-- BFMV -->  
        <!------------------------------------------------------------------>
         <sqlQuery name="Bfmv" isCacheable="false" excludeProjects="CryptoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id" sortingTable="apidb.SequenceAttributes"
                     lowerCase="true"/>
             <column name="a_count" sortingTable="apidb.SequenceAttributes"
@@ -63,7 +63,7 @@
         </sqlQuery>
 
         <sqlQuery name="ContigAttrs" isCacheable='true' includeProjects="CryptoDB">
-            <paramRef ref="params.primaryKey"/> 
+            <paramRef ref="recordParams.primaryKey"/> 
             <column name="source_id" />
             <column name="sequence" />
             <column name="a_count" />
@@ -121,7 +121,7 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="Attribution" isCacheable="false" includeProject="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="short_name"/>
             <sql>
             <![CDATA[
@@ -156,7 +156,7 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="ExternalDbInfo" isCacheable="false" includeProjects="CryptoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="externalDbName"/>
             <column name="externalDbVersion"/>
             <sql>

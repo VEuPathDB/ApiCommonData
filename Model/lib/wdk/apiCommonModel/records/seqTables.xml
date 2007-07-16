@@ -3,7 +3,7 @@
 
         <sqlQuery name="Centromere" includeProjects="PlasmoDB"
                isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="start_min" />
             <column name="end_max" />
             <sql>
@@ -22,7 +22,7 @@
 
         <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
                isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="comment_id"/>
             <column name="stable_id"/>
             <column name="headline"/>

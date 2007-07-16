@@ -17,7 +17,7 @@
        <!------------------------------------------------------------------>
 
         <sqlQuery name="SNPs" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="strain_a_query"/>
             <column name="strain_b_query"/>
             <column name="strain_a_disp"/>
@@ -81,7 +81,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="Notes" displayName="Notes" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="comment_string"/>
             <sql>
             <![CDATA[
@@ -99,7 +99,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="UserComments" displayName="User Comments" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="comment_id"/>
             <column name="stable_id"/>
             <column name="headline"/>
@@ -133,7 +133,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="EcNumber" displayName="EC Numbers" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="ec_number" />
             <column name="source"/>
             <column name="ec_description"/>
@@ -169,7 +169,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="GoTerms" displayName="GO Terms" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="is_not"/>
             <column name="go_id"/>
             <column name="ontology"/>
@@ -196,7 +196,7 @@
 
        <sqlQuery name="MetabolicPathways" displayName="Metabolic Pathways"
                   isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="pathway_id"/>
             <column name="pathway_name"/>
             <column name="activity"/>
@@ -249,7 +249,7 @@
 
        <sqlQuery name="Orthologs" displayName="Plasmodium Orthologs"
                   isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id" />
             <column name="species"/>
             <column name="product"/>
@@ -283,7 +283,7 @@
 
        <sqlQuery name="Epitopes"
                   isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="iedb_id"/>
             <column name="location"/>
             <column name="sequence"/>
@@ -315,7 +315,7 @@
        <!------------------------------------------------------------------>
 
        <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="alias"/>
             <sql>
             <![CDATA[
@@ -335,7 +335,7 @@
 
        <sqlQuery name="InteractionsAsPrey" isCacheable="false"
                   displayName="Gene As Prey" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="bait_start"/>
             <column name="bait_end"/>
@@ -365,7 +365,7 @@
 
        <sqlQuery name="InteractionsAsBait" isCacheable="false"
                   displayName="Gene As Bait" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="bait_start"/>
             <column name="bait_end"/>
@@ -395,7 +395,7 @@
 
        <sqlQuery name="Y2hInteractions" isCacheable="false"
               displayName="Y2H Protein Interaction Data" includeProjects="PlasmoDB">
-        <paramRef ref="params.primaryKey"/>
+        <paramRef ref="recordParams.primaryKey"/>
         <column name="source_id"/>
         <column name="bait_start"/>
         <column name="bait_end"/>
@@ -438,7 +438,7 @@
 
        <sqlQuery name="ArrayElements" displayName="Mapped Array Elements"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="array_source_id"/>
             <column name="array_provider"/>
             <sql>
@@ -472,7 +472,7 @@
 
        <sqlQuery name="ProteinExpression" displayName="Protein Expression Profile"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="profile_element"/>
             <column name="element_value"/>
             <sql>
@@ -501,7 +501,7 @@
 
        <sqlQuery name="Mr4Reagents" displayName="MR4 Reagents"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="atcc_number"/>
             <column name="reagent_type"/>
             <column name="remark"/>
@@ -537,7 +537,7 @@
 
        <sqlQuery name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="developmental_stage"/>
             <column name="algorithm"/>
             <column name="seq_coverage"/>
@@ -568,7 +568,7 @@
 
        <sqlQuery name="ProteinDatabase" displayName="Protein Database"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="accession"/>
             <column name="gi"/>
             <column name="dataset"/>
@@ -636,7 +636,7 @@
 
        <sqlQuery name="3dPreds" displayName="Protein Structure Predictions"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="search_term"/>
             <column name="pdb_template"/>
             <sql>
@@ -665,7 +665,7 @@
 
        <sqlQuery name="PdbSimilarities"
                   isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="pdb_chain"/>
             <column name="pdb_id"/>
             <column name="pvalue_mant"/>
@@ -692,7 +692,7 @@
        <!------------------------------------------------------------------>
 
       <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB">
-       <paramRef ref="params.primaryKey"/>
+       <paramRef ref="recordParams.primaryKey"/>
        <column name="studyName" />
        <column name="fold_change" />
        <column name="confidence" />
@@ -741,7 +741,7 @@
 
        <sqlQuery name="TaskComments" displayName="TASK Comments"
                   isCacheable="false" includeProjects="ToxoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="comment_string"/>
             <sql>
 			<![CDATA[
@@ -760,7 +760,7 @@
 
        <sqlQuery name="PfamDomains" displayName="Pfam Domains"
                   isCacheable="false" includeProjects="ToxoDB">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
             <column name="definition"/>
             <column name="start_min"/>
             <column name="end_max"/>
