@@ -108,7 +108,8 @@
                                             DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
-					    ApiCommonData/Load-Installation">
+					    ApiCommonData/Load-Installation,
+                                            ApiCommonData/Model-Installation">
 
     <ant target="defaultProjectInstall"/>
   </target>  
@@ -134,6 +135,13 @@
     <ant target="defaultComponentInstall">
       <property name="project" value="ApiCommonData"/>
       <property name="component" value="Load"/>
+    </ant>
+  </target>  
+
+  <target name="ApiCommonData/Model-Installation" depends="ProjectTree">
+    <ant target="defaultComponentInstall">
+      <property name="project" value="ApiCommonData"/>
+      <property name="component" value="Model"/>
     </ant>
   </target>  
 
