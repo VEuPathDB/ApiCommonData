@@ -58,8 +58,8 @@
           the gene(s) on the chromosome.
 	  ]]>
         </description>
-	<description includeProjects="ApiDB">
-	  <![CDATA[
+	    <description includeProjects="ApiDB">
+	      <![CDATA[
           Find genes that are located in a specified genomic region.<br><br>
           Either select a <i>T. gondii</i> chromosome from the pull-down menu
           <b>or</b> enter a sequence ID of a chromosome (e.g. "VIIa") or a 
@@ -67,9 +67,11 @@
           correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
+<!-- not implemented yet        
         <propertyList name="attribution">
            <import name="default.genomes.attribution"/>
         </propertyList> 
+-->
     </question>
 
 
@@ -124,8 +126,8 @@
               queryRef="GeneFeatureIds.GenesByCentromereProximity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList 
-              summaryAttributesList="organism,location_text,dist_centromere,product"
-              sortingAttributesList="organism,location_text asc"
+              summary="organism,location_text,dist_centromere,product"
+              sorting="organism,location_text asc"
         />
         <summary>
           <![CDATA[
@@ -161,8 +163,8 @@
               queryRef="GeneFeatureIds.GenesByTelomereProximity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList
-              summaryAttributesList="organism,location_text,dist_telomere,product"
-              sortingAttributesList="organism,location_text asc"
+              summary="organism,location_text,dist_telomere,product"
+              sorting="organism,location_text asc"
         />
         <summary>
           <![CDATA[
@@ -193,8 +195,8 @@
               queryRef="GeneFeatureIds.GenesByGeneType"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList
-              summaryAttributesList="organism,location_text,product,is_pseudo"
-              sortingAttributesList="organism asc,location_text asc"
+              summary="organism,location_text,product,is_pseudo"
+              sorting="organism asc,location_text asc"
         />
         <summary>
            Find genes by type (eg, protein coding, tRNA, pseudogenes, etc).
@@ -220,8 +222,8 @@
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
         <attributesList
-              summaryAttributesList="organism,location_text,product,exon_count"
-              sortingAttributesList="organism asc,exon_count desc,location_text asc"
+              summary="organism,location_text,product,exon_count"
+              sorting="organism asc,exon_count desc,location_text asc"
         />
         <summary>
         Find genes having a given number of exons.
@@ -243,8 +245,8 @@
          queryRef="GeneFeatureIds.GenesByIsoelectricPoint"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product,isoelectric_point"
-         sortingAttributesList="organism asc,isoelectric_point asc, location_text asc"
+         summary="organism,location_text,product,isoelectric_point"
+         sorting="organism asc,isoelectric_point asc, location_text asc"
         /> 
         <summary>
           Find genes whose protein product has an isoelectric point in a range that you specify.
@@ -267,8 +269,8 @@
          queryRef="GeneFeatureIds.GenesByMolecularWeight"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product,molecular_weight"
-         sortingAttributesList="organism asc,molecular_weight asc, location_text asc"
+         summary="organism,location_text,product,molecular_weight"
+         sorting="organism asc,molecular_weight asc, location_text asc"
         /> 
         <summary>
           Find genes whose unmodified protein product has a molecular weight in a range that you specify.
@@ -295,8 +297,8 @@
          queryRef="GeneFeatureIds.GenesByPdbSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="location_text,product"
-         sortingAttributesList="location_text asc"
+         summary="location_text,product"
+         sorting="location_text asc"
         /> 
         <summary>
             <![CDATA[
@@ -325,8 +327,8 @@
               queryRef="GeneFeatureIds.GenesWithStructurePrediction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product"
-              sortingAttributesList="organism asc, location_text asc"
+              summary="organism,location_text,product"
+              sorting="organism asc, location_text asc"
         /> 
         <propertyList name="organism">
            <value value="P. falciparum"/>
@@ -364,7 +366,7 @@
               queryRef="GeneFeatureIds.GenesWithProteinLowComplexity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,organism"
+              summary="product,organism"
         /> 
         <propertyList name="organism">
            <value value="P. falciparum"/>
@@ -393,8 +395,8 @@
               queryRef="GeneFeatureIds.GenesBySecondaryStructure"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,percent_coil,percent_strand,percent_helix"
-              sortingAttributesList="organism asc, location_text asc"
+              summary="organism,location_text,product,percent_coil,percent_strand,percent_helix"
+              sorting="organism asc, location_text asc"
         /> 
         <summary>
          Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
@@ -427,8 +429,7 @@
          queryRef="GeneFeatureIds.GenesBySimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="Header,TabularRow,Alignment,Footer"
-        /> 
+         summary="Header,TabularRow,Alignment,Footer"/> 
          <summary>
            Find genes that have BLAST similarity to your input sequence.
          </summary>
@@ -466,8 +467,8 @@
          queryRef="GeneFeatureIds.GenesByMotifSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product,Locations,MatchCount,Sequence"
-         sortingAttributesList="organism asc,MatchCount desc,location_text asc"
+         summary="organism,location_text,product,Locations,MatchCount,Sequence"
+         sorting="organism asc,MatchCount desc,location_text asc"
         /> 
         <summary>
              Find genes whose protein product contains a motif pattern that
@@ -642,8 +643,8 @@
               queryRef="GeneFeatureIds.GenesByInterproDomain"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,e_value"
-              sortingAttributesList="organism asc,e_value asc, location_text asc"
+              summary="organism,location_text,product,e_value"
+              sorting="organism asc,e_value asc, location_text asc"
         /> 
         <summary>
           Find genes containing a given protein domain.
@@ -681,8 +682,8 @@
               queryRef="GeneFeatureIds.GenesBySnps"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
-              sortingAttributesList="total_snps desc,cds_snp_density desc"
+              summary="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
+              sorting="total_snps desc,cds_snp_density desc"
         /> 
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
@@ -757,7 +758,7 @@
               queryRef="GeneFeatureIds.GenesByEcNumber"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,product"
+              summary="organism,product"
         /> 
         <summary>
            <![CDATA[
@@ -827,8 +828,7 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
               queryRef="GeneFeatureIds.GenesByGoTerm"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,product"
-        /> 
+              summary="organism,product"/> 
         <summary>
 Find genes by Gene Ontology (GO) term for molecular function, biological process or subcellular localization.
         </summary>
@@ -862,12 +862,12 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          queryRef="GeneFeatureIds.GenesByMetabolicPathway"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="location_text,product,met_pathways"
-         sortingAttributesList="location_text asc"
+         summary="location_text,product,met_pathways"
+         sorting="location_text asc"
         /> 
-        <summary>
+        <summary includeProjects="PlasmoDB">
         Find genes involved in a specific metabolic pathway.
-        </summary includeProjects="PlasmoDB">
+        </summary>
         <description>
             <![CDATA[
         Find genes involved in a specific metabolic pathway.
@@ -918,8 +918,8 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
               queryRef="GeneFeatureIds.GenesByProteinProteinInteraction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="location_text,product,bait_start,bait_end,prey_start,prey_end,times_observed,number_of_searches,preyNumberBaits,baitNumberPreys,bait_or_prey"
-              sortingAttributesList="times_observed desc, number_of_searches desc, location_text asc"
+              summary="location_text,product,bait_start,bait_end,prey_start,prey_end,times_observed,number_of_searches,preyNumberBaits,baitNumberPreys,bait_or_prey"
+              sorting="times_observed desc, number_of_searches desc, location_text asc"
         /> 
         <summary>
          Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
@@ -986,8 +986,8 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
          queryRef="GeneFeatureIds.GenesByFunctionalInteraction"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="location_text,product,queries_matched,query_ids,likelihood_scores"
-         sortingAttributesList="queries_matched desc,likelihood_scores desc,location_text asc"
+         summary="location_text,product,queries_matched,query_ids,likelihood_scores"
+         sorting="queries_matched desc,likelihood_scores desc,location_text asc"
         /> 
         <summary>
            <![CDATA[
@@ -1034,8 +1034,8 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
               queryRef="GeneFeatureIds.GenesByWatersDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,fold_change,confidence"
-              sortingAttributesList="fold_change desc,confidence desc"
+              summary="product,fold_change,confidence"
+              sorting="fold_change desc,confidence desc"
         /> 
         <summary>
             <![CDATA[ Find genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
@@ -1072,8 +1072,8 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
               queryRef="GeneFeatureIds.GenesByDifferentialMeanExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,fold_change"
-              sortingAttributesList="fold_change desc"
+              summary="product,fold_change"
+              sorting="fold_change desc"
         /> 
         <summary>
             <![CDATA[
@@ -1122,8 +1122,8 @@ References:
               queryRef="GeneFeatureIds.GenesByExpressionPercentileA" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,percentile"
-              sortingAttributesList="percentile desc"
+              summary="product,percentile"
+              sorting="percentile desc"
         /> 
         <summary>
             <![CDATA[
@@ -1178,7 +1178,7 @@ References:
          queryRef="GeneFeatureIds.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,product,derisiOverlayPct"
+         summary="organism,product,derisiOverlayPct"
         /> 
         <summary>
           Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
@@ -1212,7 +1212,7 @@ References:
          queryRef="GeneFeatureIds.GenesByProfileSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,distance,time_shift,profilesGraph"
+         summary="organism,distance,time_shift,profilesGraph"
         /> 
          <summary>
             <![CDATA[
@@ -1259,7 +1259,7 @@ References:
          queryRef="GeneFeatureIds.GenesByExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="product,winzelerPct"
+         summary="product,winzelerPct"
         /> 
         <summary>
            <![CDATA[
@@ -1328,7 +1328,7 @@ References:
          queryRef="GeneFeatureIds.GenesByGametocyteExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="product"
+         summary="product"
         /> 
         <summary>
             <![CDATA[
@@ -1381,7 +1381,7 @@ References:
          queryRef="GeneFeatureIds.BergheiGenesByExpressionPercentile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="product,watersPct"
+         summary="product,watersPct"
         /> 
         <summary>
            <![CDATA[
@@ -1411,8 +1411,8 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               category="Transcript Expression"
               displayName="Differential Expression"
               queryRef="GeneFeatureIds.GenesByDifferentialExpression" 
-              summaryAttributesList="product,location_text,fold_change,confidence"
-              sortingAttributesList="fold_change desc,confidence desc,location_text asc"
+              summary="product,location_text,fold_change,confidence"
+              sorting="fold_change desc,confidence desc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
             Find genes by differential expression analysis
@@ -1458,8 +1458,8 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               category="Transcript Expression"
               displayName="Expression Percentile"
               queryRef="GeneFeatureIds.GenesByExpressionPercentile" 
-              summaryAttributesList="product,percentile"
-              sortingAttributesList="percentile desc"
+              summary="product,percentile"
+              sorting="percentile desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
             Find genes by expression percentile analysis
@@ -1492,11 +1492,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          queryRef="GeneFeatureIds.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="PlasmoDB,ApiDB"
-         summaryAttributesList="product"
+         summary="product"
         /> 
         <attributesList includeProjects="ToxoDB,CryptoDB"
-              summaryAttributesList="location_text,product,sum_sequence_count,sum_spectrum_count"
-              sortingAttributesList="sum_sequence_count desc,sum_spectrum_count desc"
+              summary="location_text,product,sum_sequence_count,sum_spectrum_count"
+              sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
         <summary>
            <![CDATA[
@@ -1627,7 +1627,7 @@ one time.
          queryRef="GeneFeatureIds.GenesByProteomicsProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="product"
+         summary="product"
         /> 
         <propertyList name="organism">
            <value value="P. berghei"/>
@@ -1657,8 +1657,8 @@ one time.
               queryRef="GeneFeatureIds.GenesBySubcellularLocalization"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="location_text,product"
-              sortingAttributesList="location_text asc"
+              summary="location_text,product"
+              sorting="location_text asc"
         /> 
         <propertyList name="organism">
            <value value="P. falciparum"/>
@@ -1709,8 +1709,8 @@ one time.
               queryRef="GeneFeatureIds.GenesByTransmembraneDomains"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,tm_count"
-              sortingAttributesList="organism asc,tm_count asc,location_text asc"
+              summary="organism,location_text,product,tm_count"
+              sorting="organism asc,tm_count asc,location_text asc"
         /> 
         <summary>
            Find genes with at least a given number of transmembrane domains.
@@ -1734,8 +1734,8 @@ Transmembrane domains were predicted using TMHMM2.
          queryRef="GeneFeatureIds.GenesWithSignalPeptide"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product,sigp_sum_score"
-         sortingAttributesList="organism asc,sigp_sum_score desc,location_text asc"
+         summary="organism,location_text,product,sigp_sum_score"
+         sorting="organism asc,sigp_sum_score desc,location_text asc"
         /> 
         <summary>
          Find genes that are predicted to encode a signal peptide.
@@ -1766,8 +1766,8 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GenesWithEpitopes" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,organism,location_text,count,confidence"
-        sortingAttributesList="organism desc,location_text desc, count desc, confidence asc"
+              summary="product,organism,location_text,count,confidence"
+        sorting="organism desc,location_text desc, count desc, confidence asc"
         /> 
              <summary>
               <![CDATA[
@@ -1809,8 +1809,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByExportPrediction"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product,exportpred_score"
-         sortingAttributesList="organism asc,exportpred_score desc,location_text asc"
+         summary="organism,location_text,product,exportpred_score"
+         sorting="organism asc,exportpred_score desc,location_text asc"
         /> 
         <summary>
           Find genes that are predicted by ExportPred to produce an exported protein.
@@ -1839,8 +1839,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByPhyleticProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="location_text,product,num_queries,query_ids,mutual_information_scores"
-         sortingAttributesList="num_queries desc,mutual_information_scores desc,location_text asc"
+         summary="location_text,product,num_queries,query_ids,mutual_information_scores"
+         sorting="num_queries desc,mutual_information_scores desc,location_text asc"
         /> 
         <propertyList name="organism">
            <value value="P. falciparum"/>
@@ -1897,8 +1897,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByOrthologPattern"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism, location_text,product"
-         sortingAttributesList="organism asc, location_text asc"
+         summary="organism, location_text,product"
+         sorting="organism asc, location_text asc"
         /> 
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
@@ -1943,8 +1943,8 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GenesOrthologousToAGivenGene"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product"
-              sortingAttributesList="organism asc,location_text asc"
+              summary="organism,location_text,product"
+              sorting="organism asc,location_text asc"
         /> 
         <summary>
           <![CDATA[
@@ -1973,8 +1973,8 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,gene_type"
-              sortingAttributesList="organism asc,location_text asc"
+              summary="organism,location_text,product,gene_type"
+              sorting="organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -2001,8 +2001,8 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,gene_type"
-              sortingAttributesList="organism asc,location_text asc"
+              summary="organism,location_text,product,gene_type"
+              sorting="organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -2027,8 +2027,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByTextSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product"
-         sortingAttributesList="organism asc,location_text asc"
+         summary="organism,location_text,product"
+         sorting="organism asc,location_text asc"
         /> 
         <summary>
              Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways.
@@ -2051,8 +2051,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByTaxon"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="organism,location_text,product"
-         sortingAttributesList="organism asc,location_text asc"
+         summary="organism,location_text,product"
+         sorting="organism asc,location_text asc"
         /> 
         <summary>
             Find genes from one or more species.
@@ -2076,7 +2076,7 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GenesByProteinDbAccession"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="product,organism"
+              summary="product,organism"
         /> 
         <summary>
          Find genes mapped to a protein accession number.
@@ -2104,8 +2104,8 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneFeatureIds.GenesByMr4Reagents"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summaryAttributesList="location_text,product"
-         sortingAttributesList="location_text asc"
+         summary="location_text,product"
+         sorting="location_text asc"
         /> 
         <propertyList name="organism">
            <value value="P. falciparum"/>
@@ -2141,8 +2141,8 @@ Find genes that are predicted to encode a signal peptide.
               queryRef="GeneFeatureIds.GenesByESTOverlap"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summaryAttributesList="organism,location_text,product,number_of_ests"
-              sortingAttributesList="organism asc,number_of_ests desc"
+              summary="organism,location_text,product,number_of_ests"
+              sorting="organism asc,number_of_ests desc"
         /> 
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
@@ -2205,7 +2205,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GenesByOrthologs"
          displayName="Genes Orthologous to Genes in a Query Result"
               queryRef="GeneFeatureIds.GenesByOrthologs"
-              summaryAttributesList="organism,product"
+              summary="organism,product"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
            <![CDATA[
@@ -2221,7 +2221,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
     <question name="GenesByPlasmoDbDataset"
          displayName="Genes imported from PlasmoDB 4.4"
               queryRef="GeneFeatureIds.GenesByPlasmoDbDataset"
-              summaryAttributesList="organism,product"
+              summary="organism,product"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
            <![CDATA[
@@ -2232,7 +2232,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
 
     <question name="GenesByIntraerythrocyticExpression" displayName="Asexual"
               queryRef="GeneFeatureIds.GenesByIntraerythrocyticExpression"
-              summaryAttributesList="product,winzelerPct"
+              summary="product,winzelerPct"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
               Asexual cycle expression on Affy chips, from the Winzeler lab
@@ -2247,7 +2247,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
 
     <question name="GenesByExtraerythrocyticExpression" displayName="Sexual"
               queryRef="GeneFeatureIds.GenesByExtraerythrocyticExpression"
-              summaryAttributesList="product,winzelerPct"
+              summary="product,winzelerPct"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
               Sexual cycle expression on Affy chips, from the Winzeler lab
@@ -2262,7 +2262,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
 
     <question name="GenesByExpression" displayName="All"
               queryRef="GeneFeatureIds.GenesByExpression"
-              summaryAttributesList="product,winzelerPct"
+              summary="product,winzelerPct"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
               Gene Expression on Affy chips, from the Winzeler lab
@@ -2308,7 +2308,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
     <question name="UnifiedBlast"
          displayName="BLAST"
          queryRef="UniversalIds.Blast"
-         summaryAttributesList="organism,Header,TabularRow,Alignment,Footer"
+         summary="organism,Header,TabularRow,Alignment,Footer"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
          <summary>
            <![CDATA[
