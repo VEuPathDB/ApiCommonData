@@ -315,6 +315,7 @@ sub makeDataFile {
   my $studyName = $self->getArg('studyName');
 
   $studyName =~ s/\s/_/g;
+  $studyName =~ s/[\(\)]//g;
 
   my $fileDir = $self->getArg('fileDir') . "/" . $studyName;
 
