@@ -81,3 +81,5 @@ CREATE TABLE logins.histories
 
 GRANT insert, update, delete on logins.histories to GUS_W;
 GRANT select on logins.histories to GUS_R;
+
+exit
