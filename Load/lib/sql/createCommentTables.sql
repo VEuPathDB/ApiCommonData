@@ -131,3 +131,5 @@ CREATE SEQUENCE comments.external_databases_pkseq START WITH 1 INCREMENT BY 1;
 
 GRANT select on comments.external_databases_pkseq to GUS_W;
 GRANT select on comments.external_databases_pkseq to GUS_R;
+
+exit
