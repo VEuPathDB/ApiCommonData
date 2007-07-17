@@ -13,7 +13,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <datasetParam name="ds_gene_ids"
-                     prompt="Gene ID input set"
+                     prompt="Gene ID input set">
             <help>input a comma delimited set of gene ids, or upload a file</help>
            <suggest includeProjects="PlasmoDB"
 					sample="PF11_0344, PY01656, Pv092275"
@@ -36,9 +36,11 @@
 		<stringParam name="signature" 
 				includeProjects="ApiDB"
 				prompt="User Signature"
-				help="Used to pass the Users Signature to the component sites"
-				visible="false"/>
-
+				visible="false">
+            <help>
+                 Used to pass the Users Signature to the component sites
+            </help>
+		</stringParam>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -46,9 +48,7 @@
                      prompt="Best alignments only"
                      multiPick="false">
         <help>
-           <text>
              Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
-           </text>
         </help>
         <enumValue>
           <term>Yes</term>
@@ -68,9 +68,7 @@
                      prompt="Consistent alignments only"
                      multiPick="false">
         <help>
-           <text>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-           </text>
         </help>
         <enumValue>
           <term>No</term>
@@ -107,8 +105,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <stringParam name="bp_overlap_gte"
-                     prompt="Base Overlap >="
-                     substitute="yes">
+                     prompt="Base Overlap &gt;=">
             <help>Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general, the specificity of this evidence is proportional to the overlap length.</help>
             <suggest sample="(Example: 100)"
                      default="100"/>
@@ -121,9 +118,7 @@
                      prompt="EST"
                      multiPick="false">
         <help>
-           <text>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-           </text>
         </help>
         <enumValue>
           <term>does overlap with a gene</term>
@@ -139,19 +134,20 @@
         <stringParam name="stoxopforganism"
               prompt="Organism"
               visible="false"
-              default="Plasmo falciparum"
-              help="You can select one or more organisms by checking the box next to the one(s) that you wish to use."/>
+              default="Plasmo falciparum">
+            <help>You can select one or more organisms by checking the box next to the one(s) that you wish to use.</help>
+            <suggest sample="(Example: 100)"
+                     default="100"/>
+        </stringParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Universal, genomic and ORF BLAST -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <enumParam name="BlastDatabaseType"
                      prompt="Target"
-                     multiPick="false"
+                     multiPick="false">
         <help>
-           <text>
              The type of the subject database.
-           </text>
         </help>
         <enumValue>
           <term> Choose one</term>
@@ -196,9 +192,7 @@
                      prompt="Organism"
                      multiPick="false">
         <help>
-           <text>
              Organism(s) from which the sequences in the BLAST database originated
-           </text>
         </help>
         <enumValue includeProjects="ApiDB,PlasmoDB">
           <term>P. berghei</term>
@@ -284,9 +278,7 @@
                      prompt="Query sequence type"
                      multiPick="false">
         <help>
-           <text>
              The type of your query sequence
-           </text>
         </help>
         <enumValue>
           <term>DNA</term>
@@ -308,13 +300,10 @@
       <enumParam name="-filter"
                     id="-filter"
                     prompt="Low complexity filter">
-           <suggest default="yes"/>
         <help>
-           <text>
              Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
-           </text>
         </help>
-        <enumValue>
+        <enumValue default="true">
           <term>yes</term>
           <internal>yes</internal>
         </enumValue>
@@ -350,8 +339,6 @@
       <enumParam name="chromosome"
                      prompt="Chromosome"
                      multiPick="true">
-        <help>
-        </help>
         <enumValue>
           <term>chromosome 1</term>
           <internal>MAL1</internal>
@@ -415,9 +402,7 @@
                      multiPick="false"
                      default="choose one">
         <help>
-           <text>
              Results will be sorted ascending or descending order
-           </text>
         </help>
         <enumValue>
           <term>choose one</term>
@@ -553,9 +538,7 @@
                      prompt="EST Library"
                      multiPick="true">
         <help>
-           <text>
              Select a clone library.
-           </text>
         </help>
       </flatVocabParam>
 
@@ -564,9 +547,7 @@
 		     prompt="Reference"
                      multiPick="false">
         <help>
-           <text>
              Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
         </help>
       </flatVocabParam>
 
@@ -575,9 +556,7 @@
 		     prompt="Comparator"
                      multiPick="false">
         <help>
-           <text>
              Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
         </help>
       </flatVocabParam>
 
@@ -585,9 +564,7 @@
 		     prompt="Comparator(s)"
                      multiPick="true">
         <help>
-           <text>
              Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-           </text>
         </help>
         <enumValue>
           <term>Pf-7G8</term>
@@ -749,9 +726,7 @@
                      prompt="Genomic Sequence"
                      multiPick="false">
         <help>
-           <text>
              Results will be sorted ascending or descending order
-           </text>
         </help>
         <enumValue>
           <term>chromosome 1</term>
