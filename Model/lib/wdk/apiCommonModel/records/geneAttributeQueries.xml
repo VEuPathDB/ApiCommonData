@@ -9,6 +9,7 @@
 
         <sqlQuery name="GeneAlias" includeProjects="PlasmoDB" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <sql>
             <![CDATA[
@@ -134,6 +135,7 @@
                    TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id='$$primaryKey$$'
+                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
 
@@ -175,6 +177,7 @@
                    bfmv.rh_high_glucose
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id='$$primaryKey$$'
+                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
             <sql includeProjects="ApiDB">
@@ -225,7 +228,7 @@
                    bfmv.winzeler_max_pct as winz_max_pct
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id='$$primaryKey$$'
- AND '$$projectId$$' = bfmv.project_id
+                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
             <sql includeProject="CryptoDB">
@@ -258,6 +261,7 @@
                    UPPER(bfmv.source_id) AS plasmocyc_gene_id
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id='$$primaryKey$$'
+                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
         </sqlQuery>
@@ -269,6 +273,7 @@
 
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="protein_sequence"/>
             <sql>
@@ -293,6 +298,7 @@
         <sqlQuery name="TranscriptSequence" isCacheable="false"
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="transcript_sequence"/>
             <sql>
@@ -314,6 +320,7 @@
         <sqlQuery name="CDS" isCacheable="false"
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="cds"/>
             <sql>
@@ -340,6 +347,7 @@
 
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="graph_derisi_winzeler" />
             <column name="graph_winzeler" />
@@ -362,6 +370,7 @@
                       NVL(MAX(graph_cowman), 0) AS graph_cowman
                FROM apidb.ExpressionGraphSummary egs
                WHERE egs.source_id = '$$primaryKey$$'
+                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
         </sqlQuery>

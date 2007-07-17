@@ -38,9 +38,10 @@
               isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
+        <column name="project_id"/>
        <sql>
              <![CDATA[
-            SELECT DISTINCT gi.gene AS source_id
+            SELECT DISTINCT gi.gene AS source_id, '@@PROJECT_ID@@' as project_id
             FROM apidb.GeneId gi, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE ds.dataset_id = $$ds_gene_ids$$
               AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
@@ -67,9 +68,10 @@
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
+        <column name="project_id"/>
         <sql excludeProjects="CryptoDB">
             <![CDATA[
-            SELECT DISTINCT gi.gene AS source_id
+            SELECT DISTINCT gi.gene AS source_id, '@@PROJECT_ID@@' as project_id
             FROM apidb.GeneId gi
             WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$single_gene_id$$'),
                                                        '*', '%'),
@@ -78,7 +80,7 @@
         </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-            SELECT g.source_id
+            SELECT g.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.genefeature g,
                  dots.rnatype r,
                  dots.transcript t
@@ -108,10 +110,11 @@
               excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="geneParams.ec_number_pattern"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
+        <column name="project_id"/>
         <column name="source_id"  />
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
@@ -148,11 +151,12 @@
     <sqlQuery name="GenesByPlasmoDbDataset" isCacheable="true"
               includeProjects="PlasmoDB">
         <paramRef ref="geneParams.plasmodb_4.4_dataset"/>
+        <column name="project_id"/>
         <column name="source_id"  />
         <sql>
             <!-- keep order or genes but remove duplicates -->
             <![CDATA[
-                SELECT imported.source_id FROM (
+                SELECT imported.source_id, '@@PROJECT_ID@@' as project_id FROM (
                     SELECT ga.gene AS source_id, min(c.i) AS i
                     FROM cache$$plasmodb_4.4_dataset$$@apidb.cbilprod c,
                          apidb.plasmodb_genes@apidb.cbilprod pg,
@@ -174,11 +178,12 @@
         <paramRef ref="geneParams.min_tm"/>
         <paramRef ref="geneParams.max_tm"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="predicted_helices" includeProjects="CryptoDB"/>
         <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
-            SELECT gf.source_id
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga
                  (SELECT t.parent_id, COUNT(*) AS tm_count
                   FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
@@ -197,7 +202,7 @@
         </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-            SELECT g.source_id, tmf.predicted_helices
+            SELECT g.source_id, '@@PROJECT_ID@@' as project_id, tmf.predicted_helices
             FROM dots.genefeature g,
                  dots.transcript t,
                  dots.translatedaafeature taaf,
@@ -238,6 +243,7 @@
         <paramRef ref="geneParams.min_searches"/>
         <paramRef ref="geneParams.min_observed"/>
         <paramRef ref="geneParams.bait_or_prey"/>
+        <column name="project_id"/>
         <column name="source_id" />
         <column name="gene_source_id" />
         <column name="bait_start" />
@@ -252,7 +258,7 @@
         <sql>
             <![CDATA[
             SELECT * FROM
-               (SELECT pf.source_id, pf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+               (SELECT pf.source_id, '@@PROJECT_ID@@' as project_id, pf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches,
                        (select distinct prey_number_of_baits
                          from apidb.geneinteraction igi
@@ -268,7 +274,7 @@
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND pf.na_sequence_id = ens.na_sequence_id
                 UNION
-                SELECT bf.source_id, bf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+                SELECT bf.source_id, '@@PROJECT_ID@@' as project_id, bf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, prey_number_of_baits,
                        (select distinct bait_number_of_preys
                          from apidb.geneinteraction igi
@@ -320,11 +326,13 @@
         <paramRef ref="geneParams.geneType"/>
         <paramRef ref="geneParams.includePseudogenes"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id" />
         <column name="is_pseudo" />
         <sql>
             <![CDATA[
-            SELECT gf.source_id,decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, 
+              decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
             FROM dots.GeneFeature gf, dots.NaSequence ens, apidb.GeneAttributes ga
             WHERE gf.sequence_ontology_id IN ($$geneType$$)
               AND gf.na_sequence_id = ens.na_sequence_id
@@ -359,10 +367,11 @@
         <paramRef ref="geneParams.minPlusMinusHours"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
           <![CDATA[
-          SELECT DISTINCT gf.source_id
+          SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
           WHERE (('$$minOrMax$$' = 'min')
@@ -396,6 +405,7 @@
        <paramRef ref="sharedParams.-b"/>
        <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
@@ -437,6 +447,7 @@
        <paramRef ref="geneParams.ProfileMinShift"/>
        <paramRef ref="geneParams.ProfileMaxShift"/>
        <wsColumn name="source_id" width="50" wsName="GeneID"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="distance" wsName="Distance" width="50"/>
        <wsColumn name="time_shift" wsName="Shift" width="50"/>
        <wsColumn name="query_source_id" wsName="QueryGeneId" width="50"/>
@@ -470,6 +481,7 @@
        <paramRef ref="sharedParams.motif_expression"/>
        <paramRef ref="geneSimilarityParams.motif_organism"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="3999"/>
@@ -499,6 +511,7 @@
        <paramRef ref="geneParams.datasets"/>
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
     <wsQuery name="GenesByAnnotatedKeyword"
@@ -530,7 +543,7 @@
 
         <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
-            SELECT DISTINCT gf2.source_id
+            SELECT DISTINCT gf2.source_id, '@@PROJECT_ID@@' as project_id
             FROM $$historyId$$ qr, dots.GeneFeature gf1,
                  dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
                  dots.GeneFeature gf2, dots.ExternalNaSequence ens,
@@ -552,7 +565,7 @@
        <sql includeProjects="ApiDB">
             <![CDATA[
 
-SELECT DISTINCT sns2.source_id, ext.name as project_id 
+SELECT DISTINCT sns2.source_id, '@@PROJECT_ID@@' as project_id, ext.name as project_id 
 FROM $$historyId$$ qr, dots.splicednasequence sns1, dots.sequencesequencegroup ssg1, dots.splicednasequence sns2, dots.sequencesequencegroup ssg2, core.tableinfo ti ,    sres.ExternalDatabaseRelease extr,  sres.ExternalDatabase ext 
 WHERE qr.source_id = sns1.source_id 
 AND sns1.na_sequence_id = ssg1.sequence_id 
@@ -582,10 +595,11 @@ order by project_id,sns2.source_id
 		excludeProjectes="ApiDB">
         <paramRef ref="geneParams.go_term"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id" />
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.ExternalNaSequence ens, dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  dots.GoAssociation ga, sres.GoTerm gp,
@@ -630,13 +644,14 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_mutual_information_score"/>
         <paramRef ref="geneParams.include_only_queries"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
+        <column name="project_id"/>
         <column name="source_id" />
         <column name="query_ids" />
         <column name="mutual_information_scores" />
         <column name="num_queries" />
         <sql>
             <![CDATA[
-                SELECT gf2.source_id, count(*) as num_queries,
+                SELECT gf2.source_id, '@@PROJECT_ID@@' as project_id, count(*) as num_queries,
                     apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids,
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
                 FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
@@ -694,13 +709,14 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_interaction"/>
         <paramRef ref="geneParams.include_only_queries"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="likelihood_scores"/>
         <column name="query_ids" />
         <column name="queries_matched"/>
         <sql>
             <![CDATA[
-                SELECT gf2.source_id, 
+                SELECT gf2.source_id, '@@PROJECT_ID@@' as project_id, 
                   apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                   apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
                   count(*) as queries_matched
@@ -716,7 +732,7 @@ order by project_id,sns2.source_id
                 GROUP BY gf2.source_id
                 HAVING count(*) >= $$min_num_query_matches$$
               UNION
-                SELECT gf2.source_id, 
+                SELECT gf2.source_id, '@@PROJECT_ID@@' as project_id, 
                   apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                   apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
                   count(*) as queries_matched
@@ -746,11 +762,12 @@ order by project_id,sns2.source_id
 			excludeProjects="ApiDB">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="sigp_sum_score"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id,
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id,
              (spf.maxy_conclusion + spf.maxc_conclusion + 
               spf.maxs_conclusion + spf.means_conclusion ) as sigp_sum_score
             FROM dots.NaSequence ens, dots.GeneFeature gf, 
@@ -789,12 +806,13 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.intraerythrocytic_stages"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_percentile"/>
         <column name="min_percentile"/>
         <sql>
             <![CDATA[
-            SELECT e.source_id, MAX(e.value) AS max_percentile,
+            SELECT e.source_id, '@@PROJECT_ID@@' as project_id, MAX(e.value) AS max_percentile,
                    MIN(e.value) AS min_percentile
             FROM apidb.Expression e
             WHERE (e.element_order = $$intraerythrocytic_stages$$
@@ -816,12 +834,13 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.extraerythrocytic_stages"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_percentile"/>
         <column name="min_percentile"/>
         <sql>
             <![CDATA[
-            SELECT e.source_id, MAX(e.value) AS max_percentile,
+            SELECT e.source_id, '@@PROJECT_ID@@' as project_id, MAX(e.value) AS max_percentile,
                    MIN(e.value) AS min_percentile
             FROM apidb.Expression e
             WHERE e.profile_set_name in ('winzeler_cc_sorbPct', 'winzeler_cc_sporPct')
@@ -842,13 +861,14 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByExpression" isCacheable="true">
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_percentile"/>
         <column name="min_percentile"/>
         <sql>
             <![CDATA[
 
-            SELECT e.source_id, MAX(e.value) AS max_percentile,
+            SELECT e.source_id, '@@PROJECT_ID@@' as project_id, MAX(e.value) AS max_percentile,
                    MIN(e.value) AS min_percentile
             FROM apidb.Expression e
             WHERE e.profile_set_name
@@ -871,11 +891,12 @@ order by project_id,sns2.source_id
        <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
        <paramRef ref="geneParams.regulated_dir"/>
        <paramRef ref="geneParams.fold_change"/>
+        <column name="project_id"/>
        <column name="source_id" />
        <column name="fold_change" />
        <sql>
         <![CDATA[
-           SELECT ga.gene as source_id, 
+           SELECT ga.gene as source_id, '@@PROJECT_ID@@' as project_id, 
                    to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
                    THEN avg(ep1.mean)/avg(ep2.mean)
                    ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
@@ -916,12 +937,13 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByExpressionPercentileA" displayName="By Expression Percentile" isCacheable='true'>
        <paramRef ref="geneParams.cowmanSample"/>
        <paramRef ref="geneParams.percentile"/>
+        <column name="project_id"/>
        <column name="source_id" />
        <column name="percentile" />
        <sql>
             <![CDATA[
 	    SELECT 
-                 ga.gene as source_id, 
+                 ga.gene as source_id, '@@PROJECT_ID@@' as project_id, 
                  max(to_char(de.percentile,'99.99')) as percentile
             FROM RAD.ExpressionProfile de, Rad.ShortOligoFamily sof,
                  Rad.Analysis a, Rad.AnalysisInput aia, 
@@ -955,12 +977,13 @@ order by project_id,sns2.source_id
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir"/>
+        <column name="project_id"/>
        <column name="source_id" />
        <column name="confidence" />
        <column name="fold_change" />
        <sql>
             <![CDATA[
-          SELECT ga.gene as source_id,
+          SELECT ga.gene as source_id, '@@PROJECT_ID@@' as project_id,
 	      max(to_char(de.fold_change, '999.99')) as fold_change,
               max(to_char(de.confidence,'99.99')) as confidence
             FROM Rad.LogicalGroup lg,
@@ -1007,10 +1030,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.ys_max_expression_percentile"/>
         <paramRef ref="geneParams.ms_min_expression_percentile"/>
         <paramRef ref="geneParams.ms_max_expression_percentile"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-        SELECT DISTINCT fred.source_id from(
+        SELECT DISTINCT fred.source_id, '@@PROJECT_ID@@' as project_id from(
             SELECT p.source_id
             FROM apidb.profileElementName pen,
                  apidb.profileSet ps,
@@ -1078,10 +1102,11 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
         <paramRef ref="geneParams.localization"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-              SELECT DISTINCT s.source_id
+              SELECT DISTINCT s.source_id, '@@PROJECT_ID@@' as project_id
               FROM apidb.Subcellular s
               WHERE targetting_domain = '$$localization$$'
               ORDER BY s.source_id
@@ -1091,10 +1116,11 @@ order by project_id,sns2.source_id
 
     <!-- sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
         <paramRef ref="geneParams.localization"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-              SELECT DISTINCT paf.source_id
+              SELECT DISTINCT paf.source_id, '@@PROJECT_ID@@' as project_id
               FROM dots.PredictedAaFeature paf
               WHERE external_database_release_id IN (-1, $$localization$$)
               ORDER BY paf.source_id
@@ -1111,11 +1137,12 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_isoelectric_point"/>
         <paramRef ref="geneParams.max_isoelectric_point"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="isoelectric_point"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT asa.isoelectric_point, gf.source_id
+            SELECT DISTINCT asa.isoelectric_point, '@@PROJECT_ID@@' as project_id, gf.source_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  apidb.AaSequenceAttribute asa,
@@ -1153,10 +1180,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_molecular_weight"/>
         <paramRef ref="geneParams.max_molecular_weight"/>
         <paramRef ref="generalParams.organism"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, apidb.AaSequenceAttribute asa,
                  dots.NaSequence ns, apidb.GeneAttributes ga
@@ -1192,10 +1220,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.num_exons_gte"/>
         <paramRef ref="geneParams.num_exons_lte"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-             SELECT source_id
+             SELECT source_id, '@@PROJECT_ID@@' as project_id
              FROM apidb.geneattributes
              WHERE ncbi_tax_id in ($$organism$$)
              AND exon_count  >= $$num_exons_gte$$
@@ -1230,10 +1259,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.phyletic_indent_map"/>
         <paramRef ref="geneParams.phyletic_term_map"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id, ns.taxon_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id, ns.taxon_id
             FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
             WHERE pp.profile_string LIKE '$$profile_pattern$$'
               AND pp.source_id = gf.source_id
@@ -1262,11 +1292,12 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByMetabolicPathway" excludeProjects="ApiDB,CryptoDB">
         <paramRef ref="geneParams.metabolic_pathway"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="met_pathways"/>
         <sql>
             <![CDATA[
-              SELECT gf.source_id,
+              SELECT gf.source_id, '@@PROJECT_ID@@' as project_id,
        apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
@@ -1304,10 +1335,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.ookinetes_value"/>
         <paramRef ref="geneParams.oocysts_value"/>
         <paramRef ref="geneParams.sporozoites_value"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT pb.source_id FROM
+            SELECT DISTINCT pb.source_id, '@@PROJECT_ID@@' as project_id FROM
             (SELECT p.source_id
             FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
             WHERE pe.profile_id = p.profile_id
@@ -1358,10 +1390,11 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByMr4Reagents" displayName="by MR4 Reagents"
               isCacheable="true">
         <paramRef ref="geneParams.mr4_reagent_type"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-               SELECT DISTINCT gf.source_id
+               SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
                FROM dots.GeneFeature gf,
                 dots.DbRefAaFeature df,
                 sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
@@ -1389,11 +1422,13 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.min_exportpred_score"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="exportpred_score"/>
         <sql>
             <![CDATA[
-                SELECT gf.source_id, max(df.score) as exportpred_score
+                SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, 
+                  max(df.score) as exportpred_score
                 FROM dots.aasequence aa,dots.DomainFeature df, dots.translatedaafeature tf,
                      dots.transcript t,dots.genefeature gf
                 WHERE  aa.taxon_id in ($$organism$$)
@@ -1414,10 +1449,11 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByTaxon" excludeProjects="ApiDB">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT gf.source_id
+                SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
                 FROM DoTS.GeneFeature gf, apidb.GeneAttributes ga
                 WHERE gf.na_sequence_id IN
                       (SELECT ens.na_sequence_id
@@ -1447,11 +1483,12 @@ order by project_id,sns2.source_id
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="epitopeParams.confidence"/>
         <column name="source_id" />
+        <column name="project_id"/>
         <column name="confidence" />
         <column name="count" />
         <sql>
             <![CDATA[
-        SELECT gf.source_id, count(ef.source_id) AS count,
+        SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, count(ef.source_id) AS count,
            DECODE(
              MAX(
                DECODE(ef.type, 'Not Full Set Not on Blast Hit', 1,
@@ -1497,10 +1534,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_seq_coverage"/>
         <paramRef ref="geneParams.min_span_count"/>
         <paramRef ref="geneParams.min_spectrum_count"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT distinct gf.source_id
+                SELECT distinct gf.source_id, '@@PROJECT_ID@@' as project_id
                 FROM apidb.MassSpecSummary mss, dots.transcript t,
                      dots.genefeature gf, dots.translatedAAFeature taf
                 WHERE (mss.developmental_stage = '$$mass_spec_stage$$'
@@ -1523,10 +1561,11 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesOrthologousToAGivenGene"
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT gf2.source_id
+                SELECT DISTINCT gf2.source_id, '@@PROJECT_ID@@' as project_id
                 FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                      dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                      core.TableInfo ti,apidb.GeneId gi
@@ -1552,11 +1591,12 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.max_centromere_distance"/>
         <paramRef ref="geneParams.chromosome"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="dist_centromere"/>
         <sql>
             <![CDATA[
-                SELECT gcd.gene AS source_id,
+                SELECT gcd.gene AS source_id, '@@PROJECT_ID@@' as project_id,
                 TRIM(TO_CHAR(gcd.centromere_distance,'9,999,999')) as dist_centromere
                 FROM apidb.GeneCentromereDistance gcd, apidb.GeneAttributes ga
                 WHERE gcd.gene = ga.source_id
@@ -1575,11 +1615,12 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.distanceFromTelomere"/>
         <paramRef ref="geneParams.chromosome"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="dist_telomere"/>
         <sql>
             <![CDATA[
-	    SELECT gf.source_id, 
+	    SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, 
             trim(to_char(LEAST(s.length - l.end_max,l.start_min),'999,999')) as dist_telomere
 	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
 	    WHERE gf.na_sequence_id = s.na_sequence_id
@@ -1602,10 +1643,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.genomicSequence"/>
         <paramRef ref="geneParams.start_point"/>
         <paramRef ref="geneParams.end_point"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT distinct gf.source_id
+            SELECT distinct gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
               AND (ens.source_id = $$pfGenomicSequence$$
@@ -1639,10 +1681,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.pfNonnuclearSequence"/>
         <paramRef ref="geneParams.start_point"/>
         <paramRef ref="geneParams.end_point"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT distinct gf.source_id
+            SELECT distinct gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
               AND ens.source_id IN ($$pfNonnuclearSequence$$)
@@ -1661,10 +1704,11 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesWithStructurePrediction"
               displayName="with Structure Predictions"
               isCacheable="true">
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
@@ -1688,10 +1732,12 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT gf.source_id, MAX(ens.taxon_id) AS gene_taxon_id
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id,
+                 MAX(ens.taxon_id) AS gene_taxon_id
             FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  core.TableInfo tas_ti, dots.Similarity s,
                  core.TableInfo eas_ti, dots.ExternalAaSequence eas,
@@ -1732,10 +1778,11 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.accession"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
              FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                   sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                   sres.ExternalDatabase ed, dots.ExternalNaSequence ens
@@ -1772,6 +1819,7 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.dn_ds_ratio_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.dn_ds_ratio_upper" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.snp_density" groupRef="paramGroups.advancedParams"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="cds_snp_density"/>
         <column name="dn_ds_ratio"/>
@@ -1782,7 +1830,7 @@ order by project_id,sns2.source_id
         <column name="total_snps"/>
         <sql>
             <![CDATA[
-              SELECT source_id,
+              SELECT source_id, '@@PROJECT_ID@@' as project_id,
 	           round(non_synonymous / CASE synonymous
 	                      WHEN 0 THEN 1
 				  ELSE synonymous end, 2) as dn_ds_ratio,
@@ -1814,10 +1862,11 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.percentLowComplexity"/>
         <paramRef ref="geneParams.chromosome"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-	    select gf.source_id
+	    select gf.source_id, '@@PROJECT_ID@@' as project_id
 	    from Dots.LowComplexityAAFeature lc, Dots.GeneFeature gf,
 	         Dots.ExternalNASequence ens, Dots.AALocation al, 
                  Dots.AASequence s, Dots.Transcript t, Dots.TranslatedAAFeature taf
@@ -1849,13 +1898,15 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_helix"/>
         <paramRef ref="geneParams.max_helix"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="percent_coil"/>
         <column name="percent_strand"/>
         <column name="percent_helix"/>
         <sql>
             <![CDATA[
-            SELECT gf.source_id, c.percentage as percent_coil, e.percentage as percent_strand, h.percentage as percent_helix
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, c.percentage as percent_coil,
+                e.percentage as percent_strand, h.percentage as percent_helix
             FROM dots.SecondaryStructure ss, dots.SecondaryStructureCall c, dots.SecondaryStructureCall e,
                  dots.SecondaryStructureCall h,dots.genefeature gf,dots.transcript t, 
                  dots.translatedaafeature tf,dots.nasequence s
@@ -1907,11 +1958,12 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.domain_database"/>
         <paramRef ref="geneParams.domain_accession"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <column name="e_value"/>
         <sql excludeProjects="ToxoDB">
             <![CDATA[
-            SELECT gf.source_id,avg(df.e_value) as e_value
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, avg(df.e_value) as e_value
             FROM dots.DomainFeature df,dots.translatedaasequence tas,
                  dots.genefeature gf, dots.transcript t, dots.TranslatedAAFeature taf,
                  dots.DbRefAaFeature draf, sres.DbRef dr
@@ -1930,7 +1982,7 @@ order by project_id,sns2.source_id
        </sql>
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT DISTINCT gf.source_id
+            SELECT DISTINCT gf.source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  dots.DomainFeature df, dots.DbRefAaFeature draf,
@@ -1970,10 +2022,11 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.day_and_strain"/>
         <paramRef ref="geneParams.min_expression_percentile" default="80"/>
         <paramRef ref="geneParams.max_expression_percentile" default="100"/>
+        <column name="project_id"/>
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT p.source_id
+            SELECT DISTINCT p.source_id, '@@PROJECT_ID@@' as project_id
             FROM apidb.profile p, apidb.profileElementName pen,
                  apidb.profileElement pe
             WHERE pe.value BETWEEN $$min_expression_percentile$$ / 100
@@ -2001,11 +2054,12 @@ order by project_id,sns2.source_id
        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+        <column name="project_id"/>
        <column name="source_id" />
        <column name="number_of_ests" />
        <sql excludeProjects="CryptoDB">
             <![CDATA[
-            SELECT gene as source_id,count(*) as number_of_ests
+            SELECT gene as source_id, '@@PROJECT_ID@@' as project_id, count(*) as number_of_ests
             FROM apidb.EstAlignmentGeneSummary
             WHERE est_gene_overlap_length >= $$bp_overlap_gte$$
             AND is_consistent in ($$high_confidence_only$$)
@@ -2020,7 +2074,7 @@ order by project_id,sns2.source_id
        <sql includeProjects="CryptoDB">
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-            SELECT gf.source_id,count(*) as number_of_ests
+            SELECT gf.source_id, '@@PROJECT_ID@@' as project_id, count(*) as number_of_ests
             FROM dots.genefeature gf, 
                  dots.nalocation nal, 
                  dots.blatalignment blat, 

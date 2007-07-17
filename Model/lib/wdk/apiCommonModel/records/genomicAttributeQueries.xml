@@ -57,7 +57,7 @@
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = '$$primaryKey$$'
-                AND '$$projectId$$' = bfmv.project_id
+                AND bfmv.project_id='$$projectId$$'
              ]]>
            </sql>
         </sqlQuery>
@@ -111,6 +111,7 @@
             AND enas.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
             AND enas.source_id = '$$primaryKey$$'
+            AND bfmv.project_id='$$projectId$$'
              ]]>
            </sql>
         </sqlQuery>
@@ -142,6 +143,7 @@
                      sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
                 WHERE ens.source_id = '$$primaryKey$$'
+                  AND bfmv.project_id='$$projectId$$'
                   AND ens.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
@@ -166,6 +168,7 @@
                       sres.externaldatabase ed, 
                       sres.externaldatabaserelease edr
               WHERE enas.external_database_release_id = edr.external_database_release_id
+                  AND bfmv.project_id='$$projectId$$'
                   AND edr.external_database_id = ed.external_database_id
                   AND source_id = '$$primaryKey$$' 
               ]]>

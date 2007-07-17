@@ -14,9 +14,10 @@
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
+        <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT est.accession AS source_id
+            SELECT est.accession AS source_id, '@@PROJECT_ID@@' as project_id
             FROM dots.Est est
             WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
           ]]>
@@ -48,11 +49,12 @@
         <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
         <column name="source_id"/>
+        <column name="project_id"/>
         <column name="est_location" excludeProjects="CryptoDB"/>
 
         <sql excludeProjects="CryptoDB">
             <![CDATA[
-            SELECT accession as source_id,
+            SELECT accession as source_id, '@@PROJECT_ID@@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(target_sequence_source_id || ':'
@@ -76,7 +78,7 @@
 
         <sql includeProjects="CryptoDB">
             <![CDATA[
-           SELECT est.accession as source_id
+           SELECT est.accession as source_id, '@@PROJECT_ID@@' as project_id
 	    FROM  dots.BlatAlignment blat,
 	          dots.AssemblySequence asbl,
 		  dots.Est est,
@@ -122,6 +124,7 @@
              isCacheable='true'>
         <paramRef ref="sharedParams.libraryId"/>
         <column name="source_id" />
+        <column name="project_id"/>
         <sql>
             SELECT enas.source_id
             FROM dots.externalnasequence enas, dots.est e
@@ -157,11 +160,12 @@
        <paramRef ref="sharedParams.min_percent_est_aligned" excludeProjects="CryptoDB"
              groupRef="paramGroups.advancedParams"/>
        <column name="source_id" />
+       <column name="project_id"/>
        <column name="est_locations"  excludeProjects="CryptoDB"/>
        <column name="genes"  excludeProjects="CryptoDB"/>
        <sql excludeProjects="CryptoDB">
             <![CDATA[
-              SELECT accession as source_id,
+              SELECT accession as source_id, '@@PROJECT_ID@@' as project_id,
                   apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'
@@ -196,7 +200,8 @@
         <sql includeProjects="CryptoDB">
             <!-- query result includes 11 ests that have no genomic alignment -->
             <![CDATA[
-            SELECT accession as source_id FROM dots.est where est_id $$inNotIn$$ (
+            SELECT accession as source_id, '@@PROJECT_ID@@' as project_id 
+              FROM dots.est where est_id $$inNotIn$$ (
                 SELECT distinct(e.est_id)
                 FROM dots.genefeature gf, core.tableinfo info,
                 dots.nalocation nal, dots.blatalignment blat, 
@@ -247,6 +252,7 @@
        <paramRef ref="sharedParams.-filter"/>
 
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>

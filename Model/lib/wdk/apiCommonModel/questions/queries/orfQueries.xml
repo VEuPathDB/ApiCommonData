@@ -18,7 +18,7 @@
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT oa.project_id, oa.source_id
+                SELECT DISTINCT oa.source_id, '@@PROJECT_ID@@' as project_id
                 FROM apidb.OrfAttributes oa
                 WHERE oa.lowercase_source_id
                       LIKE LOWER(REPLACE(REPLACE('$$orf_id$$',' ',''),
@@ -52,13 +52,12 @@
         <column name="orf_location"/>
         <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
-	    SELECT oa.project_id, t.source_id,
+	    SELECT t.source_id, '@@PROJECT_ID@@' as project_id,
                   enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM  dots.externalNASequence enas,
 	          dots.nafeature t,
 	          sres.sequenceontology so,
-	          dots.nalocation nal,
-                  apidb.OrfAttributes oa
+	          dots.nalocation nal
 	    WHERE enas.na_sequence_id = t.na_sequence_id
 	      AND t.sequence_ontology_id = so.sequence_ontology_id
 	      AND so.term_name = 'ORF'
@@ -67,16 +66,15 @@
                    OR lower(enas.source_id) = lower('$$genomicSequence$$'))
               AND nal.end_max >= $$start_point$$ 
               AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
-              AND t.source_id = oa.source_id
            ]]>
        </sql>
         <sql includeProjects="ToxoDB"> <!-- not clear to me why this uses taaf -sdf -->
             <![CDATA[
-	    SELECT oa.project_id, m.source_id,
+	    SELECT m.source_id, '@@PROJECT_ID@@' as project_id,
 	       vs.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM dots.VirtualSequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
-                 apidb.GenomicSequence gs, apidb.OrfAttributes oa
+                 apidb.GenomicSequence gs
 	    WHERE m.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
 	    AND vs.na_sequence_id = m.na_sequence_id
@@ -88,7 +86,6 @@
 	    AND so.term_name = 'ORF'
 	    AND nal.end_max >= $$start_point$$  
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
-            AND m.source_id = oa.source_id
            ]]>
        </sql>
      </sqlQuery>
@@ -115,6 +112,7 @@
        <paramRef ref="sharedParams.motif_expression"/>
        <paramRef ref="orfSimilarityParams.motif_organism"/>
        <wsColumn name="source_id" width="60" wsName="GeneID"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="3999"/>
@@ -148,6 +146,7 @@
        <paramRef ref="sharedParams.-b"/>
        <paramRef ref="sharedParams.-filter"/>
        <wsColumn name="source_id" width="60" wsName="Identifier"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
@@ -188,11 +187,10 @@
         <column name="sum_spectrum_count" />
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            select distinct oa.project_id, misc.source_id,
+            select distinct misc.source_id, '@@PROJECT_ID@@' as project_id,
                             seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
-                 apidb.OrfAttributes oa
             (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
               from (select mss.aa_sequence_id, count(*) as sum_seq_ct
                 from apidb.massspecsummary mss,
@@ -225,12 +223,11 @@
             and o.term_name = 'ORF'
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
-            and misc.source_id = oa.source_id
             ]]>
        </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-                select distinct oa.project_id, misc.source_id,
+                select distinct misc.source_id, '@@PROJECT_ID@@' as project_id,
                        seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
@@ -282,7 +279,6 @@
              'AAEE01000003-2-1036973-1038130',
              'AAEE01000001-1-392320-392592',
              'AAEE01000009-1-131134-131337')
-            and misc.source_id = oa.source_id
            ]]>
        </sql>
     </sqlQuery>   
