@@ -324,7 +324,8 @@
                      prompt="Maximum descriptions (V)">
             <help>Number of one-line descriptions to show</help>
             <suggest default="50"/>
-
+        </stringParam>
+       
         <stringParam name="-b"
                      prompt="Maximum alignments (B)">
             <help>Number of alignments to show</help>
@@ -483,24 +484,11 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <stringParam name="genomicSequence"
-            prompt="Genomic sequence ID" 
-            substitute="yes">
-
-        <suggest includeProjects="CryptoDB"
-            sample="AAEL01000057, AAEE01000009, BX526834"
-            default="AAEE01000006"/>
-        <suggest includeProjects="ApiDB"
-            sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_995305"
-            default="AAEL01000057"/>
-        <suggest includeProjects="ToxoDB"
-            sample="Ia, VIIb, XI, VIIa, TGG_995305"
-            default="Ia"/>
-        <suggest includeProjects="PlasmoDB"
-            sample="MAL4, ctg_4094, MALPY00019"
-            default="MAL4"/>     
+            prompt="Genomic sequence ID">
 
         <help includeProjects="ApiDB">
           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in this search, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs.
+        </help>
         <help includeProjects="CrptoDB">
             Enter an identifier for a genomic contig. The IDs
             correspond to the accession numbers in the GenBank records
@@ -517,18 +505,30 @@
         <help includeProjects="PlasmoDB">
             Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  Wild cards are permitted in this search, i.e. use MALPY* to ask for all &#60;i&#62; P.vivax &#60;/i&#62; sequences.
         </help>
+
+        <suggest includeProjects="CryptoDB"
+            sample="AAEL01000057, AAEE01000009, BX526834"
+            default="AAEE01000006"/>
+        <suggest includeProjects="ApiDB"
+            sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_995305"
+            default="AAEL01000057"/>
+        <suggest includeProjects="ToxoDB"
+            sample="Ia, VIIb, XI, VIIa, TGG_995305"
+            default="Ia"/>
+        <suggest includeProjects="PlasmoDB"
+            sample="MAL4, ctg_4094, MALPY00019"
+            default="MAL4"/>     
+
     </stringParam>    
 
         <stringParam name="start_point"
-                     prompt="Start at"
-                     substitute="yes">
+                     prompt="Start at">
             <help>Select the distance (in nucleotides) to the start</help>
             <suggest default="1"/>
         </stringParam>
 
         <stringParam name="end_point"
-                     prompt="End Location (0 = end)"
-                     substitute="yes">
+                     prompt="End Location (0 = end)">
             <help>Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence</help>
             <suggest default="0"/>
         </stringParam>
@@ -680,29 +680,25 @@
     <!-- mass spec -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <stringParam name="min_seq_coverage"
-                     prompt="Minimum Percent Sequence Coverage"
-                     substitute="yes">
+                     prompt="Minimum Percent Sequence Coverage">
             <help>Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="min_span_count"
-                     prompt="Minimum Number of Spans"
-                     substitute="yes">
+                     prompt="Minimum Number of Spans">
             <help>Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned</help>
             <suggest default="2"/>
         </stringParam>
 
         <stringParam name="min_sequence_count"
-                     prompt="Minimum Number of&lt;br&gt;Unique Peptide Sequences"
-                     substitute="yes">
-                     <help>Use this parameter to set a minimum for the number of unique peptide sequences found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
+                     prompt="Minimum Number of&lt;br&gt;Unique Peptide Sequences">
+           <help>Use this parameter to set a minimum for the number of unique peptide sequences found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
            <suggest  default="1"/>
         </stringParam>
 
         <stringParam name="min_spectrum_count"
-                     prompt="Minimum Number of Spectra"
-                     substitute="yes">
+                     prompt="Minimum Number of Spectra">
             <help>Use this parameter to set a minimum for the number of mass spectra found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
             <suggest default="1"/>
         </stringParam>
@@ -713,7 +709,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <historyParam name="historyId"
-              prompt="History ID">
+                      prompt="History ID">
               <help>The number in the left column of My Query History</help>
         </historyParam>
 
@@ -722,7 +718,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	 
 
-      <enumParam name="chromosome"
+      <enumParam name="chromosome_with_organelles"
                      prompt="Genomic Sequence"
                      multiPick="false">
         <help>

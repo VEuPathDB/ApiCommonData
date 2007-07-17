@@ -17,11 +17,9 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
-                     multiPick="false"
+                     multiPick="false">
         <help>
-           <text>
              Organism(s) from which the sequences in the BLAST database originated
-           </text>
         </help>
         <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumValue includeProjects="ApiDB,PlasmoDB">
@@ -117,11 +115,9 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
-                     multiPick="false"
+                     multiPick="false">
         <help>
-           <text>
              Organism(s) from which the sequences in the BLAST database originated
-           </text>
         </help>
         <useTermOnly value="true" includeProjects="ApiDB"/>
        <enumValue includeProjects="ApiDB,PlasmoDB">
@@ -193,12 +189,10 @@
     <!-- ORF motif organism -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
       <enumParam name="motif_organism"
-                        prompt="Organism"
-			multiPick="true"
+                 prompt="Organism"
+			     multiPick="true">
         <help>
-           <text>
              Choose one or more organisms to search with the given motif
-           </text>
         </help>
         <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumValue>
@@ -250,8 +244,13 @@
           <term>P. reichenowi</term>
           <internal>Preichenowi/PreichenowiOrfs_plasmoDB-5.3.fasta</internal>
         </enumValue>
+     </enumParam>
 
-     <enumParam name="BlastDatabaseOrganism"
+  </paramSet>
+  
+  <paramSet name="geneSimilarityParams">
+     
+     <enumParam name="BlastDatabaseOrganism">
        <enumValue includeProjects="ApiDB">
          <term>T. gondii</term>
          <internal>Tgondii/TgondiiAnnotatedProteins_toxoDB-4.2.fasta</internal>
@@ -312,17 +311,15 @@
        </enumValue>
 
       </enumParam>
-
+  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene motif organism -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
       <enumParam name="motif_organism"
-                        prompt="Organism"
-			multiPick="true"
+                 prompt="Organism"
+			     multiPick="true">
         <help>
-           <text>
              Choose one or more organisms to search with the given motif
-           </text>
         </help>
         <useTermOnly value="true" includeProjects="ApiDB"/>
         <enumValue>
@@ -370,8 +367,10 @@
           <term>P. reichenowi</term>
           <internal>Preichenowi/PreichenowiAnnotatedProteins_plasmoDB-5.3.fasta</internal>
         </enumValue>
-
-     <enumParam name="BlastDatabaseOrganism"
+     </enumParam>
+     
+<!--
+     <enumParam name="BlastDatabaseOrganism">
        <enumValue includeProjects="ApiDB">
          <term>T. gondii</term>
          <internal>Tgondii/TgondiiAnnotatedProteins_toxoDB-4.2.fasta</internal>
@@ -419,6 +418,7 @@
          <internal>Cparvum</internal>
        </enumValue>
       </enumParam>
+-->
   </paramSet>
 
 </wdkModel>
