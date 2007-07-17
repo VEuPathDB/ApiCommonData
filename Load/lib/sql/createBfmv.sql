@@ -913,20 +913,7 @@ prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
 DROP MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
 
 CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111 AS
-SELECT CASE
-         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
-           THEN 'CryptoDB'
-         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
-           THEN 'PlasmoDB'
-         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
-           THEN 'ToxoDB'
-         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
-           THEN 'TrichDB'
-         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
-           THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
-       END as project_id,
-       ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
@@ -1006,7 +993,7 @@ CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
 -- cleanup
 ---------------------------
 
-prompt These mviews appear superflous (their names end in four digits but no synonym points at them).
+prompt These mviews appear superfluous (their names end in four digits but no synonym points at them).
 prompt Consider carefully dropping them.
 
 SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS drops
