@@ -26,3 +26,4 @@ select count(*) from apidb.geneid@TOXOBLD;
 prompt *****select count(*) from apidb.geneid;
 select count(*) from apidb.geneid;
 
+exit
