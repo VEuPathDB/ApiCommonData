@@ -500,18 +500,20 @@
     <stringParam name="genomicSequence"
             prompt="Genomic sequence ID" 
             substitute="yes">
+
         <suggest includeProjects="CryptoDB"
-            sample="(Examples: AAEL01000057, AAEE01000009, BX526834)"
-            default="(Example: AAEE01000006)"/>
+            sample="AAEL01000057, AAEE01000009, BX526834"
+            default="AAEE01000006"/>
         <suggest includeProjects="ApiDB"
-            sample="AAEL010000057, AAEE01000009, BX526834"
+            sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_995305"
             default="AAEL01000057"/>
         <suggest includeProjects="ToxoDB"
-            sample="Ia, VIIb, XI"
+            sample="Ia, VIIb, XI, VIIa, TGG_995305"
             default="Ia"/>
         <suggest includeProjects="PlasmoDB"
-            sample="(Examples: MAL4, ctg_4094)"
+            sample="MAL4, ctg_4094, MALPY00019"
             default="MAL4"/>     
+
         <help includeProjects="ApiDB">
           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in this search, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs.
         <help includeProjects="CrptoDB">

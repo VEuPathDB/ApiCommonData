@@ -1,6 +1,7 @@
 <wdkModel>
 
-  <questionSet name="OrfQuestions">
+  <questionSet name="OrfQuestions"
+               displayName="Search Orfs">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
@@ -12,17 +13,17 @@
               queryRef="OrfIds.OrfsByLocation"
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-      <attributeList includeProjects="CryptoDB,ApiDB"
+      <attributesList includeProjects="CryptoDB,ApiDB"
              summary="organism"
              sorting="organism asc"
       />
 
-      <attributeList includeProjects="ToxoDB"
+      <attributesList includeProjects="ToxoDB"
              summary="orf_location_text,length"
              sorting="orf_location_text asc"
       />
 
-      <attributeList includeProjects="PlasmoDB"
+      <attributesList includeProjects="PlasmoDB"
              summary="formatted_organism,orf_location_text,length"
              sorting="formatted_organism,orf_location_text asc"
       />
@@ -32,25 +33,12 @@
       </summary>
 
       <description includeProjects="CryptoDB,ApiDB" >
-       Find Orfs that are located in a specified genomic region.<p>
-       Enter the ID of a genomic sequence and start and end locations on that sequence.
+          <![CDATA[
+            <p>Find Orfs that are located in a specified genomic region.</p>
+            <p>Enter the ID of a genomic sequence and start and end locations on that sequence.</p>
+          ]]>
       </description>
 
-      <suggest includeProjects="ToxoDB"
-                sample="VIIa, TGG_995305"
-      />
-
-      <suggest includeProjects="PlasmoDB"
-                sample="Chromosome 1, MAL4, MALPY00019"
-      />
-
-      <suggest includeProjects="CryptoDB"
-                sample="AAEL01000057"
-      />
-
-      <suggest includeProjects="ApiDB"
-                sample="MAL4, MALPY00019, VIIa, TGG_995305, AAEL01000057"
-      />
     </question>
 
 
@@ -61,10 +49,9 @@
     <question name="OrfByOrfId" 
               displayName="Orfs by ID"
               queryRef="OrfIds.OrfsByOrfId" 
-              summaryAttributesList="organism"
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-             <attributeList 
+             <attributesList 
                summary="organism"
                sorting="organism asc"
              />
@@ -88,12 +75,12 @@
               queryRef="OrfIds.OrfsByMassSpec" 
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-          <atrributeList excludeProjects="ApiDB"
+          <atrributesList excludeProjects="ApiDB"
               summary="orf_location_text,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
           />
 
-          <atrributeList includeProjects="ApiDB"
+          <atrributesList includeProjects="ApiDB"
               summary="organism"
               sorting="organism asc"
           />
@@ -169,7 +156,7 @@ one time.
          queryRef="OrfIds.OrfsByMotifSearch"
          recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-      <attributeList
+      <attributesList
          summary="organism,Locations,MatchCount,Sequence"
          sorting="orgmanism asc"
       />
@@ -325,7 +312,7 @@ one time.
          queryRef="OrfIds.OrfsBySimilarity"
          recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-      <attributeList
+      <attributesList
          summary="Header,TabularRow,Alignment,Footer"
       />
 
