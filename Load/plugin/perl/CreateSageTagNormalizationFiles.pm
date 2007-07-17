@@ -4,15 +4,22 @@ package ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles;
 use strict;
 
 use GUS::PluginMgr::Plugin;
+
 use GUS::Model::Study::Study;
 use GUS::Model::Study::OntologyEntry;
+
 use GUS::Model::RAD::SAGETag;
 use GUS::Model::RAD::SAGETagResult;
 use GUS::Model::RAD::Protocol;
 use GUS::Model::RAD::ProtocolParam;
 use GUS::Model::RAD::LogicalGroup;
 use GUS::Model::RAD::LogicalGroupLink;
+
+use GUS::Model::Core::UserInfo;
+
 use GUS::Model::SRes::Contact;
+
+use GUS::ObjRelP::DbiDatabase;
 
 $| = 1;
 
@@ -41,12 +48,6 @@ sub getArgumentsDeclaration{
 		reqd  => 1,
 		isList => 0
 	       }),
-     stringArg({name => 'contact',
-		 descr => 'name,first,last as they should appear in sres.contact',
-		 constraintFunc => undef,
-		 reqd => 1,
-		 isList => 1
-		}),
      integerArg({name  => 'decPlaces',
                  descr => 'desired number of decimal places in normalized frequency',
                  constraintFunc=> undef,
@@ -355,7 +356,8 @@ sub makeCfgFile {
 
   open (FILE,">$fileDir/$file") || $self->error ("Can't open $fileDir/$file for writing\n");
 
-  my $operatorId = $self->getContactId();
+  my $contact = $self->getContactForUser();
+  my $operatorId = $contact->getId();
 
   my $date = `date +%Y-%m-%d`;
   chomp($date);
@@ -371,33 +373,76 @@ sub makeCfgFile {
 XX
 }
 
-sub getContactId {
+#sub getContactId {
+#  my ($self) = @_;
+
+#  my $contactHash;
+
+#  if(defined $self->getArg('contact')->[0])  {  $contactHash->{name}=$self->getArg('contact')->[0];}
+#  if(defined $self->getArg('contact')->[1])  {  $contactHash->{first}=$self->getArg('contact')->[1];}
+#  if(defined $self->getArg('contact')->[2])  {  $contactHash->{last}=$self->getArg('contact')->[2];}
+
+#  my $contact = GUS::Model::SRes::Contact->new($contactHash);
+
+#  if ($contact) {
+#    $self->log("Obtained contact object\n");
+#  }
+#  else {
+#    $self->userError("Unable to obtain contact object\n");
+#  }
+
+#  if (! $contact->retrieveFromDB()) {
+
+#    $contact->submit();
+#  }
+
+#  my $contactId = $contact->getId();
+
+#  return $contactId
+#}
+
+sub getContactForUser {
   my ($self) = @_;
 
-  my $contactHash;
+  my $database;
+  unless($database = GUS::ObjRelP::DbiDatabase->getDefaultDatabase()) {
+    $self->error("Required Default DbiDatabase not provided by the Plugin");
+  }
 
-  if(defined $self->getArg('contact')->[0])  {  $contactHash->{name}=$self->getArg('contact')->[0];}
-  if(defined $self->getArg('contact')->[1])  {  $contactHash->{first}=$self->getArg('contact')->[1];}
-  if(defined $self->getArg('contact')->[2])  {  $contactHash->{last}=$self->getArg('contact')->[2];}
+  my $userId = $database->getDefaultUserId;
 
-  my $contact = GUS::Model::SRes::Contact->new($contactHash);
+  my $userInfo = GUS::Model::Core::UserInfo->new({user_id => $userId});
 
-  if ($contact) {
-    $self->log("Obtained contact object\n");
+  unless($userInfo->retrieveFromDB()) {
+    $self->error("User Id [$userId] is not valid");
+  }
+
+  my $contact;
+  if(my $contactId = $userInfo->getContactId()) {
+    $contact = GUS::Model::SRes::Contact->new({contact_id => $contactId});
+
+    unless($contact->retrieveFromDB()) {
+      $self->error("Contact Id [$contactId] is not valid");
+    }
   }
   else {
-    $self->userError("Unable to obtain contact object\n");
+    my $first = $userInfo->getFirstName();
+    my $last = $userInfo->getLastName();
+    my $full = $first . " " . $last;
+
+    $contact = GUS::Model::SRes::Contact->new({first => $first,
+                                               last => $last,
+                                              });
+
+    unless($contact->retrieveFromDB()) {
+      $contact->setName($full);
+      $contact->submit();
+    }
   }
 
-  if (! $contact->retrieveFromDB()) {
-
-    $contact->submit();
-  }
-
-  my $contactId = $contact->getId();
-
-  return $contactId
+  return $contact;
 }
+
 
 
 1;
