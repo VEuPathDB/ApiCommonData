@@ -481,7 +481,20 @@ DROP MATERIALIZED VIEW apidb.GeneAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 AS
-SELECT gf.source_id,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       gf.source_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
        SUBSTR(gf.product, 1, 200) AS product,
        LEAST(nl.start_min, nl.end_max) AS start_min,
@@ -597,7 +610,20 @@ DROP MATERIALIZED VIEW apidb.SequenceAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 AS
-SELECT SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
        (sequence.length
         - (sequence.a_count + sequence.c_count + sequence.g_count + sequence.t_count))
@@ -651,7 +677,20 @@ DROP MATERIALIZED VIEW apidb.SnpAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 AS
-SELECT snp.source_id AS source_id,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       snp.source_id AS source_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
        CASE WHEN ed.name = 'Su SNPs' THEN 'Su_SNPs'
@@ -724,7 +763,21 @@ DROP MATERIALIZED VIEW apidb.OrfAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 AS
-SELECT SUBSTR(m.source_id, 1, 60) AS source_id,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       SUBSTR(m.source_id, 1, 60) AS source_id,
+       LOWER(SUBSTR(m.source_id, 1, 60)) AS lowercase_source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        SUBSTR(sequence.source_id, 1, 30) AS nas_id,
@@ -761,7 +814,20 @@ DROP MATERIALIZED VIEW apidb.EstAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.EstAttributes1111 AS
-SELECT ens.source_id,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       ens.source_id,
        e.seq_primer AS primer,
        ens.a_count,
        ens.c_count,
@@ -805,7 +871,20 @@ DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1111;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 ###;
 CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 AS
-SELECT ens.source_id, ed.name AS provider,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
 FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
@@ -834,7 +913,20 @@ prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
 DROP MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
 
 CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111 AS
-SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createBfmv.sql'
+       END as project_id,
+       ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
