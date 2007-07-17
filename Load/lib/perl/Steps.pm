@@ -1663,19 +1663,19 @@ sub loadSplignResults {
 
 }
 
-sub extractScaffolds {
+sub extractSageNaSequences {
   my ($mgr,$species) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = "extract${species}Scaffolds";
+  my $signal = "extract${species}SageNaSequences";
 
-  return if $mgr->startStep("Extracting $species scaffolds from GUS", $signal);
+  return if $mgr->startStep("Extracting $species sage na sequences from GUS", $signal);
 
   my $gusConfigFile = $propertySet->getProp('gusConfigFile');
 
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
-  foreach my $scaffolds (@{$mgr->{scaffolds}->{$species}}) {
+  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
     my $dbName =  $scaffolds->{name};
     my $dbVer =  $scaffolds->{ver};
 
@@ -1684,7 +1684,7 @@ sub extractScaffolds {
 
     my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbVer);
 
-    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}Scaffolds.fsa";
+    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}SageNaSequences.fsa";
 
     my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
@@ -2140,7 +2140,7 @@ sub InsertCompositeElementNaSequences {
 }
 
 sub extractSageTags {
-  my ($mgr,$species) = @_;
+  my ($mgr, $species, $prependSeq) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -2161,7 +2161,7 @@ sub extractSageTags {
 
     my $logFile = "$mgr->{myPipelineDir}/logs/$signal${species}.log";
 
-    my $sql = "select s.composite_element_id,s.tag
+    my $sql = "select s.composite_element_id, '$prependSeq' || s.tag as tag
              from rad.sagetag s,rad.arraydesign a
              where a.name = '$dbName'
              and a.version = $dbVer
@@ -2175,22 +2175,22 @@ sub extractSageTags {
   $mgr->endStep($signal);
 }
 
-sub mapSageTagsToScaffolds {
+sub mapSageTagsToNaSequences {
   my ($mgr, $species) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "map${species}SageTags";
 
-  return if $mgr->startStep("Mapping SAGE tags to $species scaffolds", $signal);
+  return if $mgr->startStep("Mapping SAGE tags to $species sage na sequences", $signal);
 
-  foreach my $scaffolds (@{$mgr->{scaffolds}->{$species}}) {
+  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
     my $dbName =  $scaffolds->{name};
 
     my $scafName = $dbName;
     $scafName =~ s/\s/\_/g;
 
-    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${scafName}Scaffolds.fsa";
+    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${scafName}SageNaSequences.fsa";
 
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
