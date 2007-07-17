@@ -2215,11 +2215,11 @@ sub loadSageTagMap {
 
   my $signal = "load${species}SageTagMap";
 
-  return if $mgr->startStep("Loading SAGE tags to $species scaffolds maps", $signal);
+  return if $mgr->startStep("Loading SAGE tags to $species sage na sequences maps", $signal);
 
   my $propertySet = $mgr->{propertySet};
 
-  foreach my $scaffolds (@{$mgr->{scaffolds}->{$species}}) {
+  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
     my $dbName =  $scaffolds->{name};
     my $scafName = $dbName;
     $scafName =~ s/\s/\_/g;
@@ -3159,9 +3159,7 @@ sub createSageTagNormFiles {
 
   $signal =~ s/\s/_/g;
 
-  my $contact = $propertySet->getProp('contact');
-
-  my $args = "--paramValue $paramValue --studyName '$name' --fileDir $fileDir --contact $contact";
+  my $args = "--paramValue $paramValue --studyName '$name' --fileDir $fileDir";
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles",
