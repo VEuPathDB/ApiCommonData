@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use DBI;
+use Getopt::Long qw(GetOptions);
+
+my ($database, $user, $password, $file);
+
+GetOptions("user:s" => \$user,
+	   "database|db=s" => \$database,
+	   "password|pw=s" => \$password,
+	   "file:s" => \$file,
+	  );
+
+my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
+  or die $DBI::errstr;
+
+if ($file) {
+  open(IN, "$file") or die "Can't open file $file: $!\n";
+}
+
+
+my %acc; # key: assembly_id; value: genbank accession id
+
+# Read the file, and store data in a hash
+while(<IN>) {
+  $_ =~ s/(\d+)\t(.+)$/$1\t$2/;
+  $acc{$1} = $2;
+}
+close (IN);
+
+# create table
+my $table = 'AssemblyToGenBank';
+
+my $sthTable = $dbh->prepare(<<EOSQL);
+  CREATE TABLE AssemblyToGenBank
+  (asmbl_id int (11), gb_acc varchar(25))
+EOSQL
+$sthTable->execute() or die $DBI::errstr ;
+
+
+# insert data in table
+my $sthAcc = $dbh->prepare(<<EOSQL);
+  INSERT INTO AssemblyToGenBank
+  (asmbl_id, gb_acc)  VALUES (?, ?)
+EOSQL
+
+my @asm_ids = keys(%acc);
+foreach my $try (@asm_ids) {
+  $sthAcc->execute($try, $acc{$try});
+}
+$sthAcc->finish();
+
+$dbh->disconnect();
+
+# perl $GUS_HOME/bin/loadGBAccessionInManatee --user root --database tvag --file TIGR_asmbls_2_GB_Acc.table
