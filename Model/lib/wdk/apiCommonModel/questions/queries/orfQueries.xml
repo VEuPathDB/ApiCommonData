@@ -52,7 +52,7 @@
         <column name="orf_location"/>
         <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
-	    SELECT t.source_id, '@@PROJECT_ID@@' as project_id,
+	    SELECT t.source_id, '@PROJECT_ID@' as project_id,
                   enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM  dots.externalNASequence enas,
 	          dots.nafeature t,
@@ -70,7 +70,7 @@
        </sql>
         <sql includeProjects="ToxoDB"> <!-- not clear to me why this uses taaf -sdf -->
             <![CDATA[
-	    SELECT m.source_id, '@@PROJECT_ID@@' as project_id,
+	    SELECT m.source_id, '@PROJECT_ID@' as project_id,
 	       vs.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
 	    FROM dots.VirtualSequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
@@ -187,7 +187,7 @@
         <column name="sum_spectrum_count" />
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            select distinct misc.source_id, '@@PROJECT_ID@@' as project_id,
+            select distinct misc.source_id, '@PROJECT_ID@' as project_id,
                             seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
@@ -227,7 +227,7 @@
        </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-                select distinct misc.source_id, '@@PROJECT_ID@@' as project_id,
+                select distinct misc.source_id, '@PROJECT_ID@' as project_id,
                        seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,

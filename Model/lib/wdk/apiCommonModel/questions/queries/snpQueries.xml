@@ -11,7 +11,7 @@
 	  <column name="project_id"/>
 	  <sql>
 	    <![CDATA[
-	      SELECT sf.source_id AS source_id, '@@PROJECT_ID@@' as project_id
+	      SELECT sf.source_id AS source_id, '@PROJECT_ID@' as project_id
 	      FROM dots.SnpFeature sf
 	      WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$snp_id$$',' ',''), '*', '%'))
 	    ]]>
@@ -47,7 +47,7 @@
         <column name="comp_products"/>
         <sql includeProjects="ToxoDB">
             <![CDATA[
-SELECT snpq.source_id, '@@PROJECT_ID@@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
@@ -96,7 +96,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
         <sql includeProjects="PlasmoDB">
             <![CDATA[
-select snpq.source_id, '@@PROJECT_ID@@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+select snpq.source_id, '@PROJECT_ID@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
@@ -186,7 +186,7 @@ group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
           <column name="comp_products"/>
         <sql includeProjects="ToxoDB">
             <![CDATA[
-SELECT snpq.source_id, '@@PROJECT_ID@@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
@@ -233,7 +233,7 @@ GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
        </sql>
         <sql includeProjects="PlasmoDB">
             <![CDATA[
-select snpq.source_id, '@@PROJECT_ID@@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+select snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
@@ -320,7 +320,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
         <column name="major_strains"/>
         <sql>
             <![CDATA[
-select snpq.source_id, '@@PROJECT_ID@@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count,
+select snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count,
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.allele END) AS apidb.varchartab), ', ') as minor_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.product END) AS apidb.varchartab), ', ') as minor_products,
   apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele != snpq.major_allele THEN snpq.strain END) AS apidb.varchartab), ', ') as minor_strains,

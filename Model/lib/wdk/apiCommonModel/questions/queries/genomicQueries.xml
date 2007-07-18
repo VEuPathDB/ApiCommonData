@@ -20,7 +20,7 @@
         <column name="source_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
-            SELECT enas.source_id, '@@PROJECT_ID@@' as project_id
+            SELECT enas.source_id, '@PROJECT_ID@' as project_id
             FROM dots.externalnasequence enas,
                  sres.sequenceontology so
             WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE('$$sequenceId$$', '*', '%')))
@@ -30,7 +30,7 @@
         </sql>
         <sql includeProjects="PlasmoDB,ToxoDB">
         <![CDATA[
-            SELECT distinct source_id, '@@PROJECT_ID@@' as project_id
+            SELECT distinct source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence
             WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequenceId$$',' ',''), '*', '%'))
            ]]>
@@ -55,7 +55,7 @@
         <column name="source_id"/>
         <sql excludeProjects="ApiDB">
             <![CDATA[
-            SELECT DISTINCT ens.source_id, '@@PROJECT_ID@@' as project_id
+            SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
                CONNECT BY parent_id = prior taxon_id

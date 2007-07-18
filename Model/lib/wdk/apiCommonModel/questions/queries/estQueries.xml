@@ -17,7 +17,7 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT est.accession AS source_id, '@@PROJECT_ID@@' as project_id
+            SELECT est.accession AS source_id, '@PROJECT_ID@' as project_id
             FROM dots.Est est
             WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
           ]]>
@@ -54,7 +54,7 @@
 
         <sql excludeProjects="CryptoDB">
             <![CDATA[
-            SELECT accession as source_id, '@@PROJECT_ID@@' as project_id,
+            SELECT accession as source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(target_sequence_source_id || ':'
@@ -78,7 +78,7 @@
 
         <sql includeProjects="CryptoDB">
             <![CDATA[
-           SELECT est.accession as source_id, '@@PROJECT_ID@@' as project_id
+           SELECT est.accession as source_id, '@PROJECT_ID@' as project_id
 	    FROM  dots.BlatAlignment blat,
 	          dots.AssemblySequence asbl,
 		  dots.Est est,
@@ -165,7 +165,7 @@
        <column name="genes"  excludeProjects="CryptoDB"/>
        <sql excludeProjects="CryptoDB">
             <![CDATA[
-              SELECT accession as source_id, '@@PROJECT_ID@@' as project_id,
+              SELECT accession as source_id, '@PROJECT_ID@' as project_id,
                   apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'
@@ -200,7 +200,7 @@
         <sql includeProjects="CryptoDB">
             <!-- query result includes 11 ests that have no genomic alignment -->
             <![CDATA[
-            SELECT accession as source_id, '@@PROJECT_ID@@' as project_id 
+            SELECT accession as source_id, '@PROJECT_ID@' as project_id 
               FROM dots.est where est_id $$inNotIn$$ (
                 SELECT distinct(e.est_id)
                 FROM dots.genefeature gf, core.tableinfo info,
