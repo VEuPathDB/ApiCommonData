@@ -16,7 +16,7 @@
             <column name="orf_strand" sortingTable="apidb.OrfAttributes" sortingColumn="is_reversed" />
             <sql>
             <![CDATA[
-                SELECT bfmv.source_id, bfmv.nas_id, bfmv.length, bfmv.organism, bfmv.ncbi_tax_id,
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.nas_id, bfmv.length, bfmv.organism, bfmv.ncbi_tax_id,
                        '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
                        REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                       chr(38) || 'nbsp;') || '</i>'
