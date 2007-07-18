@@ -30,7 +30,7 @@ ADD CONSTRAINT mss_pk PRIMARY KEY (mass_spec_summary_id);
 
 ALTER TABLE apidb.MassSpecSummary
 ADD CONSTRAINT mss_fk1 FOREIGN KEY (aa_sequence_id)
-REFERENCES dots.AaSequenceImp (aa_sequence_id);
+REFERENCES dots.AASequenceImp (aa_sequence_id);
 
 ALTER TABLE apidb.MassSpecSummary
 ADD CONSTRAINT mss_fk2 FOREIGN KEY (external_database_release_id)
