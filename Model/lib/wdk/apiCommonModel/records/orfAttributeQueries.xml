@@ -27,7 +27,7 @@
                       decode(bfmv.is_reversed,0,'+',1,'-',null) as orf_strand
                 FROM apidb.OrfAttributes bfmv
                 WHERE bfmv.source_id = '$$primaryKey$$'
-                   AND '$$projectId$$' = bfmv.project_id
+                  AND bfmv.project_id = '$$projectId$$'
         ]]>
            </sql>
         </sqlQuery>
@@ -36,17 +36,29 @@
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="sequence"/>
-            <sql includeProjects="PlasmoDB,ToxoDB">
-            <![CDATA[
-               SELECT nf.source_id,ts.sequence
+            <sql includeProjects="PlasmoDB">
+               SELECT nf.source_id,ts.sequence, '$$projectId$$' as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
                     dots.NaFeature nf
                WHERE nf.source_id = '$$primaryKey$$'
                  AND nf.na_feature_id = tf.na_feature_id
                  AND ts.aa_sequence_id = tf.aa_sequence_id
-            ]]>
            </sql>
-            <sql includeProjects="ApiDB,CryptoDB,ToxoDB">
+            <sql includeProjects="ToxoDB">
+                SELECT t.source_id, tas.sequence, '$$projectId$$' as project_id
+                FROM dots.VirtualSequence vs,
+                     dots.Miscellaneous t,
+                     dots.TranslatedAaFeature taf,
+                     dots.TranslatedAaSequence tas,
+                     sres.SequenceOntology so
+                WHERE t.na_feature_id = taf.na_feature_id
+                  AND taf.aa_sequence_id = tas.aa_sequence_id
+                  AND vs.na_sequence_id = t.na_sequence_id 
+                  AND t.sequence_ontology_id = so.sequence_ontology_id
+                  AND so.term_name = 'ORF'
+                  AND t.source_id = '$$primaryKey$$'
+           </sql>
+            <sql includeProjects="ApiDB,CryptoDB">
 		SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
                 	  from dots.TranslatedAASequence taas,
                       	 sres.SequenceOntology s,
