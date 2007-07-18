@@ -1,0 +1,96 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+
+my ($gusConfigFile, $drop, $create, $db);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	   "drop!" => \$drop,
+	   "create!" => \$create,
+	   "db=s" => \$db);
+
+if (!$db || !($drop || $create) || ($drop && $create)) {
+  die "usage: commondbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+}
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+
+my @create = qw( enterDbVersion.sql
+                 createApidbSchema.sql
+                 increaseColumnWidth.sql
+                 removeNullConstraintsFromSimilarityTables.sql
+                 fixGusTableCapitalization.sql
+                 createCommentTables.sql
+                 createDbRefAaFeature.sql
+                 createDifferentialExpression.sql
+                 createExpressionProfileTables.sql
+                 createGeneInteractionTables.sql
+                 createGeneMappingView.sql
+                 createMassSpecSummary.sql
+                 createNaSequenceViews.sql
+                 createPhylogeneticProfile.sql
+                 createRadExpressionProfile.sql
+                 createRelatedNaFeature.sql
+                 createReportCache.sql
+                 createSequenceAttributeTables.sql
+                 createSeqVariation.sql
+                 createSnpFeature.sql
+                 createStoredProcedures.sql
+                 createSyntenyTables.sql
+                 createTranscriptView.sql
+                 createTranslatedAaFeature.sql
+                 createTransmembraneTable.sql
+                 createUserTables.sql
+                 createDbTuning.sql
+                 createArrayElementFeature.sql
+	       );
+
+my @delete = qw( dropDbRefAaFeature.sql
+                 dropExpressionProfileTables.sql
+                 dropGeneInteractionTables.sql
+                 dropGeneMappingView.sql
+                 dropMassSpecSummary.sql
+                 dropPhylogeneticProfile.sql
+                 dropSequenceAttributeTables.sql
+                 dropSnpFeature.sql
+                 dropSyntenyTables.sql
+                 dropTransmembraneTable.sql
+                 dropArrayElementFeature.sql
+                 restoreNullConstraintsFromSimilarityTables.sql
+                 dropDbTuning.sql
+                 dropStoredProcedures.sql
+                 dropApidbSchema.sql
+	       );
+
+if ($create) {
+
+  for my $sql (@create) {
+    &runSql($login, $password, $db, $sql);
+  }
+
+} else {
+
+  for my $sql (@delete) {
+    &runSql($login, $password, $db, $sql);
+  }
+
+}
+
+sub runSql {
+  my ($login, $password, $db, $file) = @_;
+
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/$file";
+
+  -e $fullFile || die "File '$fullFile' does not exist";
+
+  my $cmd = "sqlplus $login\@$db/$password \@$fullFile";
+print STDERR "$cmd\n";
+  system($cmd);
+  my $status = $? >> 8;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}
