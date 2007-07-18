@@ -12,7 +12,7 @@ my ($gusConfigFile, $drop, $create, $db);
 	   "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
-  die "usage: plasmodbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+  die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
