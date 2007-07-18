@@ -6,80 +6,93 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++ ORF by Id ++ -->
+    <!-- ++ ID ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="OrfQuestions.OrfByOrfId"
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="CryptoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="MAL1-1-10639-11520"/>
+        <sanityParam name="orf_id" value="AAEE01000001"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfByOrfId"
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="PlasmoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="MAL1-1-10639-11520"/>
+        <sanityParam name="orf_id" value="PB_PH0001"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfByOrfId"
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="ToxoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="MAL1-1-10639-11520"/>
+        <sanityParam name="orf_id" value="Ia"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByLocation"
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Location ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="CryptoDB,ApiDB"
                     minOutputLength="8000" maxOutputLength="10000"
                     pageStart="1" pageEnd="20">
-        <sanityParam name="chromosomeOptional" value="chromosome 1"/>
-        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="genomicSequence" value="AAEE01000001"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByLocation"
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="PlasmoDB,ApiDB"
                     minOutputLength="8000" maxOutputLength="10000"
                     pageStart="1" pageEnd="20">
-        <sanityParam name="chromosomeOptional" value="chromosome 1"/>
-        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="chromosomeOptional" value=""/>
+        <sanityParam name="genomicSequence" value="PB_PH0001"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByLocation"
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="ToxoDB,ApiDB"
                     minOutputLength="8000" maxOutputLength="10000"
                     pageStart="1" pageEnd="20">
-        <sanityParam name="chromosomeOptional" value="chromosome 1"/>
-        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="chromosomeOptional" value="Ia"/>
+        <sanityParam name="genomicSequence" value="(Example: VIIa, TGG_995305)"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch"
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Motif ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="CryptoDB,ApiDB"
             minOutputLength="4" maxOutputLength="100"
             pageStart="1" pageEnd="20">
-        <sanityParam name="motif_xpression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="P. falciparum"/>
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="C. parvum"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch"
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="PlasmoDB,ApiDB"
             minOutputLength="4" maxOutputLength="100"
             pageStart="1" pageEnd="20">
-        <sanityParam name="motif_xpression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="P. falciparum"/>
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="P. berghei"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch"
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="ToxoDB,ApiDB"
             minOutputLength="4" maxOutputLength="100"
             pageStart="1" pageEnd="20">
-        <sanityParam name="motif_xpression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="P. falciparum"/>
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="T. gondii"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity"
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Similarity ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="CryptoDB,ApiDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
           <sanityParam name="-e" value="1e-10"/>
@@ -87,11 +100,11 @@
           <sanityParam name="-b" value="25"/>
       </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity"
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="PlasmoDB,ApiDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. berghei"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
           <sanityParam name="-e" value="1e-10"/>
@@ -99,11 +112,11 @@
           <sanityParam name="-b" value="25"/>
       </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity"
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
           <sanityParam name="-e" value="1e-10"/>
