@@ -3,7 +3,7 @@
   <!--=====================================================================-->
   <!-- Params  -->
   <!--=====================================================================-->
-  <paramSet> 
+  <paramSet name="organismParams"> 
       <flatVocabParam name="organism"
                      queryRef="organismVQ.withGenes"
                      prompt="Organism"
@@ -458,7 +458,7 @@
     <!-- pb -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pb" excludeProjects="ApiDB"
+    <sqlQuery name="pb" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -497,7 +497,7 @@
     <wsQuery name="pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
-    </sqlQuery>
+    </wsQuery>
 
   </querySet>
 
