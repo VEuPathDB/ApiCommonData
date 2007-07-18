@@ -3,7 +3,7 @@
   <!--=====================================================================-->
   <!-- Params  -->
   <!--=====================================================================-->
-  <paramSet name="organismParams"> 
+  <paramSet> 
       <flatVocabParam name="organism"
                      queryRef="organismVQ.withGenes"
                      prompt="Organism"
@@ -78,10 +78,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="all" includeProjects="ApiDB">
+    <wsQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
     <!--===================================================================-->
     <!-- with chromosomes -->  
     <!--===================================================================-->
@@ -122,10 +122,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="withChromosomes" includeProjects="ApiDB">
+    <wsQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- with genomic seq-->  
@@ -167,11 +167,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="withGenomicSeq" includeProjects="ApiDB">
+    <wsQuery name="withGenomicSeq" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
-
     <!--===================================================================-->
     <!-- with genes
 
@@ -219,10 +218,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="withGenes" includeProjects="ApiDB">
+    <wsQuery name="withGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- with EC -->  
@@ -264,10 +263,11 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="withEC" includeProjects="ApiDB">
+    <wsQuery name="withEC" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
+
     <!--===================================================================-->
     <!-- cp-tg
 
@@ -314,10 +314,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="cp-tg" includeProjects="ApiDB">
+    <wsQuery name="cp-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- plasmoWithGenes  -->  
@@ -359,10 +359,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="withPlasmoGenes" includeProjects="ApiDB">
+    <wsQuery name="withPlasmoGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- tg pf -->  
@@ -404,10 +404,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="tg-pf" includeProjects="ApiDB">
+    <wsQuery name="tg-pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- pf -->  
@@ -449,16 +449,16 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="pf" includeProjects="ApiDB">
+    <wsQuery name="pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
--->
 
     <!--===================================================================-->
     <!-- pb -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pb" excludeProjects="ApiDB">
+    <sqlQuery name="pb" excludeProjects="ApiDB"
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -473,7 +473,7 @@
           FROM (SELECT tn.name, t.taxon_id AS internal_taxon
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
+                  AND t.taxon_id = tn.taxon_i
                   AND t.rank = 'species' 
                   AND t.taxon_id IN
                        (SELECT taxon_id
@@ -494,10 +494,10 @@
       </sql>
     </sqlQuery>
 
-<!--
-    <wsQuery name="pb" includeProjects="ApiDB">
+    <wsQuery name="pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPluging" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
     </sqlQuery>
--->
 
   </querySet>
 
