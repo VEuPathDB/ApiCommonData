@@ -16,36 +16,63 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="Bfmv" isCacheable="false" excludeProjects="CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
-            <column name="source_id" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="a_count" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="c_count" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="g_count" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="t_count" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="other_count" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="length" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="at_percent" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="organism" sortingTable="apidb.SequenceAttributes"
-                    lowerCase="true"/>
-            <column name="formatted_organism"
+
+            <column name="source_id" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="a_count" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="c_count" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="g_count" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="t_count" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="other_count"
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="length" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="secondary_identifier" includeProjects="CryptoDB" />
+
+            <column name="chromosomemappingtext" includeProjects="CryptoDB" />
+
+            <column name="at_percent" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="organism" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="formatted_organism" includeProjects="ApiDB,PlasmoDB"
                     sortingTable="apidb.SequenceAttributes"
                     sortingColumn="organism" lowerCase="true"/>
-            <column name="sequence_description"
+
+            <column name="sequence_description" includeProjects="ApiDB,PlasmoDB"
                     sortingTable="apidb.SequenceAttributes"
                     lowerCase="true"/>
-            <column name="genbank_accession"
+
+            <column name="genbank_accession" includeProjects="ApiDB,PlasmoDB"
                     sortingTable="apidb.SequenceAttributes"
                     lowerCase="true"/>
-            <sql>
-            <![CDATA[
-                SELECT bfmv.source_id, bfmv.a_count, bfmv.c_count,
+
+            <column name="externalDbName" includeProjects="CryptoDB,ToxoDB"
+                    sortingColumn="database_name"
+                    sortingTable="apidb.SequenceAttributes"/>
+
+            <column name="externalDbVersion" includeProjects="CryptoDB,ToxoDB"
+                     sortingColumn="database_version"
+                    sortingTable="apidb.SequenceAttributes"/>
+
+            <column name="cyc_db" includeProjects="CryptoDB" />
+
+            <sql includeProjects="ApiDB">
+              <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id,bfmv.a_count, bfmv.c_count, 
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
                     bfmv.length, bfmv.at_percent, bfmv.organism,
                     '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
@@ -57,30 +84,14 @@
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = '$$primaryKey$$'
-                AND bfmv.project_id='$$projectId$$'
+                AND bfmv.project_id = '$$projectId$$'
              ]]>
            </sql>
-        </sqlQuery>
 
-        <sqlQuery name="ContigAttrs" isCacheable='true' includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/> 
-            <column name="source_id" />
-            <column name="sequence" />
-            <column name="a_count" />
-            <column name="c_count" />
-            <column name="g_count" />
-            <column name="t_count" />
-            <column name="other_count" />
-            <column name="length" />
-            <column name="secondary_identifier" />
-            <column name="chromosomemappingtext" />
-            <column name="organism" />
-            <column name="cryptocyc_db" />
-            <column name="extdbname" />
-            <sql> 
+           <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
-            enas.source_id, 
+            enas.source_id, '$$project_id$$ as project_id, 
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
@@ -111,14 +122,44 @@
             AND enas.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
             AND enas.source_id = '$$primaryKey$$'
-            AND bfmv.project_id='$$projectId$$'
+             ]]>
+           </sql>
+
+            <sql includeProjects="PlasmoDB">
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
+                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
+                    bfmv.length, bfmv.at_percent, bfmv.organism,
+                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                   chr(38) || 'nbsp;') || '</i>'
+                      AS formatted_organism,
+                    bfmv.ncbi_tax_id, bfmv.sequence_description,
+                    bfmv.genbank_accession, bfmv.database_name,
+                    bfmv.database_version
+              FROM apidb.SequenceAttributes bfmv
+              WHERE bfmv.source_id = '$$primaryKey$$'
+                AND bfmv.project_id = '$$projectId$$'
+             ]]>
+           </sql>
+
+           <sql includeProjects="ToxoDB">
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count,
+                       bfmv.c_count, bfmv.g_count, bfmv.t_count,
+                       bfmv.other_count, bfmv.length, bfmv.at_percent,
+                       bfmv.organism, bfmv.database_name AS externalDbName,
+                       bfmv.database_version AS externalDbVersion
+                FROM apidb.SequenceAttributes bfmv
+                WHERE bfmv.source_id = '$$primaryKey$$'
+                  AND bfmv.project_id = '$$projectId$$'
              ]]>
            </sql>
         </sqlQuery>
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!--  -->  
+       <!-- Attribution -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="Attribution" isCacheable="false" includeProject="PlasmoDB">
@@ -126,7 +167,7 @@
             <column name="short_name"/>
             <sql>
             <![CDATA[
-                SELECT ens.source_id,
+                SELECT ens.source_id, bfmv.project_id,
                        decode(ed.name,
                               'Jane Carlton P. vivax chromosomes', 'TIGR',
                               'Sanger P. reichenowi contigs', 'Sanger',
@@ -153,27 +194,67 @@
         </sqlQuery>
 
 
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- External DB info -->  
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- GFF -->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="ExternalDbInfo" isCacheable="false" includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="externalDbName"/>
-            <column name="externalDbVersion"/>
-            <sql>
-              <![CDATA[
-              SELECT ed.name AS externalDbName, edr.version AS externalDbVersion
-              FROM dots.externalnasequence enas, 
-                      sres.externaldatabase ed, 
-                      sres.externaldatabaserelease edr
-              WHERE enas.external_database_release_id = edr.external_database_release_id
-                  AND bfmv.project_id='$$projectId$$'
-                  AND edr.external_database_id = ed.external_database_id
-                  AND source_id = '$$primaryKey$$' 
-              ]]>
-            </sql>
-        </sqlQuery>
+    <sqlQuery name="SequenceGffAttrs" excludeProjects="ApiDB">
+        <paramRef ref="params.primaryKey"/>
+        <column name="gff_seqid"/>
+        <column name="gff_source"/>
+        <column name="gff_type"/>
+        <column name="gff_fstart"/>
+        <column name="gff_fend"/>
+        <column name="gff_score"/>
+        <column name="gff_strand"/>
+        <column name="gff_phase"/>
+        <column name="gff_attr_id"/>
+        <column name="gff_attr_name"/>
+        <column name="gff_attr_description"/>
+        <column name="gff_attr_locus_tag"/>
+        <column name="gff_attr_molecule_type"/>
+        <column name="gff_attr_organism_name"/>
+        <column name="gff_attr_translation_table"/>
+        <column name="gff_attr_topology"/>
+        <column name="gff_attr_localization"/>
+        <column name="gff_attr_size"/>
+        <column name="gff_sequence"/>
+        <sql>
+            select ens.source_id, '$$projectId$$ as project_id
+                   ens.source_id as gff_seqid,
+                   'ApiDB' as gff_source,
+                   'supercontig' as gff_type,
+                   1 as gff_fstart,
+                   ens.length as gff_fend,
+                   '.' as gff_score,
+                   '+' as gff_strand,
+                   '.' as gff_phase,
+                   ens.source_id as gff_attr_id,
+                   ens.source_id as gff_attr_name,
+                   ens.description as gff_attr_description,
+                   ens.source_id as gff_attr_locus_tag,
+                   'dsDNA' as gff_attr_molecule_type,
+                   SUBSTR(tn.name, 1, INSTR(tn.name || '  ', ' ', 1, 2) - 1) as gff_attr_organism_name,
+                   11 as gff_attr_translation_table,
+                   'linear' as gff_attr_topology,
+                   'nuclear' as gff_attr_localization,
+                   ens.length as gff_attr_size,
+                   ens.sequence as gff_sequence
+            from DoTS.ExternalNaSequence ens,
+                 sres.externaldatabase ed,
+                 sres.externaldatabaserelease edr,
+                 sres.taxon t,
+                 sres.TaxonName tn
+            where ens.source_id = '$$primaryKey$$'
+              and ens.external_database_release_id = edr.external_database_release_id
+              and edr.external_database_id = ed.external_database_id
+              and ens.taxon_id = t.taxon_id
+              and ens.taxon_id = tn.taxon_id
+              and tn.name_class = 'scientific name'
+        </sql>
+    </sqlQuery>
 
-    </querySet>
+
+  </querySet>
+
 <wdkModel>

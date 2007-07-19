@@ -7,7 +7,7 @@
  
    - crypto column names changed:
       * cryptocyc_db  ->  cyc_db
-      * extdbname -> externlDbName
+      * extdbname -> externalDbName
 
    - the bfmv should only include shared attributes so its sql can be identical across projects.
      the rest can be factored into associated attribute queries
@@ -74,19 +74,19 @@
             <columnAttribute name="chromosomemappingtext" includeProjects="CryptoDB" 
                  inReportMaker="false"    internal="true" />
 
-            <columnAttribute name="at_percent" includeProjects="PlasmoDB,ToxoDB"
+            <columnAttribute name="at_percent" includeProjects="ApiDB,PlasmoDB,ToxoDB"
                  displayName="AT Percent"/>
 
             <columnAttribute name="organism"
                  displayName="Organism" internal="true"/>
 
-            <columnAttribute name="formatted_organism" includeProjects="PlasmoDB"
+            <columnAttribute name="formatted_organism" includeProjects="ApiDB,PlasmoDB"
                  displayName="Organism" inReportMaker="false"/>
 
-            <columnAttribute name="sequence_description" includeProjects="PlasmoDB"
+            <columnAttribute name="sequence_description" includeProjects="ApiDB,PlasmoDB"
                  displayName="Description" />
 
-            <columnAttribute name="genbank_accession"  includeProjects="PlasmoDB" 
+            <columnAttribute name="genbank_accession"  includeProjects="ApiDB,PlasmoDB" 
                  displayName="GenBank" internal="true"/>
 
             <columnAttribute name="externalDbName" includeProjects="ToxoDB,CryptoDB"
@@ -111,10 +111,12 @@
                                  internal="true"/>
         </attributeQueryRef>
 
+
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- data dump attributes -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-          <attributeQueryRef ref="DataDumpQueries.SequenceGffAttrs">
+
+          <attributeQueryRef ref="SequenceAttributes.SequenceGffAttrs" excludeProjects="ApiDB">
               <columnAttribute displayName="SeqId" name="gff_seqid" inReportMaker="false" internal="true"/>
               <columnAttribute displayName="Data Source" name="gff_source" inReportMaker="false" internal="true"/>
               <columnAttribute displayName="Feature Type" name="gff_type" inReportMaker="false" internal="true"/>
