@@ -34,18 +34,20 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- blast db type -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="BlastDatabaseType"
+    <enumParam name="BlastDatabaseType"
                      prompt="Target"
                      multiPick="false">
-        <help>
+      <help>
              Organism(s) from which the sequences in the BLAST database originated
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
         <enumValue>
           <term>ORF (Protein)</term>
           <internal>orfs</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- mass spec assay -->
@@ -54,7 +56,8 @@
              prompt="Assay Type"
              multiPick="true"
              visible="true">
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
           <enumValue includeProjects="ApiDB,CryptoDB">
             <term><![CDATA[1D Gel LC-MS/MS<sup>&#182;</sup> (C.p.)]]></term>
             <internal>'Wastling MassSpec 1D Gel LC-MS/MS'</internal>
@@ -103,7 +106,8 @@
             <term><![CDATA[Conoid-depleted Fraction<sup>2</sup> (T.g)]]></term>
             <internal>'Murray Conoid-depleted Fraction'</internal>
           </enumValue>
-      </enumParam>
+      <enumList>
+    </enumParam>
 
   </paramSet>
 </wdkModel>

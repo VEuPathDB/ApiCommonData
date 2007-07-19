@@ -33,23 +33,25 @@
   <!-- Signature -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<stringParam name="signature" 
+      <stringParam name="signature" 
 				includeProjects="ApiDB"
 				prompt="User Signature"
 				visible="false">
             <help>
                  Used to pass the Users Signature to the component sites
             </help>
-		</stringParam>
+      </stringParam>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   -->
+  <!-- best alignment only  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="best_alignment_only"
+    <enumParam name="best_alignment_only"
                      prompt="Best alignments only"
                      multiPick="false">
-        <help>
+      <help>
              Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term>Yes</term>
           <internal>1</internal>
@@ -58,18 +60,20 @@
           <term>No</term>
           <internal>0,1</internal>
         </enumValue>
-      </enumParam>
+      <enumList>   
+    </enumParam>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--   -->
+  <!-- high confidence est only  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="high_confidence_only"
+    <enumParam name="high_confidence_only"
                      prompt="Consistent alignments only"
                      multiPick="false">
-        <help>
+      <help>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term>No</term>
           <internal>0,1</internal>
@@ -78,7 +82,8 @@
           <term>Yes</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      <enumList>   
+    </enumParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--  -->  
@@ -114,12 +119,13 @@
   <!--  -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <enumParam name="inNotIn"
+    <enumParam name="inNotIn"
                      prompt="EST"
                      multiPick="false">
-        <help>
+      <help>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term>does overlap with a gene</term>
           <internal>INTERSECT</internal>
@@ -128,7 +134,8 @@
           <term>does not overlap with a gene</term>
           <internal>MINUS</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
 
         <stringParam name="stoxopforganism"
@@ -143,12 +150,13 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Universal, genomic and ORF BLAST -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="BlastDatabaseType"
+    <enumParam name="BlastDatabaseType"
                      prompt="Target"
                      multiPick="false">
-        <help>
+      <help>
              The type of the subject database.
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term> Choose one</term>
           <internal>Choose one</internal>
@@ -186,14 +194,16 @@
           <internal>ESTs Translated</internal>
         </enumValue>
 
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
-      <enumParam name="BlastDatabaseOrganism"
+    <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
                      multiPick="false">
-        <help>
+      <help>
              Organism(s) from which the sequences in the BLAST database originated
-        </help>
+      </help>
+      <enumList>   
         <enumValue includeProjects="ApiDB,PlasmoDB">
           <term>P. berghei</term>
           <internal>Pberghei</internal>
@@ -272,14 +282,16 @@
           <term>C. parvum Chr6</term>
           <internal>CparvumChr6</internal>
         </enumValue>
-      </enumParam>
+      <enumList>   
+    </enumParam>
 
-      <enumParam name="BlastQueryType"
+    <enumParam name="BlastQueryType"
                      prompt="Query sequence type"
                      multiPick="false">
-        <help>
+      <help>
              The type of your query sequence
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term>DNA</term>
           <internal>dna</internal>
@@ -288,7 +300,8 @@
           <term>Protein</term>
           <internal>protein</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
         <stringParam name="BlastQuerySequence"
                      prompt="Input Sequence"
@@ -297,12 +310,13 @@
             <suggest sample=""/>
         </stringParam>
 
-      <enumParam name="-filter"
+    <enumParam name="-filter"
                     id="-filter"
                     prompt="Low complexity filter">
-        <help>
+      <help>
              Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
-        </help>
+      </help>
+      <enumList>   
         <enumValue default="true">
           <term>yes</term>
           <internal>yes</internal>
@@ -311,7 +325,8 @@
           <term>no</term>
           <internal>no</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
         <stringParam name="-e"
                      prompt="Expectation value">
@@ -337,9 +352,11 @@
   <!--  -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <enumParam name="chromosome"
+    <enumParam name="chromosome"
                      prompt="Chromosome"
                      multiPick="true">
+
+      <enumList>   
         <enumValue>
           <term>chromosome 1</term>
           <internal>MAL1</internal>
@@ -396,15 +413,15 @@
           <term>chromosome 14</term>
           <internal>MAL14</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
-      <enumParam name="chromosomeOptional"
-                     prompt="P. falciparum Genomic Sequence"
+    <enumParam name="chromosomeOptional"
+                     prompt="Chromosome"
                      multiPick="false"
                      default="choose one">
-        <help>
-             Results will be sorted ascending or descending order
-        </help>
+
+      <enumList includeProjects="PlasmoDB">   
         <enumValue>
           <term>choose one</term>
           <internal>choose one</internal>
@@ -477,7 +494,76 @@
           <term>plastid IR-B</term>
           <internal>X95276</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+
+
+      <enumList includeProjects="ToxoDB">   
+        <enumValue>
+          <term>Select:</term>
+          <internal>Select:</internal>
+        </enumValue>
+        <enumValue>
+          <term>Ia</term>
+          <internal>Ia</internal>
+        </enumValue>
+        <enumValue>
+          <term>Ib</term>
+          <internal>Ib</internal>
+        </enumValue>
+        <enumValue>
+          <term></term>
+          <internal>II</internal>
+        </enumValue>
+        <enumValue>
+          <term>II</term>
+          <internal></internal>
+        </enumValue>
+        <enumValue>
+          <term>III</term>
+          <internal>III</internal>
+        </enumValue>
+        <enumValue>
+          <term>IV</term>
+          <internal>IV</internal>
+        </enumValue>
+        <enumValue>
+          <term>V</term>
+          <internal>V</internal>
+        </enumValue>
+        <enumValue>
+          <term>VI</term>
+          <internal>VI</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIIa</term>
+          <internal>VIIa</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIIb</term>
+          <internal>VIIb</internal>
+        </enumValue>
+        <enumValue>
+          <term>VIII</term>
+          <internal>VIII</internal>
+        </enumValue>
+        <enumValue>
+          <term>IX</term>
+          <internal>IX</internal>
+        </enumValue>
+        <enumValue>
+          <term>X</term>
+          <internal>X</internal>
+        </enumValue>
+        <enumValue>
+          <term>XI</term>
+          <internal>XI</internal>
+        </enumValue>
+        <enumValue>
+          <term>XII</term>
+          <internal>XII</internal>
+        </enumValue>
+      </enumList>   
+    </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Sequence Id -->  
@@ -560,12 +646,13 @@
         </help>
       </flatVocabParam>
 
-      <enumParam name="snp_strain_m"
+    <enumParam name="snp_strain_m"
 		     prompt="Comparator(s)"
                      multiPick="true">
-        <help>
+      <help>
              Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-        </help>
+      </help>
+      <enumList>   
         <enumValue>
           <term>Pf-7G8</term>
           <internal>7G8</internal>
@@ -662,7 +749,8 @@
           <term>Pf-VS-1</term>
           <internal>VS-1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>   
+    </enumParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Motif search -->
@@ -718,12 +806,13 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	 
 
-      <enumParam name="chromosome_with_organelles"
+  <enumParam name="chromosome_with_organelles"
                      prompt="Genomic Sequence"
                      multiPick="false">
-        <help>
-             Results will be sorted ascending or descending order
-        </help>
+    <help>
+             Results will be sorted ascending or descending orde
+    </help>
+    <enumList includeProjects="PlasmoDB">   
         <enumValue>
           <term>chromosome 1</term>
           <internal>'MAL1'</internal>
@@ -792,65 +881,68 @@
           <term>plastid IR-B</term>
           <internal>'X95276'</internal>
         </enumValue>
+     </enumList>   
 		
-        <enumValue>
-          <term>Ia</term>
-          <internal>Ia</internal>
-        </enumValue>
-        <enumValue>
-          <term>Ib</term>
-          <internal>Ib</internal>
-        </enumValue>
-        <enumValue>
-          <term>II</term>
-          <internal>II</internal>
-        </enumValue>
-        <enumValue>
-          <term>III</term>
-          <internal>III</internal>
-        </enumValue>
-        <enumValue>
-          <term>IV</term>
-          <internal>IV</internal>
-        </enumValue>
-        <enumValue>
-          <term>V</term>
-          <internal>V</internal>
-        </enumValue>
-        <enumValue>
-          <term>VI</term>
-          <internal>VI</internal>
-        </enumValue>
-        <enumValue>
-          <term>VIIa</term>
-          <internal>VIIa</internal>
-        </enumValue>
-        <enumValue>
-          <term>VIIb</term>
-          <internal>VIIb</internal>
-        </enumValue>
-        <enumValue>
-          <term>VIII</term>
-          <internal>VIII</internal>
-        </enumValue>
-        <enumValue>
-          <term>IX</term>
-          <internal>IX</internal>
-        </enumValue>
-        <enumValue>
-          <term>X</term>
-          <internal>X</internal>
-        </enumValue>
-        <enumValue>
-          <term>XI</term>
-          <internal>XI</internal>
-        </enumValue>
-        <enumValue>
-          <term>XII</term>
-          <internal>XII</internal>
-        </enumValue>
-
+     <enumList includeProjects="ToxoDB">   
+         <enumValue>
+            <term>Ia</term>
+            <internal>Ia</internal>
+          </enumValue>
+          <enumValue>
+            <term>Ib</term>
+            <internal>Ib</internal>
+          </enumValue>
+          <enumValue>
+            <term>II</term>
+            <internal>II</internal>
+          </enumValue>
+          <enumValue>
+            <term>III</term>
+            <internal>III</internal>
+          </enumValue>
+          <enumValue>
+            <term>IV</term>
+            <internal>IV</internal>
+          </enumValue>
+          <enumValue>
+            <term>V</term>
+            <internal>V</internal>
+          </enumValue>
+          <enumValue>
+            <term>VI</term>
+            <internal>VI</internal>
+          </enumValue>
+          <enumValue>
+            <term>VIIa</term>
+            <internal>VIIa</internal>
+          </enumValue>
+          <enumValue>
+            <term>VIIb</term>
+            <internal>VIIb</internal>
+          </enumValue>
+          <enumValue>
+            <term>VIII</term>
+            <internal>VIII</internal>
+          </enumValue>
+          <enumValue>
+            <term>IX</term>
+            <internal>IX</internal>
+          </enumValue>
+          <enumValue>
+            <term>X</term>
+            <internal>X</internal>
+          </enumValue>
+          <enumValue>
+            <term>XI</term>
+            <internal>XI</internal>
+          </enumValue>
+          <enumValue>
+            <term>XII</term>
+            <internal>XII</internal>
+          </enumValue>
+      </enumList>   
 		
+      <enumList includeProjects="CryptoDB">   
         <enumValue>
           <term>AAEE01000006 (Chromosome 1)</term>
           <internal>AAEE01000006</internal>
@@ -927,12 +1019,11 @@
           <term>AAEE01000011 (Chromosome 8)</term>
           <internal>AAEE01000011</internal>
         </enumValue>
+      </enumList>   
+    </enumParam>
 
 
-      </enumParam>
-
-
-    </paramSet>
+  </paramSet>
 
   <!--======================================================================-->
   <!-- General Vocab queries  -->

@@ -473,7 +473,7 @@
           FROM (SELECT tn.name, t.taxon_id AS internal_taxon
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_i
+                  AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species' 
                   AND t.taxon_id IN
                        (SELECT taxon_id

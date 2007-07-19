@@ -15,13 +15,14 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Unified and Genomic BLAST database organism  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="BlastDatabaseOrganism"
+    <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
                      multiPick="false">
-        <help>
+      <help>
              Organism(s) from which the sequences in the BLAST database originated
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
         <enumValue includeProjects="ApiDB,PlasmoDB">
           <term>P. berghei</term>
           <internal>Pberghei</internal>
@@ -100,8 +101,9 @@
           <term>C. parvum Chr6</term>
           <internal>CparvumChr6</internal>
         </enumValue>
+      </enumList>   
 
-      </enumParam>
+    </enumParam>
   </paramSet>
 
   <!--===========================================================================-->
@@ -116,10 +118,11 @@
      <enumParam name="BlastDatabaseOrganism"
                      prompt="Organism"
                      multiPick="false">
-        <help>
+      <help>
              Organism(s) from which the sequences in the BLAST database originated
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
        <enumValue includeProjects="ApiDB,PlasmoDB">
          <term>P. berghei</term>
          <internal>Pberghei</internal>
@@ -182,19 +185,20 @@
          <term>C. parvum Chr6</term>
          <internal>CparvumChr6</internal>
        </enumValue>
-
-      </enumParam>
+     <enumList>   
+   </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ORF motif organism -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="motif_organism"
+    <enumParam name="motif_organism"
                  prompt="Organism"
 			     multiPick="true">
-        <help>
+      <help>
              Choose one or more organisms to search with the given motif
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </help
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
         <enumValue>
           <term>C. hominis</term>
           <internal>Chominis_orf50.fsa</internal>
@@ -244,13 +248,15 @@
           <term>P. reichenowi</term>
           <internal>Preichenowi/PreichenowiOrfs_plasmoDB-5.3.fasta</internal>
         </enumValue>
-     </enumParam>
+      </enumList>   
+    </enumParam>
 
   </paramSet>
   
   <paramSet name="geneSimilarityParams">
      
-     <enumParam name="BlastDatabaseOrganism">
+    <enumParam name="BlastDatabaseOrganism">
+      <enumList>   
        <enumValue includeProjects="ApiDB">
          <term>T. gondii</term>
          <internal>Tgondii/TgondiiAnnotatedProteins_toxoDB-4.2.fasta</internal>
@@ -309,19 +315,20 @@
          <term>C. parvum Chr6</term>
          <internal>CparvumChr6</internal>
        </enumValue>
-
-      </enumParam>
+      </enumList>   
+    </enumParam>
   
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene motif organism -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <enumParam name="motif_organism"
+    <enumParam name="motif_organism"
                  prompt="Organism"
 			     multiPick="true">
-        <help>
+      <help>
              Choose one or more organisms to search with the given motif
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
         <enumValue>
           <term>C. hominis</term>
           <internal>ChominisAnnotatedProtein.fsa</internal>
@@ -367,10 +374,12 @@
           <term>P. reichenowi</term>
           <internal>Preichenowi/PreichenowiAnnotatedProteins_plasmoDB-5.3.fasta</internal>
         </enumValue>
-     </enumParam>
+     </enumList>   
+   </enumParam>
      
 <!--
-     <enumParam name="BlastDatabaseOrganism">
+   <enumParam name="BlastDatabaseOrganism">
+     <enumList>   
        <enumValue includeProjects="ApiDB">
          <term>T. gondii</term>
          <internal>Tgondii/TgondiiAnnotatedProteins_toxoDB-4.2.fasta</internal>
@@ -417,7 +426,8 @@
          <term>C. parvum</term>
          <internal>Cparvum</internal>
        </enumValue>
-      </enumParam>
+     </enumList>   
+   </enumParam>
 -->
   </paramSet>
 

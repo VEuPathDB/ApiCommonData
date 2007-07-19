@@ -140,14 +140,15 @@
                      default="2"/>
         </stringParam>
 
-      <enumParam name="regulated_dir"
+    <enumParam name="regulated_dir"
                      prompt="Direction"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Select ...
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>down-regulated</term>
           <internal>-</internal>
@@ -156,7 +157,8 @@
           <term>up-regulated</term>
           <internal></internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="percentile"
                      prompt="Percentile >="
@@ -215,14 +217,13 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <enumParam name="whole_words"
+    <enumParam name="whole_words"
                      prompt="Match only whole words?"
                      multiPick="false">
-        <help>
-           <text>
+      <help>
              Select whether to reject text matches that start or end in the middle of a word
-           </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>yes</term>
           <internal>true</internal>
@@ -231,7 +232,8 @@
           <term>no</term>
           <internal>false</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  Gene Type Parameters-->  
@@ -251,11 +253,12 @@
       <enumParam name="includePseudogenes"
                      prompt="Include Pseudogenes"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Choose whether to include pseudogenes in your query results.
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>No</term>
           <internal>0</internal>
@@ -268,7 +271,8 @@
           <term>Pseudogenes Only</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
@@ -315,14 +319,15 @@
     <!-- Protein protein interaction -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <enumParam name="bait_or_prey"
+    <enumParam name="bait_or_prey"
                      prompt="Specified protein is bait or prey"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Optionally specifiy whether given protein is bait or prey
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>bait</term>
           <internal>'bait'</internal>
@@ -331,7 +336,8 @@
           <term>prey</term>
           <internal>'prey'</internal>
         </enumValue>
-      </enumParam>
+      <enumList>
+    </enumParam>
 
         <stringParam name="min_observed"
                      prompt="Restrict by the minimum number of times this interaction was found">
@@ -357,14 +363,15 @@
     <!-- BLAST -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <enumParam name="BlastDatabaseType"
+    <enumParam name="BlastDatabaseType"
                      prompt="Target"
                      multiPick="false"
-        <help>
+      <help>
            <text>
              The type of the target database (eg CDS, translated CDS, Protein)
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Proteins</term>
           <internal>proteins</internal>
@@ -377,21 +384,23 @@
           <term>Translated Transcripts</term>
           <internal>Transcripts Translated</internal>
         </enumValue>
-      </enumParam>
+      <enumList>
+    </enumParam>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <enumParam name="epitope_confidence"
+    <enumParam name="epitope_confidence"
                         prompt="Confidence"
                         multiPick="true"
-        <help>
+      <help>
            <text>
              Epitopes are mapped to genes in PlasmoDB using high quality BLAST similarities (percent identity >= 97%) between the GenBank proteins listed on IEDB and the proteins found in PlasmoDB, and exact string matching.  Confidence levels are assigned to each set of epitopes based on the quality of this mapping.  A high confidence is assigned to a set where all of the epitopes are found on a given BLAST hit.  A medium confidence is assigned to a set where either some, but not all, of the epitopes in a set are found on a given BLAST hit, or where all of the epitopes in a set are found in a given protein, but the protein was not identified as a match by BLAST.  A low confidence is assigned to sets where some, but not all, of the epitopes are found in a given protein, but the protein was not identified by BLAST.  Choose one or more assigned confidence levels to search for epitopes in.
            </text>
-        </help>
+      </help>
+      <enumList>
        <enumValue>
          <term>High</term>
          <internal>'Full Set On Blast Hit'</internal>
@@ -404,7 +413,8 @@
          <term>Medium</term>
          <internal>'Full Set Not on Blast Hit','Not Full Set On Blast Hit'</internal>
        </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -459,14 +469,15 @@
 
 
 
-      <enumParam name="include_reichenowi"
+    <enumParam name="include_reichenowi"
 		     prompt="Include P. reichenowi"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Click yes to include P. reichenowi snps in this query.  P.r snps were generated by alignment of P. reichenowi sequence with the P falciparum 3D7 reference sequence.  Note, if you want to only query reichenowi, you must click 'None' in the P. falciparum strains select list.
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>No</term>
           <internal>foobar</internal>
@@ -475,16 +486,18 @@
           <term>Yes</term>
           <internal>Preich</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="include_only_queries"
+    <enumParam name="include_only_queries"
 		     prompt="Restrict to queries only"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Click yes to to restrict the results returned to only those genes which have been input as query ids.  This allows you to determine the relatedness of your query set
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>No</term>
           <internal>no</internal>
@@ -493,16 +506,18 @@
           <term>Yes</term>
           <internal>yes</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="snp_stat"
+    <enumParam name="snp_stat"
 		     prompt="SNP Class"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Choose the class of SNP you want to query on ... choose minumum and maximum numbers below
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>All SNPs</term>
           <internal>total</internal>
@@ -527,16 +542,18 @@
           <term>Synonymous</term>
           <internal>synonymous</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="snp_order"
+    <enumParam name="snp_order"
 		     prompt="Sort by"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted on this column in descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>All SNPs</term>
           <internal>total</internal>
@@ -565,16 +582,18 @@
           <term>Synonymous SNPs</term>
           <internal>synonymous</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="sort_order"
+    <enumParam name="sort_order"
 		     prompt="Sort direction"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Descending</term>
           <internal>DESC</internal>
@@ -583,16 +602,18 @@
           <term>Ascending</term>
           <internal>ASC</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="profileSet"
+    <enumParam name="profileSet"
                      prompt="Microarray time course(s) to query"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Any of the time courses</term>
           <internal>DeRisi % Smoothed Averaged</internal>
@@ -609,16 +630,18 @@
           <term>Dev. Series HB3 (glass slide), DeRisi</term>
           <internal>DeRisi HB3 Smoothed Averaged</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="waters_profilesets"
+    <enumParam name="waters_profilesets"
                      prompt="Microarray time course(s) to query"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Either</term>
           <internal>Waters HP% Percents Averaged</internal>
@@ -631,17 +654,19 @@
           <term>HPE</term>
           <internal>Waters HPE Percents Averaged</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="minOrMax"
+    <enumParam name="minOrMax"
                      prompt="Query based on"
                      multiPick="false">
-            <help>     <help>
+      <help>  
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
-        <enumValue>
+      </help>
+      <enumList>
+       <enumValue>
           <term>Timing of both max and min expression</term>
           <internal>both</internal>
         </enumValue>
@@ -653,16 +678,18 @@
           <term>Timing of minimal expression</term>
           <internal>min</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="maxExprHour"
+    <enumParam name="maxExprHour"
                      prompt="Timing of maximal expression"
                      multiPick="false">
-            <help><help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>1 hour</term>
           <internal>1</internal>
@@ -855,16 +882,18 @@
           <term>48 hours</term>
           <internal>48</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="maxPlusMinusHours"
+    <enumParam name="maxPlusMinusHours"
                      prompt="Maximal expression time plus or minus"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>1 hour</term>
           <internal>1</internal>
@@ -961,16 +990,18 @@
           <term>24 hours</term>
           <internal>24</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="minExprHour"
+    <enumParam name="minExprHour"
                      prompt="Timing of minimum expression"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>1 hour</term>
           <internal>1</internal>
@@ -1163,16 +1194,18 @@
           <term>48 hours</term>
           <internal>48</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="minPlusMinusHours"
+    <enumParam name="minPlusMinusHours"
                      prompt="Minimum expression time plus or minus"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>1 hour</term>
           <internal>1</internal>
@@ -1269,16 +1302,18 @@
           <term>24 hours</term>
           <internal>24</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="inductionFold"
+    <enumParam name="inductionFold"
                      prompt="Induction ratio cut-off"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>-- None --</term>
           <internal>0</internal>
@@ -1303,16 +1338,18 @@
           <term>>= 32 fold induction</term>
           <internal>32</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="expressionPct"
+    <enumParam name="expressionPct"
                      prompt="Maximum percentile cut-off"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>-- None --</term>
           <internal>0</internal>
@@ -1353,16 +1390,18 @@
           <term>>= 90th percentile</term>
           <internal>90</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="pfNonnuclearSequence"
+    <enumParam name="pfNonnuclearSequence"
                      prompt="Genomic Sequence"
                      multiPick="true">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>mitochondrial genome</term>
           <internal>'AJ276844'</internal>
@@ -1375,7 +1414,8 @@
           <term>plastid IR-B</term>
           <internal>'X95276'</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="start_location"
                      prompt="Start Location">
@@ -1471,14 +1511,15 @@
         </help>
       </flatVocabParam>
 
-      <enumParam name="synchronization"
+    <enumParam name="synchronization"
                      prompt="Synchronization"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Sorbitol</term>
           <internal>'winzeler_cc_sorbPct'</internal>
@@ -1491,16 +1532,18 @@
           <term>Either</term>
           <internal>'winzeler_cc_sorbPct', 'winzeler_cc_tempPct'</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="localization"
+    <enumParam name="localization"
                      prompt="Localization"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Apicoplast</term>
           <internal>apicoplast</internal>
@@ -1513,7 +1556,8 @@
           <term>RBC membrane (HT motif)</term>
           <internal>ht</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="ortholog_pattern"
                      prompt="Ortholog pattern">
@@ -1521,13 +1565,14 @@
             <suggest default=""/>
         </stringParam>
 
-      <enumParam name="phyletic_indent_map"
+    <enumParam name="phyletic_indent_map"
                      visible="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Archaea</term>
           <internal>0</internal>
@@ -1960,15 +2005,17 @@
           <term>rno</term>
           <internal>5</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="phyletic_term_map"
+    <enumParam name="phyletic_term_map"
                      visible="false">
-        <help>
+      <help>
            <text>
              Results will be sorted ascending or descending order
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>aed</term>
           <internal>Aedes aegypti</internal>
@@ -2317,7 +2364,8 @@
           <term>ype</term>
           <internal>Yersinia pestis CO92</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
       <flatVocabParam name="metabolic_pathway"
                      queryRef="GeneVQ.MetabolicPathways"
@@ -2393,13 +2441,14 @@
             <suggest default="10"/>
         </stringParam>
 
-      <enumParam name="asexual_blood_stages_value"
+    <enumParam name="asexual_blood_stages_value"
                      prompt="Asexual blood stages">
-        <help>
+      <help>
            <text>
              Choose one or more organisms to search with the given motif
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>do not care</term>
           <internal>any</internal>
@@ -2412,15 +2461,17 @@
           <term>observed</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="gametocytes_value"
+    <enumParam name="gametocytes_value"
                      prompt="Gametocytes">
-        <help>
+      <help>
            <text>
              Choose one or more organisms to search with the given motif
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>do not care</term>
           <internal>any</internal>
@@ -2433,15 +2484,17 @@
           <term>observed</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ookinetes_value"
+    <enumParam name="ookinetes_value"
                      prompt="Ookinetes">
-        <help>
+      <help>
            <text>
              Choose one or more organisms to search with the given motif
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>do not care</term>
           <internal>any</internal>
@@ -2454,15 +2507,17 @@
           <term>observed</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="oocysts_value"
+    <enumParam name="oocysts_value"
                      prompt="Oocysts">
-        <help>
+      <help>
            <text>
              Choose one or more organisms to search with the given motif
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>do not care</term>
           <internal>any</internal>
@@ -2475,15 +2530,17 @@
           <term>observed</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="sporozoites_value"
+    <enumParam name="sporozoites_value"
                      prompt="Sporozoites">
-        <help>
+      <help>
            <text>
              Choose one or more organisms to search with the given motif
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>do not care</term>
           <internal>any</internal>
@@ -2496,7 +2553,8 @@
           <term>observed</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="min_interaction"
                      prompt="Minimum Likelihood Score"
@@ -2505,14 +2563,15 @@
             <suggest default="2"/>
         </stringParam>
 
-      <enumParam name="mass_spec_stage"
+    <enumParam name="mass_spec_stage"
                      prompt="Lifecycle Stage"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Select a lifecycle stage from the list provided.
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>any</term>
           <internal>any</internal>
@@ -2541,7 +2600,8 @@
           <term>Trophozoite</term>
           <internal>trophozoite</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="genbank_accession"
                      prompt="GenBank Accession Number"
@@ -2571,14 +2631,15 @@
             <suggest default="10000"/>
         </stringParam>
 
-      <enumParam name="start_from"
+    <enumParam name="start_from"
                      prompt="Start Location"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Select whether to measure the start point from the beginning or end of the sequence
            </text>
-        </help>
+      </help>
+      </enumList>
         <enumValue>
           <term>beginning</term>
           <internal>beginning</internal>
@@ -2587,16 +2648,18 @@
           <term>end</term>
           <internal>end</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="end_from"
+    <enumParam name="end_from"
                      prompt="From"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Select whether to measure the end point from the beginning or end of the sequence
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>end</term>
           <internal>end</internal>
@@ -2605,16 +2668,18 @@
           <term>beginning</term>
           <internal>beginning</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="protein_dataset"
+    <enumParam name="protein_dataset"
                      prompt="Protein Dataset"
                      multiPick="true">
-        <help>
+      <help>
            <text>
              Select whether to measure the end point from the beginning or end of the sequence
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>GenBank</term>
           <internal>'NRDB_gb_dbXRefBySeqIdentity'</internal>
@@ -2627,7 +2692,8 @@
           <term>Swiss-Prot</term>
           <internal>'NRDB_sp_dbXRefBySeqIdentity'</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="pvalue_cutoff"
                      prompt="BLAST P-value less than 10 to the"
@@ -2707,14 +2773,15 @@
             <suggest default="PF11_0344"/>
         </stringParam>
 
-      <enumParam name="ProfileDistanceMethod"
+    <enumParam name="ProfileDistanceMethod"
                      prompt="Distance Method"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              The method used to calculate the similarity distance
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Euclidean Distance</term>
           <internal>euclidean_distance</internal>
@@ -2723,7 +2790,8 @@
           <term>Pearson Correlation</term>
           <internal>pearson_correlation</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="ProfileNumToReturn"
                      prompt="# of Matches"
@@ -2732,14 +2800,15 @@
             <suggest default="50"/>
         </stringParam>
 
-      <enumParam name="ProfileSearchGoal"
+    <enumParam name="ProfileSearchGoal"
                      prompt="Search Goal"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              The searching goal of the profile similarity query
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>most similar</term>
           <internal>similar</internal>
@@ -2748,16 +2817,18 @@
           <term>least similar</term>
           <internal>dissimilar</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ProfileProfileSet"
+    <enumParam name="ProfileProfileSet"
                      prompt="Strain"
                      multiPick="false"
-        <help>
+      <help>
            <text>
              Choose the strain of the profile to search against
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>3D7</term>
           <internal>DeRisi 3D7 Smoothed Averaged</internal>
@@ -2770,16 +2841,18 @@
           <term>HB3</term>
           <internal>DeRisi HB3 Smoothed Averaged</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ProfileTimeShift"
+    <enumParam name="ProfileTimeShift"
                      prompt="Time Shift"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Whether to allow time shifting or not
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>not allow</term>
           <internal>0</internal>
@@ -2788,16 +2861,18 @@
           <term>allow</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ProfileScaleData"
+    <enumParam name="ProfileScaleData"
                      prompt="Scale Result"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              Whether to scale result data into [0..1] or not
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>not scale</term>
           <internal>0</internal>
@@ -2806,16 +2881,18 @@
           <term>scale to [0..1]</term>
           <internal>1</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ProfileMinShift"
+    <enumParam name="ProfileMinShift"
                      prompt="Min Shift"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              The minimum allowed time shift
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>0 hour</term>
           <internal>0</internal>
@@ -3008,16 +3085,18 @@
           <term>47 hours</term>
           <internal>47</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
-      <enumParam name="ProfileMaxShift"
+    <enumParam name="ProfileMaxShift"
                      prompt="Max Shift"
                      multiPick="false">
-        <help>
+      <help>
            <text>
              The maximum allowed time shift
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>0 hour</term>
           <internal>0</internal>
@@ -3210,7 +3289,8 @@
           <term>47 hours</term>
           <internal>47</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -3224,14 +3304,15 @@
                      default="membrane"/>
         </stringParam>
 
-      <enumParam name="text_fields"
+    <enumParam name="text_fields"
                      prompt="Fields"
                      multiPick="true">
-        <help>
+      <help>
            <text>
              Choose which text fields to search.
            </text>
-        </help>
+      </help>
+      <enumList>
         <enumValue>
           <term>Gene product</term>
           <internal>product.txt</internal>
@@ -3264,7 +3345,8 @@
           <term>Metabolic pathway names and descriptions</term>
           <internal>metpaths.txt</internal>
         </enumValue>
-      </enumParam>
+      </enumList>
+    </enumParam>
 
         <stringParam name="max_pvalue"
                      prompt="Max p-value exponent (BLAST Hits v. NRDB)">
