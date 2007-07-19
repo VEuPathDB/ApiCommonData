@@ -4,14 +4,17 @@
   <!-- == records == -->
   <!-- ============================================================ -->
 
-      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" includeProjects="CryptoDB,ApiDB"
-                    primaryKey="AAEE01000001"/>
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" 
+                    includeProjects="CryptoDB,ApiDB"
+                    projectId="CryptoDB" primaryKey="AAEE01000001"/>
 
-      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" includeProjects="PlasmoDB,ApiDB"
-                    primaryKey="PB_PH0001"/>
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" 
+                    includeProjects="PlasmoDB,ApiDB"
+                    projectId="PlasmoDB" primaryKey="PB_PH0001"/>
 
-      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" includeProjects="ToxoDB,ApiDB"
-                    primaryKey="Ia"/>
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" 
+                    includeProjects="ToxoDB,ApiDB"
+                    projectId="ToxoDB" primaryKey="Ia"/>
 
   <!-- ============================================================ -->
   <!-- == attribute queries == -->
@@ -44,21 +47,21 @@
     <!-- ++ GFF dump ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuery ref="OrfAttributes.SequenceGffAttrs" includeProjects="CryptoDB,ApiDB"
+    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="CryptoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value="AAEE01000001-1-1003825-1003983"/>
+        <sanityParam name="primaryKey" value="AAEE01000001"/>
         <sanityParam name="projectId" value="CryptoDB"/>
     </sanityQuery>
 
-    <sanityQuery ref="OrfAttributes.SequenceGffAttrs" includeProjects="PlasmoDB,ApiDB"
+    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="PlasmoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value="PB_PH0001-5-607-398"/>
+        <sanityParam name="primaryKey" value="PB_PH0001"/>
         <sanityParam name="projectId" value="PlasmoDB"/>
     </sanityQuery>
 
-    <sanityQuery ref="OrfAttributes.SequenceGffAttrs" includeProjects="ToxoDB,ApiDB"
+    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="ToxoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value="Ia-1-1887223-1887375"/>
+        <sanityParam name="primaryKey" value="Ia"/>
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
@@ -69,20 +72,41 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-      <sanityQuery ref="SequenceTables.Centromere"
+      <sanityQuery ref="SequenceTables.Centromere" includeProjects="PlasmoDB"
                    minOutputLength="1" maxOutputLength="1">
           <sanityParam name="primaryKey" value="MAL4"/>
       </sanityQuery>
 
-      <sanityQuery ref="SequenceTables.SequenceComments"
+      <sanityQuery ref="SequenceTables.SequenceComments" includeProjects="CryptoDB"
                    minOutputLength="0" maxOutputLength="1000">
-          <sanityParam name="primaryKey" value="MAL4"/>
+          <sanityParam name="primaryKey" value="AAEE01000001"/>
       </sanityQuery>
 
-    <sanityQuery ref="DataDumpQueries.SequenceGffQuery"
-            minOutputLength="4" maxOutputLength="100">
-        <sanityParam name="organism_with_sequences" value="Plasmodium falciparum"/>
+      <sanityQuery ref="SequenceTables.SequenceComments" includeProjects="PlasmoDB"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="PB_PH0001"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceTables.SequenceComments" includeProjects="ToxoDB"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="Ia"/>
+      </sanityQuery>
+
+    <sanityQuery ref="SequenceTables.SequenceGffDbxrefs" includeProjects="CryptoDB"
+            minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="AAEE01000001"/>
     </sanityQuery>
+
+     <sanityQuery ref="SequenceTables.SequenceGffDbxrefs" includeProjects="PlasmoDB"
+            minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="PB_PH0001"/>
+    </sanityQuery>
+
+   <sanityQuery ref="SequenceTables.SequenceGffDbxrefs" includeProjects="ToxoDB"
+            minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="Ia"/>
+    </sanityQuery>
+
 
 
 
