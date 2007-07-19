@@ -62,7 +62,7 @@
 	      AND t.sequence_ontology_id = so.sequence_ontology_id
 	      AND so.term_name = 'ORF'
 	      AND t.na_feature_id = nal.na_feature_id
-	      AND (enas.source_id = $$chromosomeOptional$$
+	      AND (enas.source_id = '$$chromosomeOptional$$'
                    OR lower(enas.source_id) = lower('$$genomicSequence$$'))
               AND nal.end_max >= $$start_point$$ 
               AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)

@@ -12,19 +12,19 @@
     <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="CryptoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="AAEE01000001"/>
+        <sanityParam name="orf_id" value="AAEE01000001-1-1003825-1003983"/>
     </sanityQuestion>
 
     <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="PlasmoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="PB_PH0001"/>
+        <sanityParam name="orf_id" value="PB_PH0001-5-607-398"/>
     </sanityQuestion>
 
     <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="ToxoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="orf_id" value="Ia"/>
+        <sanityParam name="orf_id" value="Ia-1-1887223-1887375"/>
     </sanityQuestion>
 
 
@@ -41,16 +41,16 @@
     </sanityQuestion>
 
     <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="PlasmoDB,ApiDB"
-                    minOutputLength="8000" maxOutputLength="10000"
+                    minOutputLength="4" maxOutputLength="10"
                     pageStart="1" pageEnd="20">
-        <sanityParam name="chromosomeOptional" value=""/>
+        <sanityParam name="chromosomeOptional" value="choose one"/>
         <sanityParam name="genomicSequence" value="PB_PH0001"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
     <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="ToxoDB,ApiDB"
-                    minOutputLength="8000" maxOutputLength="10000"
+                    minOutputLength="8000" maxOutputLength="25000"
                     pageStart="1" pageEnd="20">
         <sanityParam name="chromosomeOptional" value="Ia"/>
         <sanityParam name="genomicSequence" value="(Example: VIIa, TGG_995305)"/>
@@ -116,7 +116,7 @@
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
-          <sanityParam name="BlastDatabaseOrganism" value="T. gondii"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
           <sanityParam name="-e" value="1e-10"/>
