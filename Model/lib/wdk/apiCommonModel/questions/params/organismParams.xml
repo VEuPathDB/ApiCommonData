@@ -307,9 +307,8 @@
                (SELECT 'Cryptosporidium parvum' AS name FROM dual
                  UNION
                 SELECT 'Toxoplasma gondii' AS name FROM dual) cp_tg
-          WHERE organisms.name = partial_ordering.name(+)
-            AND organisms.name = cp_tg.name
-          ORDER BY partial_ordering.rank, organisms.name
+          WHERE organisms.name = cp_tg.name
+          ORDER BY organisms.name
         ]]>
       </sql>
     </sqlQuery>
