@@ -8,7 +8,7 @@ WHERE name = 'AAFEATUREDBREF';
 
 UPDATE core.TableInfo
 SET name = 'CompositeElementDbRef'
-WHERE name = 'COMPOSITEELEMENTDBREF' OR name = 'CompositeElementDbRef';
+WHERE name = 'COMPOSITEELEMENTDBREF' OR name = 'CompositeElementDbRref';
 
 UPDATE core.TableInfo
 SET name = 'CompositeElementNASequence'
