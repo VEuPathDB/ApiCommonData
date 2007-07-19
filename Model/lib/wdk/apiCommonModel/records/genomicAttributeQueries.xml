@@ -16,6 +16,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="Bfmv" isCacheable="false" excludeProjects="CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
 
             <column name="source_id" 
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
@@ -91,7 +92,7 @@
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
-            enas.source_id, '$$project_id$$ as project_id, 
+            enas.source_id, '$$project_id$$' as project_id, 
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
@@ -111,7 +112,7 @@
               ),
               'parvum', 'cparvum', 'hominis') as cryptocyc_db,
             ed.name as extdbname
-            FROM dots.externalnasequence enas, 
+            FROM dots.nasequence enas, 
             dots.source src, 
             sres.taxonname tn,
             sres.externaldatabaserelease edr,
@@ -162,8 +163,9 @@
        <!-- Attribution -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Attribution" isCacheable="false" includeProject="PlasmoDB">
+        <sqlQuery name="Attribution" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="short_name"/>
             <sql>
             <![CDATA[
@@ -180,7 +182,7 @@
                               'P. falciparum mitochondrial genome', 'LSHTM',
                               'P. falciparum plastid-like DNA', 'NIMR',
                               ed.name) AS short_name
-                FROM dots.ExternalNaSequence ens,
+                FROM dots.NaSequence ens,
                      sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
                 WHERE ens.source_id = '$$primaryKey$$'
@@ -199,7 +201,8 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SequenceGffAttrs" excludeProjects="ApiDB">
-        <paramRef ref="params.primaryKey"/>
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
         <column name="gff_source"/>
         <column name="gff_type"/>
@@ -220,7 +223,7 @@
         <column name="gff_attr_size"/>
         <column name="gff_sequence"/>
         <sql>
-            select ens.source_id, '$$projectId$$ as project_id
+            select ens.source_id, '$$projectId$$' as project_id,
                    ens.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,
@@ -240,7 +243,7 @@
                    'nuclear' as gff_attr_localization,
                    ens.length as gff_attr_size,
                    ens.sequence as gff_sequence
-            from DoTS.ExternalNaSequence ens,
+            from DoTS.NaSequence ens,
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.taxon t,
@@ -257,4 +260,4 @@
 
   </querySet>
 
-<wdkModel>
+</wdkModel>

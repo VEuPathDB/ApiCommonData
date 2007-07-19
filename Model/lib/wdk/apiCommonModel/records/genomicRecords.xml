@@ -17,11 +17,11 @@
 
     <recordClassSet name="SequenceRecordClasses">
 
-        <projectParamRef ref="recordParams.Project"/>
-
         <recordClass idPrefix=""
           name="SequenceRecordClass" type="Genomic Sequence"
           attributeOrdering="overview,otherInfo,dnaContext">
+
+          <projectParamRef ref="recordParams.Project"/>
 
       <!-- =============================================================== -->
       <!--   Reporters -->  
@@ -136,7 +136,7 @@
         <!-- Genbank record -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <linkAttribute name="GenbankRecord" includeProjects="PlasmoDB,ToxoDB"
+         <linkAttribute name="GenbankRecord" includeProjects="PlasmoDB"
                         visible="$$genbank_accession$$"
                         inReportMaker="false">
             <url>
@@ -293,7 +293,7 @@
 
           <table name="SequenceGffDbxrefs" excludeProjects="ApiDB"
                  displayName="Sequence DbXrefs"
-                 queryRef="DataDumpQueries.SequenceGffDbxrefs" inReportMaker="false">
+                 queryRef="SequenceTables.SequenceGffDbxrefs" inReportMaker="false">
               <columnAttribute displayName="Dbxref" name="gff_dbxref"/>
           </table>
 

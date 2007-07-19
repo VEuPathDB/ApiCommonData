@@ -4,6 +4,7 @@
         <sqlQuery name="Centromere" includeProjects="PlasmoDB"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="start_min" />
             <column name="end_max" />
             <sql>
@@ -23,6 +24,7 @@
         <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="comment_id"/>
             <column name="stable_id"/>
             <column name="headline"/>
@@ -47,9 +49,10 @@
             </sql>
         </sqlQuery>
 
-    <sqlQuery name="SequenceGffDbxrefs"  excludeProjects="ApiDB 
+    <sqlQuery name="SequenceGffDbxrefs"  excludeProjects="ApiDB" 
             isCacheable="false">
-        <paramRef ref="params.primaryKey"/>
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
         <column name="gff_dbxref"/>
         <sql>
             SELECT ens.source_id,
