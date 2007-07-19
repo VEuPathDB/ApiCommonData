@@ -41,7 +41,8 @@ my $sthTU = $dbh->prepare(<<EOSQL);
          GREATEST(tu.end5, tu.end3) AS tu_stop,
          ident.com_name,
          ident.is_pseudogene,
-         ident.ec_
+         ident.ec_,
+         ident.pub_locus
   FROM   ident
          INNER JOIN asm_feature AS tu USING (feat_name)
          INNER JOIN feat_link AS tu_link ON (tu_link.parent_feat = tu.feat_name)
@@ -87,18 +88,47 @@ my $sthCDS = $dbh->prepare(<<EOSQL);
     AND  cds.feat_type = "CDS"
 EOSQL
 
+##need to get the id mapping ...
+my $idMap = $dbh->prepare(<<EOSQL);
+   select prot_id,locus_tag,gene_id from GenBankToProtein
+EOSQL
+
+my $sthRptType = $dbh->prepare(<<EOSQL);
+   select score from ORF_attribute where feat_name = ? and att_type = 'rpt_gene'
+EOSQL
+
+my %idMap;
+$idMap->execute();
+while (my ($prot_id,$tigr_id,$locus_id) = $idMap->fetchrow_array()) {
+  $idMap{$tigr_id}->{locus_id} = $locus_id;
+  $idMap{$tigr_id}->{protein_id} = $prot_id;
+}
+
+
+my $ctLocusMaps = 0;
+my $ctTuMaps = 0;
+my %ctRpt;
 $sthModel->execute($source);
 while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinSeq) = $sthModel->fetchrow_array()) {
 
   my $strand = $isReversed ? "-" : "+";
 
   $sthTU->execute($sourceId);
-  my ($tuName, $tuStart, $tuStop, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
+  my ($tuName, $tuStart, $tuStop, $product, $isPseudo, $ecNumber, $pub_locus) = $sthTU->fetchrow_array();
 
   my $exonCount = 0;
 
   my ($minStart, $maxStop);
   my @exons;
+
+  ##deal with repeated genes ...
+  my $repeatType;
+  if(!$idMap{$tuName}->{locus_id}){
+    $sthRptType->execute($sourceId);
+    ($repeatType) = $sthRptType->fetchrow_array();
+  }
+  my $gene_id = $idMap{$tuName}->{locus_id} ? $idMap{$tuName}->{locus_id} : "TVAG_RG_$scaffold\_".++$ctRpt{$scaffold};
+  my $aliases = $idMap{$tuName}->{locus_id} ? "$tuName, $idMap{$tuName}->{protein_id}" : $tuName;
 
   # select all exons from this model
   $sthExon->execute($sourceId);
@@ -128,7 +158,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 			$strand,
 			"0",
 			join(" ; ",
-			     qq{GenePrediction "$sourceId"},
+			     qq{GenePrediction "$gene_id"},
 			     qq{OrderNumber $exonCount},
 			     qq{CodingStart $CDSStart},
 			     qq{CodingEnd $CDSStop},
@@ -147,14 +177,14 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 			$strand,
 			"0",
 			join(" ; ",
-			     qq{GenePrediction "$sourceId"},
+			     qq{GenePrediction "$gene_id"},
 			     qq{OrderNumber $exonCount},
 			     qq{CodingStart @{[$annotation ? -1 : $exonStart]}},
 			     qq{CodingEnd @{[$annotation ? -1 : $exonStop]}},
 			    ),
 		       );
     }
-  }
+  } 
 
   print OUT join("\t",
 		 $scaffold,
@@ -166,10 +196,12 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		 $strand,
 		 ".",
 		 join(" ; ",
-		      qq{GenePrediction "$sourceId"},
+		      qq{GenePrediction "$gene_id"},
 		      ($product    ? qq{Note "$product"} : ()),
-		      ($tuName     ? qq{TU "$tuName"} : ()),
+		      ($aliases    ? qq{Aliases "$aliases"} : ()),
 		      ($isPseudo   ? "Pseudo 1" : ()),
+		      (!$idMap{$tuName}->{locus_id} ? qq{RepeatedGene "1"} : ()),
+		      ($repeatType ? qq{RepeatType "$repeatType"} : ()),
 		      ($ecNumber   ? qq{ECNumber "$ecNumber"} : ()),
 		      ($proteinSeq ? qq{Protein "$proteinSeq"} : ()),
 		     )
@@ -184,5 +216,6 @@ $sthTU->finish();
 $sthModel->finish();
 $sthExon->finish();
 $sthCDS->finish();
+$sthRptType->finish();
 $dbh->disconnect();
 
