@@ -1,0 +1,92 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == questions == -->
+  <!-- ============================================================ -->
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ ID ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="CryptoDB,ApiDB"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequence" value="AAEE01000001"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="PlasmoDB,ApiDB"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequence" value="PB_PH0001"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="ToxoDB,ApiDB"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequence" value="Ia"/>
+      </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Taxon ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="CryptoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="7400" maxOutputLength="7600">
+          <sanityParam name="organism" value="Cryptosporidium parvum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="PlasmoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="7400" maxOutputLength="7600">
+          <sanityParam name="organism_with_sequences" value="Plasmodium berghei"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="ToxoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="7400" maxOutputLength="7600">
+          <sanityParam name="organism_with_sequences" value="Toxoplasma gondii"/>
+      </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Similarity ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="CryptoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="PlasmoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="ToxoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+<sanityModel>

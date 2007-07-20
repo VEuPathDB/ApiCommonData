@@ -85,20 +85,30 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++ Similarity ++ -->
+    <!-- ++ Mass Spec ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="CryptoDB,ApiDB"
+    <sanityQuestion ref="OrfQuestions.OrfsByMassSpec" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
-          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
-          <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
-          <sanityParam name="BlastQueryType" value="Protein"/>
-          <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
-          <sanityParam name="-e" value="1e-10"/>
-          <sanityParam name="-v" value="50"/>
-          <sanityParam name="-b" value="25"/>
+          <sanityParam name="orf_ms_assay" value="1-D SDS PAGE Insoluble Fraction<sup>1</sup> (T.g)"/>
+          <sanityParam name="organism" value="T. gondii"/>
+          <sanityParam name="min_sequence_count" value="1"/>
+          <sanityParam name="min_spectrum_count" value="1"/>
       </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsByMassSpec" includeProjects="CryptoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="orf_ms_assay" value="MudPit Soluble fractions<sup>&#182;</sup> (C.p.)"/>
+          <sanityParam name="organism" value="C. parvum"/>
+          <sanityParam name="min_sequence_count" value="1"/>
+          <sanityParam name="min_spectrum_count" value="1"/>
+      </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Similarity ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="PlasmoDB,ApiDB"
                       pageStart="1" pageEnd="20"

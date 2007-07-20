@@ -5,9 +5,9 @@
 
            <projectParamRef ref="recordParams.Project"/>
 
-      <!-- =============================================================== -->
-      <!--   Reporters -->  
-      <!-- =============================================================== -->
+          <!-- =============================================================== -->
+          <!--   Reporters -->  
+          <!-- =============================================================== -->
 
           <reporter name="tabular" displayName="Summary - TAB Delimited"
                       implementation="org.gusdb.wdk.model.report.TabularReporter" />
@@ -16,17 +16,16 @@
           <reporter name="fullRecord" displayName="Detailed"
                       implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
 
-       <!-- =================================================================== -->
-       <!--  Attributes  ++++++++-->
-       <!-- =================================================================== -->
+           <!-- =================================================================== -->
+           <!--  Attributes  ++++++++-->
+           <!-- =================================================================== -->
 
-          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-          <!-- BFMV attributes -->  
-          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!-- BFMV attributes -->  
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
             <attributeQueryRef ref="OrfAttributes.Bfmv">
                 <columnAttribute name="nas_id" displayName="Sequence ID" internal="false"/>
-                <!--columnAttribute name="orf_id" displayName="ORF ID" internal="false"/-->
                 <columnAttribute name="orf_start" internal="true"/>
                 <columnAttribute name="orf_end" internal="true"/>
                 <columnAttribute name="orf_start_text" displayName="Start" internal="false" align="center"/>
@@ -37,21 +36,21 @@
                 <columnAttribute name="formatted_organism" displayName="Organism" internal="false" inReportMaker="false"/>
             </attributeQueryRef>
 
-          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-          <!-- sequence attributes -->  
-          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!-- sequence attributes -->  
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
             <attributeQueryRef ref="OrfAttributes.Sequence">
                 <columnAttribute name="sequence" displayName="Sequence" internal="true" />
             </attributeQueryRef>
 
-      <!-- =================================================================== -->
-      <!--  Text Attributes  ++++++++-->
-      <!-- =================================================================== -->
+          <!-- =================================================================== -->
+          <!--  Text Attributes  ++++++++-->
+          <!-- =================================================================== -->
 
-        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <!-- overview -->  
-        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!-- overview -->  
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
             <textAttribute name="orf_location_text" displayName="Location"
                            internal="false" inReportMaker="true">
                 <text>
@@ -61,9 +60,9 @@
                </text>
            </textAttribute>           
 
-        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <!-- overview -->  
-        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!-- overview -->  
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
             <textAttribute name="overview" displayName="Overview"
                            internal="true" inReportMaker="false">
                <text>
