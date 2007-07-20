@@ -1,0 +1,69 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == records == -->
+  <!-- ============================================================ -->
+
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass" 
+                    includeProjects="CryptoDB,ApiDB"
+                    projectId="CryptoDB" primaryKey="Chro.trn046"/>
+
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass" 
+                    includeProjects="PlasmoDB,ApiDB"
+                    projectId="CryptoDB" primaryKey="PB400024.00.0"/>
+
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass" 
+                    includeProjects="ToxoDB,ApiDB"
+                    projectId="CryptoDB" primaryKey="44.m00048"/>
+
+
+  <!-- ============================================================ -->
+  <!-- == attribute queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ BFMV ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneAttributes.GeneAlias"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneAttributes.ProteinSequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneAttributes.TranscriptSequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneAttributes.CDS"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneAttributes.ExpressionGraphs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+<sanityModel>
