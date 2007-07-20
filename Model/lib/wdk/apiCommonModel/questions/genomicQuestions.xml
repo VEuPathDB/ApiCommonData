@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <questionSet name="GenomicSequenceQuestions">
+  <questionSet name="GenomicSequenceQuestions" displayName="Search genomic sequences">
 
     <!-- ************************************************************ -->
     <!-- SourceId -->  
@@ -9,7 +9,7 @@
     <question name="SequenceBySourceId"
       category="Other Attributes"
       displayName="Genomic Sequence ID"
-      queryRef="GenomicSequenceIds.SequenceBySourceId"
+      queryRef="SequenceIds.SequenceBySourceId"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass">
          
       <attributesList 
@@ -26,9 +26,6 @@
       <description includeProjects="PlasmoDB,ToxoDB,ApiDB">
         Find genomic sequences (chromosomes or contigs) by ID.
       </description>
-      <suggest includeProjects="ApiDB"
-        sample="AAEL010000057, AAEE01000009, BX526834, MAL4, Ia"
-      />
     </question>
     
     
@@ -44,7 +41,6 @@
       
       <attributesList 
         summary="organism"
-        sorting=""
       />
       
       <summary>
@@ -91,6 +87,16 @@
         ]]>
       </description>
 
+         <dynamicAttributes>
+             <columnAttribute name="TabularRow" displayName="Blast summary"
+                              inReportMaker="false"/>
+             <columnAttribute name="Alignment" displayName="Blast alignment"
+                              inReportMaker="false"/>
+             <columnAttribute name="Header" displayName="Blast header"
+                              inReportMaker="false"/>
+             <columnAttribute name="Footer" displayName="Blast footer"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
     </question>
     
     

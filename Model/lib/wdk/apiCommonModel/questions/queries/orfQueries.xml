@@ -202,7 +202,7 @@
                   and msf.aa_feature_id = aal.aa_feature_id
                   and msf.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$orf_ms_assay_1$$)
+                  and ed.name in ('$$orf_ms_assay$$')
                 group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
                 group by intseq.aa_sequence_id
                 having count(*) >= $$min_sequence_count$$
@@ -213,7 +213,7 @@
                      sres.externaldatabaserelease edr
                 where mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$orf_ms_assay_1$$)
+                  and ed.name in ('$$orf_ms_assay$$')
                 group by mss.aa_sequence_id
                 having sum(spectrum_count) >= $$min_spectrum_count$$
             ) spec
@@ -243,7 +243,7 @@
                   and msf.aa_feature_id = aal.aa_feature_id
                   and msf.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$orf_ms_assay_1$$)
+                  and ed.name in ('$$orf_ms_assay$$')
                 group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
                 group by intseq.aa_sequence_id
                 having count(*) >= $$min_sequence_count$$
@@ -254,7 +254,7 @@
                      sres.externaldatabaserelease edr
                 where mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$orf_ms_assay_1$$)
+                  and ed.name in ('$$orf_ms_assay$$')
                 group by mss.aa_sequence_id
                 having sum(spectrum_count) >= $$min_spectrum_count$$
             ) spec
@@ -268,7 +268,7 @@
             and nas.taxon_id in 
             (select taxon_id from sres.taxon
              connect by parent_id = prior taxon_id
-             start with taxon_id in ($$parvumOrganism$$))
+             start with taxon_id in ($$organism$$))
             and misc.source_id not in 
             ('AAEE01000003-2-916100-917650',
              'AAEE01000002-1-148078-149013',

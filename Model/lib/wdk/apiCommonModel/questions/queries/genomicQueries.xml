@@ -1,4 +1,4 @@
-<wdkModel name="SequenceId">
+<wdkModel>
 
    <!-- notes
 
@@ -9,6 +9,7 @@
       - assumes that NAsequence table has source_id
 
    -->
+  <querySet name="SequenceIds">
     
     <!-- ************************************************************ -->
     <!-- SourceId -->  
@@ -104,7 +105,7 @@
     
     <wsQuery name="SequencesBySimilarity" includeProjects="PlasmoDB,ToxoDB"
         processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
-        <paramRef ref="sequenceParams.BlastDatabaseType"/>
+        <paramRef ref="genomicParams.BlastDatabaseType"/>
         <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
         <paramRef ref="sharedParams.BlastQueryType"/>
         <paramRef ref="sharedParams.BlastQuerySequence"/>
@@ -124,7 +125,7 @@
   
     <wsQuery name="SequencesBySimilarity" includeProjects="ApiDB" 
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sequenceParams.BlastDatabaseType"/>
+        <paramRef ref="genomicParams.BlastDatabaseType"/>
         <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
         <paramRef ref="sharedParams.BlastQueryType"/>
         <paramRef ref="sharedParams.BlastQuerySequence"/>
@@ -140,5 +141,6 @@
         <wsColumn name="Header" width="3000"/>
         <wsColumn name="Footer" width="3000"/>
     </wsQuery>
+  </querySet>
     
 </wdkModel>
