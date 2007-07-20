@@ -14,9 +14,13 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- BFMV -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="Bfmv" isCacheable="false" excludeProjects="CryptoDB">
+        <sqlQuery name="Bfmv" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
+
+            <column name="sequence"
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"
+                    includeProjects="CryptoDB"/>
 
             <column name="source_id" 
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
@@ -65,11 +69,11 @@
                     sortingColumn="database_name"
                     sortingTable="apidb.SequenceAttributes"/>
 
-            <column name="externalDbVersion" includeProjects="CryptoDB,ToxoDB"
+            <column name="externalDbVersion" includeProjects="ToxoDB"
                      sortingColumn="database_version"
                     sortingTable="apidb.SequenceAttributes"/>
 
-            <column name="cyc_db" includeProjects="CryptoDB" />
+           <!--   <column name="cyc_db" includeProjects="CryptoDB" />  -->
 
             <sql includeProjects="ApiDB">
               <![CDATA[
@@ -111,7 +115,7 @@
                 instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
               ),
               'parvum', 'cparvum', 'hominis') as cryptocyc_db,
-            ed.name as extdbname
+            ed.name as externalDbname
             FROM dots.nasequence enas, 
             dots.source src, 
             sres.taxonname tn,

@@ -421,7 +421,7 @@
                      multiPick="false"
                      default="choose one">
 
-      <enumList includeProjects="PlasmoDB">   
+      <enumList>   
         <enumValue>
           <term>choose one</term>
           <internal>choose one</internal>
@@ -631,7 +631,8 @@
       <flatVocabParam name="snp_strain_a"
                      queryRef="SharedVQ.SnpStrainA"
 		     prompt="Reference"
-                     multiPick="false">
+                     multiPick="false"
+                     excludeProjects="CryptoDB">
         <help>
              Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
         </help>
@@ -640,7 +641,8 @@
       <flatVocabParam name="snp_strain_b"
                      queryRef="SharedVQ.SnpStrainB"
 		     prompt="Comparator"
-                     multiPick="false">
+                     multiPick="false"
+                     excludeProjects="CryptoDB">
         <help>
              Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
         </help>
@@ -648,7 +650,8 @@
 
     <enumParam name="snp_strain_m"
 		     prompt="Comparator(s)"
-                     multiPick="true">
+                     multiPick="true"
+                     excludeProjects="CryptoDB">
       <help>
              Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
       </help>
@@ -1032,7 +1035,7 @@
   <querySet name="SharedVQ">
 
 
-        <sqlQuery name="SnpStrainA">
+        <sqlQuery name="SnpStrainA" excludeProjects="CryptoDB">
           <column name="internal"/>
           <column name="term"/>
           <sql>
@@ -1059,7 +1062,7 @@
           </sql>
         </sqlQuery>
 
-        <sqlQuery name="SnpStrainB">
+        <sqlQuery name="SnpStrainB" excludeProjects="CryptoDB">
           <column name="internal"/>
           <column name="term"/>
           <sql>

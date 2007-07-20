@@ -59,17 +59,23 @@
                   AND t.source_id = '$$primaryKey$$'
            </sql>
             <sql includeProjects="ApiDB,CryptoDB">
-		SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
-                	  from dots.TranslatedAASequence taas,
-                      	 sres.SequenceOntology s,
-                      	 sres.ExternalDatabaseRelease extr,
-         	         sres.ExternalDatabase ext
-                	 WHERE taas.source_id = '$$primaryKey$$'
-                    	  AND  taas.sequence_ontology_id = s.sequence_ontology_id
-                    	  AND s.term_name = 'ORF'
-                   	  AND taas.external_database_release_id=extr.external_database_release_id
-                 	  AND extr.external_database_id=ext.external_database_id
-                   	  AND ext.name='$$projectId$$'
+	      SELECT
+                t.source_id as source_id,
+                taas.sequence, '$$projectId$$' as project_id
+              FROM dots.externalNASequence enas,
+                    dots.miscellaneous t,
+                    dots.translatedaafeature taaf,
+                    dots.translatedaasequence taas,
+                    sres.taxonname tn,
+                    sres.sequenceontology so
+              WHERE t.na_feature_id = taaf.na_feature_id
+                AND taaf.aa_sequence_id = taas.aa_sequence_id
+                AND enas.na_sequence_id = t.na_sequence_id 
+                AND enas.taxon_id = tn.taxon_id
+                AND tn.name_class = 'scientific name'
+                AND t.sequence_ontology_id = so.sequence_ontology_id
+                AND so.term_name = 'ORF'
+                AND t.source_id = '$$primaryKey$$'
 		</sql>
         </sqlQuery>
     </querySet>

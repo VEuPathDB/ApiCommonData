@@ -33,7 +33,7 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="CryptoDB,ApiDB"
-                    minOutputLength="8000" maxOutputLength="10000"
+                    minOutputLength="2000" maxOutputLength="10000"
                     pageStart="1" pageEnd="20">
         <sanityParam name="sequenceId" value="AAEE01000001"/>
         <sanityParam name="start_point" value="1"/>
@@ -50,7 +50,7 @@
     </sanityQuestion>
 
     <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="ToxoDB,ApiDB"
-                    minOutputLength="8000" maxOutputLength="25000"
+                    minOutputLength="4" maxOutputLength="25000"
                     pageStart="1" pageEnd="20">
         <sanityParam name="chromosomeOptional" value="Ia"/>
         <sanityParam name="sequenceId" value="(Example: VIIa, TGG_995305)"/>
@@ -63,7 +63,7 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="CryptoDB,ApiDB"
-            minOutputLength="4" maxOutputLength="300"
+            minOutputLength="1" maxOutputLength="300"
             pageStart="1" pageEnd="20">
         <sanityParam name="motif_expression" value="CC6+RK"/>
         <sanityParam name="motif_organism" value="C. parvum"/>
@@ -90,7 +90,7 @@
 
     <sanityQuestion ref="OrfQuestions.OrfsByMassSpec" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
-                      minOutputLength="1" maxOutputLength="50">
+                      minOutputLength="1" maxOutputLength="100">
           <sanityParam name="orf_ms_assay" value="Wastling Rhoptry"/>
           <sanityParam name="organism" value="Toxoplasma gondii"/>
           <sanityParam name="min_sequence_count" value="1"/>
@@ -99,7 +99,7 @@
 
     <sanityQuestion ref="OrfQuestions.OrfsByMassSpec" includeProjects="CryptoDB,ApiDB"
                       pageStart="1" pageEnd="20"
-                      minOutputLength="1" maxOutputLength="50">
+                      minOutputLength="1" maxOutputLength="100">
           <sanityParam name="orf_ms_assay" value="Wastling MassSpec MudPit Insoluble"/>
           <sanityParam name="organism" value="Cryptosporidium parvum"/>
           <sanityParam name="min_sequence_count" value="1"/>
@@ -112,7 +112,7 @@
 
     <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="PlasmoDB,ApiDB"
                       pageStart="1" pageEnd="20"
-                      minOutputLength="1" maxOutputLength="50">
+                      minOutputLength="1" maxOutputLength="100">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
           <sanityParam name="BlastDatabaseOrganism" value="P. berghei"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
@@ -124,7 +124,7 @@
 
     <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
-                      minOutputLength="1" maxOutputLength="50">
+                      minOutputLength="1" maxOutputLength="100">
           <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
           <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
           <sanityParam name="BlastQueryType" value="Protein"/>

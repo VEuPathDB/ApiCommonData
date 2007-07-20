@@ -16,10 +16,14 @@
 
 
     <recordClassSet name="SequenceRecordClasses">
-
+<!--
         <recordClass idPrefix=""
           name="SequenceRecordClass" type="Genomic Sequence"
           attributeOrdering="overview,otherInfo,dnaContext">
+-->
+        <recordClass idPrefix=""
+          name="SequenceRecordClass" type="Genomic Sequence"
+          attributeOrdering="overview">
 
           <projectParamRef ref="recordParams.Project"/>
 
@@ -45,7 +49,7 @@
           <!-- BFMV attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <attributeQueryRef ref="SequenceAttributes.Bfmv" includeProjects="PlasmoDB,ToxoDB">
+        <attributeQueryRef ref="SequenceAttributes.Bfmv">
 
             <columnAttribute name="sequence" includeProjects="CryptoDB" 
                  displayName="Sequence"   />
@@ -95,8 +99,8 @@
             <columnAttribute name="externalDbVersion" includeProjects="ToxoDB" 
                  displayName="External DB Version" internal="true" inReportMaker="false"/>
 
-            <columnAttribute name="cyc_db" includeProjects="CryptoDB" 
-                 inReportMaker="false"    internal="true" />
+        <!--    <columnAttribute name="cyc_db" includeProjects="CryptoDB" 
+                 inReportMaker="false"    internal="true" />-->
 
         </attributeQueryRef>
 
