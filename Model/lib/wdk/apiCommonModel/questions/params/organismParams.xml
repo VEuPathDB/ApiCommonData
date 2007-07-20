@@ -58,15 +58,15 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND t.taxon_id IN
                        (SELECT taxon_id
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
                (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
@@ -89,7 +89,7 @@
     <sqlQuery name="withChromosomes" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql>
+      <sql includeProjects="CryptoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -102,22 +102,45 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
-                  AND t.taxon_id IN
-                       (SELECT taxon_id
-                        FROM sres.taxon
-                        CONNECT BY taxon_id = prior parent_id
-                        START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
-                 UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
-                 UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
-          WHERE organisms.name = partial_ordering.name(+)
-          ORDER BY partial_ordering.rank, organisms.name
+                  AND t.rank = 'species'
+                  AND tn.name IN ('Cryptosporidium parvum')) organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+      <sql includeProjects="ToxoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name IN ('Toxoplasma gondii')) organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+      <sql includeProjects="PlasmoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name IN ('Plasmodium falciparum')) organisms
+          ORDER BY organisms.name
         ]]>
       </sql>
     </sqlQuery>
@@ -128,7 +151,7 @@
     </wsQuery>
 
     <!--===================================================================-->
-    <!-- with genomic seq-->  
+    <!-- with genomic seq-->
     <!--===================================================================-->
 
     <sqlQuery name="withGenomicSeq" excludeProjects="ApiDB">
@@ -147,20 +170,25 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND t.taxon_id IN
                        (SELECT taxon_id
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, sres.SequenceOntology so
+                              WHERE so.sequence_ontology_id = ns.sequence_ontology_id
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')))) organisms,
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -198,20 +226,24 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND t.taxon_id IN
                        (SELECT taxon_id
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -243,15 +275,15 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND t.taxon_id IN
                        (SELECT taxon_id
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
                (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
@@ -295,7 +327,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Cryptosporidium parvum')) organisms
           ORDER BY organisms.name
         ]]>
@@ -313,7 +345,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Toxoplasma gondii')) organisms
           ORDER BY organisms.name
         ]]>
@@ -331,7 +363,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('none at all')) organisms
           ORDER BY organisms.name
         ]]>
@@ -363,16 +395,16 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name like 'Plasmodium %'
                   AND t.taxon_id IN
                        (SELECT taxon_id
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ens.taxon_id
-                              FROM dots.NaSequence ens, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ens.na_sequence_id))) organisms,
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
                (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
@@ -409,7 +441,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('none at all')) organisms
           ORDER BY organisms.name
         ]]>
@@ -427,7 +459,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Toxoplasma gondii')) organisms
           ORDER BY organisms.name
         ]]>
@@ -445,7 +477,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Plasmodium falciparum')) organisms
           ORDER BY organisms.name
         ]]>
@@ -477,7 +509,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('none at all')) organisms
           ORDER BY organisms.name
         ]]>
@@ -495,7 +527,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Plasmodium falciparum')) organisms
           ORDER BY organisms.name
         ]]>
@@ -527,7 +559,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('none at all')) organisms
           ORDER BY organisms.name
         ]]>
@@ -545,7 +577,7 @@
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species' 
+                  AND t.rank = 'species'
                   AND tn.name IN ('Plasmodium berghei')) organisms
           ORDER BY organisms.name
         ]]>
