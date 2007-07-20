@@ -64,9 +64,10 @@ my $sthModel = $dbh->prepare(<<EOSQL);
          INNER JOIN asm_feature AS model USING (asmbl_id)
          INNER JOIN phys_ev USING (feat_name)
   WHERE  model.feat_type = "model"
-    AND  phys_ev.ev_type = ?
+    AND  phys_ev.ev_type = ?  /* 'working' */
     AND  clone_info.is_public = 1
 EOSQL
+
 
 my $sthExon = $dbh->prepare(<<EOSQL);
   SELECT LEAST(exon.end5, exon.end3) AS exon_start,
@@ -86,6 +87,25 @@ my $sthCDS = $dbh->prepare(<<EOSQL);
          INNER JOIN asm_feature AS cds ON (exon_link.child_feat = cds.feat_name)
   WHERE  exon_link.parent_feat = ?
     AND  cds.feat_type = "CDS"
+EOSQL
+
+##RNAs ...
+my $sthRNA = $dbh->prepare(<<EOSQL);
+  SELECT asg.gb_acc AS scaffold,
+         model.feat_name AS model_id,
+         LEAST(model.end5, model.end3) AS model_start,
+         GREATEST(model.end5, model.end3) AS model_stop,
+         IF(model.end5 > model.end3, 1, 0) AS is_reversed,
+         model.feat_type
+  FROM   clone_info
+         INNER JOIN AssemblyToGenBank AS asg USING (asmbl_id)
+         INNER JOIN asm_feature AS model USING (asmbl_id)
+  WHERE  model.feat_type in ("tRNA","rRNA")
+    AND  clone_info.is_public = 1
+EOSQL
+
+my $sthRnaDesc = $dbh->prepare(<<EOSQL);
+ select com_name,pub_locus from ident where feat_name = ?
 EOSQL
 
 ##need to get the id mapping ...
@@ -200,7 +220,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		      ($product    ? qq{Note "$product"} : ()),
 		      ($aliases    ? qq{Aliases "$aliases"} : ()),
 		      ($isPseudo   ? "Pseudo 1" : ()),
-		      (!$idMap{$tuName}->{locus_id} ? qq{RepeatedGene "1"} : ()),
+		      (!$idMap{$tuName}->{locus_id} ? qq{GeneType "repeated_gene"} : qq{GeneType "protein_coding"}),
 		      ($repeatType ? qq{RepeatType "$repeatType"} : ()),
 		      ($ecNumber   ? qq{ECNumber "$ecNumber"} : ()),
 		      ($proteinSeq ? qq{Protein "$proteinSeq"} : ()),
@@ -211,11 +231,59 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 
 }
 
+##now do the RNAs.  NOTE that for trich all are single exons ... this will now work otherwise!
+$sthRNA->execute();
+while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $rnaType) = $sthRNA->fetchrow_array()) {
+  my $strand = $isReversed ? "-" : "+";
+  $sthRnaDesc->execute($sourceId);
+  my($product,$gene_id) = $sthRnaDesc->fetchrow_array();
+
+  if(!$gene_id){
+    print STDERR "Unable to retrieve locus_id for $sourceId\n";
+    next;
+  }
+
+  print OUT join("\t",
+		 $scaffold,
+		 $annotation ? "annotation" : $source,
+		 "transcript",
+		 $modelStart,
+		 $modelStop,
+		 ".",
+		 $strand,
+		 ".",
+		 join(" ; ",
+		      qq{GenePrediction "$gene_id"},
+		      ($product    ? qq{Note "$product"} : ()),
+		      qq{Aliases "$sourceId"},
+		      qq{GeneType "$rnaType"},
+		     )
+		), "\n";
+
+  print OUT join("\t",
+                 $scaffold,
+                 $annotation ? "annotation" : $source,
+                 "exon",
+                 $modelStart,
+                 $modelStop,
+                 ".",
+                 $strand,
+                 "0",
+                 join(" ; ",
+                      qq{GenePrediction "$gene_id"},
+                      qq{OrderNumber 1},
+                     ),
+                ), "\n";
+  
+}
+
 close(OUT);
 $sthTU->finish();
 $sthModel->finish();
 $sthExon->finish();
 $sthCDS->finish();
 $sthRptType->finish();
+$sthRNA->finish();
+$sthRnaDesc->finish();
 $dbh->disconnect();
 
