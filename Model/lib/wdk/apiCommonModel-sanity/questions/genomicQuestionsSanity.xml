@@ -12,19 +12,19 @@
       <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="CryptoDB,ApiDB"
                       minOutputLength="1" maxOutputLength="1"
                       pageStart="1" pageEnd="20">
-          <sanityParam name="sequence" value="AAEE01000001"/>
+          <sanityParam name="sequenceId" value="AAEE01000001"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="PlasmoDB,ApiDB"
                       minOutputLength="1" maxOutputLength="1"
                       pageStart="1" pageEnd="20">
-          <sanityParam name="sequence" value="PB_PH0001"/>
+          <sanityParam name="sequenceId" value="PB_PH0001"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="ToxoDB,ApiDB"
                       minOutputLength="1" maxOutputLength="1"
                       pageStart="1" pageEnd="20">
-          <sanityParam name="sequence" value="Ia"/>
+          <sanityParam name="sequenceId" value="Ia"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -40,13 +40,13 @@
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="PlasmoDB,ApiDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="7400" maxOutputLength="7600">
-          <sanityParam name="organism_with_sequences" value="Plasmodium berghei"/>
+          <sanityParam name="organism" value="Plasmodium berghei"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
-                      minOutputLength="7400" maxOutputLength="7600">
-          <sanityParam name="organism_with_sequences" value="Toxoplasma gondii"/>
+                      minOutputLength="1000" maxOutputLength="2000">
+          <sanityParam name="organism" value="Toxoplasma gondii"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -58,7 +58,7 @@
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
           <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
@@ -70,8 +70,9 @@
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
-          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. berghei"/>
+          <sanityParam name="BlastQuerySequence" value="ATAAAACACCTTTAGGAAAAAATAATATAGATAATGATAAT
+CAAAAAGATTTGAAAACATATGACATACAAGATGACAAATCTTCACGCAAAAAAATGACCACAGAATTTAATATGTTTTTGAGTGAAAATACACCT"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
@@ -82,7 +83,7 @@
                       minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
           <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
