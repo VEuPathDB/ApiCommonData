@@ -19,6 +19,7 @@
         isCacheable="true">
         <paramRef ref="sharedParams.sequenceId"/> 
         <column name="source_id"/>
+        <column name="project_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
             SELECT enas.source_id, '@PROJECT_ID@' as project_id
