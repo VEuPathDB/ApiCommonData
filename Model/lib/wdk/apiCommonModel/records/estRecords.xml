@@ -1,0 +1,127 @@
+<wdkModel>
+
+    <recordClassSet name="EstRecordClasses">
+
+        <!-- EstRecordClasses.EstRecordClass -->
+        <recordClass idPrefix="" name="EstRecordClass" type="EST">
+
+          <!-- =============================================================== -->
+          <!--   Reporters -->  
+          <!-- =============================================================== -->
+          <reporter name="tabular" displayName="Summary - TAB Delimited"
+                    implementation="org.gusdb.wdk.model.report.TabularReporter"/>
+          <reporter name="gff3" displayName="Summary - GFF3"
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
+          <reporter name="fullRecord" displayName="Detailed"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
+
+           <!-- =================================================================== -->
+           <!--  Attributes  ++++++++-->
+           <!-- =================================================================== -->
+
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!-- BFMV attributes -->  
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+            <attributeQueryRef ref="EstAttributes.Bfmv">
+                <columnAttribute name="source_id"   inReportMaker="false" displayName="Accession" internal="true"/>
+                <columnAttribute name="a_count"     inReportMaker="false" internal="true"/>
+                <columnAttribute name="c_count"     inReportMaker="false" internal="true"/>
+                <columnAttribute name="g_count"     inReportMaker="false" internal="true"/>
+                <columnAttribute name="t_count"     inReportMaker="false" internal="true"/>
+                <columnAttribute name="other_count" inReportMaker="false" internal="true"/>
+                <columnAttribute name="length"      displayName="length" internal="false" align="center"/>
+                <columnAttribute name="primer"      inReportMaker="false" internal="true"/>
+                <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
+                <columnAttribute name="vector"      displayName="Vector" internal="false"/>
+                <columnAttribute name="stage"       displayName="Stage" internal="false"/>
+                <columnAttribute name="organism"    displayName="Organism" internal="true"/>
+                <columnAttribute name="formatted_organism"    displayName="Organism" internal="false" inReportMaker="false"/>
+                <columnAttribute name="ncbi_tax_id" displayName="NCBI taxon" internal="true"/>
+                <columnAttribute name="extdbname"   inReportMaker="false" internal="true"/>
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="EstAttributes.Sequence">
+                <columnAttribute name="sequence" displayName="Sequence" internal="true"/>
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="EstAttributes.Reference" excludeProjects="ApiDB">
+                <columnAttribute inReportMaker="false" name="author"      internal="true" />
+                <columnAttribute inReportMaker="false" name="affiliation" internal="true" />
+                <columnAttribute inReportMaker="false" name="address"     internal="true" />
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="EstAttributes.Cluster" includeProjects="CryptoDB">
+                <columnAttribute inReportMaker="false" name="na_sequence_id" internal="true" />
+                <columnAttribute inReportMaker="false" name="number_of_contained_sequences" internal="true" />
+            </attributeQueryRef>
+            
+      <!-- =================================================================== -->
+      <!-- Tables ++++++++-->
+      <!-- =================================================================== -->
+
+            <table name="AlignmentInfo"
+                   displayName="Alignments to genomic sequence"
+                   queryRef="EstTables.AlignmentInfo">
+                <columnAttribute inReportMaker="true"  name="accession" displayName="Accession"   internal="false" />
+                <linkAttribute displayName="Genomic sequence" name="alignedcontig" visible="$$sequence_id$$"
+                   inReportMaker="false" internal="false" >
+                     <url>
+                        <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=&primary_key=$$sequence_id$$]]>
+                     </url>
+                </linkAttribute>
+                <textAttribute inReportMaker="true" name="location" displayName="Location">
+                  <text>
+                    <![CDATA[
+                      $$target_start$$ - $$target_end$$ ($$is_reversed$$)
+                    ]]>
+                  </text>
+                </textAttribute>
+                <columnAttribute inReportMaker="false"  name="context_start" internal="true" />
+                <columnAttribute inReportMaker="false"  name="context_end"   internal="true" />
+                <columnAttribute inReportMaker="true"  name="percent_identity" displayName="Percent identity"  internal="false" />
+                <columnAttribute inReportMaker="true"  name="is_best_alignment" displayName="Best alignment?"  internal="false" />
+                <columnAttribute inReportMaker="true"  name="is_consistent" displayName="Consistent?"  internal="false" />
+                <columnAttribute inReportMaker="true"  name="sequence_id" displayName="Sequence"    internal="true" />
+                <columnAttribute inReportMaker="true"  name="target_start" displayName="Start" internal="true" />
+                <columnAttribute inReportMaker="true"  name="target_end"  displayName="End" internal="true" />
+                <columnAttribute inReportMaker="true"  name="is_reversed" displayName="Strand" internal="true" />
+                <linkAttribute displayName="Alignment" name="alignmentlink" visible="view"
+                   inReportMaker="false" internal="false" >
+                     <url>
+                        <![CDATA[
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/plasmo/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
+                </linkAttribute>
+            </table>
+
+
+             <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
+               <text>
+                    <![CDATA[
+                    Library: $$dbest_name$$<br>
+                    Primer: $$primer$$<br>
+		    Vector: $$vector$$<br>
+		    Stage:  $$stage$$<br>
+                    Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$,
+                    <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
+                    Length: $$length$$<br>
+                    Link out: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$source_id$$">NCBI</a>
+                ]]>
+               </text>
+           </textAttribute>
+
+           <!-- custom record jsp page has a dependency on this attribute name. if you change here, change there -->
+           <textAttribute name="reference" displayName="Sequence Attribution" inReportMaker="false" internal="true">
+              <text>
+                   <![CDATA[
+                   <font size="-1">$$author$$<br>$$affiliation$$<br> $$address$$</font>
+                   ]]>
+              </text>
+           </textAttribute>
+
+       </recordClass>
+    </recordClassSet>
+
+</wdkModel>

@@ -82,7 +82,7 @@
   <!-- ============================================================ -->
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Centromere ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
       <sanityQuery ref="SequenceTables.Centromere" includeProjects="PlasmoDB"
                    minOutputLength="1" maxOutputLength="1">
@@ -90,6 +90,9 @@
           <sanityParam name="projectId" value="PlasmoDB"/>
       </sanityQuery>
 
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Comments ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
       <sanityQuery ref="SequenceTables.SequenceComments" includeProjects="CryptoDB"
                    minOutputLength="0" maxOutputLength="1000">
           <sanityParam name="primaryKey" value="AAEE01000001"/>
@@ -107,6 +110,11 @@
           <sanityParam name="primaryKey" value="Ia"/>
           <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ GFF db xrefs ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuery ref="SequenceTables.SequenceGffDbxrefs" includeProjects="CryptoDB"
             minOutputLength="1" maxOutputLength="10">

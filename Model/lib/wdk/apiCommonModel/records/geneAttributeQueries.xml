@@ -1,22 +1,29 @@
 <wdkModel>
     <querySet name="GeneAttributes">
 
+     <!-- notes
 
+       - all projects need a gene alias query (or, we have to break that out of the 
+         <recordClass> element
+
+     -->
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Gene alias -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="GeneAlias" includeProjects="PlasmoDB" isCacheable="false">
+        <sqlQuery name="GeneAlias" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
-            <sql>
-            <![CDATA[
+            <sql includeProjects="PlasmoDB">
                 SELECT gene as source_id
                 FROM apidb.GeneAlias
                 WHERE alias = '$$primaryKey$$'
-            ]]>
+            </sql>
+            <sql excludeProjects="PlasmoDB">
+                SELECT '$$primaryKey$$' as source_id
+                FROM dual
             </sql>
         </sqlQuery>
 
