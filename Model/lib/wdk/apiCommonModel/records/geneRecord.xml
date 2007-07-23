@@ -171,7 +171,7 @@
             <columnAttribute name="ncbi_tax_id" displayName="Taxonomy Id" internal="true" inReportMaker="false"/>
             <columnAttribute name="cyc_db" displayName="PlasmoCYC DB Name" internal="true" 
                  inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
-            <columnAttribute name="cyc_gene_id" displayName="PlasmoCYC Gene ID" name="cyc_gene_id" 
+            <columnAttribute name="cyc_gene_id" displayName="PlasmoCYC Gene ID" 
                  internal="true" inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
             <columnAttribute name="cyc_db" displayName="ToxoCYC DB Name" internal="true" 
                  inReportMaker="false" includeProjects="ToxoDB"/>
@@ -242,7 +242,7 @@
           <!-- data dump attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <attributeQueryRef ref="DataDumpQueries.GeneGffAttrs" excludeProjects="ApiDB">
+          <attributeQueryRef ref="GeneAttributes.GeneGffAttrs" excludeProjects="ApiDB">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -682,7 +682,7 @@
 
           <table name="gff_GeneDbxrefs" excludeProjects="ApiDB"
                  displayName="Gene Exons"
-                 queryRef="DataDumpQueries.GeneGffDbxrefs" inReportMaker="false">
+                 queryRef="GeneTables.GeneGffDbxrefs" inReportMaker="false">
 
               <columnAttribute displayName="Dbxref" name="gff_dbxref"/>
           </table>
@@ -693,7 +693,7 @@
 
           <table name="gff_GeneRnas" excludeProjects="ApiDB"
                  displayName="Gene RNAs"
-                 queryRef="DataDumpQueries.GeneRnas" internal="true" inReportMaker="false">
+                 queryRef="GeneTables.GeneRnas" internal="true" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -717,7 +717,7 @@
 
           <table name="gff_GeneCdss" excludeProjects="ApiDB"
                  displayName="Gene CDSs"
-                 queryRef="DataDumpQueries.GeneCdss" inReportMaker="false">
+                 queryRef="GeneTables.GeneCdss" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -742,7 +742,7 @@
 
           <table name="gff_GeneExons" excludeProjects="ApiDB"
                  displayName="Gene Exons"
-                 queryRef="DataDumpQueries.GeneExons" inReportMaker="false">
+                 queryRef="GeneTables.GeneExons" inReportMaker="false">
 
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>

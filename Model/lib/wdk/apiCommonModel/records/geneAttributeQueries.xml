@@ -99,7 +99,7 @@
             <column name="rh_high_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
             <sql includeProjects="PlasmoDB">
             <![CDATA[
-            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product,
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
                    start_min, end_max,
                    trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
                    trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
@@ -366,7 +366,7 @@
             <column name="graph_cowman"/>
             <sql>
             <![CDATA[
-               SELECT '$$primaryKey$$' AS source_id,
+               SELECT '$$primaryKey$$' AS source_id, '$$projectId$$' as project_id,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
@@ -377,10 +377,52 @@
                       NVL(MAX(graph_cowman), 0) AS graph_cowman
                FROM apidb.ExpressionGraphSummary egs
                WHERE egs.source_id = '$$primaryKey$$'
-                 AND bfmv.project_id='$$projectId$$'
             ]]>
             </sql>
         </sqlQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- GFF -->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GeneGffAttrs">
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
+        <column name="gff_seqid"/>
+        <column name="gff_source"/>
+        <column name="gff_type"/>
+        <column name="gff_fstart"/>
+        <column name="gff_fend"/>
+        <column name="gff_score"/>
+        <column name="gff_strand"/>
+        <column name="gff_phase"/>
+        <column name="gff_attr_id"/>
+        <column name="gff_attr_name"/>
+        <column name="gff_attr_description"/>
+        <column name="gff_attr_locus_tag"/>
+        <column name="gff_attr_size"/>
+        <sql>
+            select gf.source_id,
+                   ens.source_id as gff_seqid,
+                   'ApiDB' as gff_source,
+                   'gene' as gff_type,
+                   least(nl.start_min, nl.end_max) as gff_fstart,
+                   greatest(nl.start_min, nl.end_max) as gff_fend,
+                   '.' as gff_score,
+                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
+                   '.' as gff_phase,
+                   gf.source_id as gff_attr_id,
+                   gf.source_id as gff_attr_name,
+                   gf.product as gff_attr_description,
+                   gf.source_id as gff_attr_locus_tag,
+                   (greatest(nl.start_min, nl.end_max) - least(nl.start_min, nl.end_max) + 1) as gff_attr_size
+            from DoTS.GeneFeature gf, 
+                 DoTS.NaLocation nl, 
+                 DoTS.ExternalNaSequence ens
+            where gf.source_id = '$$primaryKey$$'
+                  and gf.na_feature_id = nl.na_feature_id
+                  and gf.na_sequence_id = ens.na_sequence_id
+        </sql>
+    </sqlQuery>
     </querySet>
 </wdkModel>
