@@ -64,14 +64,23 @@
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ns.taxon_id
-                              FROM dots.NaSequence ns, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
+                             (  SELECT ns.taxon_id
+                                FROM dots.NaSequence ns, dots.GeneFeature gf
+                                WHERE gf.na_sequence_id = ns.na_sequence_id
+                              UNION
+                                SELECT ns.taxon_id
+                                FROM dots.NaSequence ns, sres.SequenceOntology so
+                                WHERE so.sequence_ontology_id = ns.sequence_ontology_id
+                                  AND so.term_name IN ('contig', 'supercontig', 'chromosome')))) organisms,
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -286,14 +295,18 @@
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT ns.taxon_id
-                              FROM dots.NaSequence ns, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
+                             (SELECT taxon_id
+                              FROM dots.AaSequence aas, dots.AaSequenceEnzymeClass asec
+                              WHERE aas.aa_sequence_id = asec.aa_sequence_id))) organisms,
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -410,11 +423,15 @@
                              (SELECT ns.taxon_id
                               FROM dots.NaSequence ns, dots.GeneFeature gf
                               WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
-               (SELECT 'Plasmodium falciparum' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium vivax' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
                  UNION
-                SELECT 'Plasmodium yoelii' AS name, 3 AS rank FROM dual) partial_ordering
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
