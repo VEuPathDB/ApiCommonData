@@ -55,6 +55,7 @@
         isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
         <column name="source_id"/>
+        <column name="project_id"/>
         <sql excludeProjects="ApiDB">
             <![CDATA[
             SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
