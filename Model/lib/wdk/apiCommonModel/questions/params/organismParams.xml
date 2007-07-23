@@ -151,7 +151,12 @@
     </wsQuery>
 
     <!--===================================================================-->
-    <!-- with genomic seq-->
+    <!-- with genomic seq
+
+         only include a species if one of the species' taxon_ids is
+         associated with a sequence whose sequence_ontology_id maps to
+         'contig', 'supercontig' or 'chromosome'.
+                                                                           -->
     <!--===================================================================-->
 
     <sqlQuery name="withGenomicSeq" excludeProjects="ApiDB">
