@@ -769,7 +769,7 @@ sub renameFile {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $signal = $fileName;
+  my $signal = $dir . $fileName;
 
   $signal =~ s/\///g;
 
@@ -1730,18 +1730,19 @@ sub extractIdsFromBlastResult {
 sub filterBLASTResults{
   my ($mgr, $taxonList, $gi2taxidFile, $blastDir, $fileName) = @_;
 
+  my $signal = "filtering${blastDir}BlastResults";
+
   my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/$fileName";
-  my $inputFile = $blastFile.'.unfiltered';
-  
+
+  my $inputFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/unfiltered$fileName";
+
   unless (-e $inputFile) {
     rename($blastFile, $inputFile) or die "can not rename $blastFile to $inputFile\n";
   }
-  
+
   my $outFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
 
   $gi2taxidFile = "$mgr->{dataDir}/misc/$gi2taxidFile";
-
-  my $signal = "filtering${blastDir}BlastResults";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
