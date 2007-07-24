@@ -21,13 +21,11 @@
             <paramRef ref="recordParams.projectId"/>
             <column name="alias"/>
             <sql>
-            <![CDATA[
             SELECT distinct ng.name AS alias
             FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
             WHERE gf.source_id = '$$primaryKey$$'
               AND gf.na_feature_id = nfng.na_feature_id
               AND nfng.na_gene_id = ng.na_gene_id
-            ]]>
             </sql>
         </sqlQuery>
 
@@ -462,7 +460,7 @@
        <!-- PFam domains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="PfamDomains" 
+        <sqlQuery name="PfamDomains" includeProjects="CryptoDB,ToxoDB"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -492,6 +490,7 @@
                 ORDER BY start_min
             </sql>
             <sql includeProjects="ToxoDB">
+            <![CDATA[
             SELECT pe.definition, pe.accession,
                    SUBSTR(pe.accession, 1, INSTR(pe.accession, '.', 1, 1) -1)
                        AS accession_base,
@@ -507,6 +506,7 @@
               AND df.pfam_entry_id = pe.pfam_entry_id
               AND df.e_value <= 0.05
               GROUP BY pe.definition, pe.accession, al.start_min, al.end_max
+            ]]>
             </sql>
         </sqlQuery>
 

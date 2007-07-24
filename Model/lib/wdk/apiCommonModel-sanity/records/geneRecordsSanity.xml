@@ -67,6 +67,28 @@
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ GFF dump ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneAttributes.GeneGffAttrs" includeProjects="CryptoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Chro.trn046"/>
+        <sanityParam name="projectId" value="CryptoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffAttrs" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB400024.00.0"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffAttrs" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Protein Sequence ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
@@ -83,10 +105,10 @@
         <sanityParam name="projectId" value="PlasmoDB"/>
     </sanityQuery>
 
-    <sanityQuery ref="GeneAttributes.ProteinSequence" includeProjects=",ApiDB"
+    <sanityQuery ref="GeneAttributes.ProteinSequence" includeProjects="ToxoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="44.m00048"/>
-        <sanityParam name="projectId" value=""/>
+        <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
 
@@ -300,6 +322,54 @@
           <sanityParam name="primaryKey" value="PF11_0344"/>
           <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
+
+    <sanityQuery ref="GeneTables.Epitopes"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.PfamDomains"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.GeneGffDbxrefs"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.GeneRnas"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.GeneCdss"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.GeneExons"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneTables.TaskComments"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="primaryKey" value="FIX_null_dflt"/>
+        <sanityParam name="projectId" value="FIX_null_dflt"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Pf only  ++ -->
