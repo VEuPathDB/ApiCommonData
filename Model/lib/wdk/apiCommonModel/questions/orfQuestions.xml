@@ -13,29 +13,19 @@
               queryRef="OrfIds.OrfsByLocation"
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-      <attributesList includeProjects="CryptoDB,ApiDB"
-             summary="organism"
-             sorting="organism asc"
-      />
-
-      <attributesList includeProjects="ToxoDB"
-             summary="orf_location_text,length"
-             sorting="orf_location_text asc"
-      />
-
-      <attributesList includeProjects="PlasmoDB"
+      <attributesList 
              summary="formatted_organism,orf_location_text,length"
              sorting="formatted_organism asc,orf_location_text asc"
       />
-     
+
       <summary>
           Find Orfs that are located in a specified genomic region.
       </summary>
 
-      <description includeProjects="CryptoDB,ApiDB" >
+      <description>
           <![CDATA[
             <p>Find Orfs that are located in a specified genomic region.</p>
-            <p>Enter the ID of a genomic sequence and start and end locations on that sequence.</p>
+            <p>Enter the ID of a genomic sequence, start and end locations on that sequence and the minimum length (in amino acids) of the ORF.</p>
           ]]>
       </description>
 
@@ -52,8 +42,8 @@
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
              <attributesList 
-               summary="organism,orf_location_text,length"
-               sorting="organism asc, orf_location_text asc"
+               summary="formatted_organism,orf_location_text,length"
+               sorting="formatted_organism asc, orf_location_text asc"
              />
              <summary>
              Find ORFs by ID.
@@ -75,14 +65,9 @@
               queryRef="OrfIds.OrfsByMassSpec" 
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
-          <attributesList excludeProjects="ApiDB"
-              summary="orf_location_text,sum_sequence_count,sum_spectrum_count"
-              sorting="sum_sequence_count desc,sum_spectrum_count desc"
-          />
-
-          <attributesList includeProjects="ApiDB"
-              summary="organism"
-              sorting="organism asc"
+          <attributesList 
+              summary="formatted_organism,orf_location_text,sum_sequence_count,sum_spectrum_count"
+              sorting="formatted_organism asc,sum_sequence_count desc,sum_spectrum_count desc"
           />
 
               <summary>
@@ -94,7 +79,7 @@
               <![CDATA[
              Find <i>Cryptosporidium</i> open reading frames that have evidence of expression 
              based on peptides identified by MS/MS analysis in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture.<p>
-            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
+            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.  NOTE: This query only returns ORFs that contain peptides that could not be mapped onto an annotated gene model overlapping with the ORF.
             <p>
              <sup>&#182;</sup>
    <%-- description by J. Wastling --%>
@@ -116,29 +101,25 @@ one time.
 
               <description includeProjects="ToxoDB">
               <![CDATA[
-             Find <i>Toxoplasma</i> open reading frames that have evidence of expression 
-             based on peptides identified by MS/MS analysis in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture.<p>
-            See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.
-            <p>
-             <sup>&#182;</sup>
-   <%-- description by J. Wastling --%>
-<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
-<br>
-Mass spectrometry data were obtained from two-dimensional gel 
-electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
-MudPIT analysis of a sporozoite/oocyst excystation mixture of 
-<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
-hits were obtained resulting in 1,252 non-redundant protein identifications.  
-In addition a further 100 hits were obtained to sequences which matched a 
-predicted open reading frame, but for which no gene model currently exists.  
-In total these protein identifications represent nearly one third of the 
-entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
-that the entire proteome from all life-stages will be expressed at any 
-one time.
+             <p>
+             Find <i>Toxoplasma</i> ORFs that have evidence of protein expression based on Mass Spec analyses.
+             <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.  NOTE: This query only returns ORFs that contain peptides that could not be mapped onto an annotated gene model overlapping with the ORF.
+             <p>
+             <sup>1</sup> <i>Proteomics data from JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
+             Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
+             <p>
+             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, 
+	     DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
+	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. 
+	     PLoS Pathog <b>2</b>:121-138.</i><br>
+             1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
+             <p><p>
+             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. 
+             With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
              ]]>
              </description>
 
-	<dynamicAttributes excludeProjects="ApiDB">
+	<dynamicAttributes>
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>

@@ -47,36 +47,18 @@
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="orfParams.min_orf_length"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <column name="orf_location"/>
-        <sql includeProjects="PlasmoDB,CryptoDB">
+        <sql includeProjects="ToxoDB,PlasmoDB,CryptoDB"> 
             <![CDATA[
-	    SELECT t.source_id, '@PROJECT_ID@' as project_id,
-                  enas.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
-	    FROM  dots.externalNASequence enas,
-	          dots.nafeature t,
-	          sres.sequenceontology so,
-	          dots.nalocation nal
-	    WHERE enas.na_sequence_id = t.na_sequence_id
-	      AND t.sequence_ontology_id = so.sequence_ontology_id
-	      AND so.term_name = 'ORF'
-	      AND t.na_feature_id = nal.na_feature_id
-	      AND (enas.source_id = '$$chromosomeOptional$$'
-                   OR lower(enas.source_id) = lower('$$sequenceId$$'))
-              AND nal.end_max >= $$start_point$$ 
-              AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
-           ]]>
-       </sql>
-        <sql includeProjects="ToxoDB"> <!-- not clear to me why this uses taaf -sdf -->
-            <![CDATA[
-	    SELECT m.source_id, '@PROJECT_ID@' as project_id,
-	       vs.source_id || ':' || trim(to_char(nal.start_min,'999,999,999')) || '-' || trim(to_char(nal.end_max,'999,999,999')) || '(' || decode(nal.is_reversed,0,'+',1,'-',null) || ')' as orf_location
-	    FROM dots.VirtualSequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
+	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
 	    WHERE m.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
+            AND tas.length >= $$min_orf_length$$
 	    AND vs.na_sequence_id = m.na_sequence_id
 	    AND vs.source_id = gs.source_id
 	    AND (gs.source_id = '$$chromosomeOptional$$'
