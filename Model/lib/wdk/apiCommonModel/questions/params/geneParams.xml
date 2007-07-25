@@ -411,6 +411,7 @@
                      prompt="Non-synonymous / synonymous SNP ratio >= ">
             <help>Lower Bound on the ratio of non-synonymous to synonymous coding snps</help>
             <suggest default="0"/>
+        </stringParam>
 
 
       <stringParam name="min_num_coding_snps"
@@ -2542,10 +2543,10 @@
         </stringParam>
 
         <stringParam name="percentLowComplexity"
+                     substitute="yes"
 	             prompt="Percent of Low Complexity in Protein">
             <help>Enter an lower bound on the percent of low complexity.</help>
-            <suggest substitute="yes"
-		     default="30"/>
+            <suggest default="30"/>
         </stringParam>
 
         <stringParam name="max_centromere_distance"
@@ -2648,6 +2649,7 @@
                      substitute="yes">
             <help>Choose a upper bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of coil will be returned.</help>
             <suggest default="100"/>
+        </stringParam>
 
 
         <stringParam name="min_strand"

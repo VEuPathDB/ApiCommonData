@@ -418,7 +418,7 @@
                    (greatest(nl.start_min, nl.end_max) - least(nl.start_min, nl.end_max) + 1) as gff_attr_size
             from DoTS.GeneFeature gf, 
                  DoTS.NaLocation nl, 
-                 DoTS.ExternalNaSequence ens
+                 DoTS.NaSequence ens
             where gf.source_id = '$$primaryKey$$'
                   and gf.na_feature_id = nl.na_feature_id
                   and gf.na_sequence_id = ens.na_sequence_id
