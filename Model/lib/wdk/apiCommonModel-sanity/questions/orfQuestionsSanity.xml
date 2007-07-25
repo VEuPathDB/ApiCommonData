@@ -124,7 +124,21 @@
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
           <sanityParam name="-filter" value="no"/>
-      </sanityQuestion>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="CryptoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastQuerySequence" value="LCRGKKKFLIFFLFVCLFLVLFFFQDRVSLCSPGCPGTH"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
+    </sanityQuestion>
+
 
     <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="ToxoDB,ApiDB"
                       pageStart="1" pageEnd="20"
