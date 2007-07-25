@@ -1732,6 +1732,8 @@ sub filterBLASTResults{
 
   my $signal = "filtering${blastDir}BlastResults";
 
+  return if $mgr->startStep("Filtering BLAST Results for $blastDir", $signal);
+
   my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/$fileName";
   my $inputFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/unfiltered$fileName";
 
