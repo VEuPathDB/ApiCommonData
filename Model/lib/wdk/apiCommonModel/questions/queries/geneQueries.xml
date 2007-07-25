@@ -531,7 +531,7 @@
 
     <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
               isCacheable="true">
-        <paramRef ref="generalParams.historyId"/>
+        <paramRef ref="sharedParams.historyId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="source_id" />
         <column name="project_id" includeProjects="ApiDB"/>
@@ -929,7 +929,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB" 
+    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB"> 
        <paramRef ref="geneParams.cowmanSample"/>
        <paramRef ref="geneParams.percentile"/>
         <column name="project_id"/>
@@ -1177,7 +1177,7 @@ order by project_id,sns2.source_id
               isCacheable="true">
         <paramRef ref="geneParams.min_molecular_weight"/>
         <paramRef ref="geneParams.max_molecular_weight"/>
-        <paramRef ref="generalParams.organism"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -1477,7 +1477,7 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesWithEpitopes" excludeProjects="ApiDB"
            isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <paramRef ref="epitopeParams.confidence"/>
+        <paramRef ref="geneParams.epitope_confidence"/>
         <column name="source_id" />
         <column name="project_id"/>
         <column name="confidence" />
@@ -1524,7 +1524,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMassSpec" 
+    <sqlQuery name="GenesByMassSpec" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.mass_spec_stage"/>
         <paramRef ref="geneParams.min_seq_coverage"/>
@@ -1552,10 +1552,10 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByMassSpec" includeProjects="CryptoDB"
             isCacheable='true'>
-        <paramRef ref="params.parvumOrganism"/>
-        <paramRef ref="params.wastlinglowery_ms_assay"/>
-        <paramRef ref="params.min_sequence_count"/>
-        <paramRef ref="params.min_spectrum_count"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <paramRef ref="geneParams.wastlinglowery_ms_assay"/>
+        <paramRef ref="geneParams.min_sequence_count"/>
+        <paramRef ref="geneParams.min_spectrum_count"/>
         <column name="source_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
@@ -1606,11 +1606,12 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
     
-    <sqlQuery name="GenesByMassSpec" displayName="By Mass Spec. Evidence" isCacheable='true'>
-        <paramRef ref="params.organism"/>
-        <paramRef ref="params.ms_assay"/>
-        <paramRef ref="params.min_sequence_count"/>
-        <paramRef ref="params.min_spectrum_count"/>
+    <sqlQuery name="GenesByMassSpec" includeProjects="ToxoDB"
+        isCacheable='true'>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <paramRef ref="geneParams.ms_assay"/>
+        <paramRef ref="geneParams.min_sequence_count"/>
+        <paramRef ref="geneParams.min_spectrum_count"/>
         <column name="source_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
