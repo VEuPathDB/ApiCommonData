@@ -51,6 +51,16 @@ my $sthTU = $dbh->prepare(<<EOSQL);
   LIMIT 1
 EOSQL
 
+my $sthPubLocus = $dbh->prepare(<<EOSQL);
+  SELECT ident.pub_locus
+  FROM   clone_info 
+         INNER JOIN asm_feature AS tu USING (asmbl_id) 
+         INNER JOIN ident USING (feat_name)
+  WHERE  tu.feat_type = "TU"
+  AND    is_public = 1
+  AND    ident.feat_name = ?
+EOSQL
+
 my $sthModel = $dbh->prepare(<<EOSQL);
   SELECT clone_info.clone_name AS scaffold,
          model.feat_name AS model_id,
@@ -94,6 +104,11 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
   $sthTU->execute($sourceId);
   my ($tuName, $tuStart, $tuStop, $product, $isPseudo, $ecNumber) = $sthTU->fetchrow_array();
 
+  # extract pub_locus if stored in mysql database (as is for pv and py)
+  my $pubLocus;
+  $sthPubLocus->execute($tuName);
+  $pubLocus = $sthPubLocus->fetchrow_array();
+
   my $exonCount = 0;
 
   my ($minStart, $maxStop);
@@ -116,6 +131,9 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
       if ($cdsCount > 1) {
 	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
       }
+
+      # substitute $sourceId var with pub_locus when possible (for pv and py)
+      $sourceId = $pubLocus if ($pubLocus);
 
       push @exons, join("\t",
 			$scaffold,
@@ -155,6 +173,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
     }
   }
 
+
   print OUT join("\t",
 		 $scaffold,
 		 $annotation ? "annotation" : $source,
@@ -183,4 +202,5 @@ $sthTU->finish();
 $sthModel->finish();
 $sthExon->finish();
 $sthCDS->finish();
+$sthPubLocus->finish();
 $dbh->disconnect();
