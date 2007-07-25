@@ -1733,11 +1733,10 @@ sub filterBLASTResults{
   my $signal = "filtering${blastDir}BlastResults";
 
   my $blastFile =  "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/$fileName";
-
   my $inputFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/unfiltered$fileName";
 
   unless (-e $inputFile) {
-    rename($blastFile, $inputFile) or die "can not rename $blastFile to $inputFile\n";
+    rename($blastFile, $inputFile) or die "cannot rename $blastFile to $inputFile\n";
   }
 
   my $outFile = "$mgr->{dataDir}/similarity/$blastDir/master/mainresult/blastSimilarity.out";
@@ -1747,8 +1746,6 @@ sub filterBLASTResults{
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   $taxonList =~ s/"//g;
-
-  return if $mgr->startStep("Filtering blast results for $blastDir", $signal);
 
   my $cmd = "splitAndFilterBLASTX --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $outFile 2>> $logFile";
 
