@@ -1,0 +1,71 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- ============================================================ -->
+  <!-- == vocab queries == -->
+  <!-- ============================================================ -->
+  <!-- ============================================================ -->
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Domain Database ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneVQ.DomainDatabase"
+            minOutputLength="10" maxOutputLength="20">
+    </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Metabolic Pathways ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneVQ.MetabolicPathways" excludeProjects="CryptoDB"
+            minOutputLength="50" maxOutputLength="200">
+    </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Gene Types ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneVQ.GeneTypes"
+            minOutputLength="1" maxOutputLength="9">
+    </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ PlasmoDB only ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneVQ.ExtraerythrocyticStages" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneVQ.IntraerythrocyticStages" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="8" maxOutputLength="8">
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneVQ.Mr4Reagents" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="5" maxOutputLength="8">
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneVQ.Clades" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="5" maxOutputLength="5">
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneVQ.DayAndStrain" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="23" maxOutputLength="23">
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneVQ.cowmanSample" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="12" maxOutputLength="12">
+    </sanityQuery>
+
+
+</sanityModel>
