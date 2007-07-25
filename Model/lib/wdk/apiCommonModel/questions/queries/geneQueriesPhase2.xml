@@ -1,0 +1,1006 @@
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  plasmoDB 4.4 dataset-->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByPlasmoDbDataset" includeProjects="PlasmoDB"
+                 isCacheable="true">
+        <paramRef ref="geneParams.plasmodb_4-4_dataset"/>
+        <column name="project_id"/>
+        <column name="source_id"  />
+        <sql>
+            <!-- keep order or genes but remove duplicates -->
+            <![CDATA[
+                SELECT imported.source_id, '@PROJECT_ID@' as project_id FROM (
+                    SELECT ga.gene AS source_id, min(c.i) AS i
+                    FROM cache$$plasmodb_4-4_dataset$$@apidb.cbilprod c,
+                         apidb.plasmodb_genes@apidb.cbilprod pg,
+                         apidb.GeneAlias ga
+                    WHERE c.na_feature_id = pg.na_feature_id
+                      AND lower(pg.source_id) = ga.alias
+                    GROUP BY ga.gene) imported
+                ORDER BY i
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Y2H Protein protein interaction -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB"
+         isCacheable="true">
+        <paramRef ref="geneParams.single_gene_id" default="PFL0275w"/>
+        <paramRef ref="geneParams.min_searches"/>
+        <paramRef ref="geneParams.min_observed"/>
+        <paramRef ref="geneParams.bait_or_prey"/>
+        <column name="project_id"/>
+        <column name="source_id" />
+        <column name="gene_source_id" />
+        <column name="bait_start" />
+        <column name="bait_end" />
+        <column name="prey_start" />
+        <column name="prey_end" />
+        <column name="times_observed" />
+        <column name="number_of_searches" />
+        <column name="prey_number_of_baits" />
+        <column name="bait_number_of_preys" />
+        <column name="bait_or_prey" />
+        <sql>
+            <![CDATA[
+            SELECT * FROM
+               (SELECT pf.source_id, '@PROJECT_ID@' as project_id, pf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+                       times_observed, number_of_searches,
+                       (select distinct prey_number_of_baits
+                         from apidb.geneinteraction igi
+                         where igi.bait_gene_feature_id = pf.na_feature_id) AS prey_number_of_baits,
+                       bait_number_of_preys, 'bait' as bait_or_prey
+                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                     dots.ExternalNaSequence ens, apidb.GeneInteraction gi
+                WHERE lower('$$single_gene_id$$') = ga.id
+                  AND ga.gene = bf.source_id
+                  AND gi.number_of_searches >= $$min_searches$$
+                  AND gi.times_observed >= $$min_observed$$
+                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                  AND gi.prey_gene_feature_id = pf.na_feature_id
+                  AND pf.na_sequence_id = ens.na_sequence_id
+                UNION
+                SELECT bf.source_id, '@PROJECT_ID@' as project_id, bf.source_id as gene_source_id, bait_start, bait_end, prey_start, prey_end,
+                       times_observed, number_of_searches, prey_number_of_baits,
+                       (select distinct bait_number_of_preys
+                         from apidb.geneinteraction igi
+                         where igi.prey_gene_feature_id = bf.na_feature_id) AS bait_number_of_preys, 'prey' as bait_or_prey
+                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                     dots.ExternalNaSequence ens,  apidb.GeneInteraction gi
+                WHERE lower('$$single_gene_id$$') = ga.id
+                  AND ga.gene = pf.source_id
+                  AND gi.number_of_searches >= $$min_searches$$
+                  AND gi.times_observed >= $$min_observed$$
+                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                  AND gi.prey_gene_feature_id = pf.na_feature_id
+                  AND bf.na_sequence_id = ens.na_sequence_id)
+            WHERE ($$bait_or_prey$$ = bait_or_prey
+                   OR $$bait_or_prey$$ = 'either')
+           ]]>
+       </sql>
+    </sqlQuery>
+
+   <wsQuery name="GenesByProteinProteinInteraction" includeProjects="ApiDB"
+                        isCacheable="true" 
+                        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+        <paramRef ref="geneParams.single_gene_id" default="PFL0275w"/>
+        <paramRef ref="geneParams.min_searches"/>
+        <paramRef ref="geneParams.min_observed"/>
+        <paramRef ref="geneParams.bait_or_prey"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="gene_source_id" width="32" wsName="gene_source_id"/>
+        <wsColumn name="bait_start" width="32"/>
+        <wsColumn name="bait_end" width="32"/>
+        <wsColumn name="prey_start" width="32"/>
+        <wsColumn name="prey_end" width="32"/>
+        <wsColumn name="times_observed" width="32"/>
+        <wsColumn name="number_of_searches" width="32"/>
+        <wsColumn name="prey_number_of_baits" width="32"/>
+        <wsColumn name="bait_number_of_preys" width="32"/>
+        <wsColumn name="bait_or_prey" width="32"/>
+     </wsQuery>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExpressionTiming" includeProjects="PlasmoDB" 
+              isCacheable="true">
+        <paramRef ref="geneParams.profileSet"/>
+        <paramRef ref="geneParams.minOrMax"/>
+        <paramRef ref="geneParams.maxExprHour"/>
+        <paramRef ref="geneParams.maxPlusMinusHours"/>
+        <paramRef ref="geneParams.minExprHour"/>
+        <paramRef ref="geneParams.minPlusMinusHours"/>
+        <paramRef ref="geneParams.inductionFold"/>
+        <paramRef ref="geneParams.expressionPct"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+          <![CDATA[
+          SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+          FROM apidb.profile pr, apidb.profileset prs,
+               dots.nafeature gf
+          WHERE (('$$minOrMax$$' = 'min')
+                 OR ((abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
+                      OR (abs($$maxExprHour$$ - pr.equiv_max) >= (48 - $$maxPlusMinusHours$$))))
+          AND (('$$minOrMax$$' = 'max')
+               OR ((abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
+                   OR (abs($$minExprHour$$ - pr.equiv_min) >= (48 -$$minPlusMinusHours$$))))
+          AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.max_percentile >= $$expressionPct$$ / 100
+          AND pr.source_id = gf.source_id
+          AND pr.profile_set_id = prs.profile_set_id
+          AND prs.name like ('$$profileSet$$')
+          ORDER BY gf.source_id
+          ]]>
+      </sql>
+    </sqlQuery>
+
+             
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Expression profile similarity -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <wsQuery name="GenesByProfileSimilarity" includeProjects="PlasmoDB"  
+             processName="org.plasmodb.wsfplugin.profile.ProfileSimilarityPlugin">
+       <paramRef ref="geneParams.ProfileGeneId"/>
+       <paramRef ref="geneParams.ProfileDistanceMethod"/>
+       <paramRef ref="geneParams.ProfileNumToReturn"/>
+       <paramRef ref="geneParams.ProfileProfileSet"/>
+       <paramRef ref="geneParams.ProfileSearchGoal"/>
+       <paramRef ref="geneParams.ProfileTimeShift"/>
+       <paramRef ref="geneParams.ProfileScaleData"/>
+       <paramRef ref="geneParams.ProfileMinShift"/>
+       <paramRef ref="geneParams.ProfileMaxShift"/>
+       <wsColumn name="source_id" width="50" wsName="GeneID"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="distance" wsName="Distance" width="50"/>
+       <wsColumn name="time_shift" wsName="Shift" width="50"/>
+       <wsColumn name="query_source_id" wsName="QueryGeneId" width="50"/>
+    </wsQuery>
+
+    <wsQuery name="GenesByProfileSimilarity" includeProjects="ApiDB"  
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+       <paramRef ref="geneParams.ProfileGeneId"/>
+       <paramRef ref="geneParams.ProfileDistanceMethod"/>
+       <paramRef ref="geneParams.ProfileNumToReturn"/>
+       <paramRef ref="geneParams.ProfileProfileSet"/>
+       <paramRef ref="geneParams.ProfileSearchGoal"/>
+       <paramRef ref="geneParams.ProfileTimeShift"/>
+       <paramRef ref="geneParams.ProfileScaleData"/>
+       <paramRef ref="geneParams.ProfileMinShift"/>
+       <paramRef ref="geneParams.ProfileMaxShift"/>
+       <wsColumn name="source_id" width="50" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="distance" wsName="distance" width="50"/>
+       <wsColumn name="time_shift" wsName="time_shift" width="50"/>
+       <wsColumn name="query_source_id" wsName="query_source_id" width="50"/>
+    </wsQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByPhyleticProfile" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="sharedParams.ds_gene_ids" default="PY03942"/>
+        <paramRef ref="geneParams.min_mutual_information_score"/>
+        <paramRef ref="geneParams.include_only_queries"/>
+        <paramRef ref="geneParams.min_num_query_matches"/>
+        <column name="project_id"/>
+        <column name="source_id" />
+        <column name="query_ids" />
+        <column name="mutual_information_scores" />
+        <column name="num_queries" />
+        <sql>
+            <![CDATA[
+                SELECT gf2.source_id, '@PROJECT_ID@' as project_id, count(*) as num_queries,
+                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids,
+                    apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
+                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                     dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'no'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = pp1.na_feature_id
+                  AND ((pp1.phylogenetic_profile_id = mis.primary_profile_id
+                  AND mis.secondary_profile_id = pp2.phylogenetic_profile_id)
+                    OR (pp1.phylogenetic_profile_id = mis.secondary_profile_id
+                  AND mis.primary_profile_id = pp2.phylogenetic_profile_id))
+                  and mis.mutual_information_score/1000 >= $$min_mutual_information_score$$
+                  AND pp2.na_feature_id = gf2.na_feature_id
+                  AND gf2.source_id != gf1.source_id
+                  group  by gf2.source_id
+                  having count(*) >= $$min_num_query_matches$$
+                UNION
+                SELECT gf2.source_id, count(*) as num_queries,
+                    apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                    apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
+                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                     dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'yes'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = pp1.na_feature_id
+                  AND ((pp1.phylogenetic_profile_id = mis.primary_profile_id
+                  AND mis.secondary_profile_id = pp2.phylogenetic_profile_id)
+                    OR (pp1.phylogenetic_profile_id = mis.secondary_profile_id
+                  AND mis.primary_profile_id = pp2.phylogenetic_profile_id))
+                  and mis.mutual_information_score/1000 >= $$min_mutual_information_score$$
+                  AND pp2.na_feature_id = gf2.na_feature_id
+                  AND gf2.source_id in (select intds.dataset_value as gene_id 
+                      from @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ intds
+                      where intds.dataset_id = $$ds_gene_ids$$) 
+                  AND gf2.source_id != gf1.source_id
+                  group  by gf2.source_id
+                  having count(*) >= $$min_num_query_matches$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByFunctionalInteraction" includeProjects="PlasmoDB" 
+              isCacheable="true">
+        <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
+        <paramRef ref="geneParams.min_interaction"/>
+        <paramRef ref="geneParams.include_only_queries"/>
+        <paramRef ref="geneParams.min_num_query_matches"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="likelihood_scores"/>
+        <column name="query_ids" />
+        <column name="queries_matched"/>
+        <sql>
+            <![CDATA[
+                SELECT gf2.source_id, '@PROJECT_ID@' as project_id, 
+                  apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                  apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
+                  count(*) as queries_matched
+                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'no'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = rnf.na_feature_id
+                  AND rnf.associated_na_feature_id = gf2.na_feature_id
+                  AND rnf.value >= '$$min_interaction$$'
+                GROUP BY gf2.source_id
+                HAVING count(*) >= $$min_num_query_matches$$
+              UNION
+                SELECT gf2.source_id, '@PROJECT_ID@' as project_id, 
+                  apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
+                  apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
+                  count(*) as queries_matched
+                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
+                     dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
+                WHERE '$$include_only_queries$$' = 'yes'
+                  AND gf1.source_id = gi.gene
+                  AND gi.id = lower(ds.dataset_value)
+                  AND ds.dataset_id = $$ds_gene_ids$$
+                  AND gf1.na_feature_id = rnf.na_feature_id
+                  AND rnf.associated_na_feature_id = gf2.na_feature_id
+                  AND rnf.value >= '$$min_interaction$$'
+                  AND gf2.source_id in (select intds.dataset_value as gene_id 
+                      from @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ intds
+                      where intds.dataset_id = $$ds_gene_ids$$)
+                GROUP BY gf2.source_id
+                HAVING count(*) >= $$min_num_query_matches$$
+           ]]>
+       </sql>
+    </sqlQuery>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB" 
+           isCacheable="true">
+        <paramRef ref="geneParams.synchronization"/>
+        <paramRef ref="geneParams.intraerythrocytic_stages"/>
+        <paramRef ref="geneParams.min_expression_percentile"/>
+        <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+            SELECT e.source_id, '@PROJECT_ID@' as project_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE (e.element_order = $$intraerythrocytic_stages$$
+                   OR $$intraerythrocytic_stages$$ = 0)
+              AND e.profile_set_name in ($$synchronization$$)
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExtraerythrocyticExpression"  includeProjects="PlasmoDB"
+           isCacheable="true">
+        <paramRef ref="geneParams.extraerythrocytic_stages"/>
+        <paramRef ref="geneParams.min_expression_percentile"/>
+        <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+            SELECT e.source_id, '@PROJECT_ID@' as project_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE e.profile_set_name in ('winzeler_cc_sorbPct', 'winzeler_cc_sporPct')
+              AND (e.element_order = $$extraerythrocytic_stages$$
+                   OR $$extraerythrocytic_stages$$ = 0)
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExpression" includeProjects="PlasmoDB"
+           isCacheable="true">
+        <paramRef ref="geneParams.min_expression_percentile"/>
+        <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            <![CDATA[
+
+            SELECT e.source_id, '@PROJECT_ID@' as project_id, MAX(e.value) AS max_percentile,
+                   MIN(e.value) AS min_percentile
+            FROM apidb.Expression e
+            WHERE e.profile_set_name
+                  in ('winzeler_cc_sorbPct', 'winzeler_cc_tempPct',
+                      'winzeler_cc_sporPct')
+              AND e.value >= $$min_expression_percentile$$ / 100
+              AND e.value <= $$max_expression_percentile$$ / 100
+            GROUP BY e.source_id
+            ORDER BY e.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.diffMeanExpr_reference"/>
+       <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
+       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.fold_change"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="fold_change" />
+       <sql>
+        <![CDATA[
+           SELECT ga.gene as source_id, '@PROJECT_ID@' as project_id, 
+                   to_char((CASE WHEN avg(ep1.mean)/avg(ep2.mean) >= 1
+                   THEN avg(ep1.mean)/avg(ep2.mean)
+                   ELSE -1/(avg(ep1.mean)/avg(ep2.mean))
+                   END),999.9) as fold_change
+            FROM Rad.AnalysisInput ai1, Rad.Analysis a1, 
+                 Rad.ExpressionProfile ep1,  
+                 Rad.AnalysisInput ai2, Rad.Analysis a2,
+                 Rad.ExpressionProfile ep2, 
+                 Rad.Protocol p, Rad.ShortOligoFamily sof,
+                 ApiDB.GeneAlias ga
+            WHERE p.name = 'R Expression Statistics'
+             AND ai1.logical_group_id = $$diffMeanExpr_reference$$
+             AND a1.analysis_id = ai1.analysis_id
+             AND a1.protocol_id = p.protocol_id
+             AND ep1.analysis_id = a1.analysis_id
+             AND sof.composite_element_id = ep1.row_id
+             AND ai2.logical_group_id = $$diffMeanExpr_comparitor$$
+             AND a2.analysis_id = ai2.analysis_id
+             AND a2.protocol_id = p.protocol_id
+             AND ep2.analysis_id = a2.analysis_id
+             AND sof.composite_element_id = ep2.row_id
+             AND sof.source_id is not null
+             AND ga.alias = sof.source_id
+             having  case when '$$regulated_dir$$' = '-' 
+                    then avg(ep2.mean)/avg(ep1.mean)
+                     else avg(ep1.mean)/avg(ep2.mean)
+                     end > $$fold_change$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+            ]]>
+          </sql>
+    </sqlQuery>   
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB"> 
+       <paramRef ref="geneParams.cowmanSample"/>
+       <paramRef ref="geneParams.percentile"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="percentile" />
+       <sql>
+            <![CDATA[
+	    SELECT 
+                 ga.gene as source_id, '@PROJECT_ID@' as project_id, 
+                 max(to_char(de.percentile,'99.99')) as percentile
+            FROM RAD.ExpressionProfile de, Rad.ShortOligoFamily sof,
+                 Rad.Analysis a, Rad.AnalysisInput aia, 
+		 Rad.LogicalGroup lga,
+                 Rad.Protocol p, Rad.ProtocolParam pp, Rad.AnalysisParam ap,
+                 ApiDB.GeneAlias ga
+            WHERE sof.source_id is not null
+             AND ga.alias = sof.source_id
+             AND sof.composite_element_id = de.row_id
+             AND a.analysis_id = de.analysis_id
+             AND a.analysis_id = aia.analysis_id
+             AND aia.logical_group_id = lga.logical_group_id 
+             AND a.protocol_id = p.protocol_id
+             AND pp.protocol_id = p.protocol_id
+             AND ap.protocol_param_id = pp.protocol_param_id
+             AND ap.analysis_id = a.analysis_id
+             AND p.name = 'R Expression Statistics'
+             AND lga.logical_group_id = '$$cowmanSample$$'
+             AND de.percentile >= $$percentile$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+            ]]>
+          </sql>
+    </sqlQuery>   
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="confidence" />
+       <column name="fold_change" />
+       <sql>
+            <![CDATA[
+          SELECT ga.gene as source_id, '@PROJECT_ID@' as project_id,
+	      max(to_char(de.fold_change, '999.99')) as fold_change,
+              max(to_char(de.confidence,'99.99')) as confidence
+            FROM Rad.LogicalGroup lg,
+                 Rad.AnalysisInput ai,
+                 Rad.Analysis a, 
+                 RAD.DifferentialExpression de, 
+                 Rad.ShortOligoFamily sof,
+                 Rad.Protocol p, 
+                 Rad.ProtocolParam pp, 
+                 Rad.AnalysisParam ap,
+                 ApiDB.GeneAlias ga
+            WHERE lg.name = 'DOZI mutant vs. Wild Type - Loess Normalized Analyses'
+             AND ai.logical_group_id = lg.logical_group_id 
+             AND a.analysis_id = ai.analysis_id
+             AND de.analysis_id = a.analysis_id
+             AND sof.composite_element_id = de.row_id
+             AND sof.source_id is not null
+             AND ga.alias = sof.source_id
+             AND p.name = 'PaGE'
+             AND a.protocol_id = p.protocol_id
+             AND pp.protocol_id = p.protocol_id
+             AND pp.name = 'reference_condition'
+             AND ap.protocol_param_id = pp.protocol_param_id
+             AND a.analysis_id = ap.analysis_id
+             AND de.confidence >= $$confidence$$
+             AND ( $$regulated_dir$$ de.fold_change) >= $$fold_change$$
+             GROUP BY ga.gene
+             ORDER BY ga.gene
+        ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB"
+           isCacheable="true">
+        <paramRef ref="geneParams.waters_profilesets"/>
+        <paramRef ref="geneParams.r_min_expression_percentile"/>
+        <paramRef ref="geneParams.r_max_expression_percentile"/>
+        <paramRef ref="geneParams.yt_min_expression_percentile"/>
+        <paramRef ref="geneParams.yt_max_expression_percentile"/>
+        <paramRef ref="geneParams.ys_min_expression_percentile"/>
+        <paramRef ref="geneParams.ys_max_expression_percentile"/>
+        <paramRef ref="geneParams.ms_min_expression_percentile"/>
+        <paramRef ref="geneParams.ms_max_expression_percentile"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+        SELECT DISTINCT fred.source_id, '@PROJECT_ID@' as project_id from(
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'R'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$r_min_expression_percentile$$ / 100
+              AND pe.value <= $$r_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'YT'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$yt_min_expression_percentile$$ / 100
+              AND pe.value <= $$yt_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'YS'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$ys_min_expression_percentile$$ / 100
+              AND pe.value <= $$ys_max_expression_percentile$$ / 100
+          INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElementName pen,
+                 apidb.profileSet ps,
+                 apidb.profile p,
+                 apidb.profileElement pe
+            WHERE ps.name LIKE '$$waters_profilesets$$'
+              AND p.profile_set_id = ps.profile_set_id
+              AND pe.profile_id = p.profile_id
+              AND pen.element_order = pe.element_order
+              AND pen.name = 'MS'
+              AND ps.profile_set_id = pen.profile_set_id
+              AND pe.value >= $$ms_min_expression_percentile$$ / 100
+              AND pe.value <= $$ms_max_expression_percentile$$ / 100
+          ) fred
+          ORDER BY fred.source_id
+        ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesBySubcellularLocalization" includeProjects="PlasmoDB"
+           isCacheable="true">
+        <paramRef ref="geneParams.localization"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+              SELECT DISTINCT s.source_id, '@PROJECT_ID@' as project_id
+              FROM apidb.Subcellular s
+              WHERE targetting_domain = '$$localization$$'
+              ORDER BY s.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <!-- sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
+        <paramRef ref="geneParams.localization"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+              SELECT DISTINCT paf.source_id, '@PROJECT_ID@' as project_id
+              FROM dots.PredictedAaFeature paf
+              WHERE external_database_release_id IN (-1, $$localization$$)
+              ORDER BY paf.source_id
+           ]]>
+       </sql>
+    </sqlQuery -->
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByProteomicsProfile" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.asexual_blood_stages_value"/>
+        <paramRef ref="geneParams.gametocytes_value"/>
+        <paramRef ref="geneParams.ookinetes_value"/>
+        <paramRef ref="geneParams.oocysts_value"/>
+        <paramRef ref="geneParams.sporozoites_value"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT pb.source_id, '@PROJECT_ID@' as project_id FROM
+            (SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 1 AND ('any' = '$$asexual_blood_stages_value$$' OR
+                                           pe.value = '$$asexual_blood_stages_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 2 AND ('any' = '$$gametocytes_value$$' OR
+                                           pe.value = '$$gametocytes_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 3 AND ('any' = '$$ookinetes_value$$' OR
+                                           pe.value = '$$ookinetes_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 4 AND ('any' = '$$oocysts_value$$' OR
+                                           pe.value = '$$oocysts_value$$'))
+            INTERSECT
+            SELECT p.source_id
+            FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
+            WHERE pe.profile_id = p.profile_id
+            AND   p.profile_set_id = ps.profile_set_id
+            AND   ps.name = 'berghei_proteomic_Sinden'
+            AND (pe.element_order = 5 AND ('any' = '$$sporozoites_value$$' OR
+                                           pe.value = '$$sporozoites_value$$'))) pb
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByMr4Reagents" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.mr4_reagent_type"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+               FROM dots.GeneFeature gf,
+                dots.DbRefAaFeature df,
+                sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
+                sres.ExternalDatabase ed, dots.TranslatedAAFeature taf,
+                dots.Transcript t
+               WHERE ed.name = 'MR4DBxRefs'
+                 AND edr.external_database_id = ed.external_database_id
+                 AND dbr.external_database_release_id = edr.external_database_release_id
+                 AND (LOWER(dbr.secondary_identifier) = '$$mr4_reagent_type$$'
+                      OR '$$mr4_reagent_type$$' = 'any')
+                 AND df.db_ref_id = dbr.db_ref_id
+                 AND taf.aa_feature_id = df.aa_feature_id
+                 AND t.na_feature_id = taf.na_feature_id
+                 AND gf.na_feature_id = t.parent_id
+
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExportPrediction" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.min_exportpred_score"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="exportpred_score"/>
+        <sql>
+            <![CDATA[
+                SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
+                  max(df.score) as exportpred_score
+                FROM dots.aasequence aa,dots.DomainFeature df, dots.translatedaafeature tf,
+                     dots.transcript t,dots.genefeature gf
+                WHERE  aa.taxon_id in ($$organism$$)
+                   AND aa.aa_sequence_id = df.aa_sequence_id
+                   AND df.algorithm_name = 'exportpred'
+                   AND df.score >= $$min_exportpred_score$$
+                   AND tf.aa_sequence_id = aa.aa_sequence_id
+                   AND t.na_feature_id = tf.na_feature_id
+                   AND gf.na_feature_id = t.parent_id
+                   GROUP BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByCentromereProximity" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.max_centromere_distance"/>
+        <paramRef ref="sharedParams.chromosome"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="dist_centromere"/>
+        <sql>
+            <![CDATA[
+                SELECT gcd.gene AS source_id, '@PROJECT_ID@' as project_id,
+                TRIM(TO_CHAR(gcd.centromere_distance,'9,999,999')) as dist_centromere
+                FROM apidb.GeneCentromereDistance gcd, apidb.GeneAttributes ga
+                WHERE gcd.gene = ga.source_id
+                  AND gcd.centromere_distance <= $$max_centromere_distance$$
+                  AND gcd.genomic_sequence in ($$chromosome$$)
+                ORDER BY gcd.genomic_sequence, ga.start_min
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByTelomereProximity" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.distanceFromTelomere"/>
+        <paramRef ref="sharedParams.chromosome"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="dist_telomere"/>
+        <sql>
+            <![CDATA[
+	    SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
+            trim(to_char(LEAST(s.length - l.end_max,l.start_min),'999,999')) as dist_telomere
+	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
+	    WHERE gf.na_sequence_id = s.na_sequence_id
+	     AND l.na_feature_id = gf.na_feature_id
+	     AND s.source_id  in ($$chromosome$$)
+	     AND (l.end_max >= s.length - $$distanceFromTelomere$$
+                                      OR l.start_min <= 1 + $$distanceFromTelomere$$)
+	     ORDER BY s.source_id,l.end_max
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByNonnuclearGenomicRegion" includeProjects="PlasmoDB,ToxoBD"
+              isCacheable="true">
+        <paramRef ref="geneParams.pfNonnuclearSequence"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND ens.source_id IN ($$pfNonnuclearSequence$$)
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesWithStructurePrediction" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
+                 dots.DbRefaaFeature drnf,  sres.DbRef dr,
+                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+            WHERE gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = aaf.na_feature_id
+              AND aaf.aa_feature_id = drnf.aa_feature_id
+              AND drnf.db_ref_id = dr.db_ref_id
+              AND dr.external_database_release_id = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND ed.name = 'Predicted protein structures'
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.clades"/>
+        <paramRef ref="geneParams.pvalue_cutoff"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+                 MAX(ens.taxon_id) AS gene_taxon_id
+            FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
+                 core.TableInfo tas_ti, dots.Similarity s,
+                 core.TableInfo eas_ti, dots.ExternalAaSequence eas,
+                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+                 dots.GeneFeature gf, dots.ExternalNaSequence ens,
+                 dots.Transcript t
+            WHERE taf.aa_sequence_id = tas.aa_sequence_id
+              AND tas_ti.name = 'TranslatedAASequence'
+              AND tas_ti.table_id = s.query_table_id
+              AND s.query_id = tas.aa_sequence_id
+              AND s.pvalue_exp < $$pvalue_cutoff$$
+              AND eas_ti.name = 'ExternalAASequence'
+              AND eas_ti.table_id = s.subject_table_id
+              AND s.subject_id = eas.aa_sequence_id
+              AND eas.external_database_release_id
+                  = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND ed.name = 'PDB protein sequences'
+              AND t.na_feature_id = taf.na_feature_id
+              AND gf.na_feature_id = t.parent_id
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND eas.taxon_id IN
+                  (SELECT taxon_id from sres.taxon
+                   CONNECT BY parent_id = PRIOR taxon_id
+                   START WITH taxon_id IN ($$clades$$))
+              AND ens.taxon_id IN ($$organism$$)
+            GROUP BY gf.source_id
+            ORDER BY MAX(ens.taxon_id), gf.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByProteinDbAccession" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.accession"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                  sres.ExternalDatabase ed, dots.ExternalNaSequence ens
+             WHERE (dr.primary_identifier = '$$accession$$'
+                    OR dr.secondary_identifier = '$$accession$$')
+               AND gf.na_feature_id = drnf.na_feature_id
+               AND drnf.db_ref_id = dr.db_ref_id
+               AND dr.external_database_release_id
+                     = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+                           /*  'NRDB_pdb_dbXRefBySeqIdentity', */
+                               'NRDB_ref_dbXRefBySeqIdentity',
+                               'NRDB_sp_dbXRefBySeqIdentity',
+                               'GenBank')
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND ens.taxon_id IN ($$organism$$)
+            ORDER BY gf.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesWithProteinLowComplexity" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.percentLowComplexity"/>
+        <paramRef ref="sharedParams.chromosome"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+	    select gf.source_id, '@PROJECT_ID@' as project_id
+	    from Dots.LowComplexityAAFeature lc, Dots.GeneFeature gf,
+	         Dots.ExternalNASequence ens, Dots.AALocation al, 
+                 Dots.AASequence s, Dots.Transcript t, Dots.TranslatedAAFeature taf
+            where ens.source_id in ($$chromosome$$)
+            and gf.na_sequence_id = ens.na_sequence_id
+            and t.parent_id = gf.na_feature_id
+            and taf.na_feature_id = t.na_feature_id
+            and s.aa_sequence_id = taf.aa_sequence_id
+            and lc.aa_sequence_id = s.aa_sequence_id
+            and al.aa_feature_id = lc.aa_feature_id
+	    group by gf.source_id
+	    having sum(100 *(al.end_max - al.start_min)/s.length ) > $$percentLowComplexity$$
+            ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+   <!-- got rid of the unused pr_organism parameter -->
+
+    <sqlQuery name="GenesByGametocyteExpression" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.day_and_strain"/>
+        <paramRef ref="geneParams.min_expression_percentile" default="80"/>
+        <paramRef ref="geneParams.max_expression_percentile" default="100"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT DISTINCT p.source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.profile p, apidb.profileElementName pen,
+                 apidb.profileElement pe
+            WHERE pe.value BETWEEN $$min_expression_percentile$$ / 100
+                               AND $$max_expression_percentile$$ / 100
+              AND pen.profile_element_name_id IN ($$day_and_strain$$)
+              AND pen.profile_set_id = p.profile_set_id
+              AND p.profile_id = pe.profile_id
+              AND pe.element_order = pen.element_order
+            ORDER by p.source_id
+            ]]>
+       </sql>
+    </sqlQuery>
+
