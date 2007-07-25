@@ -96,6 +96,26 @@ my $sthCDS = $dbh->prepare(<<EOSQL);
     AND  cds.feat_type = "CDS"
 EOSQL
 
+# RNAs ...
+my $sthRNA = $dbh->prepare(<<EOSQL);
+  SELECT clone_info.clone_name AS scaffold,
+         model.feat_name AS model_id,
+         LEAST(model.end5, model.end3) AS model_start,
+         GREATEST(model.end5, model.end3) AS model_stop,
+         IF(model.end5 > model.end3, 1, 0) AS is_reversed,
+         model.feat_type
+  FROM   clone_info
+         INNER JOIN asm_feature AS model USING (asmbl_id)
+  WHERE  model.feat_type in ("tRNA","rRNA")
+    AND  clone_info.is_public = 1
+EOSQL
+
+my $sthRnaDesc = $dbh->prepare(<<EOSQL);
+ select com_name,pub_locus from ident where feat_name = ?
+EOSQL
+
+
+
 $sthModel->execute($source);
 while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinSeq) = $sthModel->fetchrow_array()) {
 
@@ -108,6 +128,7 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
   my $pubLocus;
   $sthPubLocus->execute($tuName);
   $pubLocus = $sthPubLocus->fetchrow_array();
+  my $aliases;
 
   my $exonCount = 0;
 
@@ -132,8 +153,11 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
       }
 
-      # substitute $sourceId var with pub_locus when possible (for pv and py)
-      $sourceId = $pubLocus if ($pubLocus);
+      # if pub_locus exists (as does for pv and py) capture sourceId as alias, and pub_locus as sourceId
+      if ($pubLocus){
+	$aliases = $sourceId;
+	$sourceId = $pubLocus if ($pubLocus);
+      }
 
       push @exons, join("\t",
 			$scaffold,
@@ -186,15 +210,57 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 		 join(" ; ",
 		      qq{GenePrediction "$sourceId"},
 		      ($product    ? qq{Note "$product"} : ()),
+		      ($aliases    ? qq{Aliases "$aliases"} : ()),
 		      ($tuName     ? qq{TU "$tuName"} : ()),
 		      ($isPseudo   ? "Pseudo 1" : ()),
+		      qq(GeneType "protein_coding"),
 		      ($ecNumber   ? qq{ECNumber "$ecNumber"} : ()),
 		      ($proteinSeq ? qq{Protein "$proteinSeq"} : ()),
 		     )
 		), "\n";
 
   print OUT join("\n", @exons), "\n";
+}
 
+##now do the RNAs.  NOTE that for trich all are single exons ... this will now work otherwise!
+$sthRNA->execute();
+while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $rnaType) = $sthRNA->fetchrow_array()) {
+  my $strand = $isReversed ? "-" : "+";
+  $sthRnaDesc->execute($sourceId);
+  my($product,$gene_id) = $sthRnaDesc->fetchrow_array();
+
+
+  print OUT join("\t",
+		 $scaffold,
+		 $annotation ? "annotation" : $source,
+		 "transcript",
+		 $modelStart,
+		 $modelStop,
+		 ".",
+		 $strand,
+		 ".",
+		 join(" ; ",
+		      ($gene_id ? qq{GenePrediction "$gene_id"} : qq{GenePrediction "$sourceId"}),
+		      ($product    ? qq{Note "$product"} : ()),
+		      ($gene_id ? qq{Aliases "$sourceId"} : ()),
+		      qq{GeneType "$rnaType"},
+		     )
+		), "\n";
+
+  print OUT join("\t",
+                 $scaffold,
+                 $annotation ? "annotation" : $source,
+                 "exon",
+                 $modelStart,
+                 $modelStop,
+                 ".",
+                 $strand,
+                 "0",
+                 join(" ; ",
+		      ($gene_id ? qq{GenePrediction "$gene_id"} : qq{GenePrediction "$sourceId"}),
+                      qq{OrderNumber 1},
+                     ),
+                ), "\n";
 }
 
 close(OUT);
@@ -203,4 +269,6 @@ $sthModel->finish();
 $sthExon->finish();
 $sthCDS->finish();
 $sthPubLocus->finish();
+$sthRNA->finish();
+$sthRnaDesc->finish();
 $dbh->disconnect();
