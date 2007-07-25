@@ -275,7 +275,7 @@
     <!-- plasmodb 4.4 dataset -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <stringParam name="plasmodb_4.4_dataset"
+        <stringParam name="plasmodb_4-4_dataset"
                      visible="false"
                      prompt="PlasmoDB 4.4 dataset">
             <help>PlasmoDB 4.4 dataset</help>
@@ -2489,6 +2489,91 @@
             <help>Set a minimum for the likelihood of interaction</help>
             <suggest default="2"/>
         </stringParam>
+
+    <enumParam name="orf_ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB"
+             prompt="Assay Type"
+             multiPick="true"
+             visible="true">
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[1D Gel LC-MS/MS<sup>&#182;</sup> (C.p.)]]></display>
+            <term>Wastling MassSpec 1D Gel LC-MS/MS</term>
+            <internal>Wastling MassSpec 1D Gel LC-MS/MS</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[2D Gel LC-MS/MS<sup>&#182;</sup> (C.p.)]]></display>
+            <term>Wastling MassSpec 2D Gel LC-MS/MS</term>
+            <internal>Wastling MassSpec 2D Gel LC-MS/MS</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[MudPit Soluble fractions<sup>&#182;</sup> (C.p.)]]></display>
+            <term>Wastling MassSpec MudPit Soluble</term>
+            <internal>Wastling MassSpec MudPit Soluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[MudPit Insoluble fractions<sup>&#182;</sup> (C.p.)]]></display>
+            <term>Wastling MassSpec MudPit Insoluble</term>
+            <internal>Wastling MassSpec MudPit Insoluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[Insoluble Excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <term>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</term>
+            <internal>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[Insoluble Non-excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <term>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</term>
+            <internal>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,CryptoDB">
+            <display><![CDATA[Soluble Excysted and Non-excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <term>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</term>
+            <internal>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</internal>
+          </enumValue>
+
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[1-D SDS PAGE<sup>1</sup> (T.g)]]></display>
+            <term>Wastling 1-D SDS PAGE</term>
+            <internal>Wastling 1-D SDS PAGE</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[1-D SDS PAGE Soluble Fraction<sup>1</sup> (T.g)]]></display>
+            <term>Wastling 1-D SDS PAGE Soluble</term>
+            <internal>Wastling 1-D SDS PAGE Soluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[1-D SDS PAGE Insoluble Fraction<sup>1</sup> (T.g)]]></display>
+            <term>Wastling 1-D SDS PAGE Insoluble</term>
+            <internal>Wastling 1-D SDS PAGE Insoluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[MudPIT Insoluble Fraction<sup>1</sup> (T.g)]]></display>
+            <term>Wastling MudPIT Soluble</term>
+            <internal>Wastling MudPIT Soluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[MudPIT Soluble Fraction<sup>1</sup> (T.g)]]></display>
+            <term>Wastling MudPIT Soluble</term>
+            <internal>Wastling MudPIT Soluble</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[Rhoptry Fraction<sup>1*</sup> (T.g)]]></display>
+            <term>Wastling Rhoptry</term>
+            <internal>Wastling Rhoptry</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[Conoid-enriched Fraction<sup>2</sup> (T.g)]]></display>
+            <term>Murray Conoid-enriched Fraction</term>
+            <internal>Murray Conoid-enriched Fraction</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,ToxoDB">
+            <display><![CDATA[Conoid-depleted Fraction<sup>2</sup> (T.g)]]></display>
+            <term>Murray Conoid-depleted Fraction</term>
+            <internal>Murray Conoid-depleted Fraction</internal>
+          </enumValue>
+      </enumList>
+    </enumParam>
 
     <enumParam name="mass_spec_stage"
                      prompt="Lifecycle Stage"

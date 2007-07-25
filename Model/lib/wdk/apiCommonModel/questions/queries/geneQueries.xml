@@ -150,7 +150,7 @@
 
     <sqlQuery name="GenesByPlasmoDbDataset" includeProjects="PlasmoDB"
                  isCacheable="true">
-        <paramRef ref="geneParams.plasmodb_4.4_dataset"/>
+        <paramRef ref="geneParams.plasmodb_4-4_dataset"/>
         <column name="project_id"/>
         <column name="source_id"  />
         <sql>
@@ -158,7 +158,7 @@
             <![CDATA[
                 SELECT imported.source_id, '@PROJECT_ID@' as project_id FROM (
                     SELECT ga.gene AS source_id, min(c.i) AS i
-                    FROM cache$$plasmodb_4.4_dataset$$@apidb.cbilprod c,
+                    FROM cache$$plasmodb_4-4_dataset$$@apidb.cbilprod c,
                          apidb.plasmodb_genes@apidb.cbilprod pg,
                          apidb.GeneAlias ga
                     WHERE c.na_feature_id = pg.na_feature_id
@@ -1527,9 +1527,9 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByMassSpec" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.mass_spec_stage"/>
-        <paramRef ref="geneParams.min_seq_coverage"/>
-        <paramRef ref="geneParams.min_span_count"/>
-        <paramRef ref="geneParams.min_spectrum_count"/>
+        <paramRef ref="sharedParams.min_seq_coverage"/>
+        <paramRef ref="sharedParams.min_span_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -1554,8 +1554,8 @@ order by project_id,sns2.source_id
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
         <paramRef ref="geneParams.wastlinglowery_ms_assay"/>
-        <paramRef ref="geneParams.min_sequence_count"/>
-        <paramRef ref="geneParams.min_spectrum_count"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
@@ -1695,7 +1695,7 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByCentromereProximity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.max_centromere_distance"/>
-        <paramRef ref="geneParams.chromosome"/>
+        <paramRef ref="sharedParams.chromosome"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dist_centromere"/>
@@ -1719,7 +1719,7 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByTelomereProximity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.distanceFromTelomere"/>
-        <paramRef ref="geneParams.chromosome"/>
+        <paramRef ref="sharedParams.chromosome"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dist_telomere"/>
@@ -1745,9 +1745,9 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="sharedParams.chromosome"/>
-        <paramRef ref="geneParams.genomicSequence"/>
-        <paramRef ref="geneParams.start_point"/>
-        <paramRef ref="geneParams.end_point"/>
+        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -1768,10 +1768,10 @@ order by project_id,sns2.source_id
                     isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
-	               <paramRef ref="params.stringChromosome"/>
-	               <paramRef ref="params.genomicSequence"/>
-	               <paramRef ref="params.start_point"/>
-	               <paramRef ref="params.end_point"/>
+	               <paramRef ref="sharedParams.chromosome"/>
+	               <paramRef ref="sharedParams.sequenceId"/>
+                       <paramRef ref="sharedParams.start_point"/>
+                       <paramRef ref="sharedParams.end_point"/>
 	               <wsColumn name="source_id" width="32" wsName="source_id" />
 	               <wsColumn name="project_id" width="32" wsName="project_id"/>
 	</wsQuery>
@@ -1784,8 +1784,8 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByNonnuclearGenomicRegion" includeProjects="PlasmoDB,ToxoBD"
               isCacheable="true">
         <paramRef ref="geneParams.pfNonnuclearSequence"/>
-        <paramRef ref="geneParams.start_point"/>
-        <paramRef ref="geneParams.end_point"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -1915,8 +1915,8 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB"
               isCacheable="true">
-        <paramRef ref="geneParams.snp_strain_a"/>
-        <paramRef ref="geneParams.snp_strain_b"/>
+        <paramRef ref="sharedParams.snp_strain_a"/>
+        <paramRef ref="sharedParams.snp_strain_b"/>
         <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
@@ -1965,7 +1965,7 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesWithProteinLowComplexity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.percentLowComplexity"/>
-        <paramRef ref="geneParams.chromosome"/>
+        <paramRef ref="sharedParams.chromosome"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
