@@ -27,7 +27,7 @@
                       decode(bfmv.is_reversed,0,'+',1,'-',null) as orf_strand
                 FROM apidb.OrfAttributes bfmv
                 WHERE bfmv.source_id = '$$primaryKey$$'
-                  AND bfmv.project_id = '$$projectId$$'
+                  AND LOWER(bfmv.project_id) = LOWER('$$projectId$$')
         ]]>
            </sql>
         </sqlQuery>
@@ -58,7 +58,7 @@
                   AND so.term_name = 'ORF'
                   AND t.source_id = '$$primaryKey$$'
            </sql>
-            <sql includeProjects="ApiDB,CryptoDB">
+            <sql includeProjects="CryptoDB">
 	      SELECT
                 t.source_id as source_id,
                 taas.sequence, '$$projectId$$' as project_id
@@ -77,6 +77,20 @@
                 AND so.term_name = 'ORF'
                 AND t.source_id = '$$primaryKey$$'
 		</sql>
+
+                <sql includeProjects="ApiDB">
+                  SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
+                	  from dots.TranslatedAASequence taas,
+                      	 sres.SequenceOntology s,
+                      	 sres.ExternalDatabaseRelease extr,
+         	         sres.ExternalDatabase ext
+                	 WHERE taas.source_id = '$$primaryKey$$'
+                    	  AND  taas.sequence_ontology_id = s.sequence_ontology_id
+                    	  AND s.term_name = 'ORF'
+                   	  AND taas.external_database_release_id=extr.external_database_release_id
+                 	  AND extr.external_database_id=ext.external_database_id
+                   	  AND ext.name=LOWER('$$projectId$$')
+                </sql>
         </sqlQuery>
     </querySet>
 </wdkModel>

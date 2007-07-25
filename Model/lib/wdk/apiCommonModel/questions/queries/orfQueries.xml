@@ -79,6 +79,7 @@
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="orfParams.min_orf_length"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="orf_location" width="32"/>
@@ -271,8 +272,10 @@
         <paramRef ref="orfParams.orf_ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
-       <wsColumn name="source_id" width="50" wsName="source_id"/>
-       <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="source_id" width="50" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/> 
+        <wsColumn name="sum_sequence_count" width="32" wsName="sum_sequence_count" />
+        <wsColumn name="sum_spectrum_count" width="32" wsName="sum_spectrum_count" />
     </wsQuery>
 
   </querySet>
