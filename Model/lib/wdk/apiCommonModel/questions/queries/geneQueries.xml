@@ -106,8 +106,8 @@
   <!-- EC number -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByEcNumber" displayName="by EC Number"
-              excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesByEcNumber" excludeProjects="ApiDB"
+               isCacheable="true">
         <paramRef ref="geneParams.ec_number_pattern"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
         <column name="project_id"/>
@@ -134,7 +134,7 @@
        </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesByEcNumber" displayName="by EC Number"
+    <wsQuery name="GenesByEcNumber" 
              isCacheable='true' includeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
@@ -148,8 +148,8 @@
   <!--  plasmoDB 4.4 dataset-->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPlasmoDbDataset" isCacheable="true"
-              includeProjects="PlasmoDB">
+    <sqlQuery name="GenesByPlasmoDbDataset" includeProjects="PlasmoDB"
+                 isCacheable="true">
         <paramRef ref="geneParams.plasmodb_4.4_dataset"/>
         <column name="project_id"/>
         <column name="source_id"  />
@@ -294,7 +294,7 @@
        </sql>
     </sqlQuery>
 
-   <wsQuery name="GenesByProteinProteinInteraction"  includeProjects="ApiDB"
+   <wsQuery name="GenesByProteinProteinInteraction" includeProjects="ApiDB"
                         isCacheable="true" 
                         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
@@ -357,7 +357,7 @@
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionTiming" 
+    <sqlQuery name="GenesByExpressionTiming" includeProjects="PlasmoDB" 
               isCacheable="true">
         <paramRef ref="geneParams.profileSet"/>
         <paramRef ref="geneParams.minOrMax"/>
@@ -502,21 +502,19 @@
   <!-- Text Search (needs to be better unified) -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <wsQuery name="GenesByTextSearch"
-     		processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin"
-			excludeProjects="ApiDB">
+    <wsQuery name="GenesByTextSearch" excludeProjects="ApiDB"
+          processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="geneParams.text_expression"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.datasets"/>
+       <paramRef ref="geneParams.text_fields"/>
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
-    <wsQuery name="GenesByAnnotatedKeyword"
-         		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"
-				includeProjects="ApiDB">
+    <wsQuery name="GenesByAnnotatedKeyword" includeProjects="ApiDB"
+              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
             <paramRef ref="geneParams.datasets"/>
             <paramRef ref="geneParams.text_expression"/>
@@ -531,11 +529,8 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" displayName="by orthology"
+    <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
               isCacheable="true">
-        <description>
-            Find orthologs of the genes in an existing query result set
-        </description>
         <paramRef ref="generalParams.historyId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="source_id" />
@@ -591,8 +586,7 @@ order by project_id,sns2.source_id
   <!-- Go Term -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByGoTerm" 
-		excludeProjectes="ApiDB">
+    <sqlQuery name="GenesByGoTerm" excludeProjects="ApiDB">
         <paramRef ref="geneParams.go_term"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
@@ -624,8 +618,7 @@ order by project_id,sns2.source_id
     </sqlQuery>
 
 
-	<wsQuery name="GenesByGoTerm"
-		includeProjects="ApiDB" 
+	<wsQuery name="GenesByGoTerm" includeProjects="ApiDB" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	              <paramRef ref="geneParams.go_term"/>
@@ -638,9 +631,9 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPhyleticProfile" displayName="by phyletic profile"
+    <sqlQuery name="GenesByPhyleticProfile" includeProjects="PlasmoDB"
               isCacheable="true">
-        <paramRef ref="geneParams.ds_gene_ids" default="PY03942"/>
+        <paramRef ref="sharedParams.ds_gene_ids" default="PY03942"/>
         <paramRef ref="geneParams.min_mutual_information_score"/>
         <paramRef ref="geneParams.include_only_queries"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
@@ -703,9 +696,9 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByFunctionalInteraction" displayName="by functional interaction"
+    <sqlQuery name="GenesByFunctionalInteraction" includeProjects="PlasmoDB" 
               isCacheable="true">
-        <paramRef ref="geneParams.ds_gene_ids" default="PF11_0344"/>
+        <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
         <paramRef ref="geneParams.min_interaction"/>
         <paramRef ref="geneParams.include_only_queries"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
@@ -758,8 +751,7 @@ order by project_id,sns2.source_id
   <!-- Signal Peptide -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithSignalPeptide" 
-			excludeProjects="ApiDB">
+    <sqlQuery name="GenesWithSignalPeptide" excludeProjects="ApiDB">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
@@ -786,8 +778,7 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-	<wsQuery name="GenesWithSignalPeptide" 
-			includeProjects="ApiDB"
+	<wsQuery name="GenesWithSignalPeptide" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	    <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams" />
@@ -801,7 +792,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByIntraerythrocyticExpression" isCacheable="true">
+    <sqlQuery name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB" 
+           isCacheable="true">
         <paramRef ref="geneParams.synchronization"/>
         <paramRef ref="geneParams.intraerythrocytic_stages"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
@@ -830,7 +822,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExtraerythrocyticExpression" isCacheable="true">
+    <sqlQuery name="GenesByExtraerythrocyticExpression"  includeProjects="PlasmoDB"
+           isCacheable="true">
         <paramRef ref="geneParams.extraerythrocytic_stages"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
@@ -858,7 +851,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpression" isCacheable="true">
+    <sqlQuery name="GenesByExpression" includeProjects="PlasmoDB"
+           isCacheable="true">
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
         <column name="project_id"/>
@@ -886,7 +880,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByDifferentialMeanExpression" isCacheable='true'>
+    <sqlQuery name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB"
+          isCacheable='true'>
        <paramRef ref="geneParams.diffMeanExpr_reference"/>
        <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
        <paramRef ref="geneParams.regulated_dir"/>
@@ -934,7 +929,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionPercentileA" displayName="By Expression Percentile" isCacheable='true'>
+    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB" 
        <paramRef ref="geneParams.cowmanSample"/>
        <paramRef ref="geneParams.percentile"/>
         <column name="project_id"/>
@@ -973,7 +968,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByWatersDifferentialExpression" isCacheable='true'>
+    <sqlQuery name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB"
+          isCacheable='true'>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir"/>
@@ -1020,7 +1016,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="BergheiGenesByExpressionPercentile" isCacheable="true">
+    <sqlQuery name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB"
+           isCacheable="true">
         <paramRef ref="geneParams.waters_profilesets"/>
         <paramRef ref="geneParams.r_min_expression_percentile"/>
         <paramRef ref="geneParams.r_max_expression_percentile"/>
@@ -1100,7 +1097,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySubcellularLocalization" isCacheable="true">
+    <sqlQuery name="GenesBySubcellularLocalization" includeProjects="PlasmoDB"
+           isCacheable="true">
         <paramRef ref="geneParams.localization"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -1175,8 +1173,8 @@ order by project_id,sns2.source_id
   <!-- Molecular Weight -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMolecularWeight" 
-              isCacheable="true" excludeProjects="ApiDB">
+    <sqlQuery name="GenesByMolecularWeight" excludeProjects="ApiDB"
+              isCacheable="true">
         <paramRef ref="geneParams.min_molecular_weight"/>
         <paramRef ref="geneParams.max_molecular_weight"/>
         <paramRef ref="generalParams.organism"/>
@@ -1201,8 +1199,7 @@ order by project_id,sns2.source_id
     </sqlQuery>
 
 
-	<wsQuery name="GenesByMolecularWeight" 
-		includeProjects="ApiDB"
+	<wsQuery name="GenesByMolecularWeight" includeProjects="ApiDB"
 		isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -1233,7 +1230,6 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-
     <wsQuery name="GenesByExonCount" 
 	   includeProjects="ApiDB"
        isCacheable='true' 
@@ -1251,7 +1247,7 @@ order by project_id,sns2.source_id
   <!-- Ortholog pattern -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologPattern" displayName="by Ortholog Pattern"
+    <sqlQuery name="GenesByOrthologPattern" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="geneParams.profile_pattern"/>
         <paramRef ref="geneParams.included_species"/>
@@ -1274,7 +1270,8 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesByOrthologPattern" isCacheable='true'
+    <wsQuery name="GenesByOrthologPattern" includeProjects="ApiDB"
+             isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                     <paramRef ref="geneParams.profile_pattern"/>
                     <paramRef ref="geneParams.included_species"/>
@@ -1313,8 +1310,7 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-	<wsQuery name="GenesByMetabolicPathway" 
-		includeProjecs="ApiDB"
+	<wsQuery name="GenesByMetabolicPathway" includeProjects="ApiDB"
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
 	        <paramRef ref="geneParams.metabolic_pathway"/>
@@ -1328,7 +1324,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByProteomicsProfile" displayName="by Proteomics Profile"
+    <sqlQuery name="GenesByProteomicsProfile" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.asexual_blood_stages_value"/>
         <paramRef ref="geneParams.gametocytes_value"/>
@@ -1387,7 +1383,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMr4Reagents" displayName="by MR4 Reagents"
+    <sqlQuery name="GenesByMr4Reagents" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.mr4_reagent_type"/>
         <column name="project_id"/>
@@ -1418,7 +1414,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExportPrediction" displayName="by Export Prediction"
+    <sqlQuery name="GenesByExportPrediction" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.min_exportpred_score"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -1466,8 +1462,7 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesByTaxon" 
-           includeProjects="ApiDB"
+    <wsQuery name="GenesByTaxon" includeProjects="ApiDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -1479,7 +1474,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithEpitopes" isCacheable='true'>
+    <sqlQuery name="GenesWithEpitopes" excludeProjects="ApiDB"
+           isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="epitopeParams.confidence"/>
         <column name="source_id" />
@@ -1554,11 +1550,119 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
+    <sqlQuery name="GenesByMassSpec" includeProjects="CryptoDB"
+            isCacheable='true'>
+        <paramRef ref="params.parvumOrganism"/>
+        <paramRef ref="params.wastlinglowery_ms_assay"/>
+        <paramRef ref="params.min_sequence_count"/>
+        <paramRef ref="params.min_spectrum_count"/>
+        <column name="source_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
+        <sql>
+            <![CDATA[
+            select distinct gf.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, 
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$wastlinglowery_ms_assay$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$wastlinglowery_ms_assay$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec,
+            dots.nasequence nas
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = t.na_feature_id
+            and t.parent_id = gf.na_feature_id
+            and gf.na_sequence_id = nas.na_sequence_id
+            and nas.taxon_id in 
+            (select taxon_id from sres.taxon
+             connect by parent_id = prior taxon_id
+             start with taxon_id in ($$parvumOrganism$$))
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+           ]]>
+       </sql>
+    </sqlQuery>
+    
+    <sqlQuery name="GenesByMassSpec" displayName="By Mass Spec. Evidence" isCacheable='true'>
+        <paramRef ref="params.organism"/>
+        <paramRef ref="params.ms_assay"/>
+        <paramRef ref="params.min_sequence_count"/>
+        <paramRef ref="params.min_spectrum_count"/>
+        <column name="source_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
+        <sql>
+            <![CDATA[
+            select distinct gf.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, 
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = t.na_feature_id
+            and t.parent_id = gf.na_feature_id
+	    and gf.external_database_release_id = edr.external_database_release_id
+	    and edr.external_database_id = ed.external_database_id
+	    and ed.name = 'Chromosome Map - David Sibley'
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+           ]]>
+       </sql>
+    </sqlQuery>   
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesOrthologousToAGivenGene"
+    <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="project_id"/>
@@ -1587,7 +1691,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByCentromereProximity"
+    <sqlQuery name="GenesByCentromereProximity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.max_centromere_distance"/>
         <paramRef ref="geneParams.chromosome"/>
@@ -1611,7 +1715,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByTelomereProximity"
+    <sqlQuery name="GenesByTelomereProximity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.distanceFromTelomere"/>
         <paramRef ref="geneParams.chromosome"/>
@@ -1638,7 +1742,7 @@ order by project_id,sns2.source_id
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
-              displayName="by genomic location" isCacheable="true">
+              isCacheable="true">
         <paramRef ref="sharedParams.chromosome"/>
         <paramRef ref="geneParams.genomicSequence"/>
         <paramRef ref="geneParams.start_point"/>
@@ -1659,9 +1763,9 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-	<wsQuery name="GenesByGenomicRegion" includeProjects="ApiDB" displayName="by  genomic location" isCacheable='true'
+	<wsQuery name="GenesByGenomicRegion" includeProjects="ApiDB" 
+                    isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-	               <description>genes by genomic location</description>
                        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
 	               <paramRef ref="params.stringChromosome"/>
 	               <paramRef ref="params.genomicSequence"/>
@@ -1676,8 +1780,8 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByNonnuclearGenomicRegion"
-              displayName="by non-nuclear genomic location" isCacheable="true">
+    <sqlQuery name="GenesByNonnuclearGenomicRegion" includeProjects="PlasmoDB,ToxoBD"
+              isCacheable="true">
         <paramRef ref="geneParams.pfNonnuclearSequence"/>
         <paramRef ref="geneParams.start_point"/>
         <paramRef ref="geneParams.end_point"/>
@@ -1701,8 +1805,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithStructurePrediction"
-              displayName="with Structure Predictions"
+    <sqlQuery name="GenesWithStructurePrediction" includeProjects="PlasmoDB"
               isCacheable="true">
         <column name="project_id"/>
         <column name="source_id"/>
@@ -1727,7 +1830,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPdbSimilarity"
+    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
@@ -1774,7 +1877,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByProteinDbAccession"
+    <sqlQuery name="GenesByProteinDbAccession" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.accession"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
@@ -1809,7 +1912,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySnps"
+    <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.snp_strain_a"/>
         <paramRef ref="geneParams.snp_strain_b"/>
@@ -1858,7 +1961,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithProteinLowComplexity"
+    <sqlQuery name="GenesWithProteinLowComplexity" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.percentLowComplexity"/>
         <paramRef ref="geneParams.chromosome"/>
@@ -1888,8 +1991,7 @@ order by project_id,sns2.source_id
   <!-- SecondaryStructure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySecondaryStructure"
-			includeProjects="PlasmoDB"
+    <sqlQuery name="GenesBySecondaryStructure" includeProjects="PlasmoDB"
             isCacheable="true">
         <paramRef ref="geneParams.min_coil"/>
         <paramRef ref="geneParams.max_coil"/>
@@ -1952,8 +2054,7 @@ order by project_id,sns2.source_id
   <!-- Interpro -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByInterproDomain"
-            excludeProjects="ApiDB"  
+    <sqlQuery name="GenesByInterproDomain" excludeProjects="ApiDB"  
 			isCacheable="true">
         <paramRef ref="geneParams.domain_database"/>
         <paramRef ref="geneParams.domain_accession"/>
@@ -2001,8 +2102,7 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-	 <wsQuery name="GenesByInterproDomain" 
-			includeProjects="ApiDB"
+	 <wsQuery name="GenesByInterproDomain" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	              <paramRef ref="geneParams.domain_database"/>
@@ -2017,7 +2117,7 @@ order by project_id,sns2.source_id
 
    <!-- got rid of the unused pr_organism parameter -->
 
-    <sqlQuery name="GenesByGametocyteExpression"
+    <sqlQuery name="GenesByGametocyteExpression" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.day_and_strain"/>
         <paramRef ref="geneParams.min_expression_percentile" default="80"/>
@@ -2045,8 +2145,7 @@ order by project_id,sns2.source_id
   <!-- ESTOverlap -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByESTOverlap" 
-			excludeProjects="ApiDB">
+    <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
@@ -2104,9 +2203,8 @@ order by project_id,sns2.source_id
     </sqlQuery>
 
 
-    <wsQuery name="GenesByESTOverlap" 
-				processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"
-				includeProjects="ApiDB">
+    <wsQuery name="GenesByESTOverlap" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	       <paramRef ref="sharedParams.libraryId"/>
 	       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>

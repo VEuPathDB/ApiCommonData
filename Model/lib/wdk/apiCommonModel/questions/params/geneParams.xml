@@ -11,7 +11,7 @@
   <!-- Params  -->
   <!--===========================================================================-->
 
-  <paramSet name="params">
+  <paramSet name="geneParams">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene Id -->  
@@ -91,7 +91,7 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <flatVocabParam name="cowmanSample"
+      <flatVocabParam name="cowmanSample" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.cowmanSample"
                      prompt="Study"
                      multiPick="false">
@@ -100,7 +100,7 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="diffMeanExpr_reference"
+      <flatVocabParam name="diffMeanExpr_reference" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.cowmanSample"
                      prompt="Reference study"
                      multiPick="false">
@@ -109,7 +109,7 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="diffMeanExpr_comparitor"
+      <flatVocabParam name="diffMeanExpr_comparitor" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.cowmanSample"
                      prompt="Comparison study"
                      multiPick="false">
@@ -1442,7 +1442,7 @@
             <suggest default="100"/>
         </stringParam>
 
-      <flatVocabParam name="extraerythrocytic_stages"
+      <flatVocabParam name="extraerythrocytic_stages" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.ExtraerythrocyticStages"
                      prompt="Extraerythrocytic Lifecycle Stage"
                      multiPick="false">
@@ -1451,7 +1451,7 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="intraerythrocytic_stages"
+      <flatVocabParam name="intraerythrocytic_stages" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.IntraerythrocyticStages"
                      prompt="Intraerythrocytic Lifecycle Stage"
                      multiPick="false">
@@ -2317,7 +2317,7 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="mr4_reagent_type"
+      <flatVocabParam name="mr4_reagent_type" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.Mr4Reagents"
                      prompt="Reagent Type"
                      multiPick="false">
@@ -2621,7 +2621,7 @@
             <suggest default="-20"/>
         </stringParam>
 
-      <flatVocabParam name="clades"
+      <flatVocabParam name="clades" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.Clades"
                      prompt="PDB Proteins from"
                      multiPick="true">
@@ -3276,7 +3276,7 @@
             <help>Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed.</help>
         </stringParam>
 
-      <flatVocabParam name="day_and_strain"
+      <flatVocabParam name="day_and_strain" includeProjects="PlasmoDB"
                      queryRef="GeneVQ.DayAndStrain"
                      prompt="Day of Gametocytogenesis and Strain"
                      multiPick="true">
@@ -3310,7 +3310,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ExtraerythrocyticStages">
+        <sqlQuery name="ExtraerythrocyticStages" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3323,7 +3323,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="IntraerythrocyticStages">
+        <sqlQuery name="IntraerythrocyticStages" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3337,7 +3337,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="Mr4Reagents">
+        <sqlQuery name="Mr4Reagents" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3362,7 +3362,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="Clades">
+        <sqlQuery name="Clades" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3405,7 +3405,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="DayAndStrain">
+        <sqlQuery name="DayAndStrain" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3423,7 +3423,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="cowmanSample">
+        <sqlQuery name="cowmanSample" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3449,11 +3449,11 @@ SELECT distinct lg.name AS term,
         <!-- keep this one at the end of the file because it's embedded quote mark throughs off
              emac's syntax highlighting
         -->
-        <sqlQuery name="MetabolicPathways">
+        <sqlQuery name="MetabolicPathways" excludeProjects="CryptoDB">
             <column name="internal"/>
             <column name="term"/>
-            <sql>
-           <![CDATA[
+
+            <sql includeProjects="PlasmoDB">
              SELECT DISTINCT dr.primary_identifier AS internal,
                     TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
@@ -3463,7 +3463,17 @@ SELECT distinct lg.name AS term,
                AND ed.name = 'Links to Pathway Maps'
                AND dr.primary_identifier != 'qualityControl'
              ORDER BY term
-           ]]>
+            </sql>
+
+            <sql includeProjects="ToxoDB">
+             SELECT DISTINCT dr.primary_identifier AS internal,
+                    decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier) AS term
+             FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+             WHERE dr.external_database_release_id = edr.external_database_release_id
+               AND edr.external_database_id = ed.external_database_id
+               AND ed.name = 'Links to Pathway Maps'
+             ORDER BY term
             </sql>
 
         </sqlQuery>
