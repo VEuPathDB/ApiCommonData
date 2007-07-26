@@ -928,7 +928,7 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.chromosome"/>
+        <paramRef ref="sharedParams.chromosomeOptional"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -939,7 +939,7 @@ order by project_id,sns2.source_id
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
-              AND (ens.source_id = $$pfGenomicSequence$$
+              AND (ens.source_id = $$chromosomeOptional$$
                    OR lower(ens.source_id) = lower('$$genomicSequence$$'))
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
@@ -952,7 +952,7 @@ order by project_id,sns2.source_id
                     isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
-	               <paramRef ref="sharedParams.chromosome"/>
+	               <paramRef ref="sharedParams.chromosomeOptional"/>
 	               <paramRef ref="sharedParams.sequenceId"/>
                        <paramRef ref="sharedParams.start_point"/>
                        <paramRef ref="sharedParams.end_point"/>

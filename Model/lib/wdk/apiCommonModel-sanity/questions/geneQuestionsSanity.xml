@@ -2,6 +2,289 @@
 
   <!-- ============================================================ -->
   <!-- ============================================================ -->
+  <!-- == questions == -->
+  <!-- ============================================================ -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Genes By Location ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="220">
+        <sanityParam name="chromosomeOptional" value="Ia"/>
+        <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+        <sanityParam name="start_location" value="1"/>
+        <sanityParam name="end_location" value="0"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="10" maxOutputLength="30">
+        <sanityParam name="chromosomeOptional" value="chromosome 1"/>
+        <sanityParam name="sequenceId" value="MAL4"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="100000"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="220">
+        <sanityParam name="chromosomeOptional" value="Ia"/>
+        <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+        <sanityParam name="start_location" value="1"/>
+        <sanityParam name="end_location" value="0"/>
+    </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByGeneType"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="geneType" value="protein coding"/>
+        <sanityParam name="includePseudogenes" value="No"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByExonCount"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="num_exons_gte" value="2"/>
+        <sanityParam name="num_exons_lte" value="20"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="min_isoelectric_point" value="6"/>
+        <sanityParam name="max_isoelectric_point" value="10"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="min_molecular_weight" value="10000"/>
+        <sanityParam name="max_molecular_weight" value="50000"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="min_coil" value="0"/>
+        <sanityParam name="max_coil" value="100"/>
+        <sanityParam name="min_strand" value="0"/>
+        <sanityParam name="max_strand" value="100"/>
+        <sanityParam name="min_helix" value="0"/>
+        <sanityParam name="max_helix" value="100"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesBySimilarity"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastDatabaseType" value="Proteins"/>
+        <sanityParam name="BlastDatabaseOrganism" value="P. berghei"/>
+        <sanityParam name="BlastQuerySequence" value="FIX_null_dflt"/>
+        <sanityParam name="-e" value="0.05"/>
+        <sanityParam name="-v" value="50"/>
+        <sanityParam name="-b" value="50"/>
+        <sanityParam name="-filter" value="yes"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByMotifSearch"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="C. hominis"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="domain_database" value=" Choose one:"/>
+        <sanityParam name="domain_accession" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="go_term" value="catalytic activity"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="metabolic_pathway" value="14-3-3 protein"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="min_tm" value="2"/>
+        <sanityParam name="max_tm" value="5"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="min_sigp_sum_score" value="3"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
+        <sanityParam name="included_species" value="FIX_null_dflt"/>
+        <sanityParam name="excluded_species" value="FIX_null_dflt"/>
+        <sanityParam name="phyletic_indent_map" value="Archaea"/>
+        <sanityParam name="phyletic_term_map" value="aed"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="single_gene_id" value="PF11_0344"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="text_expression" value="membrane"/>
+        <sanityParam name="whole_words" value="yes"/>
+        <sanityParam name="max_pvalue" value="-30"/>
+        <sanityParam name="text_fields" value="Gene product"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="libraryId" value="Field isolate cDNA library"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByProteinStructure"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs"
+            pageStart="1" pageEnd="20"
+            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+   <!-- ============================================================ -->
+  <!-- ============================================================ -->
   <!-- == vocab queries == -->
   <!-- ============================================================ -->
   <!-- ============================================================ -->
