@@ -10,6 +10,7 @@ use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
+		'repeated_gene'=>'repeat_region',
 		'tRNA_gene'=> 'tRNA_encoding',
 		'rRNA_gene'=> 'rRNA_encoding',
 		'snRNA_gene'=> 'snRNA_encoding',
@@ -50,7 +51,7 @@ sub makeGeneSkeleton{
       push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
-    if ($bioperlGene->primary_tag() eq 'coding_gene') {
+    if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene') {
       my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
 
@@ -108,7 +109,7 @@ sub makeGusGene {
   my $type = $bioperlGene->primary_tag();
 
   $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") 
-     unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene"));
+     unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene", "repeated_gene"));
 
   my $gusGene = $plugin->makeSkeletalGusFeature($bioperlGene, $genomicSeqId,
 						$dbRlsId, 
