@@ -1,0 +1,1888 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sanityModel>
+
+    <sanityQuery ref="GeneFeatureIds.GenesWithEpitopes"
+            minOutputLength="1" maxOutputLength="1500">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="confidence" value="Medium"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByDifferentialMeanExpression"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="diffMeanExpr_reference" value="W2mef EBA175 KO (late T)"/>
+        <sanityParam name="diffMeanExpr_comparitor" value="3D7 WT 24hr"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByWatersDifferentialExpression"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="confidence" value="0.8"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="down-regulated"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GeneBySingleLocusTag"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="locus_tag" value="PF11_0344"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL3-3-891696-892409"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfAttributes.Sequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL3-3-891696-892409"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="AJ555578"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Sequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="AJ555578"/>
+    </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.no_yes_list"
+            minOutputLength="2" maxOutputLength="2">
+    </sanityQuery>
+
+    <sanityQuery ref="SequenceAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL4"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL1.89"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpsBy.SnpBySourceId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="snp_id" value="CombinedSNP.MAL11.3000"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpsBy.SnpsByGeneId"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="locus_tag" value="PF11_0344"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpsBy.SnpsByLocation"
+            minOutputLength="90" maxOutputLength="150">
+        <sanityParam name="chromosome_single" value="chromosome 1"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpsBy.SnpsByAlleleFrequency"
+            minOutputLength="60000" maxOutputLength="65000">
+        <sanityParam name="major_allele_min" value="1"/>
+        <sanityParam name="major_allele_max" value="20"/>
+        <sanityParam name="minor_allele_min" value="1"/>
+        <sanityParam name="minor_allele_max" value="20"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByGeneIds"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="ds_gene_ids" value="PF11_03*"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByPlasmoDbDataset"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="plasmodb_dataset" value="FIX_null_dflt"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByOrthologs"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByNonnuclearGenomicRegion"
+            minOutputLength="1" maxOutputLength="5">
+        <sanityParam name="pfNonnuclearSequence" value="mitochondrial genome"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByESTOverlap"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="organism" value="Plasmodium berghei"/>
+        <sanityParam name="libraryId" value="Plasmodium berghei cDNA library"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstIds.EstBySourceId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="est_id" value="AU087658"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstIds.EstsByLocation"
+            minOutputLength="1500" maxOutputLength="1900">
+        <sanityParam name="chromosome" value="chromosome 2"/>
+        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstIds.EstsByLibrary"
+            minOutputLength="12000" maxOutputLength="13000">
+        <sanityParam name="libraryId" value="PyBS"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstIds.EstsWithGeneOverlap"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstIds.UnifiedBlast"
+            minOutputLength="1" maxOutputLength="3">
+        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastDatabaseType" value="EST"/>
+        <sanityParam name="BlastDatabaseOrganism" value="P. berghei"/>
+        <sanityParam name="-e" value="0.05"/>
+        <sanityParam name="-v" value="50"/>
+        <sanityParam name="-b" value="50"/>
+        <sanityParam name="BlastQuerySequence" value="TTGACGAACCTATATTGTTGGATGTGTTCCCTCATAATTCGGTCATTGTGAATAGAAACTACCCCTTCTTTGTTGATTTAATTTTTTGGGGAAGAGCAAATGAAAACATATCCGTGTTGGATACAAAAGAAAATAATATCAAATTAAATAATACCAAGTTAATAAAA"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfIds.OrfByOrfId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="orf_id" value="MAL1-1-10639-11520"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfIds.OrfsByLocation"
+            minOutputLength="8000" maxOutputLength="10000">
+        <sanityParam name="pfGenomicSequenceOrNot" value="chromosome 1"/>
+        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfIds.OrfsByMotifSearch"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="Expression" value="CC6+RK"/>
+        <sanityParam name="Dataset" value="P. falciparum"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.GenesByExternalDatabase"
+            minOutputLength="5000" maxOutputLength="5500">
+        <sanityParam name="extDbName" value="Jane Carlton P. vivax chromosomes"/>
+        <sanityParam name="extDbRlsVer" value="2005-09-01"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffQuery"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="organism_with_sequences" value="Plasmodium falciparum"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.GeneGffDbxrefs"
+            minOutputLength="4" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="PF11_0344"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffAttrs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL4"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffAttrs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MALPY00002"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffDbxrefs"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="MAL4"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffDbxrefs"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="MALPY00002"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.EstAttrs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="AU087658"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Reference"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="AU087658"/>
+    </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.IncludePseudogenes"
+            minOutputLength="1" maxOutputLength="4">
+    </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.high_confidence_only"
+            minOutputLength="1" maxOutputLength="4">
+    </sanityQuery>
+
+    <sanityQuery ref="GeneTables.Epitopes"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="MAL13P1.465"/>
+        <sanityParam name="confidence" value="Medium"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SequenceAttributes.Attribution"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL10"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL2.308"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpTables.Strains"
+            minOutputLength="1" maxOutputLength="40">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL2.308"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpTables.Providers"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL2.308"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstTables.AlignmentInfo"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="AU087658"/>
+    </sanityQuery>
+
+    <sanityQuery ref="UserCommentAttributes.UserComments"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="PF11_0344"/>
+    </sanityQuery>
+
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySnps"
+                   minOutputLength="1" maxOutputLength="15">
+                  <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+                  <sanityParam name="snp_strain_b" value="Pf-D10"/>
+		  <sanityParam name="snp_stat" value="All SNPs"/>
+		  <sanityParam name="occurrences_lower" value="0"/>
+		  <sanityParam name="occurrences_upper" value="1000"/>
+		  <sanityParam name="dn_ds_ratio_lower" value="20"/>
+		  <sanityParam name="dn_ds_ratio_upper" value="50"/>
+		  <sanityParam name="snp_density" value="0"/>
+      </sanityQuery>
+	
+
+      <sanityQuery ref="GeneFeatureIds.GenesWithProteinLowComplexity"
+                   minOutputLength="45" maxOutputLength="55">
+          <sanityParam name="chromosome" value="chromosome 1"/>
+	  <sanityParam name="percentLowComplexity" value="20"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesWithProteinLowComplexity"
+                   minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="chromosome" value="chromosome 14"/>
+	  <sanityParam name="percentLowComplexity" value="50"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTelomereProximity"
+                   minOutputLength="5" maxOutputLength="15">
+          <sanityParam name="chromosome" value="chromosome 1"/>
+	  <sanityParam name="distanceFromTelomere" value="50000"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTelomereProximity"
+                   minOutputLength="40" maxOutputLength="60">
+          <sanityParam name="chromosome" value="chromosome 11"/>
+	  <sanityParam name="distanceFromTelomere" value="100000"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GeneByLocusTag"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByEcNumber"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+          <sanityParam name="ec_number_pattern" value="6.1.1.12"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGeneType"
+                   minOutputLength="30" maxOutputLength="100">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMotifSearch"
+                   minOutputLength="1" maxOutputLength="6">
+          <sanityParam name="Expression" value="CC6+RK"/>
+          <sanityParam name="Dataset" value="P. falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTextSearch"
+                   minOutputLength="0" maxOutputLength="100">
+          <sanityParam name="species_name" value="Plasmodium falciparum"/>
+          <sanityParam name="text_expression" value="membrane"/>
+		  <sanityParam name="datasets" value="Similar proteins (BLAST hits v. NRDB)"/>
+          <sanityParam name="max_pvalue" value="-150"/>
+          <sanityParam name="case_independent" value="yes"/>
+		  <sanityParam name="whole_words" value="yes"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByOrthologPattern"
+                   minOutputLength="3000" maxOutputLength="3500">
+          <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
+          <sanityParam name="included_species" value="P. falciparum"/>
+          <sanityParam name="excluded_species" value="H. sapiens"/>
+          <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+          <sanityParam name="phyletic_term_map" value="rno"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExonCount" minOutputLength="1000"
+                   maxOutputLength="1200">
+          <sanityParam name="num_exons_gte" value="3"/>
+          <sanityParam name="num_exons_lte" value="5"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByIsoelectricPoint"
+                   minOutputLength="1500" maxOutputLength="9500">
+          <sanityParam name="min_isoelectric_point" value="6"/>
+          <sanityParam name="max_isoelectric_point" value="8"/>
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMolecularWeight"
+                   minOutputLength="2000" maxOutputLength="30000">
+          <sanityParam name="min_molecular_weight" value="10000"/>
+          <sanityParam name="max_molecular_weight" value="50000"/>
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+      </sanityQuery>
+
+      <!-- sanityQuery ref="GeneFeatureIds.GenesByPlasmoDbDataset"
+                   minOutputLength="10" maxOutputLength="20">
+          <sanityParam name="plasmodb_dataset" value="111090"/>
+      </sanityQuery -->
+
+      <sanityQuery ref="GeneFeatureIds.GenesByProteinProteinInteraction"
+                   minOutputLength="2" maxOutputLength="10">
+          <sanityParam name="locus_tag" value="PFL0275w"/>
+          <sanityParam name="bait_or_prey" value="bait"/>
+          <sanityParam name="min_observed" value="2"/>
+          <sanityParam name="min_searches" value="2"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTransmembraneDomains"
+                   minOutputLength="200" maxOutputLength="1600">
+          <sanityParam name="min_tm" value="4"/>
+          <sanityParam name="max_tm" value="8"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTaxon"
+                   minOutputLength="5000" maxOutputLength="6000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGoTerm"
+                   minOutputLength="1000" maxOutputLength="1200">
+          <sanityParam name="go_term" value="catalytic activity"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <!-- sanityQuery ref="GeneFeatureIds.GenesByPfamDomain"
+                   minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="pfam_term" value="PF07391"/>
+          <sanityParam name="pfam_list" value="14-3-3 protein"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery -->
+
+      <sanityQuery ref="GeneFeatureIds.GenesByInterproDomain"
+                   minOutputLength="1" maxOutputLength="2">
+          <sanityParam name="domain_database" value="PRODOM"/>
+          <sanityParam name="domain_accession" value="PD001363: RIBOSOMAL S13 RRNA-BINDING RNA-BINDING 30S PROTEOME COMPLETE TRNA-BINDING MITOCHONDRION S13P"/>
+          <sanityParam name="organism" value="Plasmodium vivax"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesWithSignalPeptide"
+                   minOutputLength="500" maxOutputLength="1000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="min_sigp_sum_score" value="3"/>
+      </sanityQuery>
+
+      <!-- skip this; every cache clear breaks it
+      <sanityQuery ref="GeneFeatureIds.GenesByOrthologs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="historyId" value="19104"/>
+          <sanityParam name="plasmodb_dataset" value="2009"/>
+      </sanityQuery>
+      -->
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySimilarity"
+                   minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByPhyleticProfile"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="ds_gene_ids" value="PFD0830w"/>
+          <sanityParam name="min_mutual_information_score" value="0.47"/>
+          <sanityParam name="include_only_queries" value="No"/>
+          <sanityParam name="min_num_query_matches" value="1"/>
+      </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesByExpressionPercentileA"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="cowmanSample" value="D10 WT 48hr"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExpressionTiming"
+                   minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="profileSet" value="Any of the time courses"/>
+          <sanityParam name="minOrMax" value="Timing of maximal expression"/>
+          <sanityParam name="maxExprHour" value="21 hours"/>
+          <sanityParam name="maxPlusMinusHours" value="4 hours"/>
+          <sanityParam name="minExprHour" value="30 hours"/>
+          <sanityParam name="minPlusMinusHours" value="2 hours"/>
+          <sanityParam name="inductionFold" value=">= 4 fold induction"/>
+          <sanityParam name="expressionPct" value=">= 50th percentile"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySubcellularLocalization"
+                   minOutputLength="400" maxOutputLength="600">
+          <sanityParam name="localization" value="Apicoplast"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByIntraerythrocyticExpression"
+                   minOutputLength="1000" maxOutputLength="2000">
+          <sanityParam name="synchronization" value="Sorbitol"/>
+          <sanityParam name="intraerythrocytic_stages" value="Any"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExtraerythrocyticExpression"
+                   minOutputLength="1500" maxOutputLength="2000">
+          <sanityParam name="extraerythrocytic_stages" value="Either"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExpression"
+                   minOutputLength="1000" maxOutputLength="3000">
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.BergheiGenesByExpressionPercentile"
+                   minOutputLength="1500" maxOutputLength="2000">
+          <sanityParam name="waters_profilesets" value="Either"/>
+          <sanityParam name="r_min_expression_percentile" value="20"/>
+          <sanityParam name="r_max_expression_percentile" value="90"/>
+          <sanityParam name="yt_min_expression_percentile" value="0"/>
+          <sanityParam name="yt_max_expression_percentile" value="100"/>
+          <sanityParam name="ys_min_expression_percentile" value="0"/>
+          <sanityParam name="ys_max_expression_percentile" value="100"/>
+          <sanityParam name="ms_min_expression_percentile" value="0"/>
+          <sanityParam name="ms_max_expression_percentile" value="100"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMetabolicPathway"
+                   minOutputLength="10" maxOutputLength="100">
+          <sanityParam name="metabolic_pathway" value="Redox metabolism"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExportPrediction"
+                   minOutputLength="100" maxOutputLength="300">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="min_exportpred_score" value="10"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByProteomicsProfile"
+                   minOutputLength="200" maxOutputLength="1000">
+          <sanityParam name="asexual_blood_stages_value" value="do not care"/>
+          <sanityParam name="gametocytes_value" value="observed"/>
+          <sanityParam name="ookinetes_value" value="do not care"/>
+          <sanityParam name="oocysts_value" value="do not care"/>
+          <sanityParam name="sporozoites_value" value="do not care"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByFunctionalInteraction"
+                   minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+          <sanityParam name="min_interaction" value="2"/>
+          <sanityParam name="min_interaction" value="0.47"/>
+          <sanityParam name="include_only_queries" value="No"/>
+          <sanityParam name="min_num_query_matches" value="1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMassSpec"
+                   minOutputLength="1300" maxOutputLength="1500">
+          <sanityParam name="mass_spec_stage" value="any"/>
+          <sanityParam name="min_seq_coverage" value="0"/>
+          <sanityParam name="min_span_count" value="0"/>
+          <sanityParam name="min_spectrum_count" value="2"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMr4Reagents"
+                   minOutputLength="10" maxOutputLength="200">
+          <sanityParam name="mr4_reagent_type" value="antibodies"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesOrthologousToAGivenGene"
+                   minOutputLength="4" maxOutputLength="7">
+          <sanityParam name="locus_tag" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByCentromereProximity"
+                   minOutputLength="3" maxOutputLength="8">
+          <sanityParam name="max_centromere_distance" value="10000"/>
+          <sanityParam name="chromosome" value="chromosome 1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGenomicRegion"
+                   minOutputLength="10" maxOutputLength="30">
+          <sanityParam name="pfGenomicSequenceOrNot" value="chromosome 1"/>
+          <sanityParam name="genomicSequence" value="MAL1"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="100000"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByPdbSimilarity"
+                   minOutputLength="300" maxOutputLength="400">
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+          <sanityParam name="clades" value="Archaea,Apicomplexa"/>
+          <sanityParam name="pvalue_cutoff" value="-4"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesWithStructurePrediction"
+                   minOutputLength="400" maxOutputLength="500">
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByProteinDbAccession"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="accession" value="CAD50836.1"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySecondaryStructure"
+                   minOutputLength="20" maxOutputLength="30">
+          <sanityParam name="min_coil" value="65"/>
+          <sanityParam name="max_coil" value="75"/>
+          <sanityParam name="min_strand" value="15"/>
+          <sanityParam name="max_strand" value="25"/>
+          <sanityParam name="min_helix" value="5"/>
+          <sanityParam name="max_helix" value="15"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByProfileSimilarity"
+                   minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="ProfileGeneId" value="PF11_0344"/>
+          <sanityParam name="ProfileDistanceMethod" value="Euclidean Distance"/>
+          <sanityParam name="ProfileNumToReturn" value="50"/>
+          <sanityParam name="ProfileProfileSet" value="HB3"/>
+          <sanityParam name="ProfileSearchGoal" value="most similar"/>
+          <sanityParam name="ProfileTimeShift" value="not allow"/>
+          <sanityParam name="ProfileScaleData" value="not scale"/>
+          <sanityParam name="ProfileMinShift" value="0 hour"/>
+          <sanityParam name="ProfileMaxShift" value="0 hour"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGametocyteExpression"
+                   minOutputLength="500" maxOutputLength="600">
+          <sanityParam name="day_and_strain" value="Strain 3D7 Day 1"/>
+          <sanityParam name="min_expression_percentile" value="60"/>
+          <sanityParam name="max_expression_percentile" value="70"/>
+          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.cowmanSample"
+            minOutputLength="12" maxOutputLength="12">
+    </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.diffExprComparisons"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+    <sanityQuery ref="VocabQueries.regulated_dir"
+            minOutputLength="2" maxOutputLength="2">
+    </sanityQuery>
+
+      <sanityQuery ref="VocabQueries.ExtraerythrocyticStages"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.IntraerythrocyticStages"
+                   minOutputLength="8" maxOutputLength="8"/>
+
+      <sanityQuery ref="VocabQueries.Synchronization"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.PhyleticIndentMap"
+                   minOutputLength="60" maxOutputLength="120"/>
+
+      <sanityQuery ref="VocabQueries.PhyleticTermMap"
+                   minOutputLength="50" maxOutputLength="200"/>
+
+      <sanityQuery ref="VocabQueries.OrganismWithGenes"
+                   minOutputLength="6" maxOutputLength="6"/>
+
+      <sanityQuery ref="VocabQueries.OrganismWithSequences"
+                   minOutputLength="8" maxOutputLength="8"/>
+
+      <sanityQuery ref="VocabQueries.OrganismWithEsts"
+                   minOutputLength="4" maxOutputLength="4"/>
+
+      <sanityQuery ref="VocabQueries.PfOrganism"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.BaitOrPrey"
+                   minOutputLength="2" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.MetabolicPathways"
+                   minOutputLength="50" maxOutputLength="150"/>
+
+      <sanityQuery ref="VocabQueries.MassSpecStage"
+                   minOutputLength="7" maxOutputLength="7"/>
+
+      <sanityQuery ref="VocabQueries.Mr4Reagents"
+                   minOutputLength="5" maxOutputLength="8"/>
+
+      <sanityQuery ref="VocabQueries.ObservedNotObserved"
+                   minOutputLength="2" maxOutputLength="4"/>
+
+      <sanityQuery ref="GeneAttributes.GeneAlias"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.Bfmv"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.ProteinSequence"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.TranscriptSequence"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.CDS"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.ExpressionGraphs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF14_0176"/>
+      </sanityQuery>
+
+<!-- replaced by bfmv
+      <sanityQuery ref="GeneAttributes.GeneAttrs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.SequenceOntology"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.AaSequenceAttrs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.Anticodon"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="MAL4_tRNA_Asn1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.ExonCount"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF14_0176"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.Transmembrane"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF14_0176"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.Organism"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.Binomial"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.ExternalDbInfo"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+-->
+
+      <sanityQuery ref="GeneTables.Notes" minOutputLength="1"
+                   maxOutputLength="4">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.UserComments"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <!-- sanityQuery ref="GeneTables.GeneComments"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery -->
+
+      <!-- sanityQuery ref="GeneTables.ProteinComments"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery -->
+
+      <sanityQuery ref="GeneTables.EcNumber"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="PFA0145c"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.InteractionsAsPrey"
+                   minOutputLength="1" maxOutputLength="6">
+          <sanityParam name="primaryKey" value="PFL0275w"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.InteractionsAsBait"
+                   minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="PFL0275w"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.Y2hInteractions"
+                   minOutputLength="3" maxOutputLength="12">
+          <sanityParam name="primaryKey" value="PFL0275w"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.GoTerms"
+                   minOutputLength="1" maxOutputLength="8">
+          <sanityParam name="primaryKey" value="MAL13P1.106"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.Aliases"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="PF10_0001"/>
+      </sanityQuery>
+
+      <!-- sanityQuery ref="GeneTables.PhyleticProfiles"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="PFD0830w"/>
+      </sanityQuery -->
+
+      <sanityQuery ref="GeneTables.Orthologs"
+                   minOutputLength="2" maxOutputLength="8">
+          <sanityParam name="primaryKey" value="PFL2005w"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.Mr4Reagents"
+                   minOutputLength="30" maxOutputLength="40">
+          <sanityParam name="primaryKey" value="PFI1475w"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.MetabolicPathways"
+                   minOutputLength="2" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.ProteinExpression"
+                   minOutputLength="2" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="PB001182.00.0"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.MassSpec"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="MAL13P1.114"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.ProteinDatabase"
+                   minOutputLength="3" maxOutputLength="6">
+          <sanityParam name="primaryKey" value="PF14_0187"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.3dPreds"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF14_0187"/>
+      </sanityQuery>
+
+    <sanityQuery ref="GeneTables.TwoChannelDifferentialExpression"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PB000296.02.0"/>
+    </sanityQuery>
+
+      <sanityQuery ref="GeneTables.PdbSimilarities"
+                   minOutputLength="8" maxOutputLength="8">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.ArrayElements"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.SNPs"
+                   minOutputLength="85" maxOutputLength="125">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneGffQuery"
+                   minOutputLength="3000" maxOutputLength="8000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneGffAttrs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF10_0104"/>
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneRnas"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="PF10_0104"/>
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneCdss"
+                   minOutputLength="1" maxOutputLength="12">
+          <sanityParam name="primaryKey" value="PF10_0104"/>
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneExons"
+                   minOutputLength="5" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="PF10_0104"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceIds.SequenceBySourceId"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="sequence" value="MAL4"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceIds.SequencesByTaxon"
+                   minOutputLength="17" maxOutputLength="17">
+          <sanityParam name="organism_with_sequences" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceIds.SequencesBySimilarity"
+                   minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceTables.Centromere"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="MAL4"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceTables.SequenceComments"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="MAL4"/>
+      </sanityQuery>
+
+      <sanityQuery ref="OrfIds.OrfsBySimilarity"
+                   minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQR"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="EstIds.EstsBySimilarity"
+                   minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="TTGGAAGCTTGTTCAGCCTGTTCAGCAGCTTTTTCAGCTTCTTCAGCAGCTTTTTC"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="VocabQueries.GeneTypes"
+                   minOutputLength="1" maxOutputLength="9"/>
+
+      <sanityQuery ref="VocabQueries.Chromosome"
+                   minOutputLength="14" maxOutputLength="14"/>
+
+      <sanityQuery ref="VocabQueries.ProfileSet"
+                   minOutputLength="4" maxOutputLength="4"/>
+
+      <sanityQuery ref="VocabQueries.WatersProfileSets"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.MinOrMax"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.Hours48"
+                   minOutputLength="48" maxOutputLength="48"/>
+
+      <sanityQuery ref="VocabQueries.Hours24"
+                   minOutputLength="24" maxOutputLength="24"/>
+
+      <sanityQuery ref="VocabQueries.InductionFold"
+                   minOutputLength="6" maxOutputLength="6"/>
+
+      <sanityQuery ref="VocabQueries.Percentile"
+                   minOutputLength="10" maxOutputLength="10"/>
+
+      <sanityQuery ref="VocabQueries.PfGenomicSequence"
+                   minOutputLength="17" maxOutputLength="17"/>
+
+      <sanityQuery ref="VocabQueries.PfGenomicSequenceOrNot"
+                   minOutputLength="18" maxOutputLength="18"/>
+
+      <sanityQuery ref="VocabQueries.Localization"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.BlastQueryType"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.BlastDatabaseType"
+                   minOutputLength="9" maxOutputLength="9"/>
+
+      <sanityQuery ref="VocabQueries.BlastDatabaseOrganism"
+                   minOutputLength="11" maxOutputLength="11"/>
+
+      <sanityQuery ref="VocabQueries.MotifDataset"
+                   minOutputLength="5" maxOutputLength="5"/>
+
+      <sanityQuery ref="VocabQueries.WhichEnd"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.WhichEnd2"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.ProteinDataset"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.Clades"
+                   minOutputLength="5" maxOutputLength="5"/>
+
+      <sanityQuery ref="VocabQueries.SpeciesName"
+                   minOutputLength="6" maxOutputLength="6"/>
+
+      <sanityQuery ref="VocabQueries.ProfileDistanceMethod"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.ProfileSearchGoal"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.ProfileProfileSet"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.ProfileTimeShift"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.ProfileScaleData"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.ProfileMinShift"
+                   minOutputLength="48" maxOutputLength="48"/>
+
+      <sanityQuery ref="VocabQueries.ProfileMaxShift"
+                   minOutputLength="48" maxOutputLength="48"/>
+
+      <sanityQuery ref="VocabQueries.CaseIndependence"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.TextSearchDatasets"
+                   minOutputLength="8" maxOutputLength="8"/>
+
+      <sanityQuery ref="VocabQueries.DayAndStrain"
+                   minOutputLength="23" maxOutputLength="23"/>
+
+      <sanityQuery ref="VocabQueries.inNotIn"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.IncludeReichenowi"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrainA"
+                   minOutputLength="23" maxOutputLength="28"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrainB"
+                   minOutputLength="23" maxOutputLength="28"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrainM"
+                   minOutputLength="23" maxOutputLength="28"/>
+
+      <sanityQuery ref="VocabQueries.SnpStat"
+                   minOutputLength="6" maxOutputLength="6"/>
+
+      <sanityQuery ref="VocabQueries.SnpSort"
+                   minOutputLength="7" maxOutputLength="7"/>
+
+      <sanityQuery ref="VocabQueries.SortOrder"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.WholeWords"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.DomainDatabase"
+                   minOutputLength="10" maxOutputLength="12"/>
+
+      <!-- sanityQuery ref="VocabQueries.DomainAccession"
+                   minOutputLength="5500" maxOutputLength="6000"/ -->
+
+      <sanityQuery ref="VocabQueries.EstLibraries"
+                   minOutputLength="25" maxOutputLength="28"/>
+
+      <sanityQuery ref="VocabQueries.GeneBlastDatabaseType"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.SequenceBlastDatabaseType"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.EstBlastDatabaseType"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.OrfBlastDatabaseType"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.BlastDatabaseOrganismWithGenes"
+                   minOutputLength="9" maxOutputLength="9"/>
+
+      <sanityQuery ref="VocabQueries.PfNonnuclearSequence"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.MotifOrfDataset"
+                   minOutputLength="8" maxOutputLength="8"/>
+
+    <sanityQuery ref="VocabQueries.Confidence"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+      <sanityQuery ref="VocabQueries.best_alignment_only"
+            minOutputLength="2" maxOutputLength="2">
+      </sanityQuery>
+
+      <sanityQuery ref="ArrayElementAttributes.ProviderAndOrganism"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="Ks382_1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="ArrayElementTables.Genes"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="Ks382_1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="ArrayElementTables.GenomicLocations"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="Ks382_1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.GeneComments"
+                   minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="primaryKey" value="PF11_0344"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.SequenceComments"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="MAL9"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UtilityTables.InterproTermList"
+                   minOutputLength="650" maxOutputLength="900">
+          <sanityParam name="primaryKey" value="SUPERFAMILY"/>
+      </sanityQuery>
+
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass"
+                    primaryKey="PF11_0344"/>
+
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass"
+                    primaryKey="MAL4"/>
+
+
+      <sanityRecord ref="UserCommentsRecordClasses.GeneCommentsClass"
+                    primaryKey="PF11_0344"/>
+
+      <sanityRecord ref="UserCommentsRecordClasses.SequenceCommentsClass"
+                    primaryKey="MAL11"/>
+
+      <sanityRecord ref="ArrayElementRecordClasses.ArrayElementRecordClass"
+                    primaryKey="Ks382_1"/>
+
+      <sanityRecord ref="SnpRecordClasses.SnpRecordClass"
+                    primaryKey="BI-MAL6-1044"/>
+
+      <sanityRecord ref="EstRecordClasses.EstRecordClass"
+                    primaryKey="AJ555574"/>
+
+      <sanityRecord ref="OrfRecordClasses.OrfRecordClass"
+                    primaryKey="ctg_3585-3-3-158"/>
+
+      <sanityRecord ref="InterproTermClasses.InterproTermClass"
+                    primaryKey="PRODOM"/>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1500">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByWatersDifferentialExpression"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="confidence" value="0.8"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="down-regulated"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByDifferentialMeanExpression"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="diffMeanExpr_reference" value="W2mef EBA175 KO (late T)"/>
+        <sanityParam name="diffMeanExpr_comparitor" value="3D7 WT 24hr"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="locus_tag" value="PF11_0344"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByNonnuclearLocation"
+            minOutputLength="3" maxOutputLength="10"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="pfNonnuclearSequence" value="mitochondrial genome"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTelomereProximity"
+            minOutputLength="2" maxOutputLength="2"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="distanceFromTelomere" value="30000"/>
+        <sanityParam name="chromosome" value="chromosome 1"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithProteinLowComplexity"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="percentLowComplexity" value="30"/>
+        <sanityParam name="chromosome" value="chromosome 1"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySnps"
+            minOutputLength="1500" maxOutputLength="1700"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_b" value="Pf-7G8"/>
+        <sanityParam name="snp_stat" value="All SNPs"/>
+        <sanityParam name="occurrences_lower" value="0"/>
+        <sanityParam name="occurrences_upper" value="1000"/>
+        <sanityParam name="dn_ds_ratio_lower" value="0"/>
+        <sanityParam name="dn_ds_ratio_upper" value="100"/>
+        <sanityParam name="snp_density" value="0"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByGeneIds"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="organism" value="Plasmodium berghei"/>
+        <sanityParam name="libraryId" value="Plasmodium berghei cDNA library"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value="AU087658"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsByLocation"
+            minOutputLength="1600" maxOutputLength="1800"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="chromosome" value="chromosome 2"/>
+        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsByLibrary"
+            minOutputLength="12000" maxOutputLength="13000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="libraryId" value="PyBS"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap"
+            pageStart="1" pageEnd="20"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="orf_id" value="MAL1-1-10639-11520"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation"
+                    minOutputLength="8000" maxOutputLength="10000"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="pfGenomicSequenceOrNot" value="chromosome 1"/>
+        <sanityParam name="genomicSequence" value="MAL4"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="Expression" value="CC6+RK"/>
+        <sanityParam name="Dataset" value="P. falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpBySourceId"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_id" value="CombinedSNP.MAL11.3000"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpsByGeneId"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="locus_tag" value="PF11_0344"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpsByLocation"
+            minOutputLength="90" maxOutputLength="150"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="chromosome_single" value="chromosome 1"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpsByAlleleFrequency"
+            minOutputLength="60000" maxOutputLength="65000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="major_allele_min" value="1"/>
+        <sanityParam name="major_allele_max" value="20"/>
+        <sanityParam name="minor_allele_min" value="1"/>
+        <sanityParam name="minor_allele_max" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="DataDumpQuestions.SequenceGffQuestion"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="organism_with_sequences" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="DataDumpQuestions.GenesByExternalDatabase"
+            pageStart="1" pageEnd="20"
+            minOutputLength="5000" maxOutputLength="5500">
+        <sanityParam name="extDbName" value="Jane Carlton P. vivax chromosomes"/>
+        <sanityParam name="extDbRlsVer" value="2005-09-01"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByPlasmoDbDataset"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="plasmodb_dataset" value="FIX_null_dflt"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence"
+            minOutputLength="1000" maxOutputLength="2000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="synchronization" value="Sorbitol"/>
+        <sanityParam name="intraerythrocytic_stages" value="Any"/>
+        <sanityParam name="min_expression_percentile" value="80"/>
+        <sanityParam name="max_expression_percentile" value="90"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence"
+            minOutputLength="3000" maxOutputLength="4000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="synchronization" value="Sorbitol"/>
+        <sanityParam name="intraerythrocytic_stages" value="Any"/>
+        <sanityParam name="min_expression_percentile" value="50"/>
+        <sanityParam name="max_expression_percentile" value="100"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByProteinStructure"
+            minOutputLength="3000" maxOutputLength="4000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="synchronization" value="Sorbitol"/>
+        <sanityParam name="intraerythrocytic_stages" value="Any"/>
+        <sanityParam name="min_expression_percentile" value="50"/>
+        <sanityParam name="max_expression_percentile" value="100"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.UnifiedBlast"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastDatabaseType" value="Transcripts"/>
+        <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+        <sanityParam name="-e" value="0.05"/>
+        <sanityParam name="-v" value="50"/>
+        <sanityParam name="-b" value="50"/>
+        <sanityParam name="BlastQuerySequence" value="GTGCCCTTGAATATGAATATTATAAGCATACTAATGGCGGTGGTAAGGGTAAAAGGTATCCGTGTACAGAGTTAGGTGAAAAAGTAGAACCACGTTTTTCGGATACACTTGGTGGTCAGTGTACTAACAAAAA"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ds_gene_id" value="PF11_0344"/>
+      </sanityQuestion>
+
+      <!-- alias -->
+      <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ds_gene_id" value="1399.t00180"/>
+      </sanityQuestion>
+
+      <!-- accession from NRDB match -->
+      <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ds_gene_id" value="NP_701204.1"/>
+      </sanityQuestion>
+
+      <!-- GI from NRDB match -->
+       <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ds_gene_id" value="23496270"/>
+      </sanityQuestion>
+
+     <!-- GI from manually delivered giDbRefs.txt file (aaron) -->
+     <sanityQuestion ref="GeneQuestions.GeneByLocusTag"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ds_gene_id" value="1575532"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber"
+                      minOutputLength="1" maxOutputLength="3"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+          <sanityParam name="ec_number_pattern" value="6.1.1.12"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequence" value="MAL4"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="7400" maxOutputLength="7600">
+          <sanityParam name="organism_with_sequences" value="Plasmodium berghei"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="DataDumpQuestions.GeneGffQuestion"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="3000" maxOutputLength="8000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGeneType"
+                      pageStart="30" pageEnd="100"
+                      minOutputLength="30" maxOutputLength="100">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="3000" maxOutputLength="3500">
+          <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
+          <sanityParam name="included_species" value="P. falciparum"/>
+          <sanityParam name="excluded_species" value="H. sapiens"/>
+          <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+          <sanityParam name="phyletic_term_map" value="rno"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1000" maxOutputLength="2000">
+          <sanityParam name="min_isoelectric_point" value="6"/>
+          <sanityParam name="max_isoelectric_point" value="8"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="2000" maxOutputLength="30000">
+          <sanityParam name="min_molecular_weight" value="10000"/>
+          <sanityParam name="max_molecular_weight" value="50000"/>
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMotifSearch"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="6">
+          <sanityParam name="Expression" value="CC6+RK"/>
+          <sanityParam name="Dataset" value="P. falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByTextSearch"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="0" maxOutputLength="100">
+          <sanityParam name="species_name" value="Plasmodium falciparum,Plasmodium vivax"/>
+          <sanityParam name="text_expression" value="membrane"/>
+          <sanityParam name="datasets" value="Similar proteins (BLAST hits v. NRDB)"/>
+          <sanityParam name="max_pvalue" value="-250"/>
+          <sanityParam name="case_independent" value="yes"/>
+          <sanityParam name="whole_words" value="yes"/>
+
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExonCount"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1000" maxOutputLength="1200">
+          <sanityParam name="num_exons_gte" value="3"/>
+          <sanityParam name="num_exons_lte" value="5"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByPhyleticProfile"
+                   pageStart="1" pageEnd="20"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="ds_gene_ids" value="PFD0830w"/>
+          <sanityParam name="min_mutual_information_score" value="0.47"/>
+          <sanityParam name="include_only_queries" value="No"/>
+          <sanityParam name="min_num_query_matches" value="1"/>
+      </sanityQuestion>
+
+      <!-- sanityQuestion ref="InternalQuestions.GenesByPlasmoDbDataset"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="20">
+          <sanityParam name="plasmodb_dataset" value="111090"/>
+      </sanityQuestion -->
+
+      <!-- skip this; every cache clear breaks it
+      <sanityQuestion ref="InternalQuestions.GenesByOrthologs"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="historyId" value="19104"/>
+          <sanityParam name="plasmodb_dataset" value="2009"/>
+      </sanityQuestion>
+      -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentileA"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="cowmanSample" value="D10 WT 48hr"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="InternalQuestions.GenesByIntraerythrocyticExpression"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="800" maxOutputLength="2000">
+          <sanityParam name="synchronization" value="Sorbitol"/>
+          <sanityParam name="intraerythrocytic_stages" value="Any"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="InternalQuestions.GenesByExtraerythrocyticExpression"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2000">
+          <sanityParam name="extraerythrocytic_stages" value="Either"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="InternalQuestions.GenesByExpression"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2500">
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentile"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2500">
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.BergheiGenesByExpressionPercentile"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1200" maxOutputLength="2000">
+          <sanityParam name="r_min_expression_percentile" value="20"/>
+          <sanityParam name="r_max_expression_percentile" value="90"/>
+          <sanityParam name="yt_min_expression_percentile" value="0"/>
+          <sanityParam name="yt_max_expression_percentile" value="100"/>
+          <sanityParam name="ys_min_expression_percentile" value="0"/>
+          <sanityParam name="ys_max_expression_percentile" value="100"/>
+          <sanityParam name="ms_min_expression_percentile" value="0"/>
+          <sanityParam name="ms_max_expression_percentile" value="100"/>
+          <sanityParam name="waters_profilesets" value="HP"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteinProteinInteraction"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="2" maxOutputLength="10">
+          <sanityParam name="locus_tag" value="PFL0275w"/>
+          <sanityParam name="bait_or_prey" value="bait"/>
+          <sanityParam name="min_observed" value="2"/>
+          <sanityParam name="min_searches" value="2"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains"
+                   pageStart="1" pageEnd="20"
+                   minOutputLength="200" maxOutputLength="1600">
+          <sanityParam name="min_tm" value="4"/>
+          <sanityParam name="max_tm" value="8"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByTaxon"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="5000" maxOutputLength="6000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGoTerm"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="190" maxOutputLength="200">
+          <sanityParam name="go_term" value="host cell plasma membrane"/>
+          <sanityParam name="organism" value="Plasmodium falciparum,Plasmodium yoelii"/>
+      </sanityQuestion>
+
+      <!-- sanityQuestion ref="GeneQuestions.GenesByPfamDomain"
+                      pageStart="2" pageEnd="6"
+                      minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="pfam_term" value="apical membrane antigen 1"/>
+          <sanityParam name="pfam_list" value="14-3-3 protein"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion -->
+
+      <sanityQuestion ref="GeneQuestions.GenesByInterproDomain"
+                      pageStart="1" pageEnd="20"
+                   minOutputLength="1" maxOutputLength="2">
+          <sanityParam name="domain_database" value="PRODOM"/>
+          <sanityParam name="domain_accession" value="PD001363: RIBOSOMAL S13 RRNA-BINDING RNA-BINDING 30S PROTEOME COMPLETE TRNA-BINDING MITOCHONDRION S13P"/>
+          <sanityParam name="organism" value="Plasmodium vivax"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="500" maxOutputLength="1000">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="min_sigp_sum_score" value="3"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExpressionTiming"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="profileSet" value="Any of the time courses"/>
+          <sanityParam name="minOrMax" value="Timing of maximal expression"/>
+          <sanityParam name="maxExprHour" value="21 hours"/>
+          <sanityParam name="maxPlusMinusHours" value="4 hours"/>
+          <sanityParam name="minExprHour" value="30 hours"/>
+          <sanityParam name="minPlusMinusHours" value="2 hours"/>
+          <sanityParam name="inductionFold" value=">= 4 fold induction"/>
+          <sanityParam name="expressionPct" value=">= 50th percentile"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByLocation"
+                      pageStart="1" pageEnd="20"
+                   minOutputLength="10" maxOutputLength="30">
+          <sanityParam name="pfGenomicSequenceOrNot" value="chromosome 1"/>
+          <sanityParam name="genomicSequence" value="MAL1"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="100000"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesBySubcellularLocalization"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="400" maxOutputLength="600">
+          <sanityParam name="localization" value="Apicoplast"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="100">
+          <sanityParam name="metabolic_pathway" value="DNA Replication"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="GeneQuestions.GenesByExportPrediction"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="300">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="min_exportpred_score" value="10"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteomicsProfile"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="200" maxOutputLength="1000">
+          <sanityParam name="asexual_blood_stages_value" value="do not care"/>
+          <sanityParam name="gametocytes_value" value="observed"/>
+          <sanityParam name="ookinetes_value" value="do not care"/>
+          <sanityParam name="oocysts_value" value="do not care"/>
+          <sanityParam name="sporozoites_value" value="do not care"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByFunctionalInteraction"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="ds_gene_id" value="PF11_0344"/>
+          <sanityParam name="min_interaction" value="12"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMassSpec"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1300" maxOutputLength="1500">
+          <sanityParam name="mass_spec_stage" value="any"/>
+          <sanityParam name="min_seq_coverage" value="0"/>
+          <sanityParam name="min_span_count" value="0"/>
+          <sanityParam name="min_spectrum_count" value="2"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMr4Reagents"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="200">
+          <sanityParam name="mr4_reagent_type" value="antibodies"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesOrthologousToAGivenGene"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="4" maxOutputLength="7">
+          <sanityParam name="locus_tag" value="PF11_0344"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByCentromereProximity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="3" maxOutputLength="8">
+             <sanityParam name="chromosome" value="chromosome 1"/>
+          <sanityParam name="max_centromere_distance" value="10000"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteinDbAccession"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="accession" value="CAD50836.1"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="20" maxOutputLength="30">
+          <sanityParam name="min_coil" value="65"/>
+          <sanityParam name="max_coil" value="75"/>
+          <sanityParam name="min_strand" value="15"/>
+          <sanityParam name="max_strand" value="25"/>
+          <sanityParam name="min_helix" value="5"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="max_helix" value="15"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByPdbSimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="300" maxOutputLength="400">
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+          <sanityParam name="clades" value="Archaea,Apicomplexa"/>
+          <sanityParam name="pvalue_cutoff" value="-4"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesWithStructurePrediction"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="400" maxOutputLength="500">
+      </sanityQuestion>
+
+    <sanityXmlQuestion ref="XmlQuestions.Tutorials"
+            minOutputLength="4" maxOutputLength="100"        
+            pageStart="1" pageEnd="20">
+    </sanityXmlQuestion>
+
+      <sanityXmlQuestion ref="XmlQuestions.News"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.NewsRss"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.ComingSoon"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="500"/>
+
+      <!-- sanityXmlQuestion ref="XmlQuestions.DidYouKnow"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="1000"/ -->
+
+      <sanityXmlQuestion ref="XmlQuestions.Methods"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="1000"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.DataSources"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.About"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.FAQ"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="1000"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.ExternalLinks"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProfileSimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="ProfileGeneId" value="PF11_0344"/>
+          <sanityParam name="ProfileDistanceMethod" value="Euclidean Distance"/>
+          <sanityParam name="ProfileNumToReturn" value="50"/>
+          <sanityParam name="ProfileProfileSet" value="3D7"/>
+          <sanityParam name="ProfileSearchGoal" value="most similar"/>
+          <sanityParam name="ProfileTimeShift" value="not allow"/>
+          <sanityParam name="ProfileScaleData" value="not scale"/>
+          <sanityParam name="ProfileMinShift" value="0 hour"/>
+          <sanityParam name="ProfileMaxShift" value="0 hour"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGametocyteExpression"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="500" maxOutputLength="600">
+          <sanityParam name="day_and_strain" value="Strain 3D7 Day 1"/>
+          <sanityParam name="min_expression_percentile" value="65"/>
+          <sanityParam name="max_expression_percentile" value="75"/>
+          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="OrfQuestions.OrfsBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="NKRKDSEFFSKWQQRRYSSCPQKPRPNTTNLVERQRK"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="EstQuestions.EstsBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastQuerySequence" value="TTGGAAGCTTGTTCAGCCTGTTCAGCAGCTTTTTCAGCTTCTTCAGCAGCTTTTT"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+</sanityModel>

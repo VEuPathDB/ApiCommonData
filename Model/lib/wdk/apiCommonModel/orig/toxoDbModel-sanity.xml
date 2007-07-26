@@ -1,0 +1,1162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sanityModel>
+
+    <sanityQuery ref="GeneAttributes.Bfmv"
+                 minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="49.m00014"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneTables.Notes"
+                 minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="113.m00755"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneTables.Orthologs"
+            minOutputLength="4" maxOutputLength="4">
+        <sanityParam name="primaryKey" value="42.m03416"/>
+    </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByEcNumber"
+                   minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="ec_number_pattern" value="4.2.1.55"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGeneType"
+                   minOutputLength="200" maxOutputLength="210">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTextSearch"
+                   minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="text_expression" value="proline"/>
+          <sanityParam name="whole_words" value="no"/>
+          <sanityParam name="max_pvalue" value="-30"/>
+          <sanityParam name="datasets" value="Gene product,User comments"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByOrthologPattern"
+                   minOutputLength="2000" maxOutputLength="2500">
+          <sanityParam name="profile_pattern" value="%hsa:N%tgo:Y%"/>
+          <sanityParam name="included_species" value="T. gondii"/>
+          <sanityParam name="excluded_species" value="H. sapiens"/>
+          <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+          <sanityParam name="phyletic_term_map" value="rno"/>
+          <sanityParam name="organism" value="Toxoplasma gondii"/>
+      </sanityQuery>
+
+    <sanityQuery ref="GeneFeatureIds.GenesOrthologousToAGivenGene"
+            minOutputLength="4" maxOutputLength="4">
+        <sanityParam name="locus_tag" value="42.m03416"/>
+    </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByExonCount" minOutputLength="1"
+                   maxOutputLength="4000">
+          <sanityParam name="num_exons_lte" value="20"/>
+          <sanityParam name="num_exons_gte" value="15"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByIsoelectricPoint"
+                   minOutputLength="1000" maxOutputLength="1800">
+          <sanityParam name="min_isoelectric_point" value="10"/>
+          <sanityParam name="max_isoelectric_point" value="20"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMolecularWeight"
+                   minOutputLength="2000" maxOutputLength="5000">
+          <sanityParam name="min_molecular_weight" value="10000"/>
+          <sanityParam name="max_molecular_weight" value="50000"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByTransmembraneDomains"
+                   minOutputLength="1" maxOutputLength="1000">
+          <sanityParam name="min_tm" value="4"/>
+          <sanityParam name="max_tm" value="4"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGoTerm"
+                   minOutputLength="0" maxOutputLength="2000">
+          <sanityParam name="go_term" value="catalytic activity"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByProteinDomain"
+                   minOutputLength="1" maxOutputLength="200">
+          <sanityParam name="domain_database" value="PRODOM"/>
+          <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesWithSignalPeptide"
+                   minOutputLength="800" maxOutputLength="1200">
+          <sanityParam name="min_sigp_sum_score" value="3"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMetabolicPathway"
+                   minOutputLength="33" maxOutputLength="33">
+          <sanityParam name="metabolic_pathway" value="Glycolysis / Gluconeogenesis"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByGenomicRegion"
+                   minOutputLength="100" maxOutputLength="600">
+          <sanityParam name="chromosome_single" value="Ia"/>
+          <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+          <sanityParam name="start_location" value="1"/>
+          <sanityParam name="end_location" value="0"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesByNonnuclearGenomicRegion"
+                   minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="non_nuclear_sequence" value="Apicoplast genome"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySnps"
+	    minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+        <sanityParam name="snp_strain_b" value="ME49 (type II)"/>
+        <sanityParam name="snp_stat" value="All SNPs"/>
+        <sanityParam name="occurrences_lower" value="100"/>
+        <sanityParam name="occurrences_upper" value="1000"/>
+        <sanityParam name="dn_ds_ratio_lower" value="0"/>
+        <sanityParam name="dn_ds_ratio_upper" value="100"/>
+        <sanityParam name="snp_density" value="0"/>
+      </sanityQuery>
+
+
+	  <sanityQuery ref="GeneFeatureIds.GenesByESTOverlap"
+	  		minOutputLength="400" maxOutputLength="500">
+		<sanityParam name="libraryId" value="TgME49cDNA"/>
+		<sanityParam name="bp_overlap_gte" value="100"/>
+		<sanityParam name="best_alignment_only" value="Yes"/>
+		<sanityParam name="high_confidence_only" value="No"/>
+		<sanityParam name="min_percent_identity" value="90"/>
+		<sanityParam name="min_percent_est_aligned" value="20"/>
+	  </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.ProteinSequence"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.TranscriptSequence"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneAttributes.CDS"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.EcNumber"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.GoTerms"
+                   minOutputLength="15" maxOutputLength="20">
+          <sanityParam name="primaryKey" value="41.m00036"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.MetabolicPathways"
+                   minOutputLength="5" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="20.m00382"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.TaskComments"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m02663"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.SNPs"
+                   minOutputLength="3" maxOutputLength="3">
+          <sanityParam name="primaryKey" value="44.m02663"/>
+      </sanityQuery>
+
+      <!-- no user-comments for now; so minOutputLength=0 -->
+      <sanityQuery ref="UserCommentTables.GeneComments"
+                   minOutputLength="0" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m02663"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.UserComments"
+                   minOutputLength="0" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m02663"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.TaskComments"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="44.m02663"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.Epitopes"
+                   minOutputLength="5" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="42.m00015"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SnpTables.Strains"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SnpTables.Providers"
+                   minOutputLength="1" maxOutputLength="3">
+          <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SnpAttributes.Sequence"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+      </sanityQuery>
+
+
+      <sanityQuery ref="EstTables.AlignmentInfo"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="AA011889"/>
+      </sanityQuery>
+
+
+
+      <sanityQuery ref="DataDumpQueries.GeneGffQuery"
+                   minOutputLength="3000" maxOutputLength="8000">
+      </sanityQuery>
+
+      <sanityQuery ref="DataDumpQueries.GeneGffAttrs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceIds.SequenceBySourceId"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="sequence" value="XI"/>
+      </sanityQuery>
+
+
+      <!-- no sequence-comments for now; so minOutputLength=0 -->
+      <sanityQuery ref="UserCommentTables.SequenceComments"
+                   minOutputLength="0" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="Ia"/>
+      </sanityQuery>
+
+      <sanityQuery ref="SequenceTables.SequenceComments"
+                   minOutputLength="0" maxOutputLength="5">
+          <sanityParam name="primaryKey" value="Ia"/>
+      </sanityQuery>
+
+      <!-- RE-CHECK: not implemented -->
+      <sanityQuery ref="SequenceTables.Centromere"
+                   minOutputLength="0" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="XI"/>
+      </sanityQuery>
+
+      <sanityQuery ref="VocabQueries.non_nuclear_sequence"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.GeneTypes"
+                   minOutputLength="1" maxOutputLength="9"/>
+
+      <sanityQuery ref="VocabQueries.Chromosome"
+                   minOutputLength="15" maxOutputLength="15"/>
+
+      <sanityQuery ref="VocabQueries.Organism"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.MetabolicPathways"
+                   minOutputLength="116" maxOutputLength="116"/>
+
+      <sanityQuery ref="VocabQueries.BlastQueryType"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+
+      <sanityQuery ref="VocabQueries.GeneBlastDatabaseType"
+                   minOutputLength="1" maxOutputLength="3"/>
+      <sanityQuery ref="VocabQueries.SequenceBlastDatabaseType"
+                   minOutputLength="1" maxOutputLength="2"/>
+      <sanityQuery ref="VocabQueries.EstBlastDatabaseType"
+                   minOutputLength="1" maxOutputLength="2"/>
+      <sanityQuery ref="VocabQueries.OrfBlastDatabaseType"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+
+      <sanityQuery ref="VocabQueries.BlastDatabaseOrganism"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.EstBlastDatabaseOrganism"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.PhyleticIndentMap"
+                   minOutputLength="100" maxOutputLength="110"/>
+
+      <sanityQuery ref="VocabQueries.PhyleticTermMap"
+                   minOutputLength="85" maxOutputLength="90"/>
+
+      <sanityQuery ref="VocabQueries.MotifDataset"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.MotifOrfDataset"
+                   minOutputLength="1" maxOutputLength="1"/>
+
+      <sanityQuery ref="VocabQueries.WhichEnd"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.WhichEnd2"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrainA"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrainB"
+                   minOutputLength="3" maxOutputLength="3"/>
+
+      <sanityQuery ref="VocabQueries.SnpStat"
+                   minOutputLength="6" maxOutputLength="6"/>
+
+      <sanityQuery ref="VocabQueries.SnpSort"
+                   minOutputLength="7" maxOutputLength="7"/>
+
+      <sanityQuery ref="VocabQueries.SortOrder"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.WholeWords"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.DomainDatabase"
+                   minOutputLength="10" maxOutputLength="10"/>
+
+      <sanityQuery ref="VocabQueries.EstLibraries"
+                   minOutputLength="25" maxOutputLength="35"/>
+
+      <sanityQuery ref="VocabQueries.SnpStrain"
+                   minOutputLength="3" maxOutputLength="4"/>
+
+      <sanityQuery ref="VocabQueries.inNotIn"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.CaseIndependence"
+                   minOutputLength="2" maxOutputLength="2"/>
+
+      <sanityQuery ref="VocabQueries.TextSearchDatasets"
+                   minOutputLength="7" maxOutputLength="8"/>
+
+      <sanityQuery ref="ProteinAttributes.ProteinAttrs"
+                   minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="primaryKey" value="44.m00048"/>
+      </sanityQuery>
+
+    <sanityQuery ref="EstIds.EstBySourceId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="est_id" value="AA009308"/>
+    </sanityQuery>
+
+	  <sanityQuery ref="EstIds.EstsByLocation"
+	  		minOutputLength="30" maxOutputLength="40">
+		<sanityParam name="chromosome_single" value="Ia"/>
+		<sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+		<sanityParam name="start_point" value="1"/>
+		<sanityParam name="end_point" value="0"/>
+		<sanityParam name="best_alignment_only" value="Yes"/>
+		<sanityParam name="high_confidence_only" value="No"/>
+		<sanityParam name="min_percent_identity" value="90"/>
+		<sanityParam name="min_percent_est_aligned" value="20"/>
+		<sanityParam name="libraryId" value="TgME49cDNA"/>
+          </sanityQuery>
+
+	  <sanityQuery ref="EstIds.EstsByLibrary"
+	  		minOutputLength="700" maxOutputLength="800">
+		<sanityParam name="libraryId" value="TgME49cDNA"/>
+		</sanityQuery>
+
+	  <sanityQuery ref="EstIds.EstsWithGeneOverlap"
+		  		minOutputLength="600" maxOutputLength="610">
+                <sanityParam name="libraryId" value="TgME49cDNA"/>
+		<sanityParam name="inNotIn" value="does overlap with a gene"/>
+		<sanityParam name="bp_overlap_gte" value="35"/>
+		<sanityParam name="best_alignment_only" value="Yes"/>
+		<sanityParam name="high_confidence_only" value="No"/>
+		<sanityParam name="min_percent_identity" value="90"/>
+		<sanityParam name="min_percent_est_aligned" value="20"/>
+          </sanityQuery>
+
+	  	
+	  <sanityQuery ref="EstIds.EstsBySimilarity"
+		  		minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.05"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+	  </sanityQuery>
+
+
+    <sanityQuery ref="EstIds.UnifiedBlast"
+            minOutputLength="1" maxOutputLength="5">
+        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastDatabaseType" value="Genome"/>
+        <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+        <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+        <sanityParam name="-e" value="0.05"/>
+        <sanityParam name="-v" value="50"/>
+        <sanityParam name="-b" value="50"/>
+        <sanityParam name="-filter" value="yes"/>
+    </sanityQuery>
+
+	  <sanityQuery ref="EstAttributes.Reference"
+	  		minOutputLength="1" maxOutputLength="1">
+		<sanityParam name="primaryKey" value="AA011889"/>
+	  </sanityQuery>
+
+
+    <sanityQuery ref="SnpsBy.SnpBySourceId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="snp_id" value="SNP_Ia_17864"/>
+    </sanityQuery>
+
+      <!-- sanityQuery ref="SnpsBy.SnpsByGeneId"
+                   minOutputLength="60" maxOutputLength="65">
+        <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+        <sanityParam name="snp_strain_m" value="ME49 (type II)"/>
+        <sanityParam name="ds_gene_ids" value="49.m00014"/>
+      </sanityQuery -->
+
+      <sanityQuery ref="SnpsBy.SnpsByLocation"
+                   minOutputLength="300" maxOutputLength="400">
+	  <sanityParam name="chromosome_single" value="Ia"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+          <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+          <sanityParam name="snp_strain_m" value="ME49 (type II)"/>
+      </sanityQuery>
+
+
+      <sanityQuery ref="ProteinTables.TransmembraneDomains"
+                   minOutputLength="1" maxOutputLength="15">
+          <sanityParam name="primaryKey" value="113.m00769-1"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UtilityTables.InterproTermList"
+                   minOutputLength="80" maxOutputLength="85">
+          <sanityParam name="primaryKey" value="PIR"/>
+      </sanityQuery>
+
+
+
+      <sanityQuery ref="GeneFeatureIds.GenesByMotifSearch"
+                    minOutputLength="1" maxOutputLength="6">
+           <sanityParam name="Expression" value="CC6+RK"/>
+           <sanityParam name="Dataset" value="T. gondii annotated proteins"/>
+       </sanityQuery>
+ 
+
+      <sanityQuery ref="SequenceIds.SequencesBySimilarity"
+                   minOutputLength="2" maxOutputLength="2">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.05"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneFeatureIds.GenesBySimilarity"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="MAQLASRSLCAGPSSACHGSRRFLLASLAVLFFVGLGCCLGVPVSPSPPADASEDLFCTY"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="OrfIds.OrfsBySimilarity"
+                   minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value=" QGRKGVQSGFGHTRPDAGCLITSARRQHECCQSPDVCWRRRHHVCSVVLAAGRDRVRNLV"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="OrfIds.OrfsByLocation" 
+                   minOutputLength="8" maxOutputLength="10">
+          <sanityParam name="chromosome_single" value="Ia"/>
+          <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+          <sanityParam name="start_point" value="1"/> 
+          <sanityParam name="end_point" value="1000"/>
+      </sanityQuery>
+
+      <sanityQuery ref="OrfIds.OrfsByMotifSearch"
+                    minOutputLength="250" maxOutputLength="260">
+           <sanityParam name="Expression" value="CC6+RK"/>
+           <sanityParam name="Dataset" value="T. gondii ORFs"/>
+       </sanityQuery>
+
+
+      <sanityQuery ref="EstIds.EstsBySimilarity"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value=" GGAGGGGAGGGGCAATGGTAATTGCATGTGCTTGCGCGGACAGTCTTGGTATGACACCTG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UnifiedQueries.BlastSimilarity"
+                      minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value= "ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuery>
+
+
+
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass"
+                    primaryKey="44.m00048"/>
+
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass"
+                    primaryKey="XI"/>
+
+      <sanityRecord ref="ProteinRecordClasses.ProteinRecordClass"
+                    primaryKey="44.m00048"/>
+
+      <sanityRecord ref="SnpRecordClasses.SnpRecordClass" 
+                    primaryKey="SNP_VIIa_810455"/>
+
+      <sanityRecord ref="EstRecordClasses.EstRecordClass" 
+                    primaryKey="CV700698"/>
+
+      <sanityRecord ref="OrfRecordClasses.OrfRecordClass" 
+                    primaryKey="Ia-1-1887223-1887375"/>
+
+      <sanityRecord ref="UserCommentsRecordClasses.GeneCommentsClass" 
+                    primaryKey="20.m03960"/>
+
+      <sanityRecord ref="UserCommentsRecordClasses.SequenceCommentsClass" 
+                    primaryKey="Ia"/>
+
+      <sanityRecord ref="InterproTermClasses.InterproTermClass" 
+                    primaryKey="PIR" />
+
+
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber"
+                      minOutputLength="1" maxOutputLength="3"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="ec_number_pattern" value="6.1.1.12"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequence" value="XI"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="DataDumpQuestions.GeneGffQuestion"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="3000" maxOutputLength="8000">
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGeneType"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="200" maxOutputLength="210">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern"
+            pageStart="1" pageEnd="20"
+            minOutputLength="2000" maxOutputLength="2500">
+        <sanityParam name="profile_pattern" value="%hsa:N%tgo:Y%"/>
+        <sanityParam name="included_species" value="T. gondii"/>
+        <sanityParam name="excluded_species" value="H. sapiens"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+        <sanityParam name="phyletic_term_map" value="rno"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesOrthologousToAGivenGene"
+            pageStart="1" pageEnd="20"
+            minOutputLength="4" maxOutputLength="4">
+        <sanityParam name="locus_tag" value="42.m03416"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="400" maxOutputLength="800">
+          <sanityParam name="min_isoelectric_point" value="11"/>
+          <sanityParam name="max_isoelectric_point" value="20"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="2000" maxOutputLength="5000">
+          <sanityParam name="min_molecular_weight" value="10000"/>
+          <sanityParam name="max_molecular_weight" value="50000"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByTextSearch"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="text_expression" value="proline"/>
+          <sanityParam name="whole_words" value="no"/>
+          <sanityParam name="max_pvalue" value="-30"/>
+          <sanityParam name="datasets" value="Gene product,User comments"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExonCount"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="4000">
+          <sanityParam name="num_exons_lte" value="20"/>
+          <sanityParam name="num_exons_gte" value="15"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1000">
+          <sanityParam name="min_tm" value="4"/>
+          <sanityParam name="max_tm" value="4"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGoTerm"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="0" maxOutputLength="2000">
+          <sanityParam name="go_term" value="catalytic activity"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByInterproDomain"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="200">
+          <sanityParam name="domain_database" value="PRODOM"/>
+          <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="800" maxOutputLength="1200">
+          <sanityParam name="min_sigp_sum_score" value="3"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByNonnuclearLocation"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="70">
+          <sanityParam name="non_nuclear_sequence" value="Apicoplast genome"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySnps"
+            pageStart="1" pageEnd="20"
+	    minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+        <sanityParam name="snp_strain_b" value="ME49 (type II)"/>
+        <sanityParam name="snp_stat" value="All SNPs"/>
+        <sanityParam name="occurrences_lower" value="100"/>
+        <sanityParam name="occurrences_upper" value="1000"/>
+        <sanityParam name="dn_ds_ratio_lower" value="0"/>
+        <sanityParam name="dn_ds_ratio_upper" value="100"/>
+        <sanityParam name="snp_density" value="0"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByESTOverlap"
+                      pageStart="1" pageEnd="20"
+		      minOutputLength="400" maxOutputLength="500">
+	  <sanityParam name="libraryId" value="TgME49cDNA"/>
+	  <sanityParam name="bp_overlap_gte" value="100"/>
+	  <sanityParam name="best_alignment_only" value="Yes"/>
+	  <sanityParam name="high_confidence_only" value="No"/>
+	  <sanityParam name="min_percent_identity" value="90"/>
+	  <sanityParam name="min_percent_est_aligned" value="20"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="33" maxOutputLength="33">
+          <sanityParam name="metabolic_pathway" value="Glycolysis / Gluconeogenesis"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMotifSearch"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="2" maxOutputLength="2">
+          <sanityParam name="Expression" value="CC6+RK"/>
+          <sanityParam name="Dataset" value="T. gondii annotated proteins"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity"
+                   pageStart="1" pageEnd="20"
+                   minOutputLength="2" maxOutputLength="2">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.05"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="MAQLASRSLCAGPSSACHGSRRFLLASLAVLFFVGLGCCLGVPVSPSPPADASEDLFCTY"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="OrfQuestions.OrfsBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value=" QGRKGVQSGFGHTRPDAGCLITSARRQHECCQSPDVCWRRRHHVCSVVLAAGRDRVRNLV"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="EstQuestions.EstsBySimilarity"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value=" GGAGGGGAGGGGCAATGGTAATTGCATGTGCTTGCGCGGACAGTCTTGGTATGACACCTG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="InternalQuestions.UnifiedBlast"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="SnpQuestions.SnpsByLocation"
+                      pageStart="1" pageEnd="20"
+	  	      minOutputLength="300" maxOutputLength="400">
+          <sanityParam name="chromosome_single" value="Ia"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+          <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+          <sanityParam name="snp_strain_m" value="ME49 (type II)"/>
+      </sanityQuestion>
+
+
+      <sanityQuestion ref="EstQuestions.EstsByLocation"
+                      pageStart="1" pageEnd="20"
+	  	      minOutputLength="30" maxOutputLength="40">
+	<sanityParam name="chromosome_single" value="Ia"/>
+	<sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+	<sanityParam name="start_point" value="1"/>
+	<sanityParam name="end_point" value="0"/>
+	<sanityParam name="best_alignment_only" value="Yes"/>
+	<sanityParam name="high_confidence_only" value="No"/>
+	<sanityParam name="min_percent_identity" value="90"/>
+	<sanityParam name="min_percent_est_aligned" value="20"/>
+	<sanityParam name="libraryId" value="TgME49cDNA"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="EstQuestions.EstsByLibrary"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="761" maxOutputLength="761">
+          <sanityParam name="libraryId" value="TgME49cDNA"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="OrfQuestions.OrfsByLocation"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="8" maxOutputLength="10">
+          <sanityParam name="chromosome_single" value="Ia"/>
+          <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+          <sanityParam name="start_point" value="1"/> 
+          <sanityParam name="end_point" value="1000"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="250" maxOutputLength="260">
+          <sanityParam name="Expression" value="CC6+RK"/>
+          <sanityParam name="Dataset" value="T. gondii ORFs"/>
+      </sanityQuestion>
+
+
+      <sanityXmlQuestion ref="XmlQuestions.News"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.NewsRss"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.Methods"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="1000"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.DataSources"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.About"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.FAQ"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="1000"/>
+
+      <sanityXmlQuestion ref="XmlQuestions.ExternalLinks"
+                         pageStart="1" pageEnd="20"
+                         minOutputLength="1" maxOutputLength="100"/>
+
+
+    <sanityQuery ref="GeneFeatureIds.GenesByTaxon"
+            minOutputLength="8000" maxOutputLength="8040">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneFeatureIds.GenesWithEpitopes"
+            minOutputLength="1" maxOutputLength="4">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="confidence" value="High"/>
+    </sanityQuery>
+
+
+    <!-- sanityQuery ref="GeneFeatureIds.GeneByLocusTag"
+            minOutputLength="2" maxOutputLength="2">
+        <sanityParam name="ds_gene_ids" value="49.m00014,65.m01111"/>
+    </sanityQuery -->
+
+
+    <sanityQuery ref="GeneFeatureIds.GeneBySingleLocusTag"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="locus_tag" value="49.m00014"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneFeatureIds.GenesByDifferentialExpression"
+            minOutputLength="300" maxOutputLength="350">
+        <sanityParam name="exprnsample" value="RH (Type I) in High Glucose  vs. RH (TypeI) with No Glucose"/>
+        <sanityParam name="confidence" value="0.9"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="GeneFeatureIds.GenesByExpressionPercentile"
+            minOutputLength="750" maxOutputLength="800">
+        <sanityParam name="sample" value="RH (Type I)"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SequenceIds.SequencesByTaxon"
+            minOutputLength="620" maxOutputLength="620">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuery>
+
+
+
+    <sanityQuery ref="VocabQueries.Confidence"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.SnpStrainM"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.IncludePseudogenes"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.high_confidence_only"
+            minOutputLength="2" maxOutputLength="2">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.best_alignment_only"
+            minOutputLength="2" maxOutputLength="2">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.ExprnSample"
+            minOutputLength="4" maxOutputLength="4">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.regulated_dir"
+            minOutputLength="3" maxOutputLength="3">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.Sample"
+            minOutputLength="5" maxOutputLength="5">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.MsAssay"
+            minOutputLength="8" maxOutputLength="8">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.OrganismWithSequences"
+            minOutputLength="1" maxOutputLength="1">
+    </sanityQuery>
+
+    <sanityQuestion ref="GeneQuestions.GenesByLocation"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="220">
+        <sanityParam name="chromosome_single" value="Ia"/>
+        <sanityParam name="genomic_sequence" value="(Example: VIIa, TGG_995305)"/>
+        <sanityParam name="start_location" value="1"/>
+        <sanityParam name="end_location" value="0"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3" maxOutputLength="5">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="confidence" value="High"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="locus_tag" value="49.m00014"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon"
+            pageStart="1" pageEnd="20"
+            minOutputLength="8000" maxOutputLength="8040">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByDifferentialExpression"
+            pageStart="1" pageEnd="20"
+            minOutputLength="300" maxOutputLength="350">
+        <sanityParam name="exprnsample" value="RH (Type I) in High Glucose  vs. RH (TypeI) with No Glucose"/>
+        <sanityParam name="confidence" value="0.9"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentile"
+            pageStart="1" pageEnd="20"
+            minOutputLength="750" maxOutputLength="800">
+        <sanityParam name="sample" value="RH (Type I)"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon"
+            pageStart="1" pageEnd="20"
+            minOutputLength="620" maxOutputLength="620">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence"
+            pageStart="1" pageEnd="20"
+            minOutputLength="8000" maxOutputLength="8100">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence"
+            pageStart="1" pageEnd="20"
+            minOutputLength="750" maxOutputLength="800">
+        <sanityParam name="sample" value="RH (Type I)"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuestion>
+
+    <sanityQuery ref="OrfIds.OrfByOrfId"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="orf_id" value="Ia-1-1000180-1000404"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="SnpAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="SNP_Ia_17864"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="EstAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV655340"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="EstAttributes.Sequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV655340"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="OrfAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia-1-1000180-1000404"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="OrfAttributes.Sequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia-1-1000180-1000404"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SequenceAttributes.Bfmv"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffQuery"
+            minOutputLength="619" maxOutputLength="619">
+        <sanityParam name="organism_with_sequences" value="Toxoplasma gondii"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffDbxrefs"
+            minOutputLength="2" maxOutputLength="2">
+        <sanityParam name="primaryKey" value="49.m00014"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffDbxrefs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.Filter"
+            minOutputLength="2" maxOutputLength="2">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.BlastDatabaseType"
+            minOutputLength="9" maxOutputLength="9">
+    </sanityQuery>
+
+
+    <sanityQuery ref="VocabQueries.GenomicBlastDatabaseOrganism"
+            minOutputLength="5" maxOutputLength="5">
+    </sanityQuery>
+
+
+    <sanityQuery ref="ProteinAttributes.Sequence"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="49.m00019-1"/>
+    </sanityQuery>
+
+    <sanityQuery ref="ProteinAttributes.Organism"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="49.m00019-1"/>
+    </sanityQuery>
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="est_id" value="AA009308"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap"
+            pageStart="1" pageEnd="20"
+		  		minOutputLength="580" maxOutputLength="610">
+        <sanityParam name="libraryId" value="TgME49cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="orf_id" value="Ia-1-1000180-1000404"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpBySourceId"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="snp_id" value="SNP_Ia_17864"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="DataDumpQuestions.SequenceGffQuestion"
+            pageStart="1" pageEnd="20"
+            minOutputLength="619" maxOutputLength="619">
+        <sanityParam name="organism_with_sequences" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <sanityXmlQuestion ref="XmlQuestions.Tutorials"
+            minOutputLength="1" maxOutputLength="15"
+            pageStart="1" pageEnd="20">
+    </sanityXmlQuestion>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffAliases"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffGoTerms"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffRnas"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffCdss"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+    </sanityQuery>
+
+
+    <sanityQuery ref="DataDumpQueries.GeneGffExons"
+            minOutputLength="8" maxOutputLength="8">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+    </sanityQuery>
+
+    <sanityQuery ref="DataDumpQueries.SequenceGffAttrs"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia"/>
+    </sanityQuery>
+
+</sanityModel>
