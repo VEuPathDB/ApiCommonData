@@ -3942,12 +3942,16 @@ sub copyToDownloadSiteWithSsh {
 }
 
 ###########IPRSCAN#####################
+## the environment on the compute cluster must be set for the iprscan directory path
+## example: setenv IPRSCAN_HOME /genomics/share/pkg/bio/interproscan/iprscan_v4.3.1
+#######################################
+
 sub createIprscanDir{
   my ($mgr, $subjectFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $subject = $subjectFile;
-  my $signal = "make" . $subject . "Dir";
+  my $signal = "make" . $subject . "IprscanDir";
 
   my $dataDir = $mgr->{'dataDir'};
   my $clusterDataDir = $mgr->{'clusterDataDir'};
