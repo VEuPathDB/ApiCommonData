@@ -37,7 +37,7 @@
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Gene Type ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
       <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="CryptoDB,ApiDB"
@@ -64,18 +64,26 @@
           <sanityParam name="organism" value="Plasmodium falciparum"/>
       </sanityQuestion>
 
-      <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects=",ApiDB"
+      <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="ToxoDB,ApiDB"
                       pageStart="30" pageEnd="100"
                       minOutputLength="30" maxOutputLength="100">
           <sanityParam name="geneType" value="tRNA"/>
           <sanityParam name="includePseudogenes" value="Yes"/>
-          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="organism" value="Toxoplasma ghondii"/>
       </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Exon Count ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+   <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="num_exons_gte" value="2"/>
+        <sanityParam name="num_exons_lte" value="20"/>
+        <sanityParam name="organism" value=""/>
+    </sanityQuestion>
 
    <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
@@ -85,56 +93,40 @@
         <sanityParam name="organism" value="Plasmodium berghei"/>
     </sanityQuestion>
 
-   <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="CryptoDB,ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="num_exons_gte" value="2"/>
-        <sanityParam name="num_exons_lte" value="20"/>
-        <sanityParam name="organism" value=""/>
-    </sanityQuestion>
-
    <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="100" maxOutputLength="1000">
         <sanityParam name="num_exons_gte" value="2"/>
         <sanityParam name="num_exons_lte" value="20"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Isoelectric Point ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1000" maxOutputLength="3000">
+            minOutputLength="1500" maxOutputLength="9500">
         <sanityParam name="min_isoelectric_point" value="6"/>
         <sanityParam name="max_isoelectric_point" value="10"/>
         <sanityParam name="organism" value="Plasmodium berghei"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1500" maxOutputLength="9500">
         <sanityParam name="min_isoelectric_point" value="6"/>
         <sanityParam name="max_isoelectric_point" value="10"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
-    </sanityQuestion>
-
-    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects=",ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="min_isoelectric_point" value="6"/>
-        <sanityParam name="max_isoelectric_point" value="10"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1000" maxOutputLength="4000">
         <sanityParam name="min_molecular_weight" value="10000"/>
@@ -142,25 +134,17 @@
         <sanityParam name="organism" value="Plasmodium berghei"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
         <sanityParam name="min_molecular_weight" value="10000"/>
         <sanityParam name="max_molecular_weight" value="50000"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
-    </sanityQuestion>
-
-    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects=",ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="min_molecular_weight" value="10000"/>
-        <sanityParam name="max_molecular_weight" value="50000"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Secondary Structure ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
@@ -175,29 +159,6 @@
           <sanityParam name="max_helix" value="15"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects=",ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
-          <sanityParam name="min_coil" value="65"/>
-          <sanityParam name="max_coil" value="75"/>
-          <sanityParam name="min_strand" value="15"/>
-          <sanityParam name="max_strand" value="25"/>
-          <sanityParam name="min_helix" value="5"/>
-          <sanityParam name="organism" value="Plasmodium berghei"/>
-          <sanityParam name="max_helix" value="15"/>
-    </sanityQuestion>
-
-    <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects=",ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
-          <sanityParam name="min_coil" value="65"/>
-          <sanityParam name="max_coil" value="75"/>
-          <sanityParam name="min_strand" value="15"/>
-          <sanityParam name="max_strand" value="25"/>
-          <sanityParam name="min_helix" value="5"/>
-          <sanityParam name="organism" value="Plasmodium berghei"/>
-          <sanityParam name="max_helix" value="15"/>
-    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ BLAST ++ -->
@@ -267,108 +228,237 @@
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="200">
+        <sanityParam name="domain_database" value="PRODOM"/>
+        <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+        <sanityParam name="organism" value="Cryptosporidum parvum"/>
+    </sanityQuestion>
+
     <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects=",ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="domain_database" value=" Choose one:"/>
-        <sanityParam name="domain_accession" value="FIX_null_dflt"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+            minOutputLength="1" maxOutputLength="2">
+        <sanityParam name="domain_database" value="PRODOM"/>
+        <sanityParam name="domain_accession" value="PD001363: RIBOSOMAL S13 RRNA-BINDING RNA-BINDING 30S PROTEOME COMPLETE TRNA-BINDING MITOCHONDRION S13P"/>
+        <sanityParam name="organism" value="Plasmodium vivax"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="200">
+        <sanityParam name="domain_database" value="PRODOM"/>
+        <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Go Term ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1" maxOutputLength="72">
+          <sanityParam name="organism" value="C. hominis"/>
+          <sanityParam name="go_term" value="GO:0004672"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="100">
         <sanityParam name="go_term" value="catalytic activity"/>
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="metabolic_pathway" value="14-3-3 protein"/>
+            minOutputLength="100" maxOutputLength="200">
+        <sanityParam name="go_term" value="catalytic activity"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Metabolic Pathway ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="10" maxOutputLength="100">
+          <sanityParam name="metabolic_pathway" value="DNA Replication"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="10" maxOutputLength="100">
+          <sanityParam name="metabolic_pathway" value="DNA Replication"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="33" maxOutputLength="33">
+          <sanityParam name="metabolic_pathway" value="Glycolysis / Gluconeogenesis"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Transmembrane Domains ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="min_tm" value="2"/>
+        <sanityParam name="max_tm" value="5"/>
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
         <sanityParam name="min_tm" value="2"/>
         <sanityParam name="max_tm" value="5"/>
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="min_tm" value="2"/>
+        <sanityParam name="max_tm" value="5"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Signal Peptide ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="174" maxOutputLength="400">
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+        <sanityParam name="min_sigp_sum_score" value="3"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="500" maxOutputLength="1000">
         <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="min_sigp_sum_score" value="3"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="800" maxOutputLength="1200">
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
         <sanityParam name="min_sigp_sum_score" value="3"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Ortholog Pattern ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
-        <sanityParam name="included_species" value="FIX_null_dflt"/>
-        <sanityParam name="excluded_species" value="FIX_null_dflt"/>
-        <sanityParam name="phyletic_indent_map" value="Archaea"/>
-        <sanityParam name="phyletic_term_map" value="aed"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+            minOutputLength="1000" maxOutputLength="1500">
+
+          <sanityParam name="profile_pattern" value="%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%"/>
+          <sanityParam name="included_species" value="Alveolates"/>
+          <sanityParam name="excluded_species" value="Bacteria"/>
+          <sanityParam name="organism" value="C. hominis"/>
+          <sanityParam name="phyletic_indent_map" value="Archaea"/>
+          <sanityParam name="phyletic_term_map" value="rno"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="3500">
+          <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
+          <sanityParam name="included_species" value="P. falciparum"/>
+          <sanityParam name="excluded_species" value="H. sapiens"/>
+          <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+          <sanityParam name="phyletic_term_map" value="rno"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="2000" maxOutputLength="2500">
+        <sanityParam name="profile_pattern" value="%hsa:N%tgo:Y%"/>
+        <sanityParam name="included_species" value="T. gondii"/>
+        <sanityParam name="excluded_species" value="H. sapiens"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+        <sanityParam name="phyletic_term_map" value="rno"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Single Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="single_gene_id" value="cgd6_690"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
         <sanityParam name="single_gene_id" value="PF11_0344"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="single_gene_id" value="57.m01867"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="ds_gene_ids" value="cgd6_690"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="ds_gene_ids" value="PF11_0344"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="ds_gene_ids" value="57.m01867"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Text Search ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="text_expression" value="membrane"/>
+        <sanityParam name="whole_words" value="yes"/>
+        <sanityParam name="max_pvalue" value="-30"/>
+        <sanityParam name="text_fields" value="Gene product"/>
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
         <sanityParam name="text_expression" value="membrane"/>
         <sanityParam name="whole_words" value="yes"/>
         <sanityParam name="max_pvalue" value="-30"/>
@@ -376,25 +466,59 @@
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="text_expression" value="membrane"/>
+        <sanityParam name="whole_words" value="yes"/>
+        <sanityParam name="max_pvalue" value="-30"/>
+        <sanityParam name="text_fields" value="Gene product"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Taxon ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="4000" maxOutputLength="6000">
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="4000" maxOutputLength="6000">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="5000" maxOutputLength="8000">
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ EST Overlap ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="10" maxOutputLength="500">
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+        <sanityParam name="libraryId" value="Field isolate cDNA library"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="500">
         <sanityParam name="organism" value="Plasmodium falciparum"/>
         <sanityParam name="libraryId" value="Field isolate cDNA library"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
@@ -404,14 +528,76 @@
         <sanityParam name="min_percent_est_aligned" value="20"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="400" maxOutputLength="500">
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="libraryId" value="TgME49cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Microarray Evidence ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Mass Spec Evidence ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+     <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+   <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Protein Structure ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+     <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
+    </sanityQuestion>
+
+   <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="0">
     </sanityQuestion>
 
 
@@ -419,31 +605,25 @@
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="InternalQuestions.GenesByMassSpecEvidence" includeProjects=",ApiDB"
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects=",ApiDB"
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
-    </sanityQuestion>
-
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects=",ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="" maxOutputLength="">
         <sanityParam name="historyId" value="FIX_null_dflt"/>
         <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Toxoplasma ghondii"/>
     </sanityQuestion>
 
    <!-- ============================================================ -->
