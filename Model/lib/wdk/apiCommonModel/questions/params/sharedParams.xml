@@ -416,17 +416,15 @@
       </enumList>   
     </enumParam>
 
-<!-- why is this here?  it is redundant with the one below.  does it need an include?
-    <stringParam name="chromosomeOptional"
+    <stringParam name="chromosomeOptional" includeProjects="ApiDB"
                      prompt="Chromosome">
             <suggest default="choose one"/>
     </stringParam>
--->
 
-    <enumParam name="chromosomeOptional"
+    <enumParam name="chromosomeOptional" excludeProjects="ApiDB"
                      prompt="Chromosome"
                      multiPick="false"
-                     default="choose one" excludeProjects="ApiDB">
+                     default="choose one">
 
       <enumList includeProjects="PlasmoDB">   
         <enumValue>
