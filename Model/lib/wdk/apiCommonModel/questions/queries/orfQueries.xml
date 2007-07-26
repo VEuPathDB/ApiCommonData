@@ -61,7 +61,7 @@
             AND tas.length >= $$min_orf_length$$
 	    AND vs.na_sequence_id = m.na_sequence_id
 	    AND vs.source_id = gs.source_id
-	    AND (gs.source_id = '$$chromosomeOptional$$'
+	    AND (gs.source_id = $$chromosomeOptional$$
                    OR gs.lowercase_source_id = lower('$$sequenceId$$'))
 	    AND m.sequence_ontology_id = so.sequence_ontology_id
 	    AND m.na_feature_id = nal.na_feature_id

@@ -166,6 +166,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="Crypto,ApiDB"
             pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
@@ -177,6 +178,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
@@ -188,6 +190,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
@@ -225,7 +228,7 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Interpro Domain ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="CryptoDB,ApiDB"
@@ -236,7 +239,7 @@
         <sanityParam name="organism" value="Cryptosporidum parvum"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects=",ApiDB"
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="2">
         <sanityParam name="domain_database" value="PRODOM"/>
@@ -602,7 +605,7 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++  ++ -->
+    <!-- ++ Orthologs ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="CryptoDB,ApiDB"
@@ -619,14 +622,8 @@
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="ToxoDB,ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="" maxOutputLength="">
-        <sanityParam name="historyId" value="FIX_null_dflt"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
-    </sanityQuestion>
 
-   <!-- ============================================================ -->
+  <!-- ============================================================ -->
   <!-- ============================================================ -->
   <!-- == vocab queries == -->
   <!-- ============================================================ -->
