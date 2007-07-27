@@ -216,7 +216,7 @@
     <question name="GenesByEcNumber"
          category="Putative Function"
          displayName="EC Number"
-              queryRef="GeneFeatureIds.GenesByEcNumber"
+              queryRef="GeneId.GenesByEcNumber"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="organism,product"
@@ -236,8 +236,8 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 
 E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University).
           ]]>
-        </description includeProjects="CryptoDB">
-              <description>
+        </description>
+        <description includeProjects="CryptoDB">
               <![CDATA[
               Find <i>Cryptosporidium</i> genes that have been assigned a particular Enzyme Commission (EC) number. 
               Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'. <p>
@@ -266,6 +266,7 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
               PlasmoDB EC numbers have been assigned to genes for <i>P. falciparum</i> by Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University). ToxoDB EC numbers have been assigned by Ian Paulsen (TIGR).
               ]]>
               </description>
+<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
         </propertyList>
@@ -275,6 +276,7 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
         <propertyList name="organism" includeProjects="ApiDB">
            <value value="P. falciparum, T gondii"/>
         </propertyList>
+-->
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -284,12 +286,13 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
     <question name="GenesBySnps" includeProjects="ApiDB,PlasmoDB,ToxoDB"
               category="Population Biology"
               displayName="SNP Characteristics"
-              queryRef="GeneFeatureIds.GenesBySnps"
+              queryRef="GeneId.GenesBySnps"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
               sorting="total_snps desc,cds_snp_density desc"
         /> 
+<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
         </propertyList>
@@ -299,6 +302,7 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
         <propertyList name="organism" includeProjects="ApiDB">
            <value value="P. falciparum, T gondii"/>
         </propertyList>
+-->
         <summary>
            <![CDATA[
 	 Find genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
@@ -359,7 +363,7 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
     <question name="GenesByMassSpec"  
          displayName="Protein Expression"
          category="Protein Expression"
-         queryRef="GeneFeatureIds.GenesByMassSpec"
+         queryRef="GeneId.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="PlasmoDB,ApiDB"
          summary="product"
@@ -375,12 +379,14 @@ E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berrim
                 or within a subcellular fraction of the parasite.
           ]]>
         </summary>
+<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
            <value value="P. falciparum"/>
         </propertyList>
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description includeProjects="PlasmoDB">
             <![CDATA[
                 Find <I>P. falciparum</I> genes that have evidence of
@@ -482,6 +488,10 @@ one time.
              With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
              ]]>
              </description>
+	<dynamicAttributes includeProjects="CryptoDB,ToxoDB">
+	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
+	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+	</dynamicAttributes>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -491,7 +501,7 @@ one time.
     <question name="GenesWithEpitopes" 
               category="Other Attributes"
               displayName="Epitope Presence"
-              queryRef="GeneFeatureIds.GenesWithEpitopes" 
+              queryRef="GeneId.GenesWithEpitopes" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="product,organism,location_text,count,confidence"
