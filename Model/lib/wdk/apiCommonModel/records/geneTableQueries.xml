@@ -23,7 +23,7 @@
             <sql>
             SELECT distinct ng.name AS alias
             FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_feature_id = nfng.na_feature_id
               AND nfng.na_gene_id = ng.na_gene_id
             </sql>
@@ -65,7 +65,7 @@
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density
 	      FROM apidb.snpsummary
-	      WHERE source_id = '$$primaryKey$$'
+	      WHERE source_id = $$primaryKey$$
               ORDER BY ord desc
             ]]>
             </sql>
@@ -88,7 +88,7 @@
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,              
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density             
               FROM apidb.SnpSummary ss
-              WHERE ss.source_id = '$$primaryKey$$' 
+              WHERE ss.source_id = $$primaryKey$$ 
               ORDER BY num_total desc
             ]]>
             </sql>
@@ -107,7 +107,7 @@
             <![CDATA[
             SELECT nfc.comment_string
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
-            WHERE nf.source_id='$$primaryKey$$'
+            WHERE nf.source_id=$$primaryKey$$
               AND nf.na_feature_id = nfc.na_feature_id
             ]]>
             </sql>
@@ -125,7 +125,7 @@
             select source_id, na_feature_id from dots.genefeature g
             ) feat
             WHERE nafc.na_feature_id = feat.na_feature_id
-            AND feat.source_id = '$$primaryKey$$'
+            AND feat.source_id = $$primaryKey$$
             AND TO_CHAR(comment_string) not like 'introns and exons likely.' 
             AND TO_CHAR(comment_string) not like 'introns and exons likely'
             ]]>
@@ -160,7 +160,7 @@
               WHERE u.email = c.email
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = gf.source_id
-                    AND gf.source_id = '$$primaryKey$$'
+                    AND gf.source_id = $$primaryKey$$
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
               ORDER BY c.comment_date DESC
@@ -205,7 +205,7 @@
                  dots.transcript t,
                  dots.aaSequenceEnzymeClass asec, 
                  sres.enzymeClass ec
-            WHERE  gf.source_id='$$primaryKey$$'
+            WHERE  gf.source_id=$$primaryKey$$
               AND  gf.na_feature_id = t.parent_id
               AND  t.na_feature_id = taf.na_feature_id
               AND  taf.aa_sequence_id = asec.aa_sequence_id
@@ -228,7 +228,7 @@
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE gf.source_id='$$primaryKey$$'
+            WHERE gf.source_id=$$primaryKey$$
               AND t.parent_id = gf.na_feature_id
               AND taf.na_feature_id = t.na_feature_id
               AND asec.aa_sequence_id = taf.aa_sequence_id
@@ -259,7 +259,7 @@
                     gts.source, gts.evidence_code,
                     lower(gts.evidence_code) AS lowercase_evidence_code
             FROM apidb.GoTermSummary gts
-            WHERE gts.source_id = '$$primaryKey$$'
+            WHERE gts.source_id = $$primaryKey$$
             ORDER BY gts.ontology, gts.go_id
             ]]>
             </sql>
@@ -287,7 +287,7 @@
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
             AND gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             AND dr.external_database_release_id = edr.external_database_release_id
@@ -306,7 +306,7 @@
 	         sres.DbRef dr, dots.TranslatedAaFeature taf,
 		 sres.ExternalDatabaseRelease edr,
 		 sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
 	    AND gf.na_feature_id = t.parent_id
 	    AND t.na_feature_id = taf.na_feature_id
             AND taf.aa_feature_id = draf.aa_feature_id
@@ -338,7 +338,7 @@
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
                  sres.TaxonName tn
-            WHERE gf1.source_id = '$$primaryKey$$'
+            WHERE gf1.source_id = $$primaryKey$$
               AND gf1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
               AND ssg1.sequence_group_id = ssg2.sequence_group_id
@@ -373,7 +373,7 @@
                 SELECT es.iedb_id, es.location, es.sequence, es.name,
                        es.confidence
                 FROM apidb.EpitopeSummary es
-                WHERE es.source_id = '$$primaryKey$$'
+                WHERE es.source_id = $$primaryKey$$
                 ORDER BY DECODE(es.confidence, 'Low', 1,
                               'Medium', 2,
                               'High', 3,
@@ -405,7 +405,7 @@
                       mss.number_of_spans, mss.sequence_count, mss.spectrum_count
                FROM dots.TranslatedAaFeature taf, dots.genefeature gf, 
                     dots.transcript t, apidb.MassSpecSummary mss
-               WHERE gf.source_id = '$$primaryKey$$'
+               WHERE gf.source_id = $$primaryKey$$
                  AND t.parent_id = gf.na_feature_id
                  AND taf.na_feature_id = t.na_feature_id
                  AND mss.aa_sequence_id = taf.aa_sequence_id
@@ -445,7 +445,7 @@
              and mss.aa_sequence_id = taaf.aa_sequence_id
              and taaf.na_feature_id = t.na_feature_id
              and t.parent_id = gf.na_feature_id
-             and gf.source_id = '$$primaryKey$$'
+             and gf.source_id = $$primaryKey$$
              group by start_min, 
                       taaf.aa_sequence_id,
                       end_max
@@ -486,7 +486,7 @@
                 AND df.external_database_release_id = ede.external_database_release_id
                 AND df.source_id = SUBSTR(external_primary_identifier, 1, 
                                      INSTR(external_primary_identifier, '.', 1, 1) -1)
-                AND taaf.source_id = '$$primaryKey$$'
+                AND taaf.source_id = $$primaryKey$$
                 ORDER BY start_min
             </sql>
             <sql includeProjects="ToxoDB">
@@ -498,7 +498,7 @@
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.DomainFeature df,
                  dots.AaLocation al, dots.PfamEntry pe
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = df.aa_sequence_id
@@ -525,12 +525,12 @@
 /*          SELECT gts.source_id,
                    gts.go_id AS gff_dbxref
             FROM apidb.GoTermSummary gts
-            WHERE gts.source_id = '$$primaryKey$$'
+            WHERE gts.source_id = $$primaryKey$$
            UNION
 */          SELECT gf.source_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.GeneFeature gf, dots.NaSequence ns, sres.Taxon t
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id = t.taxon_id
            UNION
@@ -539,7 +539,7 @@
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE gf.source_id='$$primaryKey$$'
+            WHERE gf.source_id=$$primaryKey$$
               AND t.parent_id = gf.na_feature_id
               AND taf.na_feature_id = t.na_feature_id
               AND asec.aa_sequence_id = taf.aa_sequence_id
@@ -547,7 +547,7 @@
            UNION
 /*            SELECT gf.source_id, so.so_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.SequenceOntology so
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.sequence_ontology_id = so.sequence_ontology_id
            UNION
 */            SELECT gf.source_id,
@@ -555,7 +555,7 @@
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_feature_id = drnf.na_feature_id
               AND drnf.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id
@@ -570,7 +570,7 @@
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = aaf.na_feature_id
               AND aaf.aa_feature_id = drnf.aa_feature_id
@@ -583,7 +583,7 @@
                    'Sanger:' || gf.source_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.external_database_release_id
                   = edr.external_database_release_id
               AND edr.external_database_id = ed.external_database_id
@@ -639,7 +639,7 @@
                  sres.externaldatabaserelease edr,
                  sres.SequenceOntology so,
                  dots.splicednasequence s
-            where gf.source_id = '$$primaryKey$$'
+            where gf.source_id = $$primaryKey$$
                 and gf.na_feature_id = rna.parent_id
                 and rna.na_feature_id = nl.na_feature_id
                 and gf.na_sequence_id = ens.na_sequence_id
@@ -694,7 +694,7 @@
                    dots.TranslatedAaSequence tas,
                    dots.NaSequence ens, 
                    dots.NaLocation nl
-              where gf.source_id = '$$primaryKey$$'
+              where gf.source_id = $$primaryKey$$
                 and rna.parent_id = gf.na_feature_id
                 and s.na_sequence_id = rna.na_sequence_id
                 and rna.na_feature_id = tf.na_feature_id
@@ -744,7 +744,7 @@
                  DoTS.NaLocation nl, 
                  DoTS.NaSequence ens,
                  dots.RnaFeatureExon rfe
-            where gf.source_id = '$$primaryKey$$'
+            where gf.source_id = $$primaryKey$$
             and gf.na_feature_id = rna.parent_id
             and rna.na_feature_id = rfe.rna_feature_id
             and ef.na_feature_id = rfe.exon_feature_id
@@ -783,7 +783,7 @@
                    gi.prey_number_of_baits
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
-           WHERE pf.source_id='$$primaryKey$$'
+           WHERE pf.source_id=$$primaryKey$$
              AND pf.na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
@@ -813,7 +813,7 @@
                    gi.bait_number_of_preys
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
-           WHERE bf.source_id='$$primaryKey$$'
+           WHERE bf.source_id=$$primaryKey$$
              AND pf.na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
@@ -845,7 +845,7 @@
                        bait_number_of_preys, 'bait' as bait_or_prey
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens, apidb.GeneInteraction gi
-                WHERE bf.source_id = '$$primaryKey$$'
+                WHERE bf.source_id = $$primaryKey$$
                   AND bf.na_feature_id = gi.bait_gene_feature_id
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND pf.na_sequence_id = ens.na_sequence_id
@@ -855,7 +855,7 @@
                        NULL AS bait_number_of_preys, 'prey' as bait_or_prey
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens,  apidb.GeneInteraction gi
-                WHERE pf.source_id = '$$primaryKey$$'
+                WHERE pf.source_id = $$primaryKey$$
                   AND bf.na_feature_id = gi.bait_gene_feature_id
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND bf.na_sequence_id = ens.na_sequence_id
@@ -882,7 +882,7 @@
                     sres.ExternalDatabaseRelease edr,
                     dots.ExternalNaSequence ens,
                     core.TableInfo ti1, core.TableInfo ti2
-               WHERE gf.source_id = '$$primaryKey$$'
+               WHERE gf.source_id = $$primaryKey$$
                  AND t.parent_id = gf.na_feature_id
                  AND ed.external_database_id = edr.external_database_id
                  AND edr.external_database_release_id = ens.external_database_release_id
@@ -913,7 +913,7 @@
                  apidb.profileElement pe,
                  apidb.profile p,
                  apidb.profileSet ps
-            WHERE p.source_id = '$$primaryKey$$'
+            WHERE p.source_id = $$primaryKey$$
             AND ps.name = 'berghei_proteomic_Sinden'
             AND ps.profile_set_id = p.profile_set_id
 	    AND ps.profile_set_id = pen.profile_set_id
@@ -946,7 +946,7 @@
                      dots.TranslatedAAFeature taf,
                      sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE gf.source_id = '$$primaryKey$$'
+                WHERE gf.source_id = $$primaryKey$$
                   AND t.parent_id = gf.na_feature_id
                   AND taf.na_feature_id = t.na_feature_id
                   AND df.aa_feature_id = taf.aa_feature_id
@@ -1014,7 +1014,7 @@
                 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE gf.source_id = '$$primaryKey$$'
+                WHERE gf.source_id = $$primaryKey$$
                   AND gf.na_feature_id = drnf.na_feature_id
                   AND drnf.db_ref_id = dr.db_ref_id
                   AND dr.external_database_release_id
@@ -1045,7 +1045,7 @@
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$primaryKey$$'
+            WHERE gf.source_id = $$primaryKey$$
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = aaf.na_feature_id
               AND aaf.aa_feature_id = drnf.aa_feature_id
@@ -1079,7 +1079,7 @@
                        ps.pvalue_exp, ps.taxon, ps.percent_identity,
                        ps.percent_plasmo_coverage
                 FROM apidb.PdbSimilarity ps
-                WHERE ps.source_id = '$$primaryKey$$'
+                WHERE ps.source_id = $$primaryKey$$
                 ORDER BY ps.score DESC
             ]]>
             </sql>
@@ -1117,7 +1117,7 @@
              AND de.analysis_id = a.analysis_id
              AND sof.composite_element_id = de.row_id
              AND sof.source_id is not null
-             AND ga.gene = '$$primaryKey$$'
+             AND ga.gene = $$primaryKey$$
              AND ga.alias = sof.source_id
              AND p.name = 'PaGE'
              AND a.protocol_id = p.protocol_id
@@ -1150,7 +1150,7 @@
 			<![CDATA[
 			SELECT content AS comment_string
 			FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
-			WHERE c.stable_id = '$$primaryKey$$'
+			WHERE c.stable_id = $$primaryKey$$
 				AND c.review_status_id = 'task'
 			]]>
             </sql>
@@ -1198,7 +1198,7 @@
                   AND stab.name = 'ExternalAASequence'
                   AND sim.query_table_id  = qtab.table_id 
                   AND qtab.name = 'TranslatedAASequence'
-                  AND t.source_id = '$$primaryKey$$'
+                  AND t.source_id = $$primaryKey$$
                   ORDER BY to_number(pval) ASC)
             WHERE rownum < 6
             ]]>
@@ -1217,7 +1217,7 @@
             <sql>
             SELECT protein_id
             FROM dots.transcript
-            WHERE source_id = '$$primaryKey$$'
+            WHERE source_id = $$primaryKey$$
             </sql>
         </sqlQuery>
 

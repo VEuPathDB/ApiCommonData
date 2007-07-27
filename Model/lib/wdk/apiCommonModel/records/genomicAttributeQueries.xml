@@ -88,15 +88,15 @@
                     bfmv.genbank_accession, bfmv.database_name,
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = '$$primaryKey$$'
-                AND bfmv.project_id = '$$projectId$$'
+              WHERE bfmv.source_id = $$primaryKey$$
+                AND bfmv.project_id = $$projectId$$
              ]]>
            </sql>
 
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
-            enas.source_id, '$$project_id$$' as project_id, 
+            enas.source_id, $$project_id$$ as project_id, 
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
@@ -126,7 +126,7 @@
             AND tn.name_class = 'scientific name'
             AND enas.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
-            AND enas.source_id = '$$primaryKey$$'
+            AND enas.source_id = $$primaryKey$$
              ]]>
            </sql>
 
@@ -143,8 +143,8 @@
                     bfmv.genbank_accession, bfmv.database_name,
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = '$$primaryKey$$'
-                AND bfmv.project_id = '$$projectId$$'
+              WHERE bfmv.source_id = $$primaryKey$$
+                AND bfmv.project_id = $$projectId$$
              ]]>
            </sql>
 
@@ -156,8 +156,8 @@
                        bfmv.organism, bfmv.database_name AS externalDbName,
                        bfmv.database_version AS externalDbVersion
                 FROM apidb.SequenceAttributes bfmv
-                WHERE bfmv.source_id = '$$primaryKey$$'
-                  AND bfmv.project_id = '$$projectId$$'
+                WHERE bfmv.source_id = $$primaryKey$$
+                  AND bfmv.project_id = $$projectId$$
              ]]>
            </sql>
         </sqlQuery>
@@ -173,7 +173,7 @@
             <column name="short_name"/>
             <sql>
             <![CDATA[
-                SELECT ens.source_id, '$$projectId$$' as project_id,
+                SELECT ens.source_id, $$projectId$$ as project_id,
                        decode(ed.name,
                               'Jane Carlton P. vivax chromosomes', 'TIGR',
                               'Sanger P. reichenowi contigs', 'Sanger',
@@ -189,7 +189,7 @@
                 FROM dots.NaSequence ens,
                      sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE ens.source_id = '$$primaryKey$$'
+                WHERE ens.source_id = $$primaryKey$$
                   AND ens.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
@@ -226,7 +226,7 @@
         <column name="gff_attr_size"/>
         <column name="gff_sequence"/>
         <sql>
-            select ens.source_id, '$$projectId$$' as project_id,
+            select ens.source_id, $$projectId$$ as project_id,
                    ens.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,
@@ -251,7 +251,7 @@
                  sres.externaldatabaserelease edr,
                  sres.taxon t,
                  sres.TaxonName tn
-            where ens.source_id = '$$primaryKey$$'
+            where ens.source_id = $$primaryKey$$
               and ens.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
               and ens.taxon_id = t.taxon_id

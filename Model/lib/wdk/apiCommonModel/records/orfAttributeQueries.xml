@@ -26,8 +26,8 @@
                       trim(to_char(bfmv.start_min,'999,999,999')) as orf_start_text,
                       decode(bfmv.is_reversed,0,'+',1,'-',null) as orf_strand
                 FROM apidb.OrfAttributes bfmv
-                WHERE bfmv.source_id = '$$primaryKey$$'
-                  AND LOWER(bfmv.project_id) = LOWER('$$projectId$$')
+                WHERE bfmv.source_id = $$primaryKey$$
+                  AND LOWER(bfmv.project_id) = LOWER($$projectId$$)
         ]]>
            </sql>
         </sqlQuery>
@@ -37,15 +37,15 @@
             <paramRef ref="recordParams.primaryKey"/>
             <column name="sequence"/>
             <sql includeProjects="PlasmoDB">
-               SELECT nf.source_id,ts.sequence, '$$projectId$$' as project_id
+               SELECT nf.source_id,ts.sequence, $$projectId$$ as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
                     dots.NaFeature nf
-               WHERE nf.source_id = '$$primaryKey$$'
+               WHERE nf.source_id = $$primaryKey$$
                  AND nf.na_feature_id = tf.na_feature_id
                  AND ts.aa_sequence_id = tf.aa_sequence_id
            </sql>
             <sql includeProjects="ToxoDB">
-                SELECT t.source_id, tas.sequence, '$$projectId$$' as project_id
+                SELECT t.source_id, tas.sequence, $$projectId$$ as project_id
                 FROM dots.VirtualSequence vs,
                      dots.Miscellaneous t,
                      dots.TranslatedAaFeature taf,
@@ -56,12 +56,12 @@
                   AND vs.na_sequence_id = t.na_sequence_id 
                   AND t.sequence_ontology_id = so.sequence_ontology_id
                   AND so.term_name = 'ORF'
-                  AND t.source_id = '$$primaryKey$$'
+                  AND t.source_id = $$primaryKey$$
            </sql>
             <sql includeProjects="CryptoDB">
 	      SELECT
                 t.source_id as source_id,
-                taas.sequence, '$$projectId$$' as project_id
+                taas.sequence, $$projectId$$ as project_id
               FROM dots.externalNASequence enas,
                     dots.miscellaneous t,
                     dots.translatedaafeature taaf,
@@ -75,7 +75,7 @@
                 AND tn.name_class = 'scientific name'
                 AND t.sequence_ontology_id = so.sequence_ontology_id
                 AND so.term_name = 'ORF'
-                AND t.source_id = '$$primaryKey$$'
+                AND t.source_id = $$primaryKey$$
 		</sql>
 
                 <sql includeProjects="ApiDB">
@@ -84,12 +84,12 @@
                       	 sres.SequenceOntology s,
                       	 sres.ExternalDatabaseRelease extr,
          	         sres.ExternalDatabase ext
-                	 WHERE taas.source_id = '$$primaryKey$$'
+                	 WHERE taas.source_id = $$primaryKey$$
                     	  AND  taas.sequence_ontology_id = s.sequence_ontology_id
                     	  AND s.term_name = 'ORF'
                    	  AND taas.external_database_release_id=extr.external_database_release_id
                  	  AND extr.external_database_id=ext.external_database_id
-                   	  AND ext.name=LOWER('$$projectId$$')
+                   	  AND ext.name=LOWER($$projectId$$)
                 </sql>
         </sqlQuery>
     </querySet>

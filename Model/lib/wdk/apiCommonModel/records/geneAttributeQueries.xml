@@ -19,10 +19,10 @@
             <sql includeProjects="PlasmoDB">
                 SELECT gene as source_id
                 FROM apidb.GeneAlias
-                WHERE alias = '$$primaryKey$$'
+                WHERE alias = $$primaryKey$$
             </sql>
             <sql excludeProjects="PlasmoDB">
-                SELECT '$$primaryKey$$' as source_id
+                SELECT $$primaryKey$$ as source_id
                 FROM dual
             </sql>
         </sqlQuery>
@@ -141,8 +141,8 @@
                    bfmv.winzeler_max_timing as winz_max_timing,
                    TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct
             FROM apidb.GeneAttributes bfmv
-               WHERE bfmv.source_id='$$primaryKey$$'
-                 AND bfmv.project_id='$$projectId$$'
+               WHERE bfmv.source_id=$$primaryKey$$
+                 AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
 
@@ -183,8 +183,8 @@
                    bfmv.pru, bfmv.veg, bfmv.rh, bfmv.rh_no_glucose,
                    bfmv.rh_high_glucose
             FROM apidb.GeneAttributes bfmv
-               WHERE bfmv.source_id='$$primaryKey$$'
-                 AND bfmv.project_id='$$projectId$$'
+               WHERE bfmv.source_id=$$primaryKey$$
+                 AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
             <sql includeProjects="ApiDB">
@@ -234,8 +234,8 @@
                    bfmv.winzeler_max_timing as winz_max_timing,
                    bfmv.winzeler_max_pct as winz_max_pct
             FROM apidb.GeneAttributes bfmv
-               WHERE bfmv.source_id='$$primaryKey$$'
-                 AND bfmv.project_id='$$projectId$$'
+               WHERE bfmv.source_id=$$primaryKey$$
+                 AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
             <sql includeProjects="CryptoDB">
@@ -267,8 +267,8 @@
                    AS plasmocyc_db,
                    UPPER(bfmv.source_id) AS plasmocyc_gene_id
             FROM apidb.GeneAttributes bfmv
-               WHERE bfmv.source_id='$$primaryKey$$'
-                 AND bfmv.project_id='$$projectId$$'
+               WHERE bfmv.source_id=$$primaryKey$$
+                 AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
         </sqlQuery>
@@ -289,7 +289,7 @@
                    tas.sequence AS protein_sequence
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
-            WHERE gf.source_id='$$primaryKey$$'
+            WHERE gf.source_id=$$primaryKey$$
               AND t.parent_id = gf.na_feature_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = tas.aa_sequence_id
@@ -312,7 +312,7 @@
             <![CDATA[
               select gf.source_id, s.sequence as transcript_sequence
               from dots.genefeature gf, dots.transcript t, dots.splicednasequence s
-              where gf.source_id = '$$primaryKey$$'
+              where gf.source_id = $$primaryKey$$
               and t.parent_id = gf.na_feature_id
               and s.na_sequence_id = t.na_sequence_id
             ]]>
@@ -339,7 +339,7 @@
                        AS cds
               FROM dots.genefeature gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
-              WHERE gf.source_id = '$$primaryKey$$'
+              WHERE gf.source_id = $$primaryKey$$
                 AND t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
                 AND t.na_feature_id = tf.na_feature_id
@@ -366,7 +366,7 @@
             <column name="graph_cowman"/>
             <sql>
             <![CDATA[
-               SELECT '$$primaryKey$$' AS source_id, '$$projectId$$' as project_id,
+               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
@@ -376,7 +376,7 @@
                       NVL(MAX(graph_gametocyte), 0) AS graph_gametocyte,
                       NVL(MAX(graph_cowman), 0) AS graph_cowman
                FROM apidb.ExpressionGraphSummary egs
-               WHERE egs.source_id = '$$primaryKey$$'
+               WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -419,7 +419,7 @@
             from DoTS.GeneFeature gf, 
                  DoTS.NaLocation nl, 
                  DoTS.NaSequence ens
-            where gf.source_id = '$$primaryKey$$'
+            where gf.source_id = $$primaryKey$$
                   and gf.na_feature_id = nl.na_feature_id
                   and gf.na_sequence_id = ens.na_sequence_id
         </sql>

@@ -12,7 +12,7 @@
             SELECT nl.start_min, nl.end_max
             FROM dots.NaSequence ens, dots.Miscellaneous m,
                  dots.NaLocation nl, sres.SequenceOntology so
-            WHERE ens.source_id = '$$primaryKey$$'
+            WHERE ens.source_id = $$primaryKey$$
               AND ens.na_sequence_id = m.na_sequence_id
               AND m.na_feature_id = nl.na_feature_id
               AND m.sequence_ontology_id = so.sequence_ontology_id
@@ -44,7 +44,7 @@
               WHERE u.email = c.email
                     AND c.comment_target_id = 'genome'
                     AND c.stable_id = ens.source_id
-                    AND ens.source_id = '$$primaryKey$$'
+                    AND ens.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -58,12 +58,12 @@
             SELECT ens.source_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.Taxon t
-            WHERE ens.source_id = '$$primaryKey$$'
+            WHERE ens.source_id = $$primaryKey$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
             SELECT ens.source_id, so.so_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.SequenceOntology so
-            WHERE ens.source_id = '$$primaryKey$$'
+            WHERE ens.source_id = $$primaryKey$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,
@@ -71,7 +71,7 @@
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE ens.source_id = '$$primaryKey$$'
+            WHERE ens.source_id = $$primaryKey$$
               AND ens.na_sequence_id = drns.na_sequence_id
               AND drns.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id
