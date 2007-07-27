@@ -137,6 +137,13 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 
   # select all exons from this model
   $sthExon->execute($sourceId);
+
+  # if pub_locus exists (as does for pv and py) capture sourceId as alias, and pub_locus as sourceId
+  if ($pubLocus){
+      $aliases = $sourceId;
+      $sourceId = $pubLocus if ($pubLocus);
+  }
+
   while (my ($exonStart, $exonStop, $exonFeature) = $sthExon->fetchrow_array()) {
     $exonCount++;
 
@@ -153,11 +160,6 @@ while (my ($scaffold, $sourceId, $modelStart, $modelStop, $isReversed, $proteinS
 	die "model $sourceId, exon $exonFeature has more than one CDS !?!\n";
       }
 
-      # if pub_locus exists (as does for pv and py) capture sourceId as alias, and pub_locus as sourceId
-      if ($pubLocus){
-	$aliases = $sourceId;
-	$sourceId = $pubLocus if ($pubLocus);
-      }
 
       push @exons, join("\t",
 			$scaffold,
