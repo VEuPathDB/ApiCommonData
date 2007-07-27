@@ -21,7 +21,7 @@
                 SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
                 FROM apidb.OrfAttributes oa
                 WHERE oa.lowercase_source_id
-                      LIKE LOWER(REPLACE(REPLACE('$$orf_id$$',' ',''),
+                      LIKE LOWER(REPLACE(REPLACE($$orf_id$$,' ',''),
                                                  '*', '%'))
             ]]>
         </sql>
@@ -62,7 +62,7 @@
 	    AND vs.na_sequence_id = m.na_sequence_id
 	    AND vs.source_id = gs.source_id
 	    AND (gs.source_id = $$chromosomeOptional$$
-                   OR gs.lowercase_source_id = lower('$$sequenceId$$'))
+                   OR gs.lowercase_source_id = lower($$sequenceId$$))
 	    AND m.sequence_ontology_id = so.sequence_ontology_id
 	    AND m.na_feature_id = nal.na_feature_id
 	    AND so.term_name = 'ORF'
@@ -185,7 +185,7 @@
                   and msf.aa_feature_id = aal.aa_feature_id
                   and msf.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ('$$orf_ms_assay$$')
+                  and ed.name in ($$orf_ms_assay$$)
                 group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
                 group by intseq.aa_sequence_id
                 having count(*) >= $$min_sequence_count$$
@@ -196,7 +196,7 @@
                      sres.externaldatabaserelease edr
                 where mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ('$$orf_ms_assay$$')
+                  and ed.name in ($$orf_ms_assay$$)
                 group by mss.aa_sequence_id
                 having sum(spectrum_count) >= $$min_spectrum_count$$
             ) spec
@@ -226,7 +226,7 @@
                   and msf.aa_feature_id = aal.aa_feature_id
                   and msf.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ('$$orf_ms_assay$$')
+                  and ed.name in ($$orf_ms_assay$$)
                 group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
                 group by intseq.aa_sequence_id
                 having count(*) >= $$min_sequence_count$$
@@ -237,7 +237,7 @@
                      sres.externaldatabaserelease edr
                 where mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ('$$orf_ms_assay$$')
+                  and ed.name in ($$orf_ms_assay$$)
                 group by mss.aa_sequence_id
                 having sum(spectrum_count) >= $$min_spectrum_count$$
             ) spec

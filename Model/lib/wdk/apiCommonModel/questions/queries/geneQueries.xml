@@ -73,7 +73,7 @@
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi
-            WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER('$$single_gene_id$$'),
+            WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER($$single_gene_id$$),
                                                        '*', '%'),
                                                '[[:space:]]', '')
             ]]>
@@ -87,8 +87,8 @@
             WHERE g.na_feature_id = r.parent_id (+)
             AND r.na_feature_id = t.parent_id (+)
             AND (
-                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE('$$single_gene_id$$', '*', '%')))
-                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE('$$single_gene_id$$', '*', '%'))) ||'%'
+                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE($$single_gene_id$$, '*', '%')))
+                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE($$single_gene_id$$, '*', '%'))) ||'%'
             ) and g.source_id is not null
            ]]>
        </sql>
@@ -112,25 +112,23 @@
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
         <column name="project_id"/>
         <column name="source_id"  />
-        <sql>
-            <![CDATA[
+        <sql >
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE ('$$organism$$' = '-1'
+            WHERE ($$organism$$ = '-1'
                    OR gs.taxon_id in (select taxon_id from sres.taxon
                                       connect by parent_id = prior taxon_id
-                                      start with taxon_id = '$$organism$$'))
+                                      start with taxon_id = $$organism$$))
               AND gs.na_sequence_id = gf.na_sequence_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = asec.aa_sequence_id
               AND asec.enzyme_class_id = ec.enzyme_class_id
-              AND ec.ec_number LIKE REPLACE(REPLACE('$$ec_number_pattern$$',' ',''),
+              AND ec.ec_number LIKE REPLACE(REPLACE($$ec_number_pattern$$,' ',''),
                                             '-', '%')
             ORDER BY gf.source_id
-           ]]>
        </sql>
     </sqlQuery>
 
@@ -419,8 +417,8 @@ order by project_id,sns2.source_id
               AND ti.name = 'TranslatedAASequence'
               AND ga.go_term_id = gr.child_term_id
               AND gr.parent_term_id = gp.go_term_id
-              AND (gp.go_id = '$$go_term$$'
-                   OR gp.name LIKE REPLACE('$$go_term$$', '*', '%'))
+              AND (gp.go_id = $$go_term$$
+                   OR gp.name LIKE REPLACE($$go_term$$, '*', '%'))
               AND gr.go_relationship_type_id = grt.go_relationship_type_id
               AND grt.name = 'closure'
             ORDER BY gf.source_id
@@ -613,7 +611,7 @@ order by project_id,sns2.source_id
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
             FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
-            WHERE pp.profile_string LIKE '$$profile_pattern$$'
+            WHERE pp.profile_string LIKE $$profile_pattern$$
               AND pp.source_id = gf.source_id
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id in ($$organism$$)
@@ -652,7 +650,7 @@ order by project_id,sns2.source_id
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
               (SELECT idrnf.na_feature_id
                FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
-               WHERE idr.primary_identifier = '$$metabolic_pathway$$'
+               WHERE idr.primary_identifier = $$metabolic_pathway$$
                  AND idrnf.db_ref_id = idr.db_ref_id) internal
             WHERE internal.na_feature_id = drnf.na_feature_id
             AND gf.na_feature_id = drnf.na_feature_id
@@ -704,7 +702,7 @@ order by project_id,sns2.source_id
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->
+  <!-- Epitopes -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesWithEpitopes" excludeProjects="ApiDB"
@@ -770,8 +768,8 @@ order by project_id,sns2.source_id
                 SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
                 FROM apidb.MassSpecSummary mss, dots.transcript t,
                      dots.genefeature gf, dots.translatedAAFeature taf
-                WHERE (mss.developmental_stage = '$$mass_spec_stage$$'
-                          OR '$$mass_spec_stage$$' = 'any')
+                WHERE (mss.developmental_stage = $$mass_spec_stage$$
+                          OR $$mass_spec_stage$$ = 'any')
                   AND mss.aa_seq_percent_covered >= $$min_seq_coverage$$
                   AND mss.number_of_spans >= $$min_span_count$$
                   AND mss.spectrum_count >= $$min_spectrum_count$$
@@ -907,7 +905,7 @@ order by project_id,sns2.source_id
                 FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                      dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                      core.TableInfo ti,apidb.GeneId gi
-                WHERE gi.id = lower('$$single_gene_id$$')
+                WHERE gi.id = lower($$single_gene_id$$)
                   AND gf1.source_id = gi.gene 
                   AND gf1.na_feature_id = ssg1.sequence_id
                   AND ssg1.source_table_id = ti.table_id
@@ -940,7 +938,7 @@ order by project_id,sns2.source_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
               AND (ens.source_id = $$chromosomeOptional$$
-                   OR lower(ens.source_id) = lower('$$genomicSequence$$'))
+                   OR lower(ens.source_id) = lower($$genomicSequence$$))
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
               AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
@@ -995,8 +993,8 @@ order by project_id,sns2.source_id
               cds_length,round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density,
               total as total_snps
 	      FROM apidb.snpsummary
-	      WHERE ((strain_a = '$$snp_strain_a$$' and strain_b = '$$snp_strain_b$$' )
-                    or  (strain_a = '$$snp_strain_b$$' and strain_b = '$$snp_strain_a$$'))
+	      WHERE ((strain_a = $$snp_strain_a$$ and strain_b = $$snp_strain_b$$ )
+                    or  (strain_a = $$snp_strain_b$$ and strain_b = $$snp_strain_a$$))
 	      AND non_synonymous / CASE synonymous
 	                          WHEN 0 THEN 1
 				  ELSE synonymous end >= $$dn_ds_ratio_lower$$
@@ -1097,7 +1095,7 @@ order by project_id,sns2.source_id
               AND draf.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id = $$domain_database$$
               AND dr.primary_identifier
-                  = substr('$$domain_accession$$', 1, instr('$$domain_accession$$'||':', ':')-1)
+                  = substr($$domain_accession$$, 1, instr($$domain_accession$$||':', ':')-1)
               AND tas.taxon_id IN ($$organism$$)
               AND tas.aa_sequence_id = taf.aa_sequence_id
               AND taf.na_feature_id = t.na_feature_id
@@ -1120,7 +1118,7 @@ order by project_id,sns2.source_id
               AND draf.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id = $$domain_database$$
               AND dr.primary_identifier
-                  = substr('$$domain_accession$$', 1, instr('$$domain_accession$$'||':', ':')-1)
+                  = substr($$domain_accession$$, 1, instr($$domain_accession$$||':', ':')-1)
             ORDER BY gf.source_id
             ]]>
        </sql>

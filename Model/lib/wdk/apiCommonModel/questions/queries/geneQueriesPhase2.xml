@@ -58,7 +58,7 @@
                        bait_number_of_preys, 'bait' as bait_or_prey
                 FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.ExternalNaSequence ens, apidb.GeneInteraction gi
-                WHERE lower('$$single_gene_id$$') = ga.id
+                WHERE lower($$single_gene_id$$) = ga.id
                   AND ga.gene = bf.source_id
                   AND gi.number_of_searches >= $$min_searches$$
                   AND gi.times_observed >= $$min_observed$$
@@ -73,7 +73,7 @@
                          where igi.prey_gene_feature_id = bf.na_feature_id) AS bait_number_of_preys, 'prey' as bait_or_prey
                 FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.ExternalNaSequence ens,  apidb.GeneInteraction gi
-                WHERE lower('$$single_gene_id$$') = ga.id
+                WHERE lower($$single_gene_id$$) = ga.id
                   AND ga.gene = pf.source_id
                   AND gi.number_of_searches >= $$min_searches$$
                   AND gi.times_observed >= $$min_observed$$
@@ -130,17 +130,17 @@
           SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
-          WHERE (('$$minOrMax$$' = 'min')
+          WHERE (($$minOrMax$$ = 'min')
                  OR ((abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
                       OR (abs($$maxExprHour$$ - pr.equiv_max) >= (48 - $$maxPlusMinusHours$$))))
-          AND (('$$minOrMax$$' = 'max')
+          AND (($$minOrMax$$ = 'max')
                OR ((abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
                    OR (abs($$minExprHour$$ - pr.equiv_min) >= (48 -$$minPlusMinusHours$$))))
           AND pr.ind_ratio >= $$inductionFold$$
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
-          AND prs.name like ('$$profileSet$$')
+          AND prs.name like ($$profileSet$$)
           ORDER BY gf.source_id
           ]]>
       </sql>
@@ -211,7 +211,7 @@
                 FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
                      dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
                      dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE '$$include_only_queries$$' = 'no'
+                WHERE $$include_only_queries$$ = 'no'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
                   AND ds.dataset_id = $$ds_gene_ids$$
@@ -232,7 +232,7 @@
                 FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
                      dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
                      dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE '$$include_only_queries$$' = 'yes'
+                WHERE $$include_only_queries$$ = 'yes'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
                   AND ds.dataset_id = $$ds_gene_ids$$
@@ -276,13 +276,13 @@
                   count(*) as queries_matched
                 FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
                      dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE '$$include_only_queries$$' = 'no'
+                WHERE $$include_only_queries$$ = 'no'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
                   AND ds.dataset_id = $$ds_gene_ids$$
                   AND gf1.na_feature_id = rnf.na_feature_id
                   AND rnf.associated_na_feature_id = gf2.na_feature_id
-                  AND rnf.value >= '$$min_interaction$$'
+                  AND rnf.value >= $$min_interaction$$
                 GROUP BY gf2.source_id
                 HAVING count(*) >= $$min_num_query_matches$$
               UNION
@@ -292,13 +292,13 @@
                   count(*) as queries_matched
                 FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
                      dots.GeneFeature gf2,@LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE '$$include_only_queries$$' = 'yes'
+                WHERE $$include_only_queries$$ = 'yes'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
                   AND ds.dataset_id = $$ds_gene_ids$$
                   AND gf1.na_feature_id = rnf.na_feature_id
                   AND rnf.associated_na_feature_id = gf2.na_feature_id
-                  AND rnf.value >= '$$min_interaction$$'
+                  AND rnf.value >= $$min_interaction$$
                   AND gf2.source_id in (select intds.dataset_value as gene_id 
                       from @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ intds
                       where intds.dataset_id = $$ds_gene_ids$$)
@@ -436,7 +436,7 @@
              AND sof.composite_element_id = ep2.row_id
              AND sof.source_id is not null
              AND ga.alias = sof.source_id
-             having  case when '$$regulated_dir$$' = '-' 
+             having  case when $$regulated_dir$$ = '-' 
                     then avg(ep2.mean)/avg(ep1.mean)
                      else avg(ep1.mean)/avg(ep2.mean)
                      end > $$fold_change$$
@@ -477,7 +477,7 @@
              AND ap.protocol_param_id = pp.protocol_param_id
              AND ap.analysis_id = a.analysis_id
              AND p.name = 'R Expression Statistics'
-             AND lga.logical_group_id = '$$cowmanSample$$'
+             AND lga.logical_group_id = $$cowmanSample$$
              AND de.percentile >= $$percentile$$
              GROUP BY ga.gene
              ORDER BY ga.gene
@@ -558,7 +558,7 @@
                  apidb.profileSet ps,
                  apidb.profile p,
                  apidb.profileElement pe
-            WHERE ps.name LIKE '$$waters_profilesets$$'
+            WHERE ps.name LIKE $$waters_profilesets$$
               AND p.profile_set_id = ps.profile_set_id
               AND pe.profile_id = p.profile_id
               AND pen.element_order = pe.element_order
@@ -572,7 +572,7 @@
                  apidb.profileSet ps,
                  apidb.profile p,
                  apidb.profileElement pe
-            WHERE ps.name LIKE '$$waters_profilesets$$'
+            WHERE ps.name LIKE $$waters_profilesets$$
               AND p.profile_set_id = ps.profile_set_id
               AND pe.profile_id = p.profile_id
               AND pen.element_order = pe.element_order
@@ -586,7 +586,7 @@
                  apidb.profileSet ps,
                  apidb.profile p,
                  apidb.profileElement pe
-            WHERE ps.name LIKE '$$waters_profilesets$$'
+            WHERE ps.name LIKE $$waters_profilesets$$
               AND p.profile_set_id = ps.profile_set_id
               AND pe.profile_id = p.profile_id
               AND pen.element_order = pe.element_order
@@ -600,7 +600,7 @@
                  apidb.profileSet ps,
                  apidb.profile p,
                  apidb.profileElement pe
-            WHERE ps.name LIKE '$$waters_profilesets$$'
+            WHERE ps.name LIKE $$waters_profilesets$$
               AND p.profile_set_id = ps.profile_set_id
               AND pe.profile_id = p.profile_id
               AND pen.element_order = pe.element_order
@@ -627,7 +627,7 @@
             <![CDATA[
               SELECT DISTINCT s.source_id, '@PROJECT_ID@' as project_id
               FROM apidb.Subcellular s
-              WHERE targetting_domain = '$$localization$$'
+              WHERE targetting_domain = $$localization$$
               ORDER BY s.source_id
            ]]>
        </sql>
@@ -668,40 +668,40 @@
             WHERE pe.profile_id = p.profile_id
             AND   p.profile_set_id = ps.profile_set_id
             AND   ps.name = 'berghei_proteomic_Sinden'
-            AND (pe.element_order = 1 AND ('any' = '$$asexual_blood_stages_value$$' OR
-                                           pe.value = '$$asexual_blood_stages_value$$'))
+            AND (pe.element_order = 1 AND ('any' = $$asexual_blood_stages_value$$ OR
+                                           pe.value = $$asexual_blood_stages_value$$))
             INTERSECT
             SELECT p.source_id
             FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
             WHERE pe.profile_id = p.profile_id
             AND   p.profile_set_id = ps.profile_set_id
             AND   ps.name = 'berghei_proteomic_Sinden'
-            AND (pe.element_order = 2 AND ('any' = '$$gametocytes_value$$' OR
-                                           pe.value = '$$gametocytes_value$$'))
+            AND (pe.element_order = 2 AND ('any' = $$gametocytes_value$$ OR
+                                           pe.value = $$gametocytes_value$$))
             INTERSECT
             SELECT p.source_id
             FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
             WHERE pe.profile_id = p.profile_id
             AND   p.profile_set_id = ps.profile_set_id
             AND   ps.name = 'berghei_proteomic_Sinden'
-            AND (pe.element_order = 3 AND ('any' = '$$ookinetes_value$$' OR
-                                           pe.value = '$$ookinetes_value$$'))
+            AND (pe.element_order = 3 AND ('any' = $$ookinetes_value$$ OR
+                                           pe.value = $$ookinetes_value$$))
             INTERSECT
             SELECT p.source_id
             FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
             WHERE pe.profile_id = p.profile_id
             AND   p.profile_set_id = ps.profile_set_id
             AND   ps.name = 'berghei_proteomic_Sinden'
-            AND (pe.element_order = 4 AND ('any' = '$$oocysts_value$$' OR
-                                           pe.value = '$$oocysts_value$$'))
+            AND (pe.element_order = 4 AND ('any' = $$oocysts_value$$ OR
+                                           pe.value = $$oocysts_value$$))
             INTERSECT
             SELECT p.source_id
             FROM apidb.profileElement pe, apidb.profile p, apidb.profileset ps
             WHERE pe.profile_id = p.profile_id
             AND   p.profile_set_id = ps.profile_set_id
             AND   ps.name = 'berghei_proteomic_Sinden'
-            AND (pe.element_order = 5 AND ('any' = '$$sporozoites_value$$' OR
-                                           pe.value = '$$sporozoites_value$$'))) pb
+            AND (pe.element_order = 5 AND ('any' = $$sporozoites_value$$ OR
+                                           pe.value = $$sporozoites_value$$))) pb
            ]]>
        </sql>
     </sqlQuery>
@@ -726,8 +726,8 @@
                WHERE ed.name = 'MR4DBxRefs'
                  AND edr.external_database_id = ed.external_database_id
                  AND dbr.external_database_release_id = edr.external_database_release_id
-                 AND (LOWER(dbr.secondary_identifier) = '$$mr4_reagent_type$$'
-                      OR '$$mr4_reagent_type$$' = 'any')
+                 AND (LOWER(dbr.secondary_identifier) = $$mr4_reagent_type$$
+                      OR $$mr4_reagent_type$$ = 'any')
                  AND df.db_ref_id = dbr.db_ref_id
                  AND taf.aa_feature_id = df.aa_feature_id
                  AND t.na_feature_id = taf.na_feature_id
@@ -928,8 +928,8 @@
              FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                   sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                   sres.ExternalDatabase ed, dots.ExternalNaSequence ens
-             WHERE (dr.primary_identifier = '$$accession$$'
-                    OR dr.secondary_identifier = '$$accession$$')
+             WHERE (dr.primary_identifier = $$accession$$
+                    OR dr.secondary_identifier = $$accession$$)
                AND gf.na_feature_id = drnf.na_feature_id
                AND drnf.db_ref_id = dr.db_ref_id
                AND dr.external_database_release_id

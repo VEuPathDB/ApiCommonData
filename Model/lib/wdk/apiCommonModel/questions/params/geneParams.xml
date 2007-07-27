@@ -42,7 +42,8 @@
 
         <stringParam name="min_mutual_information_score"
                      prompt="Minimum mutual information score"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Enter the minimum mutual information score to report similarities.  The score range is from 0.472 to 1.67</help>
             <suggest default="0.47"/>
 
@@ -50,7 +51,8 @@
 
         <stringParam name="min_num_query_matches"
                      prompt="Minimum number of query matches"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Enter the minimum number of queries you want to match to your genes.  If you input 5 genes ids for your query and enter 5 minimum number of queries then the only genes returned would be ones that all 5 queries match</help>
              <suggest default="1"/>
 
@@ -74,19 +76,20 @@
 
         <stringParam name="num_exons_gte"
                      prompt="Exon Count >="
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Which genes are annotated as containing introns? One easy way to do this search is to look for genes with more than one annotated exon. Enter a minimum of exons you would like to search for as an integer, e.g. '3'.</help>
-            <suggest sample="(Example: 2)"
-                     default="2"/>
+            <suggest default="2"/>
         </stringParam>
 
  <stringParam name="num_exons_lte"
                      prompt="Exon Count &lt;="
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Enter a maximum number of exons you would like to search for as an integer, e.g. '3'.</help>
-            <suggest sample="(Example: 20)"
-                     default="20"/>
+            <suggest default="20"/>
         </stringParam>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -120,18 +123,18 @@
 
         <stringParam name="confidence"
                      prompt="Confidence >= "
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help></help> 
-            <suggest sample="(Example: )"
-                     default="0.8"/>
+            <suggest default="0.8"/>
         </stringParam>
 
         <stringParam name="fold_change"
                      prompt="Fold change >="
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help></help> 
-            <suggest sample="(Example: )"
-                     default="2"/>
+            <suggest default="2"/>
         </stringParam>
 
     <enumParam name="regulated_dir"
@@ -154,10 +157,10 @@
 
         <stringParam name="percentile"
                      prompt="Percentile >="
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help></help> 
-            <suggest sample="(Example: )"
-                     default="90"/>
+            <suggest default="90"/>
         </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -166,18 +169,18 @@
 
         <stringParam name="min_tm"
                      prompt="Minimum Number of Transmembrane Domains"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Proteins may have none, one or more transmembrane domains. Please enter a minimum number of predicted transmembrane domains to start your search.</help>
-            <suggest sample="(Example: 2)"
-                     default="2"/>
+            <suggest default="2"/>
         </stringParam>
 
          <stringParam name="max_tm"
                      prompt="Maximum Number of Transmembrane Domains"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Proteins may have none, one or more transmembrane domains. Please enter a maximum number of predicted transmembrane domains to start your search.</help>
-            <suggest sample="(Example: 5)"
-                     default="5"/>
+            <suggest default="5"/>
         </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -186,7 +189,8 @@
 
         <stringParam name="min_sigp_sum_score"
                      prompt="Minimum SignalP conclusion score"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>SignalP provides four scores and a conclusion for each such that the conclusion  is 1 if the score meets a certain criteria and 0 otherwise.  The SignalP summary conclusion is the sum of the four conclusions generated by SignalP, thus four is the highest score possible.  We consider a summary conclusion score of three to be significant</help>
             <suggest default="3"/>
         </stringParam>
@@ -234,7 +238,8 @@
       <flatVocabParam name="geneType"
                      queryRef="GeneVQ.GeneTypes"
                      prompt="Gene type"
-                     multiPick="true">
+                     multiPick="true"
+                     quote="false">
         <help>
              Select a gene type.
         </help>
@@ -277,7 +282,8 @@
 
         <stringParam name="plasmodb_4-4_dataset"
                      visible="false"
-                     prompt="PlasmoDB 4.4 dataset">
+                     prompt="PlasmoDB 4.4 dataset"
+                     quote="false">
             <help>PlasmoDB 4.4 dataset</help>
         </stringParam>
 
@@ -326,13 +332,15 @@
     </enumParam>
 
         <stringParam name="min_observed"
-                     prompt="Restrict by the minimum number of times this interaction was found">
+                     prompt="Restrict by the minimum number of times this interaction was found"
+                     quote="false">
             <help>Restrict by the minimum number of times this interaction was found</help>
             <suggest default="1"/>
         </stringParam>
 
         <stringParam name="min_searches"
-                     prompt="Restrict by the minimum number of searches that found this interaction">
+                     prompt="Restrict by the minimum number of searches that found this interaction"
+                     quote="false">
             <help>Restrict by the minimum number of searches that found this interaction</help>
             <suggest default="1"/>
         </stringParam>
@@ -385,15 +393,15 @@
       <enumList>
        <enumValue>
          <term>High</term>
-         <internal>'Full Set On Blast Hit'</internal>
+         <internal>Full Set On Blast Hit</internal>
        </enumValue>
        <enumValue>
          <term>Low</term>
-         <internal>'Not Full Set Not on Blast Hit'</internal>
+         <internal>Not Full Set Not on Blast Hit</internal>
        </enumValue>
        <enumValue>
          <term>Medium</term>
-         <internal>'Full Set Not on Blast Hit','Not Full Set On Blast Hit'</internal>
+         <internal>Full Set Not on Blast Hit','Not Full Set On Blast Hit</internal>
        </enumValue>
       </enumList>
     </enumParam>
@@ -402,50 +410,58 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <stringParam name="dn_ds_ratio_upper"
-                     prompt="Non-synonymous / synonymous SNP ratio &lt;= ">
+                     prompt="Non-synonymous / synonymous SNP ratio &lt;= "
+                     quote="false">
             <help>Upper Bound on the ratio of non-synonymous to synonymous coding snps</help>
             <suggest default="100"/>
         </stringParam>
 
       <stringParam name="dn_ds_ratio_lower"
-                     prompt="Non-synonymous / synonymous SNP ratio >= ">
+                     prompt="Non-synonymous / synonymous SNP ratio >= "
+                     quote="false">
             <help>Lower Bound on the ratio of non-synonymous to synonymous coding snps</help>
             <suggest default="0"/>
         </stringParam>
 
 
       <stringParam name="min_num_coding_snps"
-                     prompt="Number of coding SNPs >= ">
+                     prompt="Number of coding SNPs >= "
+                     quote="false">
             <help>Lower Bound on the number of coding snps</help>
             <suggest default="0"/>
         </stringParam>
 
        <stringParam name="occurrences_upper"
-                     prompt="Number of SNPs of above class &lt;= ">
+                     prompt="Number of SNPs of above class &lt;= "
+                     quote="false">
             <help>Upper Bound on the number of SNPs of the selected class</help>
             <suggest default="1000"/>
         </stringParam>
 
       <stringParam name="occurrences_lower"
-                     prompt="Number of SNPs of above class >= ">
+                     prompt="Number of SNPs of above class >= "
+                     quote="false">
             <help>Lower Bound on the number of SNPs of the selected class</help>
             <suggest default="0"/>
         </stringParam>
 
       <stringParam name="major_allele_max"
-                     prompt="Frequency of major allele &lt;= ">
+                     prompt="Frequency of major allele &lt;= "
+                     quote="false">
             <help>Upper Bound on the number of strains that have the major allele</help>
             <suggest default="20"/>
         </stringParam>
 
       <stringParam name="major_allele_min"
-                     prompt="Frequency of major allele >= ">
+                     prompt="Frequency of major allele >= "
+                     quote="false">
             <help>Lower Bound on the number strains that have the major allele</help>
             <suggest default="1"/>
         </stringParam>
 
       <stringParam name="snp_density"
-                     prompt="SNPs per KB (CDS) >= ">
+                     prompt="SNPs per KB (CDS) >= "
+                     quote="false">
             <help>Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence</help>
             <suggest default="0"/>
         </stringParam>
@@ -650,7 +666,8 @@
 
     <enumParam name="maxExprHour"
                      prompt="Timing of maximal expression"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -852,7 +869,8 @@
 
     <enumParam name="maxPlusMinusHours"
                      prompt="Maximal expression time plus or minus"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -958,7 +976,8 @@
 
     <enumParam name="minExprHour"
                      prompt="Timing of minimum expression"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -1160,7 +1179,8 @@
 
     <enumParam name="minPlusMinusHours"
                      prompt="Minimum expression time plus or minus"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -1266,7 +1286,8 @@
 
     <enumParam name="inductionFold"
                      prompt="Induction ratio cut-off"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -1300,7 +1321,8 @@
 
     <enumParam name="expressionPct"
                      prompt="Maximum percentile cut-off"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -1371,73 +1393,85 @@
     </enumParam>
 
         <stringParam name="start_location"
-                     prompt="Start Location">
+                     prompt="Start Location"
+                     quote="false">
             <help>Lower bound on nucleotide range to search for gene</help>
             <suggest default="1"/>
         </stringParam>
 
         <stringParam name="end_location"
-                     prompt="End Location">
+                     prompt="End Location"
+                     quote="false">
             <help>Upper bound on nucleotide range to search for gene.  Use a number larger than the sequence length to search to the end of the sequence.</help>
             <suggest default="10000000000"/>
         </stringParam>
 
         <stringParam name="min_expression_percentile"
-                     prompt="Minimum expression percentile">
+                     prompt="Minimum expression percentile"
+                     quote="false">
             <help>Lower bound on expression percentile.</help>
             <suggest default="50"/>
         </stringParam>
 
         <stringParam name="max_expression_percentile"
-                     prompt="Maximum expression percentile">
+                     prompt="Maximum expression percentile"
+                     quote="false">
             <help>Upper bound on expression percentile.</help>
             <suggest default="100"/>
         </stringParam>
 
         <stringParam name="r_min_expression_percentile"
-                     prompt="Rings min percentile">
+                     prompt="Rings min percentile"
+                     quote="false">
             <help>Lower bound on expression percentile.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="r_max_expression_percentile"
-                     prompt="Rings max percentile">
+                     prompt="Rings max percentile"
+                     quote="false">
             <help>Upper bound on expression percentile.</help>
             <suggest default="100"/>
         </stringParam>
 
         <stringParam name="yt_min_expression_percentile"
-                     prompt="Early trophs min percentile">
+                     prompt="Early trophs min percentile"
+                     quote="false">
             <help>Lower bound on expression percentile.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="yt_max_expression_percentile"
-                     prompt="Early trophs max percentile">
+                     prompt="Early trophs max percentile"
+                     quote="false">
             <help>Upper bound on expression percentile.</help>
             <suggest default="100"/>
         </stringParam>
 
         <stringParam name="ys_min_expression_percentile"
-                     prompt="Early schizont min percentile">
+                     prompt="Early schizont min percentile"
+                     quote="false">
             <help>Lower bound on expression percentile.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="ys_max_expression_percentile"
-                     prompt="Early schizont max percentile">
+                     prompt="Early schizont max percentile"
+                     quote="false">
             <help>Upper bound on expression percentile.</help>
             <suggest default="100"/>
         </stringParam>
 
         <stringParam name="ms_min_expression_percentile"
-                     prompt="Late schizont min percentile">
+                     prompt="Late schizont min percentile"
+                     quote="false">
             <help>Lower bound on expression percentile.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="ms_max_expression_percentile"
-                     prompt="Late schizont max percentile">
+                     prompt="Late schizont max percentile"
+                     quote="false">
             <help>Upper bound on expression percentile.</help>
             <suggest default="100"/>
         </stringParam>
@@ -1462,22 +1496,18 @@
 
     <enumParam name="synchronization"
                      prompt="Synchronization"
-                     multiPick="false">
+                     multiPick="true">
       <help>
              Results will be sorted ascending or descending order
       </help>
       <enumList>
         <enumValue>
           <term>Sorbitol</term>
-          <internal>'winzeler_cc_sorbPct'</internal>
+          <internal>winzeler_cc_sorbPct</internal>
         </enumValue>
         <enumValue>
           <term>Temperature</term>
-          <internal>'winzeler_cc_tempPct'</internal>
-        </enumValue>
-        <enumValue>
-          <term>Either</term>
-          <internal>'winzeler_cc_sorbPct', 'winzeler_cc_tempPct'</internal>
+          <internal>winzeler_cc_tempPct</internal>
         </enumValue>
       </enumList>
     </enumParam>
@@ -1511,7 +1541,8 @@
         </stringParam>
 
     <enumParam name="phyletic_indent_map"
-                     visible="false">
+                     visible="false"
+                     quote="false">
       <help>
              Results will be sorted ascending or descending order
       </help>
@@ -2332,25 +2363,29 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <stringParam name="min_isoelectric_point"
-                     prompt="Min Isoelectric Point">
+                     prompt="Min Isoelectric Point"
+                     quote="false">
             <help>Lower bound for the protein isoelectric point</help>
             <suggest default="6"/>
         </stringParam>
 
         <stringParam name="max_isoelectric_point"
-                     prompt="Max Isoelectric Point">
+                     prompt="Max Isoelectric Point"
+                     quote="false">
             <help>Upper bound for the protein isoelectric point</help>
             <suggest default="10"/>
         </stringParam>
 
         <stringParam name="min_molecular_weight"
-                     prompt="Min Molecular Weight (Daltons)">
+                     prompt="Min Molecular Weight (Daltons)"
+                     quote="false">
             <help>Lower bound for the protein molecular weight</help>
             <suggest default="10000"/>
         </stringParam>
 
         <stringParam name="max_molecular_weight"
-                     prompt="Max Molecular Weight (Daltons)">
+                     prompt="Max Molecular Weight (Daltons)"
+                     quote="false">
             <help>Upper bound for the protein molecular weight</help>
             <suggest default="50000"/>
         </stringParam>
@@ -2373,7 +2408,8 @@
         </stringParam>
 
         <stringParam name="min_exportpred_score"
-                     prompt="Minimum ExportPred Score">
+                     prompt="Minimum ExportPred Score"
+                     quote="false">
             <help>mininum requirement of score by ExportPred algorithm</help>
             <suggest default="10"/>
         </stringParam>
@@ -2485,7 +2521,8 @@
 
         <stringParam name="min_interaction"
                      prompt="Minimum Likelihood Score"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Set a minimum for the likelihood of interaction</help>
             <suggest default="2"/>
         </stringParam>
@@ -2701,7 +2738,8 @@
 
         <stringParam name="pvalue_cutoff"
                      prompt="BLAST P-value less than 10 to the"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Only consider BLAST similarities with a P-value less than ten to the given power.</help>
             <suggest default="-20"/>
         </stringParam>
@@ -2724,14 +2762,16 @@
 
         <stringParam name="min_coil"
                      prompt="Minimum percent coil"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a lower bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of coil will be returned.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="max_coil"
                      prompt="Maximum percent coil"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a upper bound on the coil percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of coil will be returned.</help>
             <suggest default="100"/>
         </stringParam>
@@ -2739,28 +2779,32 @@
 
         <stringParam name="min_strand"
                      prompt="Minimum percent strand"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a lower bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of strand will be returned.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="max_strand"
                      prompt="Maximum percent strand"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a upper bound on the strand percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of strand will be returned.</help>
             <suggest default="100"/>
         </stringParam>
 
         <stringParam name="min_helix"
                      prompt="Minimum percent helix"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a lower bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains at least this percentage of helix will be returned.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="max_helix"
                      prompt="Maximum percent helix"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>Choose a upper bound on the helix percentage.  Only genes coding for proteins whose secondary structure contains no more than this percentage of helix will be returned.</help>
             <suggest default="100"/>
         </stringParam>
@@ -2796,7 +2840,8 @@
 
         <stringParam name="ProfileNumToReturn"
                      prompt="# of Matches"
-                     substitute="yes">
+                     substitute="yes"
+                     quote="false">
             <help>The number of genes in the result</help>
             <suggest default="50"/>
         </stringParam>
@@ -2843,7 +2888,8 @@
 
     <enumParam name="ProfileTimeShift"
                      prompt="Time Shift"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Whether to allow time shifting or not
       </help>
@@ -2861,7 +2907,8 @@
 
     <enumParam name="ProfileScaleData"
                      prompt="Scale Result"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Whether to scale result data into [0..1] or not
       </help>
@@ -2879,7 +2926,8 @@
 
     <enumParam name="ProfileMinShift"
                      prompt="Min Shift"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              The minimum allowed time shift
       </help>
@@ -3081,7 +3129,8 @@
 
     <enumParam name="ProfileMaxShift"
                      prompt="Max Shift"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              The maximum allowed time shift
       </help>
@@ -3289,8 +3338,7 @@
         <stringParam name="text_expression"
                      prompt="Text term">
             <help>Enter a regular expression describing the text term(s) to search for.  Example: membrane</help>
-            <suggest sample="(Example: membrane)"
-                     default="membrane"/>
+            <suggest default="membrane"/>
         </stringParam>
 
     <enumParam name="text_fields"
@@ -3336,13 +3384,15 @@
     </enumParam>
 
         <stringParam name="max_pvalue"
-                     prompt="Max p-value exponent (BLAST Hits v. NRDB)">
+                     prompt="Max p-value exponent (BLAST Hits v. NRDB)"
+                     quote="false">
             <help>Only applicable to the 'Similar proteins' field.  Use this to filter away BLAST hits that are below a threshold of significance, so you only search the descriptions of significantly similar proteins.</help>
             <suggest default="-30"/>
         </stringParam>
 
         <stringParam name="e_value"
-                     prompt="E value &lt;=">
+                     prompt="E value &lt;="
+                     quote="false">
             <help>Enter the maximum E value allowed to report domain matches.</help>
             <suggest default="0.05"/>
         </stringParam>

@@ -13,7 +13,7 @@
 	    <![CDATA[
 	      SELECT sf.source_id AS source_id, '@PROJECT_ID@' as project_id
 	      FROM dots.SnpFeature sf
-	      WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$snp_id$$',' ',''), '*', '%'))
+	      WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$snp_id$$,' ',''), '*', '%'))
 	    ]]>
 	  </sql>
       </sqlQuery>
@@ -79,7 +79,7 @@ FROM
       AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford') 
       AND sf.na_feature_id = isva.parent_id                               
       AND sf.na_feature_id = isvb.parent_id                               
-      AND isva.strain = '$$snp_strain_a$$'                               
+      AND isva.strain = $$snp_strain_a$$                               
       AND isvb.strain in ($$snp_strain_m$$)
       AND isva.allele != isvb.allele ) hits
   WHERE hits.na_sequence_id = nas.na_sequence_id
@@ -87,8 +87,8 @@ FROM
     AND hits.snp_na_feature_id = l.na_feature_id
     AND hits.snp_na_feature_id = sva.parent_id 
     AND hits.snp_na_feature_id = svb.parent_id 
-    AND sva.strain = '$$snp_strain_a$$'                               
-    AND svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)                             
+    AND sva.strain = $$snp_strain_a$$                               
+    AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)                             
     ) snpq                              
 GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
            ]]>
@@ -128,7 +128,7 @@ from
       and ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')                               
       and sf.na_feature_id = isva.parent_id                               
       and sf.na_feature_id = isvb.parent_id                               
-      and isva.strain = '$$snp_strain_a$$'                               
+      and isva.strain = $$snp_strain_a$$                               
       and isvb.strain in ($$snp_strain_m$$)
       and isva.allele != isvb.allele ) hits
   where hits.na_sequence_id = nas.na_sequence_id
@@ -136,8 +136,8 @@ from
     and hits.snp_na_feature_id = l.na_feature_id
     and hits.snp_na_feature_id = sva.parent_id 
     and hits.snp_na_feature_id = svb.parent_id 
-    and sva.strain = '$$snp_strain_a$$'                               
-    and svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)                             
+    and sva.strain = $$snp_strain_a$$                               
+    and svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)                             
     ) snpq                              
 group by snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
            ]]>
@@ -208,7 +208,7 @@ FROM
       nas.source_id as seq_source_id,l.start_min,isf.position_in_protein
      FROM sres.ExternalDatabase ed,sres.ExternalDatabaseRelease edr,dots.SeqVariation isva, dots.NALocation l,
           dots.VirtualSequence nas, dots.SeqVariation isvb, dots.SnpFeature isf    
-     WHERE nas.source_id = '$$chromosome_single$$'
+     WHERE nas.source_id = $$chromosome_single$$
       AND isf.na_sequence_id = nas.na_sequence_id
       AND edr.external_database_release_id = isf.external_database_release_id
       AND edr.external_database_id = ed.external_database_id   
@@ -218,15 +218,15 @@ FROM
       AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
       AND isf.na_feature_id = isva.parent_id                               
       AND isf.na_feature_id = isvb.parent_id                               
-      AND isva.strain = '$$snp_strain_a$$'                               
+      AND isva.strain = $$snp_strain_a$$                               
       AND isvb.strain in ($$snp_strain_m$$)
       AND isva.allele != isvb.allele ) hits 
   WHERE  hits.parent_id = gf.na_feature_id(+)
     AND gf.na_feature_id = gene_loc.na_feature_id(+)    
     AND hits.na_feature_id = sva.parent_id 
     AND hits.na_feature_id = svb.parent_id 
-    AND sva.strain = '$$snp_strain_a$$'
-    AND svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)
+    AND sva.strain = $$snp_strain_a$$
+    AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)
     ) snpq                              
 GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
            ]]>
@@ -265,15 +265,15 @@ from
       AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
       and isf.na_feature_id = isva.parent_id                               
       and isf.na_feature_id = isvb.parent_id                               
-      and isva.strain = '$$snp_strain_a$$'                               
+      and isva.strain = $$snp_strain_a$$                               
       and isvb.strain in ($$snp_strain_m$$)
       and isva.allele != isvb.allele ) hits 
   where  hits.parent_id = gf.na_feature_id(+)
     and gf.na_feature_id = gene_loc.na_feature_id(+)    
     and hits.na_feature_id = sva.parent_id 
     and hits.na_feature_id = svb.parent_id 
-    and sva.strain = '$$snp_strain_a$$'
-    and svb.strain in ('$$snp_strain_a$$',$$snp_strain_m$$)
+    and sva.strain = $$snp_strain_a$$
+    and svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)
     ) snpq                              
 group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
            ]]>

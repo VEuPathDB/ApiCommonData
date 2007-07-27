@@ -19,7 +19,7 @@
           <![CDATA[
             SELECT est.accession AS source_id, '@PROJECT_ID@' as project_id
             FROM dots.Est est
-            WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
+            WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
           ]]>
        </sql>
     </sqlQuery>
@@ -64,7 +64,7 @@
                        || ')') AS apidb.varchartab), ', ') AS est_location
 	    FROM  apidb.ESTALIGNMENTGENESUMMARY
             WHERE (target_sequence_source_id IN ($$chromosomeOptional$$)
-                   OR lower(target_sequence_source_id) = lower('$$genomicSequence$$'))
+                   OR lower(target_sequence_source_id) = lower($$genomicSequence$$))
             AND target_start >= $$start_point$$
             AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
             AND   is_consistent in ($$high_confidence_only$$)
@@ -90,8 +90,8 @@
             AND   (blat.target_start <= $$end_location$$ OR $$end_location$$ = 0)
 	    AND   etn.external_database_release_id = blat.target_external_db_release_id
             AND   blat.max_target_gap < 10000
-	    AND   (etn.source_id = '$$parvum_chromosome$$'
-                   OR lower(etn.source_id) = lower('$$contig$$'))
+	    AND   (etn.source_id = $$parvum_chromosome$$
+                   OR lower(etn.source_id) = lower($$contig$$))
             AND blat.target_start >= $$start_location$$ 
             AND (blat.target_end <= $$end_location$$ OR $$end_location$$ = 0)
 	    GROUP BY est.accession

@@ -47,7 +47,8 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <enumParam name="best_alignment_only"
                      prompt="Best alignments only"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
       </help>
@@ -69,7 +70,8 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <enumParam name="high_confidence_only"
                      prompt="Consistent alignments only"
-                     multiPick="false">
+                     multiPick="false"
+                     quote="false">
       <help>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
       </help>
@@ -90,7 +92,8 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <stringParam name="min_percent_identity"
-                     prompt="Percent identity >=">
+                     prompt="Percent identity >="
+                     quote="false">
             <help>You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity</help>           
             <suggest default="90"/>
         </stringParam>
@@ -99,7 +102,8 @@
   <!--  -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <stringParam name="min_percent_est_aligned"
-                     prompt="Percent of EST bases aligned >=">
+                     prompt="Percent of EST bases aligned >="
+                     quote="false">
             <help>Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.</help>
             <suggest default="20"
                           />
@@ -110,7 +114,8 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <stringParam name="bp_overlap_gte"
-                     prompt="Base Overlap &gt;=">
+                     prompt="Base Overlap &gt;="
+                     quote="false">
             <help>Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general, the specificity of this evidence is proportional to the overlap length.</help>
             <suggest sample="(Example: 100)"
                      default="100"/>
@@ -696,13 +701,15 @@
     </stringParam>    
 
         <stringParam name="start_point"
-                     prompt="Start at">
+                     prompt="Start at"
+                     quote="false">
             <help>Select the distance (in nucleotides) to the start</help>
             <suggest default="1"/>
         </stringParam>
 
         <stringParam name="end_point"
-                     prompt="End Location (0 = end)">
+                     prompt="End Location (0 = end)"
+                     quote="false">
             <help>Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence</help>
             <suggest default="0"/>
         </stringParam>
@@ -710,7 +717,8 @@
       <flatVocabParam name="libraryId"
                      queryRef="SharedVQ.EstLibraries"
                      prompt="EST Library"
-                     multiPick="true">
+                     multiPick="true"
+                     quote="false">
         <help>
              Select a clone library.
         </help>
@@ -859,25 +867,29 @@
     <!-- mass spec -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <stringParam name="min_seq_coverage"
-                     prompt="Minimum Percent Sequence Coverage">
+                     prompt="Minimum Percent Sequence Coverage"
+                     quote="false">
             <help>Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%.</help>
             <suggest default="0"/>
         </stringParam>
 
         <stringParam name="min_span_count"
-                     prompt="Minimum Number of Spans">
+                     prompt="Minimum Number of Spans"
+                     quote="false">
             <help>Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned</help>
             <suggest default="2"/>
         </stringParam>
 
         <stringParam name="min_sequence_count"
-                     prompt="Minimum Number of&lt;br&gt;Unique Peptide Sequences">
+                     prompt="Minimum Number of&lt;br&gt;Unique Peptide Sequences"
+                     quote="false">
            <help>Use this parameter to set a minimum for the number of unique peptide sequences found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
            <suggest  default="1"/>
         </stringParam>
 
         <stringParam name="min_spectrum_count"
-                     prompt="Minimum Number of Spectra">
+                     prompt="Minimum Number of Spectra"
+                     quote="false">
             <help>Use this parameter to set a minimum for the number of mass spectra found that must match a gene in order for it to be returned by the query. Roughly speaking this parameter provides a measure of the abundance of the protein product in question, at least within a particular experiment.</help>
             <suggest default="1"/>
         </stringParam>

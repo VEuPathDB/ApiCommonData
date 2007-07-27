@@ -25,7 +25,7 @@
             SELECT enas.source_id, '@PROJECT_ID@' as project_id
             FROM dots.externalnasequence enas,
                  sres.sequenceontology so
-            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE('$$sequenceId$$', '*', '%')))
+            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE($$sequenceId$$, '*', '%')))
             AND enas.sequence_ontology_id = so.sequence_ontology_id
             AND so.term_name in ('contig', 'supercontig')
            ]]>
@@ -34,7 +34,7 @@
         <![CDATA[
             SELECT distinct source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence
-            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE('$$sequenceId$$',' ',''), '*', '%'))
+            WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
            ]]>
         </sql>
     </sqlQuery>
