@@ -155,7 +155,7 @@
         <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga
+            FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga,
                  (SELECT t.parent_id, COUNT(*) AS tm_count
                   FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
                        dots.TransmembraneAaFeature tmaf, dots.AaLocation al
@@ -168,7 +168,7 @@
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id IN ($$organism$$)
               AND gf.source_id = ga.source_id
-            ORDER BY tm_count, gf.source_id
+            ORDER BY ga.tm_count, gf.source_id
            ]]>
         </sql>
         <sql includeProjects="CryptoDB">
@@ -325,7 +325,7 @@
     <wsQuery name="GenesByAnnotatedKeyword" includeProjects="ApiDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-            <paramRef ref="geneParams.datasets"/>
+            <paramRef ref="geneParams.text_fields"/>
             <paramRef ref="geneParams.text_expression"/>
             <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
             <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
@@ -350,7 +350,7 @@
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
             FROM $$historyId$$ qr, dots.GeneFeature gf1,
                  dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
-                 dots.GeneFeature gf2, dots.ExternalNaSequence ens,
+                 dots.GeneFeature gf2, dots.NaSequence ens,
                  core.TableInfo ti
             WHERE qr.source_id = gf1.source_id
               AND gf1.na_feature_id = ssg1.sequence_id
@@ -403,7 +403,7 @@ order by project_id,sns2.source_id
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.ExternalNaSequence ens, dots.GeneFeature gf, dots.Transcript t,
+            FROM dots.NaSequence ens, dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  dots.GoAssociation ga, sres.GoTerm gp,
                  sres.GoRelationship gr, core.TableInfo ti,
@@ -494,8 +494,7 @@ order by project_id,sns2.source_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  apidb.AaSequenceAttribute asa,
-                 dots.NaSequence ns,
-                 apidb.ga_source_id = gf.source_id
+                 dots.NaSequence ns
             WHERE asa.isoelectric_point BETWEEN $$min_isoelectric_point$$
                                             AND $$max_isoelectric_point$$
               AND gf.na_feature_id = t.parent_id
@@ -571,10 +570,11 @@ order by project_id,sns2.source_id
         <column name="source_id"/>
         <sql>
             <![CDATA[
-             SELECT source_id, '@PROJECT_ID@' as project_id
-             FROM apidb.geneattributes
-             WHERE ncbi_tax_id in ($$organism$$)
-             AND exon_count  >= $$num_exons_gte$$
+             SELECT ga.source_id, '@PROJECT_ID@' as project_id
+             FROM apidb.geneattributes ga, dots.nasequence ns
+             WHERE ns.taxon_id IN ($$organism$$)
+             AND ga.sequence_id = ns.source_id
+             AND exon_count  >= $$num_exons_gte$$ 
              And exon_count <= $$num_exons_lte$$
             ]]>
        </sql>
@@ -731,7 +731,7 @@ order by project_id,sns2.source_id
              dots.AaLocation al, sres.ExternalDatabaseRelease edr,
              sres.ExternalDatabase ed, dots.GeneFeature gf,
              dots.TranslatedAaFeature taf, dots.Transcript t,
-             dots.MotifAaSequence mas, dots.ExternalNaSequence ens
+             dots.MotifAaSequence mas, dots.NaSequence ens
         WHERE tas.aa_sequence_id = ef.aa_sequence_id
           AND ef.aa_feature_id = al.aa_feature_id
           AND ef.motif_aa_sequence_id = mas.aa_sequence_id
@@ -924,7 +924,7 @@ order by project_id,sns2.source_id
   <!-- Location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="sharedParams.chromosomeOptional"/>
         <paramRef ref="sharedParams.sequenceId"/>
@@ -935,10 +935,10 @@ order by project_id,sns2.source_id
         <sql>
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.ExternalNaSequence ens
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
               AND (ens.source_id = $$chromosomeOptional$$
-                   OR lower(ens.source_id) = lower($$genomicSequence$$))
+                   OR lower(ens.source_id) = lower($$sequenceId$$))
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
               AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
@@ -946,7 +946,7 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-	<wsQuery name="GenesByGenomicRegion" includeProjects="ApiDB" 
+	<wsQuery name="GenesByLocation" includeProjects="ApiDB" 
                     isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
@@ -1083,7 +1083,7 @@ order by project_id,sns2.source_id
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <column name="e_value"/>
+        <column name="e_value" excludeProjects="ToxoDB"/>
         <sql excludeProjects="ToxoDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, avg(df.e_value) as e_value
@@ -1173,7 +1173,7 @@ order by project_id,sns2.source_id
                  dots.est query,
                  dots.library lib,
                  dots.assemblysequence asbl,
-                 dots.externalnasequence target 
+                 dots.nasequence target 
             WHERE gf.na_feature_id = nal.na_feature_id 
               AND gf.na_sequence_id = target.na_sequence_id 
               AND target.na_sequence_id = blat.target_na_sequence_id 

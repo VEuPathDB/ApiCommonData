@@ -14,7 +14,7 @@
     <question name="GenesByLocation"
          category="Genomic Position"
          displayName="Chromosomal Location"
-         queryRef="GeneId.GenesByGenomicRegion"
+         queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
        <attributesList excludeProjects="CryptoDB"
@@ -759,9 +759,13 @@ one time.
               displayName="Interpro Domain"
               queryRef="GeneId.GenesByInterproDomain"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,e_value"
               sorting="organism asc,e_value asc, location_text asc"
+        /> 
+        <attributesList includeProjects="ToxoDB"
+              summary="organism,location_text,product"
+              sorting="organism asc, location_text asc"
         /> 
         <summary>
           Find genes containing a given protein domain.
@@ -782,10 +786,10 @@ one time.
               here</a>.
               ]]>
         </description>
-       <dynamicAttributes>
+       <dynamicAttributes excludeProjects="ToxoDB">
 	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
-	</dynamicAttributes>
-    </question>
+       </dynamicAttributes>
+     </question>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

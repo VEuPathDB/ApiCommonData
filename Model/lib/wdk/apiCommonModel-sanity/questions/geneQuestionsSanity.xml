@@ -14,8 +14,8 @@
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="220">
         <sanityParam name="sequenceId" value="AAEE01000001"/>
-        <sanityParam name="start_location" value="1"/>
-        <sanityParam name="end_location" value="0"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
     <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="PlasmoDB,ApiDB"
@@ -29,11 +29,11 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="200" maxOutputLength="220">
+            minOutputLength="200" maxOutputLength="1400">
         <sanityParam name="chromosomeOptional" value="Ia"/>
         <sanityParam name="sequenceId" value="(Example: VIIa, TGG_995305)"/>
-        <sanityParam name="start_location" value="1"/>
-        <sanityParam name="end_location" value="0"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -66,10 +66,10 @@
 
       <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="ToxoDB,ApiDB"
                       pageStart="30" pageEnd="100"
-                      minOutputLength="30" maxOutputLength="100">
+                      minOutputLength="30" maxOutputLength="300">
           <sanityParam name="geneType" value="tRNA"/>
           <sanityParam name="includePseudogenes" value="Yes"/>
-          <sanityParam name="organism" value="Toxoplasma ghondii"/>
+          <sanityParam name="organism" value="Toxoplasma gondii"/>
       </sanityQuestion>
 
 
@@ -98,7 +98,7 @@
             minOutputLength="100" maxOutputLength="1000">
         <sanityParam name="num_exons_gte" value="2"/>
         <sanityParam name="num_exons_lte" value="20"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -119,7 +119,7 @@
             minOutputLength="1500" maxOutputLength="9500">
         <sanityParam name="min_isoelectric_point" value="6"/>
         <sanityParam name="max_isoelectric_point" value="10"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -136,10 +136,10 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="FIX_min_len" maxOutputLength="FIX_max_len">
+            minOutputLength="1000" maxOutputLength="4000">
         <sanityParam name="min_molecular_weight" value="10000"/>
         <sanityParam name="max_molecular_weight" value="50000"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -223,7 +223,7 @@
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="10">
         <sanityParam name="motif_expression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="T. ghondii"/>
+        <sanityParam name="motif_organism" value="T. gondii"/>
     </sanityQuestion>
 
 
@@ -252,7 +252,7 @@
             minOutputLength="1" maxOutputLength="200">
         <sanityParam name="domain_database" value="PRODOM"/>
         <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -276,9 +276,9 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="200">
+            minOutputLength="100" maxOutputLength="2000">
         <sanityParam name="go_term" value="catalytic activity"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -330,7 +330,7 @@
             minOutputLength="1" maxOutputLength="1000">
         <sanityParam name="min_tm" value="2"/>
         <sanityParam name="max_tm" value="5"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -355,7 +355,7 @@
     <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="800" maxOutputLength="1200">
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
         <sanityParam name="min_sigp_sum_score" value="3"/>
     </sanityQuestion>
 
@@ -476,7 +476,7 @@
         <sanityParam name="whole_words" value="yes"/>
         <sanityParam name="max_pvalue" value="-30"/>
         <sanityParam name="text_fields" value="Gene product"/>
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -498,8 +498,8 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="5000" maxOutputLength="8000">
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+            minOutputLength="5000" maxOutputLength="9000">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 
@@ -534,7 +534,7 @@
     <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="400" maxOutputLength="500">
-        <sanityParam name="organism" value="Toxoplasma ghondii"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
         <sanityParam name="libraryId" value="TgME49cDNA"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
