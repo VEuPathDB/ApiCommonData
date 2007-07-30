@@ -95,7 +95,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="1000">
+            minOutputLength="100" maxOutputLength="6000">
         <sanityParam name="num_exons_gte" value="2"/>
         <sanityParam name="num_exons_lte" value="20"/>
         <sanityParam name="organism" value="Toxoplasma gondii"/>
@@ -169,7 +169,7 @@
             minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
-          <sanityParam name="BlastDatabaseOrganism" value="C. parvum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
           <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
           <sanityParam name="-e" value="0.01"/>
           <sanityParam name="-v" value="50"/>
@@ -181,7 +181,7 @@
             minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
-          <sanityParam name="BlastDatabaseOrganism" value="P. falciparum"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Plasmodium falciparum"/>
           <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
           <sanityParam name="-e" value="0.01"/>
           <sanityParam name="-v" value="50"/>
@@ -193,7 +193,7 @@
             minOutputLength="20" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
-          <sanityParam name="BlastDatabaseOrganism" value="T. gondii ME49"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
           <sanityParam name="BlastQuerySequence" value="MAQLASRSLCAGPSSACHGSRRFLLASLAVLFFVGLGCCLGVPVSPSPPADASEDLFCTY"/>
           <sanityParam name="-e" value="0.01"/>
           <sanityParam name="-v" value="50"/>
@@ -209,21 +209,21 @@
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="10">
         <sanityParam name="motif_expression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="C. hominis"/>
+        <sanityParam name="motif_organism" value="Cryptosporidium hominis"/>
     </sanityQuestion>
 
    <sanityQuestion ref="GeneQuestions.GenesByMotifSearch" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="10">
         <sanityParam name="motif_expression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="P. berghei"/>
+        <sanityParam name="motif_organism" value="Plasmodium berghei"/>
     </sanityQuestion>
 
    <sanityQuestion ref="GeneQuestions.GenesByMotifSearch" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="10">
         <sanityParam name="motif_expression" value="CC6+RK"/>
-        <sanityParam name="motif_organism" value="T. gondii"/>
+        <sanityParam name="motif_organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
 

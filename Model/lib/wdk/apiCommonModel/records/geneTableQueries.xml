@@ -459,8 +459,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- PFam domains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-        <sqlQuery name="PfamDomains" includeProjects="CryptoDB,ToxoDB"
+        <sqlQuery name="PfamDomains" includeProjects="CryptoDB"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -489,6 +488,7 @@
                 AND taaf.source_id = $$primaryKey$$
                 ORDER BY start_min
             </sql>
+<!--  NOT USED??  (if not, please excise from this file)
             <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT pe.definition, pe.accession,
@@ -508,6 +508,7 @@
               GROUP BY pe.definition, pe.accession, al.start_min, al.end_max
             ]]>
             </sql>
+-->
         </sqlQuery>
 
     
