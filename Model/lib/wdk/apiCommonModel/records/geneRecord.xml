@@ -807,7 +807,7 @@
              </text>
          </textAttribute>
 
-         <textAttribute name="dnaContext" displayName="Genomic Context"  excludeProjects="ApiDB"
+         <textAttribute name="dnaContext" displayName="Genomic Context"  includeProjects="ToxoDB,PlasmoDB"
                internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                 <![CDATA[
@@ -823,27 +823,27 @@
 
          
 
-         <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" excludeProjects="ApiDB">
+         <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" includeProjects="PlasmoDB,ToxoDB">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
                 @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
                 ]]>
             </text>
-            <text includeProjects="ToxooDB">
+            <text includeProjects="ToxoDB">
                  <![CDATA[
                 @CGI_URL@/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
                 ]]>
             </text>
          </textAttribute>
 
-         <textAttribute name="proteinFeatures" displayName="Protein Features" excludeProjects="ApiDB"
+         <textAttribute name="proteinFeatures" displayName="Protein Features" includeProjects="PlasmoDB,ToxoDB"
                         internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
                  @CGI_URL@/gbrowse_img/plasmodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
                  ]]>
             </text>
-            <text includeProjects="ToxooDB">
+            <text includeProjects="ToxoDB">
                  <![CDATA[
                  @CGI_URL@/gbrowse_img/toxodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap;base=@CGI_URL@/gbrowse
                  ]]>
