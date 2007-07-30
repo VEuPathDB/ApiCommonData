@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::InsertGeneOligoSimilarities;
+package ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
