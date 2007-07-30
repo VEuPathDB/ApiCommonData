@@ -140,7 +140,7 @@
   <!-- Transmembrane domains -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByTransmembraneDomains" includeProjects="PlasmoDB,ToxoDB"
+    <sqlQuery name="GenesByTransmembraneDomains" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="geneParams.min_tm"/>
         <paramRef ref="geneParams.max_tm"/>
@@ -148,7 +148,7 @@
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="predicted_helices" includeProjects="CryptoDB"/>
-        <sql includeProjects="PlasmoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga,
@@ -633,7 +633,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMetabolicPathway" excludeProjects="ApiDB,CryptoDB">
+    <sqlQuery name="GenesByMetabolicPathway" includeProjects="ToxoDB,PlasmoDB">
         <paramRef ref="geneParams.metabolic_pathway"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -922,7 +922,7 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>

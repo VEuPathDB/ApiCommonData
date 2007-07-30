@@ -2341,7 +2341,7 @@
       </enumList>
     </enumParam>
 
-      <flatVocabParam name="metabolic_pathway"
+      <flatVocabParam name="metabolic_pathway" includeProjects="PlasmoDB,ToxoDB"
                      queryRef="GeneVQ.MetabolicPathways"
                      prompt="Metabolic Pathway"
                      multiPick="false">
@@ -3586,7 +3586,7 @@ SELECT distinct lg.name AS term,
         <!-- keep this one at the end of the file because it's embedded quote mark throughs off
              emac's syntax highlighting
         -->
-        <sqlQuery name="MetabolicPathways" excludeProjects="CryptoDB">
+        <sqlQuery name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
 
