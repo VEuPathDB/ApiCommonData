@@ -16,6 +16,9 @@
                     includeProjects="ToxoDB,ApiDB"
                     projectId="ToxoDB" primaryKey="Ia-1-1887223-1887375"/>
 
+      <sanityRecord ref="OrfRecordClasses.OrfRecordClass" 
+                    includeProjects="GiardiaDB,ApiDB"
+                    projectId="ToxoDB" primaryKey="ctg02_243-6-1018-419"/>
 
   <!-- ============================================================ -->
   <!-- == attribute queries == -->
@@ -43,6 +46,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="OrfAttributes.Bfmv" includeProjects="GiaridaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="ctg02_243-6-1018-419"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Sequence ++ -->
@@ -64,6 +72,12 @@
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="Ia-1-1887223-1887375"/>
         <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfAttributes.Sequence" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="ctg02_243-6-1018-419"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
   <!-- ============================================================ -->

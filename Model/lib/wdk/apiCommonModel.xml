@@ -7,14 +7,12 @@
 ]>
 
 <wdkModel>
-  <modelName includeProjects="PlasmoDB" name="PlasmoDB" displayName="PlasmoDB" 
-             version="5.3"/>
-  <modelName includeProjects="ApiDB" name="ApiDB" displayName="ApiDB"
-             version="2.2"/>
-  <modelName includeProjects="ToxoDB" name="ToxoDB" displayName="ToxoDB"
-             version="3.3"/>
-  <modelName includeProjects="CryptoDB" name="CryptoDB" displayName="CryptoDB"
-             version="11.3"/>
+  <modelName includeProjects="PlasmoDB" name="PlasmoDB" displayName="PlasmoDB" version="5.3"/>
+  <modelName includeProjects="ApiDB" name="ApiDB" displayName="ApiDB" version="2.2"/>
+  <modelName includeProjects="ToxoDB" name="ToxoDB" displayName="ToxoDB" version="3.3"/>
+  <modelName includeProjects="CryptoDB" name="CryptoDB" displayName="CryptoDB" version="11.3"/>
+  <modelName includeProjects="GiardiaDB" name="GiardiaDB" displayName="GiardiaDB" version="1.0"/>
+  <modelName includeProjects="TrichDB" name="TrichDB" displayName="TrichDB" version="1.0"/>
 
   <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
     <value>P. falciparum</value>
@@ -32,6 +30,14 @@
 
   <defaultPropertyList includeProjects="ToxoDB" name="organisms">
     <value>T. gondii</value>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="TrichDB" name="organisms">
+    <value>T. vaginalis</value>
+  </defaultPropertyList>
+
+  <defaultPropertyList includeProjects="GiardiaDB" name="organisms">
+    <value>G. lamblia</value>
   </defaultPropertyList>
 
   <defaultPropertyList includeProjects="ApiDB" name="organisms">
@@ -76,6 +82,14 @@
      <value>Ch Genome</value>
   </defaultPropertyList> 
 
+  <defaultPropertyList includeProjects="GiardiaDB" name="default.genomes.attribution">
+     <value>Gl Genome</value>
+  </defaultPropertyList> 
+
+  <defaultPropertyList includeProjects="TrichDB" name="default.genomes.attribution">
+     <value>Tv Genome</value>
+  </defaultPropertyList> 
+
     <!-- shared -->
     <import file="apiCommonModel/records/recordParams.xml"/>
     <import file="apiCommonModel/questions/params/organismParams.xml"/>
@@ -101,12 +115,13 @@
     <import file="apiCommonModel/records/geneAttributeQueries.xml"/>
     <import file="apiCommonModel/records/geneTableQueries.xml"/>
     <import file="apiCommonModel/records/geneRecord.xml"/>
+<!--
 
     <import file="apiCommonModel/questions/params/geneParams.xml"/>
     <import file="apiCommonModel/questions/queries/geneQueries.xml"/>
     <import file="apiCommonModel/questions/geneQuestions.xml"/>
-<!--
     <import file="apiCommonModel/questions/internalQuestions.xml"/>
+
 
     <import file="apiCommonModel/records/estAttributeQueries.xml"/>
     <import file="apiCommonModel/records/estRecords.xml"/>

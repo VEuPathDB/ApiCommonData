@@ -96,7 +96,7 @@
     <!-- with chromosomes -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withChromosomes" excludeProjects="ApiDB">
+    <sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql includeProjects="CryptoDB">
@@ -150,6 +150,42 @@
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
                   AND tn.name IN ('Plasmodium falciparum')) organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+      <sql includeProjects="GiardiaDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name IN ('Giardia lamblia')) organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+      <sql includeProjects="TrichDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name IN ('Trichomonas vaginalis')) organisms
           ORDER BY organisms.name
         ]]>
       </sql>
@@ -369,22 +405,9 @@
           ORDER BY organisms.name
         ]]>
       </sql>
-      <sql includeProjects="PlasmoDB">
+      <sql includeProjects="PlasmoDB,GiardiaDB,TrichDB">
         <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('none at all')) organisms
-          ORDER BY organisms.name
+          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
     </sqlQuery>
@@ -451,22 +474,9 @@
     <sqlQuery name="tg-pf" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB">
+      <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
         <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('none at all')) organisms
-          ORDER BY organisms.name
+          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
       <sql includeProjects="ToxoDB">
@@ -519,22 +529,9 @@
     <sqlQuery name="pf" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB,ToxoDB">
+      <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('none at all')) organisms
-          ORDER BY organisms.name
+          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
       <sql includeProjects="PlasmoDB">
@@ -569,22 +566,9 @@
     <sqlQuery name="pb" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB,ToxoDB">
+      <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('none at all')) organisms
-          ORDER BY organisms.name
+          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
       <sql includeProjects="PlasmoDB">

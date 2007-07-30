@@ -103,7 +103,7 @@
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_string"/>
-            <sql includeProjects="PlasmoDB,ToxoDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
             <![CDATA[
             SELECT nfc.comment_string
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
@@ -212,7 +212,7 @@
               AND  asec.enzyme_class_id = ec.enzyme_class_id
             ]]>
             </sql>
-            <sql includeProjects="PlasmoDB,ToxoDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
             <![CDATA[
             SELECT distinct asec.evidence_code AS source, ec.ec_number,
                    ec.description as ec_description,
@@ -270,7 +270,7 @@
        <!-- Pathways -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="MetabolicPathways" excludeProjects="ApiDB"
+       <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB"
                    isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>

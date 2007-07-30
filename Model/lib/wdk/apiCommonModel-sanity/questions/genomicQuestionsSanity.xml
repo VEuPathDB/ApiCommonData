@@ -27,6 +27,12 @@
           <sanityParam name="sequenceId" value="Ia"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="GiardiaDB,ApiDB"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequenceId" value="ctg02_243"/>
+      </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Taxon ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -47,6 +53,12 @@
                       pageStart="1" pageEnd="20"
                       minOutputLength="1000" maxOutputLength="2000">
           <sanityParam name="organism" value="Toxoplasma gondii"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="GiardiaDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1000" maxOutputLength="70000">
+          <sanityParam name="organism" value="Giardia lamblia"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

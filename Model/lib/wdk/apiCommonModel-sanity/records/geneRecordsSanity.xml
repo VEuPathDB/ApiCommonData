@@ -16,6 +16,9 @@
                     includeProjects="ToxoDB,ApiDB"
                     projectId="ToxoDB" primaryKey="44.m00048"/>
 
+      <sanityRecord ref="GeneRecordClasses.GeneRecordClass"
+                    includeProjects="GiardiaDB,ApiDB"
+                    projectId="ToxoDB" primaryKey="GL50803_112048"/>
 
   <!-- ============================================================ -->
   <!-- == attribute queries == -->
@@ -43,6 +46,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneAttributes.GeneAlias" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ BFMV ++ -->
@@ -66,6 +74,12 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneAttributes.Bfmv" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ GFF dump ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -86,6 +100,12 @@
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="44.m00048"/>
         <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffAttrs" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -111,6 +131,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneAttributes.ProteinSequence" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Transcript Sequence ++ -->
@@ -134,6 +159,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneAttributes.TranscriptSequence" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ CDS ++ -->
@@ -157,6 +187,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneAttributes.CDS" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Expression Graphs ++ -->
@@ -197,6 +232,12 @@
           <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
 
+      <sanityQuery ref="GeneTables.UserComments" includeProjects="GiardiaDB"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="GL50803_112048"/>
+          <sanityParam name="projectId" value="GiardiaDB"/>
+      </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ EC number ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -217,6 +258,12 @@
                    minOutputLength="1" maxOutputLength="4">
           <sanityParam name="primaryKey" value="44.m00048"/>
           <sanityParam name="projectId" value="ToxoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.EcNumber" includeProjects="GiardiaDB"
+                   minOutputLength="1" maxOutputLength="4">
+          <sanityParam name="primaryKey" value="GL50803_112048"/>
+          <sanityParam name="projectId" value="GiardiaDB"/>
       </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -241,6 +288,12 @@
           <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
 
+      <sanityQuery ref="GeneTables.GoTerms" includeProjects="GiardiaDB"
+                   minOutputLength="1" maxOutputLength="20">
+          <sanityParam name="primaryKey" value="GL50803_112048"/>
+          <sanityParam name="projectId" value="GiardiaDB"/>
+      </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Orthologs ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -263,6 +316,12 @@
           <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
 
+      <sanityQuery ref="GeneTables.Orthologs" includeProjects="GiardiaDB"
+                   minOutputLength="2" maxOutputLength="8">
+          <sanityParam name="primaryKey" value="GL50803_112048"/>
+          <sanityParam name="projectId" value="GiardiaDB"/>
+      </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Notes ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -283,6 +342,12 @@
                    maxOutputLength="4">
           <sanityParam name="primaryKey" value="113.m00755"/>
           <sanityParam name="projectId" value="ToxoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="GeneTables.Notes" minOutputLength="1" includeProjects="GiardiaDB"
+                   maxOutputLength="4">
+          <sanityParam name="primaryKey" value="GL50803_112048"/>
+          <sanityParam name="projectId" value="GiardiaDB"/>
       </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -345,6 +410,12 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneTables.Epitopes" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ pfam domains ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -384,6 +455,12 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneTables.GeneGffDbxrefs" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ gff RNAs ++ -->
@@ -405,6 +482,12 @@
             minOutputLength="1" maxOutputLength="100">
         <sanityParam name="primaryKey" value="44.m00048"/>
         <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneTables.GeneRnas" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
 
@@ -430,6 +513,11 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="GeneTables.GeneCdss" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ gff exons ++ -->
@@ -451,6 +539,12 @@
             minOutputLength="1" maxOutputLength="100">
         <sanityParam name="primaryKey" value="44.m00048"/>
         <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneTables.GeneExons" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
 

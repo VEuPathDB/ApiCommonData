@@ -15,7 +15,7 @@
         <sanityParam name="orf_id" value="AAEE01000001-1-1003825-1003983"/>
     </sanityQuestion>
 
-    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="PlasmoDB"
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="PlasmoDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
         <sanityParam name="orf_id" value="PB_PH0001-5-607-398"/>
@@ -25,6 +25,12 @@
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
         <sanityParam name="orf_id" value="Ia-1-1887223-1887375"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfByOrfId" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="orf_id" value="ctg02_243-6-1018-419"/>
     </sanityQuestion>
 
 
@@ -61,6 +67,15 @@
         <sanityParam name="min_orf_length" value="50"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="GiardiaDB,ApiDB"
+                    minOutputLength="4" maxOutputLength="25000"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="sequenceId" value="ctg02_243"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="min_orf_length" value="50"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Motif ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -84,6 +99,13 @@
             pageStart="1" pageEnd="20">
         <sanityParam name="motif_expression" value="CC6+RK"/>
         <sanityParam name="motif_organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="4" maxOutputLength="300"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="Giardia lamblia"/>
     </sanityQuestion>
 
 
@@ -147,6 +169,18 @@
           <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="QGRKGVQSGFGHTRPDAGCLITSARRQHECCQSPDVCWRRRHHVCSVVLAAGRDRVRNLV"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="GiardiaDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Giardia lamblia"/>
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastQuerySequence" value="DVSAEDRHQPVQRPTCSGGVRGRQTGRARKEKIEGVQGAPRGGQGAVHAHHRVCLAQRDA"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>

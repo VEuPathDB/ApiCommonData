@@ -36,7 +36,7 @@
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="sequence"/>
-            <sql includeProjects="PlasmoDB">
+            <sql excludeProjects="ApiDB">
                SELECT nf.source_id,ts.sequence, $$projectId$$ as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
                     dots.NaFeature nf
@@ -44,41 +44,7 @@
                  AND nf.na_feature_id = tf.na_feature_id
                  AND ts.aa_sequence_id = tf.aa_sequence_id
            </sql>
-            <sql includeProjects="ToxoDB">
-                SELECT t.source_id, tas.sequence, $$projectId$$ as project_id
-                FROM dots.VirtualSequence vs,
-                     dots.Miscellaneous t,
-                     dots.TranslatedAaFeature taf,
-                     dots.TranslatedAaSequence tas,
-                     sres.SequenceOntology so
-                WHERE t.na_feature_id = taf.na_feature_id
-                  AND taf.aa_sequence_id = tas.aa_sequence_id
-                  AND vs.na_sequence_id = t.na_sequence_id 
-                  AND t.sequence_ontology_id = so.sequence_ontology_id
-                  AND so.term_name = 'ORF'
-                  AND t.source_id = $$primaryKey$$
-           </sql>
-            <sql includeProjects="CryptoDB">
-	      SELECT
-                t.source_id as source_id,
-                taas.sequence, $$projectId$$ as project_id
-              FROM dots.externalNASequence enas,
-                    dots.miscellaneous t,
-                    dots.translatedaafeature taaf,
-                    dots.translatedaasequence taas,
-                    sres.taxonname tn,
-                    sres.sequenceontology so
-              WHERE t.na_feature_id = taaf.na_feature_id
-                AND taaf.aa_sequence_id = taas.aa_sequence_id
-                AND enas.na_sequence_id = t.na_sequence_id 
-                AND enas.taxon_id = tn.taxon_id
-                AND tn.name_class = 'scientific name'
-                AND t.sequence_ontology_id = so.sequence_ontology_id
-                AND so.term_name = 'ORF'
-                AND t.source_id = $$primaryKey$$
-		</sql>
-
-                <sql includeProjects="ApiDB">
+           <sql includeProjects="ApiDB">
                   SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
                 	  from dots.TranslatedAASequence taas,
                       	 sres.SequenceOntology s,
@@ -90,7 +56,7 @@
                    	  AND taas.external_database_release_id=extr.external_database_release_id
                  	  AND extr.external_database_id=ext.external_database_id
                    	  AND ext.name=LOWER($$projectId$$)
-                </sql>
+           </sql>
         </sqlQuery>
     </querySet>
 </wdkModel>

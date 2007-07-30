@@ -18,11 +18,12 @@
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
+                SELECT DISTINCT oa.source_id, oa.project_id
                 FROM apidb.OrfAttributes oa
                 WHERE oa.lowercase_source_id
                       LIKE LOWER(REPLACE(REPLACE($$orf_id$$,' ',''),
                                                  '*', '%'))
+                AND oa.project_id = '@PROJECT_ID@'
             ]]>
         </sql>
     </sqlQuery>
@@ -43,14 +44,14 @@
  
     <sqlQuery name="OrfsByLocation" excludeProjects="ApiDB"
                isCacheable="true">
-        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.chromosomeOptional" excludeProjects="GiardiaDB,TrichDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="orfParams.min_orf_length"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql includeProjects="ToxoDB,PlasmoDB,CryptoDB"> 
+        <sql> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,

@@ -16,6 +16,9 @@
         <help>
              Enter an ORF ID.  Wildcards (*) are allowed.
         </help>
+            <suggest includeProjects="GiardiaDB"
+                     sample="ctg02_243-6-1018-419, ctg02_4-4-133461-132640"
+                     default="ctg02_243-6-1018-419"/>
             <suggest includeProjects="PlasmoDB"
                      sample="MAL1-1-10639-11520, MAL1-1-105160-105438"
                      default="MAL1-1-10639-11520"/>
@@ -31,6 +34,7 @@
         </stringParam>
 
         <stringParam name="min_orf_length"
+                     quote="false"
                      prompt="Minimum ORF length">
           <help>
               Enter the minimum length of ORF to return (NOTE: 50 aa is the shortest that have been computed).

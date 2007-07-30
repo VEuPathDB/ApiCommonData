@@ -30,7 +30,7 @@
             AND so.term_name in ('contig', 'supercontig')
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
             SELECT distinct source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence
@@ -104,7 +104,7 @@
     </wsQuery>
     
     
-    <wsQuery name="SequencesBySimilarity" includeProjects="PlasmoDB,ToxoDB"
+    <wsQuery name="SequencesBySimilarity" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
         processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
         <paramRef ref="genomicParams.BlastDatabaseType"/>
         <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
