@@ -114,10 +114,9 @@
             FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE ($$organism$$ = '-1'
-                   OR gs.taxon_id in (select taxon_id from sres.taxon
+            WHERE gs.taxon_id in (select taxon_id from sres.taxon
                                       connect by parent_id = prior taxon_id
-                                      start with taxon_id = $$organism$$))
+                                      start with taxon_id in ($$organism$$))
               AND gs.na_sequence_id = gf.na_sequence_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
@@ -741,7 +740,7 @@ order by project_id,sns2.source_id
               = edr.external_database_release_id
           AND edr.external_database_id = ed.external_database_id
           AND ed.name = 'Links to IEDB epitopes'
-          AND ef.type IN ($$confidence$$)
+          AND ef.type IN ($$epitope_confidence$$)
         GROUP BY gf.source_id
         ORDER BY gf.source_id
            ]]>
@@ -781,7 +780,7 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesByMassSpec" includeProjects="CryptoDB"
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
-        <paramRef ref="geneParams.wastlinglowery_ms_assay"/>
+        <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id" />
@@ -880,7 +879,7 @@ order by project_id,sns2.source_id
             and t.parent_id = gf.na_feature_id
 	    and gf.external_database_release_id = edr.external_database_release_id
 	    and edr.external_database_id = ed.external_database_id
-	    and ed.name = 'Chromosome Map - David Sibley'
+	    and ed.name = 'Chromosome Map - David Sbiley'
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>

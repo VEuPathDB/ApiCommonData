@@ -724,27 +724,74 @@
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="snp_strain_a"
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- SNPs -->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <flatVocabParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB"
                      queryRef="SharedVQ.SnpStrainA"
 		     prompt="Reference"
-                     multiPick="false"
-                     excludeProjects="CryptoDB">
+                     multiPick="false">
         <help>
              Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
         </help>
       </flatVocabParam>
 
-      <flatVocabParam name="snp_strain_b"
+      
+      <enumParam name="snp_strain_a" includeProjects="ApiDB,ToxoDB"
+		     prompt="Reference"
+                     multiPick="false">
+        <help>
+             Choose a reference from the list of strains. 
+        </help>
+        <enumList>   
+          <enumValue>
+            <term>ME49 (type II)</term>
+            <internal>ME49</internal>
+          </enumValue>
+          <enumValue>
+            <term>VEG (type III)</term>
+            <internal>VEG</internal>
+          </enumValue>
+          <enumValue>
+            <term>GT1 (type I)</term>
+            <internal>GT1</internal>
+          </enumValue>
+        </enumList>   
+      </enumParam>
+
+      <flatVocabParam name="snp_strain_b" includeProjects="ApiDB,PlasmoDB"
                      queryRef="SharedVQ.SnpStrainB"
 		     prompt="Comparator"
-                     multiPick="false"
-                     excludeProjects="CryptoDB">
+                     multiPick="false">
         <help>
              Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
         </help>
       </flatVocabParam>
 
-    <enumParam name="snp_strain_m"
+      <enumParam name="snp_strain_b" includeProjects="ApiDB,ToxoDB"
+		     prompt="Reference"
+                     multiPick="false">
+        <help>
+             Choose a comparator from the list to compare to your reference.
+        </help>
+        <enumList>   
+          <enumValue>
+            <term>RH (type I; chr IA and IB only)</term>
+            <internal>RH</internal>
+          </enumValue>
+          <enumValue>
+            <term>ME49 (type II)</term>
+            <internal>ME49</internal>
+          </enumValue>
+          <enumValue>
+            <term>VEG (type III)</term>
+            <internal>VEG</internal>
+          </enumValue>
+        </enumList>   
+      </enumParam>
+
+    <enumParam name="snp_strain_m" includeProjects="ApiDB,PlasmoDB"
 		     prompt="Comparator(s)"
                      multiPick="true"
                      excludeProjects="CryptoDB">
@@ -850,6 +897,28 @@
         </enumValue>
       </enumList>   
     </enumParam>
+
+      <enumParam name="snp_strain_m" includeProjects="ApiDB,ToxoDB"
+		     prompt="Reference"
+                     multiPick="false">
+        <help>
+             Choose a comparator(s) from the list to compare to your reference.
+        </help>
+        <enumList>   
+          <enumValue>
+            <term>ME49 (type II)</term>
+            <internal>ME49</internal>
+          </enumValue>
+          <enumValue>
+            <term>VEG (type III)</term>
+            <internal>VEG</internal>
+          </enumValue>
+          <enumValue>
+            <term>GT1 (type I)</term>
+            <internal>GT1</internal>
+          </enumValue>
+        </enumList>   
+      </enumParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Motif search -->

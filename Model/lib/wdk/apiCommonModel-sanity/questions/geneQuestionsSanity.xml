@@ -103,6 +103,109 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Epitope ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,CryptoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3" maxOutputLength="5">
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
+        <sanityParam name="epitope_confidence" value="High"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3" maxOutputLength="5">
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+        <sanityParam name="epitope_confidence" value="High"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3" maxOutputLength="5">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="epitope_confidence" value="High"/>
+    </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ EC number ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,CryptoDB"
+                      minOutputLength="1" maxOutputLength="35"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,PlasmoDB"
+                      minOutputLength="1" maxOutputLength="3"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="ec_number_pattern" value="6.1.1.12"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,ToxoDB"
+                      minOutputLength="1" maxOutputLength="35"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="organism" value="Toxoplasma gondii"/>
+          <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
+      </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Mass spec ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByMassSpec" includeProjects="ApiDB,CryptoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
+        <sanityParam name="ms_assay" value="Wastling MassSpec MudPit Soluble"/>
+        <sanityParam name="min_sequence_count" value="1"/>
+        <sanityParam name="min_spectrum_count" value="1"/>
+    </sanityQuestion>
+
+     <sanityQuestion ref="GeneQuestions.GenesByMassSpec" includeProjects="ApiDB,ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="ms_assay" value="Wastling 1-D SDS PAGE"/>
+        <sanityParam name="min_sequence_count" value="1"/>
+        <sanityParam name="min_spectrum_count" value="1"/>
+    </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ SNPs ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesBySnps" includeProjects="ApiDB,PlasmoDB"
+            minOutputLength="1500" maxOutputLength="1700"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_b" value="Pf-7G8"/>
+        <sanityParam name="snp_stat" value="All SNPs"/>
+        <sanityParam name="occurrences_lower" value="0"/>
+        <sanityParam name="occurrences_upper" value="1000"/>
+        <sanityParam name="dn_ds_ratio_lower" value="0"/>
+        <sanityParam name="dn_ds_ratio_upper" value="100"/>
+        <sanityParam name="snp_density" value="0"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySnps" includeProjects="ApiDB,ToxoDB"
+            pageStart="1" pageEnd="20"
+	    minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+        <sanityParam name="snp_strain_b" value="ME49 (type II)"/>
+        <sanityParam name="snp_stat" value="All SNPs"/>
+        <sanityParam name="occurrences_lower" value="100"/>
+        <sanityParam name="occurrences_upper" value="1000"/>
+        <sanityParam name="dn_ds_ratio_lower" value="0"/>
+        <sanityParam name="dn_ds_ratio_upper" value="100"/>
+        <sanityParam name="snp_density" value="0"/>
+    </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Isoelectric Point ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
