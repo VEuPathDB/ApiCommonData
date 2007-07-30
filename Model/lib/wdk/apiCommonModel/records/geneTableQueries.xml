@@ -459,7 +459,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- PFam domains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="PfamDomains" includeProjects="CryptoDB"
+        <sqlQuery name="PfamDomains" includeProjects="ToxoDB"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -469,7 +469,7 @@
             <column name="accession" />
             <column name="score" includeProjects="CryptoDB"/>
             <column name="accession_base" includeProjects="ToxoDB"/>
-            <sql includeProjects="CryptoDB">
+            <sql includeProjects="ToxoDB">
                 SELECT distinct df.source_id as accession, 
                        ede.description as definition, 
                        df.score, 
