@@ -32,6 +32,13 @@
     </ant>
   </target>  
 
+  <target name="WDK/Model-Installation">
+    <ant antfile="../WDK/build.xml" target="WDK/Model-Installation">
+      <property name="project" value="WDK"/>
+      <property name="version" value="1.8.1"/>
+    </ant>
+  </target>  
+
   <target name="WDK-Checkout" unless="WDK.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false">
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
@@ -108,7 +115,7 @@
                                             DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
-					    ApiCommonData/Load-Installation,
+					                        ApiCommonData/Load-Installation,
                                             ApiCommonData/Model-Installation">
 
     <ant target="defaultProjectInstall"/>
@@ -138,7 +145,8 @@
     </ant>
   </target>  
 
-  <target name="ApiCommonData/Model-Installation" depends="ProjectTree">
+  <target name="ApiCommonData/Model-Installation" depends="ProjectTree,
+                                                           WDK/Model-Installation">
     <ant target="defaultComponentInstall">
       <property name="project" value="ApiCommonData"/>
       <property name="component" value="Model"/>
