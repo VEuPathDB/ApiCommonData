@@ -119,8 +119,26 @@
     <!-- BLAST -->  
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsBySimilarity" excludeProjects="ApiDB"
+    <wsQuery name="OrfsBySimilarity" excludeProjects="ApiDB,CryptoDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="orfParams.BlastDatabaseType"/>
+       <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+       <wsColumn name="source_id" width="60" wsName="Identifier"/>
+       <wsColumn name="project_id" width="32" wsName="ProjectId"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <wsQuery name="OrfsBySimilarity" includeProjects="CryptoDB"
+             processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
