@@ -41,6 +41,7 @@
     <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="CryptoDB,ApiDB"
                     minOutputLength="2000" maxOutputLength="10000"
                     pageStart="1" pageEnd="20">
+        <sanityParam name="chromosomeOptional" value="choose one"/>
         <sanityParam name="sequenceId" value="AAEE01000001"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
@@ -155,7 +156,7 @@
           <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="LCRGKKKFLIFFLFVCLFLVLFFFQDRVSLCSPGCPGTH"/>
-          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-e" value="50"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
           <sanityParam name="-filter" value="no"/>
