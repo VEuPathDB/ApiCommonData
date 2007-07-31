@@ -13,6 +13,7 @@
     <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="220">
+        <sanityParam name="chromosomeOptional" value="choose one"/>
         <sanityParam name="sequenceId" value="AAEE01000001"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
@@ -82,7 +83,7 @@
             minOutputLength="100" maxOutputLength="1000">
         <sanityParam name="num_exons_gte" value="2"/>
         <sanityParam name="num_exons_lte" value="20"/>
-        <sanityParam name="organism" value=""/>
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
     </sanityQuestion>
 
    <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="PlasmoDB,ApiDB"
@@ -389,12 +390,12 @@
     <!-- ++ Metabolic Pathway ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="CryptoDB,ApiDB"
+  <!--  <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="10" maxOutputLength="100">
           <sanityParam name="metabolic_pathway" value="DNA Replication"/>
     </sanityQuestion>
-
+-->
     <sanityQuestion ref="GeneQuestions.GenesByMetabolicPathway" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="10" maxOutputLength="100">
