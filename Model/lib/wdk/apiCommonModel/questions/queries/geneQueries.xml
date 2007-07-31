@@ -804,7 +804,7 @@ order by project_id,sns2.source_id
                   and msf.aa_feature_id = aal.aa_feature_id
                   and msf.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$wastlinglowery_ms_assay$$)
+                  and ed.name in ($$ms_assay$$)
                 group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
                 group by intseq.aa_sequence_id
                 having count(*) >= $$min_sequence_count$$
@@ -815,7 +815,7 @@ order by project_id,sns2.source_id
                      sres.externaldatabaserelease edr
                 where mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$wastlinglowery_ms_assay$$)
+                  and ed.name in ($$ms_assay$$)
                 group by mss.aa_sequence_id
                 having sum(spectrum_count) >= $$min_spectrum_count$$
             ) spec,
@@ -827,7 +827,7 @@ order by project_id,sns2.source_id
             and nas.taxon_id in 
             (select taxon_id from sres.taxon
              connect by parent_id = prior taxon_id
-             start with taxon_id in ($$parvumOrganism$$))
+             start with taxon_id in ($$organism$$))
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>

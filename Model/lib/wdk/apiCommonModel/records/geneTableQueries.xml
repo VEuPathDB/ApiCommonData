@@ -180,7 +180,7 @@
             <column name="ec_number" />
             <column name="source"/>
             <column name="ec_description"/>
-            <column name="expasy_url" />
+            <column name="expasy_url" excludeProjects="CryptoDB"/>
             <sql includeProjects="CryptoDB">
             <![CDATA[
             SELECT distinct
@@ -459,17 +459,16 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- PFam domains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="PfamDomains" includeProjects="CryptoDB"
-                  isCacheable="false">
+        <sqlQuery name="PfamDomains" 
+                  isCacheable="false" includeProjects="CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="definition"/>
             <column name="start_min"/>
             <column name="end_max"/>
             <column name="accession" />
-            <column name="score" includeProjects="CryptoDB"/>
-            <column name="accession_base" includeProjects="ToxoDB"/>
-            <sql includeProjects="ToxoDB">
+           <!-- <column name="score"/>-->
+            <sql>
                 SELECT distinct df.source_id as accession, 
                        ede.description as definition, 
                        df.score, 
@@ -488,27 +487,6 @@
                 AND taaf.source_id = $$primaryKey$$
                 ORDER BY start_min
             </sql>
-<!--  NOT USED??  (if not, please excise from this file)
-            <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT pe.definition, pe.accession,
-                   SUBSTR(pe.accession, 1, INSTR(pe.accession, '.', 1, 1) -1)
-                       AS accession_base,
-                   al.start_min, al.end_max
-            FROM dots.GeneFeature gf, dots.Transcript t,
-                 dots.TranslatedAaFeature taf, dots.DomainFeature df,
-                 dots.AaLocation al, dots.PfamEntry pe
-            WHERE gf.source_id = $$primaryKey$$
-              AND gf.na_feature_id = t.parent_id
-              AND t.na_feature_id = taf.na_feature_id
-              AND taf.aa_sequence_id = df.aa_sequence_id
-              AND df.aa_feature_id = al.aa_feature_id
-              AND df.pfam_entry_id = pe.pfam_entry_id
-              AND df.e_value <= 0.05
-              GROUP BY pe.definition, pe.accession, al.start_min, al.end_max
-            ]]>
-            </sql>
--->
         </sqlQuery>
 
     
