@@ -103,7 +103,7 @@
   <!-- EC number -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByEcNumber" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByEcNumber" includeProjects="CryptoDB,ToxoDB,PlasmoDB"
                isCacheable="true">
         <paramRef ref="geneParams.ec_number_pattern"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
@@ -929,13 +929,24 @@ order by project_id,sns2.source_id
         <paramRef ref="sharedParams.end_point"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql>
+        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
               AND (ens.source_id = $$chromosomeOptional$$
                    OR lower(ens.source_id) = lower($$sequenceId$$))
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+        <sql includeProjects="GiardiaDB,TrichDB">
+            <![CDATA[
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND lower(ens.source_id) = lower($$sequenceId$$)
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
               AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)

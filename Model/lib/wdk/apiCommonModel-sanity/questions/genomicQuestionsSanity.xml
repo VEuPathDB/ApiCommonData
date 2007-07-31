@@ -33,6 +33,12 @@
           <sanityParam name="sequenceId" value="ctg02_243"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="GenomicSequenceQuestions.SequenceBySourceId" includeProjects="TrichDB,ApiDB"
+                      minOutputLength="1" maxOutputLength="1"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="sequenceId" value="DS113177"/>
+      </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Taxon ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -57,8 +63,14 @@
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="GiardiaDB,ApiDB"
                       pageStart="1" pageEnd="20"
+                      minOutputLength="300" maxOutputLength="70000">
+          <sanityParam name="organism" value="Giardia intestinalis"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesByTaxon" includeProjects="TrichDB,ApiDB"
+                      pageStart="1" pageEnd="20"
                       minOutputLength="1000" maxOutputLength="70000">
-          <sanityParam name="organism" value="Giardia lamblia"/>
+          <sanityParam name="organism" value="Trichomonas vaginalis"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -96,6 +108,30 @@
           <sanityParam name="BlastDatabaseType" value="Genome"/>
           <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
           <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="GiardiaDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Giardia intestinalis"/>
+          <sanityParam name="BlastQuerySequence" value=""/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="TrichDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
+          <sanityParam name="BlastQuerySequence" value=""/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>

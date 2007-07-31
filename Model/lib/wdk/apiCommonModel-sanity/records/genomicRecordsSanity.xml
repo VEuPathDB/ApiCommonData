@@ -17,8 +17,12 @@
                     projectId="ToxoDB" primaryKey="Ia"/>
 
       <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" 
-                    includeProjects="ToxoDB,ApiDB"
-                    projectId="ToxoDB" primaryKey="ctg02_243"/>
+                    includeProjects="GiardiaDB,ApiDB"
+                    projectId="GiardiaDB" primaryKey="ctg02_243"/>
+
+      <sanityRecord ref="SequenceRecordClasses.SequenceRecordClass" 
+                    includeProjects="TrichDB,ApiDB"
+                    projectId="TrichDB" primaryKey="DS113177"/>
 
   <!-- ============================================================ -->
   <!-- == attribute queries == -->
@@ -52,6 +56,12 @@
         <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="SequenceAttributes.Bfmv" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="DS113177"/>
+        <sanityParam name="projectId" value="TrichDB"/>
+    </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ GFF dump ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -74,10 +84,16 @@
         <sanityParam name="projectId" value="ToxoDB"/>
     </sanityQuery>
 
-    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="GiaridaDB,ApiDB"
+    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="GiardiaDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="ctg02_243"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SequenceAttributes.SequenceGffAttrs" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="DS113177"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -131,6 +147,12 @@
           <sanityParam name="projectId" value="GiardiaDB"/>
       </sanityQuery>
 
+      <sanityQuery ref="SequenceTables.SequenceComments" includeProjects="TrichDB"
+                   minOutputLength="0" maxOutputLength="1000">
+          <sanityParam name="primaryKey" value="DS113177"/>
+          <sanityParam name="projectId" value="TrichDB"/>
+      </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ GFF db xrefs ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -157,6 +179,12 @@
             minOutputLength="1" maxOutputLength="10">
           <sanityParam name="primaryKey" value="ctg02_243"/>
           <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+   <sanityQuery ref="SequenceTables.SequenceGffDbxrefs" includeProjects="TrichDB"
+            minOutputLength="1" maxOutputLength="10">
+          <sanityParam name="primaryKey" value="DS113177"/>
+          <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
 

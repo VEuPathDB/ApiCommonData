@@ -37,6 +37,14 @@
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="150" maxOutputLength="1400">
+        <sanityParam name="sequenceId" value="ctg02_7"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Gene Type ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -73,6 +81,13 @@
           <sanityParam name="organism" value="Toxoplasma gondii"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="GiardiaDB,ApiDB"
+                      pageStart="30" pageEnd="200"
+                      minOutputLength="30" maxOutputLength="300">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+          <sanityParam name="organism" value="Giardia intestinalis"/>
+      </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Exon Count ++ -->
@@ -102,6 +117,13 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+   <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="6000">
+        <sanityParam name="num_exons_gte" value="2"/>
+        <sanityParam name="num_exons_lte" value="20"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Epitope ++ -->
@@ -125,6 +147,13 @@
             pageStart="1" pageEnd="20"
             minOutputLength="3" maxOutputLength="5">
         <sanityParam name="organism" value="Toxoplasma gondii"/>
+        <sanityParam name="epitope_confidence" value="High"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,GiardiaDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3" maxOutputLength="20">
+        <sanityParam name="organism" value="Giardia intestinalis"/>
         <sanityParam name="epitope_confidence" value="High"/>
     </sanityQuestion>
 
@@ -152,6 +181,14 @@
           <sanityParam name="organism" value="Toxoplasma gondii"/>
           <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
       </sanityQuestion>
+
+<!--      <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,GiardiaDB"
+                      minOutputLength="1" maxOutputLength="35"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="organism" value="Giardia intestinalis"/>
+          <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
+      </sanityQuestion>
+-->
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -226,6 +263,14 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1500" maxOutputLength="9500">
+        <sanityParam name="min_isoelectric_point" value="6"/>
+        <sanityParam name="max_isoelectric_point" value="10"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -246,6 +291,13 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1000" maxOutputLength="4000">
+        <sanityParam name="min_molecular_weight" value="10000"/>
+        <sanityParam name="max_molecular_weight" value="50000"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Secondary Structure ++ -->
@@ -304,6 +356,17 @@
           <sanityParam name="-b" value="25"/>
     </sanityQuestion>
 
+   <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="30">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Giardia intestinalis"/>
+          <sanityParam name="BlastQuerySequence" value="MAHTLESDYTKGALIGEGRFAKVFLCIPPDSGDLYAVKEVVYGGPDQECSSEALLAMLRKEANLFSRLAHRCLPKT"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Motif Search ++ -->
@@ -330,6 +393,12 @@
         <sanityParam name="motif_organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+   <sanityQuestion ref="GeneQuestions.GenesByMotifSearch" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Interpro Domain ++ -->
@@ -359,6 +428,13 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="200">
+        <sanityParam name="domain_database" value="PRODOM"/>
+        <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Go Term ++ -->
@@ -385,6 +461,12 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="2000">
+        <sanityParam name="go_term" value="catalytic activity"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Metabolic Pathway ++ -->
@@ -437,6 +519,13 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="min_tm" value="2"/>
+        <sanityParam name="max_tm" value="5"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Signal Peptide ++ -->
@@ -463,6 +552,12 @@
         <sanityParam name="min_sigp_sum_score" value="3"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="1200">
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+        <sanityParam name="min_sigp_sum_score" value="3"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Ortholog Pattern ++ -->
@@ -502,6 +597,16 @@
         <sanityParam name="phyletic_term_map" value="rno"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="2000" maxOutputLength="2500">
+        <sanityParam name="profile_pattern" value="%hsa:N%gla:Y%"/>
+        <sanityParam name="included_species" value="G. intestinalis"/>
+        <sanityParam name="excluded_species" value="H. sapiens"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+        <sanityParam name="phyletic_indent_map" value="Bacteria"/>
+        <sanityParam name="phyletic_term_map" value="rno"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Single Locus Tag ++ -->
@@ -525,6 +630,11 @@
         <sanityParam name="single_gene_id" value="57.m01867"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="single_gene_id" value="GL50803_2101"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Locus Tag ++ -->
@@ -548,6 +658,11 @@
         <sanityParam name="ds_gene_ids" value="57.m01867"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="ds_gene_ids" value="GL50803_2101"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Text Search ++ -->
@@ -583,6 +698,15 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="text_expression" value="membrane"/>
+        <sanityParam name="whole_words" value="yes"/>
+        <sanityParam name="max_pvalue" value="-30"/>
+        <sanityParam name="text_fields" value="Gene product"/>
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Taxon ++ -->
@@ -606,6 +730,11 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="5000" maxOutputLength="20000">
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ EST Overlap ++ -->
@@ -647,12 +776,23 @@
         <sanityParam name="min_percent_est_aligned" value="20"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="400" maxOutputLength="500">
+        <sanityParam name="organism" value="Giardia intestinalis"/>
+        <sanityParam name="libraryId" value="library_id_goes_here"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Microarray Evidence ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects="CryptoDB,ApiDB"
+    <sanityQuestion ref="InternalQuestions.GenesByMicroarrayEvidence" includeProjects="CryptoDB"
             pageStart="1" pageEnd="20"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuestion>
@@ -747,7 +887,7 @@
     <!-- ++ Metabolic Pathways ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuery ref="GeneVQ.MetabolicPathways" excludeProjects="CryptoDB"
+    <sanityQuery ref="GeneVQ.MetabolicPathways" includeProjects="ApiDB,PlasmoDB,ToxoDB"
             minOutputLength="50" maxOutputLength="200">
     </sanityQuery>
 

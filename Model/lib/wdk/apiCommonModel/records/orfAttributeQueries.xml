@@ -27,7 +27,7 @@
                       decode(bfmv.is_reversed,0,'+',1,'-',null) as orf_strand
                 FROM apidb.OrfAttributes bfmv
                 WHERE bfmv.source_id = $$primaryKey$$
-                  AND LOWER(bfmv.project_id) = LOWER($$projectId$$)
+                  AND bfmv.project_id = $$projectId$$
         ]]>
            </sql>
         </sqlQuery>

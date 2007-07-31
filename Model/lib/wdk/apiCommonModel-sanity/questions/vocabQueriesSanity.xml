@@ -4,8 +4,12 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.withChromosomes"
+    <sanityQuery ref="organismVQ.withChromosomes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB"
             minOutputLength="1" maxOutputLength="100">
+    </sanityQuery>
+
+    <sanityQuery ref="organismVQ.withChromosomes" includeProjects="GiardiaDB,TrichDB"
+            minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
 
@@ -29,12 +33,12 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.cp-tg" includeProjects="PlasmoDB"
+    <sanityQuery ref="organismVQ.cp-tg" includeProjects="PlasmoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.withPlasmoGenes" includeProjects="CryptoDB,ToxoDB"
+    <sanityQuery ref="organismVQ.withPlasmoGenes" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
@@ -49,12 +53,12 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.tg-pf" includeProjects="CryptoDB"
+    <sanityQuery ref="organismVQ.tg-pf" includeProjects="CryptoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.pf" includeProjects="CryptoDB,ToxoDB"
+    <sanityQuery ref="organismVQ.pf" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
@@ -64,7 +68,7 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.pb" includeProjects="CryptoDB,ToxoDB"
+    <sanityQuery ref="organismVQ.pb" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
@@ -74,12 +78,12 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="SharedVQ.SnpStrainA" excludeProjects="CryptoDB"
+    <sanityQuery ref="SharedVQ.SnpStrainA" includeProjects="ApiDB,PlasmoDB,ToxoDB"
             minOutputLength="1" maxOutputLength="100">
     </sanityQuery>
 
 
-    <sanityQuery ref="SharedVQ.SnpStrainB" excludeProjects="CryptoDB"
+    <sanityQuery ref="SharedVQ.SnpStrainB" includeProjects="ApiDB,PlasmoDB,ToxoDB"
             minOutputLength="1" maxOutputLength="100">
     </sanityQuery>
 
