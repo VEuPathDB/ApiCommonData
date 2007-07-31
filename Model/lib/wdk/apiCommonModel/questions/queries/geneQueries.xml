@@ -223,6 +223,7 @@
               and gf.is_pseudo in ($$includePseudogenes$$)
               AND ens.taxon_id IN ($$organism$$)
               AND gf.source_id = ga.source_id
+              AND ga.project_id = '@PROJECT_ID@'
            ]]>
        </sql>
     </sqlQuery>

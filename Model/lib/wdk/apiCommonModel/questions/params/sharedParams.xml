@@ -668,6 +668,9 @@
         <help includeProjects="ApiDB">
           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in this search, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs.
         </help>
+        <help includeProjects="TrichDB,GiardiaDB">
+          Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in this search, i.e. use DS11* to ask for all contigs that have identifiers that begin with DS11.
+        </help>
         <help includeProjects="CrptoDB">
             Enter an identifier for a genomic contig. The IDs
             correspond to the accession numbers in the GenBank records
@@ -697,8 +700,13 @@
         <suggest includeProjects="PlasmoDB"
             sample="MAL4, ctg_4094, MALPY00019"
             default="MAL4"/>     
-
-    </stringParam>    
+        <suggest includeProjects="GiardiaDB"
+            sample="ctg02_243"
+            default="ctg02_243"/>     
+        <suggest includeProjects="TrichDB"
+            sample="DS113177"
+            default="DS113177"/>     
+</stringParam>    
 
         <stringParam name="start_point"
                      prompt="Start at"

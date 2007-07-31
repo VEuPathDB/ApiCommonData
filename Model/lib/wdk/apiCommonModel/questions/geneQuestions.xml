@@ -17,16 +17,11 @@
          queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
-       <attributesList excludeProjects="CryptoDB"
+       <attributesList 
          summary="location_text,product"
          sorting="location_text asc"
         />
  
-       <attributesList includeProjects="CryptoDB"
-         summary="organism,location_text,product,gene_type"
-         sorting="organism asc,location_text asc "
-        />
-
         <summary>
         Find genes that are located in a specified genomic region.
         </summary>
@@ -48,7 +43,7 @@
           be used).
           ]]>
         </description>
-        <description includeProjects="ToxoDB">
+        <description includeProjects="ApiDB">
 	  <![CDATA[
 	  Find genes within a given genomic region.<br>
           Either select an organism and a genomic sequence from the
@@ -58,7 +53,23 @@
           the gene(s) on the chromosome.
 	  ]]>
         </description>
-	    <description includeProjects="ApiDB">
+        <description includeProjects="TrichDB">
+	  <![CDATA[
+	  Find genes within a given genomic region.<br>
+          Enter a genomic sequence ID for any <i>T. vaginalis</I> contig.
+          The Start and End locations correspond to the coordinates of 
+          the gene(s) on the chromosome.
+	  ]]>
+        </description>
+        <description includeProjects="GiardiaDB">
+	  <![CDATA[
+	  Find genes within a given genomic region.<br>
+          Enter a genomic sequence ID for any <i>G. lamblia</I> contig.
+          The Start and End locations correspond to the coordinates of 
+          the gene(s) on the chromosome.
+	  ]]>
+        </description>
+	<description includeProjects="ToxoDB">
 	      <![CDATA[
           Find genes that are located in a specified genomic region.<br><br>
           Either select a <i>T. gondii</i> chromosome from the pull-down menu
@@ -213,7 +224,7 @@
   <!-- EC Number  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByEcNumber"
+    <question name="GenesByEcNumber" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB"
          category="Putative Function"
          displayName="EC Number"
               queryRef="GeneId.GenesByEcNumber"
@@ -498,7 +509,7 @@ one time.
   <!-- Epitopes -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesWithEpitopes" 
+    <question name="GenesWithEpitopes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB" 
               category="Other Attributes"
               displayName="Epitope Presence"
               queryRef="GeneId.GenesWithEpitopes" 
@@ -556,7 +567,7 @@ one time.
             <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
           ]]>
          </description>
-         <description includeProjects="CryptoDB,ApiDB">
+         <description includeProjects="CryptoDB,ApiDB,GiardiaDB,TrichDB">
            <![CDATA[
              Find genes that have BLAST similarity to your input query sequence.
              <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.
@@ -943,7 +954,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Orthology profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByOrthologPattern"
+    <question name="GenesByOrthologPattern" excludeProjects="TrichDB"
          displayName="Orthology Phylogenetic Profile"
          category="Evolution"
          queryRef="GeneId.GenesByOrthologPattern"
@@ -1103,6 +1114,12 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
         </summary>
+        <description includeProjects="GiardiaDB,TrichDB">
+            <![CDATA[
+             Find genes with evidence of expression based on expressed sequence tags (ESTs).
+               NOTE: you can visualize the EST alignments by clicking on the "View this sequence in the genome browser" link and turning on the EST Alignments track.
+            ]]>
+        </description>
         <description includeProjects="PlasmoDB">
             <![CDATA[
              Find genes with evidence of expression based on expressed sequence tags (ESTs).

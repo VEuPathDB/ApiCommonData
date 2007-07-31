@@ -81,6 +81,7 @@
             <column name="pred_go_component" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_component"/>
             <column name="pred_go_process" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_process"/>
             <column name="pred_go_function" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_function"/>
+            <column name="genedb_organism" sortingTable="apidb.geneattributes" includeProjects="PlasmoDB"/>
             <column name="der_min_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_level" includeProjects="PlasmoDB"/>
             <column name="der_max_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_level" includeProjects="PlasmoDB"/>
             <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing" includeProjects="PlasmoDB"/>
@@ -120,8 +121,13 @@
                           INSTR(bfmv.organism, ' ') + 1,
                           INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
                    DECODE(bfmv.organism,
-                          'Plasmodium falciparum 3D7', 'PLASMO', null)
-                   AS cyc_db,
+                          'Plasmodium falciparum 3D7', 'PLASMO', null) AS cyc_db,
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'malaria',
+                          'Plasmodium berghei strain ANKA', 'pberghei',
+                          'Plasmodium chabaudi chabaudi', 'pchabaudi',
+                          'Plasmodium knowlesi strain H', 'pknowlesi',
+                          null) AS genedb_organism,
                    UPPER(bfmv.source_id) AS cyc_gene_id,
                    bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
                    bfmv.annotated_go_component as ann_go_component,
