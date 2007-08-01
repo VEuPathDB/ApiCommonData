@@ -1191,7 +1191,7 @@ order by project_id,sns2.source_id
               AND (query_end - query_start) >= $$bp_overlap_gte$$ 
               AND blat.max_target_gap < 10000 
               AND query.library_id = lib.library_id
-              AND lib.library_id in ($$est_libraryId$$)
+              AND lib.library_id in ($$libraryId$$)
               AND blat.is_best_alignment in ($$best_alignment_only$$)
               AND blat.is_consistent in ($$high_confidence_only$$)
               AND blat.query_na_sequence_id = asbl.na_sequence_id
