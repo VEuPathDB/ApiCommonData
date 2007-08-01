@@ -66,13 +66,18 @@
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
                              (  SELECT ns.taxon_id
-                                FROM dots.NaSequence ns, dots.GeneFeature gf
+                                FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                                 WHERE gf.na_sequence_id = ns.na_sequence_id
+                                AND ga.source_id = gf.source_id
+                                AND ga.project_id = '@PROJECT_ID@' 
                               UNION
                                 SELECT ns.taxon_id
-                                FROM dots.NaSequence ns, sres.SequenceOntology so
+                                FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                                 WHERE so.sequence_ontology_id = ns.sequence_ontology_id
-                                  AND so.term_name IN ('contig', 'supercontig', 'chromosome')))) organisms,
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')
+                                AND ga.source_id = ns.source_id
+                                AND ga.project_id = '@PROJECT_ID@' 
+                                  ))) organisms,
                (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
