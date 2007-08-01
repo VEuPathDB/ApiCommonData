@@ -220,6 +220,7 @@
          </dynamicAttributes>
     </question>
 
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- EC Number  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -589,7 +590,7 @@ one time.
   <!-- Motif search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByMotifSearch" excludeProjects='GiardiaDB'
+    <question name="GenesByMotifSearch"
          displayName="Protein Motif Pattern"
          category="Similarity/Pattern"
          queryRef="GeneId.GenesByMotifSearch"
@@ -1210,6 +1211,40 @@ Find genes that are predicted to encode a signal peptide.
         <description>
            Find genes based on secondary and 3-D protein structure.
         </description>
+    </question>
+
+  <!--===========================================================================-->
+  <!-- Note: following is in internal questions so shows up on query grid .... real question -->
+  <!--===========================================================================-->
+
+    <question name="GenesByProteinStructure" includeProjects="GiardiaDB,TrichDB"
+              displayName="Protein Secondary Structure"
+              category="Predicted Proteins"
+              queryRef="GeneId.GenesBySecondaryStructure"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+              summary="organism,location_text,product,percent_coil,percent_strand,percent_helix"
+              sorting="organism asc, location_text asc"
+        /> 
+        <summary>
+         Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
+        </summary>
+        <description>
+          <![CDATA[
+              Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program. The percent composition is computed by counting the amino acids in which one of the three calls is given the highest confidence, and dividing by the length of the protein.  For example the percent helix is the number of amino acids in which helix has the highest confidence, divided by the length of the protein.
+
+
+              </P><PRE><B>References:</B> <BR> Jones DT. (1999) Protein secondary structure prediction<BR> based on position-specific scoring matrices<BR> <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=10493868">J Mol Biol. 1999 Sep 17;292(2):195-202</a></PRE>
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="percent_coil" displayName="Percent Coil" align="center"
+                              inReportMaker="false"/>
+             <columnAttribute name="percent_strand" displayName="Percent Strand" align="center"
+                              inReportMaker="false"/>
+             <columnAttribute name="percent_helix" displayName="Percent Helix" align="center"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
     </question>
 
   <!--===========================================================================-->
