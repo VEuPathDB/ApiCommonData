@@ -32,13 +32,16 @@ use Bio::Coordinate::GeneMapper;
 # debugging
 use Data::Dumper;
 
+##sql statements should be global variables
+my($idStmt,$orfStmt);
+
 sub new {
     my ($class) = @_;
     my $self = {};
     bless($self, $class);
 
     $self->initialize({
-        requiredDbVersion => 3.5,
+#        requiredDbVersion => 3.5,
         cvsRevision       => '$Revision$',
         name              => ref($self),
         argsDeclaration   => declareArgs(),
@@ -57,6 +60,9 @@ sub run {
     my $mss;
     
     $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
+
+    ##prepare the query statements
+    ($idStmt,$orfStmt) = $self->prepareSQLStatements();
 
     open(F, $inputFile) or die "Could not open $inputFile: $!\n";
     while (<F>) {

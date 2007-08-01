@@ -32,9 +32,6 @@ use Bio::Coordinate::GeneMapper;
 # debugging
 use Data::Dumper;
 
-##sql statements should be global variables
-my($mapStmt);
-
 sub new {
   my ($class) = @_;
   my $self = {};
@@ -42,7 +39,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 16102 $',
+                     cvsRevision       => '$Revision: 16109 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -65,7 +62,7 @@ sub run {
   $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
 
   ##prepare the query statements
-  ($mapStmt) = $self->prepareSQLStatements();
+  $self->prepareSQLStatements();
 
   open(F, $inputFile) or die "Could not open $inputFile: $!\n";
   while (<F>) {
@@ -526,7 +523,7 @@ sub getRecordIdentifiers {
 
 sub prepareSQLStatements {
   my($self) = @_;
-  $mapStmt = $self->getQueryHandle()->prepare(<<"EOSQL");
+  $self->{mapStmt} = $self->getQueryHandle()->prepare(<<"EOSQL");
         select gf.na_feature_id, taas.sequence, gf.external_database_release_id
         from
         dots.nafeature orf,
@@ -549,7 +546,6 @@ sub prepareSQLStatements {
         and taaf.aa_sequence_id = taas.aa_sequence_id
         and orfnal.is_reversed = gfnal.is_reversed
 EOSQL
-  return $mapStmt;
 }
 
 sub getGeneFromNaFeatureId {
@@ -562,8 +558,8 @@ sub getGeneFromNaFeatureId {
 
 #  warn "getGeneFromNaFeatureid ... na_feature_id = $naFeatureId\n";
   
-  $mapStmt->execute($naFeatureId);
-  my $res = $mapStmt->fetchall_arrayref();
+  $self->{mapStmt}->execute($naFeatureId);
+  my $res = $self->{mapStmt}->fetchall_arrayref();
   return unless scalar(@$res) > 0;
   my @tmp;
   foreach my $a (@$res){
