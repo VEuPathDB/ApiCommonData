@@ -12,7 +12,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1" maxOutputLength="220">
+            minOutputLength="1" maxOutputLength="2000">
         <sanityParam name="chromosomeOptional" value="choose one"/>
         <sanityParam name="sequenceId" value="AAEE01000001"/>
         <sanityParam name="start_point" value="1"/>
@@ -164,7 +164,7 @@
       <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,CryptoDB"
                       minOutputLength="1" maxOutputLength="35"
                       pageStart="1" pageEnd="20">
-          <sanityParam name="organism" value="Cryptospoidium parvum"/>
+          <sanityParam name="organism" value="Cryptosporidium parvum"/>
           <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
       </sanityQuestion>
 
@@ -196,7 +196,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByMassSpec" includeProjects="ApiDB,CryptoDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1" maxOutputLength="100">
+            minOutputLength="1" maxOutputLength="1500">
         <sanityParam name="organism" value="Cryptosporidium parvum"/>
         <sanityParam name="ms_assay" value="Wastling MassSpec MudPit Soluble"/>
         <sanityParam name="min_sequence_count" value="1"/>
@@ -419,7 +419,7 @@
             minOutputLength="1" maxOutputLength="200">
         <sanityParam name="domain_database" value="PRODOM"/>
         <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
-        <sanityParam name="organism" value="Cryptosporidum parvum"/>
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
     </sanityQuestion>
 
     <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="PlasmoDB,ApiDB"
@@ -452,8 +452,8 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1" maxOutputLength="72">
-          <sanityParam name="organism" value="C. hominis"/>
+            minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="organism" value="Cryptosporidium hominis"/>
           <sanityParam name="go_term" value="GO:0004672"/>
     </sanityQuestion>
 
@@ -543,7 +543,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="174" maxOutputLength="400">
+            minOutputLength="174" maxOutputLength="1000">
         <sanityParam name="organism" value="Cryptosporidium hominis"/>
         <sanityParam name="min_sigp_sum_score" value="3"/>
     </sanityQuestion>
@@ -580,7 +580,7 @@
           <sanityParam name="profile_pattern" value="%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%"/>
           <sanityParam name="included_species" value="Alveolates"/>
           <sanityParam name="excluded_species" value="Bacteria"/>
-          <sanityParam name="organism" value="C. hominis"/>
+          <sanityParam name="organism" value="Cryptosporidium hominis"/>
           <sanityParam name="phyletic_indent_map" value="Archaea"/>
           <sanityParam name="phyletic_term_map" value="rno"/>
     </sanityQuestion>
@@ -649,13 +649,13 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="CryptoDB,ApiDB"
+<!--
+   <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="ds_gene_ids" value="cgd6_690"/>
     </sanityQuestion>
-
+-->
     <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1">
@@ -724,7 +724,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="4000" maxOutputLength="6000">
+            minOutputLength="2000" maxOutputLength="6000">
         <sanityParam name="organism" value="Cryptosporidium hominis"/>
     </sanityQuestion>
 
