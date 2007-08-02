@@ -5,6 +5,8 @@
         <!-- EstRecordClasses.EstRecordClass -->
         <recordClass idPrefix="" name="EstRecordClass" type="EST">
 
+           <projectParamRef ref="recordParams.Project"/>
+
           <!-- =============================================================== -->
           <!--   Reporters -->  
           <!-- =============================================================== -->
@@ -38,7 +40,7 @@
                 <columnAttribute name="organism"    displayName="Organism" internal="true"/>
                 <columnAttribute name="formatted_organism"    displayName="Organism" internal="false" inReportMaker="false"/>
                 <columnAttribute name="ncbi_tax_id" displayName="NCBI taxon" internal="true"/>
-                <columnAttribute name="extdbname"   inReportMaker="false" internal="true"/>
+                <columnAttribute name="external_db_name"   inReportMaker="false" internal="true"/>
             </attributeQueryRef>
 
             <attributeQueryRef ref="EstAttributes.Sequence">
