@@ -128,7 +128,7 @@ sub initAmitoAnalysis {
 
   my $allSpecies = 'Glamblia,Tvaginalis';
 
-  my $taxId = ["Glamblia:184922","Tvaginalis:36329"];
+  my $taxId = ["Glamblia:184922","Tvaginalis:412133"];
 
   my ($mgr, $projectDir, $release)
     = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
