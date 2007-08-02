@@ -158,42 +158,6 @@
           ORDER BY organisms.name
         ]]>
       </sql>
-      <sql includeProjects="GiardiaDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Giardia intestinalis')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
-      <sql includeProjects="TrichDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Trichomonas vaginalis')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
     </sqlQuery>
 
     <wsQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
@@ -233,9 +197,12 @@
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
                              (SELECT ns.taxon_id
-                              FROM dots.NaSequence ns, sres.SequenceOntology so
+                              FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                               WHERE so.sequence_ontology_id = ns.sequence_ontology_id
-                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')))) organisms,
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome'
+                                AND ga.source_id = ns.source_id
+                                AND ga.project_id = '@PROJECT_ID@'
+                              )))) organisms,
                (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
@@ -289,8 +256,11 @@
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
                              (SELECT ns.taxon_id
-                              FROM dots.NaSequence ns, dots.GeneFeature gf
-                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
                (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
@@ -337,9 +307,16 @@
                         FROM sres.taxon
                         CONNECT BY taxon_id = prior parent_id
                         START WITH taxon_id IN
-                             (SELECT taxon_id
-                              FROM dots.AaSequence aas, dots.AaSequenceEnzymeClass asec
-                              WHERE aas.aa_sequence_id = asec.aa_sequence_id))) organisms,
+                             (SELECT nas.taxon_id
+                              FROM dots.translatedaafeature taf, dots.AaSequenceEnzymeClass asec,
+                              dots.transcript t, dots.genefeature gf, apidb.geneattributes ga, dots.NASEQUENCE nas
+                              WHERE taf.aa_sequence_id = asec.aa_sequence_id
+                              AND t.na_feature_id = taf.na_feature_id
+                              AND gf.na_feature_id = t.parent_id
+                              AND ga.source_id = gf.source_id
+                              ANd ga.project_id = '@PROJECT_ID@'
+                              AND nas.na_sequence_id = gf.na_sequence_id
+                              ))) organisms,
                (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
@@ -531,15 +508,10 @@
     <!-- pf -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pf" excludeProjects="ApiDB">
+    <sqlQuery name="pf" includeProjects="PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB">
-        <![CDATA[
-          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
-        ]]>
-      </sql>
-      <sql includeProjects="PlasmoDB">
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -568,15 +540,10 @@
     <!-- pb -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pb" excludeProjects="ApiDB">
+    <sqlQuery name="pb" includeProjects="PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB">
-        <![CDATA[
-          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
-        ]]>
-      </sql>
-      <sql includeProjects="PlasmoDB">
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
