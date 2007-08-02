@@ -274,6 +274,14 @@
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="4000">
+        <sanityParam name="min_molecular_weight" value="10000"/>
+        <sanityParam name="max_molecular_weight" value="50000"/>
+        <sanityParam name="organism" value="Cryptosporidium parvum"/>
+    </sanityQuestion>
+
     <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1000" maxOutputLength="4000">
@@ -330,9 +338,9 @@
     <!-- ++ BLAST ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-   <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="Crypto,ApiDB"
+   <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
+            minOutputLength="1" maxOutputLength="30">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
@@ -618,6 +626,7 @@
         <sanityParam name="phyletic_term_map" value="rno"/>
     </sanityQuestion>
 
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Single Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -649,13 +658,13 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<!--
+
    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="ds_gene_ids" value="cgd6_690"/>
     </sanityQuestion>
--->
+
     <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1">
@@ -902,6 +911,18 @@
     <sanityQuery ref="GeneVQ.GeneTypes"
             minOutputLength="1" maxOutputLength="9">
     </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ CryptoDB Only ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneId.GenesOrthologousToAGivenGene" includeProjects="CryptoDB"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="single_gene_id" value="cgd6_690"/>
+    </sanityQuery>
+
+
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
