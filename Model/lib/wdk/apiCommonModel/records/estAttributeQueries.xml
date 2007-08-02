@@ -1,0 +1,113 @@
+<wdkModel>
+
+    <querySet name="EstAttributes">
+
+        <sqlQuery name="Bfmv" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="a_count" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="c_count" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="g_count" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="t_count" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="other_count" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="length" sortingTable="apidb.EstAttributes"
+                    lowerCase="false"/>
+            <column name="primer" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="dbest_name" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="vector" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="stage" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="organism" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="formatted_organism" sortingTable="apidb.EstAttributes"
+                    sortingColumn="organism" lowerCase="true"/>
+            <column name="ncbi_tax_id" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <column name="external_db_name" sortingTable="apidb.EstAttributes"
+                    lowerCase="true"/>
+            <sql>
+            <![CDATA[
+           SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
+                  bfmv.g_count, bfmv.t_count, bfmv.other_count, bfmv.length, 
+                  bfmv.dbest_name, bfmv.vector, bfmv.stage, bfmv.organism, 
+                  bfmv.ncbi_tax_id,
+                  '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                  REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                 chr(38) || 'nbsp;') || '</i>'
+                    AS formatted_organism,
+                  bfmv.external_db_name
+            FROM  apidb.EstAttributes bfmv
+            WHERE bfmv.source_id = $$primaryKey$$
+            ]]>
+           </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Sequence" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" />
+            <column name="sequence" />
+            <sql>
+                <![CDATA[
+                SELECT enas.source_id, enas.sequence, $$projectId$$ as project_id
+                FROM dots.externalnasequence enas
+                WHERE enas.source_id = $$primaryKey$$
+                ]]>
+           </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="Reference" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" />
+            <column name="author" />
+            <column name="affiliation" />
+            <column name="address" />
+            <sql>
+            <![CDATA[
+            SELECT e.accession as source_id, $$projectId$$ as project_id,
+                   c.name as author,
+                   c.address1 as affiliation,
+                   c.address2 as address
+            FROM dots.est e, sres.contact c
+            WHERE e.contact_id = c.contact_id
+            AND e.accession = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Cluster" includeProjects="CryptoDB"
+              isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" />
+            <column name="na_sequence_id" />
+            <column name="number_of_contained_sequences" />
+            <sql>
+            <![CDATA[           
+            SELECT enas.source_id, $$projectId$$ as project_id,
+                   asmbly.na_sequence_id, 
+                   asmbly.number_of_contained_sequences 
+            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
+            WHERE  aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
+            AND    aseq.na_sequence_id = enas.na_sequence_id
+            AND    enas.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
+    </querySet>
+
+
+</wdkModel>
