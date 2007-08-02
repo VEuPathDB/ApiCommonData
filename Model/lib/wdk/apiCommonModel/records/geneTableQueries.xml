@@ -456,39 +456,6 @@
             </sql>
         </sqlQuery>
 
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- PFam domains -->  
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="PfamDomains" 
-                  isCacheable="false" includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
-            <column name="definition"/>
-            <column name="start_min"/>
-            <column name="end_max"/>
-            <column name="accession" />
-           <!-- <column name="score"/>-->
-            <sql>
-                SELECT distinct df.source_id as accession, 
-                       ede.description as definition, 
-                       df.score, 
-                       aal.start_min, 
-                       aal.end_max
-                FROM  dots.translatedaafeature taaf,
-                      dots.domainfeature df,
-                      dots.aalocation aal,
-                      sres.externaldatabaseentry ede
-                WHERE taaf.aa_sequence_id = df.aa_sequence_id
-                AND df.aa_feature_id = aal.aa_feature_id
-                AND df.ALGORITHM_NAME = 'HMMPfam'
-                AND df.external_database_release_id = ede.external_database_release_id
-                AND df.source_id = SUBSTR(external_primary_identifier, 1, 
-                                     INSTR(external_primary_identifier, '.', 1, 1) -1)
-                AND taaf.source_id = $$primaryKey$$
-                ORDER BY start_min
-            </sql>
-        </sqlQuery>
-
     
   <!--===========================================================================-->
   <!--===========================================================================-->
@@ -793,7 +760,7 @@
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
            WHERE bf.source_id=$$primaryKey$$
-             AND pf.na_feature_id = gi.prey_gene_feature_id
+             AND .na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
             </sql>
