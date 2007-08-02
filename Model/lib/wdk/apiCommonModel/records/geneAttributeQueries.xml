@@ -50,6 +50,7 @@
             <column name="context_end" sortingTable="apidb.geneattributes"/>
             <column name="strand_plus_minus" sortingTable="apidb.geneattributes" sortingColumn="strand"/>
             <column name="sequence_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
+            <column name="contig" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="cyc_db" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
             <column name="cyc_gene_id" sortingTable="apidb.geneattributes" sortingColumn="source_id"/>
             <column name="tm_count" sortingTable="apidb.geneattributes"/>
@@ -66,6 +67,7 @@
             <column name="hydropathicity_gravy_score" sortingTable="apidb.geneattributes"/>
             <column name="aromaticity_score" sortingTable="apidb.geneattributes"/>
             <column name="external_db_name" sortingTable="apidb.geneattributes"/>
+            <column name="extdbname" sortingTable="apidb.geneattributes"/>
             <column name="external_db_version" sortingTable="apidb.geneattributes"/>
             <column name="ncbi_tax_id" sortingTable="apidb.geneattributes"/>
             <column name="species" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
@@ -212,7 +214,8 @@
                    bfmv.molecular_weight, bfmv.isoelectric_point,
                    bfmv.min_molecular_weight, bfmv.max_molecular_weight,
                    bfmv.hydropathicity_gravy_score, bfmv.aromaticity_score,
-                   bfmv.external_db_name, bfmv.external_db_version,
+                   bfmv.external_db_name, bfmv.external_db_version, bfmv.external_db_name as extdbname,
+                   bfmv.sequence_id as contig,
                    bfmv.exon_count, bfmv.ncbi_tax_id,
                    SUBSTR(bfmv.organism, 1, INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1) AS genus_species,
                    SUBSTR(bfmv.organism,
