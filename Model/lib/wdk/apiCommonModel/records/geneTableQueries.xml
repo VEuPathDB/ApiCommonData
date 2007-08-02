@@ -16,7 +16,7 @@
        <!-- Aliases -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Aliases" isCacheable="false" includeProjects="CryptoDB,PlasmoDB">
+       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="alias"/>
@@ -410,48 +410,6 @@
                  AND taf.na_feature_id = t.na_feature_id
                  AND mss.aa_sequence_id = taf.aa_sequence_id
                ORDER by mss.developmental_stage
-            ]]>
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="UniqueMassSpecPeptides"  includeProjects="CryptoDB"
-                  isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
-            <column name="sequence"   />
-            <column name="start_min"  />
-            <column name="end_max"    />
-            <column name="count"      />
-            <sql>
-            <![CDATA[
-             select start_min,
-                    end_max,
-                    count,
-                    SUBSTR(taas.sequence, 
-                           start_min, 
-                           (end_max - start_min +1)) sequence
-             from (select start_min,
-                    end_max,
-                    taaf.aa_sequence_id,
-                    count(*) count
-             from apidb.massspecsummary mss,
-             dots.massspecfeature msf,
-             dots.aalocation aal,
-             dots.translatedaafeature taaf,
-             dots.transcript t,
-             dots.genefeature gf
-             where mss.mass_spec_summary_id = msf.source_id
-             and msf.aa_feature_id = aal.aa_feature_id
-             and mss.aa_sequence_id = taaf.aa_sequence_id
-             and taaf.na_feature_id = t.na_feature_id
-             and t.parent_id = gf.na_feature_id
-             and gf.source_id = $$primaryKey$$
-             group by start_min, 
-                      taaf.aa_sequence_id,
-                      end_max
-             ) u,
-             dots.translatedaasequence taas
-             where u.aa_sequence_id = taas.aa_sequence_id
             ]]>
             </sql>
         </sqlQuery>
@@ -1108,55 +1066,14 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- BLASTP -->  
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-        <sqlQuery name="BlastP" includeProjects="CryptoDB" 
-             isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
-            <column name="source_id" />
-            <column name="description" />
-            <column name="pval" />
-            <column name="secondary_identifier" />
-            <sql> 
-            <!-- The '409' genes do not have protein_ids so need to test for null -->
-            <![CDATA[
-            SELECT * 
-            FROM (SELECT eaas.source_id as source_id, 
-                         eaas.secondary_identifier, 
-                         sim.pvalue_mant || 'e' || sim.pvalue_exp as pval,
-                         eaas.description
-                  FROM dots.similarity sim, 
-                       dots.externalaasequence eaas, 
-                       dots.translatedaasequence taas, 
-                       dots.transcript t, 
-                       dots.translatedaafeature taf,
-                       core.tableinfo qtab,
-                       core.tableinfo stab
-                  WHERE sim.QUERY_ID = taas.aa_sequence_id
-                  AND taas.aa_sequence_id = taf.aa_sequence_id 
-                  AND taf.na_feature_id = t.na_feature_id
-                  AND (t.protein_id != eaas.source_id or t.protein_id is null)
-                  AND sim.SUBJECT_ID = eaas.AA_SEQUENCE_ID
-                  AND sim.subject_table_id = stab.table_id
-                  AND stab.name = 'ExternalAASequence'
-                  AND sim.query_table_id  = qtab.table_id 
-                  AND qtab.name = 'TranslatedAASequence'
-                  AND t.source_id = $$primaryKey$$
-                  ORDER BY to_number(pval) ASC)
-            WHERE rownum < 6
-            ]]>
-            </sql>
-        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Protein IDs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <!-- GeneTables.ProteinIds -->
-        <sqlQuery name="ProteinIds" includeProjects="CryptoDB">
+<!-- 
+       <sqlQuery name="ProteinIds" includeProjects="CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="protein_id"/>
@@ -1166,6 +1083,6 @@
             WHERE source_id = $$primaryKey$$
             </sql>
         </sqlQuery>
-
+-->
    </querySet>
 </wdkModel>

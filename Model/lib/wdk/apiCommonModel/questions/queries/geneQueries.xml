@@ -241,7 +241,7 @@
   <!-- BLAST -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB"
+    <wsQuery name="GenesBySimilarity" excludeProjects="ApiDB,CryptoDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="geneParams.BlastDatabaseType"/>
@@ -259,6 +259,24 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
+    <wsQuery name="GenesBySimilarity" includeProjects="CryptoDB" 
+          processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+       <paramRef ref="geneParams.BlastDatabaseType"/>
+       <paramRef ref="geneSimilarityParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>      
+       <paramRef ref="sharedParams.BlastQuerySequence"/> 
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="project_id" width="32" wsName="ProjectId"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+                     
     <wsQuery name="GenesBySimilarity" includeProjects="ApiDB" 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.BlastDatabaseType"/>
@@ -276,8 +294,6 @@
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
-                     
-
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Motif search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -317,6 +333,7 @@
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
+       <wsColumn name="text_fields" width="32" wsName="Datasets"/>
     </wsQuery>
 
     <wsQuery name="GenesByAnnotatedKeyword" includeProjects="ApiDB"
