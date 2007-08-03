@@ -1,0 +1,235 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == questions == -->
+  <!-- ============================================================ -->
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ ID ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="CryptoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value="AA555430"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value="AJ555578"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value="AA011889"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="GiardiaDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value=""/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Similarity ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Plasmodium falciparum"/>
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastQuerySequence" value="TTGGAAGCTTGTTCAGCCTGTTCAGCAGCTTTTTCAGCTTCTTCAGCAGCTTTTTC"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="CryptoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastQuerySequence" value=""/>
+          <sanityParam name="-e" value="50"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="ToxoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastQuerySequence" value="GGAGGGGAGGGGCAATGGTAATTGCATGTGCTTGCGCGGACAGTCTTGGTATGACACCTG"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="GiardiaDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Giardia intestinalis"/>
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastQuerySequence" value=""/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Location ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="CryptoDB,ApiDB"
+                    minOutputLength="1" maxOutputLength="20"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="chromosomeOptional" value="choose one"/>
+        <sanityParam name="sequenceId" value="AAEE01000001"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value=""/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="PlasmoDB,ApiDB"
+                    minOutputLength="1" maxOutputLength="20"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="chromosomeOptional" value="choose one"/>
+        <sanityParam name="sequenceId" value="PB_PH0001"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="ToxoDB,ApiDB"
+                    minOutputLength="1" maxOutputLength="25"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="chromosomeOptional" value="Ia"/>
+        <sanityParam name="sequenceId" value="(Example: VIIa, TGG_995305)"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value="TgME49cDNA"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="GiardiaDB,ApiDB"
+                    minOutputLength="1" maxOutputLength="25"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="sequenceId" value="ctg02_243"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value=""/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- By Library -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="CryptoDB,ApiDB" 
+                   minOutputLength="362" 
+                   maxOutputLength="362" pageStart="1" pageEnd="20">
+           <sanityParam name="libraryId" value="uniZAPCpIOWAsporoLib3"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="12000" maxOutputLength="13000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="libraryId" value="PyBS"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="ToxoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="761" maxOutputLength="761">
+          <sanityParam name="libraryId" value="TgME49cDNA"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="GiardiaDB,ApiDB"
+                   minOutputLength="362" 
+                   maxOutputLength="362" pageStart="1" pageEnd="20">
+           <sanityParam name="libraryId" value=""/>
+      </sanityQuestion>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- With Gene Overlap -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value="uniZAPCpIOWAsporoLib3"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="ToxoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value="TgME49cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="GiardiaDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="9000" maxOutputLength="10000">
+        <sanityParam name="libraryId" value=""/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+
+</sanityModel>

@@ -40,7 +40,7 @@
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           isCacheable="true">
         <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
-        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sharedParams.libraryId" excludeProjects="CryptoDB"/>
@@ -64,7 +64,7 @@
                        || ')') AS apidb.varchartab), ', ') AS est_location
 	    FROM  apidb.ESTALIGNMENTGENESUMMARY
             WHERE (target_sequence_source_id IN ($$chromosomeOptional$$)
-                   OR lower(target_sequence_source_id) = lower($$genomicSequence$$))
+                   OR lower(target_sequence_source_id) = lower($$sequenceId$$))
             AND target_start >= $$start_point$$
             AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
             AND   is_consistent in ($$high_confidence_only$$)
@@ -86,12 +86,12 @@
             WHERE blat.query_na_sequence_id = asbl.na_sequence_id
 	    AND   blat.target_na_sequence_id = etn.na_sequence_id
 	    AND   est.na_sequence_id = blat.query_na_sequence_id
-            AND   blat.target_end >= $$start_location$$ 
-            AND   (blat.target_start <= $$end_location$$ OR $$end_location$$ = 0)
+            AND   blat.target_end >= $$start_point$$ 
+            AND   (blat.target_start <= $$end_point$$ OR $$end_point$$ = 0)
 	    AND   etn.external_database_release_id = blat.target_external_db_release_id
             AND   blat.max_target_gap < 10000
-	    AND   (etn.source_id = $$parvum_chromosome$$
-                   OR lower(etn.source_id) = lower($$contig$$))
+	    AND   (etn.source_id = $$chromosomeOptional$$
+                   OR lower(etn.source_id) = lower($$sequenceId$$))
             AND blat.target_start >= $$start_location$$ 
             AND (blat.target_end <= $$end_location$$ OR $$end_location$$ = 0)
 	    GROUP BY est.accession
@@ -102,8 +102,8 @@
     <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
-        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
-        <paramRef ref="sharedParams.genomicSequence"/>
+        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sharedParams.libraryId"/>
@@ -279,4 +279,5 @@
     </wsQuery>
 
 
-</querySet>
+  </querySet>
+</wdkModel>
