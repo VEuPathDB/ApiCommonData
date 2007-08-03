@@ -152,9 +152,9 @@
 
     <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,GiardiaDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="3" maxOutputLength="20">
+            minOutputLength="40" maxOutputLength="70">
         <sanityParam name="organism" value="Giardia intestinalis"/>
-        <sanityParam name="epitope_confidence" value="High"/>
+        <sanityParam name="epitope_confidence" value="Medium"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -324,7 +324,7 @@
 
     <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="GiardiaDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
+            minOutputLength="50" maxOutputLength="120">
           <sanityParam name="min_coil" value="65"/>
           <sanityParam name="max_coil" value="75"/>
           <sanityParam name="min_strand" value="15"/>

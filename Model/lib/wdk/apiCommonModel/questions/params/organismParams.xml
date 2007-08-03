@@ -105,7 +105,10 @@
     <sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB">
+      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -119,43 +122,7 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name IN ('Cryptosporidium parvum')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
-      <sql includeProjects="ToxoDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Toxoplasma gondii')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
-      <sql includeProjects="PlasmoDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Plasmodium falciparum')) organisms
+                  AND tn.name = '&&organism&&' ) organisms
           ORDER BY organisms.name
         ]]>
       </sql>
@@ -352,7 +319,9 @@
     <sqlQuery name="cp-tg" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql includeProjects="CryptoDB">
+      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
+      <sql includeProjects="ToxoDB,CryptoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -366,28 +335,11 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name IN ('Cryptosporidium parvum')) organisms
+                  AND tn.name = '&&organism&&') organisms
           ORDER BY organisms.name
         ]]>
       </sql>
-      <sql includeProjects="ToxoDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Toxoplasma gondii')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
+
       <sql includeProjects="PlasmoDB,GiardiaDB,TrichDB">
         <![CDATA[
           SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
@@ -457,12 +409,14 @@
     <sqlQuery name="tg-pf" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
+      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
       <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
         <![CDATA[
           SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
-      <sql includeProjects="ToxoDB">
+      <sql includeProjects="ToxoDB,PlasmoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -476,25 +430,7 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name IN ('Toxoplasma gondii')) organisms
-          ORDER BY organisms.name
-        ]]>
-      </sql>
-      <sql includeProjects="PlasmoDB">
-        <![CDATA[
-          SELECT organisms.name AS term,
-                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
-                                             AS apidb.varchartab), ', ')
-                         AS internal
-                  FROM sres.taxon
-                  CONNECT BY prior taxon_id = parent_id
-                  START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
-                FROM sres.TaxonName tn, sres.taxon t
-                WHERE tn.name_class='scientific name'
-                  AND t.taxon_id = tn.taxon_id
-                  AND t.rank = 'species'
-                  AND tn.name IN ('Plasmodium falciparum')) organisms
+                  AND tn.name = '&&organism&&') organisms
           ORDER BY organisms.name
         ]]>
       </sql>

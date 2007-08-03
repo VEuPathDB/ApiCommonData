@@ -24,6 +24,12 @@
            <suggest includeProjects="ToxoDB"
 					sample="49.m00014,65.m01111"
                     default="49.m00014,65.m01111"/>
+           <suggest includeProjects="GiardiaDB"
+					sample="GL50803_102438, GL50803_5213, GL50803_6262"
+                    default="GL50803_102438, GL50803_5213"/>
+           <suggest includeProjects="TrichDB"
+					sample="TVAG_386080, TVAG_486660"
+                    default="TVAG_386080"/>
            <suggest includeProjects="ApiDB"
 					sample="PF11_0344, cgd6_690, 65.m01111"
                     default="PF11_0344, cgd6_690, 65.m01111"/>
@@ -1282,10 +1288,12 @@
             <column name="internal"/>
             <column name="term"/>
             <sql>
-                SELECT REPLACE(dbest_name, ',', ' - ') AS term,
-                       library_id AS internal
-                FROM dots.library
-                ORDER BY dbest_name
+                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
+                       l.library_id AS internal
+                FROM apidb.estattributes att, dots.library l
+                WHERE att.dbest_name = l.dbest_name
+                AND att.project_id = '@PROJECT_ID@'
+                ORDER BY term
             </sql>
         </sqlQuery>
 

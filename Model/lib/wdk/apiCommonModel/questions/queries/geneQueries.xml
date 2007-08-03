@@ -103,7 +103,7 @@
   <!-- EC number -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByEcNumber" includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="GenesByEcNumber" excludeProjects="ApiDB"
                isCacheable="true">
         <paramRef ref="geneParams.ec_number_pattern"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
