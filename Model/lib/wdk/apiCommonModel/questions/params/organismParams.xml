@@ -200,10 +200,10 @@
                              (SELECT ns.taxon_id
                               FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                               WHERE so.sequence_ontology_id = ns.sequence_ontology_id
-                                AND so.term_name IN ('contig', 'supercontig', 'chromosome'
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')
                                 AND ga.source_id = ns.source_id
                                 AND ga.project_id = '@PROJECT_ID@'
-                              )))) organisms,
+                              ))) organisms,
                (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
                  UNION
                 SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
