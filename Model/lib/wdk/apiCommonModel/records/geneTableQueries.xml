@@ -421,7 +421,7 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-       <sqlQuery name="GeneGffDbxrefs" isCacheable="false">
+       <sqlQuery name="GeneGffDbxrefs" isCacheable="false" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_dbxref"/>
@@ -495,7 +495,7 @@
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneRnas">
+    <sqlQuery name="GeneRnas" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -555,7 +555,7 @@
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneCdss">
+    <sqlQuery name="GeneCdss" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -610,7 +610,7 @@
     </sqlQuery>
 
 
-    <sqlQuery name="GeneExons">
+    <sqlQuery name="GeneExons" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>

@@ -261,8 +261,8 @@
                           INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
                    DECODE(bfmv.organism,
                           'Plasmodium falciparum 3D7', 'PLASMO', null)
-                   AS plasmocyc_db,
-                   UPPER(bfmv.source_id) AS plasmocyc_gene_id,
+                   AS cyc_db,
+                   UPPER(bfmv.source_id) AS cyc_gene_id,
                    bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
                    bfmv.annotated_go_component as ann_go_component,
                    bfmv.annotated_go_function as ann_go_function,
