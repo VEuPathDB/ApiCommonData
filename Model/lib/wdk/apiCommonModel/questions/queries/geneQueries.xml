@@ -336,7 +336,7 @@
        <wsColumn name="text_fields" width="32" wsName="Datasets"/>
     </wsQuery>
 
-    <wsQuery name="GenesByAnnotatedKeyword" includeProjects="ApiDB"
+    <wsQuery name="GenesByTextSearch" includeProjects="ApiDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
             <paramRef ref="geneParams.text_fields"/>
@@ -764,7 +764,15 @@ order by project_id,sns2.source_id
            ]]>
         </sql>
     </sqlQuery>   
-
+    <wsQuery name="GenesWithEpitopes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+           isCacheable='true'>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="geneParams.epitope_confidence"/>
+        <wsColumn name="source_id" />
+        <wsColumn name="project_id"/>
+        <wsColumn name="confidence" />
+        <wsColumn name="count" />
+    </wsQuery>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -903,6 +911,16 @@ order by project_id,sns2.source_id
            ]]>
        </sql>
     </sqlQuery>   
+    <wsQuery name="GenesByMassSpec" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+            isCacheable='true'>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <paramRef ref="geneParams.ms_assay"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <wsColumn name="source_id" />
+        <wsColumn name="sum_sequence_count" />
+        <wsColumn name="sum_spectrum_count" />
+    </wsQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--  -->
@@ -985,7 +1003,7 @@ order by project_id,sns2.source_id
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->
+  <!-- Genes By Snps -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB"
@@ -1033,7 +1051,26 @@ order by project_id,sns2.source_id
        </sql>
     </sqlQuery>
 
-
+    <wsQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+              isCacheable="true">
+        <paramRef ref="sharedParams.snp_strain_a"/>
+        <paramRef ref="sharedParams.snp_strain_b"/>
+        <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.occurrences_lower" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.dn_ds_ratio_lower" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.dn_ds_ratio_upper" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.snp_density" groupRef="paramGroups.advancedParams"/>
+        <wsColumn name="project_id"/>
+        <wsColumn name="source_id"/>
+        <wsColumn name="cds_snp_density"/>
+        <wsColumn name="dn_ds_ratio"/>
+        <wsColumn name="num_synonymous"/>
+        <wsColumn name="num_non_synonymous"/>
+        <wsColumn name="num_noncoding"/>
+        <wsColumn name="num_nonsense"/>
+        <wsColumn name="total_snps"/>
+   </wsQuery>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- SecondaryStructure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

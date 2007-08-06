@@ -2347,7 +2347,7 @@
       </enumList>
     </enumParam>
 
-      <flatVocabParam name="metabolic_pathway" includeProjects="PlasmoDB,ToxoDB"
+      <flatVocabParam name="metabolic_pathway" includeProjects="PlasmoDB,ToxoDB,ApiDB"
                      queryRef="GeneVQ.MetabolicPathways"
                      prompt="Metabolic Pathway"
                      multiPick="false">
@@ -3621,6 +3621,10 @@ SELECT distinct lg.name AS term,
 
         </sqlQuery>
 
+       <wsQuery name="MetabolicPathways" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+       </wsQuery>
      </querySet>
 
 </wdkModel>

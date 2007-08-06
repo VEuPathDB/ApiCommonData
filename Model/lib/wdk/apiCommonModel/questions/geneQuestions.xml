@@ -381,7 +381,7 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
+    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
          displayName="Protein Expression"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
@@ -448,7 +448,7 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
                 Erythrocytes (in press) <BR> </PRE>
                         ]]>
         </description>
-        <description includeProjects="CryptoDB">
+        <description includeProjects="CryptoDB,ApiDB">
               <![CDATA[
              <p>
              Find <i>Cryptosporidium</i> genes that have evidence of expression 
@@ -780,11 +780,11 @@ one time.
               displayName="Interpro Domain"
               queryRef="GeneId.GenesByInterproDomain"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList excludeProjects="ToxoDB"
+        <attributesList excludeProjects="ToxoDB,ApiDB"
               summary="organism,location_text,product,e_value"
               sorting="organism asc,e_value asc, location_text asc"
         /> 
-        <attributesList includeProjects="ToxoDB"
+        <attributesList includeProjects="ToxoDB,ApiDB"
               summary="organism,location_text,product"
               sorting="organism asc, location_text asc"
         /> 
@@ -807,7 +807,7 @@ one time.
               here</a>.
               ]]>
         </description>
-       <dynamicAttributes excludeProjects="ToxoDB">
+       <dynamicAttributes excludeProjects="ToxoDB,ApiDB">
 	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
        </dynamicAttributes>
      </question>
@@ -863,15 +863,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         <summary includeProjects="PlasmoDB">
         Find genes involved in a specific metabolic pathway.
         </summary>
-        <description>
-            <![CDATA[
-        Find genes involved in a specific metabolic pathway.
-          <br><br>
-
-        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
-            <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .
-           ]]>
-        </description>
+       
         <description includeProjects="CryptoDB">
               <![CDATA[
                 Maps of metabolic pathways were computationally constructed for <i>C. parvum</i>
