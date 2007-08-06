@@ -3466,6 +3466,11 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="ExtraerythrocyticStages" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
+
         <sqlQuery name="IntraerythrocyticStages" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
@@ -3480,6 +3485,11 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="IntraerythrocyticStages" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
+       
         <sqlQuery name="Mr4Reagents" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
@@ -3504,6 +3514,10 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="Mr4Reagents" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
         <sqlQuery name="Clades" includeProjects="PlasmoDB">
             <column name="internal"/>
@@ -3517,8 +3531,12 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="Clades" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
-        <sqlQuery name="DomainDatabase">
+        <sqlQuery name="DomainDatabase" excludeProjects="ApiDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -3547,6 +3565,10 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="DomainDatabase" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
         <sqlQuery name="DayAndStrain" includeProjects="PlasmoDB">
             <column name="internal"/>
@@ -3565,6 +3587,10 @@
             </sql>
         </sqlQuery>
 
+        <wsQuery name="DayAndStrain" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
         <sqlQuery name="cowmanSample" includeProjects="PlasmoDB">
             <column name="internal"/>
@@ -3587,7 +3613,10 @@ SELECT distinct lg.name AS term,
             </sql>
         </sqlQuery>
 
-
+        <wsQuery name="cowmanSample" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
         <!-- keep this one at the end of the file because it's embedded quote mark throughs off
              emac's syntax highlighting
