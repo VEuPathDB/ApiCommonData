@@ -123,7 +123,7 @@
     </sanityQuestion>
 
     <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="ToxoDB,ApiDB"
-                    minOutputLength="1" maxOutputLength="25"
+                    minOutputLength="1" maxOutputLength="40"
                     pageStart="1" pageEnd="20">
         <sanityParam name="chromosomeOptional" value="Ia"/>
         <sanityParam name="sequenceId" value="(Example: VIIa, TGG_995305)"/>
@@ -209,7 +209,7 @@
 
     <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="ToxoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="9000" maxOutputLength="10000">
+            minOutputLength="100" maxOutputLength="1000">
         <sanityParam name="libraryId" value="TgME49cDNA"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="inNotIn" value="does overlap with a gene"/>

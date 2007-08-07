@@ -97,14 +97,25 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList
+        <attributesList excludeProjects="CryptoDB"
               summary="formatted_organism,dbest_name,est_location"
               sorting="est_location asc"
         /> 
 
+        <attributesList includeProjects="CryptoDB"
+              summary="formatted_organism,dbest_name"
+              sorting="est_location asc"
+        /> 
+
+        <dynamicAttributes excludeProjects="CryptoDB">
+          <columnAttribute name="est_location" displayName="EST location(s)"/>
+        </dynamicAttributes>
+
         <summary>
             Find ESTs that are located in a specified genomic region.
         </summary>
+
+
 
 	<description>
             <![CDATA[
@@ -155,7 +166,7 @@
 
         <dynamicAttributes excludeProjects="CryptoDB,ApiDB">
             <columnAttribute name="est_locations" displayName="EST location(s)"/>
-            <columnAttribute name="gene_ids" displayName="Gene(s)"/>
+            <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
 
     </question>

@@ -82,7 +82,7 @@
 	    FROM  dots.BlatAlignment blat,
 	          dots.AssemblySequence asbl,
 		  dots.Est est,
-		  dots.ExternalNASequence etn
+		  dots.NASequence etn
             WHERE blat.query_na_sequence_id = asbl.na_sequence_id
 	    AND   blat.target_na_sequence_id = etn.na_sequence_id
 	    AND   est.na_sequence_id = blat.query_na_sequence_id
@@ -126,8 +126,8 @@
         <column name="source_id" />
         <column name="project_id"/>
         <sql>
-            SELECT enas.source_id
-            FROM dots.externalnasequence enas, dots.est e
+            SELECT enas.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.nasequence enas, dots.est e
             WHERE enas.na_sequence_id = e.na_sequence_id
             AND e.library_id in ($$libraryId$$)
        </sql>
@@ -205,7 +205,7 @@
                 SELECT distinct(e.est_id)
                 FROM dots.genefeature gf, core.tableinfo info,
                 dots.nalocation nal, dots.blatalignment blat, 
-                dots.est e, dots.externalnasequence enas2 
+                dots.est e, dots.nasequence enas2 
                 WHERE gf.na_feature_id = nal.na_feature_id 
                 AND gf.na_sequence_id = enas2.na_sequence_id 
                 AND enas2.na_sequence_id = blat.target_na_sequence_id 
@@ -250,9 +250,8 @@
        <paramRef ref="sharedParams.-v"/>
        <paramRef ref="sharedParams.-b"/>
        <paramRef ref="sharedParams.-filter"/>
-
        <wsColumn name="source_id" width="32" wsName="Identifier"/>
-       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
@@ -269,9 +268,8 @@
        <paramRef ref="sharedParams.-v"/>
        <paramRef ref="sharedParams.-b"/>
        <paramRef ref="sharedParams.-filter"/>
-
        <wsColumn name="source_id" width="60" wsName="source_id"/>
-       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="TabularRow" width="3000"/>
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
