@@ -39,7 +39,7 @@
 
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           isCacheable="true">
-        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>

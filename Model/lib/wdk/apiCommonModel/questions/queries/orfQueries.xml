@@ -5,6 +5,8 @@
       
       - changed ms_assay param names
 
+      - all components will have orfs so i changed the includes/excluded to reflect that
+
     -->
     
     <!-- ************************************************************ -->
@@ -29,7 +31,6 @@
     </sqlQuery>
 
     <wsQuery name="OrfByOrfId" includeProjects="ApiDB"
-          displayName="ID" 
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="orfParams.orf_id"/>
@@ -42,7 +43,7 @@
     <!-- Location -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="OrfsByLocation" excludeProjects="ApiDB"
+    <sqlQuery name="OrfsByLocation" 
                isCacheable="true">
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
