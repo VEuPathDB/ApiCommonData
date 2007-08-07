@@ -215,18 +215,33 @@ sub _getMatchingSequence {
   my $sql;
 
   if($type eq 'dna') {
-    $sql = "SELECT na_sequence_id, sequence 
-             FROM Dots.NASEQUENCE 
-             WHERE na_sequence_id in
-               (select na_sequence_id 
-                 from Dots.EXTERNALNASEQUENCE 
-                 where source_id = '$accession'
-                  and external_database_release_id = $dbReleaseId)
-             OR na_sequence_id in
-               (select na_sequence_id 
-                 from Dots.VIRTUALSEQUENCE 
-                 where source_id = '$accession'
-                  and external_database_release_id = $dbReleaseId)";
+     # $sql = "SELECT na_sequence_id, sequence 
+#               FROM Dots.NASEQUENCE 
+#               WHERE na_sequence_id in
+#                 (select na_sequence_id 
+#                   from Dots.EXTERNALNASEQUENCE 
+#                   where source_id = '$accession'
+#                    and external_database_release_id = $dbReleaseId)
+#               OR na_sequence_id in
+#                 (select na_sequence_id 
+#                   from Dots.VIRTUALSEQUENCE 
+#                   where source_id = '$accession'
+#                    and external_database_release_id = $dbReleaseId)";
+
+
+     $sql = "SELECT na_sequence_id, sequence 
+              FROM Dots.NASEQUENCE 
+              WHERE na_sequence_id in
+               (
+                (select na_sequence_id 
+                  from Dots.EXTERNALNASEQUENCE 
+                  where source_id = '$accession'
+                   and external_database_release_id = $dbReleaseId)
+              UNION
+                (select na_sequence_id 
+                  from Dots.VIRTUALSEQUENCE 
+                  where source_id = '$accession'
+                   and external_database_release_id = $dbReleaseId) )";
   }
   else {
     $sql = "SELECT aa_sequence_id, sequence
