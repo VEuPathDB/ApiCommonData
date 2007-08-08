@@ -59,7 +59,7 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.pf" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
+    <sanityQuery ref="organismVQ.pf" excludeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
@@ -69,7 +69,7 @@
     </sanityQuery>
 
 
-    <sanityQuery ref="organismVQ.pb" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
+    <sanityQuery ref="organismVQ.pb" excludeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
             minOutputLength="0" maxOutputLength="0">
     </sanityQuery>
 
@@ -78,6 +78,9 @@
             minOutputLength="1" maxOutputLength="1">
     </sanityQuery>
 
+    <sanityQuery ref="organismVQ.withESTs"
+            minOutputLength="1" maxOutputLength="100">
+    </sanityQuery>
 
     <sanityQuery ref="SharedVQ.SnpStrainA" includeProjects="ApiDB,PlasmoDB,ToxoDB"
             minOutputLength="1" maxOutputLength="100">

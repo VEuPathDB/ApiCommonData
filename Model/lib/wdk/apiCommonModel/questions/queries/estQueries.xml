@@ -43,7 +43,7 @@
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
-        <paramRef ref="sharedParams.libraryId" excludeProjects="CryptoDB"/>
+        <paramRef ref="sharedParams.libraryId"/>
         <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
@@ -92,8 +92,8 @@
             AND   blat.max_target_gap < 10000
 	    AND   (etn.source_id = $$chromosomeOptional$$
                    OR lower(etn.source_id) = lower($$sequenceId$$))
-            AND blat.target_start >= $$start_location$$ 
-            AND (blat.target_end <= $$end_location$$ OR $$end_location$$ = 0)
+            AND blat.target_start >= $$start_point$$ 
+            AND (blat.target_end <= $$end_point$$ OR $$end_point$$ = 0)
 	    GROUP BY est.accession
            ]]>
        </sql>

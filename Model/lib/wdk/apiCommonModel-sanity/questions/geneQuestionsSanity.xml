@@ -340,12 +340,12 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1" maxOutputLength="30">
+            minOutputLength="1" maxOutputLength="150">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
           <sanityParam name="BlastQuerySequence" value="GGATTACCTTTTGATGCATCAGAAGAAGAAATAAAAAATTTCTTTAGAGATTTCCAATTAACAAAACAAGCATATCCCATTCATATAATTAAAGGAATTAAGAATAAGCCCACTGGGCATGCATATGTGTATTTCGATGATGAAGAAGAGGCCAGAAATGCTTGTCAAGCTATGAACAGG"/>
-          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-e" value="50"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
     </sanityQuestion>

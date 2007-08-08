@@ -21,7 +21,7 @@
   <!-- By Id -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <question name="EstBySourceId" excludeProjects="CryptoDB,ApiDB"
+  <question name="EstBySourceId"
 	      displayName="ID"
 	      queryRef="EstIds.EstBySourceId"
 	      recordClassRef="EstRecordClasses.EstRecordClass">
@@ -157,9 +157,13 @@
          queryRef="EstIds.EstsWithGeneOverlap"
          recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList
+        <attributesList excludeProjects="CryptoDB,ApiDB"
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
+        /> 
+        <attributesList includeProjects="CryptoDB,ApiDB"
+           summary="formatted_organism,dbest_name"
+           sorting="formatted_organism asc"
         /> 
 
         <description>Find ESTs that Overlap a Gene..</description>
