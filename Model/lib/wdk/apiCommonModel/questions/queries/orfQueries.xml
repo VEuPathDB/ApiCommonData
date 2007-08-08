@@ -44,7 +44,7 @@
     <!-- ************************************************************ -->
  
     <sqlQuery name="OrfsByLocation" 
-               isCacheable="true">
+               isCacheable="true" excludeProjects="ApiDB">
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -52,7 +52,7 @@
         <paramRef ref="orfParams.min_orf_length"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"> 
+        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB"> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
