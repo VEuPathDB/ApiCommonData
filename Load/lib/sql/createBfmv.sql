@@ -1,4 +1,46 @@
 set time on timing on
+
+-- createBfmv.sql
+--
+-- Big F{-at,-reakin',-unctional,-ast} Materialized Views
+--
+-- This script creates materialized views which denormalize GUS tables for
+-- the sake of performance.  Each record type X has at least an mview named
+-- apidb.XAttributes, which has one row for each X record (that is, each
+-- distinct source_id for an X), and columns for different attributes.
+-- Including an attribute in apidb.XAttributes makes the WDK's query-history
+-- column-sorting easy and relatively efficient.
+--
+-- It is sometimes desirable to change the definition of one of these mviews
+-- while it is being used by an application.  Simply dropping and re-creating
+-- the materialized view creates a time gap in which the application will
+-- fail.  To handle this, the script gives the mviews names of the form
+-- "apidb.XAttributes1111", then creates a synonym, "apidb.XAttributes", which
+-- points to the mview.  To re-run this script while the mviews may be in use,
+-- change all occurrences of "1111" to any other four-digit number, for
+-- instance "1234".  The application will use the old mview until the "CREATE
+-- OR REPLACE SYNONYM" statement runs, and then switch seamlessly to the new.
+--
+-- A query at the end of this script looks for materialized views that end in
+-- a four-digit number but aren't pointed to by a synonym.  For convenience,
+-- the query result is in the form of "DROP MATERIALIZED VIEW" statements.  If
+-- this script terminates successfully*, these statements can be run, dropping
+-- the disused mviews.
+--
+-- This SQL statement will find which four-digit numbers are in use:
+-- SELECT * FROM all_synonyms where owner='APIDB';
+--
+-- This script should be run as the database user APIDB.  Running it as other
+-- users has generated "insufficient privilege" errors (even for a user with
+-- the DBA privilege).
+--
+-- * Before trying to create a materialized view, this script will attempt to
+-- drop any existing one of the same name.  If the four-digit number is
+-- changed, this will typically result in an "ORA-12003" error ("materialized
+-- view does not exist").  If the output contains no errors other than these,
+-- the script has run successfully.
+
+
 ---------------------------
 -- set permissions
 ---------------------------
@@ -43,7 +85,7 @@ DROP MATERIALIZED VIEW apidb.GoTermList;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.GoTermList ###;
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
-SELECT gf.source_id, o.ontology, 
+SELECT gf.source_id, o.ontology,
        DECODE(gail.name, 'Interpro', 'predicted', 'annotated') AS source,
        apidb.tab_to_string(CAST(COLLECT(DISTINCT gt.name) AS apidb.varchartab), ', ') AS go_terms
 FROM dots.GeneFeature gf, dots.Transcript t,
@@ -197,7 +239,7 @@ SELECT gene.source_id, pru.expression AS pru, veg.expression AS veg,
 FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
      (SELECT ga.gene, avg(ep1.mean) AS expression
        FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
-            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ExpressionProfile ep1, rad.Protocol p,
             rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
        WHERE p.name = 'R Expression Statistics'
         AND lg.name = 'Pru - RMA Quantifications'
@@ -211,7 +253,7 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
        GROUP BY ga.gene) pru,
      (SELECT ga.gene, avg(ep1.mean) AS expression
        FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
-            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ExpressionProfile ep1, rad.Protocol p,
             rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
        WHERE p.name = 'R Expression Statistics'
         AND lg.name = 'VEG - RMA Quantifications'
@@ -225,7 +267,7 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
        GROUP BY ga.gene) veg,
      (SELECT ga.gene, avg(ep1.mean) AS expression
        FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
-            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ExpressionProfile ep1, rad.Protocol p,
             rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
        WHERE p.name = 'R Expression Statistics'
         AND lg.name = 'RH - RMA Quantifications'
@@ -239,7 +281,7 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
        GROUP BY ga.gene) rh,
      (SELECT ga.gene, avg(ep1.mean) AS expression
        FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
-            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ExpressionProfile ep1, rad.Protocol p,
             rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
        WHERE p.name = 'R Expression Statistics'
         AND lg.name = 'RH (High Glucose) - RMA Quantifications'
@@ -253,7 +295,7 @@ FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneAlias) gene,
        GROUP BY ga.gene) rh_high_glucose,
      (SELECT ga.gene, avg(ep1.mean) AS expression
        FROM rad.LogicalGroup lg, rad.AnalysisInput ai1, rad.Analysis a1,
-            rad.ExpressionProfile ep1, rad.Protocol p, 
+            rad.ExpressionProfile ep1, rad.Protocol p,
             rad.ShortOligoFamily sof, ApiDB.GeneAlias ga
        WHERE p.name = 'R Expression Statistics'
         AND lg.name = 'RH (No Glucose) - RMA Quantifications'
@@ -393,7 +435,7 @@ DROP MATERIALIZED VIEW apidb.GeneProteinAttributes;
 
 prompt ### CREATE MATERIALIZED VIEW apidb.GeneProteinAttributes ###;
 CREATE MATERIALIZED VIEW apidb.GeneProteinAttributes AS
-SELECT gene.source_id, 
+SELECT gene.source_id,
        protein.tm_count, protein.molecular_weight,
        protein.isoelectric_point, protein.min_molecular_weight,
        protein.max_molecular_weight, protein.hydropathicity_gravy_score,
@@ -420,7 +462,7 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
                    WHERE tmaf.aa_feature_id = al.aa_feature_id
                    GROUP BY tmaf.aa_sequence_id) tms
              GROUP BY tms.aa_sequence_id) transmembrane,
-            (SELECT aa_sequence_id, 
+            (SELECT aa_sequence_id,
                     SUBSTR(apidb.tab_to_string(CAST(COLLECT(ec_number)
                                                AS apidb.varchartab), '; '),
                            1, 300)
@@ -585,7 +627,7 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.na_feature_id = exons.parent_id(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
   -- skip toxo predictions (except tRNAs)
-  AND (tn.name != 'Toxoplasma gondii' 
+  AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', /*'tRNAscan-SE',*/
                           'TwinScan predictions', 'TwinScanEt predictions'));
