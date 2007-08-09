@@ -22,7 +22,7 @@ use File::Temp qw(tempfile);
 
 my $verbose = 0;
 my $gusConfigFile;
-my @taxa;
+my $taxa;
 my $maxOverlap = 25;
 my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
 my $inputFile;
@@ -30,12 +30,16 @@ my $outputFile;
 
 GetOptions("verbose!"        => \$verbose,
            "gusConfigFile=s" => \$gusConfigFile,
-           "taxon=s"         => \@taxa,
+           "taxon=s"         => \$taxa,
            "maxOverlap=i"    => \$maxOverlap,
            "gi2taxidFile=s"  => \$gi2taxidFile,
            "inputFile=s"     => \$inputFile,
            "outputFile=s"    => \$outputFile,
           );
+
+my @taxa = split(/,*\s+/,$taxa);
+
+#die "there are ".scalar(@taxa). " taxa = (".join(' | ',@taxa).")\n";
 
 unless (-e $gi2taxidFile) {
   die "Must supply a valid gi2taxid mapping file!\n";
@@ -152,12 +156,12 @@ for my $taxonId ("root", @taxa) {
 
   $dbh->do("DROP TABLE hits_${taxonId}");
   $dbh->do(<<EOSQL);
-  CREATE TABLE hits_${taxonId} (
+  CREATE TABLE hits_${taxonId}(
     contig_id INTEGER NOT NULL,
     hit_start INTEGER NOT NULL,
     hit_stop INTEGER NOT NULL,
     is_reversed INTEGER NOT NULL
-  )
+  ) NOLOGGING
 EOSQL
 
   $dbh->do(<<EOSQL);
@@ -202,6 +206,7 @@ while (<INPUT>) {
       $idLine = $_;
       $numProc++;
       print STDERR "Number of query similarities being processed : $numProc\n" if ($numProc % 100 == 0);
+      &truncateTables();
     }
     elsif (m/^\s*Sum:/) {
       $sum = $_;
@@ -278,6 +283,12 @@ sub process {
 }
 
 my %ncbiTaxonIdMap;
+
+sub truncateTables {
+  for my $taxonId ("root", @taxa) {
+    $dbh->do("TRUNCATE TABLE hits_${taxonId}");
+  }
+}
 
 sub calcTaxonId {
 
