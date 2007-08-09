@@ -553,11 +553,11 @@ sub makeAlgInv {
 }
 
 sub loadSecondaryStructures {
-  my ($mgr, $algName,$algImpVer,$algInvStart,$dir,$setPercent) = @_;
+  my ($mgr, $algName,$algImpVer,$algInvStart,$algInvEnd,$dir,$setPercent) = @_;
 
   my $dirPath = "$mgr->{dataDir}/psipred/${dir}/master/mainresult";
 
-  my $args = "--predAlgName $algName --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --directory $dirPath";
+  my $args = "--predAlgName $algName --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --predAlgInvEnd $algInvEnd --directory $dirPath";
 
   $args .= " --setPercentages" if ($setPercent);
 
