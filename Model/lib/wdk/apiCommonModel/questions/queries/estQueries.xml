@@ -52,12 +52,12 @@
         <column name="est_location" excludeProjects="CryptoDB"/>
         <sqlParamValue name="chroOpt" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
-              (target_sequence_source_id IN (\$\$chromosomeOptional\$\$)
-               OR lower(target_sequence_source_id) = lower(\$\$sequenceId\$\$))
+              (target_sequence_source_id IN ($$chromosomeOptional$$)
+               OR lower(target_sequence_source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
-           <![CDATA[ lower(target_sequence_source_id) = lower(\$\$sequenceId\$\$)]]>
+           <![CDATA[ lower(target_sequence_source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
         <sql excludeProjects="CryptoDB">
             <![CDATA[

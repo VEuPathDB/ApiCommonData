@@ -18,7 +18,11 @@
 
       <sanityRecord ref="EstRecordClasses.EstRecordClass" 
                     includeProjects="GiardiaDB,ApiDB"
-                    projectId="GiardiaDB" primaryKey=""/>
+                    projectId="GiardiaDB" primaryKey="AT002319"/>
+
+      <sanityRecord ref="EstRecordClasses.EstRecordClass" 
+                    includeProjects="TrichDB,ApiDB"
+                    projectId="GiardiaDB" primaryKey="CV202110"/>
 
 
   <!-- ============================================================ -->
@@ -49,8 +53,14 @@
 
     <sanityQuery ref="EstAttributes.Bfmv" includeProjects="GiardiaDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value=""/>
+        <sanityParam name="primaryKey" value="AT002319"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Bfmv" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV202110"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -77,8 +87,14 @@
 
     <sanityQuery ref="EstAttributes.Sequence" includeProjects="GiardiaDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value=""/>
+        <sanityParam name="primaryKey" value="AT002319"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Sequence" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV202110"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -105,8 +121,14 @@
 
     <sanityQuery ref="EstAttributes.Reference" includeProjects="GiardiaDB,ApiDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value=""/>
+        <sanityParam name="primaryKey" value="AT002319"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstAttributes.Reference" includeProjects="TrichDB",ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV202110"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -147,8 +169,14 @@
 
     <sanityQuery ref="EstTables.AlignmentInfo" includeProjects="GiardiaDB"
             minOutputLength="1" maxOutputLength="1">
-        <sanityParam name="primaryKey" value=""/>
+        <sanityParam name="primaryKey" value="AT002319"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="EstTables.AlignmentInfo" includeProjects="TrichDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CV202110"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
 </sanityModel>

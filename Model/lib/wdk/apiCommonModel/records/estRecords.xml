@@ -55,7 +55,31 @@
                 <columnAttribute inReportMaker="false" name="na_sequence_id" internal="true" />
                 <columnAttribute inReportMaker="false" name="number_of_contained_sequences" internal="true" />
             </attributeQueryRef>
-            
+
+            <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
+               <text>
+                    <![CDATA[
+                    Library: $$dbest_name$$<br>
+                    Primer: $$primer$$<br>
+		    Vector: $$vector$$<br>
+		    Stage:  $$stage$$<br>
+                    Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$,
+                    <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
+                    Length: $$length$$<br>
+                    Link out: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$source_id$$">NCBI</a>
+                ]]>
+               </text>
+           </textAttribute>
+
+           <!-- custom record jsp page has a dependency on this attribute name. if you change here, change there -->
+           <textAttribute name="reference" displayName="Sequence Attribution" inReportMaker="false" internal="true">
+              <text>
+                   <![CDATA[
+                   <font size="-1">$$author$$<br>$$affiliation$$<br> $$address$$</font>
+                   ]]>
+              </text>
+           </textAttribute>
+
       <!-- =================================================================== -->
       <!-- Tables ++++++++-->
       <!-- =================================================================== -->
@@ -97,29 +121,7 @@
             </table>
 
 
-             <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
-               <text>
-                    <![CDATA[
-                    Library: $$dbest_name$$<br>
-                    Primer: $$primer$$<br>
-		    Vector: $$vector$$<br>
-		    Stage:  $$stage$$<br>
-                    Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$,
-                    <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
-                    Length: $$length$$<br>
-                    Link out: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$source_id$$">NCBI</a>
-                ]]>
-               </text>
-           </textAttribute>
 
-           <!-- custom record jsp page has a dependency on this attribute name. if you change here, change there -->
-           <textAttribute name="reference" displayName="Sequence Attribution" inReportMaker="false" internal="true">
-              <text>
-                   <![CDATA[
-                   <font size="-1">$$author$$<br>$$affiliation$$<br> $$address$$</font>
-                   ]]>
-              </text>
-           </textAttribute>
 
        </recordClass>
     </recordClassSet>

@@ -3449,7 +3449,7 @@
         <sqlQuery name="GeneTypes">
             <column name="internal"/>
             <column name="term"/>
-            <sql>
+            <sql excludeProjects="TrichDB">
               SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
                    sequence_ontology_id AS internal
               FROM sres.SequenceOntology
@@ -3458,6 +3458,17 @@
                                   'snRNA_encoding',
                                   'tRNA_encoding',
                                   'non_protein_coding')
+            </sql>
+            <sql includeProjects="TrichDB">
+              SELECT REPLACE(REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' '),'region','gene')  AS term,
+                   sequence_ontology_id AS internal
+              FROM sres.SequenceOntology
+              WHERE term_name IN ('protein_coding',
+                                  'rRNA_encoding',
+                                  'snRNA_encoding',
+                                  'tRNA_encoding',
+                                  'non_protein_coding',
+                                  'repeat_region')
             </sql>
         </sqlQuery>
 

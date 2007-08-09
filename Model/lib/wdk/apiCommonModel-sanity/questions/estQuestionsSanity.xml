@@ -30,9 +30,14 @@
     <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="GiardiaDB,ApiDB"
             minOutputLength="1" maxOutputLength="1"
             pageStart="1" pageEnd="20">
-        <sanityParam name="est_id" value=""/>
+        <sanityParam name="est_id" value="AT002319"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="EstQuestions.EstBySourceId" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="est_id" value="CV202110"/>
+    </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Similarity ++ -->
@@ -83,12 +88,23 @@
           <sanityParam name="BlastDatabaseType" value="EST"/>
           <sanityParam name="BlastDatabaseOrganism" value="Giardia intestinalis"/>
           <sanityParam name="BlastQueryType" value="DNA"/>
-          <sanityParam name="BlastQuerySequence" value=""/>
+          <sanityParam name="BlastQuerySequence" value="ACGACAGCAATACTAACGCATGCCTCCTCGCCGAGGACTTTCTCAAGCGTGGTCTAAAGA"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
       </sanityQuestion>
 
+    <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="TrichDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="EST"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastQuerySequence" value="GCGAGCTCGTTGCAGTTGTTTGGCTTGACGGAACCGCCGTAGAGAATGCGGACCTTGTTA"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Location ++ -->
@@ -142,13 +158,25 @@
         <sanityParam name="sequenceId" value="ctg02_243"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
-        <sanityParam name="libraryId" value=""/>
+        <sanityParam name="libraryId" value="trophozoite cDNA"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
         <sanityParam name="high_confidence_only" value="No"/>
         <sanityParam name="min_percent_identity" value="90"/>
         <sanityParam name="min_percent_est_aligned" value="20"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="EstQuestions.EstsByLocation" includeProjects="TrichDB,ApiDB"
+                    minOutputLength="1" maxOutputLength="100"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="sequenceId" value="DS113177"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- By Library -->
@@ -173,11 +201,16 @@
       </sanityQuestion>
 
       <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="GiardiaDB,ApiDB"
-                   minOutputLength="362" 
-                   maxOutputLength="362" pageStart="1" pageEnd="20">
-           <sanityParam name="libraryId" value=""/>
+                   minOutputLength="91" 
+                   maxOutputLength="91" pageStart="1" pageEnd="20">
+           <sanityParam name="libraryId" value="trophozoite cDNA"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="EstQuestions.EstsByLibrary" includeProjects="TrichDB,ApiDB"
+                   minOutputLength="721" 
+                   maxOutputLength="721" pageStart="1" pageEnd="20">
+           <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
+      </sanityQuestion>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- With Gene Overlap -->
@@ -189,12 +222,6 @@
         <sanityParam name="libraryId" value="uniZAPCpIOWAsporoLib3"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="inNotIn" value="does overlap with a gene"/>
-<!--
-        <sanityParam name="high_confidence_only" value="No"/>
-        <sanityParam name="best_alignment_only" value="Yes"/>
-        <sanityParam name="min_percent_identity" value="90"/>
-        <sanityParam name="min_percent_est_aligned" value="20"/>
--->
     </sanityQuestion>
 
     <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="PlasmoDB,ApiDB"
@@ -223,8 +250,8 @@
 
     <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="GiardiaDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="9000" maxOutputLength="10000">
-        <sanityParam name="libraryId" value=""/>
+            minOutputLength="20" maxOutputLength="100">
+        <sanityParam name="libraryId" value="trophozoite cDNA"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="inNotIn" value="does overlap with a gene"/>
         <sanityParam name="high_confidence_only" value="No"/>
@@ -233,5 +260,15 @@
         <sanityParam name="min_percent_est_aligned" value="20"/>
     </sanityQuestion>
 
-
+    <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="200">
+        <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
 </sanityModel>
