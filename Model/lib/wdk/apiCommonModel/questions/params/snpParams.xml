@@ -1,5 +1,5 @@
 <wdkModel>
-  <paramSet name="snpParams">
+  <paramSet name="snpParams" includeProjects="ToxoDB,PlasmoDB,ApiDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
@@ -7,9 +7,19 @@
         <stringParam name="snp_id"
                      prompt="SNP ID"
                      substitute="yes">
-                     <help>Enter an SNP ID</help>
-            <suggest default="CombinedSNP.MAL11.3000"
-                     sample="CombinedSNP.MAL11.3000, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
+                     <help>Enter a SNP ID</help>
+            <suggest  includeProjects="PlasmoDB"
+               default="CombinedSNP.MAL11.3000"
+               sample="CombinedSNP.MAL11.3000, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"
+            />
+            <suggest includeProjects="ToxoDB"
+                default="SNP_Ia_17864"
+                sample="SNP_Ia_17864, SNP_Ia_130295"
+            />
+            <suggest  includeProjects="ApiDB"
+               default="CombinedSNP.MAL11.3000"
+               sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"
+            />
         </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -28,5 +38,20 @@
             <help>Lower Bound on the number of strains that have the minor allele</help>
             <suggest default="1"/>
         </stringParam>
+
+      <stringParam name="major_allele_max"
+                     prompt="Frequency of major allele &lt;= "
+                     quote="false">
+            <help>Upper Bound on the number of strains that have the major allele</help>
+            <suggest default="20"/>
+        </stringParam>
+
+      <stringParam name="major_allele_min"
+                     prompt="Frequency of major allele >= "
+                     quote="false">
+            <help>Lower Bound on the number strains that have the major allele</help>
+            <suggest default="1"/>
+        </stringParam>
+
   </paramSet>
 </wdkModel>

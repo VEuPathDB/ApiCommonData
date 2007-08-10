@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <questionSet name="SnpQuestions">
+  <questionSet name="SnpQuestions" displayName="">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
@@ -17,16 +17,7 @@
               Find SNPs by ID. 
 	  </description>
 
-          <suggest includeProjects="ApiDB"
-              sample="SNP_Ia_17864,CombinedSNP.MAL11.3002"
-          />
-          <suggest includeProjects="ToxoDB"
-              sample="SNP_Ia_17864"
-          />
-          <suggest includeProjects="PlasmoDB" 
-              sample="CombinedSNP.MAL11.3002"
-          />
-
+<!-- not implemented yet        
          <propertyList name="organism" includeProjects="PlasmoDB">
              <value value="P. falciparum"/>
          </propertyList>
@@ -37,6 +28,7 @@
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
          </propertyList>
+-->
       </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -52,6 +44,7 @@
               sorting="snp_location asc"
         />   
 
+<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB">
              <value value="P. falciparum"/>
         </propertyList>
@@ -62,7 +55,7 @@
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
         </propertyList>
-
+-->
         <summary>
             Find SNPs that are located in a specified gene.
         </summary>
@@ -113,6 +106,7 @@
           ]]>
         </summary>
 
+<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB">
              <value value="P. falciparum"/>
         </propertyList>
@@ -123,7 +117,7 @@
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
         </propertyList>
-
+-->
 	<description includeProjects="PlasmoDB">
             <![CDATA[
               Find <i>P. falciparum</i> SNPs by chromosomal location relative to P. falciparum.
@@ -170,10 +164,11 @@
             ]]>
         </summary>
 
+<!-- not implemented yet        
         <propertyList name="organism">
              <value value="P. falciparum"/>
         </propertyList>
-
+-->
 	<description>
             <![CDATA[
               Find SNPs by specifying the frequency of the major and minor alleles.
@@ -188,4 +183,5 @@
 	</dynamicAttributes>
     </question>
 
-</questionSet>
+  </questionSet>
+</wdkModel>

@@ -1,0 +1,86 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == questions == -->
+  <!-- ============================================================ -->
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ ID ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="SnpQuestions.SnpBySourceId" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_id" value="CombinedSNP.MAL11.3000"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SnpQuestions.SnpBySourceId" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_id" value="SNP_Ia_17864"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Gene Id ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="SnpQuestions.SnpsByGeneId" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="locus_tag" value="PF11_0344"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="SnpQuestions.SnpsByGeneId" includeProjects="ToxoDB,ApiDB"
+                   minOutputLength="60" maxOutputLength="65"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+        <sanityParam name="snp_strain_m" value="ME49 (type II)"/>
+        <sanityParam name="ds_gene_ids" value="49.m00014"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Location ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="SnpQuestions.SnpsByLocation" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="90" maxOutputLength="150"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="chromosome" value="chromosome 1"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="snp_strain_a" value="Pf-3D7"/>
+        <sanityParam name="snp_strain_m" value="Pf-7G8"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="SnpQuestions.SnpsByLocation" includeProjects="ToxoDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+	  	      minOutputLength="300" maxOutputLength="400">
+          <sanityParam name="chromosome" value="Ia"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+          <sanityParam name="snp_strain_a" value="GT1 (type I)"/>
+          <sanityParam name="snp_strain_m" value="ME49 (type II)"/>
+      </sanityQuestion>
+
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Allele Frequency ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="SnpQuestions.SnpsByAlleleFrequency" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="60000" maxOutputLength="65000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="major_allele_min" value="1"/>
+        <sanityParam name="major_allele_max" value="20"/>
+        <sanityParam name="minor_allele_min" value="1"/>
+        <sanityParam name="minor_allele_max" value="20"/>
+    </sanityQuestion>
+
+</sanityModel>
