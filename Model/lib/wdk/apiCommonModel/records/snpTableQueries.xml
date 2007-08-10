@@ -5,8 +5,10 @@
        <!-- Strains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Strains" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+        <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB" 
+              isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="strain"/>
             <column name="allele"/>
             <column name="allele_gene_strand"/>
@@ -37,14 +39,28 @@
        <!-- Providers -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Providers" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+        <sqlQuery name="Providers" includeProjects="ToxoDB,PlasmoDB" 
+               isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="source_id_link"/>
             <column name="name"/>
+            <sqlParamValue name="name" includeProjects="PlasmoDB">
+                DECODE(ed.name,'Broad SNPs','Broad','Sanger falciparum SNPs','WTSI','Su SNPs','NIH', 'PlasmoDB combined SNPs', 'PlasmoDB','Sanger reichenowi SNPs','WTSI')
+            </sqlParamValue>
+            <sqlParamValue name="name" includeProjects="ToxoDB">
+                      ed.name
+            </sqlParamValue>
+            <sqlParamValue name="filter" includeProjects="PlasmoDB">
+                and sb.source_id != $$primaryKey$$
+            </sqlParamValue>
+            <sqlParamValue name="filter" includeProjects="ToxoDB">
+            </sqlParamValue>
+
             <sql>
             <![CDATA[
                SELECT sb.source_id as source_id_link,
-               DECODE(ed.name,'Broad SNPs','Broad','Sanger falciparum SNPs','WTSI','Su SNPs','NIH', 'PlasmoDB combined SNPs', 'PlasmoDB','Sanger reichenowi SNPs','WTSI') as name
+               &&name&& as name
                FROM  dots.SnpFeature sa, dots.snpfeature sb, dots.nalocation la, dots.nalocation lb,
                      sres.externaldatabase ed, sres.externaldatabaserelease edr
                WHERE sa.source_id = $$primaryKey$$
@@ -52,7 +68,7 @@
                 and sb.na_feature_id = lb.na_feature_id
                 and sa.na_sequence_id = sb.na_sequence_id
                 and la.start_min = lb.start_min
-                and sb.source_id != $$primaryKey$$
+                &&filter&&
                 and sb.external_database_release_id = edr.external_database_release_id
                 and edr.external_database_id = ed.external_database_id
              ]]>

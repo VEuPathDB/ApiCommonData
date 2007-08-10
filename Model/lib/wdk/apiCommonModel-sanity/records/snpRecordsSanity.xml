@@ -1,0 +1,91 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == records == -->
+  <!-- ============================================================ -->
+
+      <sanityRecord ref="SnpRecordClasses.SnpRecordClass" 
+                    includeProjects="PlasmoDB,ApiDB"
+                    projectId="PlasmoDB" primaryKey="CombinedSNP.MAL1.89"/>
+
+      <sanityRecord ref="SnpRecordClasses.SnpRecordClass"
+                    includeProjects="ToxoDB,ApiDB"
+                    projectId="ToxoDB" primaryKey="SNP_VIIa_810455"/>
+
+ 
+
+  <!-- ============================================================ -->
+  <!-- == attribute queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ BFMV ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="SnpAttributes.Bfmv" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL1.89"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpAttributes.Bfmv" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Sequence ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="SnpAttributes.Sequence" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL1.89"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpAttributes.Sequence" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+
+  <!-- ============================================================ -->
+  <!-- == table queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Strains ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="SnpTables.Strains" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="40">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL2.308"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpTables.Strains" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="40">
+        <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Providers ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="SnpTables.Providers" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="CombinedSNP.MAL2.308"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="SnpTables.Providers" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="primaryKey" value="SNP_VIIa_810455"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+
+</sanityModel>

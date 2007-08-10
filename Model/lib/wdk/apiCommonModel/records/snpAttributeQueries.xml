@@ -2,7 +2,8 @@
     <querySet name="SnpAttributes">
 
         <sqlQuery name="Bfmv" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="dataset" sortingTable="apidb.SnpAttributes"
                     lowerCase="true"/>
             <column name="dataset_hidden" sortingTable="apidb.SnpAttributes"
@@ -60,7 +61,7 @@
             </sqlParamValue>
             <sql>
             <![CDATA[
-           SELECT bfmv.source_id, bfmv.dataset,
+           SELECT bfmv.source_id, bfmv.project_id, bfmv.dataset,
                   DECODE(bfmv.dataset, &&datasets&&, bfmv.dataset) AS dataset_hidden,
                   bfmv.seq_source_id, bfmv.start_min, bfmv.reference_strain,
                   bfmv.reference_na, bfmv.is_coding, bfmv.position_in_CDS,
@@ -93,7 +94,8 @@
         </sqlQuery>
 
         <sqlQuery name="Sequence" isCacheable="false">
-            <paramRef ref="params.primaryKey"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="lflank"/>
             <column name="allele"/>
             <column name="rflank"/>
