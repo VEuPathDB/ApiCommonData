@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+#script to load Giardia phylogenetic trees
+
 use strict;
 use warnings;
 
@@ -41,7 +43,7 @@ my $sth = $dbh->prepare(<<EOF);
     VALUES (?,?,?)
 EOF
 
-map { $sth->execute(basename($_, '.atv'), `cat $_`, '') } @infiles;
+map { $sth->execute('GL50803_' . basename($_, '.atv'), `cat $_`, '') } @infiles;
 
 $dbh->commit;
 
