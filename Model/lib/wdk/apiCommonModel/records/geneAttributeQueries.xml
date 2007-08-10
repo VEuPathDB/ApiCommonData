@@ -231,7 +231,7 @@
                    bfmv.predicted_go_process as pred_go_process
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id=$$primaryKey$$
-                 AND bfmv.project_id=$$projectId$$
+                 AND LOWER(bfmv.project_id)=LOWER($$projectId$$)
             ]]>
             </sql>
             <sql includeProjects="ApiDB">
@@ -282,7 +282,7 @@
                    bfmv.winzeler_max_pct as winz_max_pct
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id=$$primaryKey$$
-                 AND bfmv.project_id=$$projectId$$
+                 AND LOWER(bfmv.project_id)=LOWER($$projectId$$)
             ]]>
             </sql>
 

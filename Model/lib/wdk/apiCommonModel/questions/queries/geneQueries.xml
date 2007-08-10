@@ -330,7 +330,7 @@
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.text_fields"/>
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+       <paramRef ref="organismParams.text_search_organism"/>
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="text_fields" width="32" wsName="Datasets"/>
@@ -338,7 +338,7 @@
 
     <wsQuery name="GenesByTextSearch" includeProjects="ApiDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-            <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+            <paramRef ref="organismParams.text_search_organism"/>
             <paramRef ref="geneParams.text_fields"/>
             <paramRef ref="geneParams.text_expression"/>
             <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
@@ -810,11 +810,12 @@ order by project_id,sns2.source_id
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id" />
+        <column name="project_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
         <sql>
             <![CDATA[
-            select distinct gf.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
                  dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
 		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
