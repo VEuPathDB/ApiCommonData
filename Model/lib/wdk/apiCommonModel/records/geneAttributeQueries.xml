@@ -312,6 +312,22 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- phylogenetic trees -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <sqlQuery name="PhylogeneticTree" isCacheable="false"
+                       displayName="Phylogenetic Tree" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="phyTreeId"/>
+            <sql>
+            <![CDATA[
+              select source_id as phyTreeId
+              from apidb.phylogenetictree
+              where source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- transcript sequence -->  

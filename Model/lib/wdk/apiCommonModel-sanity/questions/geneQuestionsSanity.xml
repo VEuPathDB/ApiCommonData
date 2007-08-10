@@ -45,6 +45,13 @@
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="150" maxOutputLength="1400">
+        <sanityParam name="sequenceId" value="DS113177"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuestion>
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Gene Type ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -89,6 +96,13 @@
           <sanityParam name="organism" value="Giardia intestinalis"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="TrichDB,ApiDB"
+                      pageStart="30" pageEnd="200"
+                      minOutputLength="100" maxOutputLength="500">
+          <sanityParam name="geneType" value="tRNA"/>
+          <sanityParam name="includePseudogenes" value="Yes"/>
+          <sanityParam name="organism" value="Trichomonas vaginalis"/>
+      </sanityQuestion>
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Exon Count ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -125,6 +139,14 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+   <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="num_exons_gte" value="2"/>
+        <sanityParam name="num_exons_lte" value="20"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Epitope ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -154,6 +176,13 @@
             pageStart="1" pageEnd="20"
             minOutputLength="40" maxOutputLength="70">
         <sanityParam name="organism" value="Giardia intestinalis"/>
+        <sanityParam name="epitope_confidence" value="Medium"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,TrichDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="0" maxOutputLength="70">
+        <sanityParam name="organism" value="TrichDB"/>
         <sanityParam name="epitope_confidence" value="Medium"/>
     </sanityQuestion>
 
@@ -189,6 +218,12 @@
           <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
       </sanityQuestion>
 
+      <sanityQuestion ref="GeneQuestions.GenesByEcNumber" includeProjects="ApiDB,TrichDB"
+                      minOutputLength="1" maxOutputLength="35"
+                      pageStart="1" pageEnd="20">
+          <sanityParam name="organism" value="Trichomonas vaginalis"/>
+          <sanityParam name="ec_number_pattern" value="2.7.7.-"/>
+      </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Mass spec ++ -->
@@ -270,6 +305,14 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByIsoelectricPoint" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1500" maxOutputLength="100000">
+        <sanityParam name="min_isoelectric_point" value="6"/>
+        <sanityParam name="max_isoelectric_point" value="10"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++  ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -306,6 +349,14 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1000" maxOutputLength="80000">
+        <sanityParam name="min_molecular_weight" value="10000"/>
+        <sanityParam name="max_molecular_weight" value="50000"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Secondary Structure ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -331,6 +382,18 @@
           <sanityParam name="max_strand" value="25"/>
           <sanityParam name="min_helix" value="5"/>
           <sanityParam name="organism" value="Giardia intestinalis"/>
+          <sanityParam name="max_helix" value="15"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="50" maxOutputLength="1200">
+          <sanityParam name="min_coil" value="65"/>
+          <sanityParam name="max_coil" value="75"/>
+          <sanityParam name="min_strand" value="15"/>
+          <sanityParam name="max_strand" value="25"/>
+          <sanityParam name="min_helix" value="5"/>
+          <sanityParam name="organism" value="Trichomonas vaginalis"/>
           <sanityParam name="max_helix" value="15"/>
     </sanityQuestion>
 
@@ -386,6 +449,18 @@
           <sanityParam name="-b" value="25"/>
     </sanityQuestion>
 
+   <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="20" maxOutputLength="30">
+          <sanityParam name="BlastQueryType" value="Protein"/>
+          <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
+          <sanityParam name="BlastQuerySequence" value="HRAAMCGLFNLGNNWIDVEPYETLQKTWSRVVVTLQHISEKFPDCRVFVVCGIDFVQRWN"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Motif Search ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -416,6 +491,13 @@
             minOutputLength="1" maxOutputLength="10">
         <sanityParam name="motif_expression" value="CC6+RK"/>
         <sanityParam name="motif_organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
+
+   <sanityQuestion ref="GeneQuestions.GenesByMotifSearch" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="10">
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -454,6 +536,14 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByInterproDomain" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="200">
+        <sanityParam name="domain_database" value="PRODOM"/>
+        <sanityParam name="domain_accession" value="PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"/>
+        <sanityParam name="organism" value=""Trichomonas vaginalis/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Go Term ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -484,6 +574,13 @@
             minOutputLength="100" maxOutputLength="2000">
         <sanityParam name="go_term" value="catalytic activity"/>
         <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="2000">
+        <sanityParam name="go_term" value="catalytic activity"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -545,6 +642,14 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1000" maxOutputLength="1200">
+        <sanityParam name="min_tm" value="2"/>
+        <sanityParam name="max_tm" value="5"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Signal Peptide ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -574,6 +679,13 @@
             pageStart="1" pageEnd="20"
             minOutputLength="200" maxOutputLength="1200">
         <sanityParam name="organism" value="Giardia intestinalis"/>
+        <sanityParam name="min_sigp_sum_score" value="3"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithSignalPeptide" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="200" maxOutputLength="2000">
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
         <sanityParam name="min_sigp_sum_score" value="3"/>
     </sanityQuestion>
 
@@ -655,6 +767,13 @@
         <sanityParam name="single_gene_id" value="GL50803_2101"/>
     </sanityQuestion>
 
+
+    <sanityQuestion ref="GeneQuestions.GeneBySingleLocusTag" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="single_gene_id" value="TVAG_071070"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -681,6 +800,12 @@
             pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="ds_gene_ids" value="GL50803_2101"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GeneByLocusTag" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="ds_gene_ids" value="TVAG_071070"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -727,6 +852,16 @@
         <sanityParam name="organism" value="Giardia intestinalis"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesByTextSearch" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="text_expression" value="membrane"/>
+        <sanityParam name="whole_words" value="yes"/>
+        <sanityParam name="max_pvalue" value="-30"/>
+        <sanityParam name="text_fields" value="Gene product"/>
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Taxon ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -753,6 +888,12 @@
             pageStart="1" pageEnd="20"
             minOutputLength="5000" maxOutputLength="20000">
         <sanityParam name="organism" value="Giardia intestinalis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTaxon" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="5000" maxOutputLength="100000">
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -799,7 +940,19 @@
             pageStart="1" pageEnd="20"
             minOutputLength="400" maxOutputLength="500">
         <sanityParam name="organism" value="Giardia intestinalis"/>
-        <sanityParam name="libraryId" value="library_id_goes_here"/>
+        <sanityParam name="libraryId" value="trophozoite cDNA"/>
+        <sanityParam name="bp_overlap_gte" value="100"/>
+        <sanityParam name="best_alignment_only" value="Yes"/>
+        <sanityParam name="high_confidence_only" value="No"/>
+        <sanityParam name="min_percent_identity" value="90"/>
+        <sanityParam name="min_percent_est_aligned" value="20"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="TrichDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="400" maxOutputLength="500">
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+        <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
         <sanityParam name="high_confidence_only" value="No"/>
