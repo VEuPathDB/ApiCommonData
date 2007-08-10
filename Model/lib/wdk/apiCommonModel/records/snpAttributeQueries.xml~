@@ -1,0 +1,62 @@
+<wdkModel>
+    <querySet name="OrfAttributes">
+
+        <sqlQuery name="Bfmv" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="nas_id" sortingTable="apidb.OrfAttributes" />
+            <!--column name="orf_id" sortingTable="apidb.OrfAttributes" sortingColumn="source_id" /-->
+            <column name="length" sortingTable="apidb.OrfAttributes" />
+            <column name="organism" sortingTable="apidb.OrfAttributes" />
+            <column name="formatted_organism" sortingTable="apidb.OrfAttributes" sortingColumn="organism" />
+            <column name="orf_start" sortingTable="apidb.OrfAttributes" sortingColumn="start_min" />
+            <column name="orf_end" sortingTable="apidb.OrfAttributes" sortingColumn="end_max" />
+            <column name="orf_start_text" sortingTable="apidb.OrfAttributes" sortingColumn="start_min" />
+            <column name="orf_end_text" sortingTable="apidb.OrfAttributes" sortingColumn="end_max" />
+            <column name="orf_strand" sortingTable="apidb.OrfAttributes" sortingColumn="is_reversed" />
+            <sql>
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.nas_id, bfmv.length, bfmv.organism, bfmv.ncbi_tax_id,
+                       '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                       REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                      chr(38) || 'nbsp;') || '</i>'
+                         AS formatted_organism,
+                      bfmv.start_min as orf_start,bfmv.end_max as orf_end,
+                      trim(to_char(bfmv.end_max,'999,999,999')) as orf_end_text,
+                      trim(to_char(bfmv.start_min,'999,999,999')) as orf_start_text,
+                      decode(bfmv.is_reversed,0,'+',1,'-',null) as orf_strand
+                FROM apidb.OrfAttributes bfmv
+                WHERE bfmv.source_id = $$primaryKey$$
+                  AND bfmv.project_id = $$projectId$$
+        ]]>
+           </sql>
+        </sqlQuery>
+
+	<sqlQuery name="Sequence" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="sequence"/>
+            <sql excludeProjects="ApiDB">
+               SELECT nf.source_id,ts.sequence, $$projectId$$ as project_id
+               FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
+                    dots.NaFeature nf
+               WHERE nf.source_id = $$primaryKey$$
+                 AND nf.na_feature_id = tf.na_feature_id
+                 AND ts.aa_sequence_id = tf.aa_sequence_id
+           </sql>
+           <sql includeProjects="ApiDB">
+                  SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
+                	  from dots.TranslatedAASequence taas,
+                      	 sres.SequenceOntology s,
+                      	 sres.ExternalDatabaseRelease extr,
+         	         sres.ExternalDatabase ext
+                	 WHERE taas.source_id = $$primaryKey$$
+                    	  AND  taas.sequence_ontology_id = s.sequence_ontology_id
+                    	  AND s.term_name = 'ORF'
+                   	  AND taas.external_database_release_id=extr.external_database_release_id
+                 	  AND extr.external_database_id=ext.external_database_id
+                   	  AND ext.name=LOWER($$projectId$$)
+           </sql>
+        </sqlQuery>
+    </querySet>
+</wdkModel>

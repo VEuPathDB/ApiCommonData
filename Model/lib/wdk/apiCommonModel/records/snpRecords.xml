@@ -1,0 +1,174 @@
+<wdkModel>
+
+  <!-- notes
+
+    why does bfmv have 3D7 Allele in toxo (old model has this)
+
+  -->
+
+    <recordClassSet name="SnpRecordClasses" includeProjects="ToxoDB,PlasmoDB,ApiDB">
+
+        <recordClass idPrefix="" name="SnpRecordClass" type="SNP">
+
+           <projectParamRef ref="recordParams.Project"/>
+
+          <!-- =============================================================== -->
+          <!--   Reporters -->  
+          <!-- =============================================================== -->
+
+          <reporter name="tabular" displayName="Summary - TAB Delimited"
+                      implementation="org.gusdb.wdk.model.report.TabularReporter" />
+          <reporter name="fullRecord" displayName="Detailed"
+                      implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+           <!-- =================================================================== -->
+           <!--  Attributes  ++++++++-->
+           <!-- =================================================================== -->
+
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+              <!-- BFMV attributes -->  
+              <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+            <attributeQueryRef ref="SnpAttributes.Bfmv">
+              <columnAttribute displayName="Dataset" name="dataset"
+                               internal="true" inReportMaker="true"/>
+              <columnAttribute displayName="Dataset_hidden"
+                               name="dataset_hidden" internal="true"
+                               inReportMaker="false"/>
+               <linkAttribute inReportMaker="false" displayName="SNP provider"
+                              name="provider_link" visible="$$dataset$$">
+                 <url>
+                    <![CDATA[
+                       showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=$$dataset_hidden$$&title=SNPs%20Summary
+                        ]]>
+                 </url>
+              </linkAttribute>
+
+              <columnAttribute displayName="Chromosome" name="seq_source_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Location" name="snp_location"/>
+              <columnAttribute displayName="Position" name="start_min" internal="true"/>
+              <columnAttribute displayName="Reference Strain" name="reference_strain" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reference NA" name="reference_na" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Reference AA" name="reference_aa" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Strains" name="strains" internal="false"/>
+              <columnAttribute displayName="Left Flank" name="lflank"/>
+              <columnAttribute displayName="3D7 Allele" name="allele" align="center"/>
+              <columnAttribute displayName="Right Flank" name="rflank"/>
+              <columnAttribute inReportMaker="true" displayName="Gene ID"
+                               name="gene_source_id" internal="true"/>
+               <linkAttribute inReportMaker="false" displayName="Gene ID"
+                              name="linkedGeneId" visible="$$gene_source_id$$">
+                 <url>
+                    <![CDATA[
+                       showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$gene_source_id$$
+                        ]]>
+                 </url>
+              </linkAttribute>
+              <columnAttribute displayName="Gene strand" name="gene_strand"/>
+              <columnAttribute displayName="Coding" name="is_coding" align="center"/>
+              <columnAttribute displayName="Position in CDS" name="position_in_CDS" align="center"/>
+              <columnAttribute displayName="Position in protein" name="position_in_protein" align="center"/>
+              <columnAttribute displayName="Non-synonymous" name="has_nonsynonymous_allele" align="center"/>
+              <columnAttribute displayName="Strains (gene strand)" name="strains_gene_strand" internal="false" inReportMaker="true"/>
+              <columnAttribute displayName="Left Flank (gene strand)" name="lflank_gene_strand"/>
+              <columnAttribute displayName="3D7 Allele (gene strand)" name="allele_gene_strand" align="center"/>
+              <columnAttribute displayName="Right Flank (gene strand)" name="rflank_gene_strand"/>
+              <columnAttribute displayName="Major Allele Count" name="major_allele_count" align="center"/>
+              <columnAttribute displayName="Minor Allele Count" name="minor_allele_count" align="center"/>
+              <columnAttribute displayName="Major Allele" name="major_allele" align="center"/>
+              <columnAttribute displayName="Minor Allele" name="minor_allele" align="center"/>
+              <columnAttribute displayName="Major Product" name="major_product" align="center"/>
+              <columnAttribute displayName="Minor Product" name="minor_product" align="center"/>
+              <columnAttribute displayName="Organism" name="organism" internal="true" inReportMaker="true"/>
+              <columnAttribute displayName="Organism" name="formatted_organism" inReportMaker="false" internal="false"/>
+              <columnAttribute displayName="NCBI Taxon ID" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
+            </attributeQueryRef>
+
+          <!-- =================================================================== -->
+          <!--  Text Attributes  ++++++++-->
+          <!-- =================================================================== -->
+
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!-- overview -->  
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <textAttribute name="snp_overview" displayName="SNP Genomic Overview" inReportMaker="false" internal="true">
+               <text>
+                    <![CDATA[
+                    <table>
+                    <tr><td width="220"><b>Location:</b></td><td>$$snp_location$$</td></tr>
+                    <tr><td width="220"><b>Reference:</b></td><td>Strain: $$reference_strain$$, Allele: $$reference_na$$ </td></tr>
+                    <tr><td width="220"><b>Major Allele:</b></td><td>$$major_allele$$ ($$major_allele_count$$), Product: $$major_product$$ </td></tr>
+                    <tr><td width="220"><b>Minor Allele:</b></td><td>$$minor_allele$$ ($$minor_allele_count$$), Product: $$minor_product$$ </td></tr>
+		    <tr><td width="220"><b>Left Flank:</b></td><td><font class="fixed">$$lflank$$</font></td></tr>
+		    <tr><td width="220"><b>$$reference_strain$$ Allele:</b></td><td> <font class="fixed">$$allele$$</font></td></tr>
+		    <tr><td width="220"><b>Right Flank:</b></td><td><font class="fixed">$$rflank$$</font></td></tr>
+                    <tr><td width="220"><b>Provider:</b></td><td><a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=$$dataset_hidden$$&title=SNPs%20Summary">$$dataset$$</a></td></tr>
+                    </table>
+                ]]>
+               </text>
+           </textAttribute>
+
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!-- gene context -->  
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+           <textAttribute name="gene_context" displayName="Gene Context" inReportMaker="false" >
+               <text>
+                    <![CDATA[
+                    <table>
+                    <tr><td width="220"><b>Gene ID:</b></td><td><a href="showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$gene_source_id$$">$$gene_source_id$$</a></td></tr>
+                    <tr><td width="220"><b>Gene Strand:</b></td><td>$$gene_strand$$</td></tr>
+                    <tr><td width="220"><b>Coding?:</b></td><td>$$is_coding$$</td></tr>
+                    <tr><td width="220"><b>Position in CDS:</b></td><td>$$position_in_CDS$$</td></tr>
+                    <tr><td width="220"><b>Position in Protein:</b></td><td>$$position_in_protein$$</td></tr>
+		    <tr><td width="220"><b>Left Flank (Gene Strand):</b></td><td><font class="fixed">$$lflank_gene_strand$$</font></td></tr>
+		    <tr><td width="220"><b>$$reference_strain$$ Allele (Gene Strand):</b></td><td> <font class="fixed">$$allele_gene_strand$$</font></td></tr>
+		    <tr><td width="220"><b>Right Flank (Gene Strand):</b></td><td><font class="fixed">$$rflank_gene_strand$$</font></td></tr>
+                    </table>
+                ]]>
+               </text>
+           </textAttribute>
+
+       <!-- =================================================================== -->
+       <!-- Tables ++++++++-->
+       <!-- =================================================================== -->
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- strains table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="Strains"
+                 displayName="Strains"
+                 queryRef="SnpTables.Strains">
+              <columnAttribute displayName="Strain" name="strain"/>
+              <columnAttribute displayName="Type" name="phenotype"/>
+              <columnAttribute displayName="Allele" name="allele" align="center"/>
+              <columnAttribute displayName="Allele (gene strand)" name="allele_gene_strand" align="center"/>
+              <columnAttribute displayName="Product" name="product" align="center"/>
+          </table>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!--  Providers table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="Providers_other_SNPs"
+                 displayName="Other SNPs at this location including combined SNPs"
+                 queryRef="SnpTables.Providers">
+              <columnAttribute name="source_id_link" internal="true"/>
+              <linkAttribute inReportMaker="false" displayName="SNP ID"
+                             name="linkedSourceId"
+                             visible="$$source_id_link$$">
+                 <url>
+                    <![CDATA[
+                       showRecord.do?name=SnpRecordClasses.SnpRecordClass&project_id=&primary_key=$$source_id_link$$
+                        ]]>
+                 </url>
+              </linkAttribute>
+              <columnAttribute displayName="Provider" name="name"/>
+          </table>
+
+
+        </recordClass>
+
+    </recordClassSet>
+</wdkModel>
+

@@ -1,0 +1,113 @@
+<wdkModel>
+    <querySet name="SnpAttributes">
+
+        <sqlQuery name="Bfmv" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="dataset" sortingTable="apidb.SnpAttributes"
+                    lowerCase="true"/>
+            <column name="dataset_hidden" sortingTable="apidb.SnpAttributes"
+                    sortingColumn="dataset" lowerCase="true"/>
+            <column name="seq_source_id" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
+            <column name="snp_location" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
+            <column name="start_min" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
+            <column name="is_coding" sortingTable="apidb.SnpAttributes" />
+            <column name="position_in_CDS" sortingTable="apidb.SnpAttributes" />
+            <column name="position_in_protein" sortingTable="apidb.SnpAttributes" />
+            <column name="has_nonsynonymous_allele" sortingTable="apidb.SnpAttributes" />
+            <column name="gene_source_id" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
+            <column name="gene_strand" sortingTable="apidb.SnpAttributes" />
+            <column name="strains"  sortingTable="apidb.SnpAttributes" />
+            <column name="strains_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="strains" lowerCase="true"/>
+            <column name="lflank" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
+            <column name="allele" sortingTable="apidb.SnpAttributes" sortingColumn="reference_na" lowerCase="true"/>
+            <column name="rflank" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
+            <column name="lflank_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="lflank" lowerCase="true"/>
+            <column name="allele_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="allele" lowerCase="true"/>
+            <column name="rflank_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="rflank" lowerCase="true"/>
+            <column name="organism" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
+            <column name="formatted_organism" sortingTable="apidb.SnpAttributes" sortingColumn="organism" />
+            <column name="ncbi_tax_id" sortingTable="apidb.SnpAttributes" />
+            <column name="minor_allele_count" sortingTable="apidb.SnpAttributes" />
+            <column name="major_allele_count" sortingTable="apidb.SnpAttributes" />
+            <column name="minor_product" sortingTable="apidb.SnpAttributes" />
+            <column name="major_product" sortingTable="apidb.SnpAttributes" />
+            <column name="minor_allele" sortingTable="apidb.SnpAttributes" />
+            <column name="major_allele" sortingTable="apidb.SnpAttributes" />
+            <column name="reference_na" sortingTable="apidb.SnpAttributes" />
+            <column name="reference_aa" sortingTable="apidb.SnpAttributes" />
+            <column name="reference_strain" sortingTable="apidb.SnpAttributes" />
+            <sqlParamValue includeProjects="ApiDB" name="datasets">
+                 'SNPs from alignments of GT1, VEG and RH (AmitAlignmentSnps)', 'Genomic Sequence SNPs', 
+                 'John Boothroyd lab at Stanford (ME49_SNPs)', 'EST-based SNPs',
+                 'Genetic Markers - David Sibley (GeneticMarkers_Sibley)', 'GeneticMarkers_Sibley',
+                 'NIH SNPs', 'Su_SNPs',
+                 'Broad SNPs', 'Broad_SNPs',
+                 'Sanger falciparum SNPs', 'sangerItGhanaSnps',
+                 'Sanger reichenowi SNPs', 'sangerReichenowiSnps',
+                 'PlasmoDB combined SNPs', 'plasmoDbCombinedSnps',
+            </sqlParamValue>
+            <sqlParamValue includeProjects="PlasmoDB" name="datasets">
+                 'NIH SNPs', 'Su_SNPs',
+                 'Broad SNPs', 'Broad_SNPs',
+                 'Sanger falciparum SNPs', 'sangerItGhanaSnps',
+                 'Sanger reichenowi SNPs', 'sangerReichenowiSnps',
+                 'PlasmoDB combined SNPs', 'plasmoDbCombinedSnps'
+            </sqlParamValue>
+            <sqlParamValue includeProjects="ToxoDB" name="datasets">
+                 'SNPs from alignments of GT1, VEG and RH (AmitAlignmentSnps)', 'Genomic Sequence SNPs', 
+                 'John Boothroyd lab at Stanford (ME49_SNPs)', 'EST-based SNPs',
+                 'Genetic Markers - David Sibley (GeneticMarkers_Sibley)', 'GeneticMarkers_Sibley'
+            </sqlParamValue>
+            <sql>
+            <![CDATA[
+           SELECT bfmv.source_id, bfmv.dataset,
+                  DECODE(bfmv.dataset, &&datasets&&, bfmv.dataset) AS dataset_hidden,
+                  bfmv.seq_source_id, bfmv.start_min, bfmv.reference_strain,
+                  bfmv.reference_na, bfmv.is_coding, bfmv.position_in_CDS,
+                  bfmv.position_in_protein, bfmv.reference_aa, bfmv.has_nonsynonymous_allele,
+                  bfmv.gene_source_id, bfmv.gene_strand, bfmv.lflank,
+                  bfmv.rflank, bfmv.reference_na as allele, bfmv.organism, bfmv.ncbi_tax_id,
+                  '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                  REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                 chr(38) || 'nbsp;') || '</i>'
+                    AS formatted_organism,
+                  bfmv.minor_allele_count, bfmv.major_allele_count,bfmv.minor_product,
+                  bfmv.major_product,bfmv.major_allele,bfmv.minor_allele,bfmv.strains,bfmv.strains_revcomp,
+                  bfmv.seq_source_id || ': ' || trim(to_char(bfmv.start_min,'99,999,999')) as snp_location,
+                  CASE WHEN bfmv.gene_strand = 'reverse' THEN apidb.reverse_complement(bfmv.rflank) 
+                       WHEN bfmv.gene_strand is null THEN ''
+                       ELSE bfmv.lflank  END as lflank_gene_strand,
+                  CASE WHEN bfmv.gene_strand = 'reverse' THEN apidb.reverse_complement(bfmv.lflank) 
+                       WHEN bfmv.gene_strand is null THEN ''
+                       ELSE bfmv.rflank  END as rflank_gene_strand,
+                  CASE WHEN bfmv.gene_strand = 'reverse' THEN apidb.reverse_complement(bfmv.reference_na) 
+                       WHEN bfmv.gene_strand is null THEN ''
+                       ELSE bfmv.reference_na END as allele_gene_strand,
+                  CASE WHEN bfmv.gene_strand = 'reverse' THEN bfmv.strains_revcomp 
+                       WHEN bfmv.gene_strand is null THEN ''
+                       ELSE bfmv.strains END as strains_gene_strand
+       FROM   apidb.SnpAttributes bfmv
+       WHERE  bfmv.source_id = $$primaryKey$$
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Sequence" isCacheable="false">
+            <paramRef ref="params.primaryKey"/>
+            <column name="lflank"/>
+            <column name="allele"/>
+            <column name="rflank"/>
+            <sql>
+            <![CDATA[    
+            select SUBSTR(nas.sequence,l.start_min - 50,50) as lflank,
+            SUBSTR(nas.sequence,l.start_min,1) as allele,
+            SUBSTR(nas.sequence,l.start_min + 1,50) as rflank
+            from  dots.nasequence nas, dots.snpfeature sf, dots.nalocation l
+            where sf.source_id = $$primaryKey$$
+            and sf.na_sequence_id = nas.na_sequence_id
+            and l.na_feature_id = sf.na_feature_id
+             ]]>
+           </sql>
+        </sqlQuery>
+    </querySet>
+</wdkModel>
