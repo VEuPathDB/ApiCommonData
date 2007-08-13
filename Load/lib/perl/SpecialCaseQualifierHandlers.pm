@@ -134,8 +134,9 @@ sub sourceIdAndTranscriptSeq {
     my $order = 1;
 
     for my $exon (@exonsSorted) {
+      my $sourceId = "$tagValues[0]-$order";
       $exon->setOrderNumber($order);
-      $exon->setSourceId('$tagValues[0]-$order');
+      $exon->setSourceId("$sourceId");
       $order++;
 
       my $chunk = $exon->getFeatureSequence();
