@@ -337,7 +337,9 @@ sub runR {
     GUS::Community::RadAnalysis::ProcessorError->new("File [$script] does not exist")->throw();
   }
 
-  my $command = "echo 'inputFile=\"$inputFile\"; outputFile=\"$outputFile\"' | cat - $script  | R --no-save";
+  my $executable = $self->getPathToExecutable() ? $self->getPathToExecutable() : 'R';
+
+  my $command = "echo 'inputFile=\"$inputFile\"; outputFile=\"$outputFile\"' | cat - $script  | $executable --no-save";
 
   my $systemResult = system($command);
 

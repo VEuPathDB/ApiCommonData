@@ -371,7 +371,9 @@ sub runR {
 
   my $args = "knnNeighbors = $knnNeighbors; inputFile = \"$inputFile\"; outputFile = \"$outputFile\"; statistic = \"$statistic\"; numPermutations = $numPermutations; ";
 
-  my $command = "echo '$args' | cat - $script  | R --no-save";
+  my $executable = $self->getPathToExecutable() ? $self->getPathToExecutable() : 'R';
+
+  my $command = "echo '$args' | cat - $script  | $executable --no-save";
   #print STDERR $command."\n";
 
   my $systemResult = system($command);

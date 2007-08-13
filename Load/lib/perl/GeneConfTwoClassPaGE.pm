@@ -493,7 +493,9 @@ sub runPage {
 
   my $isPairedArg = $isPaired ? "--paired" : "--unpaired";
 
-  my $pageCommand = "$PAGE --infile $pageIn --outfile $pageOut --output_gene_confidence_list --output_text --num_channels $channels $isLoggedArg $isPairedArg --level_confidence $LEVEL_CONFIDENCE --use_logged_data --tstat --min_presence $MIN_PRESCENCE --missing_value NA $design";
+  my $executable = $self->getPathToExecutable() ? $self->getPathToExecutable() : $PAGE;
+
+  my $pageCommand = "$executable --infile $pageIn --outfile $pageOut --output_gene_confidence_list --output_text --num_channels $channels $isLoggedArg $isPairedArg --level_confidence $LEVEL_CONFIDENCE --use_logged_data --tstat --min_presence $MIN_PRESCENCE --missing_value NA $design";
 
   my $systemResult = system($pageCommand);
 
