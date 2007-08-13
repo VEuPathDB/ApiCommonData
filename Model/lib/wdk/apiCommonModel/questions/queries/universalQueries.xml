@@ -5,10 +5,28 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--   -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <wsQuery name="Blast" displayName="BLAST"
+    <wsQuery name="Blast" displayName="BLAST" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
              processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
-       <paramRef ref="sharedParams.BlastDatabaseOrganism"/>
+       <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
+       <paramRef ref="sharedParams.BlastQueryType"/>
+       <paramRef ref="sharedParams.BlastQuerySequence"/>
+       <paramRef ref="sharedParams.-e"/>
+       <paramRef ref="sharedParams.-v"/>
+       <paramRef ref="sharedParams.-b"/>
+       <paramRef ref="sharedParams.-filter"/>
+
+       <wsColumn name="source_id" width="32" wsName="Identifier"/>
+       <wsColumn name="TabularRow" width="3000"/>
+       <wsColumn name="Alignment" width="4000"/>
+       <wsColumn name="Header" width="3000"/>
+       <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
+
+    <wsQuery name="Blast" displayName="BLAST" includeProjects="CryptoDB"
+             processName="org.apidb.apicomplexa.wsfplugin.ncbiblast.NcbiBlastPlugin">
+       <paramRef ref="sharedParams.BlastDatabaseType"/>
+       <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastQueryType"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>

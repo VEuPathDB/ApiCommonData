@@ -1,4 +1,6 @@
-    <!-- this is NOT a gene query.  it belongs in a "universalQuestions" query set.  here for bkwd compat -->
+<wdkModel>
+  <questionSet name="universalQuestions" displayName="">
+
     <!-- should invent a dummy record class for the return type -->
     <question name="UnifiedBlast"
          displayName="BLAST"
@@ -10,7 +12,20 @@
              Search any type of subject with BLAST.
             ]]>
         </summary>
-         <description>
+         <description includeProjects="CryptoDB">
+           <![CDATA[
+             Find genes, genomic sequences, ESTs, or ORFs that have BLAST
+             similarity to your input sequence.
+             <p>
+             (<b>Note:</b> not all species have Genes or ESTs available.)
+             <p>The search uses
+             <a href="http://blast.wustl.edu/">WU BLAST</a>.
+             <p><b>Note:</b> If you get <b>0 Results</b> it may be because
+             not all <i>Targets</i> are available for all
+             Cryptosporidium species.
+          ]]>
+         </description>
+         <description includeProjects="PlasmoDB">
            <![CDATA[
              Find genes, genomic sequences, ESTs, or ORFs that have BLAST
              similarity to your input sequence.
@@ -22,6 +37,14 @@
              not all <i>Targets</i> are available for all
              Plasmodium species.  <i>PlasmoDB does not contain any Genes or ESTs
              for P.gallinacium, P.knowlesi, P.reichenowi.</i>
+          ]]>
+         </description>
+         <description includeProjects="ToxoDB,GiardiaDB,TrichDB">
+           <![CDATA[
+             Find genes, genomic sequences, ESTs, or ORFs that have BLAST
+             similarity to your input sequence. 
+             <p>The search uses
+             <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
           ]]>
          </description>
          <dynamicAttributes>
