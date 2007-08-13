@@ -1,0 +1,36 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == questions == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Similarity ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="PlasmoDB"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastDatabaseType" value="Transcripts"/>
+        <sanityParam name="BlastDatabaseOrganism" value="Plasmodium falciparum"/>
+        <sanityParam name="-e" value="0.05"/>
+        <sanityParam name="-v" value="50"/>
+        <sanityParam name="-b" value="50"/>
+        <sanityParam name="BlastQuerySequence" value="GTGCCCTTGAATATGAATATTATAAGCATACTAATGGCGGTGGTAAGGGTAAAAGGTATCCGTGTACAGAGTTAGGTGAAAAAGTAGAACCACGTTTTTCGGATACACTTGGTGGTCAGTGTACTAACAAAAA"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="ToxoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
+          <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
+          <sanityParam name="-e" value="0.01"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+
+</sanityModel>

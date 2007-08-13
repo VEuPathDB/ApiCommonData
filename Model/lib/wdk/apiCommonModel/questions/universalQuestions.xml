@@ -1,17 +1,20 @@
 <wdkModel>
-  <questionSet name="universalQuestions" displayName="">
+  <questionSet name="UniversalQuestions" displayName="">
 
     <!-- should invent a dummy record class for the return type -->
     <question name="UnifiedBlast"
          displayName="BLAST"
          queryRef="UniversalIds.Blast"
-         summary="organism,Header,TabularRow,Alignment,Footer"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
          <summary>
            <![CDATA[
              Search any type of subject with BLAST.
             ]]>
         </summary>
+        
+         <attributesList 
+           summary="organism,Header,TabularRow,Alignment,Footer"
+         />
          <description includeProjects="CryptoDB">
            <![CDATA[
              Find genes, genomic sequences, ESTs, or ORFs that have BLAST
@@ -58,3 +61,5 @@
                               inReportMaker="false"/>
          </dynamicAttributes>
     </question>
+  </questionSet>
+</wdkModel>
