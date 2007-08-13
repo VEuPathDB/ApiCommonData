@@ -1132,7 +1132,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
     my $sql = <<"EOF";
     SELECT replace(tn.name, ' ', '_')
@@ -1327,7 +1327,7 @@ EOF
 }
 
 sub makeDownloadFile {
-    my ($mgr, $species, $name, $sql) = @_;
+    my ($mgr, $species, $name, $sql, $project) = @_;
 
     my $signal = "${name}DownloadFile";
 
@@ -1335,7 +1335,7 @@ sub makeDownloadFile {
 
     my $propertySet = $mgr->{propertySet};
     my $release = $propertySet->getProp('projectRelease');
-    my $projectDB = $propertySet->getProp('projectDB');
+    my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
 
     my $dlDir = "$mgr->{pipelineDir}/data/downloadSite/$species";
     unless (-e $dlDir) {
@@ -2993,12 +2993,13 @@ sub startTranscriptAlignToContigs {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop,$queryNcbiTaxId) = @_;
   my $propertySet = $mgr->{propertySet};
   my $dataDir = $mgr->{'dataDir'};
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
   my $queryDbRlsId = &getDbRlsId($mgr,$qDbName,$qDbRlsVer) if ($qDbName && $qDbRlsVer);
   my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
+  my $queryTaxonId = $queryNcbiTaxId ? &getTaxonId($mgr, $queryNcbiTaxId) : $taxonId;
   my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
   my $qFile = "$dataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
   $qFile =  "$dataDir/seqfiles/$querySeqFile" if $querySeqFile;
@@ -3017,7 +3018,7 @@ sub loadContigAlignments {
   my $tTabId = &getTableId($mgr, $targetTable);
 
   my $args = "--blat_files '$pslFile' --query_file $tmpFile --action '$action' --queryRegex '$regex'"
-    . " --query_table_id $qTabId --query_taxon_id $taxonId"
+    . " --query_table_id $qTabId --query_taxon_id $queryTaxonId"
   . " --target_table_id  $tTabId --target_db_rel_id $genomeDbRlsId --target_taxon_id $taxonId"
     . " --max_query_gap 5 --min_pct_id 95 --max_end_mismatch 10"
       . " --end_gap_factor 10 --min_gap_pct 90 "
