@@ -2096,11 +2096,13 @@ sub InsertExpressionProfileFromProcessedResult {
 }
 
 sub InsertRadAnalysisFromConfig {
-  my ($mgr, $configFile, $name) = @_;
+  my ($mgr, $configFile, $name, $executable) = @_;
+
+  my $optionalExecutable = $executable ? "--pathToExecutable $executable" : '';
 
   return if $mgr->startStep("Loading Rad Analysis for $name", $name);
 
-  my $args = "--configFile $configFile";
+  my $args = "--configFile $configFile $optionalExecutable";
 
   $mgr->runPlugin($name,
                   "GUS::Community::Plugin::InsertBatchRadAnalysis",
