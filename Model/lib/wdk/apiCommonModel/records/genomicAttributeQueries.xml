@@ -251,7 +251,8 @@
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.TaxonName tn
-            where ns.source_id = $$primaryKey$$
+            where gs.source_id = $$primaryKey$$
+              and ns.na_sequence_id = gs.na_sequence_id
               and ns.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
               and ns.taxon_id = tn.taxon_id
