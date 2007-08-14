@@ -3,8 +3,7 @@
   <!-- Non-nuclear location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
-    <question name="GenesByNonnuclearLocation"  excludeProjects="CryptoDB"
+    <question name="GenesByNonnuclearLocation"  includeProjects="PlasmoDB,ToxoDB,ApiDB"
          category="Genomic Position"
          displayName="Non-nuclear Chromosomal Location"
          queryRef="GeneFeatureIds.GenesByNonnuclearGenomicRegion"
@@ -15,6 +14,7 @@
          sorting="organism,location_text asc"
         />
 
+<!-- not implemented yet
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
         </propertyList>
@@ -25,7 +25,7 @@
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
         </propertyList>
-
+-->
         <summary>
         Find genes that are located in a specified region of the non-nuclear genome.
         </summary>
@@ -36,15 +36,13 @@
           ]]>
         </description>
     </question>
-  PHASE 2 --> 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Centromere -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
-    <question name="GenesByCentromereProximity"
-              includeProjects="PlasmoDB, ApiDB"
+
+    <question name="GenesByCentromereProximity" includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Centromeres"
               category="Genomic Position"
               queryRef="GeneFeatureIds.GenesByCentromereProximity"
@@ -63,9 +61,12 @@
               Find genes within a given distance from an annotated centromere location.
           ]]>
         </description>
+
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <dynamicAttributes>
           <columnAttribute name="dist_centromere" displayName="Distance from Centromere"/>
         </dynamicAttributes>
@@ -74,12 +75,11 @@
          sorting="organism,location_text asc"
         />
     </question>
-  PHASE 2 -->
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Telomere -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByTelomereProximity"
               includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Telomeres"
@@ -103,18 +103,18 @@
         <dynamicAttributes>
           <columnAttribute name="dist_telomere" displayName="Distance from Telomere"/>
         </dynamicAttributes>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Non-nuclear location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByNonnuclearLocation"  excludeProjects="CryptoDB"
          category="Genomic Position"
          displayName="Non-nuclear Chromosomal Location"
@@ -126,6 +126,7 @@
          sorting="organism,location_text asc"
         />
 
+<!-- not implemented yet
         <propertyList name="organism" includeProjects="PlasmoDB">
            <value value="P. falciparum"/>
         </propertyList>
@@ -136,6 +137,7 @@
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
         </propertyList>
+-->
 
         <summary>
         Find genes that are located in a specified region of the non-nuclear genome.
@@ -147,13 +149,11 @@
           ]]>
         </description>
     </question>
-  PHASE 2 --> 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Centromere -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByCentromereProximity"
               includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Centromeres"
@@ -174,9 +174,12 @@
               Find genes within a given distance from an annotated centromere location.
           ]]>
         </description>
+
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <dynamicAttributes>
           <columnAttribute name="dist_centromere" displayName="Distance from Centromere"/>
         </dynamicAttributes>
@@ -185,12 +188,11 @@
          sorting="organism,location_text asc"
         />
     </question>
-  PHASE 2 -->
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Telomere -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByTelomereProximity"
               includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Telomeres"
@@ -214,18 +216,18 @@
         <dynamicAttributes>
           <columnAttribute name="dist_telomere" displayName="Distance from Telomere"/>
         </dynamicAttributes>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- PDB similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB"
          displayName="PDB 3D Structures"
          category="Predicted Proteins"
@@ -249,13 +251,11 @@
             ]]>
         </description>
     </question>
-  PHASE 2 -->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Structure prediction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesWithStructurePrediction" includeProjects="PlasmoDB,ApiDB"
               displayName="Predicted 3D Structure"
               category="Predicted Proteins"
@@ -265,9 +265,11 @@
               summary="organism,location_text,product"
               sorting="organism asc, location_text asc"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <summary>
           <![CDATA[
               Find genes that have
@@ -287,14 +289,12 @@
           ]]>
         </description>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Protein low complxity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesWithProteinLowComplexity"  includeProjects="PlasmoDB,ApiDB"
               displayName="Low Complexity Proteins"
               category="Predicted Proteins"
@@ -303,9 +303,11 @@
         <attributesList
               summary="product,organism"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <summary>
           <![CDATA[
 	  Find genes with low complexity amino acid sequence
@@ -317,16 +319,12 @@
           ]]>
         </description>
     </question>
-  PHASE 2 -->
-
-
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Y2H -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,ApiDB"
               displayName="Y2H Protein Interaction"
               category="Putative Function"
@@ -339,9 +337,11 @@
         <summary>
          Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
 Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.  <br><br>
@@ -387,14 +387,12 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
                        displayName="Query Gene Was" align="center"/>
         </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Functional interaction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByFunctionalInteraction" includeProjects="PlasmoDB,ApiDB"
          displayName="Predicted Functional Interaction"
          category="Putative Function"
@@ -409,9 +407,11 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
           Find genes of <i>P. falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
           ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum HB3"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
 Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
@@ -435,14 +435,12 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
                        displayName="Queries matched" align="center"/>
         </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Waters Differential Expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Diff. expression in DOZI mutant vs. WT"
@@ -455,9 +453,11 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
         <summary>
             <![CDATA[ Find genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. berghei"/>
         </propertyList>
+-->
         <description>
             <![CDATA[
 Find genes whose expression was found to be up-regulated or down-regulated based upon PaGE differential expression analysis in a microarray study of purified gametocytes where the PB000603.01.0 gene in P. berghei has been knocked out. It has been proposed (Mair et al. Science 2006) to name PB000603.01.0 protein "DOZI" for "development of of zygote inhibited."
@@ -474,13 +474,11 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
 	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
 	</dynamicAttributes>
     </question>
-  PHASE 2 -->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Differential mean expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Diff. expression (fold-change) in KO vs. WT"
@@ -495,9 +493,11 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
             Find genes by differential expression (fold-change) in Sir2 and invasion pathway KO studies
             ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
             <![CDATA[
 Find genes based on fold-change differences in expression by comparing assays of P. falciparum RNA when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in their associated controls. Please be aware that these are individual comparisons and not subjected to any statistical analysis.
@@ -523,14 +523,12 @@ References:
 	     <columnAttribute name="fold_change" displayName="Fold-change"/>
 	</dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Expression percentile in KO/WT -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Expression percentile in KO and WT"
@@ -545,9 +543,11 @@ References:
             Find genes by expression percentile from Sir2 KO and invasion pathway KO studies 
             ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
             <![CDATA[
 Find genes expressed when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in  their associated controls.
@@ -579,14 +579,12 @@ References:
 	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
 	</dynamicAttributes>
     </question>
-  PHAS 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Expression timing -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Timing"
          category="Transcript Expression"
@@ -598,9 +596,11 @@ References:
         <summary>
           Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
               Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.  Five intraerythrocytic time courses may be
@@ -613,16 +613,14 @@ References:
           ]]>
         </description>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->
+  <!-- Profile Similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,ApiDB"
-         displayName="Expression Profile Similarity (P.f.)"
+         displayName="Expression Profile Similarity"
          category="Transcript Expression"
          queryRef="GeneFeatureIds.GenesByProfileSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -634,9 +632,11 @@ References:
           Find genes that have a similar expression profile to your input gene.
           ]]>
          </summary>
+<!-- not implemented yet
          <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
            Find genes that have a (glass slide) expression profile similar to that of your input gene.
@@ -660,14 +660,12 @@ References:
              </textAttribute>
          </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->
+  <!-- Expression Percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Percentile"
          category="Transcript Expression"
@@ -682,9 +680,11 @@ References:
          schizont, late schizont, merozoite, sporozoite, or gametocyte.
           ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
         Find genes expressed in
@@ -729,14 +729,12 @@ References:
                              inReportMaker="false"/>
         </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- GametocyteExpression -->
+  <!-- Gametocyte Expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,ApiDB"
          displayName="Gametocyte Expression"
          category="Transcript Expression"
@@ -747,13 +745,14 @@ References:
         /> 
         <summary>
             <![CDATA[
-                Find genes by
-                percentile protein expression in gametocytes.
+                Find genes by percentile protein expression in gametocytes.
            ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <description>
             <![CDATA[
                 Find <i>Plasmodium falciparum</i> genes expressed during
@@ -782,14 +781,12 @@ References:
            ]]>
         </description>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Berghei expression percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Percentile"
          category="Transcript Expression"
@@ -803,9 +800,11 @@ References:
         Find genes expressed in late schizont, ring, early trophozoite and early schizont stages.
          ]]>
         </summary>
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. berghei"/>
         </propertyList>
+-->
         <description>
            <![CDATA[
 Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite, and early schizont stages. The stages were all hybridized with late trophozoites allowing us to use late trophozoites as a reference for this query.
@@ -814,24 +813,24 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
       ]]>
         </description>
     </question>
-  PHASE 2 -->
-
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Toxo differential expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
               displayName="Differential Expression"
               queryRef="GeneFeatureIds.GenesByDifferentialExpression" 
-              summary="product,location_text,fold_change,confidence"
-              sorting="fold_change desc,confidence desc,location_text asc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
             Find genes by differential expression analysis
         </summary>
+        <attributesList
+              summary="product,location_text,fold_change,confidence"
+              sorting="fold_change desc,confidence desc,location_text asc"
+        /> 
+        <summary>
         <description>
             <![CDATA[
              Find genes whose expression was found to be up-regulated or down-regulated 
@@ -861,24 +860,25 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
 	</dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Toxo expression percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByExpressionPercentile" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
               displayName="Expression Percentile"
               queryRef="GeneFeatureIds.GenesByExpressionPercentile" 
-              summary="product,percentile"
-              sorting="percentile desc"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
             Find genes by expression percentile analysis
         </summary>
+        <attributesList
+              summary="product,percentile"
+              sorting="percentile desc"
+        /> 
+        <summary>
         <description>
             <![CDATA[
 	    Find genes which are expressed over a given percentile in a particular strain.
@@ -893,16 +893,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
 	</dynamicAttributes>
     </question>
-  PHASE 2 -->
-
-
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Berghei protein expression  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
          displayName="Protein Expression"
          category="Protein Expression"
@@ -911,9 +907,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList
          summary="product"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. berghei"/>
         </propertyList>
+-->
         <summary>
             <![CDATA[
             Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.
@@ -925,14 +923,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
             ]]>
         </description>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Subcellular localization -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,ApiDB"
          category="Cellular Location"
          displayName="Subcellular Localization"
@@ -942,9 +938,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               summary="location_text,product"
               sorting="location_text asc"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <summary>
            <![CDATA[
                Find genes targeted to the apicoplast or the RBC membrane.
@@ -978,8 +976,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
           ]]>
         </description>
     </question>
-  PHASE 2 -->
-
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1008,14 +1004,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                        displayName="ExportPred score" align="center"/>
         </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Phyletic profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,ApiDB"
          displayName="Homology Phylogenetic Profile"
          category="Evolution"
@@ -1025,10 +1019,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          summary="location_text,product,num_queries,query_ids,mutual_information_scores"
          sorting="num_queries desc,mutual_information_scores desc,location_text asc"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
            <value value="P. yoelii"/>
         </propertyList>
+-->
         <summary>
            <![CDATA[
          Find genes that have a homology-based phylogenetic profile similar to a specified list of genes.
@@ -1067,14 +1063,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                        displayName="Queries matched" align="center"/>
         </dynamicAttributes>
     </question>
-  PHASE 2 -->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Orthologous to a gene -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
-    <question name="GenesOrthologousToAGivenGene"
+    <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
               displayName="Orthologs and Paralogs"
               category="Evolution"
               queryRef="GeneFeatureIds.GenesOrthologousToAGivenGene"
@@ -1098,13 +1092,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
           ]]>
         </description>
     </question>
-  PHASE 2 -->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Protein DB Accession  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,ApiDB"
               displayName="Protein Accession"
               category="Other Attributes"
@@ -1125,14 +1117,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
           ]]>
         </description>
     </question>
-  PHASE 2 -->
-
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- MR4 reagents  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <!-- PHASE 2 
     <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB"
          displayName="MR4 Reagents Availability"
          category="Other Attributes"
@@ -1142,9 +1131,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          summary="location_text,product"
          sorting="location_text asc"
         /> 
+<!-- not implemented yet
         <propertyList name="organism">
            <value value="P. falciparum"/>
         </propertyList>
+-->
         <summary>
             <![CDATA[
                 Find genes that have
@@ -1164,7 +1155,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
            ]]>
         </description>
     </question>
-  PHASE 2 -->
 
   <!--===========================================================================-->
   <!-- Internal questions for importing from plasmodb 4.4  -->
@@ -1185,7 +1175,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
   <!--===========================================================================-->
-  <!-- Internal questions for the combined winzeler query page  -->
+  <!-- place holder
   <!--===========================================================================-->
 
     <question name="GenesByProteinStructure" displayName="Protein structure"
@@ -1195,6 +1185,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
            Find genes based on secondary and 3-D protein structure.
         </description>
     </question>
+
+  <!--===========================================================================-->
+  <!-- Internal questions for the combined winzeler query page  -->
+  <!--===========================================================================-->
+
     <question name="GenesByIntraerythrocyticExpression" displayName="Asexual"
               queryRef="GeneId.GenesByIntraerythrocyticExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
