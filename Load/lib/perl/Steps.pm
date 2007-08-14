@@ -2096,7 +2096,11 @@ sub InsertExpressionProfileFromProcessedResult {
 }
 
 sub InsertRadAnalysisFromConfig {
-  my ($mgr, $configFile, $name, $executable) = @_;
+  my ($mgr, $configFile, $name, $propName) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $executable = $propertySet->getProp($propName);
 
   my $optionalExecutable = $executable ? "--pathToExecutable $executable" : '';
 
