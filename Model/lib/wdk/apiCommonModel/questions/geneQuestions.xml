@@ -956,7 +956,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Orthology profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByOrthologPattern" excludeProjects="TrichDB"
+    <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB"
          displayName="Orthology Phylogenetic Profile"
          category="Evolution"
          queryRef="GeneId.GenesByOrthologPattern"
@@ -1099,6 +1099,33 @@ Find genes that are predicted to encode a signal peptide.
         </description>
     </question>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- SageTags-->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesBySageTag"
+         category="Transcript Expression"
+         displayName="Sage Tag evidence"
+         queryRef="GeneId.GenesBySageTag"
+         recordClassRef="GeneRecordClasses.GeneRecordClass"
+         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
+        <attributesList
+         summary="organism,location_text,product,sage_tag_count"
+         sorting="organism asc,sage_tag_count desc"
+        /> 
+        <summary>
+            Find genes with evidence of expression based on SAGE tag experiments.
+        </summary>
+        <description>
+           <![CDATA[
+            Find genes with evidence of expression based on SAGE tag experiments.  You can constrain your query to find genes where the sage tag could be in the UTR (ie, not within the CDS which may be the extent of the gene model) by setting the 5' and 3' distance to greater than 0.  The sum of the number of times all the sage tags have been sequenced for the experiment selected that fall within the selected distance from the 5' or 3' end will be returned for all genes that meet the criteria chosen.
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="sage_tag_count" displayName="Tag Count"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- EST overlap  -->

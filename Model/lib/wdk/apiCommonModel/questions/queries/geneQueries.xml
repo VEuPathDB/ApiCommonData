@@ -1196,6 +1196,34 @@ order by project_id,sns2.source_id
 	              <wsColumn name="source_id" width="32" wsName="source_id"/>
 	 </wsQuery>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- SageTags -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesBySageTag" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+       <paramRef ref="geneParams.sage_tag_library"/>
+       <paramRef ref="geneParams.st_max_five_prime_distance"/>
+       <paramRef ref="geneParams.st_max_three_prime_distance"/>
+       <paramRef ref="geneParams.st_min_tag_count"/>
+       <paramRef ref="geneParams.st_max_occurrences"/>
+<!--       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/> -->
+       <column name="project_id"/> 
+       <column name="source_id" />
+       <column name="sage_tag_count" />
+       <sql>
+            <![CDATA[
+               select source_id as source_id, '@PROJECT_ID@' as project_id, sum(tag_count) as sage_tag_count from (
+               select  source_id,composite_element_id,tag_count
+               from apidb.sagetaggene
+               where analysis_id = $$sage_tag_library$$
+               and occurrence <= $$st_max_occurrences$$
+               and ((direction = '5' and distance <= $$st_max_five_prime_distance$$)
+                  OR (direction = '3' and distance <= $$st_max_three_prime_distance$$))
+               group by source_id,composite_element_id,tag_count)
+               group by source_id having sum(tag_count) >= $$st_min_tag_count$$ 
+            ]]>
+          </sql>
+    </sqlQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ESTOverlap -->
