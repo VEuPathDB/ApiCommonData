@@ -255,3 +255,84 @@ CREATE INDEX apidb.GCent_loc_ix
        ON apidb.GeneCentromereDistance (genomic_sequence, centromere_distance);
 
 -------------------------------------------------------------------------------
+drop materialized view apidb.SageTagGene;
+
+create materialized view apidb.SageTagGene as
+select '5' as direction, g.source_id, s.source_id as composite_element_id,
+     min (case
+            when sl.is_reversed = 1 and sl.end_max - gl.end_max < 0
+              then 0
+            when sl.is_reversed = 1 and sl.end_max - gl.end_max >= 0
+              then sl.end_max - gl.end_max
+            when sl.is_reversed = 0 and gl.start_min - sl.start_min < 0
+              then 0
+            when sl.is_reversed = 0 and gl.start_min - sl.start_min >= 0
+              then gl.start_min - sl.start_min
+          end) as distance,
+     dr.analysis_id, max(dr.float_value) as tag_count,
+     max(ct.occurrence) as occurrence
+from dots.GeneFeature g, dots.NaLocation gl,
+     dots.SageTagFeature s, dots.NaLocation sl,
+     rad.DataTransformationResult dr,
+     (select source_id , count(*) as occurrence
+      from dots.SageTagFeature
+      group by source_id) ct
+where g.na_feature_id = gl.na_feature_id
+  and s.na_feature_id = sl.na_feature_id
+  and g.na_sequence_id = s.na_sequence_id
+  and gl.is_reversed = sl.is_reversed
+  and s.source_id = dr.row_id
+  and dr.row_id = ct.source_id
+  and (case
+         when sl.is_reversed = 0
+           then gl.start_min - sl.start_min
+         else sl.end_max - gl.end_max
+       end <= 1000
+      and case
+            when sl.is_reversed = 0
+              then gl.end_max - sl.end_max
+            else sl.start_min - gl.start_min
+          end >= 0)
+group by g.source_id, s.source_id, dr.analysis_id
+UNION
+select '3' as direction, g.source_id, s.source_id as composite_element_id,
+     min (case
+            when sl.is_reversed = 1 and gl.start_min - sl.start_min < 0
+              then 0
+            when sl.is_reversed = 1 and gl.start_min - sl.start_min  >= 0
+              then gl.start_min - sl.start_min
+            when sl.is_reversed = 0 and sl.end_max - gl.end_max < 0
+              then 0
+            when sl.is_reversed = 0 and sl.end_max - gl.end_max >= 0
+              then sl.end_max - gl.end_max
+          end) as distance,
+     dr.analysis_id, max(dr.float_value) as tag_count,
+     max(ct.occurrence) as occurrence
+from dots.GeneFeature g, dots.NaLocation gl,
+     dots.SageTagFeature s, dots.NaLocation sl,
+     rad.DataTransformationResult dr,
+     (select source_id , count(*) as occurrence
+      from dots.SageTagFeature
+      group by source_id) ct
+where g.na_feature_id = gl.na_feature_id
+  and s.na_feature_id = sl.na_feature_id
+  and g.na_sequence_id = s.na_sequence_id
+  and gl.is_reversed = sl.is_reversed
+  and s.source_id = dr.row_id
+  and dr.row_id = ct.source_id
+  and (case
+         when sl.is_reversed = 0
+           then sl.end_max - gl.end_max
+         else gl.start_min - sl.start_min end <= 1000
+      and
+       case
+         when sl.is_reversed = 0
+           then sl.start_min - gl.start_min
+         else gl.end_max - sl.end_max
+       end >= 0)
+group by g.source_id, s.source_id, dr.analysis_id;
+
+grant select on apidb.SageTagGene to gus_r;
+
+-------------------------------------------------------------------------------
+exit
