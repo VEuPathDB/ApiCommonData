@@ -246,10 +246,10 @@
                    'linear' as gff_attr_topology,
                    'nuclear' as gff_attr_localization,
                    ns.sequence as gff_sequence
-            from DoTS.NaSequence ns,
+            from apidb.GenomicSequence gs,
+                 dots.NaSequence ns,
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
-                 sres.taxon t,
                  sres.TaxonName tn
             where ns.source_id = $$primaryKey$$
               and ns.external_database_release_id = edr.external_database_release_id
