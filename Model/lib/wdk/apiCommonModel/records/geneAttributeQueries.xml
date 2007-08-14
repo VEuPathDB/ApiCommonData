@@ -428,13 +428,16 @@
         <column name="gff_strand"/>
         <column name="gff_phase"/>
         <column name="gff_attr_id"/>
+        <column name="gff_attr_web_id"/>
         <column name="gff_attr_name"/>
         <column name="gff_attr_description"/>
         <column name="gff_attr_locus_tag"/>
         <column name="gff_attr_size"/>
+        <column name="gff_transcript_sequence"/>
         <sql>
-            select gf.source_id,
-                   ens.source_id as gff_seqid,
+          <![CDATA[
+            select gf.source_id, $$projectId$$ as project_id,
+                   ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'gene' as gff_type,
                    least(nl.start_min, nl.end_max) as gff_fstart,
@@ -442,18 +445,26 @@
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                    '.' as gff_phase,
-                   gf.source_id as gff_attr_id,
+                   'ApiDB|' || gf.source_id as gff_attr_id,
+                   gf.source_id as gff_attr_web_id,
                    gf.source_id as gff_attr_name,
                    gf.product as gff_attr_description,
                    gf.source_id as gff_attr_locus_tag,
-                   (greatest(nl.start_min, nl.end_max) - least(nl.start_min, nl.end_max) + 1) as gff_attr_size
+                   (greatest(nl.start_min, nl.end_max)
+                   - least(nl.start_min, nl.end_max) + 1) as gff_attr_size,
+                   s.sequence as gff_transcript_sequence
             from DoTS.GeneFeature gf, 
                  DoTS.NaLocation nl, 
-                 DoTS.NaSequence ens
+                 DoTS.NaSequence ns,
+                 DoTS.Transcript rna,
+                 dots.splicednasequence s
             where gf.source_id = $$primaryKey$$
                   and gf.na_feature_id = nl.na_feature_id
-                  and gf.na_sequence_id = ens.na_sequence_id
+                  and gf.na_sequence_id = ns.na_sequence_id
+                  and gf.na_feature_id = rna.parent_id
+                  and s.na_sequence_id = rna.na_sequence_id
+          ]]>
         </sql>
-    </sqlQuery>
+      </sqlQuery>
     </querySet>
 </wdkModel>

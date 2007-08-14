@@ -99,6 +99,29 @@
          </dynamicAttributes>
     </question>
     
-    
+
+  </questionSet>
+
+
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+  <!-- Gene Data Dump questions (internal)  -->
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+
+  <questionSet name="SequenceDumpQuestions" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+             displayName="Genomic Sequence Data Dump Questions"
+             internal="yes">
+
+  <!--===========================================================================-->
+  <!-- question that retrieves all genes by organism  -->
+  <!--===========================================================================-->
+    <question name="SequenceDumpQuestion" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+         displayName="Find Sequences to dump"
+              queryRef="SequenceIds.SequenceDumpQuery"
+              recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+        <description>Find all sequences to by organisms</description>
+    </question>
+
   </questionSet>
 </wdkModel>

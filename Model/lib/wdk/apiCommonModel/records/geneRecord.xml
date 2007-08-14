@@ -36,15 +36,47 @@
           <reporter name="tabular" displayName="Summary - tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
 
-          <reporter name="gff3" displayName="Summary - GFF3"
-                    implementation="org.apidb.apicommon.model.report.Gff3Reporter"
-                    excludeProjects="ApiDB"/>
-
-          <reporter name="fullRecord" displayName="Detailed - text"
-                    implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
-
           <reporter name="srt" displayName="Sequence - configurable FASTA"
                     implementation=""/>
+                    
+          <reporter name="gff3" displayName="Summary - GFF3"
+                    implementation="org.apidb.apicommon.model.report.Gff3CachedReporter">
+              <property name="table_cache">apidb.GeneTable</property>
+              <property name="project_id_column">project_id</property>
+              <property name="record_id_column">source_id</property>
+              <property name="gff_record">gff_record</property>
+              <property name="gff_protein">gff_protein</property>
+              <property name="gff_transcript">gff_transcript</property>
+          </reporter>
+
+          <!-- the report maker used on commandline to generate gff download files -->
+          <reporter name="gff3Dump" displayName="Summary - GFF3"
+                    inReportMaker="false"
+                    implementation="org.apidb.apicommon.model.report.Gff3Reporter">
+              <property name="table_cache">apidb.GeneTable</property>
+              <property name="project_id_column">project_id</property>
+              <property name="record_id_column">source_id</property>
+              <property name="gff_record">gff_record</property>
+              <property name="gff_protein">gff_protein</property>
+              <property name="gff_transcript">gff_transcript</property>
+          </reporter>
+                    
+          <!-- the report maker used on the website -->
+          <reporter name="fullRecord" displayName="Detailed - text"
+                    implementation="org.gusdb.wdk.model.report.FullRecordCachedReporter">
+              <property name="table_cache">apidb.GeneTable</property>
+              <property name="project_id_column">project_id</property>
+              <property name="record_id_column">source_id</property>
+          </reporter>
+          
+          <!-- the report maker used on commandline to generate detailed download files -->
+          <reporter name="fullRecordDump" displayName="Detailed - text"
+                    inReportMaker="false"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter">
+              <property name="table_cache">apidb.GeneTable</property>
+              <property name="project_id_column">project_id</property>
+              <property name="record_id_column">source_id</property>
+          </reporter>
 
 
        <!-- =================================================================== -->
@@ -271,10 +303,12 @@
               <columnAttribute displayName="Strand" name="gff_strand" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Reading Frame" name="gff_phase" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Web ID" name="gff_attr_web_id" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Transcript Sequence" name="gff_transcript_sequence" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
 
          
@@ -675,11 +709,38 @@
             <columnAttribute name="confidence" displayName="Confidence"/>
           </table>
 
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- GFF Gene Aliases table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="GeneGffAliases" excludeProjects="ApiDB"
+                 displayName="Aliases"
+                 internal="true"
+                 inReportMaker="false"
+                 queryRef="GeneTables.GeneGffAliases">
+            <columnAttribute displayName="Alias" name="gff_alias"/>
+          </table>
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- GFF Gene GO Terms table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="GeneGffGoTerms" excludeProjects="ApiDB"
+                 displayName="GO Terms"
+                 internal="true"
+                 inReportMaker="false"
+                 queryRef="GeneTables.GeneGffGoTerms">
+            <columnAttribute name="gff_go_id" internal="true"/>
+          </table>
+
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- GFF Gene DB xrefs  table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="gff_GeneDbxrefs" excludeProjects="ApiDB"
+          <table name="GeneGffDbxrefs" excludeProjects="ApiDB"
                  displayName="Gene Exons"
                  queryRef="GeneTables.GeneGffDbxrefs" inReportMaker="false">
 
@@ -690,9 +751,9 @@
           <!-- GFF Gene RNAs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="gff_GeneRnas" excludeProjects="ApiDB"
+          <table name="GeneGffRnas" excludeProjects="ApiDB"
                  displayName="Gene RNAs"
-                 queryRef="GeneTables.GeneRnas" internal="true" inReportMaker="false">
+                 queryRef="GeneTables.GeneGffRnas" internal="true" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -704,19 +765,18 @@
               <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Transcript Sequence" name="gff_transcript_sequence" internal="true" inReportMaker="false"/>
+              <columnAttribute displayName="Protein Sequence" name="gff_protein_sequence" internal="true" inReportMaker="false"/>
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- GFF Gene CDSs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="gff_GeneCdss" excludeProjects="ApiDB"
+          <table name="GeneGffCdss" excludeProjects="ApiDB"
                  displayName="Gene CDSs"
-                 queryRef="GeneTables.GeneCdss" inReportMaker="false">
+                 queryRef="GeneTables.GeneGffCdss" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -728,20 +788,17 @@
               <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Coding Sequence" name="gff_coding_sequence" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Protein Sequence" name="gff_protein_sequence" internal="true" inReportMaker="false"/>
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- GFF Gene exons table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="gff_GeneExons" excludeProjects="ApiDB"
+          <table name="GeneGffExons" excludeProjects="ApiDB"
                  displayName="Gene Exons"
-                 queryRef="GeneTables.GeneExons" inReportMaker="false">
+                 queryRef="GeneTables.GeneGffExons" inReportMaker="false">
 
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
@@ -754,7 +811,6 @@
               <columnAttribute displayName="ID" name="gff_attr_id" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Name" name="gff_attr_name" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="description" name="gff_attr_description" internal="true" inReportMaker="false"/>
-              <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Size" name="gff_attr_size" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Parent" name="gff_attr_parent" internal="true" inReportMaker="false"/>
           </table>

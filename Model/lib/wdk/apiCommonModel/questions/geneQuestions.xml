@@ -1271,4 +1271,27 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
     </question>
 
   </questionSet>
+
+
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+  <!-- Gene Data Dump questions (internal)  -->
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+
+  <questionSet name="GeneDumpQuestions" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+             displayName="Gene Data Dump Questions"
+             internal="yes">
+
+  <!--===========================================================================-->
+  <!-- question that retrieves all genes by organism  -->
+  <!--===========================================================================-->
+    <question name="GeneDumpQuestion" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+         displayName="Find genes to dump"
+              queryRef="GeneId.GeneDumpQuery"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>Find all genes to by organisms</description>
+    </question>
+
+  </questionSet>
 </wdkModel>

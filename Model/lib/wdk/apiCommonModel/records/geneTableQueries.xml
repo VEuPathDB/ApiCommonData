@@ -421,17 +421,45 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
+       <sqlQuery name="GeneGffAliases" isCacheable="false">
+         <paramRef ref="recordParams.primaryKey"/>
+         <paramRef ref="recordParams.projectId"/>
+                <column name="gff_alias"/>
+                <sql>
+                <![CDATA[
+                SELECT distinct ng.name AS gff_alias
+                FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
+                WHERE gf.source_id = $$primaryKey$$
+                  AND gf.na_feature_id = nfng.na_feature_id
+                  AND nfng.na_gene_id = ng.na_gene_id
+                ]]>
+                </sql>
+       </sqlQuery>
+        
+       <sqlQuery name="GeneGffGoTerms" displayName="GO Terms" isCacheable="false">
+         <paramRef ref="recordParams.primaryKey"/>
+         <paramRef ref="recordParams.projectId"/>
+                <column name="gff_go_id"/>
+                <sql>
+                <![CDATA[
+                SELECT gts.go_id AS gff_go_id
+                FROM apidb.GoTermSummary gts
+                WHERE gts.source_id = $$primaryKey$$
+                ORDER BY gts.ontology, gts.go_id
+                ]]>
+                </sql>
+       </sqlQuery>
+
        <sqlQuery name="GeneGffDbxrefs" isCacheable="false" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_dbxref"/>
+        <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="ToxoDB">ApiDB_ToxoDB</sqlParamValue>
         <sql>
-/*          SELECT gts.source_id,
-                   gts.go_id AS gff_dbxref
-            FROM apidb.GoTermSummary gts
-            WHERE gts.source_id = $$primaryKey$$
-           UNION
-*/          SELECT gf.source_id,
+          <![CDATA[
+            SELECT gf.source_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.GeneFeature gf, dots.NaSequence ns, sres.Taxon t
             WHERE gf.source_id = $$primaryKey$$
@@ -492,10 +520,16 @@
                   = edr.external_database_release_id
               AND edr.external_database_id = ed.external_database_id
               AND ed.name like 'Sanger%'
+           UNION
+            SELECT gf.source_id,
+                   '&&brcName&&:' || gf.source_id AS gff_dbxref
+            FROM dots.GeneFeature gf
+            WHERE gf.source_id = $$primaryKey$$
+          ]]>
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneRnas" excludeProjects="ApiDB">
+    <sqlQuery name="GeneGffRnas" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -509,12 +543,11 @@
         <column name="gff_attr_id"/>
         <column name="gff_attr_name"/>
         <column name="gff_attr_description"/>
-        <column name="gff_attr_locus_tag"/>
         <column name="gff_attr_size"/>
         <column name="gff_attr_parent"/>
-        <column name="gff_transcript_sequence"/>
+        <column name="gff_protein_sequence"/>
         <sql>
-            select ens.source_id as gff_seqid,
+            select ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    decode(so.term_name,
                           'protein_coding', 'mRNA',
@@ -528,34 +561,38 @@
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                    '.' as gff_phase,
-                   gf.source_id as gff_attr_parent,
-                   'rna_' || rna.source_id as gff_attr_id,
+                   'ApiDB|' || gf.source_id as gff_attr_parent,
+                   'ApiDB|rna_' || rna.source_id as gff_attr_id,
                    rna.source_id as gff_attr_name,
                    rna.product as gff_attr_description,
-                   rna.source_id as gff_attr_locus_tag,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size,
-                   s.sequence as gff_transcript_sequence
+                   protein.sequence as gff_protein_sequence
             from DoTS.GeneFeature gf,
                  DoTS.Transcript rna,
                  DoTS.NaLocation nl,
-                 DoTS.NaSequence ens,
+                 DoTS.NaSequence ns,
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.SequenceOntology so,
-                 dots.splicednasequence s
+                 (select gf2.source_id, tas.sequence
+                  from dots.GeneFeature gf2, dots.Transcript t,
+                       dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
+                  where gf2.na_feature_id = t.parent_id
+                    and t.na_feature_id = taf.na_feature_id
+                    and taf.aa_sequence_id = tas.aa_sequence_id) protein  
             where gf.source_id = $$primaryKey$$
                 and gf.na_feature_id = rna.parent_id
                 and rna.na_feature_id = nl.na_feature_id
-                and gf.na_sequence_id = ens.na_sequence_id
+                and gf.na_sequence_id = ns.na_sequence_id
                 and rna.external_database_release_id = edr.external_database_release_id
                 AND edr.external_database_id = ed.external_database_id
                 and gf.sequence_ontology_id = so.sequence_ontology_id
-                and s.na_sequence_id = rna.na_sequence_id
+                and gf.source_id = protein.source_id(+)
             order by nl.start_min asc, nl.end_max asc
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneCdss" excludeProjects="ApiDB">
+    <sqlQuery name="GeneGffCdss" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -569,92 +606,92 @@
         <column name="gff_attr_id"/>
         <column name="gff_attr_name"/>
         <column name="gff_attr_description"/>
-        <column name="gff_attr_locus_tag"/>
         <column name="gff_attr_size"/>
         <column name="gff_attr_parent"/>
-        <column name="gff_coding_sequence"/>
-        <column name="gff_protein_sequence"/>
         <sql>
-            select ens.source_id as gff_seqid,
+            <![CDATA[
+            select ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'CDS' as gff_type,
-                   least(tf.translation_start, tf.translation_stop) as gff_fstart,
-                   greatest(tf.translation_start, tf.translation_stop) as gff_fend,
+                   least(ef.coding_start, ef.coding_end) as gff_fstart,
+                   greatest(ef.coding_start, ef.coding_end) as gff_fend,
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
-                   mod(tf.translation_start, 3) as gff_phase,
-                   rna.source_id as gff_attr_parent,
-                   'cds_' || tf.source_id as gff_attr_id,
-                   tf.source_id as gff_attr_name,
-                   gf.product as gff_attr_description,
-                   tf.source_id as gff_attr_locus_tag,
-                   (tf.translation_stop - tf.translation_start + 1) as gff_attr_size,
-                   SUBSTR(s.sequence,tf.translation_start,(tf.translation_stop - tf.translation_start + 1)) as gff_coding_sequence,
-                   tas.sequence as gff_protein_sequence
-              from dots.genefeature gf, 
-                   dots.transcript rna,
-                   dots.splicednasequence s, 
-                   dots.TranslatedAaFeature tf,
-                   dots.TranslatedAaSequence tas,
-                   dots.NaSequence ens, 
-                   dots.NaLocation nl
-              where gf.source_id = $$primaryKey$$
-                and rna.parent_id = gf.na_feature_id
-                and s.na_sequence_id = rna.na_sequence_id
-                and rna.na_feature_id = tf.na_feature_id
-                AND tf.aa_sequence_id = tas.aa_sequence_id
-                and gf.na_sequence_id = ens.na_sequence_id
-                and gf.na_feature_id = nl.na_feature_id
-              order by tf.translation_start asc, tf.translation_stop asc
-        </sql>
-    </sqlQuery>
-
-
-    <sqlQuery name="GeneExons" excludeProjects="ApiDB">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
-        <column name="gff_seqid"/>
-        <column name="gff_source"/>
-        <column name="gff_type"/>
-        <column name="gff_fstart"/>
-        <column name="gff_fend"/>
-        <column name="gff_score"/>
-        <column name="gff_strand"/>
-        <column name="gff_phase"/>
-        <column name="gff_attr_id"/>
-        <column name="gff_attr_name"/>
-        <column name="gff_attr_description"/>
-        <column name="gff_attr_locus_tag"/>
-        <column name="gff_attr_size"/>
-        <column name="gff_attr_parent"/>
-        <sql>
-            select ens.source_id as gff_seqid,
-                   'ApiDB' as gff_source,
-                   'exon' as gff_type,
-                   least(nl.start_min, nl.end_max) as gff_fstart,
-                   greatest(nl.start_min, nl.end_max) as gff_fend,
-                   '.' as gff_score,
-                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
-                   decode(ef.reading_frame, NULL, '.', ef.reading_frame) as gff_phase,
-                   rna.source_id as gff_attr_parent,
-                   'exon_' || ef.source_id as gff_attr_id,
-                   ef.name as gff_attr_name,
-                   ef.name as gff_attr_description,
-                   ef.source_id as gff_attr_locus_tag,
+                   mod((select nvl(sum(greatest(ef2.coding_start, ef2.coding_end)
+                                   - least(ef2.coding_start, ef2.coding_end) +1), 0)
+                        from dots.ExonFeature ef2
+                        where parent_id = ef.parent_id
+                          and order_number < ef.order_number), 3) as gff_phase,
+                   'ApiDB|rna_' || rna.source_id as gff_attr_parent,
+                   'ApiDB|cds_' || ef.source_id as gff_attr_id,
+                   'cds' as gff_attr_name,
+                   '.' as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size
-            from DoTS.GeneFeature gf, 
-                 DoTS.Transcript rna, 
+            from DoTS.GeneFeature gf,
+                 DoTS.Transcript rna,
                  DoTS.ExonFeature ef,
-                 DoTS.NaLocation nl, 
-                 DoTS.NaSequence ens,
+                 DoTS.NaLocation nl,
+                 DoTS.NaSequence ns,
                  dots.RnaFeatureExon rfe
             where gf.source_id = $$primaryKey$$
             and gf.na_feature_id = rna.parent_id
             and rna.na_feature_id = rfe.rna_feature_id
             and ef.na_feature_id = rfe.exon_feature_id
             and ef.na_feature_id = nl.na_feature_id
-            and gf.na_sequence_id = ens.na_sequence_id
-            order by nl.start_min asc, nl.end_max asc
+            and gf.na_sequence_id = ns.na_sequence_id
+            and ef.coding_start is not null
+            and ef.coding_end is not null
+            order by ef.order_number
+            ]]>
+        </sql>
+    </sqlQuery>
+
+
+    <sqlQuery name="GeneGffExons" excludeProjects="ApiDB">
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
+        <column name="gff_seqid"/>
+        <column name="gff_source"/>
+        <column name="gff_type"/>
+        <column name="gff_fstart"/>
+        <column name="gff_fend"/>
+        <column name="gff_score"/>
+        <column name="gff_strand"/>
+        <column name="gff_phase"/>
+        <column name="gff_attr_id"/>
+        <column name="gff_attr_name"/>
+        <column name="gff_attr_description"/>
+        <column name="gff_attr_size"/>
+        <column name="gff_attr_parent"/>
+        <sql>
+            <![CDATA[
+            select ns.source_id as gff_seqid,
+                   'ApiDB' as gff_source,
+                   'exon' as gff_type,
+                   least(nl.start_min, nl.end_max) as gff_fstart,
+                   greatest(nl.start_min, nl.end_max) as gff_fend,
+                   '.' as gff_score,
+                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
+                   '.'  as gff_phase,
+                   'ApiDB|rna_' || rna.source_id as gff_attr_parent,
+                   'ApiDB|exon_' || ef.source_id as gff_attr_id,
+                   ef.name as gff_attr_name,
+                   ef.name as gff_attr_description,
+                   (nl.end_max - nl.start_min + 1) as gff_attr_size
+            from DoTS.GeneFeature gf, 
+                 DoTS.Transcript rna, 
+                 DoTS.ExonFeature ef,
+                 DoTS.NaLocation nl, 
+                 DoTS.NaSequence ns,
+                 dots.RnaFeatureExon rfe
+            where gf.source_id = $$primaryKey$$
+            and gf.na_feature_id = rna.parent_id
+            and rna.na_feature_id = rfe.rna_feature_id
+            and ef.na_feature_id = rfe.exon_feature_id
+            and ef.na_feature_id = nl.na_feature_id
+            and gf.na_sequence_id = ns.na_sequence_id
+            order by ef.order_number
+            ]]>
         </sql>
     </sqlQuery>
 

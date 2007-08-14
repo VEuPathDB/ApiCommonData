@@ -142,6 +142,31 @@
         <wsColumn name="Header" width="3000"/>
         <wsColumn name="Footer" width="3000"/>
     </wsQuery>
+    
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Query that retrieves all sequences by organism -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="SequenceDumpQuery" isCacheable="true" includeProjects="PlasmoDB, ToxoDB, CryptoDB">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+                SELECT DISTINCT ens.source_id AS source_id,
+                       '@PROJECT_ID@' as project_id
+                FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
+                WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon
+                                       CONNECT BY parent_id = prior taxon_id
+                                       START WITH taxon_id in ($$organism$$))
+                  AND ens.sequence_ontology_id = so.sequence_ontology_id
+                  AND (so.term_name = 'supercontig' OR so.term_name = 'contig')
+            ]]>
+        </sql>
+    </sqlQuery>
+
   </querySet>
     
 </wdkModel>

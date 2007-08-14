@@ -203,7 +203,7 @@
     <!-- GFF -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceGffAttrs" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceGffAttrs" isCacheable="false" excludeProjects="ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -215,47 +215,46 @@
         <column name="gff_strand"/>
         <column name="gff_phase"/>
         <column name="gff_attr_id"/>
+        <column name="gff_attr_web_id"/>
         <column name="gff_attr_name"/>
         <column name="gff_attr_description"/>
-        <column name="gff_attr_locus_tag"/>
+        <column name="gff_attr_size"/>
         <column name="gff_attr_molecule_type"/>
         <column name="gff_attr_organism_name"/>
         <column name="gff_attr_translation_table"/>
         <column name="gff_attr_topology"/>
         <column name="gff_attr_localization"/>
-        <column name="gff_attr_size"/>
         <column name="gff_sequence"/>
         <sql>
-            select ens.source_id, $$projectId$$ as project_id,
-                   ens.source_id as gff_seqid,
+            select ns.source_id, $$projectId$$ AS project_id,
+                   ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,
                    1 as gff_fstart,
-                   ens.length as gff_fend,
+                   ns.length as gff_fend,
                    '.' as gff_score,
                    '+' as gff_strand,
                    '.' as gff_phase,
-                   ens.source_id as gff_attr_id,
-                   ens.source_id as gff_attr_name,
-                   ens.description as gff_attr_description,
-                   ens.source_id as gff_attr_locus_tag,
+                  'ApiDB|' || ns.source_id as gff_attr_id,
+                   ns.source_id as gff_attr_web_id,
+                   ns.source_id as gff_attr_name,
+                   ns.description as gff_attr_description,
+                   ns.length as gff_attr_size,
                    'dsDNA' as gff_attr_molecule_type,
                    SUBSTR(tn.name, 1, INSTR(tn.name || '  ', ' ', 1, 2) - 1) as gff_attr_organism_name,
                    11 as gff_attr_translation_table,
                    'linear' as gff_attr_topology,
                    'nuclear' as gff_attr_localization,
-                   ens.length as gff_attr_size,
-                   ens.sequence as gff_sequence
-            from DoTS.NaSequence ens,
+                   ns.sequence as gff_sequence
+            from DoTS.NaSequence ns,
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.taxon t,
                  sres.TaxonName tn
-            where ens.source_id = $$primaryKey$$
-              and ens.external_database_release_id = edr.external_database_release_id
+            where ns.source_id = $$primaryKey$$
+              and ns.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
-              and ens.taxon_id = t.taxon_id
-              and ens.taxon_id = tn.taxon_id
+              and ns.taxon_id = tn.taxon_id
               and tn.name_class = 'scientific name'
         </sql>
     </sqlQuery>

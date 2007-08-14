@@ -54,21 +54,25 @@
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_dbxref"/>
+        <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="ToxoDB">ApiDB_ToxoDB</sqlParamValue>
         <sql>
+          <![CDATA[
             SELECT ens.source_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
-            FROM dots.NaSequence ens, sres.Taxon t
+            FROM dots.ExternalNaSequence ens, sres.Taxon t
             WHERE ens.source_id = $$primaryKey$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
             SELECT ens.source_id, so.so_id AS gff_dbxref
-            FROM dots.NaSequence ens, sres.SequenceOntology so
+            FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
             WHERE ens.source_id = $$primaryKey$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,
                    'GenBank:' || dr.primary_identifier AS thingie
-            FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
+            FROM dots.ExternalNaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
             WHERE ens.source_id = $$primaryKey$$
@@ -78,6 +82,12 @@
                   = edr.external_database_release_id
               AND edr.external_database_id = ed.external_database_id
               AND ed.name = 'GenBank'
+           UNION
+            SELECT ens.source_id,
+                   '&&brcName&&:' || ens.source_id AS gff_dbxref
+            FROM dots.NaSequence ens
+            WHERE ens.source_id = $$primaryKey$$
+          ]]>
         </sql>
     </sqlQuery>
 
