@@ -1027,6 +1027,318 @@
     </sanityQuestion>
 
 
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Orthologs ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="CryptoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="PlasmoDB,ApiDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="" maxOutputLength="">
+        <sanityParam name="historyId" value="FIX_null_dflt"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Gene Dump ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="CryptoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="10000">
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="10000">
+        <sanityParam name="organism" value="Plasmodium Berghei"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="10000">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Nonnuclear Location ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.GenesByNonnuclearLocation" includeProjects="PlasmoDB"
+            minOutputLength="3" maxOutputLength="10"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="nonnuclearSequence" value="mitochondrial genome"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByNonnuclearLocation" includeProjects="ToxoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="70">
+          <sanityParam name="nonnuclearSequence" value="Apicoplast genome"/>
+          <sanityParam name="start_point" value="1"/>
+          <sanityParam name="end_point" value="0"/>
+      </sanityQuestion>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Toxo specific questions ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="GeneQuestions.ToxoGenesByDifferentialExpression" includeProjects="ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="300" maxOutputLength="350">
+        <sanityParam name="exprnsample" value="RH (Type I) in High Glucose  vs. RH (TypeI) with No Glucose"/>
+        <sanityParam name="confidence" value="0.9"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuestion>
+
+
+    <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentile" includeProjects="ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="750" maxOutputLength="800">
+        <sanityParam name="sample" value="RH (Type I)"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuestion>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Plasmo specific questions ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuestion ref="GeneQuestions.GenesByMassSpec" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1300" maxOutputLength="1500">
+          <sanityParam name="mass_spec_stage" value="any"/>
+          <sanityParam name="min_seq_coverage" value="0"/>
+          <sanityParam name="min_span_count" value="0"/>
+          <sanityParam name="min_spectrum_count" value="2"/>
+      </sanityQuestion>
+      <sanityQuestion ref="GeneQuestions.GenesByCentromereProximity" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="3" maxOutputLength="8">
+             <sanityParam name="chromosome" value="chromosome 1"/>
+          <sanityParam name="max_centromere_distance" value="10000"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByTelomereProximity" includeProjects="PlasmoDB"
+            minOutputLength="2" maxOutputLength="2"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="distanceFromTelomere" value="30000"/>
+        <sanityParam name="chromosome" value="chromosome 1"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByPdbSimilarity" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="300" maxOutputLength="400">
+          <sanityParam name="organism" value="Plasmodium berghei"/>
+          <sanityParam name="clades" value="Archaea,Apicomplexa"/>
+          <sanityParam name="pvalue_cutoff" value="-4"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesWithStructurePrediction" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="400" maxOutputLength="500">
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesWithProteinLowComplexity" includeProjects="PlasmoDB"
+            minOutputLength="4" maxOutputLength="100"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="percentLowComplexity" value="30"/>
+        <sanityParam name="chromosome" value="chromosome 1"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteinProteinInteraction" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="2" maxOutputLength="10">
+          <sanityParam name="locus_tag" value="PFL0275w"/>
+          <sanityParam name="bait_or_prey" value="bait"/>
+          <sanityParam name="min_observed" value="2"/>
+          <sanityParam name="min_searches" value="2"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByFunctionalInteraction" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="ds_gene_id" value="PF11_0344"/>
+          <sanityParam name="min_interaction" value="12"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByWatersDifferentialExpression" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="confidence" value="0.8"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="down-regulated"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByDifferentialMeanExpression" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="diffMeanExpr_reference" value="W2mef EBA175 KO (late T)"/>
+        <sanityParam name="diffMeanExpr_comparitor" value="3D7 WT 24hr"/>
+        <sanityParam name="fold_change" value="2"/>
+        <sanityParam name="regulated_dir" value="up-regulated"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentileA" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="2000">
+        <sanityParam name="cowmanSample" value="D10 WT 48hr"/>
+        <sanityParam name="percentile" value="90"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExpressionTiming" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="200">
+          <sanityParam name="profileSet" value="Any of the time courses"/>
+          <sanityParam name="minOrMax" value="Timing of maximal expression"/>
+          <sanityParam name="maxExprHour" value="21 hours"/>
+          <sanityParam name="maxPlusMinusHours" value="4 hours"/>
+          <sanityParam name="minExprHour" value="30 hours"/>
+          <sanityParam name="minPlusMinusHours" value="2 hours"/>
+          <sanityParam name="inductionFold" value=">= 4 fold induction"/>
+          <sanityParam name="expressionPct" value=">= 50th percentile"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProfileSimilarity" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="ProfileGeneId" value="PF11_0344"/>
+          <sanityParam name="ProfileDistanceMethod" value="Euclidean Distance"/>
+          <sanityParam name="ProfileNumToReturn" value="50"/>
+          <sanityParam name="ProfileProfileSet" value="3D7"/>
+          <sanityParam name="ProfileSearchGoal" value="most similar"/>
+          <sanityParam name="ProfileTimeShift" value="not allow"/>
+          <sanityParam name="ProfileScaleData" value="not scale"/>
+          <sanityParam name="ProfileMinShift" value="0 hour"/>
+          <sanityParam name="ProfileMaxShift" value="0 hour"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExpressionPercentile" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2500">
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuery ref="GeneId.GenesByGametocyteExpression" includeProjects="PlasmoDB"
+                   minOutputLength="500" maxOutputLength="600">
+          <sanityParam name="day_and_strain" value="Strain 3D7 Day 1"/>
+          <sanityParam name="min_expression_percentile" value="60"/>
+          <sanityParam name="max_expression_percentile" value="70"/>
+          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+      </sanityQuery>
+
+      <sanityQuestion ref="GeneQuestions.BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1200" maxOutputLength="2000">
+          <sanityParam name="r_min_expression_percentile" value="20"/>
+          <sanityParam name="r_max_expression_percentile" value="90"/>
+          <sanityParam name="yt_min_expression_percentile" value="0"/>
+          <sanityParam name="yt_max_expression_percentile" value="100"/>
+          <sanityParam name="ys_min_expression_percentile" value="0"/>
+          <sanityParam name="ys_max_expression_percentile" value="100"/>
+          <sanityParam name="ms_min_expression_percentile" value="0"/>
+          <sanityParam name="ms_max_expression_percentile" value="100"/>
+          <sanityParam name="waters_profilesets" value="HP"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteomicsProfile" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="200" maxOutputLength="1000">
+          <sanityParam name="asexual_blood_stages_value" value="do not care"/>
+          <sanityParam name="gametocytes_value" value="observed"/>
+          <sanityParam name="ookinetes_value" value="do not care"/>
+          <sanityParam name="oocysts_value" value="do not care"/>
+          <sanityParam name="sporozoites_value" value="do not care"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesBySubcellularLocalization" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="400" maxOutputLength="600">
+          <sanityParam name="localization" value="Apicoplast"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExportPrediction" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="100" maxOutputLength="300">
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+          <sanityParam name="min_exportpred_score" value="10"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByPhyleticProfile" includeProjects="PlasmoDB"
+                   pageStart="1" pageEnd="20"
+                   minOutputLength="1" maxOutputLength="5">
+          <sanityParam name="ds_gene_ids" value="PFD0830w"/>
+          <sanityParam name="min_mutual_information_score" value="0.47"/>
+          <sanityParam name="include_only_queries" value="No"/>
+          <sanityParam name="min_num_query_matches" value="1"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByProteinDbAccession" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="1">
+          <sanityParam name="accession" value="CAD50836.1"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByMr4Reagents" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="10" maxOutputLength="200">
+          <sanityParam name="mr4_reagent_type" value="antibodies"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesByProteinStructure" includeProjects="PlasmoDB"
+            minOutputLength="3000" maxOutputLength="4000"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="synchronization" value="Sorbitol"/>
+        <sanityParam name="intraerythrocytic_stages" value="Any"/>
+        <sanityParam name="min_expression_percentile" value="50"/>
+        <sanityParam name="max_expression_percentile" value="100"/>
+    </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="800" maxOutputLength="2000">
+          <sanityParam name="synchronization" value="Sorbitol"/>
+          <sanityParam name="intraerythrocytic_stages" value="Any"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+ 
+     <sanityQuestion ref="GeneQuestions.GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2000">
+          <sanityParam name="extraerythrocytic_stages" value="Either"/>
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByExpression" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1500" maxOutputLength="2500">
+          <sanityParam name="min_expression_percentile" value="80"/>
+          <sanityParam name="max_expression_percentile" value="90"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="GeneQuestions.GenesByGametocyteExpression" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="500" maxOutputLength="600">
+          <sanityParam name="day_and_strain" value="Strain 3D7 Day 1"/>
+          <sanityParam name="min_expression_percentile" value="65"/>
+          <sanityParam name="max_expression_percentile" value="75"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
+      </sanityQuestion>
+
   <!-- ============================================================ -->
   <!-- ============================================================ -->
   <!-- == vocab queries == -->

@@ -137,4 +137,27 @@
           <sanityParam name="-b" value="25"/>
       </sanityQuestion>
 
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Sequence Dump ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuestion ref="SequenceDumpQuestions.SequenceDumpQuestion" includeProjects="CryptoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="10" maxOutputLength="1000">
+        <sanityParam name="organism" value="Cryptosporidium hominis"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SequenceDumpQuestions.SequenceDumpQuestion" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="30" maxOutputLength="1000">
+        <sanityParam name="organism" value="Plasmodium Berghei"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="SequenceDumpQuestions.SequenceDumpQuestion" includeProjects="ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="30" maxOutputLength="1000">
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+
 </sanityModel>

@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+ <!DOCTYPE xml [
+  <!ENTITY nbsp "&#160;">
+  <!ENTITY lt   "&#60;">
+  <!ENTITY gt   "&#62;">
+]>
+
 <wdkModel>
 
     <xmlRecordClassSet name="XmlRecordClasses">
@@ -17,11 +25,12 @@
             <xmlAttribute name="tag"/>
          </xmlRecordClass>
 
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Coming soon -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <xmlRecordClass
+        <xmlRecordClass includeProjects="PlasmoDB"
         	name="ComingSoonRecord"
         	type="ComingSoon"
         	idPrefix="CS."
@@ -38,7 +47,7 @@
   <!-- Methods -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <xmlRecordClass
+         <xmlRecordClass  includeProjects="PlasmoDB,ToxoDB"
         	name="Methods"
         	type="Methods"
         	idPrefix="MTHD."
@@ -61,7 +70,8 @@
   <!-- Data sources -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <xmlRecordClass name="DataSourcesRecord"
+        <xmlRecordClass   includeProjects="PlasmoDB,ToxoDB"
+                name="DataSourcesRecord"
         	type="Data Source"
         	idPrefix="DS."
         	delimiter="@">
@@ -84,7 +94,7 @@
   <!-- About -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <xmlRecordClass
+        <xmlRecordClass  includeProjects="PlasmoDB,ToxoDB"
         	name="AboutRecord"
         	type="About"
         	idPrefix="ABOUT."
@@ -98,7 +108,7 @@
   <!-- FAQ -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <xmlRecordClass
+        <xmlRecordClass  includeProjects="PlasmoDB,ToxoDB"
         	name="FAQRecord"
         	type="FAQ"
         	idPrefix="FAQ."
@@ -121,10 +131,12 @@
         	delimiter="@">
             <xmlAttribute name="title"/>
             <xmlAttribute name="description"/>
-            <xmlAttribute name="projects"/>
-            <xmlAttribute name="fileName"/>
-            <xmlAttribute name="duration"/>
-            <xmlAttribute name="size"/>
+            <xmlTable name="files">
+              <xmlAttribute name="projects"/>
+              <xmlAttribute name="fileName"/>
+              <xmlAttribute name="duration"/>
+              <xmlAttribute name="size"/>
+            </xmlTable>
         </xmlRecordClass>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -216,3 +228,4 @@
     </xmlRecordClassSet>
 
 </wdkModel>
+

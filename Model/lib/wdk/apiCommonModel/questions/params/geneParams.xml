@@ -1414,24 +1414,26 @@
       </enumList>
     </enumParam>
 
-    <enumParam name="pfNonnuclearSequence"
-                     prompt="Genomic Sequence"
+    <enumParam name="nonnuclearSequence"
+                     prompt="Nonnuclear Genomic Sequence"
                      multiPick="true">
-      <help>
-             Results will be sorted ascending or descending order
-      </help>
       <enumList>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB" >
           <term>mitochondrial genome</term>
           <internal>'AJ276844'</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>plastid IR-A</term>
           <internal>'X95275'</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>plastid IR-B</term>
           <internal>'X95276'</internal>
+        </enumValue>
+
+        <enumValue includeProjects="ToxoDB,ApiDB">
+          <term>Apicoplast genome</term>
+          <internal>NC_001799</internal>
         </enumValue>
       </enumList>
     </enumParam>
@@ -3466,7 +3468,63 @@
              Choose one or more strain/day combination
         </help>
       </flatVocabParam>
-     </paramSet>
+
+    <enumParam name="exprnsample"
+               prompt="Expression of :"
+               multiPick="false">
+
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>RH (Type I) in High Glucose  vs. RH (TypeI) with No Glucose</term>
+          <internal>RH (High Glucose) - RMA Quantifications vs. RH (No Glucose) - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>Prugniaud (Type II)  vs.  RH (Type I)</term>
+          <internal>Pru - RMA Quantifications vs. RH - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>RH (Type I)  vs.  VEG (Type III)</term>
+          <internal>RH - RMA Quantifications vs. VEG - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>Prugniaud (Type II)  vs.  VEG (Type III)</term>
+          <internal>Pru - RMA Quantifications vs. VEG - RMA Quantifications</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+    <enumParam name="sample"
+               prompt="Expression of :"
+               multiPick="false">
+
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>RH (Type I)</term>
+          <internal>RH - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>Prugniaud (Type II)</term>
+          <internal>Pru - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>VEG (Type III)</term>
+          <internal>VEG - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>RH (Type I) in Glucose</term>
+          <internal>RH (High Glucose) - RMA Quantifications</internal>
+        </enumValue>
+        <enumValue>
+          <term>RH (Type I) with No Glucose</term>
+          <internal>RH (No Glucose) - RMA Quantifications</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+
+  </paramSet>
 
 
 

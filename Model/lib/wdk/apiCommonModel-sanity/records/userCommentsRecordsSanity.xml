@@ -1,0 +1,55 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == records == -->
+  <!-- ============================================================ -->
+
+      <sanityRecord includeProjects="PlasmoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.GeneCommentsClass"
+                    projectId="PlasmoDB" primaryKey="PF11_0344"/>
+
+      <sanityRecord includeProjects="PlasmoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.SequenceCommentsClass"
+                    projectId="PlasmoDB" primaryKey="MAL11"/>
+
+      <sanityRecord includeProjects="ToxoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.GeneCommentsClass" 
+                    projectId="ToxoDB" primaryKey="20.m03960"/>
+
+      <sanityRecord includeProjects="ToxoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.SequenceCommentsClass" 
+                    projectId="ToxoDB" primaryKey="Ia"/>
+
+  <!-- ============================================================ -->
+  <!-- == table queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++  ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+      <sanityQuery ref="UserCommentTables.GeneComments"
+                   minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="PF11_0344"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.SequenceComments"
+                   minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="MAL9"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.GeneComments"
+                   minOutputLength="1" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="20.m03960"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.SequenceComments"
+                   minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ia"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+      </sanityQuery>
+
+</sanityModel>

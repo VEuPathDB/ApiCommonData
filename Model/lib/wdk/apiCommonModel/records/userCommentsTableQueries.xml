@@ -1,0 +1,77 @@
+<wdkModel>
+    <querySet name="UserCommentTables">
+       <sqlQuery name="GeneComments">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="comment_id"/>
+            <column name="headline"/>
+            <column name="content"/>
+            <column name="location_string"/>
+            <column name="user_name"/>
+            <column name="organization"/>
+            <column name="comment_date"/>
+            <column name="project_name_version"/>
+            <column name="review_status_id"/>
+            <sql>
+              <![CDATA[
+              SELECT DISTINCT
+                        c.comment_id,
+                        NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
+                        c.content,
+                        c.location_string,
+                        (u.first_name || ' ' || u.last_name) AS user_name,
+                        u.organization,
+                        c.comment_date,
+                        (c.project_name || ' ' || c.project_version) as project_name_version,
+                        c.review_status_id
+              FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   dots.GeneFeature gf
+              WHERE u.email = c.email
+                AND c.comment_target_id='gene'
+                AND c.stable_id = gf.source_id
+                AND gf.source_id = $$primaryKey$$
+                AND c.review_status_id != 'rejected'
+              ORDER BY c.comment_date DESC
+              ]]>
+            </sql>
+          </sqlQuery>
+
+          <sqlQuery name="SequenceComments">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="comment_id"/>
+            <column name="headline"/>
+            <column name="content"/>
+            <column name="location_string"/>
+            <column name="user_name"/>
+            <column name="organization"/>
+            <column name="comment_date"/>
+            <column name="project_name_version"/>
+            <column name="review_status_id"/>
+            <sql>
+              <![CDATA[
+              SELECT DISTINCT
+              		c.comment_id,
+              		NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
+              		c.content,
+              		c.location_string,
+              		(u.first_name || ' ' || u.last_name) AS user_name,
+              		u.organization,
+		            c.comment_date,
+		            (c.project_name || ' ' || c.project_version) as project_name_version,
+		            c.review_status_id
+              FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   dots.ExternalNaSequence ens
+              WHERE u.email = c.email
+			  		AND c.comment_target_id='genome'
+                    AND c.stable_id = ens.source_id
+                    AND ens.source_id = $$primaryKey$$
+                    AND c.review_status_id != 'rejected'
+			  ORDER BY c.comment_date DESC
+               ]]>
+            </sql>
+          </sqlQuery>
+   </querySet>
+</wdkModel>

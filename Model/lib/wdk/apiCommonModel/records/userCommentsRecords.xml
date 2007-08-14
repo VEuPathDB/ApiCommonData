@@ -4,8 +4,9 @@
 
     <recordClass idPrefix=""
           name="GeneCommentsClass" type="GeneComments">
+      <projectParamRef ref="recordParams.Project"/>
       <table name="UserComments"
-                 displayName="User Comments"
+                 displayName="User Comments" 
                  queryRef="UserCommentTables.GeneComments">
             <columnAttribute name="comment_id" displayName="Comment ID"/>
             <columnAttribute name="headline" displayName="Headline"/>
@@ -21,6 +22,7 @@
 
     <recordClass idPrefix=""
           name="SequenceCommentsClass" type="SequenceComments">
+      <projectParamRef ref="recordParams.Project"/>
       <table name="UserComments"
                  displayName="User Comments"
                  queryRef="UserCommentTables.SequenceComments">
