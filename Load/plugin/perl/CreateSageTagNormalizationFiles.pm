@@ -36,6 +36,12 @@ sub getArgumentsDeclaration{
               reqd  => 1,
               isList => 0,
              }),
+     stringArg({name => 'assayToDisplayMapping',
+              descr => 'ASSAY_NAME_1|DISPLAY_NAME_1,...',
+              constraintFunc=> undef,
+              reqd  => 0,
+              isList => 1,
+             }),
      integerArg({name  => 'paramValue',
                  descr => 'value used in the function (raw frequency X paramValue)/total raw frequencies in library',
                  constraintFunc=> undef,
@@ -116,18 +122,37 @@ sub run {
   $self->logCommit();
   $self->logArgs();
 
+  my $displayNameMap = $self->makeDisplayNameHash();
+
   my $protocolId = $self->getProtocolId();
 
   my ($protParamId) = $self->getProtocolParamId($protocolId);
 
   my $assays = $self->getAssays();
 
-  my $fileSets = $self->makeFiles($protParamId,$assays,$protocolId);
+  my $fileSets = $self->makeFiles($protParamId,$assays,$protocolId, $displayNameMap);
 
   my $resultDescrip = "$fileSets assay cfg and data file sets made";
 
   $self->setResultDescr($resultDescrip);
   $self->logData($resultDescrip);
+}
+
+sub makeDisplayNameHash {
+  my ($self) = @_;
+
+  my %rv;
+
+  my $names = $self->getArg('assayToDisplayMapping');
+
+  return unless($names);
+
+  foreach(@$names) {
+    my ($assayName, $displayName) = split(/\|/, $_);
+
+    $rv{$assayName} = $displayName;
+  }
+  return \%rv;
 }
 
 sub getProtocolId {
@@ -220,7 +245,7 @@ sub getAssays {
 }
 
 sub makeFiles {
-  my ($self,$protocolParamId,$assays,$protocolId) = @_;
+  my ($self,$protocolParamId,$assays,$protocolId, $displayNameMap) = @_;
 
   my $fileSets;
 
@@ -228,7 +253,7 @@ sub makeFiles {
 
     my $assName = $ass->getName();
 
-    my $logicalGroup = $self->makeLogicalGroup($ass);
+    my $logicalGroup = $self->makeLogicalGroup($ass, $displayNameMap);
     my $logicalGroupId = $logicalGroup->getId();
 
     my ($tagFreqs,$total) = $self->getTagFreqs($ass);
@@ -244,13 +269,19 @@ sub makeFiles {
 }
 
 sub makeLogicalGroup {
-  my ($self,$ass) = @_;
+  my ($self,$ass, $displayNameMap) = @_;
 
   my $assName = $ass->getName();
 
-  my $studyName = $self->getArg('studyName');
+  my $name;
+  if($displayNameMap->{$assName}) {
+    $name = $displayNameMap->{$assName};
+  }
+  else {
+    my $studyName = $self->getArg('studyName');
 
-  my $name = $studyName . "_" . $assName;
+    $name = $studyName . "_" . $assName;
+  }
 
   my $logicalGroup = GUS::Model::RAD::LogicalGroup->new({'name'=>$name,'category'=>'quantification'});
 
