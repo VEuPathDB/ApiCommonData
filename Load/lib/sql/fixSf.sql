@@ -4,7 +4,7 @@ set time on timing on
 -- InsertSequenceFeature plugin
 
 
-select 'populate null dots.ExonFeature.order_number' from dual;
+prompt populate null dots.ExonFeature.order_number
 
 update dots.ExonFeature 
 set order_number = (select count(*)
@@ -23,7 +23,7 @@ where ExonFeature.order_number is null
 
 commit;
 
-select 'same thing, reverse strand' from dual;
+prompt same thing, reverse strand
 update dots.ExonFeature 
 set order_number = (select count(*)
                     from dots.ExonFeature ef1, dots.ExonFeature ef2,
@@ -41,7 +41,7 @@ where ExonFeature.order_number is null
 
 commit;
 
-select 'populate dots.ExonFeature.source_id as <parent-source_id>-<exon-number>' from dual;
+prompt populate dots.ExonFeature.source_id as <parent-source_id>-<exon-number>
 
 update dots.ExonFeature
 set source_id = (select gf.source_id || '-' || ef.order_number
@@ -51,7 +51,7 @@ set source_id = (select gf.source_id || '-' || ef.order_number
 
 commit;
 
-select 'move ORFs from dots.Transcript to dots.Miscellaneous' from dual;
+prompt move ORFs from dots.Transcript to dots.Miscellaneous
 
 update dots.NaFeature
 set subclass_view = 'Miscellaneous'
@@ -62,7 +62,7 @@ where subclass_view = 'Transcript'
 
 commit;
 
-select 'populate dots.Transcript.source_id as "<gene-source_id>-1"' from dual;
+prompt populate dots.Transcript.source_id as "<gene-source_id>-1"
 
 update dots.Transcript t
 set source_id = (select source_id || '-1'
@@ -72,7 +72,7 @@ where t.parent_id is not null;
 
 commit;
 
-select 'fix transcript_start for forward strand' from dual;
+prompt fix translation_start for forward strand
 -- simply the exon.coding_start - exonloc.start_min + 1
 
 update dots.translatedaafeature taaf
@@ -93,7 +93,7 @@ and il.is_reversed = 0);
 commit;
 
 
-select 'fix transcript_start for reverse strand' from dual;
+prompt fix translation_start for reverse strand
 -- simply the exonloc.end_max - exon.coding_start + 1
 
 update dots.translatedaafeature taaf
@@ -113,7 +113,7 @@ and il.is_reversed = 1);
 
 commit;
 
-select 'fix translation_stop for forward strand' from dual;
+prompt fix translation_stop for forward strand
 -- need to get the last exon and compute
 -- (transcript sequence.length - (exonloc.end_max - exon.coding_end)
 
@@ -136,7 +136,7 @@ and il.is_reversed = 0);
 commit;
 
 
-select 'fix translation_stop for reverse strand' from dual;
+prompt fix translation_stop for reverse strand
 -- need to get the last exon and compute
 -- (transcript sequence.length - (exon.coding_end - exonloc.start_min)
 
@@ -158,7 +158,7 @@ and il.is_reversed = 1);
 
 commit;
 
-select 'make protein source_ids same as transcript source_ids' from dual;
+prompt make protein source_ids same as transcript source_ids
 update dots.TranslatedAaSequence tas
 set source_id = (select t.source_id
                  from dots.Transcript t, dots.TranslatedAaFeature taf
