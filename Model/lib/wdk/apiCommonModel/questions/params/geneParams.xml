@@ -3548,7 +3548,12 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="GeneTypes">
+        <wsQuery name="SageTagLibrary" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
+
+        <sqlQuery name="GeneTypes" excludeProjects="ApiDB">
             <column name="internal"/>
             <column name="term"/>
             <sql excludeProjects="TrichDB">
@@ -3573,6 +3578,11 @@
                                   'repeat_region')
             </sql>
         </sqlQuery>
+
+        <wsQuery name="GeneTypes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal"/>
+            <wsColumn name="term"/>
+        </wsQuery>
 
         <sqlQuery name="ExtraerythrocyticStages" includeProjects="PlasmoDB">
             <column name="internal"/>
