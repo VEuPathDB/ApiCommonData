@@ -97,17 +97,17 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="CryptoDB"
+        <attributesList excludeProjects="ApiDB,CryptoDB"
               summary="formatted_organism,dbest_name,est_location"
               sorting="est_location asc"
         /> 
 
-        <attributesList includeProjects="CryptoDB"
+        <attributesList includeProjects="CryptoDB,ApiDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc"
         /> 
 
-        <dynamicAttributes excludeProjects="CryptoDB">
+        <dynamicAttributes excludeProjects="CryptoDB,ApiDB">
           <columnAttribute name="est_location" displayName="EST location(s)"/>
         </dynamicAttributes>
 
