@@ -155,14 +155,19 @@
         <sql>
             <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-                SELECT DISTINCT ens.source_id AS source_id,
-                       '@PROJECT_ID@' as project_id
-                FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
-                WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon
-                                       CONNECT BY parent_id = prior taxon_id
-                                       START WITH taxon_id in ($$organism$$))
-                  AND ens.sequence_ontology_id = so.sequence_ontology_id
-                  AND (so.term_name = 'supercontig' OR so.term_name = 'contig')
+            SELECT DISTINCT ns.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.NaSequence ns, 
+                 sres.SequenceOntology so,
+                 apidb.SequenceAttributes sa
+            WHERE ns.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
+                                  CONNECT BY parent_id = prior taxon_id
+                                  START WITH taxon_id in ($$organism$$))
+              AND ns.sequence_ontology_id = so.sequence_ontology_id
+              AND (so.term_name = 'chromosome' 
+                     OR so.term_name = 'supercontig'
+                     OR so.term_name = 'contig')
+              AND ns.source_id = sa.source_id
+              AND sa.project_id = '@PROJECT_ID@'
             ]]>
         </sql>
     </sqlQuery>

@@ -1330,10 +1330,14 @@ order by project_id,sns2.source_id
             <![CDATA[
                 SELECT gf.source_id AS source_id,
                        '@PROJECT_ID@' as project_id
-                FROM DoTS.GeneFeature gf, dots.NaSequence ns
+                FROM DoTS.GeneFeature gf, 
+                     dots.NaSequence ns, 
+                     apidb.GeneAttributes ga
                 WHERE gf.na_sequence_id = ns.na_sequence_id
                   AND ns.taxon_id IN ($$organism$$)
                   AND gf.source_id IS NOT NULL
+                  AND gf.source_id = ga.source_id
+                  AND ga.project_id = '@PROJECT_ID@'
             ]]>
         </sql>
     </sqlQuery>
