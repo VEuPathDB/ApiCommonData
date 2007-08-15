@@ -200,6 +200,22 @@
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>   
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Has Phylogenetic Tree -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByPhylogeneticTree" includeProjects="GiardiaDB" 
+              isCacheable="true">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <column name="project_id"/>
+        <column name="source_id" />
+        <sql>
+            <![CDATA[
+              select distinct tree.source_id, '@PROJECT_ID@' as project_id 
+              from apidb.phylogenetictree tree
+           ]]>
+       </sql>
+    </sqlQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Gene type -->

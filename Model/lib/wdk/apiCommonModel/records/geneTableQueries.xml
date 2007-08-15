@@ -52,7 +52,7 @@
             <sql includeProjects="PlasmoDB">
             <![CDATA[
               SELECT
-              source_id as gene_source_id,
+              source_id as gene_source_id,'@PROJECT_ID@' as project_id,
               'Pf-' || replace(strain_a,' ','%20') as strain_a_query,
               CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-'|| replace(strain_b,' ','%20') END  as strain_b_query,
               CASE WHEN strain_b = 'Preich' THEN 'Sp. Pf-'||strain_a ELSE strain_a END as strain_a_disp,
@@ -72,7 +72,7 @@
 
             <sql includeProjects="ToxoDB">
             <![CDATA[
-              SELECT  strain_a as strain_a_disp, 
+              SELECT  strain_a as strain_a_disp, '@PROJECT_ID@' as project_id,
               strain_b as strain_b_disp, 
               CASE WHEN strain_a = 'ME49' THEN 'ME49 (type II)' 
               WHEN strain_a = 'RH' THEN 'RH'
@@ -105,7 +105,7 @@
             <column name="comment_string"/>
             <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
             <![CDATA[
-            SELECT nfc.comment_string
+            SELECT nfc.comment_string, '@PROJECT_ID@' as project_id
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
             WHERE nf.source_id=$$primaryKey$$
               AND nf.na_feature_id = nfc.na_feature_id
@@ -113,7 +113,7 @@
             </sql>
             <sql includeProjects="CryptoDB"> 
             <![CDATA[
-            SELECT comment_string
+            SELECT comment_string, '@PROJECT_ID@' as project_id
             FROM   dots.NAFeatureComment nafc,
             (
             select source_id, na_feature_id from dots.transcript
@@ -153,7 +153,7 @@
                      NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
                      (u.first_name || ' ' || u.last_name) AS user_name,
                      u.organization,
-                     c.comment_date
+                     c.comment_date, '@PROJECT_ID@' as project_id
               FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.GeneFeature gf
@@ -199,7 +199,7 @@
                        asec.evidence_code 
             END  AS source,
                    ec.ec_number,
-                   ec.description as ec_description
+                   ec.description as ec_description, '@PROJECT_ID@' as project_id
             FROM dots.translatedAaFeature taf,
                  dots.genefeature gf,
                  dots.transcript t,
@@ -224,7 +224,7 @@
                              chr(38) || 'field3='||ec_number_3)
                    || decode(ec_number_4, null, null,
                              chr(38) || 'field4='||ec_number_4)
-                   as expasy_url
+                   as expasy_url, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
@@ -257,7 +257,7 @@
             <![CDATA[
             SELECT gts.is_not, gts.go_id, gts.ontology, gts.go_term_name,
                     gts.source, gts.evidence_code,
-                    lower(gts.evidence_code) AS lowercase_evidence_code
+                    lower(gts.evidence_code) AS lowercase_evidence_code, '@PROJECT_ID@' as project_id
             FROM apidb.GoTermSummary gts
             WHERE gts.source_id = $$primaryKey$$
             ORDER BY gts.ontology, gts.go_id
@@ -282,7 +282,7 @@
             <![CDATA[
             SELECT DISTINCT dr.primary_identifier AS pathway_id,
                             decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
-                            dr.remark as activity
+                            dr.remark as activity, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf,
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
@@ -337,7 +337,7 @@
             FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
-                 sres.TaxonName tn
+                 sres.TaxonName tn, '@PROJECT_ID@' as project_id
             WHERE gf1.source_id = $$primaryKey$$
               AND gf1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
@@ -371,7 +371,7 @@
             <sql>
             <![CDATA[
                 SELECT es.iedb_id, es.location, es.sequence, es.name,
-                       es.confidence
+                       es.confidence, '@PROJECT_ID@' as project_id
                 FROM apidb.EpitopeSummary es
                 WHERE es.source_id = $$primaryKey$$
                 ORDER BY DECODE(es.confidence, 'Low', 1,
@@ -402,7 +402,7 @@
                SELECT mss.developmental_stage,
                       'Sequest' as algorithm, 
                       mss.aa_seq_percent_covered as seq_coverage,
-                      mss.number_of_spans, mss.sequence_count, mss.spectrum_count
+                      mss.number_of_spans, mss.sequence_count, mss.spectrum_count, '@PROJECT_ID@' as project_id
                FROM dots.TranslatedAaFeature taf, dots.genefeature gf, 
                     dots.transcript t, apidb.MassSpecSummary mss
                WHERE gf.source_id = $$primaryKey$$
@@ -427,7 +427,7 @@
                 <column name="gff_alias"/>
                 <sql>
                 <![CDATA[
-                SELECT distinct ng.name AS gff_alias
+                SELECT distinct ng.name AS gff_alias, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
                 WHERE gf.source_id = $$primaryKey$$
                   AND gf.na_feature_id = nfng.na_feature_id
@@ -461,14 +461,14 @@
         <sql>
           <![CDATA[
             SELECT gf.source_id,
-                   'taxon:' || t.ncbi_tax_id AS gff_dbxref
+                   'taxon:' || t.ncbi_tax_id AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.NaSequence ns, sres.Taxon t
             WHERE gf.source_id = $$primaryKey$$
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id = t.taxon_id
            UNION
             SELECT gf.source_id,
-                   'EC:' || ec.ec_number AS gff_dbxref
+                   'EC:' || ec.ec_number AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
@@ -478,13 +478,13 @@
               AND asec.aa_sequence_id = taf.aa_sequence_id
               AND ec.enzyme_class_id = asec.enzyme_class_id
            UNION
-/*            SELECT gf.source_id, so.so_id AS gff_dbxref
+/*            SELECT gf.source_id, so.so_id AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, sres.SequenceOntology so
             WHERE gf.source_id = $$primaryKey$$
               AND gf.sequence_ontology_id = so.sequence_ontology_id
            UNION
 */            SELECT gf.source_id,
-                   'NCBI_gi:' || dr.secondary_identifier AS gff_dbxref
+                   'NCBI_gi:' || dr.secondary_identifier AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
@@ -499,7 +499,7 @@
                               'NRDB_sp_dbXRefBySeqIdentity')
            UNION
             SELECT gf.source_id,
-                   'PDB:' || dr.primary_identifier AS gff_dbxref
+                   'PDB:' || dr.primary_identifier AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
@@ -513,7 +513,7 @@
               AND ed.name = 'Predicted protein structures'
            UNION
             SELECT DISTINCT gf.source_id,
-                   'Sanger:' || gf.source_id AS gff_dbxref
+                   'Sanger:' || gf.source_id AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
             WHERE gf.source_id = $$primaryKey$$
@@ -523,7 +523,7 @@
               AND ed.name like 'Sanger%'
            UNION
             SELECT gf.source_id,
-                   '&&brcName&&:' || gf.source_id AS gff_dbxref
+                   '&&brcName&&:' || gf.source_id AS gff_dbxref, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf
             WHERE gf.source_id = $$primaryKey$$
           ]]>
@@ -567,7 +567,7 @@
                    rna.source_id as gff_attr_name,
                    rna.product as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size,
-                   protein.sequence as gff_protein_sequence
+                   protein.sequence as gff_protein_sequence, '@PROJECT_ID@' as project_id
             from DoTS.GeneFeature gf,
                  DoTS.Transcript rna,
                  DoTS.NaLocation nl,
@@ -627,7 +627,7 @@
                    'ApiDB|cds_' || ef.source_id as gff_attr_id,
                    'cds' as gff_attr_name,
                    '.' as gff_attr_description,
-                   (nl.end_max - nl.start_min + 1) as gff_attr_size
+                   (nl.end_max - nl.start_min + 1) as gff_attr_size, '@PROJECT_ID@' as project_id
             from DoTS.GeneFeature gf,
                  DoTS.Transcript rna,
                  DoTS.ExonFeature ef,
@@ -678,7 +678,7 @@
                    'ApiDB|exon_' || ef.source_id as gff_attr_id,
                    ef.name as gff_attr_name,
                    ef.name as gff_attr_description,
-                   (nl.end_max - nl.start_min + 1) as gff_attr_size
+                   (nl.end_max - nl.start_min + 1) as gff_attr_size, '@PROJECT_ID@' as project_id
             from DoTS.GeneFeature gf, 
                  DoTS.Transcript rna, 
                  DoTS.ExonFeature ef,
@@ -722,7 +722,7 @@
             <![CDATA[
             SELECT bf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
                    gi.prey_end, gi.times_observed, gi.number_of_searches,
-                   gi.prey_number_of_baits
+                   gi.prey_number_of_baits, '@PROJECT_ID@' as project_id
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
            WHERE pf.source_id=$$primaryKey$$
@@ -752,7 +752,7 @@
             <![CDATA[
             SELECT pf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
                    gi.prey_end, gi.times_observed, gi.number_of_searches,
-                   gi.bait_number_of_preys
+                   gi.bait_number_of_preys, '@PROJECT_ID@' as project_id
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
            WHERE bf.source_id=$$primaryKey$$
@@ -784,7 +784,7 @@
             <![CDATA[
                SELECT pf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, NULL AS prey_number_of_baits,
-                       bait_number_of_preys, 'bait' as bait_or_prey
+                       bait_number_of_preys, 'bait' as bait_or_prey, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens, apidb.GeneInteraction gi
                 WHERE bf.source_id = $$primaryKey$$
@@ -794,7 +794,7 @@
                 UNION
                 SELECT bf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, prey_number_of_baits,
-                       NULL AS bait_number_of_preys, 'prey' as bait_or_prey
+                       NULL AS bait_number_of_preys, 'prey' as bait_or_prey, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens,  apidb.GeneInteraction gi
                 WHERE pf.source_id = $$primaryKey$$
@@ -818,7 +818,7 @@
             <sql>
             <![CDATA[
                SELECT ens.source_id as array_source_id,
-                      ed.name as array_provider
+                      ed.name as array_provider, '@PROJECT_ID@' as project_id
                FROM dots.Similarity s, dots.Transcript t, dots.GeneFeature gf,
                     sres.ExternalDatabase ed,
                     sres.ExternalDatabaseRelease edr,
@@ -850,7 +850,7 @@
             <sql>
             <![CDATA[
             SELECT REPLACE(pen.name, '_', ' ') as profile_element,
-                   DECODE(pe.value, 1, 'yes', 'no') as element_value
+                   DECODE(pe.value, 1, 'yes', 'no') as element_value, '@PROJECT_ID@' as project_id
             FROM apidb.profileElementName pen,
                  apidb.profileElement pe,
                  apidb.profile p,
@@ -881,7 +881,7 @@
             <![CDATA[
                 SELECT dbr.primary_identifier AS atcc_number,
                        dbr.secondary_identifier AS reagent_type,
-                       dbr.remark
+                       dbr.remark, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf,
                      dots.DbRefAAFeature df,
                      dots.Transcript t,
@@ -952,7 +952,7 @@
                                        'NRDB_sp_dbXRefBySeqIdentity',
                                          'http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=protein&val='
                                          || dr.secondary_identifier,
-                                       ed.name) AS gi_url
+                                       ed.name) AS gi_url, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
@@ -983,7 +983,7 @@
             <column name="pdb_template"/>
             <sql>
             <![CDATA[
-            SELECT gf.source_id as search_term, dr.primary_identifier as pdb_template
+            SELECT gf.source_id as search_term, dr.primary_identifier as pdb_template, '@PROJECT_ID@' as project_id
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
@@ -1019,7 +1019,7 @@
             <![CDATA[
                 SELECT ps.pdb_chain, ps.pdb_title, ps.pdb_id, ps.pvalue_mant,
                        ps.pvalue_exp, ps.taxon, ps.percent_identity,
-                       ps.percent_plasmo_coverage
+                       ps.percent_plasmo_coverage, '@PROJECT_ID@' as project_id
                 FROM apidb.PdbSimilarity ps
                 WHERE ps.source_id = $$primaryKey$$
                 ORDER BY ps.score DESC
@@ -1043,7 +1043,7 @@
             <![CDATA[
           SELECT lg.name as studyName,
 	      max(to_char(de.fold_change, '999.99')) as fold_change,
-              max(to_char(de.confidence,'99.99')) as confidence
+              max(to_char(de.confidence,'99.99')) as confidence, '@PROJECT_ID@' as project_id
             FROM Rad.LogicalGroup lg,
                  Rad.AnalysisInput ai,
                  Rad.Analysis a, 
@@ -1091,7 +1091,7 @@
             <sql>
 			<![CDATA[
 			SELECT content AS comment_string
-			FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
+			FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, '@PROJECT_ID@' as project_id
 			WHERE c.stable_id = $$primaryKey$$
 				AND c.review_status_id = 'task'
 			]]>
@@ -1116,7 +1116,7 @@
             <paramRef ref="recordParams.projectId"/>
             <column name="protein_id"/>
             <sql>
-            SELECT protein_id
+            SELECT protein_id, '@PROJECT_ID@' as project_id
             FROM dots.transcript
             WHERE source_id = $$primaryKey$$
             </sql>

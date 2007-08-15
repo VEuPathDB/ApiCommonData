@@ -301,7 +301,7 @@
             <sql>
             <![CDATA[
             SELECT gf.source_id,
-                   tas.sequence AS protein_sequence
+                   tas.sequence AS protein_sequence,'@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
             WHERE gf.source_id=$$primaryKey$$
@@ -322,9 +322,9 @@
             <column name="phyTreeId"/>
             <sql>
             <![CDATA[
-              select source_id as phyTreeId
-              from apidb.phylogenetictree
-              where source_id = $$primaryKey$$
+              select tree.source_id as phyTreeId,tree.source_id,'@PROJECT_ID@' as project_id
+              from apidb.phylogenetictree tree
+              where tree.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -337,11 +337,10 @@
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
-            <column name="source_id"/>
             <column name="transcript_sequence"/>
             <sql>
             <![CDATA[
-              select gf.source_id, s.sequence as transcript_sequence
+              select gf.source_id, s.sequence as transcript_sequence,'@PROJECT_ID@' as project_id
               from dots.genefeature gf, dots.transcript t, dots.splicednasequence s
               where gf.source_id = $$primaryKey$$
               and t.parent_id = gf.na_feature_id
@@ -367,7 +366,7 @@
                      SUBSTR(s.sequence,
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
-                       AS cds
+                       AS cds,'@PROJECT_ID@' as project_id
               FROM dots.genefeature gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
               WHERE gf.source_id = $$primaryKey$$
