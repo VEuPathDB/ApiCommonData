@@ -1657,13 +1657,14 @@ order by project_id,sns2.source_id
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir"/>
+        <column name="project_id"/>
        <column name="source_id" />
        <column name="confidence" />
        <column name="fold_change" />
        <sql>
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-	    SELECT sof.source_id, 
+	    SELECT sof.source_id, '@PROJECT_ID@' as project_id,
 	      max(round(de.fold_change, 2)) as fold_change,
               max(round(de.confidence, 2)) as confidence
             FROM RAD.DifferentialExpression de, Rad.ShortOligoFamily sof,
@@ -1700,13 +1701,14 @@ order by project_id,sns2.source_id
           isCacheable='true'>
        <paramRef ref="geneParams.sample"/>
        <paramRef ref="geneParams.percentile"/>
+       <column name="project_id"/>
        <column name="source_id" />
        <column name="percentile" />
        <sql>
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
 	    SELECT 
-                 sof.source_id, 
+                 sof.source_id, '@PROJECT_ID@' as project_id, 
                  max(to_char(de.percentile,'99.99')) as percentile
             FROM RAD.ExpressionProfile de, Rad.ShortOligoFamily sof,
                  Rad.Analysis a, Rad.AnalysisInput aia, 

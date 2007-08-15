@@ -155,7 +155,7 @@
             isCacheable='true'>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
-       <paramRef ref="sharedParams.inNotIn"/>
+       <paramRef ref="estParams.overlapOrNot"/>
        <paramRef ref="sharedParams.best_alignment_only" excludeProjects="CryptoDB"
              groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.high_confidence_only" excludeProjects="CryptoDB"
@@ -188,7 +188,7 @@
                 AND percent_identity >= $$min_percent_identity$$
                 AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
                 AND library_id in ($$libraryId$$)
-             $$inNotIn$$                    
+             $$overlapOrNot$$                    
                SELECT i.accession,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ESTALIGNMENTGENESUMMARY i
                 WHERE i.est_gene_overlap_length >= $$bp_overlap_gte$$
@@ -206,7 +206,7 @@
             <!-- query result includes 11 ests that have no genomic alignment -->
             <![CDATA[
             SELECT accession as source_id, '@PROJECT_ID@' as project_id 
-              FROM dots.est where est_id $$inNotIn$$ (
+              FROM dots.est where est_id $$overlapOrNot$$ (
                 SELECT distinct(e.est_id)
                 FROM dots.genefeature gf, core.tableinfo info,
                 dots.nalocation nal, dots.blatalignment blat, 
