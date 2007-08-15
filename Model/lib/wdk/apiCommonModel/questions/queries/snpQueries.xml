@@ -107,10 +107,10 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <wsQuery name="SnpsByGeneId" includeProjects="ApiDB" 
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="params.ds_gene_ids"  default="PF11_0344"/>
-        <paramRef ref="params.snp_strain_a"/>
-        <paramRef ref="params.snp_strain_m"/>
-        <paramRef ref="params.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids"  default="PF11_0344"/>
+        <paramRef ref="sharedParams.snp_strain_a"/>
+        <paramRef ref="sharedParams.snp_strain_m"/>
+        <paramRef ref="sharedParams.signature"/>
         <wsColumn name="source_id"  width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="snp_location" width="32"/>
@@ -279,11 +279,10 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
     <wsQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="params.pforganism"/>
-        <paramRef ref="params.major_allele_min"/>
-        <paramRef ref="params.major_allele_max"/>
-        <paramRef ref="params.minor_allele_min"/>
-        <paramRef ref="params.minor_allele_max"/>
+        <paramRef ref="snpParams.major_allele_min"/>
+        <paramRef ref="snpParams.major_allele_max"/>
+        <paramRef ref="snpParams.minor_allele_min"/>
+        <paramRef ref="snpParams.minor_allele_max"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
 <!--        <wsColumn name="major_strains" width="200"/>-->
