@@ -43,7 +43,20 @@ my $sth = $dbh->prepare(<<EOF);
     VALUES (?,?,?)
 EOF
 
-map { $sth->execute('GL50803_' . basename($_, '.atv'), `cat $_`, '') } @infiles;
+
+foreach (@infiles){
+  my $src_id = 'GL50803_' . basename($_, '.atv');
+  my $sth0 = $dbh->prepare(<<EOF);
+    SELECT source_id FROM apidb.geneAttributes
+    WHERE source_id = ?
+EOF
+
+  $sth0->execute($src_id);
+  # load tree only if source_id exists in apidb.geneAttributes table
+  if ($sth0->fetchrow_array) {
+    $sth->execute($src_id, `cat $_`, '');
+  }
+}
 
 $dbh->commit;
 
