@@ -283,12 +283,12 @@ sub setupLogicalGroups {
   }
 
   if(scalar(@$aAnalysisNames) > 0) {
-    my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'analysis', $aAnalysisNames, $studyName, $dbh);
+    my $logicalGroupA = $self->makeLogicalGroup($conditionAName, '', 'analysis_param_value', $aAnalysisNames, $studyName, $dbh);
     push(@logicalGroups, $logicalGroupA);
   }
 
   if(scalar(@$bAnalysisNames) > 0 && scalar(@$aAnalysisNames) > 0) {
-    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'analysis', $bAnalysisNames, $studyName, $dbh);
+    my $logicalGroupB = $self->makeLogicalGroup($conditionBName, '', 'analysis_param_value', $bAnalysisNames, $studyName, $dbh);
     push(@logicalGroups, $logicalGroupB);
   }
 
