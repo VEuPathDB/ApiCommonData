@@ -170,7 +170,7 @@ sub exactMapEpitopes{
     if ($speciesKey) {
         $species = $speciesKey;
     } else {
-        my $species = $baseFileName;
+        $species = $baseFileName;
         $species =~ s/$speciesRegex/$1/;
     }
 
