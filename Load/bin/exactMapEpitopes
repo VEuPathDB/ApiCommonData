@@ -31,7 +31,7 @@ unless ($subjectFile && $epitopeFile && $outputFile){ die "Usage: ExactMapEpitop
 
 die "Cannot find '$subjectFile':$!\n" unless (-e $subjectFile);
 die "Cannot find '$epitopeFile':$!\n" unless (-e $epitopeFile);
-
+print SDTERR "Establishing dbi login\n";
 print SDTERR "Establishing dbi login\n" if $debug;
 
 #get the epitopes...we only want to do this once
