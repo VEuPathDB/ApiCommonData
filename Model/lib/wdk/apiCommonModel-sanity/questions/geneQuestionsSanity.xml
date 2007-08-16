@@ -738,7 +738,6 @@
         <sanityParam name="phyletic_term_map" value="rno"/>
     </sanityQuestion>
 
-
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Single Locus Tag ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -938,9 +937,9 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="GiardiaDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="400" maxOutputLength="500">
+            minOutputLength="3000" maxOutputLength="4000">
         <sanityParam name="organism" value="Giardia lamblia"/>
-        <sanityParam name="libraryId" value="trophozoite cDNA"/>
+        <sanityParam name="libraryId" value="Giardia lamblia trophozoite"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
         <sanityParam name="high_confidence_only" value="No"/>
@@ -1319,11 +1318,59 @@
           <sanityParam name="organism" value="Plasmodium falciparum"/>
       </sanityQuestion>
 
+
+    <sanityQuestion ref="GeneQuestions.GenesByPhylogeneticTree" includeProjects="GiardiaDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="1400" maxOutputLength="1500">
+        <sanityParam name="organism" value="Giardia lamblia"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="GiardiaDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="sage_tag_library" value="Characterization of the Giardia intestinalis Transcriptome_Trophozoite_Cell_Culture"/>
+        <sanityParam name="st_max_five_prime_distance" value="100"/>
+        <sanityParam name="st_max_three_prime_distance" value="100"/>
+        <sanityParam name="st_min_tag_count" value="2"/>
+        <sanityParam name="st_max_occurrences" value="1"/>
+        <sanityParam name="organism" value="Giardia lamblia"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="sage_tag_library" value="Transcriptional profile of P.falciparum by Serial analysis of gene expression_SAGE-3D7-library1"/>
+        <sanityParam name="st_max_five_prime_distance" value="100"/>
+        <sanityParam name="st_max_three_prime_distance" value="100"/>
+        <sanityParam name="st_min_tag_count" value="2"/>
+        <sanityParam name="st_max_occurrences" value="1"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="ToxoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="sage_tag_library" value="T. gondii 3p SAGE tag frequencies_msj"/>
+        <sanityParam name="st_max_five_prime_distance" value="100"/>
+        <sanityParam name="st_max_three_prime_distance" value="100"/>
+        <sanityParam name="st_min_tag_count" value="2"/>
+        <sanityParam name="st_max_occurrences" value="1"/>
+        <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
   <!-- ============================================================ -->
   <!-- ============================================================ -->
   <!-- == vocab queries == -->
   <!-- ============================================================ -->
   <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ SageTagLibrary ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneVQ.SageTagLibrary" includeProjects="PlasmoDB,ToxoDB,GiardiaDB"
+            minOutputLength="1" maxOutputLength="10">
+    </sanityQuery>
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

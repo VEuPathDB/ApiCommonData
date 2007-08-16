@@ -627,7 +627,7 @@ order by project_id,sns2.source_id
   <!-- Ortholog pattern -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologPattern" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByOrthologPattern" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="geneParams.profile_pattern"/>
         <paramRef ref="geneParams.included_species"/>
@@ -1222,7 +1222,8 @@ order by project_id,sns2.source_id
        <paramRef ref="geneParams.st_max_three_prime_distance"/>
        <paramRef ref="geneParams.st_min_tag_count"/>
        <paramRef ref="geneParams.st_max_occurrences"/>
-<!--       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/> -->
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
        <column name="project_id"/> 
        <column name="source_id" />
        <column name="sage_tag_count" />
