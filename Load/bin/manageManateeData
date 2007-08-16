@@ -1,7 +1,8 @@
-
 #!/usr/bin/perl
 
 use strict;
+
+use Getopt::Long qw(GetOptions);
 
 my ($database, $inputFile);
 
@@ -9,11 +10,11 @@ GetOptions("database:s" => \$database,
            "inputFile:s" => \$inputFile,
 	  );
 
-unless ($database && $path) {
+unless ($database && $inputFile) {
   die "USAGE: manageManateeData --database <STRING> --inputFile <STRING>";
 }
 
-system('mysql -u root -e "DROP DATABASE $database"')
-system('mysql -u root -e "CREATE DATABASE $database"')
-system("mysql $database -u root < $inputFile")
+system('mysql -u root -e "DROP DATABASE $database"');
+system('mysql -u root -e "CREATE DATABASE $database"');
+system("mysql $database -u root < $inputFile");
 
