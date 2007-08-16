@@ -1,0 +1,32 @@
+<wdkModel>
+<!-- notes
+
+   - Queries used by the Ajax Record Classes
+
+-->
+
+  <querySet name="AjaxTables">
+        <!-- AjaxTables.InterproTermList -->
+        <sqlQuery name="InterproTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+            <column name="accession"/>
+            <column name="name"/>
+            <column name="description"/>
+            <sql>
+                SELECT DISTINCT dr.primary_identifier AS accession,
+                                dr.primary_identifier AS name,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier || ' ' || dr.remark
+                                AS description
+                FROM dots.DbRefAaFeature draf, sres.DbRef dr,
+                     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+                WHERE draf.db_ref_id = dr.db_ref_id
+                  AND dr.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+                  AND ed.name = $$primaryKey$$
+            </sql>
+        </sqlQuery>
+
+     </querySet>
+</wdkModel>
