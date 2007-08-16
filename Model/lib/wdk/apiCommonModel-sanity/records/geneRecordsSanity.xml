@@ -546,8 +546,9 @@
     <!-- ++ gff aliases ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
+<!-- this query returns 0 fro Crypto becuase NaGene table is empty -->
     <sanityQuery ref="GeneTables.GeneGffAliases" includeProjects="CryptoDB"
-            minOutputLength="1" maxOutputLength="100">
+            minOutputLength="0" maxOutputLength="100">
         <sanityParam name="primaryKey" value="Chro.80284"/>
         <sanityParam name="projectId" value="CryptoDB"/>
     </sanityQuery>

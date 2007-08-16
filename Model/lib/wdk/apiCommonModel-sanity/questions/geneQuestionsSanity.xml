@@ -1026,26 +1026,6 @@
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
-
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++ Orthologs ++ -->
-    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-
-    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="CryptoDB,ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="" maxOutputLength="">
-        <sanityParam name="historyId" value="FIX_null_dflt"/>
-        <sanityParam name="organism" value="Cryptosporidium hominis"/>
-    </sanityQuestion>
-
-    <sanityQuestion ref="InternalQuestions.GenesByOrthologs" includeProjects="PlasmoDB,ApiDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="" maxOutputLength="">
-        <sanityParam name="historyId" value="FIX_null_dflt"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
-    </sanityQuestion>
-
-
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Gene Dump ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -1377,10 +1357,11 @@
     <!-- ++ CryptoDB Only ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuery ref="GeneId.GenesOrthologousToAGivenGene" includeProjects="CryptoDB"
+    <sanityQuestion ref="GeneQuestions.GenesOrthologousToAGivenGene" includeProjects="CryptoDB"
+                      pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1000">
         <sanityParam name="single_gene_id" value="cgd6_690"/>
-    </sanityQuery>
+    </sanityQuestion>
 
 
 

@@ -20,6 +20,14 @@
                     ref="UserCommentsRecordClasses.SequenceCommentsClass" 
                     projectId="ToxoDB" primaryKey="Ia"/>
 
+      <sanityRecord includeProjects="CryptoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.GeneCommentsClass" 
+                    projectId="CryptoDB" primaryKey="cgd5_1020"/>
+
+      <sanityRecord includeProjects="CryptoDB,ApiDB"
+                    ref="UserCommentsRecordClasses.SequenceCommentsClass" 
+                    projectId="CryptoDB" primaryKey="cgd5_1020"/>
+
   <!-- ============================================================ -->
   <!-- == table queries == -->
   <!-- ============================================================ -->
@@ -40,6 +48,12 @@
         <sanityParam name="projectId" value="ToxoDB"/>
       </sanityQuery>
 
+      <sanityQuery ref="UserCommentTables.GeneComments" includeProjects="CryptoDB"
+                   minOutputLength="0" maxOutputLength="100">
+        <sanityParam name="primaryKey" value="cgd6_690"/>
+        <sanityParam name="projectId" value="CryptoDB"/>
+      </sanityQuery>
+
       <sanityQuery ref="UserCommentTables.SequenceComments" includeProjects="PlasmoDB"
                    minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="MAL9"/>
@@ -50,6 +64,12 @@
                    minOutputLength="0" maxOutputLength="1">
         <sanityParam name="primaryKey" value="Ia"/>
         <sanityParam name="projectId" value="ToxoDB"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UserCommentTables.SequenceComments" includeProjects="CryptoDB"
+                   minOutputLength="0" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="cgd6_690"/>
+        <sanityParam name="projectId" value="CryptoDB"/>
       </sanityQuery>
 
 </sanityModel>

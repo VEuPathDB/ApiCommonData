@@ -293,7 +293,7 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
@@ -308,6 +308,28 @@
               AND t.parent_id = gf.na_feature_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = tas.aa_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" includeProjects="ApiDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="protein_sequence"/>
+            <sql>
+            <![CDATA[
+                  SELECT g.source_id, ext.name as project_id, g.sequence as translation
+                  FROM dots.TranslatedAASequence g, 
+                       sres.SequenceOntology s, 
+                       sres.ExternalDatabaseRelease extr, 
+                       sres.ExternalDatabase ext
+                  WHERE g.source_id = $$primaryKey$$
+                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                    AND g.external_database_release_id=extr.external_database_release_id
+                    AND s.term_name = 'protein'
+                    AND extr.external_database_id=ext.external_database_id
+                    AND LOWER(ext.name)=LOWER($$projectId$$)
             ]]>
             </sql>
         </sqlQuery>
