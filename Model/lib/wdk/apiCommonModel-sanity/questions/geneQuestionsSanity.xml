@@ -21,7 +21,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByLocation" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="10" maxOutputLength="30">
+            minOutputLength="10" maxOutputLength="40">
         <sanityParam name="chromosomeOptional" value="chromosome 1"/>
         <sanityParam name="sequenceId" value="MAL4"/>
         <sanityParam name="start_point" value="1"/>
@@ -66,7 +66,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByGeneType" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="5000" maxOutputLength="10000">
+            minOutputLength="5000" maxOutputLength="14000">
         <sanityParam name="geneType" value="protein coding"/>
         <sanityParam name="includePseudogenes" value="No"/>
         <sanityParam name="organism" value="Plasmodium berghei"/>
@@ -117,7 +117,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesByExonCount" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="1000">
+            minOutputLength="100" maxOutputLength="5000">
         <sanityParam name="num_exons_gte" value="2"/>
         <sanityParam name="num_exons_lte" value="20"/>
         <sanityParam name="organism" value="Plasmodium berghei"/>
@@ -319,7 +319,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="CryptoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="200" maxOutputLength="4000">
+            minOutputLength="200" maxOutputLength="6000">
         <sanityParam name="min_molecular_weight" value="10000"/>
         <sanityParam name="max_molecular_weight" value="50000"/>
         <sanityParam name="organism" value="Cryptosporidium parvum"/>
@@ -363,7 +363,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
+            minOutputLength="20" maxOutputLength="60">
           <sanityParam name="min_coil" value="65"/>
           <sanityParam name="max_coil" value="75"/>
           <sanityParam name="min_strand" value="15"/>
@@ -415,7 +415,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
+            minOutputLength="1" maxOutputLength="50">
           <sanityParam name="BlastQueryType" value="DNA"/>
           <sanityParam name="BlastDatabaseType" value="Translated Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="Plasmodium falciparum"/>
@@ -620,7 +620,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByTransmembraneDomains" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="" maxOutputLength="">
+            minOutputLength="1" maxOutputLength="1000">
         <sanityParam name="min_tm" value="2"/>
         <sanityParam name="max_tm" value="5"/>
         <sanityParam name="organism" value="Plasmodium falciparum"/>
@@ -1059,7 +1059,7 @@
     <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="PlasmoDB"
             pageStart="1" pageEnd="20"
             minOutputLength="3000" maxOutputLength="50000">
-        <sanityParam name="organism" value="Plasmodium Berghei"/>
+        <sanityParam name="organism" value="Plasmodium berghei"/>
     </sanityQuestion>
 
     <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="ToxoDB"
@@ -1159,7 +1159,7 @@
       <sanityQuestion ref="GeneQuestions.GenesByProteinProteinInteraction" includeProjects="PlasmoDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="2" maxOutputLength="10">
-          <sanityParam name="locus_tag" value="PFL0275w"/>
+          <sanityParam name="single_gene_id" value="PFL0275w"/>
           <sanityParam name="bait_or_prey" value="bait"/>
           <sanityParam name="min_observed" value="2"/>
           <sanityParam name="min_searches" value="2"/>
@@ -1235,7 +1235,7 @@
           <sanityParam name="day_and_strain" value="Strain 3D7 Day 1"/>
           <sanityParam name="min_expression_percentile" value="60"/>
           <sanityParam name="max_expression_percentile" value="70"/>
-          <sanityParam name="pf_organism" value="Plasmodium falciparum"/>
+          <sanityParam name="organism" value="Plasmodium falciparum"/>
       </sanityQuery>
 
       <sanityQuestion ref="GeneQuestions.BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB"
