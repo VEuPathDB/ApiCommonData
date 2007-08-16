@@ -152,11 +152,13 @@
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
         <column name="project_id"/>
         <column name="source_id"/>
+        <sqlParamValue name="sequence_table" excludeProjects="ToxoDB">dots.NaSequence</sqlParamValue>
+        <sqlParamValue name="sequence_table" includeProjects="ToxoDB">dots.VirtualSequence</sqlParamValue>
         <sql>
             <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
             SELECT DISTINCT ns.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.NaSequence ns, 
+            FROM &&sequence_table&& ns, 
                  sres.SequenceOntology so,
                  apidb.SequenceAttributes sa
             WHERE ns.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
