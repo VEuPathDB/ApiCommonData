@@ -62,18 +62,18 @@
           <![CDATA[
             SELECT ens.source_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
-            FROM dots.ExternalNaSequence ens, sres.Taxon t
+            FROM dots.NaSequence ens, sres.Taxon t
             WHERE ens.source_id = $$primaryKey$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
             SELECT ens.source_id, so.so_id AS gff_dbxref
-            FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
+            FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.source_id = $$primaryKey$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,
                    'GenBank:' || dr.primary_identifier AS thingie
-            FROM dots.ExternalNaSequence ens, dots.dbrefNaSequence drns,
+            FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
             WHERE ens.source_id = $$primaryKey$$

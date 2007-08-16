@@ -562,8 +562,8 @@
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                    '.' as gff_phase,
-                   'ApiDB|' || gf.source_id as gff_attr_parent,
-                   'ApiDB|rna_' || rna.source_id as gff_attr_id,
+                   'apidb|' || gf.source_id as gff_attr_parent,
+                   'apidb|rna_' || rna.source_id as gff_attr_id,
                    rna.source_id as gff_attr_name,
                    rna.product as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size,
@@ -623,8 +623,8 @@
                         from dots.ExonFeature ef2
                         where parent_id = ef.parent_id
                           and order_number < ef.order_number), 3) as gff_phase,
-                   'ApiDB|rna_' || rna.source_id as gff_attr_parent,
-                   'ApiDB|cds_' || ef.source_id as gff_attr_id,
+                   'apidb|rna_' || rna.source_id as gff_attr_parent,
+                   'apidb|cds_' || ef.source_id as gff_attr_id,
                    'cds' as gff_attr_name,
                    '.' as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size, '@PROJECT_ID@' as project_id
@@ -674,8 +674,8 @@
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                    '.'  as gff_phase,
-                   'ApiDB|rna_' || rna.source_id as gff_attr_parent,
-                   'ApiDB|exon_' || ef.source_id as gff_attr_id,
+                   'apidb|rna_' || rna.source_id as gff_attr_parent,
+                   'apidb|exon_' || ef.source_id as gff_attr_id,
                    ef.name as gff_attr_name,
                    ef.name as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size, '@PROJECT_ID@' as project_id
