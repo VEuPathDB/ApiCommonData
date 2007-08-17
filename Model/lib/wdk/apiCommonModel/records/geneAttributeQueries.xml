@@ -458,7 +458,7 @@
         <sql>
           <![CDATA[
             select gf.source_id, $$projectId$$ as project_id,
-                   ns.source_id as gff_seqid,
+                   'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'gene' as gff_type,
                    least(nl.start_min, nl.end_max) as gff_fstart,

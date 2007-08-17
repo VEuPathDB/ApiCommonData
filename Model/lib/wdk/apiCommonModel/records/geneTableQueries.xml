@@ -548,12 +548,13 @@
         <column name="gff_attr_parent"/>
         <column name="gff_protein_sequence"/>
         <sql>
-            select ns.source_id as gff_seqid,
+            select 'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    decode(so.term_name,
                           'protein_coding', 'mRNA',
                           'rRNA_encoding', 'rRNA',
                           'snRNA_encoding', 'snRNA',
+                          'snoRNA_encoding', 'snRNA',
                           'tRNA_encoding', 'tRNA',
                           'non_protein_coding', 'transcript',
                           so.term_name) as gff_type,
@@ -611,7 +612,7 @@
         <column name="gff_attr_parent"/>
         <sql>
             <![CDATA[
-            select ns.source_id as gff_seqid,
+            select 'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'CDS' as gff_type,
                    least(ef.coding_start, ef.coding_end) as gff_fstart,
@@ -666,7 +667,7 @@
         <column name="gff_attr_parent"/>
         <sql>
             <![CDATA[
-            select ns.source_id as gff_seqid,
+            select 'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'exon' as gff_type,
                    least(nl.start_min, nl.end_max) as gff_fstart,

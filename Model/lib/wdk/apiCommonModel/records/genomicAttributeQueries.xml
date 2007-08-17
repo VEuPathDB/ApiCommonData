@@ -227,7 +227,7 @@
         <column name="gff_sequence"/>
         <sql>
             select ns.source_id, $$projectId$$ AS project_id,
-                   ns.source_id as gff_seqid,
+                   'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,
                    1 as gff_fstart,
