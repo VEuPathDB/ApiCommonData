@@ -333,11 +333,11 @@
             <column name="product"/>
             <sql>
             <![CDATA[
-            SELECT DISTINCT gf2.source_id, tn.name as species, gf2.product
+            SELECT DISTINCT gf2.source_id, tn.name as species, gf2.product, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
-                 sres.TaxonName tn, '@PROJECT_ID@' as project_id
+                 sres.TaxonName tn
             WHERE gf1.source_id = $$primaryKey$$
               AND gf1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
