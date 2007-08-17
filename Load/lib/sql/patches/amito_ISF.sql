@@ -124,6 +124,7 @@ set taaf.translation_start =
             + (select nvl(sum(nl.end_max - nl.start_min + 1), 0)
                from dots.NaLocation nl, dots.ExonFeature ef2
                where nl.na_feature_id = ef2.na_feature_id
+                 and ef2.parent_id = ef.parent_id
                  and ef2.order_number < ef.order_number)
      from dots.exonfeature ef, dots.nalocation l,dots.transcript t
      where t.na_feature_id = taaf.na_feature_id
@@ -149,9 +150,10 @@ prompt fix translation_start for reverse strand, genes with noncoding exon one
 update dots.translatedaafeature taaf
 set taaf.translation_start = 
     (select l.end_max - ef.coding_start + 1
-            - (select nvl(sum(nl.end_max - nl.start_min + 1), 0)
+            + (select nvl(sum(nl.end_max - nl.start_min + 1), 0)
                from dots.NaLocation nl, dots.ExonFeature ef2
                where nl.na_feature_id = ef2.na_feature_id
+                 and ef2.parent_id = ef.parent_id
                  and ef2.order_number < ef.order_number)
      from dots.exonfeature ef, dots.nalocation l,dots.transcript t
      where t.na_feature_id = taaf.na_feature_id
@@ -180,6 +182,7 @@ set taaf.translation_stop =
             + (select nvl(sum(nl.end_max - nl.start_min + 1), 0)
                from dots.NaLocation nl, dots.ExonFeature ef2
                where nl.na_feature_id = ef2.na_feature_id
+                 and ef2.parent_id = ef.parent_id
                  and ef2.order_number > ef.order_number)
      from dots.exonfeature ef, dots.nalocation l, dots.transcript t,
           dots.splicednasequence snas
@@ -212,6 +215,7 @@ set taaf.translation_stop =
             + (select nvl(sum(nl.end_max - nl.start_min + 1), 0)
                from dots.NaLocation nl, dots.ExonFeature ef2
                where nl.na_feature_id = ef2.na_feature_id
+                 and ef2.parent_id = ef.parent_id
                  and ef2.order_number > ef.order_number)
      from dots.exonfeature ef, dots.nalocation l,dots.transcript t,
           dots.splicednasequence snas
