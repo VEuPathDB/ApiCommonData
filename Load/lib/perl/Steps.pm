@@ -2100,7 +2100,7 @@ sub InsertRadAnalysisFromConfig {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $executable = $propertySet->getProp($propName);
+  my $executable = defined($propName) ? $propertySet->getProp($propName) : undef;
 
   my $optionalExecutable = $executable ? "--pathToExecutable $executable" : '';
 
