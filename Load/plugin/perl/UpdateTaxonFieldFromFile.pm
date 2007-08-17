@@ -176,8 +176,10 @@ sub processFile {
 
     my $taxon_id = $self->getTaxonId(\%taxonIds,$line);
 
-    $sourceIds{$source_id}{'taxon'} = $taxon_id if (! exists $sourceIds{$source_id}{'taxon'} || $sourceIds{$source_id}{'taxon'} == $unknownTaxonId);
+    $sourceIds{$source_id} = $taxon_id if (! exists $sourceIds{$source_id} || $sourceIds{$source_id} == $unknownTaxonId);
   }
+
+  %taxonIds = ();
 
   return \%sourceIds;
 }
@@ -262,7 +264,7 @@ sub updateRows {
 
   $row->retrieveFromDB();
 
-  $row->setTaxonId($sourceIds->{$source}->{'taxon'}) unless ($sourceIds->{$source}->{'taxon'} == $row->getTaxonId());
+  $row->setTaxonId($sourceIds->{$source}) unless ($sourceIds->{$source} == $row->getTaxonId());
 
   $submitted += $row->submit();
 
