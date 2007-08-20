@@ -1,0 +1,20 @@
+<DoTS::BLATAlignmentQuality>
+  <blat_alignment_quality_id>1</blat_alignment_quality_id>
+  <name>very good</name>
+  <description>max_query_gap <= 5, both ends consistent (<= 10 mismatch unless polyA, not polyA on both ends), >=95% identity</description>
+</DoTS::BLATAlignmentQuality>
+<DoTS::BLATAlignmentQuality>
+  <blat_alignment_quality_id>2</blat_alignment_quality_id>
+  <name>very good with genome gaps</name>
+  <description>same as very good but internal and end mismatches allowed if there is a sufficiently large genomic sequence gap (within 10X mismatch length for ends)</description>
+</DoTS::BLATAlignmentQuality>
+<DoTS::BLATAlignmentQuality>
+  <blat_alignment_quality_id>3</blat_alignment_quality_id>
+  <name>good</name>
+  <description>same as very good, but with max_query_gap <= 15 (allow large internal gaps if there is a sufficiently large genomic sequence gap), and inconsistent ends allowed if unaligned_bases <= 50</description>
+</DoTS::BLATAlignmentQuality>
+<DoTS::BLATAlignmentQuality>
+  <blat_alignment_quality_id>4</blat_alignment_quality_id>
+  <name>not so good</name>
+  <description>everything else</description>
+</DoTS::BLATAlignmentQuality>
