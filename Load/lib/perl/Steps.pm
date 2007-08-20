@@ -123,6 +123,20 @@ sub initPlasmoAnalysis {
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+
+sub UpdateGusTableWithXml {
+  my ($mgr,$file,$table) = @;
+  my $signal = "Load${table}WithXml";
+
+  my $args = "--filename $file";
+
+  $mgr->runPlugin($signal,
+		  "GUS::Supported::Plugin::LoadGusXml", $args,
+		  "Loading rows in $table from xml file");
+}
+
+
+
 sub initAmitoAnalysis {
   my ($propertyFile, $optionalArgs) = @_;
 
@@ -1041,7 +1055,7 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
 
 
 sub makeTranscriptDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
 
     my $sql = <<"EOF";
     SELECT  replace(tn.name, ' ', '_')
@@ -1054,19 +1068,22 @@ sub makeTranscriptDownloadFile {
                 ||'|'||
             '$dataSource'
                 ||'|'||
-            '('|| so.term_name || ')' || gf.product as defline,
+            '('|| so1.term_name || ')' || gf.product as defline,
             snas.sequence
        FROM dots.$seqTable enas,
             dots.genefeature gf,
             dots.transcript t,
             dots.SplicedNaSequence snas,
             sres.taxonname tn,
-            sres.sequenceontology so,
+            sres.sequenceontology so1,
+            sres.sequenceontology so2,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr
       WHERE gf.na_feature_id = t.parent_id
+        AND gf.sequence_ontology_id = so2.sequence_ontology_id
+        AND so2.term_name != 'repeat_region'
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.SEQUENCE_ONTOLOGY_ID = so.sequence_ontology_id
+        AND snas.SEQUENCE_ONTOLOGY_ID = so1.sequence_ontology_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_sequence_id = enas.na_sequence_id 
         AND snas.taxon_id = tn.taxon_id
@@ -1080,7 +1097,54 @@ EOF
       $sql .= " and enas.external_database_release_id = $genomeDbRls";
     }
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
+sub makeRGTranscriptDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
+
+    my $sql = <<"EOF";
+    SELECT  replace(tn.name, ' ', '_')
+                ||'|'||
+            enas.source_id
+                ||'|'||
+            gf.source_id
+                ||'|'||
+            '$dataType'
+                ||'|'||
+            '$dataSource'
+                ||'|'||
+            '('|| so1.term_name || ')' || gf.product as defline,
+            snas.sequence
+       FROM dots.$seqTable enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.SplicedNaSequence snas,
+            sres.taxonname tn,
+            sres.sequenceontology so1,
+            sres.sequenceontology so2,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE gf.na_feature_id = t.parent_id
+        AND gf.sequence_ontology_id = so2.sequence_ontology_id
+        AND so2.term_name = 'repeat_region'
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.SEQUENCE_ONTOLOGY_ID = so1.sequence_ontology_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id 
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    if ($genomeExtDb && $genomeExtDbVer) {
+      my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
+      $sql .= " and enas.external_database_release_id = $genomeDbRls";
+    }
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
@@ -1126,7 +1190,6 @@ EOF
 
     makeDownloadFile($mgr, $species, $name, $sql);
 
-
 }
 
 
@@ -1156,24 +1219,71 @@ sub makeDerivedCdsDownloadFile {
                 dots.TranslatedAaFeature taaf,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
-                sres.externaldatabaserelease edr
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND t.na_feature_id = taaf.na_feature_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_sequence_id = enas.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name != 'repeat_region'
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
+sub makeRGDerivedCdsDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+
+    my $sql = <<"EOF";
+    SELECT replace(tn.name, ' ', '_')
+                  ||'|'||
+           enas.source_id
+                  ||'|'||
+           gf.source_id
+                  ||'|'||
+           'Annotation'
+                  ||'|'||
+           '$dataSource'
+                  ||'|'||
+           '(protein coding) ' || gf.product as defline,
+           SUBSTR(snas.sequence,
+                  taaf.translation_start,
+                  taaf.translation_stop - taaf.translation_start + 1)
+           FROM dots.$seqTable enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                dots.TranslatedAaFeature taaf,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so
+           WHERE gf.na_feature_id = t.parent_id
+                 AND t.na_sequence_id = snas.na_sequence_id
+                 AND t.na_feature_id = taaf.na_feature_id
+                 AND snas.external_database_release_id = edr.external_database_release_id
+                 AND gf.na_sequence_id = enas.na_sequence_id
+                 AND gf.sequence_ontology_id = so.sequence_ontology_id
+                 AND so.term_name = 'repeat_region'
+                 AND snas.taxon_id = tn.taxon_id
+                 AND tn.name_class = 'scientific name'
+                 AND edr.external_database_id = ed.external_database_id
+                 AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+       makeDownloadFile($mgr, $species, $name, $sql,$project);
+}
+
+
 sub makeAnnotatedProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
     my $sql = <<"EOF";
     SELECT replace(tn.name, ' ', '_')
@@ -1195,11 +1305,14 @@ sub makeAnnotatedProteinDownloadFile {
             dots.translatedaasequence taas,
             sres.taxonname tn,
             sres.externaldatabase ed,
-            sres.externaldatabaserelease edr
+            sres.externaldatabaserelease edr,
+            sres.sequenceontology so
       WHERE t.na_feature_id = taaf.na_feature_id
         AND gf.na_feature_id = t.parent_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
-        AND enas.na_sequence_id = gf.na_sequence_id 
+        AND enas.na_sequence_id = gf.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name != 'repeat_region'
         AND taas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND t.external_database_release_id = edr.external_database_release_id
@@ -1207,9 +1320,52 @@ sub makeAnnotatedProteinDownloadFile {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
+
+sub makeRGAnnotatedProteinDownloadFile {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+
+    my $sql = <<"EOF";
+    SELECT replace(tn.name, ' ', '_')
+        ||'|'||
+    enas.source_id
+        ||'|'||
+    gf.source_id
+        ||'|'||
+    'Annotation'
+        ||'|'||
+    '$dataSource'
+        ||'|'||
+    '(protein coding) ' || taas.description as defline,
+    taas.sequence
+       FROM dots.$seqTable enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr,
+            sres.sequenceontology so
+      WHERE t.na_feature_id = taaf.na_feature_id
+        AND gf.na_feature_id = t.parent_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND enas.na_sequence_id = gf.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'repeat_region'
+        AND taas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
 
 sub makeOrfProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
@@ -1254,7 +1410,7 @@ EOF
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$projectDB) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$projectDB,$project) = @_;
 
     my $sql = <<"EOF";
     SELECT
@@ -1289,7 +1445,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
@@ -1297,7 +1453,7 @@ EOF
 
 
 sub makeGenomicDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain,$project) = @_;
 
     my $sql = <<"EOF";
         SELECT
@@ -1322,7 +1478,7 @@ sub makeGenomicDownloadFile {
             AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
@@ -1337,7 +1493,7 @@ sub makeDownloadFile {
     my $release = $propertySet->getProp('projectRelease');
     my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
 
-    my $dlDir = "$mgr->{pipelineDir}/data/downloadSite/$species";
+    my $dlDir = "$mgr->{dataDir}/downloadSite/$species";
     unless (-e $dlDir) {
         mkdir $dlDir
           or die "Can not make directory '$dlDir'\n";
@@ -1459,7 +1615,7 @@ sub syncDownloadDirToSite {
     my $propertySet = $mgr->{propertySet};
     my $parentDir = 'release-' . $propertySet->getProp('projectRelease');
 
-    my $cmd = "rsync -ae ssh $mgr->{pipelineDir}/downloadSite/ $site/$parentDir";
+    my $cmd = "rsync -ae ssh $mgr->{dataDir}/downloadSite/ $site/$parentDir";
 
     $mgr->runCmd($cmd);
     # do we really need a signal? rysnc won't re-copy files already in place
@@ -1511,7 +1667,7 @@ sub extractESTs {
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
-  my $logFile = "$mgr->{pipelineDir}/logs/${signal}.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   my $name = "${genus}_$species";
 
@@ -1754,7 +1910,7 @@ sub filterBLASTResults{
 
   $taxonList =~ s/"//g;
 
-  my $cmd = "splitAndFilterBLASTX --taxon $taxonList --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $outFile 2>> $logFile";
+  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $outFile 2>> $logFile";
 
   $mgr->runCmd($cmd);
 
