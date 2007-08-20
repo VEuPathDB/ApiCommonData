@@ -112,9 +112,29 @@
                 <columnAttribute inReportMaker="true"  name="is_reversed" displayName="Strand" internal="true" />
                 <linkAttribute displayName="Alignment" name="alignmentlink" visible="view"
                    inReportMaker="false" internal="false" >
-                     <url>
+                     <url includeProjects="PlasmoDB">
                         <![CDATA[
-                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/plasmo/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
+                     <url includeProjects="GiardiaDB">
+                        <![CDATA[
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/giardiadb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
+                     <url includeProjects="TrichDB">
+                        <![CDATA[
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/trichdb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
+                     <url includeProjects="CryptoDB">
+                        <![CDATA[
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
+                     <url includeProjects="ToxoDB">
+                        <![CDATA[
+                        @GBROWSE_BASE_URL@/cgi-bin/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
                         ]]>
                      </url>
                 </linkAttribute>
