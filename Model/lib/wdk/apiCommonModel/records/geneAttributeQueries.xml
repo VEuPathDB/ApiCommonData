@@ -434,7 +434,29 @@
         </sqlQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- GFF -->  
+    <!-- GFF sequence -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GeneGffSequence" excludeProjects="ApiDB">
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
+        <column name="gff_transcript_sequence"/>
+        <sql>
+          <![CDATA[
+            select gf.source_id, $$projectId$$ as project_id,
+                   s.sequence as gff_transcript_sequence
+            from DoTS.GeneFeature gf, 
+                 DoTS.Transcript rna,
+                 dots.splicednasequence s
+            where gf.source_id = $$primaryKey$$
+                  and gf.na_feature_id = rna.parent_id
+                  and s.na_sequence_id = rna.na_sequence_id
+          ]]>
+        </sql>
+      </sqlQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- GFF attributes (other than sequence) -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneGffAttrs" excludeProjects="ApiDB">
@@ -454,7 +476,6 @@
         <column name="gff_attr_description"/>
         <column name="gff_attr_locus_tag"/>
         <column name="gff_attr_size"/>
-        <column name="gff_transcript_sequence"/>
         <sql>
           <![CDATA[
             select gf.source_id, $$projectId$$ as project_id,
@@ -472,20 +493,19 @@
                    gf.product as gff_attr_description,
                    gf.source_id as gff_attr_locus_tag,
                    (greatest(nl.start_min, nl.end_max)
-                   - least(nl.start_min, nl.end_max) + 1) as gff_attr_size,
-                   s.sequence as gff_transcript_sequence
+                   - least(nl.start_min, nl.end_max) + 1) as gff_attr_size
             from DoTS.GeneFeature gf, 
                  DoTS.NaLocation nl, 
                  DoTS.NaSequence ns,
-                 DoTS.Transcript rna,
-                 dots.splicednasequence s
+                 DoTS.Transcript rna
             where gf.source_id = $$primaryKey$$
                   and gf.na_feature_id = nl.na_feature_id
                   and gf.na_sequence_id = ns.na_sequence_id
                   and gf.na_feature_id = rna.parent_id
-                  and s.na_sequence_id = rna.na_sequence_id
           ]]>
         </sql>
       </sqlQuery>
+
     </querySet>
+
 </wdkModel>

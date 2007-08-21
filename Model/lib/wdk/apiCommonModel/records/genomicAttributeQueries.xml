@@ -200,7 +200,25 @@
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- GFF -->  
+    <!-- GFF sequence-->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="SequenceGffSequence" isCacheable="false" excludeProjects="ApiDB">
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
+        <column name="gff_sequence"/>
+        <sql>
+            select ns.source_id, $$projectId$$ AS project_id,
+                   ns.sequence as gff_sequence
+            from apidb.GenomicSequence gs,
+                 dots.NaSequence ns
+            where gs.source_id = $$primaryKey$$
+              and ns.na_sequence_id = gs.na_sequence_id
+        </sql>
+    </sqlQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- GFF attributes (other than sequence) -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SequenceGffAttrs" isCacheable="false" excludeProjects="ApiDB">
@@ -224,7 +242,6 @@
         <column name="gff_attr_translation_table"/>
         <column name="gff_attr_topology"/>
         <column name="gff_attr_localization"/>
-        <column name="gff_sequence"/>
         <sql>
             select ns.source_id, $$projectId$$ AS project_id,
                    'apidb|' || ns.source_id as gff_seqid,
@@ -244,8 +261,7 @@
                    SUBSTR(tn.name, 1, INSTR(tn.name || '  ', ' ', 1, 2) - 1) as gff_attr_organism_name,
                    11 as gff_attr_translation_table,
                    'linear' as gff_attr_topology,
-                   'nuclear' as gff_attr_localization,
-                   ns.sequence as gff_sequence
+                   'nuclear' as gff_attr_localization
             from apidb.GenomicSequence gs,
                  dots.NaSequence ns,
                  sres.externaldatabase ed,
