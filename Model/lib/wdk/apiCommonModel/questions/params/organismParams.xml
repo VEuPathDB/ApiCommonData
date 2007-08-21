@@ -359,17 +359,18 @@
          Choices must be a subset of
          {Cryptosporidium parvum, Toxoplasma gondii}.
 
-         This is enforced by a third inline view, named "cp_tg", in the
-         FROM clause.
+         This is enforced with an sqlParamValue namded "organism", which is
+         set as a function of the project
                                                                            -->
     <!--===================================================================-->
 
     <sqlQuery name="cp-tg" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
-      <sql includeProjects="ToxoDB,CryptoDB">
+      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="GiardiaDB,PlasmoDB,TrichDB">none at all</sqlParamValue>
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -385,12 +386,6 @@
                   AND t.rank = 'species'
                   AND tn.name = '&&organism&&') organisms
           ORDER BY organisms.name
-        ]]>
-      </sql>
-
-      <sql includeProjects="PlasmoDB,GiardiaDB,TrichDB">
-        <![CDATA[
-          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
         ]]>
       </sql>
     </sqlQuery>
@@ -459,12 +454,8 @@
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
-      <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
-        <![CDATA[
-          SELECT name AS term, taxon_id AS internal FROM sres.taxonname WHERE name IN ('none at all')
-        ]]>
-      </sql>
-      <sql includeProjects="ToxoDB,PlasmoDB">
+      <sqlParamValue name="organism" includeProjects="CryptoDB,GiardiaDB,TrichDB">none at all</sqlParamValue>
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -496,6 +487,8 @@
     <sqlQuery name="pf" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
+      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="CryptoDB,GiardiaDB,ToxoDB,TrichDB">none at all</sqlParamValue>
       <sql>
         <![CDATA[
           SELECT organisms.name AS term,
@@ -510,7 +503,7 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name IN ('Plasmodium falciparum')) organisms
+                  AND tn.name = '&&organism&&') organisms
           ORDER BY organisms.name
         ]]>
       </sql>
@@ -528,6 +521,8 @@
     <sqlQuery name="pb" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
+      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="CryptoDB,GiardiaDB,ToxoDB,TrichDB">none at all</sqlParamValue>
       <sql>
         <![CDATA[
           SELECT organisms.name AS term,
@@ -542,7 +537,7 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name IN ('Plasmodium berghei')) organisms
+                  AND tn.name = '&&organism&&') organisms
           ORDER BY organisms.name
         ]]>
       </sql>
