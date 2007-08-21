@@ -687,7 +687,7 @@ order by project_id,sns2.source_id
             AND drnf.db_ref_id = dr.db_ref_id
             group by gf.source_id
            ]]>
-       </sql>
+        </sql>
         <sql includeProjects="ToxoDB">
             <![CDATA[
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
@@ -708,7 +708,7 @@ order by project_id,sns2.source_id
             AND draf.db_ref_id = dr.db_ref_id
             GROUP BY gf.source_id
            ]]>
-       </sql>
+        </sql>
     </sqlQuery>
 
 	<wsQuery name="GenesByMetabolicPathway" includeProjects="ApiDB"
@@ -943,7 +943,7 @@ order by project_id,sns2.source_id
             and t.parent_id = gf.na_feature_id
 	    and gf.external_database_release_id = edr.external_database_release_id
 	    and edr.external_database_id = ed.external_database_id
-	    and ed.name = 'Chromosome Map - David Sbiley'
+	    and ed.name = 'Chromosome Map - David Sibley'
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
