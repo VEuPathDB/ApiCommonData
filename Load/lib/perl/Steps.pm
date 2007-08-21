@@ -125,7 +125,7 @@ sub initPlasmoAnalysis {
 
 
 sub UpdateGusTableWithXml {
-  my ($mgr,$file,$table) = @;
+  my ($mgr,$file,$table) = @_;
   my $signal = "Load${table}WithXml";
 
   my $args = "--filename $file";
