@@ -1275,6 +1275,7 @@ order by project_id,sns2.source_id
        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="geneParams.min_number_est_aligned" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
        <column name="source_id" />
        <column name="number_of_ests" />
@@ -1290,6 +1291,7 @@ order by project_id,sns2.source_id
             AND library_id in ($$libraryId$$)
             AND target_taxon_id in ($$organism$$)
             GROUP by gene
+            HAVING count(*) >= $$min_number_est_aligned$$
             ]]>
           </sql>
        <sql includeProjects="CryptoDB">
@@ -1319,7 +1321,7 @@ order by project_id,sns2.source_id
               AND blat.percent_identity >= $$min_percent_identity$$
               AND ((blat.query_bases_aligned / (asbl.sequence_end - asbl.sequence_start + 1)) * 100) >= $$min_percent_est_aligned$$
            GROUP BY gf.source_id
-           ORDER BY gf.source_id
+           HAVING count(*) >= $$min_number_est_aligned$$
             ]]>
           </sql>
     </sqlQuery>
