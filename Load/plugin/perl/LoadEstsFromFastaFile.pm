@@ -1,4 +1,4 @@
-package GUS::Supported::Plugin::LoadEstsFromFastaFile;
+package ApiCommonData::Load::Plugin::LoadEstsFromFastaFile;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 use strict;
@@ -10,7 +10,8 @@ use GUS::Model::DoTS::Library;
 use GUS::Model::SRes::Contact;
 use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::SequenceOntology;
-
+use Bio::PrimarySeq;
+use Bio::Tools::SeqStats;
 
 my $argsDeclaration =[];
 my $purposeBrief = 'Insert EST sequences from a FASTA file.';
@@ -63,7 +64,7 @@ my $argsDeclaration =
  stringArg({ name            => 'possiblyReversedRegex',
              descr           => 'regex for whether sequence is reversed',
              reqd            => 0,
-             constrainFunc   => undef,
+             constraintFunc   => undef,
              isList          => 0 }),
 
  stringArg({ name            => 'poorQualityRegex',
@@ -73,27 +74,27 @@ my $argsDeclaration =
              isList          => 0 }),
 
  booleanArg({name            => 'possiblyReversed',
-             description     => 'if likely reversed, field will be set to 1 in EST table for all sequences in file, alternative to regex',
+             descr     => 'if likely reversed, field will be set to 1 in EST table for all sequences in file, alternative to regex',
              reqd            => 0,
-             constrainFunc   => undef,
+             constraintFunc   => undef,
              isList         => 0 }),
 
  integerArg({name            => 'startAt',
-             description     => 'number of entry to begin loading, for restart',
+             descr     => 'number of entry to begin loading, for restart',
              reqd            => 0,
-             constrainFunc   => undef,
+             constraintFunc   => undef,
              isList         => 0 }),
 
  stringArg({ name            => 'putativeFullLengthRegex',
              descr           => 'regex for whether sequence is supposed to be full length',
              reqd            => 0,
-             constrainFunc   => undef,
+             constraintFunc   => undef,
              isList          => 0 }),
 
  booleanArg({name            => 'putativeFullLength',
-             description     => 'indicates all sequences are putatively full length, alternative to regex',
+             descr     => 'indicates all sequences are putatively full length, alternative to regex',
              reqd            => 0,
-             constrainFunc   => undef,
+             constraintFunc   => undef,
              isList          => 0 }),
 
  fileArg({   name            => 'fastaFile',
@@ -215,6 +216,7 @@ stringArg({   name           => 'contactFax',
  booleanArg({  name           => 'isImage',
 	       descr          => 'true if sequences are from IMAGE consortium, otherwise will be set to 0',
 	       reqd           => 0,
+	       constraintFunc   => undef,
 	       default        => 0 }),
 ];
 
@@ -389,6 +391,7 @@ sub processFile{
 	}
 	else {
 	  $seq .= $_;
+	  $seq =~ s/\s//g;
 	  $seqLength = length($seq);
 	}
 
@@ -444,7 +447,7 @@ sub makeContactRow {
 
   my $address2 = $self->getArg('contactAddress2');
 
-  my $contact = GUS::Model::SRes::Contact({'name'=>$name,'address1'=>$address1, 'address2'=>$address2 });
+  my $contact = GUS::Model::SRes::Contact->new({'name'=>$name,'address1'=>$address1, 'address2'=>$address2 });
 
   unless($contact->retrieveFromDB()) {
     if ($self->getArg('contactEmail')) {
@@ -507,7 +510,7 @@ sub createNewExternalSequence {
     new({'external_database_release_id' => $self->{external_database_release_id},
 	 'source_id' => $source_id,
 	 'taxon_id' => $self->{taxonId},
-	 'seq_version' => $seq_version,
+	 'sequence_version' => $seq_version,
 	 'sequence_ontology_id' => $self->{sequenceOntologyId} });
 
   if ($secondary_id && $aas->isValidAttribute('secondary_identifier')) {
@@ -591,14 +594,17 @@ sub fetchSequenceOntologyId {
 
   my $name = $self->getArg('SOTermName');
 
-  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({ term_name => $name });
+  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $name });
 
   $SOTerm->retrieveFromDB;
+
+  $self->{sequenceOntologyId} = $SOTerm->getId();
+
+  print STDERR ("SO ID:   ********** $self->{sequenceOntologyId} \n");
 
   $self->{sequenceOntologyId}
     || $self->userError("Can't find SO term '$name' in database");
 
-  $self->{sequenceOntologyId} = $SOTerm->getSequenceOntologyId();
 }
 
 sub fetchTaxonId {
