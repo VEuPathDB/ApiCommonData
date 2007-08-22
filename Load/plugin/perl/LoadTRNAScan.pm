@@ -428,7 +428,7 @@ sub getExonFeats {
 sub makeExonFeat {
   my ($self,$seqSourceId,$soIds,$orderNum,$scanReleaseId,$start,$end,$isReversed) = @_;
 
-  $seqSourceId = "${seqSourceId}-1-$orderNum";
+  $seqSourceId = "${seqSourceId}-$orderNum";
 
   my $codingStart = $isReversed ? $end : $start;
   my $codingEnd = $isReversed ? $start : $end;
