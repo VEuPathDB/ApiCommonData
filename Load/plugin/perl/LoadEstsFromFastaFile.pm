@@ -484,8 +484,6 @@ sub checkIfInDb {
 sub process {
   my($self,$source_id,$secondary_id,$seq_version,$seq,$possiblyReversed,$putativeFullLength,$poorQuality,$seqLength,$qualityStart, $description) = @_;
 
-  $self->{totalCount}++;
-
   my $nas = $self->createNewExternalSequence($source_id,$seq,$description,$seq_version,$secondary_id);
 
   my $est = $self->createNewEST($source_id,$possiblyReversed,$putativeFullLength,$poorQuality,$seqLength,$qualityStart);
