@@ -552,6 +552,7 @@
                    'ApiDB' as gff_source,
                    decode(so.term_name,
                           'protein_coding', 'mRNA',
+                          'repeat_region', 'mRNA',
                           'rRNA_encoding', 'rRNA',
                           'snRNA_encoding', 'snRNA',
                           'snoRNA_encoding', 'snRNA',
@@ -634,6 +635,7 @@
                  DoTS.ExonFeature ef,
                  DoTS.NaLocation nl,
                  DoTS.NaSequence ns,
+                 sres.SequenceOntology so,
                  dots.RnaFeatureExon rfe
             where gf.source_id = $$primaryKey$$
             and gf.na_feature_id = rna.parent_id
@@ -643,6 +645,8 @@
             and gf.na_sequence_id = ns.na_sequence_id
             and ef.coding_start is not null
             and ef.coding_end is not null
+            and gf.sequence_ontology_id = so.sequence_ontology_id
+            and so.term_name in ('protein_coding', 'repeat_region')
             order by ef.order_number
             ]]>
         </sql>
