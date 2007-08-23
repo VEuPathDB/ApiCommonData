@@ -109,14 +109,14 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-  <questionSet name="SequenceDumpQuestions" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+  <questionSet name="SequenceDumpQuestions" excludeProjects="ApiDB"
              displayName="Genomic Sequence Data Dump Questions"
              internal="yes">
 
   <!--===========================================================================-->
   <!-- question that retrieves all genes by organism  -->
   <!--===========================================================================-->
-    <question name="SequenceDumpQuestion" includeProjects="PlasmoDB, ToxoDB, CryptoDB"
+    <question name="SequenceDumpQuestion" excludeProjects="ApiDB"
          displayName="Find Sequences to dump"
               queryRef="SequenceIds.SequenceDumpQuery"
               recordClassRef="SequenceRecordClasses.SequenceRecordClass">

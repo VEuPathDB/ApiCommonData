@@ -148,7 +148,7 @@
   <!-- Query that retrieves all sequences by organism -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceDumpQuery" isCacheable="true" includeProjects="PlasmoDB, ToxoDB, CryptoDB">
+    <sqlQuery name="SequenceDumpQuery" isCacheable="true" excludeProjects="ApiDB">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
         <column name="project_id"/>
         <column name="source_id"/>

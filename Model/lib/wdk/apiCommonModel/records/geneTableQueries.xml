@@ -421,7 +421,7 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-       <sqlQuery name="GeneGffAliases" isCacheable="false">
+       <sqlQuery name="GeneGffAliases" isCacheable="false" excludeProjects="ApiDB">
          <paramRef ref="recordParams.primaryKey"/>
          <paramRef ref="recordParams.projectId"/>
                 <column name="gff_alias"/>
@@ -436,7 +436,7 @@
                 </sql>
        </sqlQuery>
         
-       <sqlQuery name="GeneGffGoTerms" displayName="GO Terms" isCacheable="false">
+       <sqlQuery name="GeneGffGoTerms" displayName="GO Terms" isCacheable="false" excludeProjects="ApiDB">
          <paramRef ref="recordParams.primaryKey"/>
          <paramRef ref="recordParams.projectId"/>
                 <column name="gff_go_id"/>
@@ -530,7 +530,7 @@
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneGffRnas" excludeProjects="ApiDB">
+    <sqlQuery name="GeneGffRnas" excludeProjects="ApiDB" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -594,7 +594,7 @@
         </sql>
     </sqlQuery>
 
-    <sqlQuery name="GeneGffCdss" excludeProjects="ApiDB">
+    <sqlQuery name="GeneGffCdss" excludeProjects="ApiDB" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
@@ -625,7 +625,7 @@
                         where parent_id = ef.parent_id
                           and order_number < ef.order_number), 3) as gff_phase,
                    'apidb|rna_' || rna.source_id as gff_attr_parent,
-                   'apidb|cds_' || ef.source_id as gff_attr_id,
+                   'apidb|cds_' || rna.source_id as gff_attr_id,
                    'cds' as gff_attr_name,
                    '.' as gff_attr_description,
                    (nl.end_max - nl.start_min + 1) as gff_attr_size, '@PROJECT_ID@' as project_id
@@ -649,7 +649,7 @@
     </sqlQuery>
 
 
-    <sqlQuery name="GeneGffExons" excludeProjects="ApiDB">
+    <sqlQuery name="GeneGffExons" excludeProjects="ApiDB" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="gff_seqid"/>
