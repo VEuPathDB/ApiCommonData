@@ -2680,7 +2680,7 @@ sub calculateProteinMolWt {
 sub calculateACGT {
   my ($mgr) = @_;
 
-  my $args = "";
+  my $args = "--sqlVerbose ";
 
   $mgr->runPlugin("calculateACGT",
                   "ApiCommonData::Load::Plugin::CalculateACGTContent", $args,
@@ -3138,6 +3138,7 @@ sub extractAssemblies {
   $mgr->endStep($signal);
 }
 
+
 sub startTranscriptAlignToContigs {
   my ($mgr, $species, $name) = @_;
   my $propertySet = $mgr->{propertySet};
@@ -3152,6 +3153,31 @@ sub startTranscriptAlignToContigs {
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+
+sub documentBLATAlignment {
+  my ($mgr, $version,$options) = @_;
+
+  my $documentation =
+    { name => "BLATAlignment",
+      input => "Fasta file of cDNA sequences blocked using repeatMasker with RepBase and genome sequences in nib format",
+      output => "Text file of alignments in .psl format",
+      descrip => "BLAT is a rapid tool to find mRNA/DNA alignments that can be run using the GfClient program to query an indexed DNA database on a GfServer .",
+      tools => [
+		{ name => "BLATAlignment",
+		  version => $version,
+		  params => $options,
+		  url => "http://www.cbs.dtu.dk/services/SignalP/",
+		  pubmedIds => "11932250",
+		  credits => "Kent W.J.,
+                              BLAT - The BLAST-Like Alignment Tool,
+                              Genome Research, 2002,  12(4), 656-664."
+		},
+	       ]
+    };
+  $mgr->documentStep("BLATAlignment", $documentation);
+
 }
 
 sub loadContigAlignments {
@@ -3987,6 +4013,7 @@ sub transformSimilarityCoordinates {
 
 }
 
+
 # $seqFile from earlier extractNaSeq() step, outputs gff file to sseqfiles
 sub makeOrfFile {
   my ($mgr, $seqFile, $minPepLength) = @_;
@@ -4113,6 +4140,26 @@ sub copyToDownloadSiteWithSsh {
 ## the environment on the compute cluster must be set for the iprscan directory path
 ## example: setenv IPRSCAN_HOME /genomics/share/pkg/bio/interproscan/iprscan_v4.3.1
 #######################################
+
+
+sub documentIPRScan {
+  my ($mgr,$version) = @_;
+  my $description = "InterProScan scans protein sequences against the protein signatures of the InterPro member databases including PROSITE, PRINTS, xPfam, ProDom,SMART, TIGRFAMs, PIR, SUPERFAMILY.";
+  my $documentation =    { name => "InterProScan",
+                         input => "fasta file of protein sequences and InterPro databases",
+			   output => "file containing the domain matched, description of the interpro entry, GO description of the Interpro entry and E-value of the match",
+			   descrip => $description,
+                           tools => [{ name => "InterProScan",
+				       version => $version,
+				       params => "",
+				       url => "http://www.ebi.ac.uk/InterProScan/",
+				       pubmedIds => "11590104x",
+				       credits => " Zdobnov E.M. and Apweiler R. ,
+                                                  InterProScan - an integration platform for the signature-recognition methods in InterPro,
+                                                  Bioinformatics, 2001, 17(9): 847-8"}]};
+
+ $mgr->documentStep("InterProScan", $documentation);
+}
 
 sub createIprscanDir{
   my ($mgr, $subjectFile) = @_;
