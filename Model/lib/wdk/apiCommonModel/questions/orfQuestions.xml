@@ -133,13 +133,12 @@ one time.
 
     <question name="OrfsByMotifSearch"
          displayName="ORFs by Protein Motif Search"
-         category="Text Search"
+         category="Similarity/Pattern"
          queryRef="OrfIds.OrfsByMotifSearch"
          recordClassRef="OrfRecordClasses.OrfRecordClass">
-
       <attributesList
          summary="organism,Locations,MatchCount,Sequence"
-         sorting="organism asc"
+
       />
 
          <description>
@@ -275,9 +274,8 @@ one time.
           ]]>
          </description>
          <dynamicAttributes>
-           <columnAttribute name="Locations" inReportMaker="false"/>
-           <columnAttribute name="MatchCount" displayName="Match Count"
-                            inReportMaker="false"/>
+           <columnAttribute name="Locations" displayName="Match Locations" inReportMaker="false"/>
+           <columnAttribute name="MatchCount" displayName="Match Count"  inReportMaker="false"/>
            <columnAttribute name="Sequence" inReportMaker="false" truncateTo="4000"/>
          </dynamicAttributes>
     </question>
@@ -300,13 +298,8 @@ one time.
         <summary>
            Find ORFs that have BLAST similarity to your input sequence.
         </summary>
-        <description includeProjects="PlasmoDB,ToxoDB">
-           <![CDATA[
-             Find ORFs that have BLAST similarity to your input query sequence.
-            <p>The search uses <a href="http://www.ncbi.nlm.nih.gov/BLAST/">NCBI BLAST</a>.
-          ]]>
-        </description>
-        <description includeProjects="CryptoDB,ApiDB">
+
+        <description>
            <![CDATA[
              Find ORFs that have BLAST similarity to your input query sequence.
             <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.
