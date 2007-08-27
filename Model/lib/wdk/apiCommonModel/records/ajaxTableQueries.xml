@@ -77,11 +77,18 @@
     <!--        <paramRef ref="recordParams.projectId"/> -->
             <column name="term"/>
             <column name="internal"/>
-            <sql>
+            <sql  includeProjects="CryptoDB">
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
             </sql>
+            <sql includeProjects="GiardiaDB">
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+             </sql>
+<sql includeProjects="TrichDB">
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+             </sql>
+
         </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->
@@ -90,9 +97,15 @@
     <!--        <paramRef ref="recordParams.projectId"/> -->
             <column name="term"/>
             <column name="internal"/>
-            <sql>
+            <sql  includeProjects="CryptoDB">
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual
             </sql>
+<sql includeProjects="GiardiaDB">
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+             </sql>
+<sql includeProjects="TrichDB">
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastSequenceOrganismTermList -->
@@ -101,12 +114,18 @@
     <!--        <paramRef ref="recordParams.projectId"/> -->
             <column name="term"/>
             <column name="internal"/>
-            <sql>
+            <sql  includeProjects="CryptoDB">
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
             </sql>
+<sql includeProjects="GiardiaDB">
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+             </sql>
+<sql includeProjects="TrichDB">
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastORFOrganismTermList -->
@@ -115,13 +134,19 @@
     <!--        <paramRef ref="recordParams.projectId"/> -->
             <column name="term"/>
             <column name="internal"/>
-            <sql>
+            <sql  includeProjects="CryptoDB">
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual
             </sql>
+<sql includeProjects="GiardiaDB">
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+             </sql>
+<sql includeProjects="TrichDB">
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+             </sql>
         </sqlQuery>
 
      </querySet>
