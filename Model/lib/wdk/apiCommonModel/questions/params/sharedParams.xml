@@ -141,7 +141,40 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Universal, genomic and ORF BLAST -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <enumParam name="BlastDatabaseType"
+ <enumParam name="BlastAlgorithm"
+            prompt="BLAST Program"
+            multiPick="false"
+            includeProjects="CryptoDB">
+     <help>
+           The Blast Program that will be executed
+     </help>
+     <enumList>  
+        <enumValue>
+          <term>blastn</term>
+          <internal>blastn</internal>
+        </enumValue>   
+        <enumValue>
+          <term>blastp</term>
+          <internal>blastp</internal>
+        </enumValue>   
+        <enumValue>
+          <term>blastx</term>
+          <internal>blastx</internal>
+        </enumValue>   
+        <enumValue>
+          <term>tblastn</term>
+          <internal>tblastn</internal>
+        </enumValue>   
+        <enumValue>
+          <term>tblastx</term>
+          <internal>tblastx</internal>
+        </enumValue>
+     </enumList>
+  </enumParam>
+
+
+
+  <enumParam name="BlastDatabaseType"
                      prompt="Target"
                      multiPick="false">
       <help>
