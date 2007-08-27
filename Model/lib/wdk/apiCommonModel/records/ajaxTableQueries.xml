@@ -9,7 +9,7 @@
         <!-- AjaxTables.InterproTermList -->
         <sqlQuery name="InterproTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/> 
+         <!--   <paramRef ref="recordParams.projectId"/> -->
             <column name="accession"/>
             <column name="name"/>
             <column name="description"/>
@@ -26,6 +26,101 @@
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
                   AND ed.name = $$primaryKey$$
+            </sql>
+        </sqlQuery>
+
+<!--====================================================================================-->
+
+        <!-- AjaxTables.BlastNTermList -->
+        <sqlQuery name="BlastNTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+     <!--       <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Transcripts' as term, 'Transcipts' as internal from dual UNION
+                SELECT 'EST' as term, 'EST' as internal from dual UNION
+                SELECT 'Genome' as term, 'Genome' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.BlastPXTermList -->
+        <sqlQuery name="BlastPXTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+<!--            <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Proteins' as term, 'Proteins' as internal from dual UNION
+                SELECT 'ORF (Protein)' as term, 'ORF' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.TBlastTermList -->
+        <sqlQuery name="TBlastTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Transcripts' as term, 'Translated Transcipts' as internal from dual UNION
+                SELECT 'EST' as term, 'EST' as internal from dual UNION
+                SELECT 'Genome' as term, 'Translated Genome' as internal from dual
+            </sql>
+        </sqlQuery>
+
+<!--=================================================================================-->
+
+        <!-- AjaxTables.BlastGeneOrganismTermList -->
+        <sqlQuery name="BlastGeneOrganismTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.BlastESTOrganismTermList -->
+        <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.BlastSequenceOrganismTermList -->
+        <sqlQuery name="BlastSequenceOrganismTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
+                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.BlastORFOrganismTermList -->
+        <sqlQuery name="BlastORFOrganismTermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
+                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual
             </sql>
         </sqlQuery>
 
