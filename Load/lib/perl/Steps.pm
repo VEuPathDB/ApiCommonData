@@ -1825,8 +1825,11 @@ sub loadSplignResults {
 }
 
 sub extractSageNaSequences {
-  my ($mgr,$species) = @_;
+  my ($mgr, $species, $table, $sequenceOntology) = @_;
+
   my $propertySet = $mgr->{propertySet};
+
+  $table = "Dots." . $table;
 
   my $signal = "extract${species}SageNaSequences";
 
@@ -1835,6 +1838,7 @@ sub extractSageNaSequences {
   my $gusConfigFile = $propertySet->getProp('gusConfigFile');
 
   my $taxonId = $mgr->{taxonHsh}->{$species};
+
 
   foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
     my $dbName =  $scaffolds->{name};
@@ -1851,11 +1855,11 @@ sub extractSageNaSequences {
 
     my $sql = "select x.na_sequence_id, x.description,
             'length='||x.length,x.sequence
-             from dots.ExternalNASequence x, sres.sequenceontology s
+             from $table x, sres.sequenceontology s
              where x.taxon_id = $taxonId
              and x.external_database_release_id = $dbRlsId
              and x.sequence_ontology_id = s.sequence_ontology_id
-             and lower(s.term_name) = 'supercontig'";
+             and lower(s.term_name) = '$sequenceOntology'";
 
     my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile --outputFile $scaffoldFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
