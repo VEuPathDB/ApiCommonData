@@ -2871,6 +2871,11 @@ sub extractKeywordSearchFiles {
   my $dataDir = "$mgr->{dataDir}/blastSite/textSearch";
 
   $mgr->runCmd("mkdir -p ${dataDir}");
+
+  my $cmd = "extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix";
+
+  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
+
   $mgr->runCmd("extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix --commentSchema $commentSchema --commentDblink $dbLink");
 
   $mgr->endStep($signal);
