@@ -1,0 +1,49 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == records == -->
+  <!-- ============================================================ -->
+
+      <sanityRecord ref="AjaxRecordClasses.InterproTermClass"
+                    includeProjects="PlasmoDB,ApiDB"
+                    projectId="PlasmoDB" primaryKey="INTERPRO"/>
+
+      <sanityRecord ref="AjaxRecordClasses.InterproTermClass"
+                    includeProjects="CryptoDB,ApiDB"
+                    projectId="CryptoDB" primaryKey="INTERPRO"/>
+
+      <sanityRecord ref="AjaxRecordClasses.InterproTermClass"
+                    includeProjects="ToxoDB,ApiDB"
+                    projectId="ToxoDB" primaryKey="INTERPRO"/>
+
+      <sanityRecord ref="AjaxRecordClasses.InterproTermClass"
+                    includeProjects="GiardiaDB,ApiDB"
+                    projectId="GiardiaDB" primaryKey="INTERPRO"/>
+
+      <sanityRecord ref="AjaxRecordClasses.InterproTermClass"
+                    includeProjects="TrichDB,ApiDB"
+                    projectId="TrichDB" primaryKey="INTERPRO"/>
+
+  <!-- ============================================================ -->
+  <!-- == attribute queries == -->
+  <!-- ============================================================ -->
+
+     <sanityQuery ref="AjaxTables.InterproTermList" includeProjects="CryptoDB,ApiDB"
+            minOutputLength="10" maxOutputLength="10000">
+        <sanityParam name="primaryKey" value="INTERPRO"/>
+        <sanityParam name="projectId" value="CryptoDB"/>
+     </sanityQuery>
+
+     <sanityQuery ref="AjaxTables.InterproTermList" includeProjects="PlasmoDB,ApiDB"
+            minOutputLength="10" maxOutputLength="10000">
+        <sanityParam name="primaryKey" value="INTERPRO"/>
+        <sanityParam name="projectId" value="PlasmooDB"/>
+     </sanityQuery>
+
+     <sanityQuery ref="AjaxTables.InterproTermList" includeProjects="ToxoDB,ApiDB"
+            minOutputLength="10" maxOutputLength="10000">
+        <sanityParam name="primaryKey" value="INTERPRO"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+     </sanityQuery>
+                    
+</sanityModel>
