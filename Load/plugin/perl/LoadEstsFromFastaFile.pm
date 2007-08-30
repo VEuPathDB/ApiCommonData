@@ -55,6 +55,12 @@ my $argsDeclaration =
              constraintFunc  => undef,
              isList          => 0 }),
 
+stringArg({ name            => 'checkSQL',
+             descr           => 'sql statement used to query for na_sequence_id of an EST that is already in the database',
+             reqd            => 0,
+             constraintFunc  => undef,
+             isList          => 0 }),
+
  stringArg({ name            => 'qualityStartRegex',
              descr           => 'regex to find start of quality sequence, otherwise set to 1',
              reqd            => 0,
@@ -295,7 +301,9 @@ sub processFile{
     my $seqLength;
     my $qualityStart;
 
-    my $checkStmt = $self->getAlgInvocation()->getQueryHandle()->prepare("select na_sequence_id from dots.externalnasequence where source_id = ? and external_database_release_id = $self->{external_database_release_id}");
+    my $sql = $self->getArg('checkSQL') ? $self->getArg('checkSQL') : "select na_sequence_id from dots.externalnasequence where source_id = ? and external_database_release_id = $self->{external_database_release_id}";
+
+    my $checkStmt = $self->getAlgInvocation()->getQueryHandle()->prepare($sql);
 
 
     while (<F>) {
