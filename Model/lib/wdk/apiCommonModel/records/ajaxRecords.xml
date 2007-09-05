@@ -4,7 +4,13 @@
  -these are the recordclasses used for the Ajax Question pages
 
 -->
+
   <recordClassSet name="AjaxRecordClasses">
+
+<!--=====================================================================-->
+<!-- INTERPRO TERM CLASSES-->
+<!--=====================================================================-->
+
         <!-- Interpro Term class -->
         <recordClass idPrefix="" 
           name="InterproTermClass" type="Ontology">
@@ -16,6 +22,10 @@
                 <columnAttribute name="description"/>
             </table>
         </recordClass> 
+
+<!--=====================================================================-->
+<!-- BLAST TERM CLASSES-->
+<!--=====================================================================-->
 
         <!-- BlastN Term class -->
         <recordClass idPrefix="" 
@@ -48,9 +58,37 @@
                 <columnAttribute name="term"/>
                 <columnAttribute name="internal"/>
             </table>
+        </recordClass> 
+
+<!--=====================================================================-->
+<!-- BLAST ALORITHM CLASSES-->
+<!--=====================================================================-->
+
+        <!-- Blast TGE Term class -->
+        <recordClass idPrefix="" 
+          name="Blast_Transcripts_Genome_Est_TermClass" type="Ontology">
+            <projectParamRef ref="recordParams.Project"/>
+            <table name="BlastTGETerms" displayName="Blast TGE Terms"
+                   queryRef="AjaxTables.Blast_Transcripts_Genome_Est_TermList">
+                <columnAttribute name="term"/>
+                <columnAttribute name="internal"/>
+            </table>
         </recordClass>   
 
+        <!-- Blast PO Term class -->
+        <recordClass idPrefix="" 
+          name="Blast_Protein_Orf_TermClass" type="Ontology">
+            <projectParamRef ref="recordParams.Project"/>
+            <table name="BlastPOTerms" displayName="Blast PO Terms"
+                   queryRef="AjaxTables.Blast_Protein_Orf_TermList">
+                <columnAttribute name="term"/>
+                <columnAttribute name="internal"/>
+            </table>
+        </recordClass> 
+
 <!--========================================================================-->
+<!-- BLAST ORGANISM CLASSES-->
+<!--=====================================================================-->
 
         <!-- BlastGeneOrganism Term class -->
         <recordClass idPrefix="" 

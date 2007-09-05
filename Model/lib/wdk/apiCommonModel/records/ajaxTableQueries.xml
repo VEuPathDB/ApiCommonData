@@ -4,7 +4,9 @@
    - Queries used by the Ajax Record Classes
 
 -->
-
+<!--====================================================================================-->
+<!-- INTERPRO TERM QUERIES -->
+<!--=====================================================================-->
   <querySet name="AjaxTables">
         <!-- AjaxTables.InterproTermList -->
         <sqlQuery name="InterproTermList" isCacheable='true'> 
@@ -30,6 +32,8 @@
         </sqlQuery>
 
 <!--====================================================================================-->
+<!-- BLAST TYPE QUERIES -->
+<!--=====================================================================-->
 
         <!-- AjaxTables.BlastNTermList -->
         <sqlQuery name="BlastNTermList" isCacheable='true'> 
@@ -69,7 +73,36 @@
             </sql>
         </sqlQuery>
 
+<!--====================================================================================-->
+<!-- BLAST ALGORITHM QUERIES -->
+<!--=====================================================================-->
+
+        <!-- AjaxTables.Blast_Transcripts_Gemone_Est_TermList -->
+        <sqlQuery name="Blast_Transcripts_Genome_Est_TermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+            <column name="term"/>
+            <column name="internal"/> 
+            <sql>
+                SELECT 'blastn' as term, 'blastn' as internal from dual UNION
+                SELECT 'tblastn' as term, 'tblastn' as internal from dual UNION
+                SELECT 'tblastx' as term, 'tblastx' as internal from dual
+            </sql>
+        </sqlQuery>
+
+        <!-- AjaxTables.Blast_Protein_Orf_TermList -->
+        <sqlQuery name="Blast_Protein_Orf_TermList" isCacheable='true'> 
+            <paramRef ref="recordParams.primaryKey"/> 
+            <column name="term"/>
+            <column name="internal"/>
+            <sql>
+                SELECT 'blastp' as term, 'blastp' as internal from dual UNION
+                SELECT 'blastx' as term, 'blastx' as internal from dual
+            </sql>
+        </sqlQuery>
+
 <!--=================================================================================-->
+<!-- BLAST ORGANISM QUERIES-->
+<!--=====================================================================-->
 
         <!-- AjaxTables.BlastGeneOrganismTermList -->
         <sqlQuery name="BlastGeneOrganismTermList" isCacheable='true'> 
@@ -102,21 +135,6 @@
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
              </sql>
- <sql includeProjects="ApiDB">
-                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
-                 SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Mitocondrial' as term, 'P. falciparum mitocondrial' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Plastid' as term, 'P. falciparum plastid' as internal from dual UNION
-                 SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii Apicoplast' as term, 'T. gondii apicoplast' as internal from dual
-             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->
@@ -146,18 +164,6 @@
                  SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
-             </sql>
-<sql includeProjects="ApiDB">
-                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
-                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
-                 SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Mitocondrial' as term, 'P. falciparum mitocondrial' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Plastid' as term, 'P. falciparum plastid' as internal from dual UNION
-                 SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
              </sql>
         </sqlQuery>
 
@@ -198,27 +204,6 @@
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
              </sql>
-<sql includeProjects="ApiDB">
-                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
-                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
-                 SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Mitocondrial' as term, 'P. falciparum mitocondrial' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Plastid' as term, 'P. falciparum plastid' as internal from dual UNION
-                 SELECT 'Plasmodium gallinaceum' as term, 'P. gallinaceum' as internal from dual UNION
-                 SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
-                 SELECT 'Plasmodium reichenowi' as term, 'P. reichenowi' as internal from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii RH (chr Ia and chr Ib)' as term, 'T. gondii RH (chr Ia and chr Ib)' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii Apicoplast' as term, 'T. gondii apicoplast' as internal from dual
-             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastORFOrganismTermList -->
@@ -254,24 +239,6 @@
                  SELECT 'Plasmodium reichenowi' as term, 'P. reichenowi' as internal from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
-             </sql>
-<sql includeProjects="ApiDB">
-                SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
-                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual UNION
-                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
-                 SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Mitocondrial' as term, 'P. falciparum mitocondrial' as internal from dual UNION
-                 SELECT 'Plasmodium falciparum Plastid' as term, 'P. falciparum plastid' as internal from dual UNION
-                 SELECT 'Plasmodium gallinaceum' as term, 'P. gallinaceum' as internal from dual UNION
-                 SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
-                 SELECT 'Plasmodium reichenowi' as term, 'P. reichenowi' as internal from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
              </sql>
         </sqlQuery>
 
