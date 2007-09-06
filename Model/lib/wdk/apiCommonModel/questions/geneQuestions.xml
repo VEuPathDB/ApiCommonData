@@ -78,11 +78,10 @@
           correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
-<!-- not implemented yet        
+       
         <propertyList name="attribution">
-           <import name="default.genomes.attribution"/>
+           <value>GENOME</value>
         </propertyList> 
--->
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -109,6 +108,9 @@
         <dynamicAttributes>
           <columnAttribute name="is_pseudo" displayName="Pseudogene" align="center"/>
         </dynamicAttributes>
+        <propertyList name="attribution">
+           <value>GENOME</value>
+        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -133,6 +135,9 @@
         Find genes having the given number of exons.
           ]]>
         </description>
+        <propertyList name="attribution">
+           <value>GENOME</value>
+        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -156,6 +161,9 @@
              Find genes whose protein product has an isoelectric point in the specified range.
            ]]>
         </description>
+        <propertyList name="attribution">
+           <value>GENOME</value>
+        </propertyList> 
     </question>
 
 
@@ -183,6 +191,9 @@
              Molecular weights are machine calculated from the raw translation and does not take into account any protein or residue modifications. For translations containing ambiguous amino acid codes (B, Z, X) we calculate the average of the upper and lower bound of the molecular weight.
            ]]>
         </description>
+        <propertyList name="attribution">
+           <value>GENOME</value>
+        </propertyList> 
     </question>
 
 
@@ -218,6 +229,9 @@
              <columnAttribute name="percent_helix" displayName="Percent Helix" align="center"
                               inReportMaker="false"/>
          </dynamicAttributes>
+        <propertyList name="attribution">
+           <value>GENOME</value>
+        </propertyList> 
     </question>
 
 
@@ -287,17 +301,21 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
               PlasmoDB EC numbers have been assigned to genes for <i>P. falciparum</i> by Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University). ToxoDB EC numbers have been assigned by Ian Paulsen (TIGR).
               ]]>
               </description>
-<!-- not implemented yet        
         <propertyList name="organism" includeProjects="PlasmoDB">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ToxoDB">
-           <value value="T. gongii"/>
+           <value>T. gondii</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ApiDB">
-           <value value="P. falciparum, T gondii"/>
+           <value>P. falciparum</value>
+           <value>T gondii</value>
         </propertyList>
--->
+
+        <propertyList name="attribution">
+           <value includeProjects="ApiDB,PlasmoDB">GENOME,ecMappings_Hagai</value>
+           <value excludeProjects="ApiDB,PlasmoDB">GENOME</value>
+        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -313,17 +331,17 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
               summary="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
               sorting="total_snps desc,cds_snp_density desc"
         /> 
-<!-- not implemented yet        
+
         <propertyList name="organism" includeProjects="PlasmoDB">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ToxoDB">
-           <value value="T. gongii"/>
+           <value>T. gongii</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ApiDB">
-           <value value="P. falciparum, T gondii"/>
+           <value>P. falciparum, T gondii</value>
         </propertyList>
--->
+
         <summary>
            <![CDATA[
 	 Find genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
@@ -400,14 +418,22 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
                 or within a subcellular fraction of the parasite.
           ]]>
         </summary>
-<!-- not implemented yet        
-        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
-           <value value="P. falciparum"/>
+
+        <propertyList name="organism" includeProjects="ApiDB">
+           <value>P. falciparum</value>
+           <value>C. parvum</value>
+           <value>T. gondii</value>
         </propertyList>
         <propertyList name="organism" includeProjects="PlasmoDB">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+        <propertyList name="organism" includeProjects="ToxoDB">
+           <value>T. gondii</value>
+        </propertyList>
+        <propertyList name="organism" includeProjects="CryptoDB">
+           <value>C. parvum</value>
+        </propertyList>
+
         <description includeProjects="PlasmoDB">
             <![CDATA[
                 Find <I>P. falciparum</I> genes that have evidence of
@@ -1226,18 +1252,17 @@ Find genes that are predicted to encode a signal peptide.
          sorting="organism asc,location_text asc"
         />
 
-<!-- not implemented yet
         <propertyList name="organism" includeProjects="PlasmoDB">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ToxoDB">
-           <value value="T. gondii"/>
+           <value>T. gondii</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ApiDB" >
-           <value value="P. falciparum"/>
-           <value value="T. gondii"/>
+           <value>P. falciparum</value>
+           <value>T. gondii</value>
         </propertyList>
--->
+
         <summary>
         Find genes that are located in a specified region of the non-nuclear genome.
         </summary>
@@ -1396,11 +1421,10 @@ Find genes that are predicted to encode a signal peptide.
           ]]>
         </description>
 
-<!-- not implemented yet
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <dynamicAttributes>
           <columnAttribute name="dist_centromere" displayName="Distance from Centromere"/>
         </dynamicAttributes>
@@ -1433,11 +1457,11 @@ Find genes that are predicted to encode a signal peptide.
         <dynamicAttributes>
           <columnAttribute name="dist_telomere" displayName="Distance from Telomere"/>
         </dynamicAttributes>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
     </question>
 
 
@@ -1483,11 +1507,11 @@ Find genes that are predicted to encode a signal peptide.
               summary="organism,location_text,product"
               sorting="organism asc, location_text asc"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <summary>
           <![CDATA[
               Find genes that have
@@ -1521,11 +1545,11 @@ Find genes that are predicted to encode a signal peptide.
         <attributesList
               summary="product,organism"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <summary>
           <![CDATA[
 	  Find genes with low complexity amino acid sequence
@@ -1555,11 +1579,11 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
          Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
 Find genes that interact with a given gene, as determined by yeast two-hybrid experiments.  <br><br>
@@ -1624,11 +1648,11 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
           Find genes of <i>P. falciparum</i> (strain HB3) identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
           ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum HB3"/>
+           <value>P. falciparum HB3</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
 Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
@@ -1670,11 +1694,11 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
         <summary>
             <![CDATA[ Find genes by differential expression in DOZI mutant vs. WT (from purified gametocytes). ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. berghei"/>
+           <value>P. berghei</value>
         </propertyList>
--->
+
         <description>
             <![CDATA[
 Find genes whose expression was found to be up-regulated or down-regulated based upon PaGE differential expression analysis in a microarray study of purified gametocytes where the PB000603.01.0 gene in P. berghei has been knocked out. It has been proposed (Mair et al. Science 2006) to name PB000603.01.0 protein "DOZI" for "development of of zygote inhibited."
@@ -1710,11 +1734,11 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
             Find genes by differential expression (fold-change) in Sir2 and invasion pathway KO studies
             ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
             <![CDATA[
 Find genes based on fold-change differences in expression by comparing assays of P. falciparum RNA when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in their associated controls. Please be aware that these are individual comparisons and not subjected to any statistical analysis.
@@ -1760,11 +1784,11 @@ References:
             Find genes by expression percentile from Sir2 KO and invasion pathway KO studies 
             ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
             <![CDATA[
 Find genes expressed when the Sir2 histone deacetylase gene is knocked out, when an erythrocyte binding protein (EBA-175, EBA-140, or pfRh2b) is knocked out, or in  their associated controls.
@@ -1812,11 +1836,11 @@ References:
         <summary>
           Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
               Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.  Five intraerythrocytic time courses may be
@@ -1848,11 +1872,11 @@ References:
           Find genes that have a similar expression profile to your input gene.
           ]]>
          </summary>
-<!-- not implemented yet
+
          <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
            Find genes that have a (glass slide) expression profile similar to that of your input gene.
@@ -1882,7 +1906,7 @@ References:
   <!-- Expression Percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Percentile"
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpression"
@@ -1896,11 +1920,11 @@ References:
          schizont, late schizont, merozoite, sporozoite, or gametocyte.
           ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
         Find genes expressed in
@@ -1964,11 +1988,11 @@ References:
                 Find genes by percentile protein expression in gametocytes.
            ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <description>
             <![CDATA[
                 Find <i>Plasmodium falciparum</i> genes expressed during
@@ -2016,11 +2040,11 @@ References:
         Find genes expressed in late schizont, ring, early trophozoite and early schizont stages.
          ]]>
         </summary>
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. berghei"/>
+           <value>P. berghei</value>
         </propertyList>
--->
+
         <description>
            <![CDATA[
 Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite, and early schizont stages. The stages were all hybridized with late trophozoites allowing us to use late trophozoites as a reference for this query.
@@ -2043,11 +2067,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList
          summary="product"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. berghei"/>
+           <value>P. berghei</value>
         </propertyList>
--->
+
         <summary>
             <![CDATA[
             Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.
@@ -2074,11 +2098,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               summary="location_text,product"
               sorting="location_text asc"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <summary>
            <![CDATA[
                Find genes targeted to the apicoplast or the RBC membrane.
@@ -2155,12 +2179,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          summary="location_text,product,num_queries,query_ids,mutual_information_scores"
          sorting="num_queries desc,mutual_information_scores desc,location_text asc"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
-           <value value="P. yoelii"/>
+           <value>P. falciparum</value>
+           <value>P. yoelii</value>
         </propertyList>
--->
+
         <summary>
            <![CDATA[
          Find genes that have a homology-based phylogenetic profile similar to a specified list of genes.
@@ -2239,11 +2263,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          summary="location_text,product"
          sorting="location_text asc"
         /> 
-<!-- not implemented yet
+
         <propertyList name="organism">
-           <value value="P. falciparum"/>
+           <value>P. falciparum</value>
         </propertyList>
--->
+
         <summary>
             <![CDATA[
                 Find genes that have
