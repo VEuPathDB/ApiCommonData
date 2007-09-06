@@ -639,7 +639,7 @@ sub documentPsipred {
 
 
 sub createRepeatMaskDir {
-  my ($mgr, $species, $file) = @_;
+  my ($mgr, $species, $file, $addOpt, $taskSizeOpt) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "make$species" . ucfirst($file) . "SubDir";
@@ -650,10 +650,13 @@ sub createRepeatMaskDir {
   my $clusterDataDir = $mgr->{'clusterDataDir'};
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
-  my $rmTaskSize = $propertySet->getProp('repeatmask.taskSize');
   my $rmPath = $propertySet->getProp('repeatmask.path');
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
+
+  my $rmTaskSize = $taskSizeOpt ? $taskSizeOpt : $propertySet->getProp('repeatmask.taskSize');
+
+  $rmOptions .= " $addOpt" if($addOpt);
 
   my $speciesFile = $species . $file;
   &makeRMDir($speciesFile, $dataDir, $clusterDataDir,
@@ -1851,7 +1854,6 @@ sub extractSageNaSequences {
 
   my $taxonId = $mgr->{taxonHsh}->{$species};
 
-
   foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
     my $dbName =  $scaffolds->{name};
     my $dbVer =  $scaffolds->{ver};
@@ -2521,6 +2523,20 @@ sub startGenomeAlignOnComputeCluster {
   my $clusterCmdMsg = "runGenomeAlignWithGfClient --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
+}
+
+sub startRepeatMaskOnComputeCluster {
+  my ($mgr, $queryFile, $queue) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "startRepeatMask$queryFile";
+  return if $mgr->startStep("Starting $queryFile repeat mask on cluster", $signal);
+
+  my $clusterCmdMsg = "runRepeatMask --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --queue $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
+
+  $mgr->endStep($signal);
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
 }
 
