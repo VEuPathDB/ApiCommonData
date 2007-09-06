@@ -644,7 +644,9 @@
             and ef.na_feature_id = nl.na_feature_id
             and gf.na_sequence_id = ns.na_sequence_id
             and ef.coding_start is not null
+            and ef.coding_start != -1
             and ef.coding_end is not null
+            and ef.coding_end != -1
             and gf.sequence_ontology_id = so.sequence_ontology_id
             and so.term_name in ('protein_coding', 'repeat_region')
             order by ef.order_number
