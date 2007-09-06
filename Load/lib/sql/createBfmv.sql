@@ -762,9 +762,9 @@ SELECT CASE
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
-       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 50, snp_loc.start_min - 50), 1, 50)
+       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 60, snp_loc.start_min - 60), 1, 60)
          AS lflank,
-       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 50, snp_loc.start_min + 1), 1, 50)
+       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 60, snp_loc.start_min + 1), 1, 60)
          AS rflank,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
