@@ -123,6 +123,18 @@ sub initPlasmoAnalysis {
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+sub initCryptoAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Cparvum,Chominis,Cmuris';
+
+  my $taxId = ["Cparvum:5807","Chominis:353151","Cmuris:5808"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
 
 sub UpdateGusTableWithXml {
   my ($mgr,$file,$table) = @_;
@@ -2260,7 +2272,7 @@ sub InsertRadAnalysisFromConfig {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $executable = defined($propName) ? $propertySet->getProp($propName) : undef;
+  my $executable = $propertySet->getProp($propName) if ($propName);
 
   my $optionalExecutable = $executable ? "--pathToExecutable $executable" : '';
 
@@ -3927,7 +3939,10 @@ sub createExtDbAndDbRls {
 
   my $dbPluginArgs = "--name '$extDbName' ";
 
-  $mgr->runPlugin("createDb_${extDbName}",
+  my $signalName = $extDbName;
+  $signalName =~ s/\s/_/g;
+
+  $mgr->runPlugin("createDb_${signalName}",
 			  "GUS::Supported::Plugin::InsertExternalDatabase",$dbPluginArgs,
 			  "Inserting/checking external database info for $extDbName");
 
@@ -3935,7 +3950,7 @@ sub createExtDbAndDbRls {
 
   $releasePluginArgs .= " --description '$extDbRlsDescrip'" if $extDbRlsDescrip;
 
-  $mgr->runPlugin("createRelease_${extDbName}_$extDbRlsVer",
+  $mgr->runPlugin("createRelease_${signalName}_$extDbRlsVer",
 		  "GUS::Supported::Plugin::InsertExternalDatabaseRls",$releasePluginArgs,
 		  "Inserting/checking external database release for $extDbName $extDbRlsVer");
 }
