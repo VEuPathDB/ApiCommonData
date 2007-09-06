@@ -1666,7 +1666,7 @@ sub extractAnnotatedTranscriptSeq {
 }
 
 sub extractESTs {
-  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database, $source) = @_;
 
   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
@@ -1686,7 +1686,7 @@ sub extractESTs {
 
   my $name = "${genus}_$species";
 
-  my $sql = "select '${name}|'||source_id||'|${date}|EST|dbEST',sequence
+  my $sql = "select '${name}|'||source_id||'|${date}|EST|${source}',sequence
              from dots.externalnasequence
              where external_database_release_id = $dbRlsId and taxon_id in ($taxonIdList)";
 
