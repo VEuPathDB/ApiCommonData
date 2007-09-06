@@ -3120,7 +3120,7 @@ sub loadLowComplexitySequences {
 
 
 sub makeTranscriptSeqs {
-  my ($mgr, $name, $taxId,$taxonHierarchy) = @_;
+  my ($mgr, $name, $taxId,$taxonHierarchy, $sql) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $file = $propertySet->getProp('vectorFile');
@@ -3132,6 +3132,8 @@ sub makeTranscriptSeqs {
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $file --phrapDir $phrapDir";
+
+  $args .= "--idSQL '$sql'" if($sql);
 
   $mgr->runPlugin("make${name}AssemSeqs",
           "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args,
