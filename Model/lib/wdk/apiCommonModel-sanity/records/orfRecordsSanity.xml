@@ -20,6 +20,10 @@
                     includeProjects="GiardiaDB,ApiDB"
                     projectId="GiardiaDB" primaryKey="ctg02_243-6-1018-419"/>
 
+      <sanityRecord ref="OrfRecordClasses.OrfRecordClass" 
+                    includeProjects="TrichDB,ApiDB"
+                    projectId="TrichDB" primaryKey="DS113375-1-114214-114468"/>
+
   <!-- ============================================================ -->
   <!-- == attribute queries == -->
   <!-- ============================================================ -->
@@ -52,6 +56,12 @@
         <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
+    <sanityQuery ref="OrfAttributes.Bfmv" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="DS113375-1-114214-114468"/>
+        <sanityParam name="projectId" value="TrichDB"/>
+    </sanityQuery>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Sequence ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -78,6 +88,12 @@
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="ctg02_243-6-1018-419"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="OrfAttributes.Sequence" includeProjects="TrichDB,ApiDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="DS113375-1-114214-114468"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
   <!-- ============================================================ -->

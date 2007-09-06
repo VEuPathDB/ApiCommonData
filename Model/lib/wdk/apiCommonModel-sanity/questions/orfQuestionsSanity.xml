@@ -83,6 +83,15 @@
         <sanityParam name="min_orf_length" value="50"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="OrfQuestions.OrfsByLocation" includeProjects="TrichDB,ApiDB"
+                    minOutputLength="4" maxOutputLength="25000"
+                    pageStart="1" pageEnd="20">
+        <sanityParam name="sequenceId" value="DS113177"/>
+        <sanityParam name="start_point" value="1"/>
+        <sanityParam name="end_point" value="0"/>
+        <sanityParam name="min_orf_length" value="50"/>
+    </sanityQuestion>
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ Motif ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -113,6 +122,13 @@
             pageStart="1" pageEnd="20">
         <sanityParam name="motif_expression" value="CC6+RK"/>
         <sanityParam name="motif_organism" value="Giardia lamblia"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsByMotifSearch" includeProjects="TrichDB,ApiDB"
+            minOutputLength="4" maxOutputLength="300"
+            pageStart="1" pageEnd="20">
+        <sanityParam name="motif_expression" value="CC6+RK"/>
+        <sanityParam name="motif_organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
 
@@ -188,6 +204,18 @@
           <sanityParam name="BlastDatabaseOrganism" value="Giardia lamblia"/>
           <sanityParam name="BlastQueryType" value="Protein"/>
           <sanityParam name="BlastQuerySequence" value="DVSAEDRHQPVQRPTCSGGVRGRQTGRARKEKIEGVQGAPRGGQGAVHAHHRVCLAQRDA"/>
+          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+    <sanityQuestion ref="OrfQuestions.OrfsBySimilarity" includeProjects="TrichDB,ApiDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="100">
+          <sanityParam name="BlastDatabaseType" value="ORF (Protein)"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
+          <sanityParam name="BlastAlgorithm" value="blastn"/>
+          <sanityParam name="BlastQuerySequence" value="KSNISPRSSGAAASSSLASSFGASPAAAAGAAAAAALAAAARASGSERSFWRSSICFML"/>
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>

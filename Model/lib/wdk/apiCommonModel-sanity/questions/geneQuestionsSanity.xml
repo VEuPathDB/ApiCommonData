@@ -179,6 +179,14 @@
         <sanityParam name="epitope_confidence" value="Medium"/>
     </sanityQuestion>
 
+<!-- Not in Model
+    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,TrichDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="40" maxOutputLength="70">
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+        <sanityParam name="epitope_confidence" value="Medium"/>
+    </sanityQuestion> -->
+
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ EC number ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -1043,6 +1051,18 @@
             pageStart="1" pageEnd="20"
             minOutputLength="3000" maxOutputLength="50000">
         <sanityParam name="organism" value="Toxoplasma gondii"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="GiardiaDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="50000">
+        <sanityParam name="organism" value="Giardia lamblia"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="TrichDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="3000" maxOutputLength="50000">
+        <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

@@ -11,7 +11,7 @@
     <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="PlasmoDB"
             minOutputLength="4" maxOutputLength="100"
             pageStart="1" pageEnd="20">
-        <sanityParam name="BlastQueryType" value="DNA"/>
+        <sanityParam name="BlastAlgorithm" value="blastn"/>
         <sanityParam name="BlastDatabaseType" value="Transcripts"/>
         <sanityParam name="BlastDatabaseOrganism" value="Plasmodium falciparum"/>
         <sanityParam name="-e" value="0.05"/>
@@ -23,7 +23,7 @@
       <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="ToxoDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="1">
-          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastAlgortihm" value="blastn"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
           <sanityParam name="BlastDatabaseOrganism" value="Toxoplasma gondii ME49"/>
           <sanityParam name="BlastQuerySequence" value="ATGGCGCAGCTGGCCTCGCGTTCCCTCTGCGCTGGCCCTTCGTCTG"/>
@@ -35,9 +35,33 @@
       <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="CryptoDB"
                       pageStart="1" pageEnd="20"
                       minOutputLength="1" maxOutputLength="50">
-          <sanityParam name="BlastQueryType" value="DNA"/>
+          <sanityParam name="BlastAlgorithm" value="blastn"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
           <sanityParam name="BlastDatabaseOrganism" value="Cryptosporidium parvum"/>
+          <sanityParam name="BlastQuerySequence" value="ATGACAGAGGAAAATAATAATGTAATTTTAACAAAGGAAACAAAAGATGAAGAAAATAT"/>
+          <sanityParam name="-e" value="50"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="GiardiaDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastAlgorithm" value="blastn"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Giardia lamblia"/>
+          <sanityParam name="BlastQuerySequence" value="ATGACAGAGGAAAATAATAATGTAATTTTAACAAAGGAAACAAAAGATGAAGAAAATAT"/>
+          <sanityParam name="-e" value="50"/>
+          <sanityParam name="-v" value="50"/>
+          <sanityParam name="-b" value="25"/>
+      </sanityQuestion>
+
+      <sanityQuestion ref="UniversalQuestions.UnifiedBlast" includeProjects="TrichDB"
+                      pageStart="1" pageEnd="20"
+                      minOutputLength="1" maxOutputLength="50">
+          <sanityParam name="BlastAlgorithm" value="blastn"/>
+          <sanityParam name="BlastDatabaseType" value="Genome"/>
+          <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
           <sanityParam name="BlastQuerySequence" value="ATGACAGAGGAAAATAATAATGTAATTTTAACAAAGGAAACAAAAGATGAAGAAAATAT"/>
           <sanityParam name="-e" value="50"/>
           <sanityParam name="-v" value="50"/>
