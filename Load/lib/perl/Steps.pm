@@ -3133,7 +3133,7 @@ sub makeTranscriptSeqs {
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $file --phrapDir $phrapDir";
 
-  $args .= "--idSQL '$sql'" if($sql);
+  $args .= " --idSQL '$sql'" if($sql);
 
   $mgr->runPlugin("make${name}AssemSeqs",
           "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args,
