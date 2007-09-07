@@ -1,0 +1,131 @@
+#!/bin/bash
+
+#--------------------------------------------------------------------------------
+
+DRAFT_COUNT=1;
+NON_DRAFT_COUNT=1;
+COUNT=1;
+
+declare -a DRAFT
+declare -a NON_DRAFT
+declare -a BASENAMES
+
+
+usage()
+{
+echo '$0 -t <tree string> -m <MERCATOR_DIR> -c <CNDSRC_DIR> -d draftGenome1... -d draftGemoneN -n nonDraftGeome1... -n nonDraftGenomeN'
+exit 1;
+}
+
+if [ -z $1 ]; then
+  usage
+fi
+
+while getopts ":ht:m:c:d:n:" Option
+do
+  case $Option in
+    m) MERCATOR_DIR=$OPTARG;
+       ;;
+    c) CNDSRC_DIR=$OPTARG;
+       ;;
+    t) TREE=$OPTARG;
+       ;;
+    d) DRAFT[${DRAFT_COUNT}]="-d $OPTARG"
+       BASENAMES[${COUNT}]=$OPTARG
+       let "DRAFT_COUNT += 1"
+       let "COUNT += 1"
+       ;;
+    n)  NON_DRAFT[${NON_DRAFT_COUNT}]=$OPTARG
+        BASENAMES[${COUNT}]=$OPTARG
+       let "NON_DRAFT_COUNT += 1"
+       let "COUNT += 1"
+       ;;
+    h) usage
+       ;;
+  esac
+done
+
+FASTA_DIR=$MERCATOR_DIR/fasta
+GFF_DIR=$MERCATOR_DIR/gff
+ALIGN_DIR=$MERCATOR_DIR/alignDir
+MERCATOR_INPUT=$MERCATOR_DIR/mercator-input
+MERCATOR_OUTPUT=$MERCATOR_DIR/mercator-output
+
+FA2SDB=$CNDSRC_DIR/fa2sdb
+MAKE_MERCATOR_INPUT=$CNDSRC_DIR/makeMercatorInput
+MERCATOR=$CNDSRC_DIR/mercator
+MASKREPETATIVE=$CNDSRC_DIR/maskRepetitive
+PHITS2CONSTRAINTS=$CNDSRC_DIR/phits2constraints
+SDBASSEMBLE=$CNDSRC_DIR/sdbAssemble
+MAKEALIGNMENTINPUT=$CNDSRC_DIR/makeAlignmentInput
+MAVIDALIGNDIRS=$CNDSRC_DIR/mavidAlignDirs
+
+#--------------------------------------------------------------------------------
+
+# Check that directories are there and make the ones you need if they're not
+for X in $MERCATOR_DIR $CNDSRC_DIR $FASTA_DIR $GFF_DIR $ALIGN_DIR $MERCATOR_INPUT $MERCATOR_OUTPUT
+  do
+    echo Checking Directory Exists [$X]
+    if [ -d $X ]; then 
+      echo Directory $X Exists
+    elif [ ${X} = ${ALIGN_DIR} -o ${X} = ${MERCATOR_INPUT} -o ${X} = ${MERCATOR_OUTPUT} ]; then
+      mkdir $X
+      echo Created Directory $X
+    else
+        echo Expected Directory is MISSING [$X]
+        exit 1;
+    fi
+done
+
+# Check that the execuatbles are included
+for X in $FA2SDB $MAKE_MERCATOR_INPUT $MERCATOR $MASKREPETATIVE $PHITS2CONSTRAINTS $SDBASSEMBLE $MAKEALIGNMENTINPUT $MAVIDALIGNDIRS
+  do
+    echo Checking Executable Exists [$X]
+    if [ -e $X ]; then 
+      echo Executable $X Exists
+    else
+        echo Expected Executable is MISSING [$X]
+        exit 1;
+    fi
+  done
+
+#--------------------------------------------------------------------------------
+
+# make the sbd files in the fasta directory
+for X in ${BASENAMES[@]} 
+  do
+    X=$FASTA_DIR/$X
+    echo runing fa2sdb on fasta file ${X}.fasta
+
+    $FA2SDB ${X}.sdb < ${X}.fasta
+  done
+
+$MAKE_MERCATOR_INPUT --genome-dir $FASTA_DIR --gff-dir $GFF_DIR --out-dir $MERCATOR_INPUT ${BASENAMES[@]}
+
+$MERCATOR -i $MERCATOR_INPUT -o $MERCATOR_OUTPUT ${DRAFT[@]} ${NON_DRAFT[@]} 
+
+cd $MERCATOR_OUTPUT
+
+$PHITS2CONSTRAINTS --input-dir $MERCATOR_INPUT < pairwisehits > constraints
+
+for g in ${DRAFT[@]}
+  do
+    if [ $g != '-d' ]; then
+        $SDBASSEMBLE $FASTA_DIR/$g.sdb $g.sdb < $g.agp
+    fi
+  done
+
+for g in ${NON_DRAFT[@]}
+  do
+     ln -s $FASTA_DIR/$g.sdb
+  done
+
+echo $TREE >treefile
+
+$MAKEALIGNMENTINPUT $MERCATOR_OUTPUT $ALIGN_DIR
+
+# TODO
+#$MAVIDALIGNDIRS --init-dir $ALIGN_DIR
+
+# TODO
+#  run to of colin's scripts omap2coordinates and mapdraft 
