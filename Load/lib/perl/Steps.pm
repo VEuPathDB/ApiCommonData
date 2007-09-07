@@ -3180,7 +3180,7 @@ sub makeTranscriptSeqs {
 
 
 sub extractTranscriptSeqs {
-  my ($mgr,$name,$taxId,$taxonHierarchy) = @_;
+  my ($mgr,$name,$taxId,$taxonHierarchy,$sql) = @_;
 
   my $taxonId = &getTaxonId($mgr,$taxId);
 
@@ -3189,6 +3189,8 @@ sub extractTranscriptSeqs {
   my $outputFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
 
   my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
+
+  $args .= " --idSQL \"$sql\"" if($sql);
 
     $mgr->runPlugin("${name}_ExtractUnalignedAssemSeqs",
 		    "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences",
