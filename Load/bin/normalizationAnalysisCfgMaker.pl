@@ -110,7 +110,7 @@ sub printXml {
 
     $xml .=  "  <process class=\"GUS::Community::RadAnalysis::Processor::GenericAnalysis\">
     <property name=\"dataFile\" value=\"$directory/$uri\"/>
-    <property name=\"fileTranslatorName\" value=\"$directory/$fileTranslator\"/>
+    <property name=\"fileTranslatorName\" value=\"$fileTranslator\"/>
 
     <property name=\"arrayDesignName\" value=\"$arrayDesign\"/>
     <property name=\"studyName\" value=\"$studyName\"/>
