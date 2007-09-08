@@ -883,20 +883,18 @@ SELECT CASE
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        ed.name AS external_db_name
-FROM  dots.Est e,
-      dots.ExternalNaSequence ens,
-      dots.Library l,
-      sres.Taxon,
-      sres.TaxonName tn,
-      sres.ExternalDatabase ed,
-      sres.ExternalDatabaseRelease edr
+FROM  dots.Est e, dots.ExternalNaSequence ens, dots.Library l,
+      sres.Taxon, sres.TaxonName tn, sres.ExternalDatabase ed,
+      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so
 WHERE e.na_sequence_id = ens.na_sequence_id
-AND   e.library_id = l.library_id
-AND   ens.taxon_id = tn.taxon_id
-AND   ens.taxon_id = taxon.taxon_id
-AND   tn.name_class='scientific name'
-AND   ens.external_database_release_id = edr.external_database_release_id
-AND   edr.external_database_id = ed.external_database_id;
+  AND e.library_id = l.library_id
+  AND ens.taxon_id = tn.taxon_id
+  AND ens.taxon_id = taxon.taxon_id
+  AND tn.name_class='scientific name'
+  AND ens.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ens.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name = 'EST';
 
 GRANT SELECT ON apidb.EstAttributes1111 TO gus_r;
 
@@ -967,16 +965,16 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          * 100 AS percent_est_bases_aligned,
          ga.source_id AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
-       apidb.GeneAttributes ga, sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed, apidb.GenomicSequence sequence
+       apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+       dots.NaSequence query_sequence, sres.SequenceOntology so
   WHERE e.na_sequence_id = ba.query_na_sequence_id
     AND aseq.na_sequence_id = ba.query_na_sequence_id
     AND sequence.na_sequence_id = ba.target_na_sequence_id
     AND ga.sequence_id = sequence.source_id
     AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
-    AND ba.query_external_db_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
-    AND ed.name = 'dbEST'
+    AND query_sequence.na_sequence_id = ba.query_na_sequence_id
+    AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+    AND so.term_name = 'EST'
     AND ba.target_na_sequence_id = sequence.na_sequence_id
 UNION
   SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
@@ -989,9 +987,7 @@ UNION
          * 100 AS percent_est_bases_aligned,
          NULL AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
-       (select source_id, na_sequence_id from dots.ExternalNaSequence
-        union
-        select source_id, na_sequence_id from dots.VirtualSequence) sequence
+       dots.NaSequence sequence
   WHERE e.na_sequence_id = ba.query_na_sequence_id
     AND aseq.na_sequence_id = ba.query_na_sequence_id
     AND ba.target_na_sequence_id = sequence.na_sequence_id
@@ -999,11 +995,11 @@ UNION
   ( -- set of blat_alignment_ids not in in first leg of UNION
     -- (because they overlap no genes)
     SELECT ba.blat_alignment_id
-    FROM dots.BlatAlignment ba, sres.ExternalDatabaseRelease edr,
-         sres.ExternalDatabase ed
-    WHERE ba.query_external_db_release_id = edr.external_database_release_id
-      AND edr.external_database_id = ed.external_database_id
-      AND ed.name = 'dbEST'
+    FROM dots.BlatAlignment ba, dots.NaSequence query_sequence,
+         sres.SequenceOntology so
+    WHERE query_sequence.na_sequence_id = ba.query_na_sequence_id
+      AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+      AND so.term_name = 'EST'
   MINUS
     SELECT ba.blat_alignment_id
     FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,

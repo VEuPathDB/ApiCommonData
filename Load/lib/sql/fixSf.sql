@@ -99,7 +99,7 @@ prompt fix translation_start for reverse strand
 update dots.translatedaafeature taaf
 set taaf.translation_start = 
 (select l.end_max - ef.coding_start + 1
-from dots.exonfeature ef, dots.nalocation l,dots.transcript t,
+from dots.exonfeature ef, dots.nalocation l,dots.transcript t
 where t.na_feature_id = taaf.na_feature_id
 and ef.parent_id = t.parent_id
 and ef.order_number = (select min(order_number) from dots.exonfeature efint 
