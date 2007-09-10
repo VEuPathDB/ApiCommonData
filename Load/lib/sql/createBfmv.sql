@@ -949,10 +949,9 @@ CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
 ---------------------------
 
 prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
+DROP MATERIALIZED VIEW apidb.EstAlignmentGene;
 
-DROP MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
-
-CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111 AS
+CREATE MATERIALIZED VIEW apidb.EstAlignmentGene AS
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
@@ -975,24 +974,28 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
     AND query_sequence.na_sequence_id = ba.query_na_sequence_id
     AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name = 'EST'
-    AND ba.target_na_sequence_id = sequence.na_sequence_id
-UNION
-  SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
-         e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
-         ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
-         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
-         sequence.source_id AS target_sequence_source_id,
-         NULL AS est_gene_overlap_length,
-         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
-         * 100 AS percent_est_bases_aligned,
-         NULL AS gene
-  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
-       dots.NaSequence sequence
-  WHERE e.na_sequence_id = ba.query_na_sequence_id
-    AND aseq.na_sequence_id = ba.query_na_sequence_id
-    AND ba.target_na_sequence_id = sequence.na_sequence_id
-    AND ba.blat_alignment_id IN
-  ( -- set of blat_alignment_ids not in in first leg of UNION
+    AND ba.target_na_sequence_id = sequence.na_sequence_id;
+
+DROP MATERIALIZED VIEW apidb.EstAlignmentNoGene;
+
+CREATE MATERIALIZED VIEW apidb.EstAlignmentNoGene AS
+SELECT * from EstAlignmentGene1111 WHERE 1=0 UNION -- define datatype for null column
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+       e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+       ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+       ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+       sequence.source_id AS target_sequence_source_id,
+       NULL AS est_gene_overlap_length,
+       ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+       * 100 AS percent_est_bases_aligned,
+       NULL AS gene
+FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+     dots.NaSequence sequence
+WHERE e.na_sequence_id = ba.query_na_sequence_id
+  AND aseq.na_sequence_id = ba.query_na_sequence_id
+  AND ba.target_na_sequence_id = sequence.na_sequence_id
+  AND ba.blat_alignment_id IN
+   ( -- set of blat_alignment_ids not in in first leg of UNION
     -- (because they overlap no genes)
     SELECT ba.blat_alignment_id
     FROM dots.BlatAlignment ba, dots.NaSequence query_sequence,
@@ -1001,16 +1004,14 @@ UNION
       AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
       AND so.term_name = 'EST'
   MINUS
-    SELECT ba.blat_alignment_id
-    FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
-         apidb.GeneAttributes ga
-    WHERE e.na_sequence_id = ba.query_na_sequence_id
-      AND aseq.na_sequence_id = ba.query_na_sequence_id
-      AND sequence.na_sequence_id = ba.target_na_sequence_id
-      AND ga.sequence_id = sequence.source_id
-      AND least(ba.target_end, ga.end_max)
-          - greatest(ba.target_start, ga.start_min) >= 0
-  );
+    SELECT blat_alignment_id FROM apidb.EstAlignmentGene1111);
+
+DROP MATERIALIZED VIEW EstAlignmentGeneSummary1111;
+
+CREATE MATERIALIZED VIEW EstAlignmentGeneSummary1111 AS
+SELECT * FROM apidb.EstAlignmentNoGene
+UNION
+SELECT * FROM apidb.EstAlignmentGene;
 
 GRANT SELECT ON apidb.EstAlignmentGeneSummary1111 TO gus_r;
 
