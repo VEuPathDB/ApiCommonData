@@ -97,7 +97,7 @@
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++ GFF dump ++ -->
+    <!-- ++ GFF attrs ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuery ref="GeneAttributes.GeneGffAttrs" includeProjects="CryptoDB"
@@ -122,6 +122,46 @@
             minOutputLength="1" maxOutputLength="1">
         <sanityParam name="primaryKey" value="GL50803_112048"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="TrichDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="TVAG_386080"/>
+        <sanityParam name="projectId" value="TrichDB"/>
+    </sanityQuery>
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ GFF sequence ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="CryptoDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Chro.trn046"/>
+        <sanityParam name="projectId" value="CryptoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="PlasmoDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="PFC0845c"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="ToxoDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="44.m00048"/>
+        <sanityParam name="projectId" value="ToxoDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="GiardiaDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="GL50803_112048"/>
+        <sanityParam name="projectId" value="GiardiaDB"/>
+    </sanityQuery>
+
+    <sanityQuery ref="GeneAttributes.GeneGffSequence" includeProjects="TrichDB"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="TVAG_386080"/>
+        <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -660,13 +700,13 @@
     </sanityQuery>
 
     <sanityQuery ref="GeneTables.GeneGffAliases" includeProjects="GiardiaDB"
-            minOutputLength="1" maxOutputLength="100">
+            minOutputLength="0" maxOutputLength="100">
         <sanityParam name="primaryKey" value="GL50803_112048"/>
         <sanityParam name="projectId" value="GiardiaDB"/>
     </sanityQuery>
 
     <sanityQuery ref="GeneTables.GeneGffAliases" includeProjects="TrichDB"
-            minOutputLength="1" maxOutputLength="100">
+            minOutputLength="0" maxOutputLength="100">
         <sanityParam name="primaryKey" value="TVAG_386080"/>
         <sanityParam name="projectId" value="TrichDB"/>
     </sanityQuery>
