@@ -882,10 +882,15 @@ SELECT CASE
        NVL(l.stage, 'unknown') AS stage,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
-       ed.name AS external_db_name
-FROM  dots.Est e, dots.ExternalNaSequence ens, dots.Library l,
-      sres.Taxon, sres.TaxonName tn, sres.ExternalDatabase ed,
-      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so
+       ed.name AS external_db_name,
+       nvl(best.best_alignment_count, 0) AS best_alignment_count
+FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
+     sres.TaxonName tn, sres.ExternalDatabase ed,
+     sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
+     (SELECT query_na_sequence_id, COUNT(*) AS best_alignment_count
+      FROM dots.BlatAlignment ba
+      WHERE is_best_alignment = 1
+      GROUP BY query_na_sequence_id) best
 WHERE e.na_sequence_id = ens.na_sequence_id
   AND e.library_id = l.library_id
   AND ens.taxon_id = tn.taxon_id
@@ -894,7 +899,8 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND ens.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND ens.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name = 'EST';
+  AND so.term_name = 'EST'
+  AND best.query_na_sequence_id(+) = ens.na_sequence_id;
 
 GRANT SELECT ON apidb.EstAttributes1111 TO gus_r;
 
