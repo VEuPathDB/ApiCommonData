@@ -979,7 +979,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
 DROP MATERIALIZED VIEW apidb.EstAlignmentNoGene;
 
 CREATE MATERIALIZED VIEW apidb.EstAlignmentNoGene AS
-SELECT * from EstAlignmentGene1111 WHERE 1=0 UNION -- define datatype for null column
+SELECT * from EstAlignmentGene WHERE 1=0 UNION -- define datatype for null column
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
        e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
        ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
@@ -1004,7 +1004,7 @@ WHERE e.na_sequence_id = ba.query_na_sequence_id
       AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
       AND so.term_name = 'EST'
   MINUS
-    SELECT blat_alignment_id FROM apidb.EstAlignmentGene1111);
+    SELECT blat_alignment_id FROM apidb.EstAlignmentGene);
 
 DROP MATERIALIZED VIEW EstAlignmentGeneSummary1111;
 
