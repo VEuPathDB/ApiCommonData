@@ -71,6 +71,15 @@
       </enumList>   
     </enumParam>
 
+        <stringParam name="max_number_best_alignments"
+                     prompt="Maximum number of best alignments"
+                     quote="false">
+            <help>
+              EST sequences can have two (or more) best alignments that have the same percent identity, length and score.  This parameter allows you to specify the maximum number of these best alignments that will be considered for any EST to be included in the query.  For example, if you specify 1 then all the ESTs that do not have a unique best alignment will be ignored in the query.
+            </help>           
+            <suggest default="1"
+               allowEmpty="true" emptyValue="1000" />
+        </stringParam>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- high confidence est only  -->

@@ -1255,6 +1255,7 @@ order by project_id,sns2.source_id
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.max_number_best_alignments" groupRef="paramGroups.advancedParams" excludeProjects="CryptoDB"/>
        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
@@ -1264,16 +1265,18 @@ order by project_id,sns2.source_id
        <column name="number_of_ests" />
        <sql excludeProjects="CryptoDB">
             <![CDATA[
-            SELECT gene as source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
-            FROM apidb.EstAlignmentGeneSummary
-            WHERE est_gene_overlap_length >= $$bp_overlap_gte$$
-            AND is_consistent in ($$high_confidence_only$$)
-            AND is_best_alignment in ($$best_alignment_only$$)
-            AND percent_identity >= $$min_percent_identity$$
-            AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-            AND library_id in ($$libraryId$$)
-            AND target_taxon_id in ($$organism$$)
-            GROUP by gene
+            SELECT s.gene as source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
+            FROM apidb.EstAlignmentGeneSummary s, apidb.estattributes e
+            WHERE s.est_gene_overlap_length >= $$bp_overlap_gte$$
+            AND s.is_consistent in ($$high_confidence_only$$)
+            AND s.is_best_alignment in ($$best_alignment_only$$)
+            AND s.percent_identity >= $$min_percent_identity$$
+            AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND s.library_id in ($$libraryId$$)
+            AND s.target_taxon_id in ($$organism$$)
+            AND e.source_id = s.accession
+            AND e.best_alignment_count <= $$max_number_best_alignments$$
+            GROUP by s.gene
             HAVING count(*) >= $$min_number_est_aligned$$
             ]]>
           </sql>
