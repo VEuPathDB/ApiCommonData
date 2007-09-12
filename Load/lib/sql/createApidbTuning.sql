@@ -137,7 +137,38 @@ GRANT SELECT on apidb.PdbSimilarity TO gus_r;
 
 prompt DROP/CREATE MATERIALIZED VIEW apidb.GeneId;
 
+drop materialized view apidb.PredictionLocation;
+
+create materialized view apidb.PredictionLocation as
+select gf.source_id, gf.na_sequence_id, nl.start_min, nl.end_max,
+       nl.is_reversed
+from dots.GeneFeature gf, dots.NaLocation nl, sres.ExternalDatabase ed,
+     sres.ExternalDatabaseRelease edr
+where gf.na_feature_id = nl.na_feature_id
+  and gf.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+  and ed.name
+      in ('GLEAN predictions', 'GlimmerHMM predictions', 'TigrScan',
+--        'tRNAscan-SE',
+          'TwinScan predictions', 'TwinScanEt predictions');
+
+drop materialized view apidb.GeneLocation;
+
+create materialized view apidb.GeneLocation as
+select gf.source_id, gf.na_sequence_id, nl.start_min, nl.end_max,
+       nl.is_reversed
+from dots.GeneFeature gf, dots.NaLocation nl, sres.ExternalDatabase ed,
+     sres.ExternalDatabaseRelease edr
+where gf.na_feature_id = nl.na_feature_id
+  and gf.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+  and ed.name
+      not in ('GLEAN predictions', 'GlimmerHMM predictions', 'TigrScan',
+--            'tRNAscan-SE',
+              'TwinScan predictions', 'TwinScanEt predictions');
+
 DROP MATERIALIZED VIEW apidb.GeneId;
+
 CREATE MATERIALIZED VIEW apidb.GeneId AS
 SELECT LOWER(dr.primary_identifier) AS id, gf.source_id AS gene
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
@@ -183,7 +214,21 @@ WHERE sns.na_sequence_id = drns.na_sequence_id
   AND edr.external_database_id = ed.external_database_id 
   AND ed.name = 'GenBank'
 UNION
-SELECT LOWER(alias) AS id, gene FROM apidb.GeneAlias;
+SELECT LOWER(alias) AS id, gene FROM apidb.GeneAlias
+UNION
+SELECT pred_loc.source_id AS alias, gene_loc.source_id AS gene
+FROM apidb.GeneLocation gene_loc, apidb.PredictionLocation pred_loc
+WHERE pred_loc.na_sequence_id = gene_loc.na_sequence_id
+  AND gene_loc.start_min <= pred_loc.end_max
+  AND gene_loc.end_max >= pred_loc.start_min
+  AND pred_loc.is_reversed = gene_loc.is_reversed
+UNION
+SELECT lower(pred_loc.source_id) AS alias, gene_loc.source_id AS gene
+FROM apidb.GeneLocation gene_loc, apidb.PredictionLocation pred_loc
+WHERE pred_loc.na_sequence_id = gene_loc.na_sequence_id
+  AND gene_loc.start_min <= pred_loc.end_max
+  AND gene_loc.end_max >= pred_loc.start_min
+  AND pred_loc.is_reversed = gene_loc.is_reversed;
 
 GRANT SELECT ON apidb.GeneId TO gus_r;
 
