@@ -180,13 +180,11 @@
         <sanityParam name="epitope_confidence" value="Medium"/>
     </sanityQuestion>
 
-<!-- Not in Model
-    <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,TrichDB"
-            pageStart="1" pageEnd="20"
+    <sanityQuery ref="GeneId.GenesWithEpitopes" includeProjects="ApiDB,TrichDB"
             minOutputLength="40" maxOutputLength="70">
         <sanityParam name="organism" value="Trichomonas vaginalis"/>
         <sanityParam name="epitope_confidence" value="Medium"/>
-    </sanityQuestion> -->
+    </sanityQuery>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
     <!-- ++ EC number ++ -->
@@ -453,7 +451,7 @@
 
    <sanityQuestion ref="GeneQuestions.GenesBySimilarity" includeProjects="TrichDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="30">
+            minOutputLength="1" maxOutputLength="30">
           <sanityParam name="BlastAlgorithm" value="tblastn"/>
           <sanityParam name="BlastDatabaseType" value="Transcripts"/>
           <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
@@ -580,7 +578,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="TrichDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="2000">
+            minOutputLength="100" maxOutputLength="10000">
         <sanityParam name="go_term" value="catalytic activity"/>
         <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
@@ -860,7 +858,7 @@
         <sanityParam name="whole_words" value="yes"/>
         <sanityParam name="max_pvalue" value="-30"/>
         <sanityParam name="text_fields" value="Gene product"/>
-        <sanityParam name="organism" value="Trichomonas vaginalis"/>
+        <sanityParam name="text_search_organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -958,7 +956,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="TrichDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="400" maxOutputLength="500">
+            minOutputLength="100" maxOutputLength="500">
         <sanityParam name="organism" value="Trichomonas vaginalis"/>
         <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
@@ -1066,7 +1064,7 @@
 
     <sanityQuestion ref="GeneDumpQuestions.GeneDumpQuestion" includeProjects="TrichDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="3000" maxOutputLength="50000">
+            minOutputLength="3000" maxOutputLength="100000">
         <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 

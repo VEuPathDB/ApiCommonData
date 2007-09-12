@@ -80,6 +80,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
     <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="GiardiaDB,ApiDB"
@@ -92,6 +93,7 @@
           <sanityParam name="-e" value="1e-1"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
     <sanityQuestion ref="EstQuestions.EstsBySimilarity" includeProjects="TrichDB,ApiDB"
@@ -104,6 +106,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -262,10 +265,10 @@
 
     <sanityQuestion ref="EstQuestions.EstsWithGeneOverlap" includeProjects="TrichDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="20" maxOutputLength="200">
+            minOutputLength="20" maxOutputLength="1000">
         <sanityParam name="libraryId" value="Cot1000 normalized T1 cDNA library"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
-        <sanityParam name="inNotIn" value="does overlap with a gene"/>
+        <sanityParam name="overlapOrNot" value="does overlap with a gene"/>
         <sanityParam name="high_confidence_only" value="No"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
         <sanityParam name="min_percent_identity" value="90"/>

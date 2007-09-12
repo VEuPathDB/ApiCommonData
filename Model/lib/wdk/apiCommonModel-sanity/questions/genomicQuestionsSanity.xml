@@ -87,6 +87,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="PlasmoDB,ApiDB"
@@ -99,6 +100,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="ToxoDB,ApiDB"
@@ -111,6 +113,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="GiardiaDB,ApiDB"
@@ -123,6 +126,7 @@
           <sanityParam name="-e" value="1e-10"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
       <sanityQuestion ref="GenomicSequenceQuestions.SequencesBySimilarity" includeProjects="TrichDB,ApiDB"
@@ -131,10 +135,11 @@
           <sanityParam name="BlastAlgorithm" value="blastn"/>
           <sanityParam name="BlastDatabaseType" value="Genome"/>
           <sanityParam name="BlastDatabaseOrganism" value="Trichomonas vaginalis"/>
-          <sanityParam name="BlastQuerySequence" value=""/>
-          <sanityParam name="-e" value="1e-10"/>
+          <sanityParam name="BlastQuerySequence" value="GCGAGCTCGTTGCAGTTGTTTGGCTTGACGGAACCGCCGTAGAGAATGCGGACCTTGTTA"/>
+          <sanityParam name="-e" value="100"/>
           <sanityParam name="-v" value="50"/>
           <sanityParam name="-b" value="25"/>
+          <sanityParam name="-filter" value="no"/>
       </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -167,7 +172,7 @@
 
     <sanityQuestion ref="SequenceDumpQuestions.SequenceDumpQuestion" includeProjects="TrichDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="30" maxOutputLength="2000">
+            minOutputLength="30" maxOutputLength="70000">
         <sanityParam name="organism" value="Trichomonas vaginalis"/>
     </sanityQuestion>
 
