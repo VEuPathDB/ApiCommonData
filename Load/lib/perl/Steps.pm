@@ -1572,7 +1572,7 @@ sub runGffDump {
      -model $model \\
      -organism \"$organism\" \\
      -dir $dir \\
-     2>> $logFile
+     >> $logFile
 EOF
 
   print STDERR "$cmd\n";
@@ -1606,7 +1606,7 @@ sub runWdkRecordDump {
      -organism \"$organism\" \\
      -type \"$recordType\" \\
      -dir $dir \\
-     2>> $logFile
+     >> $logFile
 EOF
 
   print STDERR "$cmd\n";
@@ -2547,7 +2547,7 @@ sub startProteinBlastOnComputeCluster {
 }
 
 sub startGenomeAlignOnComputeCluster {
-  my ($mgr,$queryFile,$targetDir,$queue) = @_;
+  my ($mgr,$queryFile,$targetDir,$queue,$ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $name = $queryFile . "-" . $targetDir;
@@ -2558,7 +2558,7 @@ sub startGenomeAlignOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runGenomeAlignWithGfClient --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
+  my $clusterCmdMsg = "runGenomeAlignWithGfClient --ppn $ppn --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
