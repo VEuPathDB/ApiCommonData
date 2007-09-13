@@ -364,6 +364,56 @@
 
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Sage Tags table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <table name="SNPs" includeProjects="GiardiaDB"
+                 displayName="Sage Tags"
+                 queryRef="GeneTables.SageTags">
+            <columnAttribute displayName= "Tag ID"
+                             name="tag_source_id"/>
+            <columnAttribute displayName= "Library"
+                             name="library"/>
+            <columnAttribute displayName= "Sequence"
+                             name="sequence"/>
+            <columnAttribute displayName= "Frequency"
+                             name="frequency"/>
+            <columnAttribute displayName= "Total in Library"
+                             name="libraryTotalTagCount"/>
+            <columnAttribute displayName= "Found in genome"
+                             name="genomeOccurrences"/>
+            <columnAttribute displayName= "Anti-sense"
+                             name="antiSense"/>
+
+
+            <columnAttribute internal="true" name="strain_a_query"/>
+            <columnAttribute internal="true" name="strain_b_query"/>
+            <columnAttribute internal="true" name="strain_a_disp"/>
+            <columnAttribute internal="true" name="strain_b_disp"/>
+            <columnAttribute internal="true" name="gene_source_id"/>
+            <linkAttribute name="LinkForStrainComparison"
+                           displayName="Strains"
+                           visible="$$strain_a_disp$$ vs $$strain_b_disp$$">
+                 <url>
+                    <![CDATA[
+                      processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=$$strain_a_query$$&myMultiProp%28snp_strain_m%29=$$strain_b_query$$&questionSubmit=Get+Answer
+                    ]]>
+                 </url>
+            </linkAttribute>
+
+
+            <columnAttribute displayName="CDS SNP Density"
+                             name="cds_snp_density"/>
+            <columnAttribute displayName="Non-synonymous"
+                             name="num_non_synonymous"/>
+            <columnAttribute displayName="Synonymous" name="num_synonymous"/>
+            <columnAttribute displayName="Nonsense" name="num_nonsense"/>
+            <columnAttribute displayName="Non-coding" name="num_non_coding"/>
+            <columnAttribute displayName="Total" name="num_total"/>
+          </table>
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Notes table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
@@ -387,7 +437,7 @@
 							displayName="Headline"
 							visible="$$headline$$">
 				<url>
-				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.GeneCommentsClass&project_id=&primary_key=$$stable_id$$#$$comment_id$$]]>
+				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.GeneCommentsClass&project_id=@PROJECT_ID@&primary_key=$$stable_id$$#$$comment_id$$]]>
 				</url>
 			</linkAttribute>
             <columnAttribute name="user_name" displayName="Made by"/>
@@ -480,7 +530,7 @@
               <linkAttribute name="geneLink" displayName="Gene"
                        visible="$$source_id$$">
                    <url>
-                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=&primary_key=$$source_id$$]]>
+                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
                    </url>
               </linkAttribute>
               <columnAttribute name="bait_start" displayName="Bait Start"

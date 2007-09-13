@@ -78,7 +78,7 @@
             <columnAttribute name="chromosomemappingtext" includeProjects="CryptoDB" 
                  inReportMaker="false"    internal="true" />
 
-            <columnAttribute name="at_percent" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+            <columnAttribute name="at_percent" excludeProjects="CryptoDB"
                  displayName="AT Percent"/>
 
             <columnAttribute name="organism"
@@ -296,7 +296,7 @@
 							displayName="Headline"
 							visible="$$headline$$">
 				<url>
-				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.SequenceCommentsClass&project_id=&primary_key=$$stable_id$$#$$comment_id$$]]>
+				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.SequenceCommentsClass&project_id=@PROJECT_ID@&primary_key=$$stable_id$$#$$comment_id$$]]>
 				</url>
 			</linkAttribute>
             <columnAttribute name="user_name" displayName="Made by"/>

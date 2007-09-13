@@ -415,6 +415,39 @@
         </sqlQuery>
 
     
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Sage Tags -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="SageTags" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="tag_source_id"/>
+            <column name="library"/>
+            <column name="sequence"/>
+            <column name="frequency"/>
+            <column name="libraryTotalTagCount"/>
+            <column name="genomeOccurrences"/>
+            <column name="antiSense"/>
+            <sql>
+            <![CDATA[
+               SELECT tf.source_id as tag_source_id, 
+                      'Troph1' as library, 
+                      t.tag as sequence, 
+                      ROUND(GREATEST(tg.tag_count * 39253 / 8755,1)) as frequency,
+                      ROUND(GREATEST(tg.tag_count * 39253 / 8755,1) / 38015 * 100, 3) as percentile,
+                      38015 as libraryTotalTagCount, 
+                      tg.occurrence as genomeOccurrences,
+                      'no' as antiSense,
+                      '@PROJECT_ID@' as project_id
+               FROM dots.SageTagFeature tf, rad.SageTag t, apidb.SageTagGene tg
+               WHERE tg.source_id = $$primaryKey$$
+                 AND t.composite_element_id = tg.composite_element_id
+                 AND tf.source_id = t.composite_element_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
   <!--===========================================================================-->
   <!--===========================================================================-->
   <!-- GFF data dump tables  -->
