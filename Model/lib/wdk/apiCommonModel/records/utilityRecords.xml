@@ -1,0 +1,64 @@
+<wdkModel>
+
+<!-- notes
+
+-Utility RecordClasses
+
+-->
+
+ <recordClassSet name="UtilityRecordClasses">
+    
+        <!-- UtilityRecordClasses.SiteInfo -->
+        <recordClass idPrefix="" 
+          name="SiteInfo" type="Gene">
+<!--
+            <attributeQueryRef ref="UtilityQueries.PingCrypto">
+                <columnAttribute name="cryptolink" internal="true" />
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="UtilityQueries.PingToxo">
+                <columnAttribute name="toxolink" internal="true" />
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="UtilityQueries.PingPlasmo">
+                <columnAttribute name="plasmolink" internal="true" />
+            </attributeQueryRef>
+-->
+            <attributeQueryRef ref="UtilityQueries.CurrentInstance">
+                <columnAttribute name="global_name" internal="true" />
+                <columnAttribute name="host_name" internal="true" />
+                <columnAttribute name="address" internal="true" />
+                <columnAttribute name="version" internal="true" />
+                <columnAttribute name="system_date" internal="true" />
+                <columnAttribute name="login" internal="true" />
+            </attributeQueryRef>
+
+            <attributeQueryRef ref="UtilityQueries.CacheState">
+                <columnAttribute name="cache_count" internal="true" />
+            </attributeQueryRef>
+ 
+            <attributeQueryRef ref="UtilityQueries.ApiCommDbLink">
+                <columnAttribute name="apicomm_global_name" internal="true" />
+            </attributeQueryRef>
+
+            <table name="AllDbLinks" displayName="All DBLinks"
+                   queryRef="UtilityQueries.AllDbLinks">
+                <columnAttribute name="owner"      displayName="owner" />
+                <columnAttribute name="db_link"   displayName="db_link" />
+                <columnAttribute name="username"  displayName="username" />
+                <columnAttribute name="host"      displayName="host" />
+                <columnAttribute name="created"   displayName="created" />
+            </table>
+
+           <textAttribute name="apicommMacro" displayName="Links to Other Web Pages" 
+                          inReportMaker="false">
+             <text>
+                  LOGIN_DBLINK=@LOGIN_DBLINK@
+             </text>
+          </textAttribute>
+
+        </recordClass>
+        
+    </recordClassSet>
+
+</wdkModel>

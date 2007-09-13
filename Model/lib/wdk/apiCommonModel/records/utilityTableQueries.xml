@@ -1,0 +1,121 @@
+<wdkModel>
+
+<!-- notes
+
+-Utility RecordClass Queries
+
+--> 
+ 
+<!-- ////////// UTILITY //////////// -->
+    <querySet name="UtilityQueries">
+
+        <!-- UtilityQueries.PingCrypto (cryptolink hard coded in jsp) 
+        <sqlQuery name="PingCrypto" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="cryptolink" />
+            <sql> 
+            <![CDATA[           
+            select 
+                global_name as cryptolink
+            from global_name@crypto
+             ]]>
+           </sql>
+        </sqlQuery>
+        -->
+        <!-- UtilityQueries.PingToxo (toxolink hard coded in jsp) 
+        <sqlQuery name="PingToxo" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="toxolink" />
+            <sql> 
+            <![CDATA[           
+            select 
+                global_name as toxolink
+            from global_name@toxo
+             ]]>
+           </sql>
+        </sqlQuery>
+        -->
+        <!-- UtilityQueries.PingPlasmo (plasmolink hard coded in jsp) 
+        <sqlQuery name="PingPlasmo" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="plasmolink" />
+            <sql> 
+            <![CDATA[           
+            select 
+                global_name as plasmolink
+            from global_name@plasmo
+             ]]>
+           </sql>
+        </sqlQuery>
+        -->
+
+        <!-- UtilityQueries.CurrentInstance -->
+        <sqlQuery name="CurrentInstance" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="global_name" />
+            <column name="host_name" />
+            <column name="address" />
+            <column name="version" />
+            <column name="system_date" />
+            <column name="login" />
+           <sql> 
+            <![CDATA[           
+            select 
+                global_name, 
+                ver.banner version,
+                UTL_INADDR.get_host_name as host_name,
+                UTL_INADDR.get_host_address as address,
+                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') as system_date,
+                sys_context('USERENV', 'SESSION_USER') as login
+            from global_name, v$version ver
+            where lower(ver.banner) like '%oracle%'
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <!-- UtilityQueries.CacheState -->
+        <sqlQuery name="CacheState" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="cache_count" />
+           <sql> 
+            <![CDATA[           
+            select count(*) as cache_count
+             from queryinstance
+             ]]>
+           </sql>
+        </sqlQuery>
+        
+        <!-- UtilityQueries.ApiCommDbLink -->
+        <sqlQuery name="ApiCommDbLink" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="apicomm_global_name" />
+           <sql> 
+            <![CDATA[           
+             select global_name as apicomm_global_name
+            from global_name@LOGIN_DBLINK@
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <!-- UtilityQueries.AllDbLinks -->
+        <sqlQuery name="AllDbLinks" isCacheable='false'>
+            <paramRef ref="params.primaryKey"/> 
+            <column name="owner" />
+            <column name="db_link" />
+            <column name="username" />
+            <column name="host" />
+            <column name="created" />
+           <sql> 
+            <![CDATA[           
+            select 
+            lower(owner) owner, lower(db_link) db_link, 
+            lower(username) username, lower(host) host, created
+            from  all_db_links
+            ]]>
+           </sql>
+        </sqlQuery>
+
+     </querySet>
+<!-- ////////// END UTILITY //////////// -->
+
+</wdkModel>
