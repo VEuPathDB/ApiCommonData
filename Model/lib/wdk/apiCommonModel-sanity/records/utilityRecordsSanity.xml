@@ -5,6 +5,27 @@
   <!-- == UtilityTermClass records == -->
   <!-- ============================================================ -->
 
-      <sanityRecord ref="UtilityRecordClasses.SiteInfo"/>
+      <sanityRecord ref="UtilityRecordClasses.SiteInfo"
+                    primaryKey="INTERPRO"/>
+
+      <sanityQuery ref="UtilityQueries.CurrentInstance"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="fill"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UtilityQueries.CacheState"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="fill"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UtilityQueries.ApiCommDbLink"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="fill"/>
+      </sanityQuery>
+
+      <sanityQuery ref="UtilityQueries.AllDbLinks"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="fill"/>
+      </sanityQuery>
 
 </sanityModel>
