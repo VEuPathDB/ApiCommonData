@@ -135,37 +135,37 @@ GRANT SELECT on apidb.PdbSimilarity TO gus_r;
 
 -------------------------------------------------------------------------------
 
+prompt DROP/CREATE MATERIALIZED VIEW apidb.FeatureLocation;
+
+drop materialized view apidb.FeatureLocation;
+
+create materialized view apidb.FeatureLocation as
+select case
+         when ed.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+                          'TigrScan', 'TwinScan predictions',
+                          'TwinScanEt predictions') -- not 'tRNAscan-SE',
+           then 'GenePrediction'
+         else nf.subclass_view
+       end as feature_type,
+       nf.source_id as feature_source_id, ns.source_id as sequence_source_id,
+       nf.na_sequence_id, nf.na_feature_id, nl.start_min, nl.end_max,
+       nl.is_reversed
+from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
+     sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+where nf.na_feature_id = nl.na_feature_id
+  and nf.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+  and nf.na_sequence_id = ns.na_sequence_id;
+
+grant select on apidb.FeatureLocation TO gus_r;
+
+create index apidb.featloc_ix on apidb.FeatureLocation
+             (feature_type, na_sequence_id, start_min, end_max, is_reversed);
+
+
+-------------------------------------------------------------------------------
+
 prompt DROP/CREATE MATERIALIZED VIEW apidb.GeneId;
-
-drop materialized view apidb.PredictionLocation;
-
-create materialized view apidb.PredictionLocation as
-select gf.source_id, gf.na_sequence_id, nl.start_min, nl.end_max,
-       nl.is_reversed
-from dots.GeneFeature gf, dots.NaLocation nl, sres.ExternalDatabase ed,
-     sres.ExternalDatabaseRelease edr
-where gf.na_feature_id = nl.na_feature_id
-  and gf.external_database_release_id = edr.external_database_release_id
-  and edr.external_database_id = ed.external_database_id
-  and ed.name
-      in ('GLEAN predictions', 'GlimmerHMM predictions', 'TigrScan',
---        'tRNAscan-SE',
-          'TwinScan predictions', 'TwinScanEt predictions');
-
-drop materialized view apidb.GeneLocation;
-
-create materialized view apidb.GeneLocation as
-select gf.source_id, gf.na_sequence_id, nl.start_min, nl.end_max,
-       nl.is_reversed
-from dots.GeneFeature gf, dots.NaLocation nl, sres.ExternalDatabase ed,
-     sres.ExternalDatabaseRelease edr
-where gf.na_feature_id = nl.na_feature_id
-  and gf.external_database_release_id = edr.external_database_release_id
-  and edr.external_database_id = ed.external_database_id
-  and ed.name
-      not in ('GLEAN predictions', 'GlimmerHMM predictions', 'TigrScan',
---            'tRNAscan-SE',
-              'TwinScan predictions', 'TwinScanEt predictions');
 
 DROP MATERIALIZED VIEW apidb.GeneId;
 
@@ -303,81 +303,123 @@ CREATE INDEX apidb.GCent_loc_ix
 drop materialized view apidb.SageTagGene;
 
 create materialized view apidb.SageTagGene as
-select '5' as direction, g.source_id, s.source_id as composite_element_id,
-     min (case
-            when sl.is_reversed = 1 and sl.end_max - gl.end_max < 0
-              then 0
-            when sl.is_reversed = 1 and sl.end_max - gl.end_max >= 0
-              then sl.end_max - gl.end_max
-            when sl.is_reversed = 0 and gl.start_min - sl.start_min < 0
-              then 0
-            when sl.is_reversed = 0 and gl.start_min - sl.start_min >= 0
-              then gl.start_min - sl.start_min
-          end) as distance,
+select '5' as direction, g.feature_source_id AS gene_source_id,
+       s.feature_source_id as tag_source_id,
+       min (case
+              when g.is_reversed = 1 and s.end_max - g.end_max < 0
+                then 0
+              when g.is_reversed = 1 and s.end_max - g.end_max >= 0
+                then s.end_max - g.end_max
+              when g.is_reversed = 0 and g.start_min - s.start_min < 0
+                then 0
+              when g.is_reversed = 0 and g.start_min - s.start_min >= 0
+                then g.start_min - s.start_min
+            end) as distance,
      dr.analysis_id, max(dr.float_value) as tag_count,
-     max(ct.occurrence) as occurrence
-from dots.GeneFeature g, dots.NaLocation gl,
-     dots.SageTagFeature s, dots.NaLocation sl,
+     max(ct.occurrence) as occurrence,
+     g.na_feature_id as gene_feature_id, s.na_feature_id as tag_feature_id,
+     case when s.is_reversed = g.is_reversed then 0
+          else 1
+     end as antisense
+from apidb.FeatureLocation g, apidb.FeatureLocation s,
      rad.DataTransformationResult dr,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
       group by source_id) ct
-where g.na_feature_id = gl.na_feature_id
-  and s.na_feature_id = sl.na_feature_id
+where g.feature_type = 'GeneFeature'
+  and s.feature_type = 'SAGETagFeature'
   and g.na_sequence_id = s.na_sequence_id
-  and gl.is_reversed = sl.is_reversed
-  and s.source_id = dr.row_id
+  and s.feature_source_id = dr.row_id
   and dr.row_id = ct.source_id
   and (case
-         when sl.is_reversed = 0
-           then gl.start_min - sl.start_min
-         else sl.end_max - gl.end_max
+         when g.is_reversed = 0
+           then g.start_min - s.start_min
+         else s.end_max - g.end_max
        end <= 1000
       and case
-            when sl.is_reversed = 0
-              then gl.end_max - sl.end_max
-            else sl.start_min - gl.start_min
+            when g.is_reversed = 0
+              then g.end_max - s.end_max
+            else s.start_min - g.start_min
           end >= 0)
-group by g.source_id, s.source_id, dr.analysis_id
+group by g.feature_source_id, s.feature_source_id, dr.analysis_id,
+         g.na_feature_id, s.na_feature_id,
+         case when s.is_reversed = g.is_reversed then 0
+              else 1
+         end
 UNION
-select '3' as direction, g.source_id, s.source_id as composite_element_id,
-     min (case
-            when sl.is_reversed = 1 and gl.start_min - sl.start_min < 0
-              then 0
-            when sl.is_reversed = 1 and gl.start_min - sl.start_min  >= 0
-              then gl.start_min - sl.start_min
-            when sl.is_reversed = 0 and sl.end_max - gl.end_max < 0
-              then 0
-            when sl.is_reversed = 0 and sl.end_max - gl.end_max >= 0
-              then sl.end_max - gl.end_max
-          end) as distance,
+select '3' as direction, g.feature_source_id AS gene_source_id,
+       s.feature_source_id as tag_source_id,
+       min (case
+              when g.is_reversed = 1 and g.start_min - s.start_min < 0
+                then 0
+              when g.is_reversed = 1 and g.start_min - s.start_min  >= 0
+                then g.start_min - s.start_min
+              when g.is_reversed = 0 and s.end_max - g.end_max < 0
+                then 0
+              when g.is_reversed = 0 and s.end_max - g.end_max >= 0
+                then s.end_max - g.end_max
+            end) as distance,
      dr.analysis_id, max(dr.float_value) as tag_count,
-     max(ct.occurrence) as occurrence
-from dots.GeneFeature g, dots.NaLocation gl,
-     dots.SageTagFeature s, dots.NaLocation sl,
+     max(ct.occurrence) as occurrence,
+     g.na_feature_id as gene_feature_id, s.na_feature_id as tag_feature_id,
+     case when s.is_reversed = g.is_reversed then 0
+          else 1
+     end as antisense
+from apidb.FeatureLocation g, apidb.FeatureLocation s,
      rad.DataTransformationResult dr,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
       group by source_id) ct
-where g.na_feature_id = gl.na_feature_id
-  and s.na_feature_id = sl.na_feature_id
+where g.feature_type = 'GeneFeature'
+  and s.feature_type = 'SAGETagFeature'
   and g.na_sequence_id = s.na_sequence_id
-  and gl.is_reversed = sl.is_reversed
-  and s.source_id = dr.row_id
+  and s.feature_source_id = dr.row_id
   and dr.row_id = ct.source_id
   and (case
-         when sl.is_reversed = 0
-           then sl.end_max - gl.end_max
-         else gl.start_min - sl.start_min end <= 1000
+         when g.is_reversed = 0
+           then s.end_max - g.end_max
+         else g.start_min - s.start_min end <= 1000
       and
        case
-         when sl.is_reversed = 0
-           then sl.start_min - gl.start_min
-         else gl.end_max - sl.end_max
+         when g.is_reversed = 0
+           then s.start_min - g.start_min
+         else g.end_max - s.end_max
        end >= 0)
-group by g.source_id, s.source_id, dr.analysis_id;
+group by g.feature_source_id, s.feature_source_id, dr.analysis_id,
+         g.na_feature_id, s.na_feature_id,
+         case when s.is_reversed = g.is_reversed then 0
+              else 1
+         end;
 
 grant select on apidb.SageTagGene to gus_r;
+
+-------------------------------------------------------------------------------
+
+drop materialized view apidb.SageTagAnalysisAttributes;
+
+-- this should be augmented to include library, number of elements in library,
+-- and the short fixed sequence recognized by the enzyme (e.g. CATG)
+
+create materialized view apidb.SageTagAnalysisAttributes as
+select stf.source_id, dtr.analysis_id, max(dtr.float_value) as tag_count,
+       max(ct.occurrence) as occurrence, st.tag as sequence,
+       st.composite_element_id
+from dots.SageTagFeature stf, dots.NaLocation nl,
+     rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
+     (select source_id , count(*) as occurrence
+      from dots.SageTagFeature
+      group by source_id) ct
+where ti.name = 'SAGETag'
+  and dtr.table_id = ti.table_id
+  and st.composite_element_id = dtr.row_id
+  and stf.source_id = st.composite_element_id
+  and nl.na_feature_id = stf.na_feature_id
+  and ct.source_id = stf.source_id
+group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id;
+
+create index apidb.staa_ix on apidb.SageTagAnalysisAttributes (analysis_id, source_id);
+
+grant select on apidb.SageTagAnalysisAttributes to gus_r;
 
 -------------------------------------------------------------------------------
 exit
