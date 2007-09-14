@@ -2942,7 +2942,7 @@ sub extractKeywordSearchFiles {
 
   $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
-  $mgr->runCmd("extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix --commentSchema $commentSchema --commentDblink $dbLink");
+  $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 }
