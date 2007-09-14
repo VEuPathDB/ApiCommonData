@@ -367,49 +367,25 @@
           <!-- Sage Tags table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SNPs" includeProjects="GiardiaDB"
+         <table name="SageTags" includeProjects="GiardiaDB"
                  displayName="Sage Tags"
                  queryRef="GeneTables.SageTags">
-            <columnAttribute displayName= "Tag ID"
+            <columnAttribute displayName= "Temporary Tag ID"
                              name="tag_source_id"/>
-            <columnAttribute displayName= "Library"
-                             name="library"/>
             <columnAttribute displayName= "Sequence"
                              name="sequence"/>
+            <columnAttribute displayName= "Library"
+                             name="library"/>
             <columnAttribute displayName= "Frequency"
                              name="frequency"/>
-            <columnAttribute displayName= "Total in Library"
+            <columnAttribute displayName= "Library Total"
                              name="libraryTotalTagCount"/>
+            <columnAttribute displayName= "Percent"
+                             name="percent"/>
             <columnAttribute displayName= "Found in genome"
                              name="genomeOccurrences"/>
             <columnAttribute displayName= "Anti-sense"
                              name="antiSense"/>
-
-
-            <columnAttribute internal="true" name="strain_a_query"/>
-            <columnAttribute internal="true" name="strain_b_query"/>
-            <columnAttribute internal="true" name="strain_a_disp"/>
-            <columnAttribute internal="true" name="strain_b_disp"/>
-            <columnAttribute internal="true" name="gene_source_id"/>
-            <linkAttribute name="LinkForStrainComparison"
-                           displayName="Strains"
-                           visible="$$strain_a_disp$$ vs $$strain_b_disp$$">
-                 <url>
-                    <![CDATA[
-                      processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=$$strain_a_query$$&myMultiProp%28snp_strain_m%29=$$strain_b_query$$&questionSubmit=Get+Answer
-                    ]]>
-                 </url>
-            </linkAttribute>
-
-
-            <columnAttribute displayName="CDS SNP Density"
-                             name="cds_snp_density"/>
-            <columnAttribute displayName="Non-synonymous"
-                             name="num_non_synonymous"/>
-            <columnAttribute displayName="Synonymous" name="num_synonymous"/>
-            <columnAttribute displayName="Nonsense" name="num_nonsense"/>
-            <columnAttribute displayName="Non-coding" name="num_non_coding"/>
-            <columnAttribute displayName="Total" name="num_total"/>
           </table>
 
 
@@ -930,7 +906,7 @@
                internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs;options=CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs+;options=CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
             <text includeProjects="ToxoDB">

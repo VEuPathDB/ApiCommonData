@@ -426,24 +426,26 @@
             <column name="library"/>
             <column name="sequence"/>
             <column name="frequency"/>
+            <column name="percent"/>
             <column name="libraryTotalTagCount"/>
             <column name="genomeOccurrences"/>
             <column name="antiSense"/>
             <sql>
             <![CDATA[
-               SELECT tf.source_id as tag_source_id, 
+               SELECT tg.tag_source_id, 
                       'Troph1' as library, 
-                      t.tag as sequence, 
-                      ROUND(GREATEST(tg.tag_count * 39253 / 8755,1)) as frequency,
-                      ROUND(GREATEST(tg.tag_count * 39253 / 8755,1) / 38015 * 100, 3) as percentile,
+                      'CATG' || t.sequence as sequence, 
+                      t.tag_count as frequency,
+                      ROUND(t.tag_count / 38015 * 100, 3) as percent,
                       38015 as libraryTotalTagCount, 
-                      tg.occurrence as genomeOccurrences,
-                      'no' as antiSense,
+                      t.occurrence as genomeOccurrences,
+                      decode(tg.antisense,0,'no',1,'yes') as antisense,
                       '@PROJECT_ID@' as project_id
-               FROM dots.SageTagFeature tf, rad.SageTag t, apidb.SageTagGene tg
-               WHERE tg.source_id = $$primaryKey$$
-                 AND t.composite_element_id = tg.composite_element_id
-                 AND tf.source_id = t.composite_element_id
+               FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg
+               WHERE tg.gene_source_id = $$primaryKey$$
+                 AND t.source_id = tg.tag_source_id
+                 AND tg.distance = 0
+                 AND tg.direction = '3'
             ]]>
             </sql>
         </sqlQuery>
