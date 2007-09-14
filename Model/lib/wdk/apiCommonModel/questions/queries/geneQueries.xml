@@ -224,12 +224,12 @@
     <sqlQuery name="GenesByGeneType" excludeProjects="ApiDB" 
               isCacheable="true">
         <paramRef ref="geneParams.geneType"/>
-        <paramRef ref="geneParams.includePseudogenes"/>
+        <paramRef ref="geneParams.includePseudogenes" excludeProjects="TrichDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id" />
         <column name="is_pseudo" />
-        <sql>
+        <sql  excludeProjects="TrichDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
               decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
@@ -237,6 +237,18 @@
             WHERE gf.sequence_ontology_id IN ($$geneType$$)
               AND gf.na_sequence_id = ens.na_sequence_id
               and gf.is_pseudo in ($$includePseudogenes$$)
+              AND ens.taxon_id IN ($$organism$$)
+              AND gf.source_id = ga.source_id
+              AND ga.project_id = '@PROJECT_ID@'
+           ]]>
+       </sql>
+<sql  includeProjects="TrichDB">
+            <![CDATA[
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
+              decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
+            FROM dots.GeneFeature gf, dots.NaSequence ens, apidb.GeneAttributes ga
+            WHERE gf.sequence_ontology_id IN ($$geneType$$)
+              AND gf.na_sequence_id = ens.na_sequence_id
               AND ens.taxon_id IN ($$organism$$)
               AND gf.source_id = ga.source_id
               AND ga.project_id = '@PROJECT_ID@'
