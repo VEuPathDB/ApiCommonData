@@ -86,9 +86,13 @@
     
     <wsQuery name="SequencesBySimilarity" excludeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
-        <paramRef ref="genomicParams.BlastDatabaseType"/>
-        <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
+
+        <paramRef ref="sharedParams.BlastDatabaseType"/>
         <paramRef ref="sharedParams.BlastAlgorithm"/>
+        <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
+<!--    <paramRef ref="genomicParams.BlastDatabaseType"/>
+        <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
+        <paramRef ref="sharedParams.BlastAlgorithm"/>-->
         <paramRef ref="sharedParams.BlastQuerySequence"/>
         <paramRef ref="sharedParams.-e"/>
         <paramRef ref="sharedParams.-v"/>
