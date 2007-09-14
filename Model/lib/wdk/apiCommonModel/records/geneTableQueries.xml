@@ -429,7 +429,7 @@
             <column name="percent"/>
             <column name="libraryTotalTagCount"/>
             <column name="genomeOccurrences"/>
-            <column name="antiSense"/>
+            <column name="sense"/>
             <sql>
             <![CDATA[
                SELECT tg.tag_source_id, 
@@ -439,13 +439,14 @@
                       ROUND(t.tag_count / 38015 * 100, 3) as percent,
                       38015 as libraryTotalTagCount, 
                       t.occurrence as genomeOccurrences,
-                      decode(tg.antisense,0,'no',1,'yes') as antisense,
+                      decode(tg.antisense,0,'sense',1,'antisense') as sense,
                       '@PROJECT_ID@' as project_id
                FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg
                WHERE tg.gene_source_id = $$primaryKey$$
                  AND t.source_id = tg.tag_source_id
                  AND tg.distance = 0
                  AND tg.direction = '3'
+               ORDER BY sense DESC
             ]]>
             </sql>
         </sqlQuery>
