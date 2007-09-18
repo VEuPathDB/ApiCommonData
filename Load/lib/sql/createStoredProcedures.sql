@@ -80,6 +80,9 @@ BEGIN
     END IF;
     l_string := l_string || p_varchar2_tab(i);
   END LOOP;
+  IF length(l_string) > 4000 THEN
+    l_string := substr(l_string, 1, 3997) || '...';
+  END IF;
   RETURN l_string;
 END tab_to_string;
 /
