@@ -10,10 +10,11 @@ declare -a DRAFT
 declare -a NON_DRAFT
 declare -a BASENAMES
 
+#--------------------------------------------------------------------------------
 
 usage()
 {
-echo '$0 -t <tree string> -m <MERCATOR_DIR> -c <CNDSRC_DIR> -d draftGenome1... -d draftGemoneN -n nonDraftGeome1... -n nonDraftGenomeN'
+echo '$0 -p <PATH TO MERCATOR DIRECTORY> -t <tree string> -m <MAVID_EXE> -c <CNDSRC_DIR> -d draftGenome1... -d draftGemoneN -n nonDraftGeome1... -n nonDraftGenomeN -r referenceGenome'
 exit 1;
 }
 
@@ -21,10 +22,16 @@ if [ -z $1 ]; then
   usage
 fi
 
-while getopts ":ht:m:c:d:n:" Option
+#--------------------------------------------------------------------------------
+
+while getopts ":ht:m:c:d:n:p:r:" Option
 do
   case $Option in
-    m) MERCATOR_DIR=$OPTARG;
+    m) MAVID_EXE=$OPTARG;
+       ;;
+    r) REFERENCE_GENOME=$OPTARG;
+       ;;
+    p) MERCATOR_DIR=$OPTARG;
        ;;
     c) CNDSRC_DIR=$OPTARG;
        ;;
@@ -45,6 +52,8 @@ do
   esac
 done
 
+#--------------------------------------------------------------------------------
+
 FASTA_DIR=$MERCATOR_DIR/fasta
 GFF_DIR=$MERCATOR_DIR/gff
 ALIGN_DIR=$MERCATOR_DIR/alignDir
@@ -59,6 +68,8 @@ PHITS2CONSTRAINTS=$CNDSRC_DIR/phits2constraints
 SDBASSEMBLE=$CNDSRC_DIR/sdbAssemble
 MAKEALIGNMENTINPUT=$CNDSRC_DIR/makeAlignmentInput
 MAVIDALIGNDIRS=$CNDSRC_DIR/mavidAlignDirs
+OMAP2COORDINATES=$CNDSRC_DIR/omap2coordinates
+MAP_DRAFT=$CNDSRC_DIR/map_draft
 
 #--------------------------------------------------------------------------------
 
@@ -78,7 +89,7 @@ for X in $MERCATOR_DIR $CNDSRC_DIR $FASTA_DIR $GFF_DIR $ALIGN_DIR $MERCATOR_INPU
 done
 
 # Check that the execuatbles are included
-for X in $FA2SDB $MAKE_MERCATOR_INPUT $MERCATOR $MASKREPETATIVE $PHITS2CONSTRAINTS $SDBASSEMBLE $MAKEALIGNMENTINPUT $MAVIDALIGNDIRS
+for X in $FA2SDB $MAKE_MERCATOR_INPUT $MERCATOR $MASKREPETATIVE $PHITS2CONSTRAINTS $SDBASSEMBLE $MAKEALIGNMENTINPUT $MAVIDALIGNDIRS $OMAP2COORDINATES $MAP_DRAFT
   do
     echo Checking Executable Exists [$X]
     if [ -e $X ]; then 
@@ -95,7 +106,6 @@ for X in $FA2SDB $MAKE_MERCATOR_INPUT $MERCATOR $MASKREPETATIVE $PHITS2CONSTRAIN
 for X in ${BASENAMES[@]} 
   do
     X=$FASTA_DIR/$X
-    echo runing fa2sdb on fasta file ${X}.fasta
 
     $FA2SDB ${X}.sdb < ${X}.fasta
   done
@@ -108,6 +118,8 @@ cd $MERCATOR_OUTPUT
 
 $PHITS2CONSTRAINTS --input-dir $MERCATOR_INPUT < pairwisehits > constraints
 
+# Must deal with Draft and non draft separately
+#--------------------------------------------------------------------------------
 for g in ${DRAFT[@]}
   do
     if [ $g != '-d' ]; then
@@ -119,13 +131,24 @@ for g in ${NON_DRAFT[@]}
   do
      ln -s $FASTA_DIR/$g.sdb
   done
+#--------------------------------------------------------------------------------
 
 echo $TREE >treefile
 
 $MAKEALIGNMENTINPUT $MERCATOR_OUTPUT $ALIGN_DIR
 
-# TODO
-#$MAVIDALIGNDIRS --init-dir $ALIGN_DIR
+$MAVIDALIGNDIRS --init-dir $ALIGN_DIR --mavidpath $MAVID_EXE
 
-# TODO
-#  run to of colin's scripts omap2coordinates and mapdraft 
+$OMAP2COORDINATES --map-dir $ALIGN_DIR < $ALIGN_DIR/map > $ALIGN_DIR/coordinates
+
+for X in ${BASENAMES[@]} 
+  do
+    if [ $X != $REFERENCE_GENOME ]; then
+      AGP_FILE=$MERCATOR_OUTPUT/$X.agp
+      OUT=$MERCATOR_DIR/$X-$REFERENCE_GENOME.align
+
+      $MAP_DRAFT $X $REFERENCE_GENOME $AGP_FILE $ALIGN_DIR >$OUT
+    fi
+  done
+ 
+echo "Finished aligning multiple genomes with Mercator and MAVID"
