@@ -5,6 +5,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
+use Time::HiRes qw(gettimeofday);
 
 my %DONE = {};
 my @DEPENDENCIES; # (parent, child) pairs of the dependency graph
@@ -90,7 +91,11 @@ sub do_update {
 
   # update this particular one
   print "updating mview ${owner}.${mview}\n" if $verbose;
+  my $startTime = gettimeofday();
   $dbh->do("begin DBMS_MVIEW.REFRESH('${owner}.${mview}'); end;");
+  my $time = gettimeofday() - $startTime;
+  $time = int($time * 10000)/10000;
+  print "$time seconds spent updating ${owner}.${mview}\n" if $verbose;
 }
 
 $dbh->disconnect();
