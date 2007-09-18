@@ -59,9 +59,12 @@
             <column name="sequence" />
             <sql>
                 <![CDATA[
-                SELECT enas.source_id, enas.sequence, $$projectId$$ as project_id
-                FROM dots.externalnasequence enas
-                WHERE enas.source_id = $$primaryKey$$
+                SELECT ens.source_id, ens.sequence,
+                       $$projectId$$ as project_id
+                FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
+                WHERE ens.source_id = '$$primaryKey$$'
+                  AND so.term_name = 'EST'
+                  AND so.sequence_ontology_id = ens.sequence_ontology_id
                 ]]>
            </sql>
         </sqlQuery>
