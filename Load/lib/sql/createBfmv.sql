@@ -485,10 +485,10 @@ GRANT SELECT ON apidb.GeneProteinAttributes TO gus_r;
 CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 
 ---------------------------
-prompt ### DROP/CREATE MATERIALIZED VIEW apidb.GenomicSequence1111 ###;
-DROP MATERIALIZED VIEW apidb.GenomicSequence1111;
+prompt ### DROP/CREATE MATERIALIZED VIEW apidb.GenomicSequence&1 ###;
+DROP MATERIALIZED VIEW apidb.GenomicSequence&1;
 
-CREATE MATERIALIZED VIEW apidb.GenomicSequence1111 AS
+CREATE MATERIALIZED VIEW apidb.GenomicSequence&1 AS
   SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
          LOWER(SUBSTR(source_id, 1, 40)) AS lowercase_source_id,
          a_count, c_count, g_count, t_count, length,
@@ -509,20 +509,20 @@ UNION
          chromosome_order_num, sequence_ontology_id
   FROM dots.VirtualSequence;
 
-GRANT SELECT ON apidb.GenomicSequence1111 TO gus_r;
+GRANT SELECT ON apidb.GenomicSequence&1 TO gus_r;
 
-CREATE INDEX apidb.GS_sourceId1111 ON apidb.GenomicSequence1111 (source_id);
-CREATE INDEX apidb.GS_lcSourceId1111 ON apidb.GenomicSequence1111 (lowercase_source_id);
-CREATE INDEX apidb.GS_naSeqId1111 ON apidb.GenomicSequence1111 (na_sequence_id);
+CREATE INDEX apidb.GS_sourceId&1 ON apidb.GenomicSequence&1 (source_id);
+CREATE INDEX apidb.GS_lcSourceId&1 ON apidb.GenomicSequence&1 (lowercase_source_id);
+CREATE INDEX apidb.GS_naSeqId&1 ON apidb.GenomicSequence&1 (na_sequence_id);
 
 CREATE OR REPLACE SYNONYM apidb.GenomicSequence
-                          FOR apidb.GenomicSequence1111;
+                          FOR apidb.GenomicSequence&1;
 ---------------------------
-prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.GeneAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.GeneAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.GeneAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.GeneAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.GeneAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.GeneAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -632,26 +632,26 @@ WHERE gf.na_feature_id = nl.na_feature_id
                           'TigrScan', /*'tRNAscan-SE',*/
                           'TwinScan predictions', 'TwinScanEt predictions'));
 
-GRANT SELECT ON apidb.GeneAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.GeneAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.GeneAttr1111_sourceId
-       ON apidb.GeneAttributes1111 (source_id);
+CREATE INDEX apidb.GeneAttr_sourceId&1
+       ON apidb.GeneAttributes&1 (source_id);
 
-CREATE INDEX apidb.GeneAttr1111_exon_ix
-       ON apidb.GeneAttributes1111 (exon_count, source_id);
+CREATE INDEX apidb.GeneAttr_exon_ix&1
+       ON apidb.GeneAttributes&1 (exon_count, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
-                          FOR apidb.GeneAttributes1111;
+                          FOR apidb.GeneAttributes&1;
 
 ---------------------------
 -- sequences
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.SequenceAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.SequenceAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.SequenceAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.SequenceAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.SequenceAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.SequenceAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.SequenceAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -704,21 +704,21 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
 ;
 
-GRANT SELECT ON apidb.SequenceAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.SequenceAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.SeqAttr1111_source_id ON apidb.SequenceAttributes1111 (source_id);
+CREATE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.SequenceAttributes
-                          FOR apidb.SequenceAttributes1111;
+                          FOR apidb.SequenceAttributes&1;
 ---------------------------
 -- SNPs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.SnpAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.SnpAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.SnpAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.SnpAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.SnpAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.SnpAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.SnpAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -787,24 +787,24 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
   AND snp_loc.na_feature_id = snp.na_feature_id
   AND gene_info.na_feature_id(+) = snp.parent_id;
 
-GRANT SELECT ON apidb.SnpAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.SnpAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.SnpAttr1111_source_id ON apidb.SnpAttributes1111 (source_id);
+CREATE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id);
 
-CREATE INDEX apidb.Snp1111_Seq_ix
-       ON apidb.SnpAttributes1111 (na_sequence_id, dataset, start_min);
+CREATE INDEX apidb.Snp_Seq_ix&1
+       ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min);
 
 CREATE OR REPLACE SYNONYM apidb.SnpAttributes
-                          FOR apidb.SnpAttributes1111;
+                          FOR apidb.SnpAttributes&1;
 ---------------------------
 -- ORFs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.OrfAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.OrfAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.OrfAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.OrfAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.OrfAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.OrfAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.OrfAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -841,21 +841,21 @@ WHERE m.na_feature_id = taaf.na_feature_id
   AND so.term_name = 'ORF'
   AND tn.name_class='scientific name';
 
-GRANT SELECT ON apidb.OrfAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.OrfAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.OrfAttr1111_source_id ON apidb.OrfAttributes1111 (source_id);
+CREATE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.OrfAttributes
-                        FOR apidb.OrfAttributes1111;
+                        FOR apidb.OrfAttributes&1;
 ---------------------------
 -- ESTs
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.EstAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.EstAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.EstAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.EstAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.EstAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.EstAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.EstAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -902,21 +902,21 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND so.term_name = 'EST'
   AND best.query_na_sequence_id(+) = ens.na_sequence_id;
 
-GRANT SELECT ON apidb.EstAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.EstAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.EstAttr1111_source_id ON apidb.EstAttributes1111 (source_id);
+CREATE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAttributes
-                          FOR apidb.EstAttributes1111;
+                          FOR apidb.EstAttributes&1;
 ---------------------------
 -- array elements
 ---------------------------
 
-prompt ### DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1111 ###;
-DROP MATERIALIZED VIEW apidb.ArrayElementAttributes1111;
+prompt ### DROP MATERIALIZED VIEW apidb.ArrayElementAttributes&1 ###;
+DROP MATERIALIZED VIEW apidb.ArrayElementAttributes&1;
 
-prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 ###;
-CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes1111 AS
+prompt ### CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes&1 ###;
+CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -942,19 +942,19 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
   AND taxon.taxon_id = ens.taxon_id
 ;
 
-GRANT SELECT ON apidb.ArrayElementAttributes1111 TO gus_r;
+GRANT SELECT ON apidb.ArrayElementAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.AEAttr1111_source_id
-ON apidb.ArrayElementAttributes1111 (source_id);
+CREATE INDEX apidb.AEAttr_source_id&1
+ON apidb.ArrayElementAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
-                          FOR apidb.ArrayElementAttributes1111;
+                          FOR apidb.ArrayElementAttributes&1;
 
 ---------------------------
 -- EstAlignmentGeneSummary
 ---------------------------
 
-prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary1111;
+prompt DROP/CREATE MATERIALIZED VIEW apidb.EstAlignmentGeneSummary&1;
 DROP MATERIALIZED VIEW apidb.EstAlignmentGene;
 
 CREATE MATERIALIZED VIEW apidb.EstAlignmentGene AS
@@ -1012,27 +1012,27 @@ WHERE e.na_sequence_id = ba.query_na_sequence_id
   MINUS
     SELECT blat_alignment_id FROM apidb.EstAlignmentGene);
 
-DROP MATERIALIZED VIEW EstAlignmentGeneSummary1111;
+DROP MATERIALIZED VIEW EstAlignmentGeneSummary&1;
 
-CREATE MATERIALIZED VIEW EstAlignmentGeneSummary1111 AS
+CREATE MATERIALIZED VIEW EstAlignmentGeneSummary&1 AS
 SELECT * FROM apidb.EstAlignmentNoGene
 UNION
 SELECT * FROM apidb.EstAlignmentGene;
 
-GRANT SELECT ON apidb.EstAlignmentGeneSummary1111 TO gus_r;
+GRANT SELECT ON apidb.EstAlignmentGeneSummary&1 TO gus_r;
 
-CREATE INDEX apidb.EstSumm_libOverlap_ix1111
-             ON apidb.EstAlignmentGeneSummary1111
+CREATE INDEX apidb.EstSumm_libOverlap_ix&1
+             ON apidb.EstAlignmentGeneSummary&1
                 (library_id, percent_identity, is_consistent,
                  est_gene_overlap_length, percent_est_bases_aligned);
 
-CREATE INDEX apidb.EstSumm_estSite_ix1111
-             ON apidb.EstAlignmentGeneSummary1111
+CREATE INDEX apidb.EstSumm_estSite_ix&1
+             ON apidb.EstAlignmentGeneSummary&1
                 (target_sequence_source_id, target_start, target_end,
                  library_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
-                          FOR apidb.EstAlignmentGeneSummary1111;
+                          FOR apidb.EstAlignmentGeneSummary&1;
 
 ---------------------------
 -- cleanup
