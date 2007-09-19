@@ -1115,7 +1115,7 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneId.GenesByTextSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="organism,location_text,product"
+         summary="organism,location_text,product,text_fields"
          sorting="organism asc,location_text asc"
         /> 
         <summary>
@@ -1126,6 +1126,10 @@ Find genes that are predicted to encode a signal peptide.
              Find genes by searching text annotations. Asterisks ("*") can be used as a wildcard, matching any sequence of characters
           ]]>
          </description>
+ <dynamicAttributes>
+            <columnAttribute name="text_fields"
+                       displayName="Found in" align="center"/>
+        </dynamicAttributes>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
