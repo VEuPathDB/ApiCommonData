@@ -799,7 +799,7 @@
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
            WHERE bf.source_id=$$primaryKey$$
-             AND .na_feature_id = gi.prey_gene_feature_id
+             AND pf.na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
             </sql>
