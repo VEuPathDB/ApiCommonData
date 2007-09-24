@@ -1545,7 +1545,7 @@ sub clearWdkCache {
   my $cmd = <<"EOF";
      wdkCache \\
      -model $model \\
-     -reset\\
+     -recreate\\
      2>> $logFile
 EOF
 
@@ -2926,7 +2926,7 @@ sub xdformat {
 }
 
 sub extractKeywordSearchFiles {
-  my ($mgr,$filePrefix,$commentSchema,$dbLink) = @_;
+  my ($mgr,$filePrefix,$commentSchema,$dbLink,$projectId) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -2938,7 +2938,7 @@ sub extractKeywordSearchFiles {
 
   $mgr->runCmd("mkdir -p ${dataDir}");
 
-  my $cmd = "extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix";
+  my $cmd = "extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix  --projectId $projectId";
 
   $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
