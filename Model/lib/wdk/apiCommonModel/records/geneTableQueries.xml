@@ -433,7 +433,7 @@
             <sql>
             <![CDATA[
                SELECT tg.tag_source_id, 
-                      'Troph1' as library, 
+                      t.library_name as library, 
                       'CATG' || t.sequence as sequence, 
                       t.tag_count as frequency,
                       ROUND(t.tag_count / 38015 * 100, 3) as percent,
