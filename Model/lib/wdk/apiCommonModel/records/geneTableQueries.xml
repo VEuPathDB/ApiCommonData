@@ -432,8 +432,13 @@
             <column name="sense"/>
             <sql>
             <![CDATA[
-               SELECT tg.tag_source_id, 
-                      t.library_name as library, 
+               SELECT tg.tag_source_id,
+                      CASE
+                        WHEN t.library_name
+                             = 'Characterization of the Giardia intestinalis Transcriptome_Trophozoite_Cell_Culture'
+                          THEN 'Troph1'
+                        ELSE t.library_name 
+                      END as library, 
                       'CATG' || t.sequence as sequence, 
                       t.tag_count as frequency,
                       ROUND(t.tag_count / 38015 * 100, 3) as percent,
