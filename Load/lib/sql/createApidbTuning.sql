@@ -403,9 +403,10 @@ drop materialized view apidb.SageTagAnalysisAttributes;
 create materialized view apidb.SageTagAnalysisAttributes as
 select stf.source_id, dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, st.tag as sequence,
-       st.composite_element_id
+       st.composite_element_id, lg.name as library_name
 from dots.SageTagFeature stf, dots.NaLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
+     rad.AnalysisInput ai, rad.LogicalGroup lg,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
       group by source_id) ct
@@ -415,7 +416,10 @@ where ti.name = 'SAGETag'
   and stf.source_id = st.composite_element_id
   and nl.na_feature_id = stf.na_feature_id
   and ct.source_id = stf.source_id
-group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id;
+  and dtr.analysis_id = ai.analysis_id
+  and ai.logical_group_id = lg.logical_group_id
+group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
+         lg.name;
 
 create index apidb.staa_ix on apidb.SageTagAnalysisAttributes (analysis_id, source_id);
 
