@@ -3070,14 +3070,37 @@ sub modifyFile {
   $mgr->endStep($signal);
 }
 
-sub grepFileAppend {
-  my ($mgr, $inFile, $outFile, $fileDir, $perlRegex, $appendToSignal) = @_;
+sub runMercatorMavid {
+  my ($mgr, $mercatorDir, $signal) = @_;
 
-  my $signal = "grepFile$inFile" . "_$appendToSignal";
+  return if $mgr->startStep("running mercator-MAVID [$signal]", $signal);
 
-  return if $mgr->startStep("grepFile ${fileDir}/$inFile", $signal);
+  my $propertySet = $mgr->{propertySet};
 
-  $mgr->runCmd("grep -P '$perlRegex' ${fileDir}/$inFile >> ${fileDir}/$outFile");
+  my $cndsrcBin = $propertySet->getProp('cndsrc_bin_dir');
+  my $mavid = $propertySet->getProp('mavid_exe');
+  my $draftString = $propertySet->getProp('mercator_draft_genomes');
+  my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
+  my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
+  my $tree = $propertySet->getProp('mercatorTree');
+
+  my @drafts =  map { "-d $_" } split(',', $draftString);
+  my @nonDrafts = map { "-n $_" } split(',', $nonDraftString);
+
+  $mgr->runCmd("runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts););
+
+  $mgr->endStep($signal);
+}
+
+sub grepMercatorGff {
+  my ($mgr, $inFile, $outFile, $fileDir) = @_;
+
+  my $signal = "grepMercatorGff$inFile";
+
+  return if $mgr->startStep("grepMercatorGff ${fileDir}/$inFile", $signal);
+
+  $mgr->runCmd("grep -P '\texon\t' ${fileDir}/$inFile > ${fileDir}/$outFile");
+  $mgr->runCmd("grep -P '\tCDS\t' ${fileDir}/$inFile >> ${fileDir}/$outFile");
 
   $mgr->endStep($signal);
   
