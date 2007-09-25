@@ -3082,7 +3082,7 @@ sub runMercatorMavid {
   my $draftString = $propertySet->getProp('mercator_draft_genomes');
   my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
   my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
-  my $tree = $propertySet->getProp('mercatorTree');
+  my $tree = $propertySet->getProp('mercator_tree');
 
   my @drafts =  map { "-d $_" } split(',', $draftString);
   my @nonDrafts = map { "-n $_" } split(',', $nonDraftString);
