@@ -3058,6 +3058,18 @@ sub removeFile {
   $mgr->endStep($signal);
 }
 
+sub modifyFile {
+  my ($mgr,$inFile,$outFile,$fileDir,$regex) = @_;
+
+  my $signal = "modify$inFile";
+
+  return if $mgr->startStep("modifying ${fileDir}/$inFile", $signal);
+
+  $mgr->runCmd("cat ${fileDir}/$inFile | perl -pe 's/$regex/' > ${fileDir}/$outFile");
+
+  $mgr->endStep($signal);
+}
+
 sub extractAnnotatedProteinsBySpecies {
   my ($mgr, $species,$dbName,$dbRlsVer) = @_;
 
