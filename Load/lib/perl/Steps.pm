@@ -3070,6 +3070,19 @@ sub modifyFile {
   $mgr->endStep($signal);
 }
 
+sub grepFileAppend {
+  my ($mgr, $inFile, $outFile, $fileDir, $perlRegex, $appendToSignal) = @_;
+
+  my $signal = "grepFile$inFile" . "_$appendToSignal";
+
+  return if $mgr->startStep("grepFile ${fileDir}/$inFile", $signal);
+
+  $mgr->runCmd("grep -P '$perlRegex' ${fileDir}/$inFile >> ${fileDir}/$outFile");
+
+  $mgr->endStep($signal);
+  
+}
+
 sub extractAnnotatedProteinsBySpecies {
   my ($mgr, $species,$dbName,$dbRlsVer) = @_;
 
