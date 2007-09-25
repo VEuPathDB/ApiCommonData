@@ -3075,6 +3075,8 @@ sub runMercatorMavid {
 
   return if $mgr->startStep("running mercator-MAVID [$signal]", $signal);
 
+  my $logFile = "$mgr->{myPipelineDir}/logs/$signal";
+
   my $propertySet = $mgr->{propertySet};
 
   my $cndsrcBin = $propertySet->getProp('cndsrc_bin_dir');
@@ -3087,7 +3089,8 @@ sub runMercatorMavid {
   my @drafts =  map { "-d $_" } split(',', $draftString);
   my @nonDrafts = map { "-n $_" } split(',', $nonDraftString);
 
-  $mgr->runCmd("runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts));
+  my $command = "runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts) . " 2>$logFile";
+  $mgr->runCmd($command);
 
   $mgr->endStep($signal);
 }
