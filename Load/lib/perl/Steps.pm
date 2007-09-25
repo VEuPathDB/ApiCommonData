@@ -3087,7 +3087,7 @@ sub runMercatorMavid {
   my @drafts =  map { "-d $_" } split(',', $draftString);
   my @nonDrafts = map { "-n $_" } split(',', $nonDraftString);
 
-  $mgr->runCmd("runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts););
+  $mgr->runCmd("runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts));
 
   $mgr->endStep($signal);
 }
