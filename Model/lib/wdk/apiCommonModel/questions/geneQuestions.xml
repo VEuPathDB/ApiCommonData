@@ -79,9 +79,6 @@
           ]]>
         </description>
        
-        <propertyList name="attribution">
-           <value>GENOME</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -108,9 +105,6 @@
         <dynamicAttributes>
           <columnAttribute name="is_pseudo" displayName="Pseudogene" align="center"/>
         </dynamicAttributes>
-        <propertyList name="attribution">
-           <value>GENOME</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -135,9 +129,6 @@
         Find genes having the given number of exons.
           ]]>
         </description>
-        <propertyList name="attribution">
-           <value>GENOME</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -161,9 +152,6 @@
              Find genes whose protein product has an isoelectric point in the specified range.
            ]]>
         </description>
-        <propertyList name="attribution">
-           <value>GENOME</value>
-        </propertyList> 
     </question>
 
 
@@ -191,9 +179,6 @@
              Molecular weights are machine calculated from the raw translation and does not take into account any protein or residue modifications. For translations containing ambiguous amino acid codes (B, Z, X) we calculate the average of the upper and lower bound of the molecular weight.
            ]]>
         </description>
-        <propertyList name="attribution">
-           <value>GENOME</value>
-        </propertyList> 
     </question>
 
 
@@ -229,16 +214,6 @@
              <columnAttribute name="percent_helix" displayName="Percent Helix" align="center"
                               inReportMaker="false"/>
          </dynamicAttributes>
-        <propertyList name="attribution">
-           <value>GENOME</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
-        </propertyList> 
     </question>
 
 
@@ -319,9 +294,8 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
            <value>T gondii</value>
         </propertyList>
 
-        <propertyList name="attribution">
-           <value includeProjects="ApiDB,PlasmoDB">GENOME,ecMappings_Hagai</value>
-           <value excludeProjects="ApiDB,PlasmoDB">GENOME</value>
+        <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
         </propertyList> 
     </question>
 
@@ -403,6 +377,15 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 	     <columnAttribute name="num_noncoding" displayName="Non-coding SNPs" align="center"/>
 	</dynamicAttributes>
 
+        <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
+           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
+           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
+           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
+        </propertyList> 
     </question>
 
 
