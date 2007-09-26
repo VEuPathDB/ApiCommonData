@@ -1326,6 +1326,12 @@ Find genes that are predicted to encode a signal peptide.
               project as orthologous (or paralogous) to a given gene.
           ]]>
         </description>
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL</value>
+           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2</value>
+       </propertyList>
+
     </question>
 
   <!--===========================================================================-->
@@ -1379,6 +1385,10 @@ Find genes that are predicted to encode a signal peptide.
 	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
 	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
 	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value>Amit_GlucoseStarvation_arrayData</value>
+           <value>Amit_GlucoseStarvation_RadAnalysis</value>
+       </propertyList>
     </question>
 
 
@@ -1411,6 +1421,10 @@ Find genes that are predicted to encode a signal peptide.
 	<dynamicAttributes>
 	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
 	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value>Amit_3_Archetypal_Lineages_arrayData</value>
+           <value>Amit_3_Archetypal_Lineages_RadAnalysis</value>
+       </propertyList>
     </question>
 
   <!--===========================================================================-->
@@ -1452,6 +1466,13 @@ Find genes that are predicted to encode a signal peptide.
         <dynamicAttributes>
           <columnAttribute name="dist_centromere" displayName="Distance from Centromere"/>
         </dynamicAttributes>
+
+       <propertyList name="genomeAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+       <propertyList name="specificAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1486,8 +1507,10 @@ Find genes that are predicted to encode a signal peptide.
            <value>P. falciparum</value>
         </propertyList>
 
+        <propertyList name="genomeAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
-
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1516,6 +1539,9 @@ Find genes that are predicted to encode a signal peptide.
             p-value exponent cutoff.
             ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">PDBProteinSequences</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1554,6 +1580,12 @@ Find genes that are predicted to encode a signal peptide.
               structures of similar proteins (from <a href="http://www.rcsb.org">PDB</a>).
           ]]>
         </description>
+       <propertyList name="genomeAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+       <propertyList name="specificAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">predictedProteinStructures</value>
+       </propertyList>
     </question>
 
 
@@ -1584,6 +1616,9 @@ Find genes that are predicted to encode a signal peptide.
 	  The low complexity percent was derived for <i>P. falciparum</i> genes using seg. <br></br>Wootton, J.C., Federhen, S. (1993)  Statistics of local complexity in amino acid sequences and sequence databases.  <i>Computers & Chemistry</i> 17: 149-163.
           ]]>
         </description>
+       <propertyList name="genomeAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
