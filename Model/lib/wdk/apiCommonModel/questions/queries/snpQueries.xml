@@ -178,7 +178,7 @@ FROM
     (SELECT distinct isf.na_feature_id as na_feature_id, isf.source_id, isf.parent_id,
       nas.source_id as seq_source_id,l.start_min,isf.position_in_protein
      FROM sres.ExternalDatabase ed,sres.ExternalDatabaseRelease edr,dots.SeqVariation isva, dots.NALocation l,
-          dots.VirtualSequence nas, dots.SeqVariation isvb, dots.SnpFeature isf    
+          dots.naSequence nas, dots.SeqVariation isvb, dots.SnpFeature isf    
      WHERE nas.source_id = $$chromosome$$
       AND isf.na_sequence_id = nas.na_sequence_id
       AND edr.external_database_release_id = isf.external_database_release_id
