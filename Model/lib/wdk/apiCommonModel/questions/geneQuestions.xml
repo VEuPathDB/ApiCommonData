@@ -323,11 +323,6 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
            <value>P. falciparum, T gondii</value>
         </propertyList>
 
-        <propertyList name="attribution">
-           <value includeProjects="PlasmoDb">GENOME</value>
-           <value includeProjects="ToxoDB">GENOME</value>
-        </propertyList> 
-
         <summary>
            <![CDATA[
 	 Find genes which have SNPs meeting specific criteria (Non-synonymous / synonymous SNP ratio, SNP density, etc).
@@ -447,28 +442,19 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
                 as the detection of proteins in MS/MS analyses is dependent on
                 solubility of the proteins and other factors.
                 <br><br>
-                <UL type='a'>Current data sets stored in PlasmoDB:
-                <LI> Florens 2002: Merozoites, Trophozoites, Sporozoites,
-                Gametocytes
-                <LI> Florens 2004: Membranes_iRBC, CompleteTrophozoiteSchizont
-                </UL>
                 Selecting "any" will result in returning genes that appear in
-                any of the available datasets.<BR>
+                any of the available datasets.
+                <BR>
                 Please refer to the original papers for more information
                 on the experiments and experimental conditions.
-                <PRE> <B>References:</B><BR>
-                a) Florens, L., Washburn, M.P., Raine, J.D., Anthony, R.M., Grainger, M., Haynes, J.D.,<BR>
-                Moch, J.K., Muster, N., Sacci, J.B., Tabb, D.L., Witney, A.A., Wolters, D., Wu, Y.,<BR>
-                Gardner, M.J., Holder, A.A., Sinden, R.E., Yates, J.R., Carucci, D.J. (2002)<BR>
-                A proteomic view of the <I>Plasmodium falciparum</I> life cycle. Nature 419: 520-526.<BR><BR>
-                c) Lasonder, E., Ishihama, Y., Andersen, J.S., Vermunt, A.M., Pain, A., Sauerwein, R.W.,<BR>
-                Eling, W.M., Hall, N., Waters, A.P., Stunnenberg, H.G., Mann M. (2002) Analysis of the<BR>
-                Plasmodium falciparum proteome by high-accuracy mass spectrometry. Nature. 419:537-542.<BR><BR>
-                b) Florens, L., Liu X., Wang, Y., Yang, S., Schwartz, O., Peglar, M., Carucci, D.J.,Yates,<BR>
-                J.R., Wu, Y.  Proteomics Approach Reveals Novel Proteins on the Surface of Malaria-Infected <BR>
-                Erythrocytes (in press) <BR> </PRE>
-                        ]]>
+           ]]>
         </description>
+
+        <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>FlorensMassSpecData2002</value>
+           <value>FlorensMassSpecData2004</value>
+        </propertyList>
+        
         <description includeProjects="CryptoDB,ApiDB">
               <![CDATA[
              <p>
@@ -545,34 +531,36 @@ one time.
               displayName="Epitope Presence"
               queryRef="GeneId.GenesWithEpitopes" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
+
         <attributesList
-              summary="product,organism,location_text,count,confidence"
-        sorting="organism desc,location_text desc, count desc, confidence asc"
+           summary="product,organism,location_text,count,confidence"
+           sorting="organism desc,location_text desc, count desc, confidence asc"
         /> 
-             <summary>
-                Find genes whose encoding protein has an epitope identified by the Immune Epitope Database and Analysis Resource.
-             </summary>
-              <description>
+
+        <summary>
+           Find genes whose encoding protein has an epitope identified by the Immune Epitope Database and Analysis Resource.
+        </summary>
+
+        <description>
               <![CDATA[
                 Find genes whose encoding protein has an epitope identified 
                 by the <a href="http://www.immuneepitope.org">Immune 
-                Epitope Database and Analysis Resource</a><sup>1</sup> (IEDB). <p>
+                Epitope Database and Analysis Resource</a> (IEDB). <p>
                 The epitopes have been remapped from the original Epitope Source Accession Number 
                 provided by IEDB to the corresponding gene identifiers used in PlasmoDB.
-                <p><hr><p>
-                <font size='-1'>
-                <sup>1</sup>Peters B, Sidney J, Bourne P, Bui HH, Buus S, Doh G, Fleri W, 
-                Kronenberg M, Kubo R, Lund O, Nemazee D, Ponomarenko JV, Sathiamurthy M, Schoenberger S, 
-                Stewart S, Surko P, Way S, Wilson S, Sette A. 
-                <a href="http://biology.plosjournals.org/perlserv/?request=get-document&amp;doi=10.1371/journal.pbio.0030091">The immune epitope database and analysis resource: from vision to blueprint. 
-                PLoS Biol. 2005 Mar;3(3):e91</a>
-                 </font>
               ]]>
-              </description>
+        </description>
+
         <dynamicAttributes>
            <columnAttribute name="count" displayName="Epitope Count" align="center"/>
-            <columnAttribute name="confidence" displayName="Confidence" align="center"/>
+           <columnAttribute name="confidence" displayName="Confidence" align="center"/>
         </dynamicAttributes>
+
+        <propertyList includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB" name="specificAttribution">
+           <value>IEDB_Epitopes</value>
+        </propertyList>
+        
+
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -824,6 +812,10 @@ one time.
        <dynamicAttributes excludeProjects="ToxoDB,ApiDB">
 	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
        </dynamicAttributes>
+
+        <propertyList name="specificAttribution">
+           <value>InterproscanData</value>
+        </propertyList>
      </question>
 
 
@@ -858,7 +850,14 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
            <a href="http://www.ebi.ac.uk/interpro/">InterPro</a> databases.
            ]]>
        </description>
-    </question>
+
+       <propertyList name="specificAttribution">
+           <value>GO</value>
+           <value>GO_evidence_codes</value>
+           <value>InterproscanData</value>
+           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+     </question>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -906,6 +905,11 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
 	<dynamicAttributes>
 	     <columnAttribute name="met_pathways" displayName="Metabolic Pathways"/>
 	</dynamicAttributes>
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="ToxoDB,ApiDB">MetabolicDbXRefs_Feng</value>
+           <value includeProjects="PlasmoDB,ApiDB">pathwayMappings_Hagai</value>
+       </propertyList>
     </question>
 
 
@@ -1009,6 +1013,13 @@ Find genes that are predicted to encode a signal peptide.
             35,603 genes).
            ]]>
         </description>
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL_LongString</value>
+           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL</value>
+           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2_Phyletic</value>
+           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1032,6 +1043,10 @@ Find genes that are predicted to encode a signal peptide.
              Find genes that have computed phylogenetic trees available.  A list of genes is returned that all have a link to a phylogenetic tree on the gene record page.
           ]]>
         </description>
+
+       <propertyList name="specificAttribution">
+           <value excludeProjects="GiardiaDB">PhylogeneticTrees_Giardia</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1138,6 +1153,9 @@ Find genes that are predicted to encode a signal peptide.
             Find genes from one or more species.
           ]]>
         </description>
+       <propertyList name="specificAttribution">
+           <value>taxonomy</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1166,6 +1184,13 @@ Find genes that are predicted to encode a signal peptide.
              <columnAttribute name="sage_tag_count" displayName="Tag Count"
                               inReportMaker="false"/>
          </dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1232,6 +1257,10 @@ Find genes that are predicted to encode a signal peptide.
              <columnAttribute name="number_of_ests" displayName="Number of ESTs"
                               inReportMaker="false"/>
          </dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1249,23 +1278,23 @@ Find genes that are predicted to encode a signal peptide.
          sorting="organism asc,location_text asc"
         />
 
-        <propertyList name="organism" includeProjects="PlasmoDB">
-           <value>P. falciparum</value>
+        <propertyList name="organism">
+           <value includeProjects="PlasmoDB,ApiDB">P. falciparum</value>
+           <value includeProjects="ToxoDB,ApiDB">T. gondii</value>
         </propertyList>
-        <propertyList name="organism" includeProjects="ToxoDB">
-           <value>T. gondii</value>
-        </propertyList>
-        <propertyList name="organism" includeProjects="ApiDB" >
-           <value>P. falciparum</value>
-           <value>T. gondii</value>
+
+        <propertyList name="genomeAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_mitochondrial</value>
+           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_plastid</value>
+           <value includeProjects="ToxoDB,ApiDB">TgondiiApicoplast</value>
         </propertyList>
 
         <summary>
-        Find genes that are located in a specified region of the non-nuclear genome.
+        Find genes that are encoded in a specified region of the non-nuclear genome.
         </summary>
         <description>
           <![CDATA[
-          Find genes that are located in a specified
+          Find genes that are encoded in a specified
           region of the non-nuclear genome.<br><br>
           ]]>
         </description>
