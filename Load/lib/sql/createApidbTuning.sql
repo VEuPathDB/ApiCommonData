@@ -216,16 +216,21 @@ WHERE sns.na_sequence_id = drns.na_sequence_id
 UNION
 SELECT LOWER(alias) AS id, gene FROM apidb.GeneAlias
 UNION
-SELECT pred_loc.source_id AS alias, gene_loc.source_id AS gene
-FROM apidb.GeneLocation gene_loc, apidb.PredictionLocation pred_loc
-WHERE pred_loc.na_sequence_id = gene_loc.na_sequence_id
+SELECT pred_loc.feature_source_id AS alias, gene_loc.feature_source_id AS gene
+FROM apidb.FeatureLocation gene_loc, apidb.FeatureLocation pred_loc
+WHERE pred_loc.feature_type = 'GenePrediction'
+  AND gene_loc.feature_type = 'GeneFeature'
+  AND pred_loc.na_sequence_id = gene_loc.na_sequence_id
   AND gene_loc.start_min <= pred_loc.end_max
   AND gene_loc.end_max >= pred_loc.start_min
   AND pred_loc.is_reversed = gene_loc.is_reversed
 UNION
-SELECT lower(pred_loc.source_id) AS alias, gene_loc.source_id AS gene
-FROM apidb.GeneLocation gene_loc, apidb.PredictionLocation pred_loc
-WHERE pred_loc.na_sequence_id = gene_loc.na_sequence_id
+SELECT lower(pred_loc.feature_source_id) AS alias,
+       gene_loc.feature_source_id AS gene
+FROM apidb.FeatureLocation gene_loc, apidb.FeatureLocation pred_loc
+WHERE pred_loc.feature_type = 'GenePrediction'
+  AND gene_loc.feature_type = 'GeneFeature'
+  AND pred_loc.na_sequence_id = gene_loc.na_sequence_id
   AND gene_loc.start_min <= pred_loc.end_max
   AND gene_loc.end_max >= pred_loc.start_min
   AND pred_loc.is_reversed = gene_loc.is_reversed;
