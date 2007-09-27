@@ -3386,6 +3386,27 @@ sub clusterByContigAlign {
 
 }
 
+### subroutine used when the aligned transcripts are from multiple sources with different external_database_release_ids
+sub clusterMultiEstSourcesByAlign { 
+    my ($mgr, $name, $species, $tExtDbName, $tExtDbRlsVer,$taxonId, $targetTable) = @_;
+    my $propertySet = $mgr->{propertySet};
+
+    my $dataDir = $mgr->{'dataDir'};
+ 
+    my $tDbRlsId=  &getDbRlsId($mgr,$tExtDbName,$tExtDbRlsVer);
+
+    my $outputFile = "$dataDir/cluster/$species$name/cluster.out";
+    my $logFile = "$dataDir/logs/${species}${name}Cluster.log";
+
+    my $args = "--taxon_id $taxonId --target_table_name  $targetTable --mixedESTs "
+	. "--target_db_rel_id $extDbRelId --out $outputFile --sort 1";
+
+    $mgr->runPlugin("Cluster${species}${name}ByContigWithAltSql", 
+		    "DoTS::DotsBuild::Plugin::ClusterByGenome",
+		    $args, "$species $name clustering by contig alignment");
+
+}
+
 sub snpGffToFasta {
   my ($mgr,$gffFile,$refStrain,$gffFormat) = @_;
 
