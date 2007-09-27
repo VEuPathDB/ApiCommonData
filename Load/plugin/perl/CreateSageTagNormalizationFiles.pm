@@ -54,12 +54,6 @@ sub getArgumentsDeclaration{
 		reqd  => 1,
 		isList => 0
 	       }),
-     integerArg({name  => 'decPlaces',
-                 descr => 'desired number of decimal places in normalized frequency',
-                 constraintFunc=> undef,
-                 reqd  => 0,
-                 isList => 0
-                })
     ];
   return $argsDeclaration;
 }
@@ -360,12 +354,9 @@ sub makeDataFile {
 
   my $paramValue = $self->getArg('paramValue');
 
-  my $decPlaces = $self->getArg('decPlaces') ? $self->getArg('decPlaces') : 0;
-
   foreach my $compElemId (keys %$tagCount) {
     my $value = ($tagCount->{$compElemId} * $paramValue)/$total;
-    my $fValue = sprintf ( "%.${decPlaces}f", $value);
-    print FILE "$compElemId\t$fValue\n";
+    print FILE "$compElemId\t$value\n";
   }
 
   close FILE;
