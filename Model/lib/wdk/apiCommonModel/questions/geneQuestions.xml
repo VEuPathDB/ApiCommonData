@@ -454,6 +454,9 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
            <value>FlorensMassSpecData2002</value>
            <value>FlorensMassSpecData2004</value>
         </propertyList>
+        <propertyList includeProjects="PlasmoDB" name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+        </propertyList>
         
         <description includeProjects="CryptoDB,ApiDB">
               <![CDATA[
@@ -1167,7 +1170,7 @@ Find genes that are predicted to encode a signal peptide.
          displayName="Sage Tag evidence"
          queryRef="GeneId.GenesBySageTag"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
-         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
+         includeProjects="ToxoDB,GiardiaDB,ApiDB">
         <attributesList
          summary="organism,location_text,product,sage_tag_count"
          sorting="organism asc,sage_tag_count desc"
@@ -2477,6 +2480,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               includeProjects="ApiDB,ToxoDB,PlasmoDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+           <![CDATA[
+           Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
+            ]]>
+        </summary>
         <description>
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
@@ -2488,6 +2496,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+           <![CDATA[
+           Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on protein expression data from mass spectrometry experiments.
+            ]]>
+        </summary>
         <description>
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on protein expression data from mass spectrometry experiments.
