@@ -1687,6 +1687,12 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
             <columnAttribute name="bait_or_prey"
                        displayName="Query Gene Was" align="center"/>
         </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>y2h_data</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1721,9 +1727,6 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
 <br><br>There are 388,969 total predicted protein pairs in the result set, with likelihood scores ranging from 2 to 9435. Below a score of 2, the number of false positives exceed the number of true positives. Most protein-protein interaction pairs (~79%) have a likelihood score of below 10, while about 20% of the pairs have a likelihood score between 10 and 9435 (only 251 pairs, or about 0.06% of the total, have a likelihood score above 100).
 
 <br><br>Empirical observations of the results show that while many pairs with very low likelihood scores (say between 2-4) are biologically valid, the predicted interactions are likely to be highly accurate as the scores approach a value of 10. In the published manuscript, a score of 14 was used to isolate a high-confidence subset of interactions, where the number of true positives was about 10 times greater than the number of false positives.
-
-
-<br><br><a href="http://www.genome.org/cgi/content/abstract/gr.4573206v1">Date, S.V. & Stoeckert, C.J., Jr. Computational modeling of the <i>Plasmodium falciparum</i> interactome reveals protein function on a genome-wide scale. <i>Genome Research</i>, April 2006, doi:10.1101/gr.4573206</a>
           ]]>
         </description>
         <dynamicAttributes>
@@ -1734,6 +1737,12 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
             <columnAttribute name="queries_matched"
                        displayName="Queries matched" align="center"/>
         </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Interactome</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -1743,7 +1752,7 @@ Find genes of identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">pl
 
     <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Diff. expression in DOZI mutant vs. WT"
+              displayName="Diff. expression in DOZI mutant vs. WT (P.b.)"
               queryRef="GeneId.GenesByWatersDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -1773,6 +1782,16 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
 	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
 	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
 	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Waters_arrayData</value>
+         <value>Waters_metaData</value>
+         <value>berghei_gss_oligos</value>
+         <value>Waters_radAnalysis</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value includeProjects="PlasmoDB,ApiDB">P.berghei_wholeGenomeShotgunSequence</value>
+         <value includeProjects="PlasmoDB,ApiDB">P.berghei_Annotation</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1781,7 +1800,7 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
 
     <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Diff. expression (fold-change) in KO vs. WT"
+              displayName="Diff. expression (fold-change) in KO vs. WT (P.f.)"
               queryRef="GeneId.GenesByDifferentialMeanExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -1919,7 +1938,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,ApiDB"
-         displayName="Expression Profile Similarity"
+         displayName="Expression Profile Similarity (P.f.)"
          category="Transcript Expression"
          queryRef="GeneId.GenesByProfileSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1939,7 +1958,6 @@ References:
         <description>
            <![CDATA[
            Find genes that have a (glass slide) expression profile similar to that of your input gene.
-             Find genes that have similar expression profile to your input gene.
           ]]>
          </description>
          <dynamicAttributes>
@@ -1958,6 +1976,15 @@ References:
                 </text>
              </textAttribute>
          </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>DeRisi_oligos</value>
+         <value>derisi_Dd2_time_series</value>
+         <value>derisi_3D7_time_series</value>
+         <value>derisi_HB3_time_series</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -2010,15 +2037,6 @@ References:
         reported.  This means that genes that have only a single probe on the
         array will not be reported as their logP values will always be too
         high to satisfy the query.
-        <p><b>References:</b><br> (1) Discovery of Gene Function by Expression
-        Profiling of the Malaria Parasite Life Cycle.  Karine G. Le Roch,
-        Yingyao Zhou, Peter L. Blair, Muni Grainger, J. Kathleen Moch, J.
-        David Haynes, Patricia De la Vega, Anthony A. Holder, Serge Batalov,
-        Daniel J. Carucci, and Elizabeth A. Winzeler Published online July 31,
-        2003; 10.1126/science.1087025 (Science Express Research Articles)
-        <br>(2) Zhou Y, Abagyan R. Match-Only Integral Distribution (MOID)
-        Algorithm for high-density oligonucleotide array analysis. BMC
-        Bioinformatics. 2002;3(1):3.
           ]]>
         </description>
         <dynamicAttributes>
@@ -2027,6 +2045,14 @@ References:
             <columnAttribute name="min_percentile" displayName="Min Percentile"
                              inReportMaker="false"/>
         </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>winzeler_cell_cycle</value>
+         <value>winzeler_gametocyte_expression</value>
+         <value></value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -2150,7 +2176,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,ApiDB"
          category="Cellular Location"
-         displayName="Subcellular Localization"
+         displayName="Subcellular Localization (P.f.)"
               queryRef="GeneId.GenesBySubcellularLocalization"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2174,26 +2200,17 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                (Haldar lab), as being associated with  proteins targeted to
                the human erythrocyte, are referred to as the  'Pexel' and 'HT'
                motifs respectively.<br><br>
-               <b>References:</b><br>
-               <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=12560551&dopt=Citation">Foth
-               BJ, Ralph SA, Tonkin CJ, Struck NS, Fraunholz M, Roos DS,
-               Cowman AF, McFadden GI<br>Dissecting apicoplast targeting in
-               the malaria parasite <i>Plasmodium falciparum</i><br>
-               <i>Science</i> 2003 Jan 31; <b>299</b>(5607):705-8</a>
-               <br><br>
-                <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15591203&query_hl=1">Hiller
-               NL, Bhattacharjee S, van Ooij C, Liolios K, Harrison T,
-               Lopez-Estrano C, Haldar K<br>
-               A host-targeting signal in virulence proteins reveals a
-               secretome in malarial infection<br>
-               <i>Science</i> 2004 Dec 10; <b>306</b>(5703):1897-8</a><br><br>
-               <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=15591202&query_hl=2">Marti
-               M, Good RT, Rug M, Knuepfer E, Cowman AF<br>
-               Targeting malaria virulence and remodeling proteins to the host
-               erythrocyte<br>
-               <i>Science</i> 2004 Dec 10; <b>306</b>(5703):1930-3</a>
           ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value>Cowman_Subcellular_motifs</value>
+         <value>Haldar_Subcellular_motifs</value>
+         <value>ApicoplastTargeting</value>
+         <value></value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+          <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
