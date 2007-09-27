@@ -161,7 +161,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesWithEpitopes" includeProjects="ApiDB,PlasmoDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="3" maxOutputLength="5">
+            minOutputLength="3" maxOutputLength="50">
         <sanityParam name="organism" value="Plasmodium falciparum"/>
         <sanityParam name="epitope_confidence" value="High"/>
     </sanityQuestion>
@@ -252,7 +252,7 @@
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="GeneQuestions.GenesBySnps" includeProjects="ApiDB,PlasmoDB"
-            minOutputLength="1500" maxOutputLength="1700"
+            minOutputLength="1500" maxOutputLength="2700"
             pageStart="1" pageEnd="20">
         <sanityParam name="snp_strain_a" value="Pf-3D7"/>
         <sanityParam name="snp_strain_b" value="Pf-7G8"/>
@@ -327,7 +327,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByMolecularWeight" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1000" maxOutputLength="4000">
+            minOutputLength="1000" maxOutputLength="6000">
         <sanityParam name="min_molecular_weight" value="10000"/>
         <sanityParam name="max_molecular_weight" value="50000"/>
         <sanityParam name="organism" value="Plasmodium berghei"/>
@@ -557,7 +557,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByGoTerm" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="1" maxOutputLength="100">
+            minOutputLength="1" maxOutputLength="2000">
         <sanityParam name="go_term" value="catalytic activity"/>
         <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
@@ -707,7 +707,7 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="3000" maxOutputLength="3500">
+            minOutputLength="3000" maxOutputLength="4000">
           <sanityParam name="profile_pattern" value="%hsa:N%pfa:Y%"/>
           <sanityParam name="included_species" value="P. falciparum"/>
           <sanityParam name="excluded_species" value="H. sapiens"/>
@@ -914,9 +914,9 @@
 
     <sanityQuestion ref="GeneQuestions.GenesByESTOverlap" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="500">
+            minOutputLength="100" maxOutputLength="2500">
         <sanityParam name="organism" value="Plasmodium falciparum"/>
-        <sanityParam name="libraryId" value="Field isolate cDNA library"/>
+        <sanityParam name="libraryId" value="Plasmodium falciparum 3D7 asexual cDNA"/>
         <sanityParam name="bp_overlap_gte" value="100"/>
         <sanityParam name="best_alignment_only" value="Yes"/>
         <sanityParam name="max_number_best_alignments" value="1000"/>
@@ -1075,7 +1075,7 @@
     <sanityQuestion ref="GeneQuestions.GenesByNonnuclearLocation" includeProjects="PlasmoDB"
             minOutputLength="3" maxOutputLength="10"
             pageStart="1" pageEnd="20">
-        <sanityParam name="nonnuclearSequence" value="mitochondrial genome"/>
+        <sanityParam name="nonnuclearSequence" value="plastid IR-A"/>
         <sanityParam name="start_point" value="1"/>
         <sanityParam name="end_point" value="0"/>
     </sanityQuestion>
@@ -1434,13 +1434,19 @@
 
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-    <!-- ++ CryptoDB Only ++ -->
+    <!-- ++ Orthologous To a Given Gene ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
     <sanityQuestion ref="GeneQuestions.GenesOrthologousToAGivenGene" includeProjects="CryptoDB"
                       pageStart="1" pageEnd="20"
             minOutputLength="1" maxOutputLength="1000">
         <sanityParam name="single_gene_id" value="cgd6_690"/>
+    </sanityQuestion>
+
+    <sanityQuestion ref="GeneQuestions.GenesOrthologousToAGivenGene" includeProjects="PlasmoDB"
+                      pageStart="1" pageEnd="20"
+            minOutputLength="1" maxOutputLength="1000">
+        <sanityParam name="single_gene_id" value="PF11_0344"/>
     </sanityQuestion>
 
 
