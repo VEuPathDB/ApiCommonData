@@ -356,6 +356,8 @@ sub makeDataFile {
 
   foreach my $compElemId (keys %$tagCount) {
     my $value = ($tagCount->{$compElemId} * $paramValue)/$total;
+
+    next unless($value > 0);
     print FILE "$compElemId\t$value\n";
   }
 
