@@ -376,25 +376,11 @@
     <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="GiardiaDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="50" maxOutputLength="120">
-          <sanityParam name="min_coil" value="65"/>
-          <sanityParam name="max_coil" value="75"/>
-          <sanityParam name="min_strand" value="15"/>
-          <sanityParam name="max_strand" value="25"/>
-          <sanityParam name="min_helix" value="5"/>
-          <sanityParam name="organism" value="Giardia lamblia"/>
-          <sanityParam name="max_helix" value="15"/>
     </sanityQuestion>
 
     <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="TrichDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="50" maxOutputLength="1200">
-          <sanityParam name="min_coil" value="65"/>
-          <sanityParam name="max_coil" value="75"/>
-          <sanityParam name="min_strand" value="15"/>
-          <sanityParam name="max_strand" value="25"/>
-          <sanityParam name="min_helix" value="5"/>
-          <sanityParam name="organism" value="Trichomonas vaginalis"/>
-          <sanityParam name="max_helix" value="15"/>
     </sanityQuestion>
 
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -1353,17 +1339,6 @@
         <sanityParam name="st_min_tag_count" value="2"/>
         <sanityParam name="st_max_occurrences" value="1"/>
         <sanityParam name="organism" value="Giardia lamblia"/>
-    </sanityQuestion>
-
-    <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="PlasmoDB"
-            pageStart="1" pageEnd="20"
-            minOutputLength="100" maxOutputLength="1000">
-        <sanityParam name="sage_tag_library" value="Transcriptional profile of P.falciparum by Serial analysis of gene expression_SAGE-3D7-library1"/>
-        <sanityParam name="st_max_five_prime_distance" value="100"/>
-        <sanityParam name="st_max_three_prime_distance" value="100"/>
-        <sanityParam name="st_min_tag_count" value="2"/>
-        <sanityParam name="st_max_occurrences" value="1"/>
-        <sanityParam name="organism" value="Plasmodium falciparum"/>
     </sanityQuestion>
 
     <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="ToxoDB"
