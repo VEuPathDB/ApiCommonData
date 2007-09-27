@@ -1299,6 +1299,98 @@
 
   </paramSet>
 
+
+
+<!-- Parameters for the SRT Page -->
+<paramSet name="SrtParams">
+<!-- SrtParams.genes_ids -->
+        <stringParam name="genes_ids"
+            id="genes_ids"
+            prompt="Gene IDs"
+           substitute="yes">
+            <help>Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided
+by the sequence generator.</help>
+           <suggest includeProjects="PlasmoDB"
+                                        sample="PF11_0344, PY01656, Pv092275"
+                    default="PF11_0344"/>
+           <suggest includeProjects="CryptoDB"
+                                        sample="cgd6_690"
+                    default="cgd6_690"/>
+           <suggest includeProjects="ToxoDB"
+                    sample="49.m00014,65.m01111"
+                    default="49.m00014"/>
+           <suggest includeProjects="GiardiaDB"
+                    sample="GL50803_102438, GL50803_5213, GL50803_6262"
+                    default="GL50803_102438"/>
+           <suggest includeProjects="TrichDB"
+                    sample="TVAG_386080, TVAG_486660"
+                    default="TVAG_386080"/>
+           <suggest includeProjects="ApiDB"
+                                        sample="PF11_0344, cgd6_690, 65.m01111"
+                    default="cgd6_690"/>
+        </stringParam>
+
+
+
+<!-- SrtParams.contigs_ids -->
+        <stringParam name="contigs_ids"
+            id="contigs_ids"
+            prompt="Contig IDs">
+ <suggest includeProjects="CryptoDB"
+            sample="AAEL01000057, AAEE01000009, BX526834"
+            default="AAEE01000006"/>
+        <suggest includeProjects="ApiDB"
+            sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_995305"
+            default="AAEL01000057"/>
+        <suggest includeProjects="ToxoDB"
+            sample="Ia, VIIb, XI, VIIa, TGG_995305"
+            default="Ia"
+            allowEmpty="true"
+            emptyValue="No Match"/>
+        <suggest includeProjects="PlasmoDB"
+            sample="MAL4, ctg_4094, MALPY00019"
+            default="MAL4"
+            allowEmpty="true"
+            emptyValue="No Match"/>
+        <suggest includeProjects="GiardiaDB"
+            sample="ctg02_7, ctg02_243"
+            default="ctg02_7"/>
+        <suggest includeProjects="TrichDB"
+            sample="DS113177"
+            default="DS113177"/>
+</stringParam>
+
+
+
+<!-- SrtParams.orfs_ids -->
+        <stringParam name="orfs_ids"
+            id="orfs_ids"
+            prompt="ORFs IDs">
+ <suggest includeProjects="GiardiaDB"
+                     sample="ctg02_243-6-1018-419, ctg02_4-4-133461-132640"
+                     default="ctg02_243-6-1018-419"/>
+<suggest includeProjects="TrichDB"
+                     sample="DS113375-1-114214-114468, DS113534-2-30548-30718"
+                     default="DS113375-1-114214-114468"/>
+            <suggest includeProjects="PlasmoDB"
+                     sample="MAL1-1-10639-11520, MAL1-1-105160-105438"
+                     default="MAL1-1-10639-11520"/>
+            <suggest includeProjects="ToxoDB"
+                     sample="Ia-1-1000180-1000404, Ia-6-99955-99632"
+                     default="Ia-1-1000180-1000404"/>
+            <suggest includeProjects="CryptoDB"
+                     sample="AAEL01000259-5-3339-3085, AAEE01000009*, AAEL*"
+                     default="AAEL01000259-5-3339-3085"/>
+            <suggest includeProjects="ApiDB"
+                     sample="AAEL01000259-5-3339-3085, AAEE01000009*, Ia-6-99955-99632, MAL1-1-105160-105438"
+                     default="AAEL01000259-5-3339-3085"/>
+        </stringParam>
+
+
+</paramSet>
+<!-- End SRT Parameters -->
+
+
   <!--======================================================================-->
   <!-- General Vocab queries  -->
   <!--======================================================================-->
