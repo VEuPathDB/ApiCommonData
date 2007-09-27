@@ -11,7 +11,7 @@
 
    For convenience, the output is in the form of "drop materialized view"
    statements.
-/*
+*/
 
 
 SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS drops
