@@ -9,6 +9,7 @@ select distinct regexp_replace(mview_name, '[^0-9]*', '')
        as "digits embedded in mview names"
 from all_mviews
 where regexp_replace(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
-      like '%fournumbers';
+      like '%fournumbers'
+order by regexp_replace(mview_name, '[^0-9]*', '');
 
 exit;
