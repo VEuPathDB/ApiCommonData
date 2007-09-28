@@ -361,7 +361,7 @@
     <!-- ++ Secondary Structure ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
+   <!-- <sanityQuestion ref="GeneQuestions.GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
             pageStart="1" pageEnd="20"
             minOutputLength="20" maxOutputLength="60">
           <sanityParam name="min_coil" value="65"/>
@@ -371,7 +371,7 @@
           <sanityParam name="min_helix" value="5"/>
           <sanityParam name="organism" value="Plasmodium berghei"/>
           <sanityParam name="max_helix" value="15"/>
-    </sanityQuestion>
+    </sanityQuestion>-->
 
     <sanityQuestion ref="InternalQuestions.GenesByProteinStructure" includeProjects="GiardiaDB,ApiDB"
             pageStart="1" pageEnd="20"
@@ -1285,10 +1285,10 @@
     <sanityQuestion ref="GeneQuestions.GenesByProteinStructure" includeProjects="PlasmoDB"
             minOutputLength="3000" maxOutputLength="4000"
             pageStart="1" pageEnd="20">
-        <sanityParam name="synchronization" value="Sorbitol"/>
+       <!-- <sanityParam name="synchronization" value="Sorbitol"/>
         <sanityParam name="intraerythrocytic_stages" value="Any"/>
         <sanityParam name="min_expression_percentile" value="50"/>
-        <sanityParam name="max_expression_percentile" value="100"/>
+        <sanityParam name="max_expression_percentile" value="100"/>--> 
     </sanityQuestion>
 
       <sanityQuestion ref="GeneQuestions.GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB"
@@ -1376,7 +1376,7 @@
     <!-- ++ SageTagLibrary ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuery ref="GeneVQ.SageTagLibrary" includeProjects="PlasmoDB,ToxoDB,GiardiaDB"
+    <sanityQuery ref="GeneVQ.SageTagLibrary" includeProjects="ToxoDB,GiardiaDB"
             minOutputLength="1" maxOutputLength="10">
     </sanityQuery>
 
