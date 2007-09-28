@@ -3102,8 +3102,9 @@ sub grepMercatorGff {
 
   return if $mgr->startStep("grepMercatorGff ${fileDir}/$inFile", $signal);
 
-  $mgr->runCmd("grep -P '\texon\t' ${fileDir}/$inFile > ${fileDir}/$outFile");
-  $mgr->runCmd("grep -P '\tCDS\t' ${fileDir}/$inFile >> ${fileDir}/$outFile");
+  # The Exons must come first... then append the CDS to the file
+  $mgr->runCmd("grep -P '\texon\t' ${fileDir}/$inFile |sed 's/apidb|//'  > ${fileDir}/$outFile");
+  $mgr->runCmd("grep -P '\tCDS\t' ${fileDir}/$inFile |sed 's/apidb|//'  >> ${fileDir}/$outFile");
 
   $mgr->endStep($signal);
   
