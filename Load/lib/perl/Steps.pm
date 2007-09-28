@@ -3388,18 +3388,23 @@ sub clusterByContigAlign {
 
 ### subroutine used when the aligned transcripts are from multiple sources with different external_database_release_ids
 sub clusterMultiEstSourcesByAlign { 
-    my ($mgr, $name, $species, $tExtDbName, $tExtDbRlsVer,$taxonId, $targetTable) = @_;
+    my ($mgr, $name, $species, $tExtDbName, $tExtDbRlsVer,$taxId, $targetTable,$distance) = @_;
     my $propertySet = $mgr->{propertySet};
 
     my $dataDir = $mgr->{'dataDir'};
  
     my $tDbRlsId=  &getDbRlsId($mgr,$tExtDbName,$tExtDbRlsVer);
 
+    my $taxonId = &getTaxonId($mgr,$taxId);
+
     my $outputFile = "$dataDir/cluster/$species$name/cluster.out";
+
+    $mgr->runCmd("mkdir -p $dataDir/cluster/$species$name");
+
     my $logFile = "$dataDir/logs/${species}${name}Cluster.log";
 
     my $args = "--taxon_id $taxonId --target_table_name  $targetTable --mixedESTs "
-	. "--target_db_rel_id $extDbRelId --out $outputFile --sort 1";
+	. "--target_db_rel_id $tDbRlsId --out $outputFile --sort 1 --distanceBetweenStarts $distance";
 
     $mgr->runPlugin("Cluster${species}${name}ByContigWithAltSql", 
 		    "DoTS::DotsBuild::Plugin::ClusterByGenome",
