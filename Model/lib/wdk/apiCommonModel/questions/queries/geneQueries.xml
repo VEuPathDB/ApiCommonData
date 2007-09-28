@@ -1265,7 +1265,6 @@ order by project_id,sns2.source_id
                   and stg.tag_source_id = sta.source_id
                   and ((stg.direction = '5' and stg.distance <= $$st_max_five_prime_distance$$)
                      OR (stg.direction = '3' and stg.distance <= $$st_max_three_prime_distance$$))
-                  and stg.antisense = 0
                   group by stg.gene_source_id, stg.tag_source_id, stg.sense_count, stg.antisense_count
                ) 
                group by gene_source_id having sum($$sense_antisense$$_count) >= $$st_min_tag_count$$ 
