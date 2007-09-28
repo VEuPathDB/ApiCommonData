@@ -123,6 +123,8 @@ sub run {
     chomp;
     $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
     $count+=2;
+
+    $self->log("Inserted $count ApiDB::Synteny") if($count % 500 == 0 || $count-1 % 500 == 0);
   }
   close(IN);
 
@@ -130,6 +132,9 @@ sub run {
 					 $self->getArg('extDbRlsSpecA'));
   $anchorCount += $self->insertAnchors($synDbRlsId, $extDbRlsIdB,
 				       $self->getArg('extDbRlsSpecB'));
+
+  $self->log("Inserted $count ApiDB::SyntenyAnchors") if($anchorCount % 50 == 0 || $anchorCount-1 % 50 == 0);
+
   return "inserted $count synteny spans and $anchorCount anchors ";
 }
 
