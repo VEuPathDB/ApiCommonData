@@ -2290,7 +2290,7 @@ sub InsertOntologyEntryFromMO {
 
 
 sub InsertExpressionProfileFromProcessedResult {
-  my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc) = @_;
+  my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc, $numberOfChannels) = @_;
 
   my $signal = "load_" . $extDbName;
   $signal =~ s/[\s\(\)]//g;
@@ -2299,7 +2299,7 @@ sub InsertExpressionProfileFromProcessedResult {
 
   $desc = $extDbName unless($desc);
 
-  my $args = "--arrayDesignName '$arrayName' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --protocolName '$protocolName' --processingType '$resultView' --studyDescrip '$desc'";
+  my $args = "--arrayDesignName '$arrayName' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --protocolName '$protocolName' --processingType '$resultView' --studyDescrip '$desc' --numberOfChannels $numberOfChannels";
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::InsertExprProfileFromProcessedResult",
@@ -3069,6 +3069,27 @@ sub modifyFile {
 
   $mgr->endStep($signal);
 }
+
+sub insertMercatorSyntenySpans {
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec) = @_;
+
+  my ($signal) = $syntenySpec =~ /([a-zA-Z-]+)/;
+  $signal .= "SyntanySpans";
+
+  return if $mgr->startStep("inserting $signal", $signal);
+
+  my $out = $file."-synteny";
+
+  my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec'";
+
+  $mgr->runCmd("formatPxSyntenyFile --inputFile $file --outputFile $out");
+  $mgr->runPlugin($signal,
+		  "ApiCommonData::Load::Plugin::InsertSyntenySpans", $args,
+		  "Inserting mercator-MAVID Synteny Spans");
+
+  $mgr->endStep($signal);
+}
+
 
 sub runMercatorMavid {
   my ($mgr, $mercatorDir, $signal) = @_;
