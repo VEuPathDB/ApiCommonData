@@ -68,7 +68,7 @@
     <!-- Sage Tag params -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <stringParam name="st_max_five_prime_distance" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+        <stringParam name="st_max_five_prime_distance" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="Maximum distance from 5' gene end"
                      substitute="yes"
                      quote="false">
@@ -77,7 +77,7 @@
             <suggest default="100" excludeProjects="GiardiaDB"/>
         </stringParam>
 
-        <stringParam name="st_max_three_prime_distance" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+        <stringParam name="st_max_three_prime_distance" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="Maximum distance from 3' gene end"
                      substitute="yes"
                      quote="false">
@@ -86,7 +86,7 @@
             <suggest default="100" excludeProjects="GiardiaDB"/>
         </stringParam>
 
-        <stringParam name="st_min_tag_count" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+        <stringParam name="st_min_tag_count" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="Minimum tag count"
                      substitute="yes"
                      quote="false">
@@ -95,7 +95,7 @@
             <suggest default="2" excludeProjects="GiardiaDB"/>
         </stringParam>
 
-        <stringParam name="st_max_occurrences" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+        <stringParam name="st_max_occurrences" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="Maximum occurrences in genome"
                      substitute="yes"
                      quote="false">
@@ -103,7 +103,7 @@
              <suggest default="1"/>
         </stringParam>
 
-      <flatVocabParam name="sage_tag_library" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+      <flatVocabParam name="sage_tag_library" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      queryRef="GeneVQ.SageTagLibrary"
                      prompt="Sage Tag Library"
                      multiPick="false">
@@ -3578,7 +3578,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
     <querySet name="GeneVQ">
 
-        <sqlQuery name="SageTagLibrary" includeProjects="GiardiaDB,ToxoDB">
+        <sqlQuery name="SageTagLibrary" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
