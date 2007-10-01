@@ -106,7 +106,7 @@ sub run{
 
   my $msg = "Submitted $count new averaged profiles. Skipped $skipped because they were already found in the database.";
 
-  return my $msg;
+  return $msg;
 }
 
 
