@@ -42,7 +42,7 @@ sub processInputProfileSet {
 
   $plugin->log("Processing '$name'");
 
-  my $profileSet = &_makeProfileSet($plugin, $dbRlsId, $header, $name,
+  my $profileSet = &makeProfileSet($plugin, $dbRlsId, $header, $name,
 				    $descrip, $sourceIdType);
 
   $profileSet->submit();
@@ -57,7 +57,7 @@ sub processInputProfileSet {
     $profileRows = \@profileRowsNoReps;
   }
   foreach my $profileRow (@$profileRows) {
-    my $profile = &_makeProfile($plugin, $profileRow, $profileSetId,
+    my $profile = &makeProfile($plugin, $profileRow, $profileSetId,
 				$elementCount,
 				$sourceIdType,
 				$tolerateMissingIds,
@@ -76,42 +76,7 @@ sub processInputProfileSet {
   $plugin->log("$count profiles submitted for '$name'. $notFound not found");
 }
 
-
-############### private subs #########################################
-
-sub _averageReplicates {
-  my ($plugin, $profileRows) = @_;
-
-  $plugin->log("Averaging replicates (if any)");
-
-  my %profiles;
-  my @profiles;
-  my $inputCount;
-
-  foreach my $row (@$profileRows) {
-    $inputCount++;
-    my $sourceId = shift(@$row);
-    push(@{$profiles{$sourceId}}, $row);
-  }
-
-  foreach my $sourceId (keys %profiles) {
-    my @sum;
-    foreach my $replicate (@{$profiles{$sourceId}}) {
-
-      for (my $i=0; $i<scalar(@$replicate); $i++) {
-	$sum[$i] += $replicate->[$i];
-      }
-    }
-
-    my @avg = map { $_ / scalar(@{$profiles{$sourceId}})} @sum;
-    push(@profiles, [$sourceId, @avg]);
-  }
-  $plugin->log("Original profiles: $inputCount.  After averaging replicates: " . scalar(@profiles));
-
-  return @profiles;
-}
-
-sub _makeProfileSet {
+sub makeProfileSet {
   my ($plugin, $dbRlsId, $header, $name, $descrip, $sourceIdType) = @_;
 
   my @header = @{$header};
@@ -137,7 +102,7 @@ sub _makeProfileSet {
   return $profileSet;
 }
 
-sub _makeProfile {
+sub makeProfile {
   my ($plugin, $profileRow, $profileSetId, $elementCount, $sourceIdType, $tolerateMissingIds, $loadProfileElement) = @_;
 
   my $subject_id;
@@ -187,6 +152,40 @@ sub _makeProfile {
   }
 
   return $profile;
+}
+
+############### private subs #########################################
+
+sub _averageReplicates {
+  my ($plugin, $profileRows) = @_;
+
+  $plugin->log("Averaging replicates (if any)");
+
+  my %profiles;
+  my @profiles;
+  my $inputCount;
+
+  foreach my $row (@$profileRows) {
+    $inputCount++;
+    my $sourceId = shift(@$row);
+    push(@{$profiles{$sourceId}}, $row);
+  }
+
+  foreach my $sourceId (keys %profiles) {
+    my @sum;
+    foreach my $replicate (@{$profiles{$sourceId}}) {
+
+      for (my $i=0; $i<scalar(@$replicate); $i++) {
+	$sum[$i] += $replicate->[$i];
+      }
+    }
+
+    my @avg = map { $_ / scalar(@{$profiles{$sourceId}})} @sum;
+    push(@profiles, [$sourceId, @avg]);
+  }
+  $plugin->log("Original profiles: $inputCount.  After averaging replicates: " . scalar(@profiles));
+
+  return @profiles;
 }
 
 sub _getExternalNaSequenceId {
