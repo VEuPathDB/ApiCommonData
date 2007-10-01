@@ -1,12 +1,13 @@
-package ApiCommonData::Load::Plugin::InsertSnps;
+package ApiCommonData::Load::Plugin::MakeAveragedProfiles;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
 
 use GUS::PluginMgr::Plugin;
+use Tie::IxHash;
 use GUS::Model::ApiDB::ProfileSet;
 use GUS::Model::ApiDB::Profile;
-
+use ApiCommonData::Load::ExpressionProfileInsertion;
 
 sub getArgumentsDeclaration{
   my $argsDeclaration =
@@ -27,6 +28,11 @@ sub getArgumentsDeclaration{
               1,4,7
               2,6',
 	     }),
+     booleanArg ({name => 'loadProfileElement',
+		  descr => 'Set this to load the ProfileElement table with the individual profile elements',
+		  reqd => 0,
+		  default =>0
+		 }),
     ];
   return $argsDeclaration;
 }
@@ -89,22 +95,22 @@ sub run{
   my ($self) = @_;
 
   my $profileName = $self->getArg('profileSetName');
-  my $profileSetId = $self->getProfileSetId($profileName);
-
-  my $newProfileSetId = $self->makeProfileSet($profileName);
+  my $profileSet = $self->getProfileSet($profileName);
 
   my $configFile = $self->getArg('configFile');
   my $sets = $self->parseConfig($configFile);
 
-  my ($count, $skipped) = $self->averageProfiles($profileSetId, $newProfileSetId, $sets);
+  my $newProfileSetId = $self->makeNewProfileSet($profileName, $profileSet, $sets);
+
+  my ($count, $skipped) = $self->averageProfiles($profileSet, $newProfileSetId, $sets, $profileSet->getSourceIdType());
 
   my $msg = "Submitted $count new averaged profiles. Skipped $skipped because they were already found in the database.";
 
-  return $msg;
+  return my $msg;
 }
 
 
-sub getProfileSetId{
+sub getProfileSet{
   my ($self, $profileName) = @_;
 
   my $profileSet  = GUS::Model::ApiDB::ProfileSet->new({'name'=>$profileName});
@@ -113,26 +119,28 @@ sub getProfileSetId{
     $self->error("ProfileSet Name not (uniquely) matched". $profileSet->getName());
   }
 
-  return $profileSet->getId();
+  return $profileSet;
 }
 
-sub makeProfileSet{
-  my ($self, $profileName) = @_;
-  my $newProfileName = $profileName."-1";
+sub makeNewProfileSet{
+  my ($self, $profileName, $profileSet, $sets) = @_;
+  my $newProfileName = $profileName."-Averaged";
 
-  my $profile = GUS::Model::ApiDB::ProfileSet->new({'name'=>$newProfileName});
+  my @header = (keys %{$sets});
 
-  if($profile->retrieveFromDB()){
+  my $newProfileSet = &makeProfileSet($self, $profileSet->getExternalDatabaseReleaseId(), \@header, $newProfileName, $profileSet->getDescription(), $profileSet->getSourceIdType());
+
+  if($newProfileSet->retrieveFromDB()){
     $self->error("There is already a profile set with the name '$newProfileName'. I cannot create this set.");
   }
 
-  $profile->submit();
-  return $profile->getId();
+  $newProfileSet->submit();
+  return $newProfileSet->getId();
 }
 
 sub parseConfig{
   my ($self, $configFile) = @_;
-  my @sets;
+  tie my %sets, "Tie::IxHash";
 
   $self->log("Retrieving list of sets...\n");
   open(FILE, $configFile) or die "Could not open the file '$configFile': $!\n";
@@ -140,41 +148,47 @@ sub parseConfig{
   while(<FILE>){
     chomp;
 
-    my @set = split(',',$_);
-
-    push(@sets, @set);
+    my ($name, $cols) = split(':',$_);
+    my @vals = split(',',$cols);
+    push(@{$sets{$name}}, @vals);
   }
 
   close(FILE);
 
-  return \@sets;
+  return \%sets;
 }
 
 sub averageProfiles{
-  my ($self, $profileSetId, $newProfileSetId, $sets) = @_;
+  my ($self, $profileSet, $newProfileSetId, $sets, $sourceIdType) = @_;
   my $count = 0;
   my $skipped = 0;
+  my $profileSetId = $profileSet->getId();
 
   $self->log("Creating averaged proviles...");
 
-  my $sql = "select * from ApiDB.Profile where profile_set_id = $profileSetId";
+  my $sql = "select profile_id from ApiDB.Profile where profile_set_id = $profileSetId";
 
   my $dbh = $self->getQueryHandle();
   my $stmt = $dbh->prepareAndExecute($sql);
 
-  while(my $profileObj = $stmt->fetchrow_array()){
+  while(my $profileId = $stmt->fetchrow_array()){
     my @avgs;
 
+    my $profileObj = GUS::Model::ApiDB::Profile->new({'profile_id' => $profileId});
+    $profileObj->retrieveFromDB();
+
     my $profile = $profileObj->getProfileAsString();
+print "PROFILE: $profile\n";
     my @values = split("\t", $profile);
 
-    foreach my $set (@{$sets}){
-      my $avg = $self->calculateAverage($set, \@values);
-      push(@avgs, $avg);
+    foreach my $name (keys %{$sets}){
+      foreach my $set (@{$$sets{$name}}){
+	my $avg = $self->calculateAverage($set, \@values);
+	push(@avgs, $avg);
+      }
     }
 
-    my $avgProfile = join("\t", @avgs);
-    $self->createNewProfile($avgProfile, $newProfileSetId, $profileObj, \$count, \$skipped);
+    $self->createNewProfile(\@avgs, $newProfileSetId, $sourceIdType, \$count, \$skipped);
 
     if ($count % 100 == 0){
       $self->log("Created $count new averaged profiles.");
@@ -185,33 +199,29 @@ sub averageProfiles{
 }
 
 sub calculateAverage{
-  my($set, $values) = @_;
+  my($self, $set, $values) = @_;
   my $sum = 0;
 
   foreach my $element (@{$set}){
     $element--;
-    $sum += $values[$element];
+    $sum += $$values[$element];
   }
 
-  my $n = @set;
+  my $n = @{$set};
   my $avg = $sum/$n;
 
   return $avg;
 }
 
 sub createNewProfile{
-  my($avgProfile, $newProfileSetId, $profileObj, $count, $skipped) = @_;
+  my($self, $avgProfile, $newProfileSetId, $sourceIdType, $count, $skipped) = @_;
 
-  my $newProfile = GUS::Model::ApiDB::Profile->new({
-		   'profile_set_id' => $newProfileSetId,
-		   'subject_table_id' => $profileObj->getSubjectTableId(),
-		   'subject_row_id' => $profileObj->getSubjectRowId(),
-		   'source_id' => $profileObj->getId(),
-		   'profile_as_string' => $avgProfile,
-		  });
+  my $elementCount = scalar(@{$avgProfile});
+
+  my $newProfile = &makeProfile($self, $avgProfile, $newProfileSetId, $elementCount, $sourceIdType, 1, $self->getArg('loadProfileElement'));
 
   if($newProfile->retrieveFromDB()){
-    $self->log("There is already an averaged profile for ". $profileObj->getId().". Skipping profile.");
+    $self->log("There is already an averaged profile for ". $newProfile->getId().". Skipping profile.");
     $skipped ++;
   }
 
