@@ -1354,6 +1354,17 @@
         <sanityParam name="organism" value="Toxoplasma gondii"/>
     </sanityQuestion>
 
+    <sanityQuestion ref="GeneQuestions.GenesBySageTag" includeProjects="PlasmoDB"
+            pageStart="1" pageEnd="20"
+            minOutputLength="100" maxOutputLength="1000">
+        <sanityParam name="sage_tag_library" value="Transcriptional profile of P.falciparum by Serial analysis of gene expression_CQlibrary"/>
+        <sanityParam name="st_max_five_prime_distance" value="100"/>
+        <sanityParam name="st_max_three_prime_distance" value="100"/>
+        <sanityParam name="st_min_tag_count" value="2"/>
+        <sanityParam name="st_max_occurrences" value="1"/>
+        <sanityParam name="organism" value="Plasmodium falciparum"/>
+    </sanityQuestion>
+
   <!-- ============================================================ -->
   <!-- ============================================================ -->
   <!-- == orphan queries == -->
@@ -1378,7 +1389,7 @@
     <!-- ++ SageTagLibrary ++ -->
     <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-    <sanityQuery ref="GeneVQ.SageTagLibrary" includeProjects="ToxoDB,GiardiaDB"
+    <sanityQuery ref="GeneVQ.SageTagLibrary" includeProjects="PlasmoDB,ToxoDB,GiardiaDB"
             minOutputLength="1" maxOutputLength="10">
     </sanityQuery>
 
