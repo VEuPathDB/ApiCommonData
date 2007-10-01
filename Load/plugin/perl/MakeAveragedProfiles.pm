@@ -24,9 +24,9 @@ sub getArgumentsDeclaration{
 	      reqd  => 1,
 	      isList => 0,
 	      mustExist => 1,
-	      format => 'newline delimited set of comma separated lists. Each list is a set of columns in the current profile to average. Ex:
-              1,4,7
-              2,6',
+	      format => 'newline delimited set of comma separated lists, with a name separated by a colon. Each list is a set of columns in the current profile to average. Ex:
+              time1:1,4,7
+              time2:2,6',
 	     }),
      booleanArg ({name => 'loadProfileElement',
 		  descr => 'Set this to load the ProfileElement table with the individual profile elements',
@@ -178,17 +178,19 @@ sub averageProfiles{
     $profileObj->retrieveFromDB();
 
     my $profile = $profileObj->getProfileAsString();
-print "PROFILE: $profile\n";
+
     my @values = split("\t", $profile);
 
     foreach my $name (keys %{$sets}){
-      foreach my $set (@{$$sets{$name}}){
+      foreach my $set ($$sets{$name}){
 	my $avg = $self->calculateAverage($set, \@values);
 	push(@avgs, $avg);
       }
     }
 
-    $self->createNewProfile(\@avgs, $newProfileSetId, $sourceIdType, \$count, \$skipped);
+    unshift(@avgs, $profileObj->getSourceId());
+
+    ($count, $skipped) = $self->createNewProfile(\@avgs, $newProfileSetId, $sourceIdType, $count, $skipped);
 
     if ($count % 100 == 0){
       $self->log("Created $count new averaged profiles.");
@@ -203,8 +205,7 @@ sub calculateAverage{
   my $sum = 0;
 
   foreach my $element (@{$set}){
-    $element--;
-    $sum += $$values[$element];
+    $sum += $$values[$element-1];
   }
 
   my $n = @{$set};
@@ -215,19 +216,19 @@ sub calculateAverage{
 
 sub createNewProfile{
   my($self, $avgProfile, $newProfileSetId, $sourceIdType, $count, $skipped) = @_;
-
-  my $elementCount = scalar(@{$avgProfile});
+  my $elementCount = scalar(@{$avgProfile}) - 1;
 
   my $newProfile = &makeProfile($self, $avgProfile, $newProfileSetId, $elementCount, $sourceIdType, 1, $self->getArg('loadProfileElement'));
 
   if($newProfile->retrieveFromDB()){
     $self->log("There is already an averaged profile for ". $newProfile->getId().". Skipping profile.");
-    $skipped ++;
+    $skipped++;
   }
 
   $newProfile->submit();
-  $count ++;
+  $count++;
 
+  return ($count, $skipped);
 }
 
 1;
