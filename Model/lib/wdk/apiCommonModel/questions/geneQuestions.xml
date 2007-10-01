@@ -1191,12 +1191,17 @@ Find genes that are predicted to encode a signal peptide.
              <columnAttribute name="antisense_count" displayName="Antisense Tag Count"
                               inReportMaker="false"/>
          </dynamicAttributes>
+       <propertyList name="genomeAttribution" includeProjects="PlasmoDB">
+         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
        <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
            <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
            <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
            <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
        </propertyList>
     </question>
 
