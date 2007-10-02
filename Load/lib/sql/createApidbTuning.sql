@@ -196,7 +196,7 @@ prompt apidb.FeatureLocation;
 
 create materialized view apidb.FeatureLocation&1 as
 select case
-         when ed.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+         when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
                           'TwinScanEt predictions') -- not 'tRNAscan-SE',
            then 'GenePrediction'
@@ -206,10 +206,11 @@ select case
        nf.na_sequence_id, nf.na_feature_id, nl.start_min, nl.end_max,
        nl.is_reversed
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
-     sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+     (select edr.external_database_release_id, ed.name
+      from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+      where edr.external_database_id = ed.external_database_id) db
 where nf.na_feature_id = nl.na_feature_id
-  and nf.external_database_release_id = edr.external_database_release_id
-  and edr.external_database_id = ed.external_database_id
+  and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = ns.na_sequence_id;
 
 grant select on apidb.FeatureLocation&1 TO gus_r;
@@ -486,14 +487,17 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
 create materialized view apidb.SageTagAnalysisAttributes&1 as
 select stf.source_id, dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, st.tag as sequence,
-       st.composite_element_id, lg.name as library_name
+       st.composite_element_id, a.name as library_name
 from dots.SageTagFeature stf, dots.NaLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
-     rad.AnalysisInput ai, rad.LogicalGroup lg,
+     rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
+     rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
       group by source_id) ct
 where ti.name = 'SAGETag'
+  and quant_ti.name = 'Assay'
+  --and di.name = 'RAD'
   and dtr.table_id = ti.table_id
   and st.composite_element_id = dtr.row_id
   and stf.source_id = st.composite_element_id
@@ -501,8 +505,11 @@ where ti.name = 'SAGETag'
   and ct.source_id = stf.source_id
   and dtr.analysis_id = ai.analysis_id
   and ai.logical_group_id = lg.logical_group_id
-group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
-         lg.name;
+  and lg.logical_group_id = ll.logical_group_id
+  and ll.row_id = a.assay_id
+  and ll.table_id = quant_ti.table_id
+  --and di.database_id = quant_ti.database_id
+group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id, a.name;
 
 create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, source_id);
 
