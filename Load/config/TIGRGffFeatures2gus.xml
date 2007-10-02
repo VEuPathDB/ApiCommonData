@@ -22,8 +22,8 @@
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
-    <qualifier name="CodingStart"    column="coding_start"/>
-    <qualifier name="CodingEnd"      column="coding_end"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
     <qualifier name="GenePrediction" column="source_id"/>
     <qualifier name="OrderNumber"    column="order_number"/>
   </feature>
