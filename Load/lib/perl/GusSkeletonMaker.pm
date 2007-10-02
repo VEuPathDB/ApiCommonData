@@ -206,6 +206,8 @@ sub makeGusExon {
 						$dbRlsId,
 						'GUS::Model::DoTS::ExonFeature',
 						$soTerms->{$type});
+
+#add exon coding start/stop here if the bioperl object has coding start/stop values, otherwise set to the exon start/stop
   return $gusExon;
 }
 
