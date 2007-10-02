@@ -14,7 +14,7 @@ use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
 
-  # (1) retype CDS into Gene
+  # (1) retype CDS or transcript into Gene
   # (4) create transcript, give it a copy of the gene's location
   # (5) add to gene
   # (6) add exons to transcript
