@@ -3,7 +3,7 @@ package ApiCommonData::Load::ExpressionProfileInsertion;
 require Exporter;
 @ISA = qw(Exporter);
 
-@EXPORT = qw(parseInputFile processInputProfileSet);
+@EXPORT = qw(parseInputFile processInputProfileSet makeProfileSet makeProfile);
 
 use strict;
 use Data::Dumper;
