@@ -2307,6 +2307,22 @@ sub InsertExpressionProfileFromProcessedResult {
                   "Inserting Rad Analysis for $extDbName");
 }
 
+sub InsertAveragedExpressionProfile {
+  my ($mgr, $profileSetName, $configFile) = @_;
+
+  my $signal = "average_" . $profileSetName;
+  $signal =~ s/[\s\(\)]//g;
+
+  return if $mgr->startStep("Loading AveragedExpressionProfile for $profileSetName", $signal);
+
+  my $args = "--profileSetName '$profileSetName' --configFile '$configFile'";
+
+  $mgr->runPlugin($signal,
+                  "ApiCommonData::Load::Plugin::MakeAveragedProfiles",
+                  $args,
+                  "Inserting Averaged Profiles for $profileSetName");
+}
+
 sub InsertRadAnalysisFromConfig {
   my ($mgr, $configFile, $name, $propName) = @_;
 
