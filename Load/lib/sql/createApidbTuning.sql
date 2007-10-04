@@ -1167,7 +1167,8 @@ SELECT CASE
            THEN 'GiardiaDB'
          ELSE 'ERROR: setting project in createBfmv.sql'
        END as project_id,
-       snp.source_id AS source_id,
+       snp.source_id,
+       snp.na_feature_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
        CASE WHEN ed.name = 'Su SNPs' THEN 'Su_SNPs'
@@ -1227,7 +1228,7 @@ GRANT SELECT ON apidb.SnpAttributes&1 TO gus_r;
 CREATE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id);
 
 CREATE INDEX apidb.Snp_Seq_ix&1
-       ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min);
+       ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min, na_feature_id);
 
 CREATE OR REPLACE SYNONYM apidb.SnpAttributes
                           FOR apidb.SnpAttributes&1;
