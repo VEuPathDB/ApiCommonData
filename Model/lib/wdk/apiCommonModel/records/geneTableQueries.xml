@@ -662,11 +662,11 @@
                    greatest(ef.coding_start, ef.coding_end) as gff_fend,
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
-                   mod((select nvl(sum(greatest(ef2.coding_start, ef2.coding_end)
+                   mod(3 - mod((select nvl(sum(greatest(ef2.coding_start, ef2.coding_end)
                                    - least(ef2.coding_start, ef2.coding_end) +1), 0)
                         from dots.ExonFeature ef2
                         where parent_id = ef.parent_id
-                          and order_number < ef.order_number), 3) as gff_phase,
+                          and order_number < ef.order_number), 3)) as gff_phase,
                    'apidb|rna_' || rna.source_id as gff_attr_parent,
                    'apidb|cds_' || rna.source_id as gff_attr_id,
                    'cds' as gff_attr_name,
