@@ -14,7 +14,7 @@ my($fastaFile,$gffFile,$outFile,$gffRegex,$fastaRegex);
             "fastaRegex|fr=s"=> \$fastaRegex,
             );
 
-die "provide fasta, gff and output files on command line\nfixMercatorOffsetsInGFF.pl --f <fastaFile> --g <gffFile> --o <outFile> --fr <fastaRegex ['^\>(\S+)'] --gr <gffRegex for sequence id ['(\S+)']\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
+die "provide fasta, gff and output files on command line\nfixMercatorOffsetsInGFF.pl --f <fastaFile> --g <gffFile> --o <outFile> --fr <fastaRegex ['^\>(\S+)']> --gr <gffRegex for sequence id ['(\S+)']>\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
 
 $fastaRegex = '^\>(\S+)' unless $fastaRegex;
 $gffRegex = '(\S+)' unless $gffRegex;
