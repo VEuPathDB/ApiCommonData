@@ -5,14 +5,19 @@ use strict;
 use CBIL::Bio::SequenceUtils;
 use Getopt::Long;
 
-my($fastaFile,$gffFile,$outFile);
+my($fastaFile,$gffFile,$outFile,$gffRegex,$fastaRegex);
 
 &GetOptions("fastaFile|f=s" => \$fastaFile, 
             "gffFile|g=s"=> \$gffFile,
             "outFile|o=s"=> \$outFile,
+            "gffRegex|gr=s"=> \$gffRegex,
+            "fastaRegex|fr=s"=> \$fastaRegex,
             );
 
-die "provide fasta and gff files on command line\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
+die "provide fasta, gff and output files on command line\nfixMercatorOffsetsInGFF.pl --f <fastaFile> --g <gffFile> --o <outFile> --fr <fastaRegex ['^\>(\S+)'] --gr <gffRegex for sequence id ['(\S+)']\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
+
+$fastaRegex = '^\>(\S+)' unless $fastaRegex;
+$gffRegex = '(\S+)' unless $gffRegex;
 
 ##parse fasta file ....
 open(S,"$fastaFile");
@@ -20,7 +25,8 @@ open(S,"$fastaFile");
 my %seq; 
 my $id = "";
 while(<S>){
-  if(/^\>(\S+)/){
+#  if(/^\>(\S+)/){
+  if(/$fastaRegex/){
     $id = $1;
   }else{
     chomp;
@@ -54,7 +60,8 @@ foreach my $id (keys%genes){
   }
   my $cds;
   foreach my $e (@exons){
-    $cds .= &getSequence($e->[0],$e->[3],$e->[4],$e->[6]);
+    my ($sid) = ($e->[0] =~ /$gffRegex/);
+    $cds .= &getSequence($sid,$e->[3],$e->[4],$e->[6]);
   }
 
   ##now translate and get offset ....
@@ -89,6 +96,7 @@ sub getOffset {
 
 sub getSequence {
   my($id,$start,$end,$strand) = @_;
+  print STDERR "Unable to find '$id' in sequence file $fastaFile\n" unless $seq{$id};
   $start--;  ##make into array context.  NOTE that now length is end - start;
   my $sequence = substr($seq{$id},$start,$end - $start);
   return $strand eq '+' ? $sequence : CBIL::Bio::SequenceUtils::reverseComplementSequence($sequence);
