@@ -36,6 +36,9 @@ GRANT insert, select, update, delete ON ApiDB.Synteny TO gus_w;
 GRANT select ON ApiDB.Synteny TO gus_r;
 GRANT select ON ApiDB.Synteny_sq TO gus_w;
 
+CREATE INDEX apidb.syn_ix
+ON apidb.Synteny(a_na_sequence_id, a_start, a_end, external_database_release_id);
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
@@ -99,8 +102,8 @@ WHERE 'SyntenyAnchor' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 CREATE INDEX apidb.SyntAnch_front_ix
-       ON apidb.SyntenyAnchor (ref_loc, next_ref_loc);
+       ON apidb.SyntenyAnchor (ref_loc, next_ref_loc, synteny_id);
 CREATE INDEX apidb.SyntAnch_back_ix
-       ON apidb.SyntenyAnchor (ref_loc, prev_ref_loc);
+       ON apidb.SyntenyAnchor (ref_loc, prev_ref_loc, synteny_id);
 ------------------------------------------------------------------------------
 exit;
