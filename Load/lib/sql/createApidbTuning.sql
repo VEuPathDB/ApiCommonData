@@ -203,8 +203,10 @@ select case
          else nf.subclass_view
        end as feature_type,
        nf.source_id as feature_source_id, ns.source_id as sequence_source_id,
-       nf.na_sequence_id, nf.na_feature_id, nl.start_min, nl.end_max,
-       nl.is_reversed
+       nf.na_sequence_id, nf.na_feature_id,
+       least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
+       greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
+       nl.is_reversed, nf.parent_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
@@ -487,14 +489,23 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
 create materialized view apidb.SageTagAnalysisAttributes&1 as
 select stf.source_id, dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, st.tag as sequence,
-       st.composite_element_id, a.name as library_name
+       st.composite_element_id, a.name as library_name,
+       library_total.total_count as library_total_tag_count,
+       (max(dtr.float_value) * 100) / library_total.total_count
+         as library_tag_percentage
 from dots.SageTagFeature stf, dots.NaLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
      rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
      rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
-      group by source_id) ct
+      group by source_id) ct,
+     (select dt.analysis_id, sum(float_value) as total_count
+      from rad.DataTransformationResult dt, rad.Analysis a, rad.Protocol p
+      where dt.analysis_id = a.analysis_id
+        and a.protocol_id = p.protocol_id
+        and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
+      group by dt.analysis_id) library_total
 where ti.name = 'SAGETag'
   and quant_ti.name = 'Assay'
   --and di.name = 'RAD'
@@ -509,7 +520,10 @@ where ti.name = 'SAGETag'
   and ll.row_id = a.assay_id
   and ll.table_id = quant_ti.table_id
   --and di.database_id = quant_ti.database_id
-group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id, a.name;
+  and dtr.analysis_id = library_total.analysis_id
+group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
+         a.name, library_total.total_count;
+
 
 create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, source_id);
 
