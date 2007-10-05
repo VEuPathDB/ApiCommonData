@@ -5,13 +5,14 @@ use strict;
 use CBIL::Bio::SequenceUtils;
 use Getopt::Long;
 
-my($fastaFile,$gffFile);
+my($fastaFile,$gffFile,$outFile);
 
 &GetOptions("fastaFile|f=s" => \$fastaFile, 
             "gffFile|g=s"=> \$gffFile,
+            "outFile|o=s"=> \$outFile,
             );
 
-die "provide fasta and gff files on command line\n" unless (-e "$fastaFile" && -e "$gffFile");
+die "provide fasta and gff files on command line\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
 
 ##parse fasta file ....
 open(S,"$fastaFile");
@@ -32,14 +33,16 @@ print STDERR "Parsed ",scalar(keys%seq)," sequences\n";
 ##now the gff file
 open(G,"$gffFile");
 my %genes;
+my @lines;
 while(<G>){
   my @tmp = split("\t",$_);
+  push(@lines,\@tmp);
   next unless $tmp[2] eq 'CDS';
   if($tmp[8] =~ /ID=(\S+?)\;/){
     push(@{$genes{$1}->{$tmp[2]}},\@tmp);
   }
 }
-
+close G;
 print STDERR "Parsed ",scalar(keys%genes)," genes\n";
 
 foreach my $id (keys%genes){
@@ -58,18 +61,20 @@ foreach my $id (keys%genes){
   my $offset = &getFirstOffset($id,$cds);
 #  print "$id\t$offset\n";
   ##now finish the thing off and go ahead and compute offset and print out
-  &printExons($id);
   my $first = shift(@exons);
-  $first->[7] = $offset;
-  print join("\t",@{$first});
+  $first->[7] = $offset; ##sets offset of the first exon
   my @upstream;
   push(@upstream,$first);
   foreach my $ex (@exons){
     $ex->[7] = getOffset($offset,\@upstream);
-    print join("\t",@{$ex});
     push(@upstream,$ex);
-
   }
+  ##now print the whole thing out
+  open(F,">$outFile");
+  foreach my $l (@lines){
+    print F join("\t",@{$l});
+  }
+  close F;
 }
 
 sub getOffset {
@@ -80,13 +85,6 @@ sub getOffset {
   }
   my $mod = ($len - $init) % 3;  ##adjust for that first exon problem
   return $mod == 0 ? 0 : 3 - $mod;
-}
-
-sub printExons {
-  my($id) = @_;
-  foreach my $e (@{$genes{$id}->{exon}}){
-    print join("\t",$e);
-  }
 }
 
 sub getSequence {
@@ -118,6 +116,7 @@ sub getFirstOffset {
   $ret{2} = $thirdCt;
   ##if here then need to print error msg and return the best one ...
   my @sort = sort{$ret{$a} <=> $ret{$b}}keys%ret;
-  print STDERR "$id: All reading frames contain stop codons ($firstCt, $secondCt, $thirdCt) .. using $sort[0]\n";
-  return $sort[0];
+  my $return = $ret{$sort[0]} <= 2 ? $sort[0] : 0;
+  print STDERR "$id: All reading frames contain stop codons ($firstCt, $secondCt, $thirdCt) .. using $return\n";
+  return $return;
 }
