@@ -76,13 +76,14 @@ foreach my $id (keys%genes){
     $ex->[7] = getOffset($offset,\@upstream);
     push(@upstream,$ex);
   }
-  ##now print the whole thing out
-  open(F,">$outFile");
-  foreach my $l (@lines){
-    print F join("\t",@{$l});
-  }
-  close F;
 }
+
+##now print the whole thing out
+open(F,">$outFile");
+foreach my $l (@lines){
+  print F join("\t",@{$l});
+}
+close F;
 
 sub getOffset {
   my($init,$ups) = @_;
