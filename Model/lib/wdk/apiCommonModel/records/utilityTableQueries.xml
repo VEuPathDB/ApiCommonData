@@ -52,6 +52,7 @@
         <!-- UtilityQueries.CurrentInstance -->
         <sqlQuery name="CurrentInstance" isCacheable='false'>
             <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
             <column name="global_name" />
             <column name="host_name" />
             <column name="address" />
@@ -76,6 +77,7 @@
         <!-- UtilityQueries.CacheState -->
         <sqlQuery name="CacheState" isCacheable='false'>
             <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
             <column name="cache_count" />
            <sql> 
             <![CDATA[           
@@ -88,6 +90,7 @@
         <!-- UtilityQueries.ApiCommDbLink -->
         <sqlQuery name="ApiCommDbLink" isCacheable='false'>
             <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
             <column name="apicomm_global_name" />
            <sql> 
             <![CDATA[           
@@ -100,6 +103,7 @@
         <!-- UtilityQueries.AllDbLinks -->
         <sqlQuery name="AllDbLinks" isCacheable='false'>
             <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
             <column name="owner" />
             <column name="db_link" />
             <column name="username" />
