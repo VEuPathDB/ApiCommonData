@@ -305,30 +305,30 @@ sub _getStartStop {
     $pos = $index + 1 ;
   }
 
-  $pos = 0;
-  my ($start, $stop) = (-1, -1);
-  my $index = 1;
+  my @answer;
+  my $start = 0;
+  my $cursor = 0;
 
-  while($index >= 0) {
-    $index = index($lcSeq, $mask, $pos);
+  foreach my $bp (split('', $lcSeq)) {
+    $cursor++;
 
-    my $inRegion = ($index == $pos);
+    # previously in unmasked region
+    if (!$start) { 
+      $start = $cursor if ($bp eq $mask);
+    }
 
-    if($inRegion && $start < 0) {
-      $start = $index - 1;
+    # previously in masked region
+    else {
+      if ($bp ne $mask) {
+        my $stop = $cursor - 1;
+        push(@answer, {start => $start, stop => $stop});
+        $start = 0;
+        $self->error("start_min [$start] > end_max [$stop]") if($start > $stop);
+      }
     }
-    elsif($inRegion && $start >= 0) {
-      $stop = $index;
-    }
-    elsif(!$inRegion && $start >= 0) {
-      my $tmp = {start => $start, stop => $stop};
-      push(@rv, $tmp);
-      $start = -1;
-    }
-    else {}
-    $pos = $index + 1;
   }
-  return(\@rv);
+
+  return(\@answer);
 }
 
 
@@ -446,8 +446,8 @@ sub undoTables {
 
   return ('DoTS.NALocation',
 	  'DoTS.AALocation',
-	  'DoTS.LowComplexityNAFeature',
-	  'DoTS.LowComplexityAAFeature'
+	  'DoTS.NAFeatureImp',
+	  'DoTS.AAFeatureImp'
 	 );
 }
 
