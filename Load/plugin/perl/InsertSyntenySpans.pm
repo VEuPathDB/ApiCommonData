@@ -146,7 +146,7 @@ sub _handleSyntenySpan {
       $b_start, $b_len,
       $strand) = split(" ", $line);
 
-  my ($a_pk) = $self->getQueryHandle()->selectrow_array(<<EOSQL, undef, $a_id, $extDbRlsIdA);
+  my ($a_pk) = $self->getDbHandle()->selectrow_array(<<EOSQL, undef, $a_id, $extDbRlsIdA);
   SELECT na_sequence_id
   FROM   @{[$self->getArg('seqTableA')]}
   WHERE  source_id = ?
@@ -154,7 +154,7 @@ sub _handleSyntenySpan {
 EOSQL
   $self->error("Couldn't find primary key for $a_id with external database release id $extDbRlsIdA\n") unless $a_pk;
   
-  my ($b_pk) = $self->getQueryHandle()->selectrow_array(<<EOSQL, undef, $b_id, $extDbRlsIdB);
+  my ($b_pk) = $self->getDbHandle()->selectrow_array(<<EOSQL, undef, $b_id, $extDbRlsIdB);
   SELECT na_sequence_id
   FROM   @{[$self->getArg('seqTableB')]}
   WHERE  source_id = ?
@@ -205,7 +205,7 @@ and seq.na_sequence_id = syn.a_na_sequence_id
 and seq.external_database_release_id = $extDbRlsIdA
 ";
 
-  my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
+  my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
   my $anchorCount = 0;
 
@@ -280,15 +280,23 @@ and seq.external_database_release_id = $extDbRlsIdA
 sub getFindGenesStmt {
   my ($self) = @_;
 
-  my $sql = "
-select g.na_feature_id, l.start_min, l.end_max
-from dots.GeneFeature g, dots.NaLocation l
-where g.na_sequence_id = ?
-and l.na_feature_id = g.na_feature_id
-and l.end_max > ?
-and l.start_min < ?
-";
-  return $self->getQueryHandle()->prepare($sql);
+#  my $sql = "
+#select g.na_feature_id, l.start_min, l.end_max
+#from dots.GeneFeature g, dots.NaLocation l
+#where g.na_sequence_id = ?
+#and l.na_feature_id = g.na_feature_id
+#and l.end_max > ?
+#and l.start_min < ?
+#";
+
+my $sql = "select na_feature_id, start_min, end_max
+from apidb.FEATURELOCATION
+where feature_type = 'GeneFeature'
+and na_sequence_id = ?
+and end_max > ?
+and start_min < ?";
+
+  return $self->getDbHandle()->prepare($sql);
 }
 
 sub findOrthologGroups {
@@ -299,7 +307,7 @@ select ssg.sequence_id, ssg.sequence_group_id, g.external_database_release_id
 from dots.SequenceSequenceGroup ssg, dots.genefeature g
 where g.na_feature_id = ssg.sequence_id
 ";
-  my $stmt = $self->getQueryHandle()->prepareAndExecute($sql);
+  my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
   my $gene2orthologGroup = {};
   my $orthologGroup2refGenes = {};
