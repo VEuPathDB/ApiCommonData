@@ -1,0 +1,80 @@
+<wdkModel>
+
+    <recordClassSet name="ArrayElementRecordClasses" includeProjects="PlasmoDB">
+        <recordClass idPrefix="" name="ArrayElementRecordClass"
+                     type="Array Element">
+
+           <projectParamRef ref="recordParams.Project"/>
+
+          <!-- =============================================================== -->
+          <!--   Reporters -->  
+          <!-- =============================================================== -->
+
+          <reporter name="tabular" displayName="Summary - TAB Delimited"
+                    implementation="org.gusdb.wdk.model.report.TabularReporter"/>
+          <reporter name="fullRecord" displayName="Detailed"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+        <!-- =================================================================== -->
+        <!--  Attributes  ++++++++-->
+        <!-- =================================================================== -->
+
+        <attributeQueryRef ref="ArrayElementAttributes.ProviderAndOrganism">
+            <columnAttribute name="provider" displayName="Provider"
+                             internal="false"/>
+            <columnAttribute name="genus_species" displayName="genus_species"
+                             internal="true"/>
+            <columnAttribute name="organism" displayName="Organism"
+                             internal="false"/>
+            <columnAttribute name="sequence" displayName="Sequence"
+                             internal="false"/>
+        </attributeQueryRef>
+
+     <!-- =================================================================== -->
+     <!-- Tables ++++++++-->
+     <!-- =================================================================== -->
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- mapped genes table -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <table name="Genes"
+               displayName="Mapped Genes"
+               queryRef="ArrayElementTables.Genes">
+            <columnAttribute name="source_id" internal="true"/>
+            <linkAttribute name="gene" displayName="Gene" visible="$$source_id$$">
+                 <url>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$source_id$$]]>
+                 </url>
+            </linkAttribute>
+        </table>
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- genomic locations table -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <table name="GenomicLocations"
+               displayName="Genomic Locations"
+               queryRef="ArrayElementTables.GenomicLocations">
+            <columnAttribute name="source_id" internal="true"/>
+            <linkAttribute name="genomicSequence" displayName="Genomic Sequence" visible="$$source_id$$">
+                 <url>
+                    <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$source_id$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="min_subject_start" displayName="Start"/>
+            <columnAttribute name="max_subject_end" displayName="End"/>
+            <columnAttribute name="gbrowse_start" internal="true"/>
+            <columnAttribute name="gbrowse_end" internal="true"/>
+            <columnAttribute name="is_reversed" displayName="Reversed"/>
+            <linkAttribute name="gbrowseLink" displayName="Genome Browser"
+                           visible="view">
+               <url>
+                <![CDATA[
+                @CGI_URL@/gbrowse/plasmodb/?name=$$source_id$$:$$gbrowse_start$$-$$gbrowse_end$$;enable=AnnotatedGenes
+                ]]>
+                </url>
+            </linkAttribute>
+        </table>
+
+       </recordClass>
+    </recordClassSet>
+</wdkModel>

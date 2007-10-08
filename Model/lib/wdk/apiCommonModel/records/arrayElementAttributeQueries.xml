@@ -1,0 +1,29 @@
+<wdkModel>
+
+    <querySet name="ArrayElementAttributes">
+        <sqlQuery name="ProviderAndOrganism" isCacheable="false" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="provider"/>
+            <column name="genus_species"/>
+            <column name="sequence"/>
+            <column name="organism"/>
+            <sql>
+            <![CDATA[
+            SELECT ens.source_id, ed.name as provider, ens.sequence,
+                   tn.name as genus_species,
+                   SUBSTR(tn.name, 1, 1) || '. '
+                   || SUBSTR(tn.name, INSTR(tn.name, ' ', 1, 1) +1) as organism
+            FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
+                 dots.ExternalNASequence ens, sres.TaxonName tn
+            WHERE ens.source_id = $$primaryKey$$
+              AND ens.external_database_release_id = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND tn.taxon_id = ens.taxon_id
+              AND tn.name_class = 'scientific name'
+             ]]>
+           </sql>
+      </sqlQuery>
+
+    </querySet>
+</wdkModel>

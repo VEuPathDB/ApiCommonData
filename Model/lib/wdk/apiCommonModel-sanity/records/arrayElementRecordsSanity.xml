@@ -1,0 +1,53 @@
+<sanityModel>
+
+  <!-- ============================================================ -->
+  <!-- == records == -->
+  <!-- ============================================================ -->
+
+      <sanityRecord ref="ArrayElementRecordClasses.ArrayElementRecordClass" 
+                    includeProjects="PlasmoDB"
+                    projectId="PlasmoDB" primaryKey="Ks382_1"/>
+
+
+  <!-- ============================================================ -->
+  <!-- == attribute queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ ProviderAndOrganism ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="ArrayElementAttributes.ProviderAndOrganism"
+            minOutputLength="1" maxOutputLength="1">
+        <sanityParam name="primaryKey" value="Ks382_1"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+ 
+
+  <!-- ============================================================ -->
+  <!-- == table queries == -->
+  <!-- ============================================================ -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ Genes ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="ArrayElementTables.Genes"
+            minOutputLength="1" maxOutputLength="5">
+        <sanityParam name="primaryKey" value="Ks382_1"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <!-- ++ GenomicLocations ++ -->
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+
+    <sanityQuery ref="ArrayElementTables.GenomicLocations"
+            minOutputLength="1" maxOutputLength="5">
+        <sanityParam name="primaryKey" value="Ks382_1"/>
+        <sanityParam name="projectId" value="PlasmoDB"/>
+    </sanityQuery>
+
+
+</sanityModel>

@@ -1,0 +1,63 @@
+<wdkModel>
+    <querySet name="ArrayElementTables" includeProjects="PlasmoDB">
+
+        <sqlQuery name="Genes" isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <sql>
+            <![CDATA[
+              SELECT t.source_id
+              FROM dots.Similarity s, dots.Transcript t,
+                   dots.ExternalNaSequence ens,
+                   core.TableInfo ti1, core.TableInfo ti2
+              WHERE ens.source_id = $$primaryKey$$
+                AND ens.na_sequence_id = s.query_id
+                AND 'ExternalNASequence' = ti1.name
+                AND ti1.table_id = s.query_table_id
+                AND 'Transcript' = ti2.name
+                AND ti2.table_id = s.subject_table_id
+                AND t.na_feature_id = s.subject_id
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <sqlQuery name="GenomicLocations" isCacheable="false" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="min_subject_start" />
+            <column name="max_subject_end" />
+            <column name="gbrowse_start" />
+            <column name="gbrowse_end" />
+            <column name="is_reversed" />
+            <sql>
+            <![CDATA[
+              SELECT ens2.source_id, s.min_subject_start, s.max_subject_end,
+                     s.is_reversed,
+                     s.min_subject_start - 25000 as gbrowse_start,
+                     s.min_subject_start + 25000 as gbrowse_end
+              FROM dots.Similarity s,
+                   dots.ExternalNaSequence ens1,
+                   core.TableInfo ti1,
+                   sres.ExternalDatabase ed2,
+                   sres.ExternalDatabaseRelease edr2,
+                   dots.ExternalNaSequence ens2,
+                   core.TableInfo ti2
+              WHERE ens1.source_id = $$primaryKey$$
+                AND ens1.na_sequence_id = s.query_id
+                AND 'ExternalNASequence' = ti1.name
+                AND ti1.table_id = s.query_table_id
+                AND ed2.name in ('Sanger P. falciparum chromosomes',
+                                 'Jane Carlton P. yoelii chromosomes')
+                AND ed2.external_database_id = edr2.external_database_id
+                AND edr2.external_database_release_id = ens2.external_database_release_id
+                AND ens2.na_sequence_id = s.subject_id
+                AND 'ExternalNASequence' = ti2.name
+                AND ti2.table_id = s.subject_table_id
+             ]]>
+           </sql>
+        </sqlQuery>
+
+    </querySet>
+</wdkModel>
