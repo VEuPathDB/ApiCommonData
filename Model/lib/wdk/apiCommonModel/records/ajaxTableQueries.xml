@@ -12,7 +12,7 @@
         <!-- AjaxTables.InterproTermList -->
         <sqlQuery name="InterproTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-         <!--   <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="accession"/>
             <column name="name"/>
             <column name="description"/>
@@ -39,7 +39,7 @@
         <!-- AjaxTables.BlastNTermList -->
         <sqlQuery name="BlastNTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-     <!--       <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql>
@@ -52,7 +52,7 @@
         <!-- AjaxTables.BlastPXTermList -->
         <sqlQuery name="BlastPXTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-<!--            <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql>
@@ -64,7 +64,7 @@
         <!-- AjaxTables.TBlastTermList -->
         <sqlQuery name="TBlastTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql>
@@ -80,7 +80,8 @@
 
         <!-- AjaxTables.Blast_Transcripts_Gemone_Est_TermList -->
         <sqlQuery name="Blast_Transcripts_Genome_Est_TermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.primaryKey"/>  
+            <paramRef ref="recordParams.projectId"/> 
             <column name="term"/>
             <column name="internal"/> 
             <sql>
@@ -93,6 +94,7 @@
         <!-- AjaxTables.Blast_Protein_Orf_TermList -->
         <sqlQuery name="Blast_Protein_Orf_TermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/> 
             <column name="term"/>
             <column name="internal"/>
             <sql>
@@ -108,7 +110,7 @@
         <!-- AjaxTables.BlastGeneOrganismTermList -->
         <sqlQuery name="BlastGeneOrganismTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
@@ -142,7 +144,7 @@
         <!-- AjaxTables.BlastESTOrganismTermList -->
         <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
@@ -172,7 +174,7 @@
         <!-- AjaxTables.BlastSequenceOrganismTermList -->
         <sqlQuery name="BlastSequenceOrganismTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
@@ -211,7 +213,7 @@
         <!-- AjaxTables.BlastORFOrganismTermList -->
         <sqlQuery name="BlastORFOrganismTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
-    <!--        <paramRef ref="recordParams.projectId"/> -->
+            <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
