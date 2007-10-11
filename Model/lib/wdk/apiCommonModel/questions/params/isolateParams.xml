@@ -59,8 +59,8 @@
 					<column name="term"/>
 					<sql>
 					<![CDATA[
-					SELECT distinct src.lab_host AS term,
-					src.lab_host      AS internal
+					SELECT distinct src.specific_host AS term,
+					src.specific_host      AS internal
 					FROM DoTS.source src
 					WHERE 
 					 specific_host is not null and

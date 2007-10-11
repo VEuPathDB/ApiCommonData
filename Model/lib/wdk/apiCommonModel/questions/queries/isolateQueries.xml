@@ -68,7 +68,7 @@
 						WHERE etn.na_sequence_id IN
 						  (SELECT sc.na_sequence_id
 						   FROM dots.source sc
-						   WHERE sc.lab_host in ('$$specific_host$$')
+						   WHERE sc.specific_host in ('$$specific_host$$')
 							 )
 						AND etn.source_id IS NOT NULL
 						AND etn.na_sequence_id = src.na_sequence_id
@@ -76,34 +76,7 @@
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
-			</sqlQuery>
-
-  </querySet>
-
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- Study name -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-		<sqlQuery name="IsolateByStudy" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.title" queryRef="studyVQ.withIsolates"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM DoTS.source src, DoTS.ExternalNASequence etn
-						WHERE etn.na_sequence_id IN
-						  (SELECT sc.na_sequence_id
-						   FROM dots.source sc
-						   WHERE sc.lab_host in ('$$specific_host$$')
-							 )
-						AND etn.source_id IS NOT NULL
-						AND etn.na_sequence_id = src.na_sequence_id
-						AND src.row_alg_invocation_id > 1000
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-			</sqlQuery>
+		</sqlQuery>
 
   </querySet>
 </wdkModel>
