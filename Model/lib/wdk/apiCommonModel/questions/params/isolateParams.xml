@@ -1,0 +1,74 @@
+<wdkModel>
+
+  <!-- notes
+
+     - should ms_assay param be a controlled vocab pulled from the database?
+
+  -->
+
+  <paramSet name="isolateParams">
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- ID -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <stringParam name="isolate_id"
+                     prompt="Isolate ID">
+        <help>
+             Enter an Isolate ID.  Wildcards (*) are allowed.
+        </help>
+            <suggest includeProjects="CryptoDB"
+                     sample="AY645178, DQ1145002, DQ115*"
+                     default="AY645178"/>
+        </stringParam>
+
+        <flatVocabParam name="isolate_organism"
+				         queryRef="organismIQ.withIsolates"
+								prompt="Organism"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			  </flatVocabParam>
+
+        <flatVocabParam name="specific_host"
+				         queryRef="hostVQ.withIsolates"
+								prompt="Host Name"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			</flatVocabParam>
+  </paramSet>
+
+  <querySet name="organismIQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct src.organism AS term,
+					src.organism      AS internal
+					FROM DoTS.source src
+					WHERE src.row_alg_invocation_id > 1000
+					]]>
+					</sql>
+			</sqlQuery>
+	 </querySet>
+
+  <querySet name="hostVQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct src.lab_host AS term,
+					src.lab_host      AS internal
+					FROM DoTS.source src
+					WHERE 
+					 specific_host is not null and
+					 src.row_alg_invocation_id > 1000
+					]]>
+					</sql>
+			</sqlQuery>
+	 </querySet>
+
+</wdkModel>
+
