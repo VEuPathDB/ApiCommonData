@@ -1,0 +1,51 @@
+<wdkModel>
+    <querySet name="IsolateAttributes">
+
+	    <sqlQuery name="Sequence" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="organism"/>
+            <column name="specific_host"/>
+            <column name="description"/>
+            <column name="sequence"/>
+            <sql excludeProjects="ApiDB">
+               SELECT etn.source_id, 
+							        src.organism || ' ' || src.strain as organism,
+							        src.specific_host,
+											etn.description,
+											etn.sequence,
+							        $$projectId$$ as project_id
+               FROM   dots.ExternalNASequence etn,
+							        dots.Source src
+               WHERE  etn.na_sequence_id = src.na_sequence_id  
+							        AND etn.source_id = $$primaryKey$$
+           </sql>
+      </sqlQuery>
+
+	    <sqlQuery name="Map" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="query_name"/>
+            <column name="target_name"/>
+            <column name="min_subject_start"/>
+            <column name="max_subject_end"/>
+            <column name="map"/>
+            <sql excludeProjects="ApiDB">
+               SELECT extq.source_id,
+							        extq.source_id query_name, 
+							        extt.source_id target_name, 
+											sim.min_subject_start,
+											sim.max_subject_end,
+							        extt.source_id || ':' || sim.min_subject_start || '..' || sim.max_subject_end as map, 
+							        $$projectId$$ as project_id
+               FROM   dots.SIMILARITY sim,
+											dots.EXTERNALNASEQUENCE extt,
+											dots.EXTERNALNASEQUENCE extq
+               WHERE  sim.query_id = extq.na_sequence_id  
+							        AND sim.subject_id = extt.na_sequence_id
+											AND extq.source_id = $$primaryKey$$
+           </sql>
+        </sqlQuery>
+
+    </querySet>
+</wdkModel>
