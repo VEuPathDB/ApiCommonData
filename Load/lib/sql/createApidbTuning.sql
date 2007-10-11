@@ -263,11 +263,12 @@ WHERE dr.secondary_identifier IS NOT NULL
                   'Predicted protein structures',
                   'GenBank')
 UNION
-SELECT lower(dr.primary_identifier) AS id, sns.source_id AS gene
-FROM dots.SplicedNaSequence sns, dots.dbrefNaSequence drns,
+SELECT lower(dr.primary_identifier) AS id, gf.source_id AS gene
+FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
       sres.ExternalDatabase ed
-WHERE sns.na_sequence_id = drns.na_sequence_id
+WHERE gf.na_feature_id = t.parent_id
+  AND t.na_sequence_id = drns.na_sequence_id
   AND drns.db_ref_id = dr.db_ref_id
   AND dr.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id 
