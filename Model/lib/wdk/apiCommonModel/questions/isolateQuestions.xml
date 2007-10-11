@@ -1,0 +1,92 @@
+<wdkModel>
+
+  <questionSet name="IsolateQuestions"
+               displayName="Search Isolates">
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Id -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="IsolateByIsolateId" 
+		          category="Other Attributes"
+              displayName="Isolates by ID"
+              queryRef="IsolateIds.IsolateByIsolateId" 
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="true">
+
+             <attributesList 
+               summary="organism, specific_host, map"
+             />
+             <summary>
+               Find Isolates by ID.
+             </summary>
+             <description>
+               Find Isolates by ID. The IDs are usually the Gebank accession number
+             </description>
+    </question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	  <!-- Taxon -->
+		<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<question name="IsolateByTaxon"
+					    category="Other Attributes"
+							displayName="Species"
+							queryRef="IsolateIds.IsolateByTaxon"
+							recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+					<attributesList
+              summary="organism, specific_host, map"
+				  /> 
+				  <summary> 
+					  Find isolates from one or more species.
+					</summary> 
+					<description> 
+					  <![CDATA[ 
+						  Find isolates from one or more species.  
+						]]> 
+					</description> 
+		</question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	  <!-- Specific Host -->
+		<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<question name="IsolateByHost"
+					    category="Other Attributes"
+							displayName="Host Name"
+							queryRef="IsolateIds.IsolateByHost"
+							recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+					<attributesList
+              summary="organism, specific_host, map"
+				  /> 
+				  <summary> 
+					  Find isolates by host name.
+					</summary> 
+					<description> 
+					  <![CDATA[ 
+						  Find isolates by host name.  
+						]]> 
+					</description> 
+			 </question>
+   </questionSet>
+
+	 <question name="IsolateByStudy"
+					    category="Other Attributes"
+							displayName="Study Name"
+							queryRef="IsolateIds.IsolateByStudy"
+							recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+					<attributesList
+              summary="organism, specific_host, map"
+				  /> 
+				  <summary> 
+					  Find isolates by study name.
+					</summary> 
+					<description> 
+					  <![CDATA[ 
+						  Find isolates by study name.  
+						]]> 
+					</description> 
+			 </question>
+  </questionSet>
+
+</wdkModel>
