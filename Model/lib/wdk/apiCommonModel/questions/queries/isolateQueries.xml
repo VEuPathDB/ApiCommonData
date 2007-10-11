@@ -1,0 +1,109 @@
+<wdkModel>
+  <querySet name="IsolateIds">
+
+   <!-- notes
+      
+      - changed ms_assay param names
+      - all components will have orfs so i changed the includes/excluded to reflect that
+
+    -->
+    
+    <!-- ************************************************************ -->
+    <!-- Isolate ID -->  
+    <!-- ************************************************************ -->
+ 
+    <sqlQuery name="IsolateByIsolateId" excludeProjects="ApiDB"
+              displayName="ID" isCacheable="true">
+        <paramRef ref="isolateParams.isolate_id"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql includeProjects="CryptoDB">
+            <![CDATA[
+                SELECT distinct nas.source_id as source_id, 
+								       '@PROJECT_ID@' as project_id
+                FROM   dots.ExternalNASequence nas
+                WHERE nas.source_id 
+								 LIKE REPLACE($$isolate_id$$,'*','%')
+            ]]>
+        </sql>
+    </sqlQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Taxon (Species) -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByTaxon" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM DoTS.source src, DoTS.ExternalNASequence etn
+						WHERE etn.na_sequence_id IN
+						  (SELECT sc.na_sequence_id
+						   FROM dots.source sc
+						   WHERE sc.organism in ('$$isolate_organism$$')
+							 )
+						AND etn.source_id IS NOT NULL
+						AND etn.na_sequence_id = src.na_sequence_id
+						AND src.row_alg_invocation_id > 1000
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+		</sqlQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Host name (Specific_host) -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByHost" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM DoTS.source src, DoTS.ExternalNASequence etn
+						WHERE etn.na_sequence_id IN
+						  (SELECT sc.na_sequence_id
+						   FROM dots.source sc
+						   WHERE sc.lab_host in ('$$specific_host$$')
+							 )
+						AND etn.source_id IS NOT NULL
+						AND etn.na_sequence_id = src.na_sequence_id
+						AND src.row_alg_invocation_id > 1000
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+			</sqlQuery>
+
+  </querySet>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Study name -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByStudy" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.title" queryRef="studyVQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM DoTS.source src, DoTS.ExternalNASequence etn
+						WHERE etn.na_sequence_id IN
+						  (SELECT sc.na_sequence_id
+						   FROM dots.source sc
+						   WHERE sc.lab_host in ('$$specific_host$$')
+							 )
+						AND etn.source_id IS NOT NULL
+						AND etn.na_sequence_id = src.na_sequence_id
+						AND src.row_alg_invocation_id > 1000
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+			</sqlQuery>
+
+  </querySet>
+</wdkModel>
