@@ -1,0 +1,59 @@
+<wdkModel>
+
+    <recordClassSet name="AssemblyRecordClasses" includeProjects="CryptoDB,ToxoDB">
+
+        <!-- AssemblyRecordClasses.AssemblyRecordClass -->
+        <recordClass idPrefix="" 
+          name="AssemblyRecordClass" type="EST Cluster"
+          attributeOrdering="reference">
+
+          <projectParamRef ref="recordParams.Project"/>
+
+          <!-- =============================================================== -->
+          <!--   Reporters -->  
+          <!-- =============================================================== -->
+
+          <reporter name="tabular" displayName="Summary - TAB Delimited"
+                    implementation="org.gusdb.wdk.model.report.TabularReporter"/>
+          <reporter name="fullRecord" displayName="Detailed"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+     <!-- =================================================================== -->
+     <!-- Tables ++++++++-->
+     <!-- =================================================================== -->
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- AlignmentInfo -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <table name="AlignmentInfo"
+               displayName="Alignments to genomic sequence"
+               queryRef="AssemblyTables.AlignmentInfo">
+            <columnAttribute inReportMaker="false" name="id" internal="true" />
+            <columnAttribute inReportMaker="false" name="contig"        internal="true" />
+            <columnAttribute inReportMaker="false" name="target_start"  internal="true" />
+            <columnAttribute inReportMaker="false" name="target_end"    internal="true" />
+            <columnAttribute inReportMaker="false" name="context_start" internal="true" />
+            <columnAttribute inReportMaker="false" name="context_end"   internal="true" />
+            <linkAttribute displayName="Genomic Seq" name="alignedcontig" visible="$$contig$$">
+                 <url>
+                    <![CDATA[
+                    showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$contig$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
+                    ]]>
+                 </url>
+            </linkAttribute>
+            <linkAttribute displayName="" name="alignmentlink" visible="View Alignment">
+                 <url includeProjects="CryptoDB">
+                    <![CDATA[
+                    /@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$contig$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
+                    ]]>
+                 </url>
+                 <url includeProjects="ToxoDB">
+                    <![CDATA[
+                    /@CGI_OR_MOD@/gbrowse/toxodb/?name=$$contig$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
+                    ]]>
+                 </url>
+            </linkAttribute>
+        </table>  
+      </recordClass>
+    </recordClassSet>
+</wdkModel>
