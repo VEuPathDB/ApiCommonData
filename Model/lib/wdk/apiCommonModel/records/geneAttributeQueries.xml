@@ -416,6 +416,7 @@
             <column name="graph_waters"/>
             <column name="graph_gametocyte"/>
             <column name="graph_cowman"/>
+            <column name="graph_mexp128"/>
             <sql>
             <![CDATA[
                SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
@@ -426,7 +427,8 @@
                       NVL(MAX(graph_dd2), 0) AS graph_dd2,
                       NVL(MAX(graph_waters), 0) AS graph_waters,
                       NVL(MAX(graph_gametocyte), 0) AS graph_gametocyte,
-                      NVL(MAX(graph_cowman), 0) AS graph_cowman
+                      NVL(MAX(graph_cowman), 0) AS graph_cowman,
+                      NVL(MAX(graph_mexp128), 0) AS graph_mexp128
                FROM apidb.ExpressionGraphSummary egs
                WHERE egs.source_id = $$primaryKey$$
             ]]>
