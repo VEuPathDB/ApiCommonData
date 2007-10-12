@@ -231,4 +231,13 @@ sub createNewProfile{
   return ($count, $skipped);
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.Profile',
+	  'ApiDB.ProfileElementName',
+	  'ApiDB.ProfileSet',
+	 );
+}
+
 1;
