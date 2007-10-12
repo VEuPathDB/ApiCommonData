@@ -78,5 +78,29 @@
 				 </sql>
 		</sqlQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate by Product -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByProduct" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM DoTS.ExternalNASequence etn, 
+						     DoTS.GeneFeature gf,
+						     DoTS.Transcript trp
+						WHERE gf.na_feature_id = trp.parent_id 
+						AND gf.na_sequence_id = etn.na_sequence_id
+						AND trp.product IN ('$$product$$')
+						AND etn.source_id IS NOT NULL
+						AND etn.row_alg_invocation_id > 1000
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+		</sqlQuery>
+
   </querySet>
 </wdkModel>

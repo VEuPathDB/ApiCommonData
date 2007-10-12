@@ -35,6 +35,14 @@
 								multiPick="true"
 								quote="false">
 					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			  </flatVocabParam>
+
+        <flatVocabParam name="product"
+				        queryRef="productVQ.withIsolates"
+								prompt="Product Name"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
 			</flatVocabParam>
   </paramSet>
 
@@ -65,6 +73,23 @@
 					WHERE 
 					 specific_host is not null and
 					 src.row_alg_invocation_id > 1000
+					]]>
+					</sql>
+			</sqlQuery>
+	</querySet>
+
+  <querySet name="productVQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct trp.product AS term,
+					trp.product      AS internal
+					FROM DoTS.Transcript trp
+					WHERE 
+					 trp.product is not null and
+					 trp.row_alg_invocation_id > 1000
 					]]>
 					</sql>
 			</sqlQuery>
