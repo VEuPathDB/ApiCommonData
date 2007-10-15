@@ -5,11 +5,11 @@
 
 				<projectParamRef ref="recordParams.Project"/>
 
-        <!-- =============================================================== -->
-				<!--   Reporters -->
-				<!-- =============================================================== -->
+      <!-- =============================================================== -->
+			<!--   Reporters -->
+			<!-- =============================================================== -->
 
-				<reporter name="tabular" displayName="Summary - TAB Delimited"
+			<reporter name="tabular" displayName="Summary - TAB Delimited"
 								implementation="org.gusdb.wdk.model.report.TabularReporter" />
 
       <!-- =================================================================== -->
@@ -37,7 +37,25 @@
          <columnAttribute name="min_subject_start" displayName="Target Start" internal="false" includeProjects="CryptoDB"/>
          <columnAttribute name="max_subject_end" displayName="Target End" internal="false" includeProjects="CryptoDB"/>
          <columnAttribute name="map" displayName="Mapping" internal="false" includeProjects="CryptoDB"/>
-       </attributeQueryRef>
+      </attributeQueryRef>
+
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Gene Product attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="IsolateAttributes.Gene">
+         <columnAttribute name="product" displayName="Product" internal="true" includeProjects="CryptoDB"/>
+      </attributeQueryRef>
+
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Protein Sequence attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequence">
+         <columnAttribute name="protein_sequence" displayName="Protein Sequence" internal="false" includeProjects="CryptoDB"/>
+         <columnAttribute name="gene_description" displayName="Gene Description" internal="false" includeProjects="CryptoDB"/>
+      </attributeQueryRef>
+
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	   <!-- overview -->
@@ -58,6 +76,10 @@
 						 <tr>
 							<td>Organism:</td>
 							<td><i>$$organism$$</i></td>
+						 </tr>
+						 <tr>
+							<td>Gene Description:</td>
+							<td><i>$$gene_description$$</i></td>
 						 </tr>
 					 </table>
 					]]>

@@ -45,7 +45,45 @@
 							        AND sim.subject_id = extt.na_sequence_id
 											AND extq.source_id = $$primaryKey$$
            </sql>
-        </sqlQuery>
+      </sqlQuery>
+
+	    <sqlQuery name="Gene" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="product"/>
+            <sql excludeProjects="ApiDB">
+               SELECT etn.source_id, 
+							        gf.product,
+							        $$projectId$$ as project_id
+               FROM   dots.ExternalNASequence etn,
+							        dots.Genefeature gf
+               WHERE  etn.na_sequence_id = gf.na_sequence_id  
+							        AND etn.source_id = $$primaryKey$$
+           </sql>
+      </sqlQuery>
+
+	    <sqlQuery name="ProteinSequence" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="gene_description"/>
+            <column name="protein_sequence"/>
+            <sql excludeProjects="ApiDB">
+               SELECT gf.source_id, 
+							        tas.description as gene_description,
+											tas.sequence as protein_sequence,
+							        $$projectId$$ as project_id
+               FROM   DoTS.TranslatedAAFeature taf,
+							        DoTS.TranslatedAASequence tas,
+							        DoTS.Transcript trp, 
+							        DoTS.GeneFeature gf,
+											DoTS.ExternalNASequence etn
+               WHERE  trp.na_feature_id = taf.na_feature_id
+							    AND tas.aa_sequence_id = taf.aa_sequence_id
+							    AND trp.parent_id = gf.na_feature_id
+									AND etn.na_sequence_id = gf.na_sequence_id
+							    AND etn.source_id = $$primaryKey$$
+           </sql>
+      </sqlQuery>
 
     </querySet>
 </wdkModel>
