@@ -999,6 +999,18 @@
                 select $$primaryKey$$ as source_id, 'OrthoMCL' as dataset,
                 'http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q='||$$primaryKey$$||'&groupredirect=1' as link_url
                 from dual
+                UNION
+                select gf.source_id,
+                'PlasmoMAP' as dataset,
+                r.remark as link_url
+                from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
+                dots.genefeature gf, sres.externaldatabase ed
+                where gf.source_id = $$primaryKey$$
+                and gf.na_feature_id = rf.na_feature_id
+                and rf.db_ref_id = r.db_ref_id
+                and r.external_database_release_id = rel.external_database_release_id
+                and rel.external_database_id = ed.external_database_id
+                and ed.name in ('plasmoMAP DbRefs')
                 ]]>
             </sql>
         </sqlQuery>
