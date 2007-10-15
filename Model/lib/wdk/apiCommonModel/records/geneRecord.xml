@@ -670,6 +670,22 @@
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Gene linkouts table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <table name="GeneLinkouts"
+                 displayName="External Links"
+                 queryRef="GeneTables.gene_dbrefs"
+                 includeProjects="PlasmoDB">
+            <columnAttribute name="dataset" displayName="Database" internal="true"/>
+            <columnAttribute name="source_id" internal="true"/>
+            <columnAttribute name="link_url" internal="true"/>
+            <linkAttribute name="db_link" displayName="Database Link" visible="$$dataset$$">
+                 <url>$$link_url$$</url>
+            </linkAttribute>
+          </table>
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- 3-D structure predictions table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

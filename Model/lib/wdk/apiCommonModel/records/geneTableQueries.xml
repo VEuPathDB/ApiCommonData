@@ -952,6 +952,58 @@
         </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- gene database links -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="gene_dbrefs" 
+                  isCacheable="false" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="dataset"/>
+            <column name="link_url"/>
+            <sql>
+            <![CDATA[
+               select gf.source_id,
+               DECODE(ed.name,'Winzeler_OPI_clusters','Winzeler OPI Cluster',
+                      'Winzeler_Literature_References','Winzeler Literature DB') as dataset,
+               r.remark || gf.source_id as link_url
+               from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
+               dots.genefeature gf, sres.externaldatabase ed
+               where gf.source_id = $$primaryKey$$
+               and gf.na_feature_id = rf.na_feature_id
+               and rf.db_ref_id = r.db_ref_id
+               and r.external_database_release_id = rel.external_database_release_id
+               and rel.external_database_id = ed.external_database_id
+               and ed.name in ('Winzeler_OPI_clusters','Winzeler_Literature_References')
+               UNION
+               select $$primaryKey$$ as source_id, 'UCSC <i>Plasmodium falciparum</i> genome browser' as dataset,
+               'http://areslab.ucsc.edu/cgi-bin/hgTracks?position=' || source_id as link_url
+               from apidb.geneattributes
+               where source_id = $$primaryKey$$
+               and project_id = $$projectId$$
+               and organism = 'Plasmodium falciparum 3D7'
+               UNION
+               select $$primaryKey$$ as source_id, 'GeneDB' as dataset,
+               DECODE(organism,
+                      'Plasmodium falciparum 3D7', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=malaria&desc=yes&wildcard=yes',
+                      'Plasmodium berghei strain ANKA','http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=pberghei&desc=yes&wildcard=yes',
+                      'Plasmodium chabaudi chabaudi', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=pchabaudi&desc=yes&wildcard=yes',
+                      'Plasmodium knowlesi strain H', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=pknowlesi&desc=yes&wildcard=yes'
+                      ) AS link_url
+                FROM apidb.geneattributes 
+                where project_id = $$projectId$$
+                and source_id = $$primaryKey$$
+                and organism in ('Plasmodium knowlesi strain H','Plasmodium chabaudi chabaudi','Plasmodium berghei strain ANKA','Plasmodium falciparum 3D7')
+                UNION
+                select $$primaryKey$$ as source_id, 'OrthoMCL' as dataset,
+                'http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q='||$$primaryKey$$||'&groupredirect=1' as link_url
+                from dual
+                ]]>
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- protein database links -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
