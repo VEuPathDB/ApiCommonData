@@ -10,6 +10,7 @@ CREATE TABLE apidb.OrthologGroup (
  avg_evalue_exp               NUMBER,
  number_of_match_pairs        NUMBER,
  aa_seq_group_experiment_id   NUMBER(12),
+ external_database_release_id NUMBER(10),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
