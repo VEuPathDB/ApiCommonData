@@ -818,27 +818,58 @@ order by project_id,sns2.source_id
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByMassSpec" includeProjects="PlasmoDB"
-              isCacheable="true">
-        <paramRef ref="geneParams.mass_spec_stage"/>
-        <paramRef ref="sharedParams.min_seq_coverage"/>
-        <paramRef ref="sharedParams.min_span_count"/>
+            isCacheable='true'>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pb"/>
+        <paramRef ref="geneParams.ms_assay"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
-        <column name="project_id"/>
-        <column name="source_id"/>
+        <column name="source_id" />
+        <column name="project_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
         <sql>
             <![CDATA[
-                SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-                FROM apidb.MassSpecSummary mss, dots.transcript t,
-                     dots.genefeature gf, dots.translatedAAFeature taf
-                WHERE (mss.developmental_stage = $$mass_spec_stage$$
-                          OR $$mass_spec_stage$$ = 'any')
-                  AND mss.aa_seq_percent_covered >= $$min_seq_coverage$$
-                  AND mss.number_of_spans >= $$min_span_count$$
-                  AND mss.spectrum_count >= $$min_spectrum_count$$
-                  AND taf.aa_sequence_id = mss.aa_sequence_id
-                  AND t.na_feature_id = taf.na_feature_id
-                  AND gf.na_feature_id = t.parent_id
-                  ORDER BY gf.source_id
+            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, 
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec,
+            dots.nasequence nas
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = t.na_feature_id
+            and t.parent_id = gf.na_feature_id
+            and gf.na_sequence_id = nas.na_sequence_id
+            and nas.taxon_id in 
+            (select taxon_id from sres.taxon
+             connect by parent_id = prior taxon_id
+             start with taxon_id in ($$organism$$))
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
        </sql>
     </sqlQuery>
@@ -963,6 +994,33 @@ order by project_id,sns2.source_id
         <wsColumn name="sum_sequence_count" />
         <wsColumn name="sum_spectrum_count" />
     </wsQuery>
+
+    <sqlQuery name="GenesByMassSpec2" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.mass_spec_stage"/>
+        <paramRef ref="sharedParams.min_seq_coverage"/>
+        <paramRef ref="sharedParams.min_span_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+                SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+                FROM apidb.MassSpecSummary mss, dots.transcript t,
+                     dots.genefeature gf, dots.translatedAAFeature taf
+                WHERE (mss.developmental_stage = $$mass_spec_stage$$
+                          OR $$mass_spec_stage$$ = 'any')
+                  AND mss.aa_seq_percent_covered >= $$min_seq_coverage$$
+                  AND mss.number_of_spans >= $$min_span_count$$
+                  AND mss.spectrum_count >= $$min_spectrum_count$$
+                  AND taf.aa_sequence_id = mss.aa_sequence_id
+                  AND t.na_feature_id = taf.na_feature_id
+                  AND gf.na_feature_id = t.parent_id
+                  ORDER BY gf.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesOrthologousToAGivenGene   COULD HAVE SQL ERRORS FOR APIDB -->

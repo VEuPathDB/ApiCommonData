@@ -394,28 +394,24 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList includeProjects="PlasmoDB,ApiDB"
-         summary="product"
-        /> 
-        <attributesList includeProjects="ToxoDB,CryptoDB"
+        <attributesList 
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
-        <summary>
+        <summary includeProjects="PlasmoDB,ApiDB">
            <![CDATA[
-                Find genes that have evidence of
-                expression in a specific lifecycle stage
-                or within a subcellular fraction of the parasite.
+            Find <i>P. berhei</i> genes that have evidence for protein expression
+            in male and female gametocytes.
           ]]>
         </summary>
 
         <propertyList name="organism" includeProjects="ApiDB">
-           <value>P. falciparum</value>
+           <value>P. berghei</value>
            <value>C. parvum</value>
            <value>T. gondii</value>
         </propertyList>
         <propertyList name="organism" includeProjects="PlasmoDB">
-           <value>P. falciparum</value>
+           <value>P. berghei</value>
         </propertyList>
         <propertyList name="organism" includeProjects="ToxoDB">
            <value>T. gondii</value>
@@ -426,33 +422,15 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 
         <description includeProjects="PlasmoDB">
             <![CDATA[
-                Find <I>P. falciparum</I> genes that have evidence of
-                expression in a specific lifecycle stage
-                or within a subcellular fraction. 
-                Select the stage or subcellular fraction and the 
-                threshold conditions for tandem mass spectrometry, 
-                MS/MS, evidence and only genes with mass-spec evidence will be
-                returned. A lower value for the minimum percent coverage or number of spans
-                will result in increased sensitivity and lower stringency.
-                If the minimum percent coverage is set to 0%, which is the default,
-                only genes with at least some mass-spec evidence will be returned.
-                Specifying a higher number of spectra will result in the
-                selection of proteins that are more abundant.
-                These values are not strictly quantitative
-                as the detection of proteins in MS/MS analyses is dependent on
-                solubility of the proteins and other factors.
-                <br><br>
-                Selecting "any" will result in returning genes that appear in
-                any of the available datasets.
-                <BR>
-                Please refer to the original papers for more information
-                on the experiments and experimental conditions.
+            Find <i>P. berhei</i> genes that have evidence for protein expression
+            in male and female gametocytes.
            ]]>
         </description>
 
         <propertyList includeProjects="PlasmoDB" name="specificAttribution">
-           <value>FlorensMassSpecData2002</value>
-           <value>FlorensMassSpecData2004</value>
+           <value>Waters_female_gametes</value>
+           <value>Waters_male_gametes</value>
+           <value>Waters_mixed_gametes</value>
         </propertyList>
         <propertyList includeProjects="PlasmoDB" name="genomeAttribution">
           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
@@ -519,10 +497,71 @@ one time.
              With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
              ]]>
              </description>
-	<dynamicAttributes includeProjects="CryptoDB,ToxoDB">
+	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB">
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
+    </question>
+
+
+    <question name="GenesByMassSpec2" includeProjects="PlasmoDB,ApiDB"
+         displayName="Protein Expression"
+         category="Protein Expression"
+         queryRef="GeneId.GenesByMassSpec2"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList includeProjects="PlasmoDB,ApiDB"
+         summary="product"
+        /> 
+        <summary>
+           <![CDATA[
+                Find genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction of the parasite.
+          ]]>
+        </summary>
+
+        <propertyList name="organism" includeProjects="ApiDB">
+           <value>P. falciparum</value>
+           <value>C. parvum</value>
+           <value>T. gondii</value>
+        </propertyList>
+        <propertyList name="organism" includeProjects="PlasmoDB">
+           <value>P. falciparum</value>
+        </propertyList>
+
+        <description includeProjects="PlasmoDB">
+            <![CDATA[
+                Find <I>P. falciparum</I> genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction. 
+                Select the stage or subcellular fraction and the 
+                threshold conditions for tandem mass spectrometry, 
+                MS/MS, evidence and only genes with mass-spec evidence will be
+                returned. A lower value for the minimum percent coverage or number of spans
+                will result in increased sensitivity and lower stringency.
+                If the minimum percent coverage is set to 0%, which is the default,
+                only genes with at least some mass-spec evidence will be returned.
+                Specifying a higher number of spectra will result in the
+                selection of proteins that are more abundant.
+                These values are not strictly quantitative
+                as the detection of proteins in MS/MS analyses is dependent on
+                solubility of the proteins and other factors.
+                <br><br>
+                Selecting "any" will result in returning genes that appear in
+                any of the available datasets.
+                <BR>
+                Please refer to the original papers for more information
+                on the experiments and experimental conditions.
+           ]]>
+        </description>
+
+        <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>FlorensMassSpecData2002</value>
+           <value>FlorensMassSpecData2004</value>
+        </propertyList>
+        <propertyList includeProjects="PlasmoDB" name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+        </propertyList>        
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
