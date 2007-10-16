@@ -56,6 +56,18 @@
          <columnAttribute name="gene_description" displayName="Gene Description" internal="false" includeProjects="CryptoDB"/>
       </attributeQueryRef>
 
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+		 <!-- Other Isolates Mapping table -->
+		 <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		 <table name="Mapping" includeProjects="CryptoDB"
+				    displayName="Isolates Mapping"
+				    queryRef="IsolateTables.Mapping">
+				<columnAttribute displayName="Accession" name="name"/>
+				<columnAttribute displayName="Organism" name="organism"/>
+				<columnAttribute displayName="Strain" name="strain"/>
+				<columnAttribute displayName="Host" name="specific_host"/>
+		 </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	   <!-- overview -->
@@ -85,6 +97,7 @@
 					]]>
 					</text>
 		 </textAttribute>
+
 
      </recordClass>
 
