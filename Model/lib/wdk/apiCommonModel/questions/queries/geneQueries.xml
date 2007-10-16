@@ -278,6 +278,7 @@
 <!--   <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="geneParams.BlastDatabaseType"/>
        <paramRef ref="geneSimilarityParams.BlastDatabaseOrganism"/>-->
+
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>
        <paramRef ref="sharedParams.-v"/>
@@ -1752,7 +1753,7 @@ order by project_id,sns2.source_id
   <!--  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionPercentile"  includeProjects="ToxoDB"
+    <sqlQuery name="ToxoGenesByExpressionPercentile"  includeProjects="ToxoDB"
           isCacheable='true'>
        <paramRef ref="geneParams.sample"/>
        <paramRef ref="geneParams.percentile"/>
@@ -1785,6 +1786,19 @@ order by project_id,sns2.source_id
             ]]>
           </sql>
     </sqlQuery>   
+
+
+<wsQuery name="ToxoGenesByExpressionPercentile" includeProjects="ApiDB"  
+        displayName="By Expression Percentile" 
+        isCacheable='true' 
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">      
+ <!--      <paramRef ref="params.tgorganism"/>  -->
+       <paramRef ref="geneParams.sample"/>
+       <paramRef ref="geneParams.percentile"/>
+       <wsColumn name="source_id" width="50" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="percentile" width="32" />
+    </wsQuery>   
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--  -->
