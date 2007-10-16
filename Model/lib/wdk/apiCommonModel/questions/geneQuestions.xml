@@ -1920,8 +1920,11 @@ References:
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="PlasmoDB"
          summary="organism,product,derisiOverlayPct"
+        /> 
+        <attributesList includeProjects="ApiDB"
+         summary="organism,product"
         /> 
         <summary>
           Find genes with peaks or troughs occuring within specified intervals during the intraerythrocytic infection cycle.
@@ -2010,7 +2013,7 @@ References:
          queryRef="GeneId.GenesByExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="product,winzelerPct"
+         summary="product,min_percentile,max_percentile"
         /> 
         <summary>
            <![CDATA[
@@ -2130,7 +2133,7 @@ References:
          queryRef="GeneId.BergheiGenesByExpressionPercentile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="product,watersPct"
+         summary="product"
         /> 
         <summary>
            <![CDATA[
