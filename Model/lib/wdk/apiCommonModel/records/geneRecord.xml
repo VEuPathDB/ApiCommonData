@@ -39,7 +39,7 @@
           <reporter name="srt" displayName="Sequence - configurable FASTA"
                     implementation=""/>
                     
-          <reporter name="gff3" displayName="Summary - GFF3"
+          <reporter name="gff3" displayName="Summary - GFF3" excludeProjects="ApiDB"  
                     implementation="org.apidb.apicommon.model.report.Gff3CachedReporter">
               <property name="table_cache">apidb.GeneTable</property>
               <property name="project_id_column">project_id</property>
@@ -50,7 +50,7 @@
           </reporter>
 
           <!-- the report maker used on commandline to generate gff download files -->
-          <reporter name="gff3Dump" displayName="Summary - GFF3"
+          <reporter name="gff3Dump" displayName="Summary - GFF3" excludeProjects="ApiDB"
                     inReportMaker="false"
                     implementation="org.apidb.apicommon.model.report.Gff3Reporter">
               <property name="table_cache">apidb.GeneTable</property>
@@ -62,7 +62,7 @@
           </reporter>
                     
           <!-- the report maker used on the website -->
-          <reporter name="fullRecord" displayName="Detailed - text"
+          <reporter name="fullRecord" displayName="Detailed - text" excludeProjects="ApiDB"
                     implementation="org.gusdb.wdk.model.report.FullRecordCachedReporter">
               <property name="table_cache">apidb.GeneTable</property>
               <property name="project_id_column">project_id</property>
@@ -70,7 +70,7 @@
           </reporter>
           
           <!-- the report maker used on commandline to generate detailed download files -->
-          <reporter name="fullRecordDump" displayName="Detailed - text"
+          <reporter name="fullRecordDump" displayName="Detailed - text" excludeProjects="ApiDB"
                     inReportMaker="false"
                     implementation="org.gusdb.wdk.model.report.FullRecordReporter">
               <property name="table_cache">apidb.GeneTable</property>
