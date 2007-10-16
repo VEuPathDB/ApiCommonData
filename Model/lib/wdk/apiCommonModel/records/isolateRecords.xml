@@ -56,6 +56,20 @@
          <columnAttribute name="gene_description" displayName="Gene Description" internal="false" includeProjects="CryptoDB"/>
       </attributeQueryRef>
 
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Reference attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="IsolateAttributes.Reference">
+         <columnAttribute name="title" displayName="Title" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="author" displayName="Author" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="year" displayName="Year" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="journal_or_book_name" displayName="Journal Name" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="journal_vol" displayName="Volume" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="journal_page" displayName="Page" internal="true" includeProjects="CryptoDB"/>
+      </attributeQueryRef>
+
+
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 		 <!-- Other Isolates Mapping table -->
 		 <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -97,6 +111,32 @@
 					]]>
 					</text>
 		 </textAttribute>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+	   <!-- attribution -->
+		 <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+		 <textAttribute name="attribution" displayName="Attribution"
+					internal="true" inReportMaker="false">
+					<text>
+					<![CDATA[
+					 <table>
+					   <tr>
+						  <td>Title:</td>
+							<td>$$title$$</td>
+						 </tr>
+						 <tr>
+							<td>Authors:</td>
+							<td>$$author$$</td>
+						 </tr>
+						 <tr>
+							<td>Journal:</td>
+							<td>$$journal_or_book_name$$ $$journal_vol$$ $$journal_page$$ $$year$$</td>
+						 </tr>
+					 </table>
+					]]>
+					</text>
+		 </textAttribute>
+
 
 
      </recordClass>

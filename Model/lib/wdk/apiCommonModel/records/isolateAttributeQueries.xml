@@ -85,5 +85,33 @@
            </sql>
       </sqlQuery>
 
+	    <sqlQuery name="Reference" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="title"/>
+            <column name="author"/>
+            <column name="year"/>
+            <column name="journal_or_book_name"/>
+            <column name="journal_vol"/>
+            <column name="journal_page"/>
+            <sql excludeProjects="ApiDB">
+               SELECT etn.source_id, 
+							        ref.title,
+											ref.author,
+											ref.year,
+											ref.journal_or_book_name,
+											ref.journal_vol,
+											ref.journal_page,
+							        $$projectId$$ as project_id
+               FROM   DoTS.ExternalNASequence etn,
+							        DoTS.NASequenceRef nasr,
+							        SRES.Reference ref
+               WHERE  nasr.reference_id = ref.reference_id
+							    AND etn.na_sequence_id = nasr.na_sequence_id
+							    AND etn.source_id = $$primaryKey$$
+								  AND RowNum = 1
+           </sql>
+      </sqlQuery>
+
     </querySet>
 </wdkModel>
