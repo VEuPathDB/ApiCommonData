@@ -43,7 +43,16 @@
 								multiPick="true"
 								quote="false">
 					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			</flatVocabParam>
+			  </flatVocabParam>
+
+        <flatVocabParam name="study"
+				        queryRef="studyVQ.withIsolates"
+								prompt="Study Name"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			  </flatVocabParam>
+
   </paramSet>
 
   <querySet name="organismIQ">
@@ -90,6 +99,22 @@
 					WHERE 
 					 trp.product is not null and
 					 trp.row_alg_invocation_id > 1000
+					]]>
+					</sql>
+			</sqlQuery>
+	 </querySet>
+
+  <querySet name="studyVQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct ref.title AS term,
+					ref.title      AS internal
+					FROM SRES.Reference ref
+					WHERE 
+					 ref.row_alg_invocation_id > 1000
 					]]>
 					</sql>
 			</sqlQuery>

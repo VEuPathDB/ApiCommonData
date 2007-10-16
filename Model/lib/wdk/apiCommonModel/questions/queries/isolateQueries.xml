@@ -102,5 +102,29 @@
 				 </sql>
 		</sqlQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate by Study -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByStudy" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM DoTS.ExternalNASequence etn, 
+						     DoTS.NASequenceRef nasr,
+								 SRES.Reference ref
+						WHERE nasr.reference_id = ref.reference_id
+						AND nasr.na_sequence_id = etn.na_sequence_id
+						AND ref.title IN ('$$study$$')
+						AND ref.title IS NOT NULL
+						AND ref.row_alg_invocation_id > 1000
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+		</sqlQuery>
+
   </querySet>
 </wdkModel>
