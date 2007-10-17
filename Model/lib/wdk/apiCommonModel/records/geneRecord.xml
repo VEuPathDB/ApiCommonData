@@ -950,6 +950,16 @@
             </text>
          </textAttribute>
 
+         <textAttribute name="dnaAlternateContext" displayName="Genomic Context"  includeProjects="ToxoDB"
+               internal="true" inReportMaker="false">
+            <text>
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
+         
+
          <textAttribute name="proteinFeatures" displayName="Protein Features" includeProjects="PlasmoDB,ToxoDB"
                         internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
