@@ -1166,8 +1166,8 @@ Find genes that are predicted to encode a signal peptide.
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
         <attributesList
-         summary="organism,location_text,product,sage_tag_count"
-         sorting="organism asc,sage_tag_count desc"
+         summary="organism,location_text,product,sense_count,antisense_count"
+         sorting="organism asc,sense_count desc"
         /> 
         <summary>
             Find genes with evidence of expression based on SAGE tag experiments.
@@ -1178,7 +1178,9 @@ Find genes that are predicted to encode a signal peptide.
           ]]>
         </description>
         <dynamicAttributes>
-             <columnAttribute name="sage_tag_count" displayName="Tag Count"
+             <columnAttribute name="sense_count" displayName="Sense Tag Count"
+                              inReportMaker="false"/>
+             <columnAttribute name="antisense_count" displayName="Antisense Tag Count"
                               inReportMaker="false"/>
          </dynamicAttributes>
     </question>
