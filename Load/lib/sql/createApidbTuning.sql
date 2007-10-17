@@ -990,11 +990,13 @@ SELECT CASE
            THEN 'GiardiaDB'
          ELSE 'ERROR: setting project in createBfmv.sql'
        END as project_id,
-       gf.source_id,
+       gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
        SUBSTR(gf.product, 1, 200) AS product,
-       LEAST(nl.start_min, nl.end_max) AS start_min,
-       GREATEST(nl.start_min, nl.end_max) AS end_max,
+       gf.is_pseudo,
+       LEAST(nl.start_min, nl.start_max, nl.end_min, nl.end_max) AS start_min,
+       GREATEST(nl.start_min, nl.start_max, nl.end_min, nl.end_max) AS end_max,
+       nl.is_reversed,
        sns.length AS transcript_length,
        GREATEST(0, least(nl.start_min, nl.end_max) - 5000)
            AS context_start,
@@ -1018,7 +1020,7 @@ SELECT CASE
        SUBSTR(edr.version, 1, 10) AS external_db_version,
        exons.exon_count, SUBSTR(cmnt.comment_string, 1, 300) AS comment_string,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num,
+       sequence.chromosome_order_num, sequence.na_sequence_id,
        go.annotated_go_component,
        go.annotated_go_function,
        go.annotated_go_process,
@@ -1093,6 +1095,9 @@ CREATE INDEX apidb.GeneAttr_sourceId&1
 
 CREATE INDEX apidb.GeneAttr_exon_ix&1
        ON apidb.GeneAttributes&1 (exon_count, source_id);
+
+CREATE INDEX apidb.GeneAttr_loc_ix&1
+       ON apidb.GeneAttributes&1 (na_sequence_id, start_min, end_max, is_reversed);
 
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
                           FOR apidb.GeneAttributes&1;
