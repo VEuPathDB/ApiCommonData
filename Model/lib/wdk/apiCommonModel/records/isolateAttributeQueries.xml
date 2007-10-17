@@ -8,11 +8,13 @@
             <column name="specific_host"/>
             <column name="description"/>
             <column name="sequence"/>
+            <column name="pcr_primer"/>
             <sql excludeProjects="ApiDB">
                SELECT etn.source_id, 
 							        src.organism || ' ' || src.strain as organism,
 							        src.specific_host,
 											etn.description,
+											src.label pcr_primer,
 											etn.sequence,
 							        $$projectId$$ as project_id
                FROM   dots.ExternalNASequence etn,
