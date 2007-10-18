@@ -7,12 +7,14 @@
             <column name="organism"/>
             <column name="specific_host"/>
             <column name="description"/>
+            <column name="isolate_source"/>
             <column name="sequence"/>
             <column name="pcr_primer"/>
             <sql excludeProjects="ApiDB">
                SELECT etn.source_id, 
 							        src.organism || ' ' || src.strain as organism,
-							        src.specific_host,
+							        src.specific_host || src.lab_host specific_host,
+											src.specimen_voucher as isolate_source,
 											etn.description,
 											src.label pcr_primer,
 											etn.sequence,
