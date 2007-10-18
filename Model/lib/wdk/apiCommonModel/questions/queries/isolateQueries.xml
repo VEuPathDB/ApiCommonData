@@ -28,6 +28,30 @@
         </sql>
     </sqlQuery>
 
+		<!-- ************************************************************ -->
+		<!-- Isolate Author -->
+		<!-- ************************************************************ -->
+
+		<sqlQuery name="IsolateByAuthor" excludeProjects="ApiDB"
+							displayName="Author" isCacheable="true">
+							<paramRef ref="isolateParams.author"/>
+			<column name="source_id"/>
+			<column name="project_id"/>
+			<sql includeProjects="CryptoDB">
+			<![CDATA[
+					SELECT distinct etn.source_id as source_id,
+							   '@PROJECT_ID@' as project_id
+					FROM   DoTS.ExternalNASequence etn,
+					       DoTS.NASequenceRef nasr,
+					  		 SRES.Reference ref
+					WHERE nasr.reference_id = ref.reference_id
+						AND etn.na_sequence_id = nasr.na_sequence_id
+						AND ref.author LIKE REPLACE($$author$$,'*','%')
+				 ]]>
+			</sql>
+		</sqlQuery>
+
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon (Species) -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
