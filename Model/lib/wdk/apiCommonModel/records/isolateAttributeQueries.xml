@@ -48,10 +48,16 @@
 							        $$projectId$$ as project_id
                FROM   dots.SIMILARITY sim,
 											dots.EXTERNALNASEQUENCE extt,
-											dots.EXTERNALNASEQUENCE extq
-               WHERE  sim.query_id = extq.na_sequence_id  
-							        AND sim.subject_id = extt.na_sequence_id
-											AND extq.source_id = $$primaryKey$$
+											dots.EXTERNALNASEQUENCE extq,
+											SRes.ExternalDatabaseRelease edr,
+											SRes.ExternalDatabase edb
+               WHERE  edr.external_database_id = edb.external_database_id
+								  AND edr.external_database_release_id = extq.external_database_release_id
+									AND edb.name = 'Isolates Data Test3'
+									AND edr.version = '2007-10-18'
+							    AND sim.query_id = extq.na_sequence_id  
+							    AND sim.subject_id = extt.na_sequence_id
+									AND extq.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 

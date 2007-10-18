@@ -183,5 +183,31 @@
 				 </sql>
 		</sqlQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate by Country -->
+	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+		<sqlQuery name="IsolateByCountry" excludeProjects="ApiDB">
+			  <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates"/>
+				<column name="source_id"/>
+				<column name="project_id"/>
+				<sql excludeProjects="ApiDB">
+					<![CDATA[
+						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+						FROM   DoTS.ExternalNASequence etn, 
+						       DoTS.Source src,
+								   SRes.ExternalDatabaseRelease edr,
+								   SRes.ExternalDatabase edb
+						WHERE  edr.external_database_id = edb.external_database_id
+						   AND edr.external_database_release_id = etn.external_database_release_id
+						   AND edb.name = 'Isolates Data Test3'
+						   AND edr.version = '2007-10-18'
+							 AND src.na_sequence_id = etn.na_sequence_id
+							 AND src.map IN ('$$country$$')
+						ORDER BY etn.source_id
+						]]>
+				 </sql>
+		</sqlQuery>
+
   </querySet>
 </wdkModel>

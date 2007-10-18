@@ -62,6 +62,14 @@
 					<useTermOnly value="true" includeProjects="CryptoDB"/>
 			  </flatVocabParam>
 
+        <flatVocabParam name="country"
+				        queryRef="countryVQ.withIsolates"
+								prompt="Country Name"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			  </flatVocabParam>
+
   </paramSet>
 
   <querySet name="organismIQ">
@@ -142,6 +150,29 @@
 					</sql>
 			</sqlQuery>
 	 </querySet>
+
+  <querySet name="countryVQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct src.map AS term,
+					       src.specific_host      AS internal
+					FROM   DoTS.Source src,
+					       DoTS.ExternalNASequence etn,
+					       SRes.ExternalDatabaseRelease edr,
+								 SRes.ExternalDatabase edb
+					WHERE  src.map is not null
+					   AND edr.external_database_id = edb.external_database_id
+					   AND edr.external_database_release_id = etn.external_database_release_id
+						 AND edb.name = 'Isolates Data Test3'
+						 AND edr.version = '2007-10-18'
+						 AND src.na_sequence_id = etn.na_sequence_id
+					]]>
+					</sql>
+			</sqlQuery>
+	</querySet>
 
 </wdkModel>
 
