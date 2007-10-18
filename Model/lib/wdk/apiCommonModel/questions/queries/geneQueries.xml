@@ -689,6 +689,7 @@ order by project_id,sns2.source_id
             group by gf.source_id
            ]]>
         </sql>
+
         <sql includeProjects="ToxoDB">
             <![CDATA[
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
@@ -1654,11 +1655,8 @@ order by project_id,sns2.source_id
                   AND gf2.source_id != gf1.source_id
                   group  by gf2.source_id
                   having count(*) >= $$min_num_query_matches$$
-        <column name="query_ids" />
-        <column name="mutual_information_scores" />
-        <column name="num_queries" />
-                UNION
-                SELECT gf2.source_id, count(*) as num_queries,
+             UNION
+                SELECT gf2.source_id, '@PROJECT_ID@' as project_id, count(*) as num_queries,
                     apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
                 FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
