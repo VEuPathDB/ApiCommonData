@@ -102,8 +102,8 @@ WHERE 'SyntenyAnchor' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 CREATE INDEX apidb.SyntAnch_front_ix
-       ON apidb.SyntenyAnchor (ref_loc, next_ref_loc, synteny_id);
+       ON apidb.SyntenyAnchor (synteny_id, ref_loc, next_ref_loc);
 CREATE INDEX apidb.SyntAnch_back_ix
-       ON apidb.SyntenyAnchor (ref_loc, prev_ref_loc, synteny_id);
+       ON apidb.SyntenyAnchor (synteny_id, ref_loc, prev_ref_loc);
 ------------------------------------------------------------------------------
 exit;
