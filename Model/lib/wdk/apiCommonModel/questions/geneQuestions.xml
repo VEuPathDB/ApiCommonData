@@ -296,6 +296,7 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 
         <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
+           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
         </propertyList> 
     </question>
 
@@ -372,6 +373,9 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 	     <columnAttribute name="num_noncoding" displayName="Non-coding SNPs" align="center"/>
 	</dynamicAttributes>
 
+       <propertyList name="genomeAttribution" includeProjects="PlasmoDB">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
         <propertyList name="specificAttribution">
            <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
            <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
@@ -405,19 +409,10 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
           ]]>
         </summary>
 
-        <propertyList name="organism" includeProjects="ApiDB">
-           <value>P. berghei</value>
-           <value>C. parvum</value>
-           <value>T. gondii</value>
-        </propertyList>
-        <propertyList name="organism" includeProjects="PlasmoDB">
-           <value>P. berghei</value>
-        </propertyList>
-        <propertyList name="organism" includeProjects="ToxoDB">
-           <value>T. gondii</value>
-        </propertyList>
-        <propertyList name="organism" includeProjects="CryptoDB">
-           <value>C. parvum</value>
+        <propertyList name="organism">
+           <value includeProjects="PlasmoDB,ApiDB">P. berghei</value>
+           <value includeProjects="ToxoDB,ApiDB">C. parvum</value>
+           <value includeProjects="CryptoDB,ApiDB">T. gondii</value>
         </propertyList>
 
         <description includeProjects="PlasmoDB">
@@ -1057,10 +1052,8 @@ Find genes that are predicted to encode a signal peptide.
         </description>
 
        <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL_LongString</value>
-           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL</value>
-           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2_Phyletic</value>
-           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2</value>
+           <value>OrthoMCLV2_Phyletic</value>
+           <value>OrthoMCLV2</value>
        </propertyList>
     </question>
 
@@ -1174,6 +1167,14 @@ Find genes that are predicted to encode a signal peptide.
             <columnAttribute name="text_fields"
                        displayName="Found in" align="center"/>
         </dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value>GO</value>
+           <value>GO_evidence_codes</value>
+           <value>InterproscanData</value>
+           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+           <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
+           <value>NRDB</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1231,7 +1232,7 @@ Find genes that are predicted to encode a signal peptide.
                               inReportMaker="false"/>
          </dynamicAttributes>
        <propertyList name="genomeAttribution" includeProjects="PlasmoDB">
-         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+         <value>P.falciparum_chromosomes</value>
        </propertyList>
        <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
@@ -1379,8 +1380,7 @@ Find genes that are predicted to encode a signal peptide.
         </description>
 
        <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ToxoDB,ApiDB">OrthoMCL</value>
-           <value includeProjects="CryptoDB,GiardiaDB,ApiDB">OrthoMCLV2</value>
+           <value>OrthoMCLV2</value>
        </propertyList>
 
     </question>
@@ -1834,14 +1834,13 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
 	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
 	</dynamicAttributes>
        <propertyList name="specificAttribution">
-         <value>Waters_arrayData</value>
-         <value>Waters_metaData</value>
          <value>berghei_gss_oligos</value>
+         <value>Waters_arrayData</value>
          <value>Waters_radAnalysis</value>
        </propertyList>
        <propertyList name="genomeAttribution">
-         <value includeProjects="PlasmoDB,ApiDB">P.berghei_wholeGenomeShotgunSequence</value>
-         <value includeProjects="PlasmoDB,ApiDB">P.berghei_Annotation</value>
+         <value>P.berghei_wholeGenomeShotgunSequence</value>
+         <value>P.berghei_Annotation</value>
        </propertyList>
     </question>
 
@@ -1892,6 +1891,16 @@ References:
 	<dynamicAttributes>
 	     <columnAttribute name="fold_change" displayName="Fold-change"/>
 	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>WinzelerGeneticVariationArray</value>
+         <value>CowmanStubbs_arrayData</value>
+         <value>CowmanDuraisingh_arrayData</value>
+         <value>CowmanBaum_arrayData</value>
+         <value>Cownam_radAnalysis</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -1901,7 +1910,7 @@ References:
 
     <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="Expression percentile in KO and WT"
+              displayName="Expression percentile in KO and WT (P.f.)"
               queryRef="GeneId.GenesByExpressionPercentileA" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -1948,6 +1957,16 @@ References:
 	<dynamicAttributes>
 	     <columnAttribute name="percentile" displayName="Percentile" align="center"/>
 	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>WinzelerGeneticVariationArray</value>
+         <value>CowmanStubbs_arrayData</value>
+         <value>CowmanDuraisingh_arrayData</value>
+         <value>CowmanBaum_arrayData</value>
+         <value>Cownam_radAnalysis</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1955,7 +1974,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
-         displayName="Expression Timing"
+         displayName="Expression Timing (P.f.)"
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1984,6 +2003,15 @@ References:
               glass slide array and analyze HB3, 3D7, and Dd2 parasites.
           ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value>DeRisi_oligos</value>
+         <value>derisi_3D7_time_series</value>
+         <value>derisi_Dd2_time_series</value>
+         <value>derisi_HB3_time_series</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -2047,7 +2075,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
-         displayName="Expression Percentile"
+         displayName="Expression Percentile (P.f.)"
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2100,9 +2128,8 @@ References:
                              inReportMaker="false"/>
         </dynamicAttributes>
        <propertyList name="specificAttribution">
+         <value>WinzelerGeneticVariationArray</value>
          <value>winzeler_cell_cycle</value>
-         <value>winzeler_gametocyte_expression</value>
-         <value></value>
        </propertyList>
        <propertyList name="genomeAttribution">
          <value>P.falciparum_chromosomes</value>
@@ -2115,7 +2142,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,ApiDB"
-         displayName="Gametocyte Expression"
+         displayName="Gametocyte Expression (P.f.)"
          category="Transcript Expression"
          queryRef="GeneId.GenesByGametocyteExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2159,6 +2186,14 @@ References:
                 <pre><b>References:</b><br>(1) Jason A. Young, Quinton L. Fivelman, Peter L. Blair, Patricia de la Vega,<br>Karine G. Le Roch, Yingyao Zhou, Daniel J. Carucci, David A. Baker, Elizabeth A. Winzeler<br><a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=16005087&dopt=Citation">The Plasmodium falciparum sexual development transcriptome: a microarray analysis using ontology-based pattern identification</a><br>Mol Biochem Parasitol. 2005 Jul 5; <br>(2) Zhou Y, Abagyan R.<br><a href="http://www.biomedcentral.com/1471-2105/3/3">Match-Only Integral Distribution (MOID) Algorithm for high-density oligonucleotide array analysis.</a><br>BMC Bioinformatics. 2002;3(1):3.</pre>
            ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value>WinzelerGeneticVariationArray</value>
+         <value>winzeler_gametocyte_expression</value>
+         <value></value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.falciparum_chromosomes</value>
+       </propertyList>
     </question>
 
 
@@ -2167,7 +2202,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
-         displayName="Expression Percentile"
+         displayName="Expression Percentile (P.b)"
          category="Transcript Expression"
          queryRef="GeneId.BergheiGenesByExpressionPercentile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2191,6 +2226,15 @@ Find <i>P. berghei</i> genes expressed in late schizont, ring, early trophozoite
 There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) and HPE is High Producer "E".  HP was mechanically passaged on a weekly basis from mouse to mouse and 10 independent experiments were set up (HPA-HPJ).  The parasites were observed, waiting for non-producing parasites to appear.  HPE was the chosen one. A deletion in HP was assumed to have created HPE (they are otherwise isogenic) and KO'd the production of gametocytes.  In such a scenario the non-producer would quickly overgrow the producer.  Both are cloned.
       ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value>berghei_gss_oligos</value>
+         <value>berghei_gss_time_series</value>
+         <value>berghei_gss_time_seriesHPE</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.berghei_wholeGenomeShotgunSequence</value>
+         <value>P.berghei_Annotation</value>
+       </propertyList>
     </question>
 
 
@@ -2199,7 +2243,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
-         displayName="Protein Expression"
+         displayName="Protein Expression (P.b)"
          category="Protein Expression"
          queryRef="GeneId.GenesByProteomicsProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2221,6 +2265,13 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
             Find <i>P. berghei</i> genes with the specified protein expression across different life cycle stages.  For each life cycle stage, choose "observed", "not observed" or "do not care".   Genes are returned that have a matching expression pattern.
             ]]>
         </description>
+       <propertyList name="specificAttribution">
+         <value>Waters_female_gametes</value>
+       </propertyList>
+       <propertyList name="genomeAttribution">
+         <value>P.berghei_wholeGenomeShotgunSequence</value>
+         <value>P.berghei_Annotation</value>
+       </propertyList>
     </question>
 
 
@@ -2321,7 +2372,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         </summary>
         <description>
            <![CDATA[
-           Find genes that have a homology-based
+           Find P.f. and P.y. genes that have a homology-based
            phylogenetic profile similar to a specified list of genes. This query also allows you to
            determine how similar in terms of phylogenetic profile the members of the query list are as they
            will hit more of the same genes the more similar the members of the query list are to one another.
@@ -2464,6 +2515,33 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         </description>
     </question>
 -->
+
+  <!--===========================================================================-->
+  <!-- place holder for multi-query page used by winzeler expression percentile -->
+  <!--===========================================================================-->
+    <question name="GenesByExpression" includeProjects="PlasmoDB"
+              displayName="Expression Percentile (P.f.)"
+              queryRef="GeneId.DontCare"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Gene Expression on Affy chips, from the Winzeler lab
+        </description>
+    </question>
+
+  </questionSet>
+
+
+
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+  <!-- Gene ID questions (internal)  -->
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+
+  <questionSet name="InternalQuestions"
+             displayName="Internal Questions"
+             internal="yes">
+
   <!--===========================================================================-->
   <!-- Internal questions for the combined winzeler query page  -->
   <!--===========================================================================-->
@@ -2503,41 +2581,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                               inReportMaker="false"/>
          </dynamicAttributes>
     </question>
-
-
-<!-- this is a duplicate.  why was it put here?  -sf
-    <question name="GenesByExpression" includeProjects="PlasmoDB"
-              displayName="All"
-              queryRef="GeneId.GenesByExpression"
-              recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
-              summary="organism,winzelerPct"
-        /> 
-        <description>
-              Gene Expression on Affy chips, from the Winzeler lab
-        </description>
-         <dynamicAttributes>
-             <columnAttribute name="max_percentile" displayName="Max Percentile"
-                              inReportMaker="false"/>
-             <columnAttribute name="min_percentile" displayName="Min Percentile"
-                              inReportMaker="false"/>
-         </dynamicAttributes>
-    </question>
--->
-
-  </questionSet>
-
-
-
-  <!--===========================================================================-->
-  <!--===========================================================================-->
-  <!-- Gene ID questions (internal)  -->
-  <!--===========================================================================-->
-  <!--===========================================================================-->
-
-  <questionSet name="InternalQuestions"
-             displayName="Internal Questions"
-             internal="yes">
 
   <!--===========================================================================-->
   <!-- Internal questions that are place holders in the query grid  -->
