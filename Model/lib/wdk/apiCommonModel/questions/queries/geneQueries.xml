@@ -673,11 +673,26 @@ order by project_id,sns2.source_id
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="met_pathways"/>
-        <sql includeProjects="PlasmoDB">
+        <sql includeProjects="PlasmoDBbroken">
             <![CDATA[
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
-              apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
+            FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
+              (SELECT idrnf.na_feature_id
+               FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
+               WHERE idr.primary_identifier = $$metabolic_pathway$$
+                 AND idrnf.db_ref_id = idr.db_ref_id) internal
+            WHERE internal.na_feature_id = drnf.na_feature_id
+            AND gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            group by gf.source_id
+           ]]>
+        </sql>
+ <sql includeProjects="PlasmoDB">
+            <![CDATA[
+              SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+              ' ' as met_pathways
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
               (SELECT idrnf.na_feature_id
                FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
