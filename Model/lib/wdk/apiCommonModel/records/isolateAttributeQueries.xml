@@ -17,10 +17,16 @@
 											src.label pcr_primer,
 											etn.sequence,
 							        $$projectId$$ as project_id
-               FROM   dots.ExternalNASequence etn,
-							        dots.Source src
+               FROM   DoTS.ExternalNASequence etn,
+							        DoTS.Source src,
+											SRes.ExternalDatabaseRelease edr,
+											SRes.ExternalDatabase edb
                WHERE  etn.na_sequence_id = src.na_sequence_id  
-							        AND etn.source_id = $$primaryKey$$
+							    AND edr.external_database_id = edb.external_database_id
+								  AND edr.external_database_release_id = etn.external_database_release_id
+									AND edb.name = 'Isolates Data Test3'
+									AND edr.version = '2007-10-18'
+							    AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
@@ -57,10 +63,16 @@
                SELECT etn.source_id, 
 							        gf.product,
 							        $$projectId$$ as project_id
-               FROM   dots.ExternalNASequence etn,
-							        dots.Genefeature gf
+               FROM   DoTS.ExternalNASequence etn,
+							        DoTS.Genefeature gf,
+											SRes.ExternalDatabaseRelease edr,
+											SRes.ExternalDatabase edb
                WHERE  etn.na_sequence_id = gf.na_sequence_id  
-							        AND etn.source_id = $$primaryKey$$
+							    AND edr.external_database_id = edb.external_database_id
+							    AND edr.external_database_release_id = etn.external_database_release_id
+									AND edb.name = 'Isolates Data Test3'
+									AND edr.version = '2007-10-18'
+							    AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
@@ -78,8 +90,14 @@
 							        DoTS.TranslatedAASequence tas,
 							        DoTS.Transcript trp, 
 							        DoTS.GeneFeature gf,
-											DoTS.ExternalNASequence etn
-               WHERE  trp.na_feature_id = taf.na_feature_id
+											DoTS.ExternalNASequence etn,
+											SRes.ExternalDatabaseRelease edr,
+											SRes.ExternalDatabase edb
+               WHERE  edr.external_database_id = edb.external_database_id
+							    AND edr.external_database_release_id = etn.external_database_release_id
+									AND edb.name = 'Isolates Data Test3'
+									AND edr.version = '2007-10-18'
+							    AND trp.na_feature_id = taf.na_feature_id
 							    AND tas.aa_sequence_id = taf.aa_sequence_id
 							    AND trp.parent_id = gf.na_feature_id
 									AND etn.na_sequence_id = gf.na_sequence_id
@@ -107,8 +125,14 @@
 							        $$projectId$$ as project_id
                FROM   DoTS.ExternalNASequence etn,
 							        DoTS.NASequenceRef nasr,
-							        SRES.Reference ref
-               WHERE  nasr.reference_id = ref.reference_id
+							        SRES.Reference ref,
+											SRes.ExternalDatabaseRelease edr,
+											SRes.ExternalDatabase edb
+               WHERE  edr.external_database_id = edb.external_database_id
+							    AND edr.external_database_release_id = etn.external_database_release_id
+									AND edb.name = 'Isolates Data Test3'
+									AND edr.version = '2007-10-18'
+							    AND nasr.reference_id = ref.reference_id
 							    AND etn.na_sequence_id = nasr.na_sequence_id
 							    AND etn.source_id = $$primaryKey$$
 								  AND RowNum = 1

@@ -19,11 +19,16 @@
         <column name="project_id"/>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-                SELECT distinct nas.source_id as source_id, 
+                SELECT distinct etn.source_id as source_id, 
 								       '@PROJECT_ID@' as project_id
-                FROM   dots.ExternalNASequence nas
-                WHERE nas.source_id 
-								 LIKE REPLACE($$isolate_id$$,'*','%')
+                FROM   DoTS.ExternalNASequence etn,
+								       SRes.ExternalDatabaseRelease edr,
+											 SRes.ExternalDatabase edb
+                WHERE  edr.external_database_id = edb.external_database_id
+								   AND edr.external_database_release_id = etn.external_database_release_id
+									 AND edb.name = 'Isolates Data Test3'
+									 AND edr.version = '2007-10-18'
+								   AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
             ]]>
         </sql>
     </sqlQuery>
@@ -43,10 +48,16 @@
 							   '@PROJECT_ID@' as project_id
 					FROM   DoTS.ExternalNASequence etn,
 					       DoTS.NASequenceRef nasr,
-					  		 SRES.Reference ref
-					WHERE nasr.reference_id = ref.reference_id
-						AND etn.na_sequence_id = nasr.na_sequence_id
-						AND ref.author LIKE REPLACE($$author$$,'*','%')
+					  		 SRES.Reference ref,
+								 SRes.ExternalDatabaseRelease edr,
+								 SRes.ExternalDatabase edb
+					WHERE  nasr.reference_id = ref.reference_id
+					   AND edr.external_database_id = edb.external_database_id
+					   AND edr.external_database_release_id = etn.external_database_release_id
+						 AND edb.name = 'Isolates Data Test3'
+						 AND edr.version = '2007-10-18'
+						 AND etn.na_sequence_id = nasr.na_sequence_id
+						 AND ref.author LIKE REPLACE($$author$$,'*','%')
 				 ]]>
 			</sql>
 		</sqlQuery>
@@ -63,15 +74,21 @@
 				<sql excludeProjects="ApiDB">
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM DoTS.source src, DoTS.ExternalNASequence etn
-						WHERE etn.na_sequence_id IN
-						  (SELECT sc.na_sequence_id
-						   FROM dots.source sc
-						   WHERE sc.organism in ('$$isolate_organism$$')
-							 )
-						AND etn.source_id IS NOT NULL
-						AND etn.na_sequence_id = src.na_sequence_id
-						AND src.row_alg_invocation_id > 1000
+						FROM   DoTS.source src, 
+						       DoTS.ExternalNASequence etn,
+									 SRes.ExternalDatabaseRelease edr,
+									 SRes.ExternalDatabase edb
+						WHERE  etn.na_sequence_id IN
+						       (SELECT sc.na_sequence_id
+						        FROM dots.source sc
+						        WHERE sc.organism in ('$$isolate_organism$$')
+							     )
+						   AND etn.source_id IS NOT NULL
+						   AND etn.na_sequence_id = src.na_sequence_id
+							 AND edr.external_database_id = edb.external_database_id
+							 AND edr.external_database_release_id = etn.external_database_release_id
+							 AND edb.name = 'Isolates Data Test3'
+							 AND edr.version = '2007-10-18'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -88,15 +105,21 @@
 				<sql excludeProjects="ApiDB">
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM DoTS.source src, DoTS.ExternalNASequence etn
+						FROM   DoTS.source src, 
+						       DoTS.ExternalNASequence etn,
+									 SRes.ExternalDatabaseRelease edr,
+									 SRes.ExternalDatabase edb
 						WHERE etn.na_sequence_id IN
-						  (SELECT sc.na_sequence_id
-						   FROM dots.source sc
-						   WHERE sc.specific_host in ('$$specific_host$$')
-							 )
-						AND etn.source_id IS NOT NULL
-						AND etn.na_sequence_id = src.na_sequence_id
-						AND src.row_alg_invocation_id > 1000
+						      (SELECT sc.na_sequence_id
+						       FROM dots.source sc
+						       WHERE sc.specific_host in ('$$specific_host$$')
+							     )
+						    AND etn.source_id IS NOT NULL
+						    AND etn.na_sequence_id = src.na_sequence_id
+								AND edr.external_database_id = edb.external_database_id
+								AND edr.external_database_release_id = etn.external_database_release_id
+								AND edb.name = 'Isolates Data Test3'
+								AND edr.version = '2007-10-18'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -115,12 +138,17 @@
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM DoTS.ExternalNASequence etn, 
 						     DoTS.GeneFeature gf,
-						     DoTS.Transcript trp
+						     DoTS.Transcript trp,
+								 SRes.ExternalDatabaseRelease edr,
+								 SRes.ExternalDatabase edb
 						WHERE gf.na_feature_id = trp.parent_id 
-						AND gf.na_sequence_id = etn.na_sequence_id
-						AND trp.product IN ('$$product$$')
-						AND etn.source_id IS NOT NULL
-						AND etn.row_alg_invocation_id > 1000
+						  AND gf.na_sequence_id = etn.na_sequence_id
+						  AND trp.product IN ('$$product$$')
+						  AND etn.source_id IS NOT NULL
+							AND edr.external_database_id = edb.external_database_id
+							AND edr.external_database_release_id = etn.external_database_release_id
+							AND edb.name = 'Isolates Data Test3'
+							AND edr.version = '2007-10-18'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -139,12 +167,17 @@
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM DoTS.ExternalNASequence etn, 
 						     DoTS.NASequenceRef nasr,
-								 SRES.Reference ref
+								 SRES.Reference ref,
+								 SRes.ExternalDatabaseRelease edr,
+								 SRes.ExternalDatabase edb
 						WHERE nasr.reference_id = ref.reference_id
 						AND nasr.na_sequence_id = etn.na_sequence_id
 						AND ref.title IN ('$$study$$')
 						AND ref.title IS NOT NULL
-						AND ref.row_alg_invocation_id > 1000
+						AND edr.external_database_id = edb.external_database_id
+						AND edr.external_database_release_id = etn.external_database_release_id
+						AND edb.name = 'Isolates Data Test3'
+						AND edr.version = '2007-10-18'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
