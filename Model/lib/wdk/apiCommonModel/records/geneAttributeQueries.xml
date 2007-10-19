@@ -435,6 +435,28 @@
             </sql>
         </sqlQuery>
 
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- toxo expression graphs -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="graph_starvation" />
+            <column name="graph_archetypal"/>
+            <sql>
+            <![CDATA[
+               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
+                      NVL(MAX(graph_starvation), 0) AS graph_starvation,
+                      NVL(MAX(graph_archetypal), 0) AS graph_archetypal
+               FROM apidb.ExpressionGraphSummary egs
+               WHERE egs.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- GFF sequence -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
