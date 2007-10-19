@@ -7,7 +7,7 @@
             <column name="source_id" />
             <sql>
             <![CDATA[
-              SELECT t.source_id
+              SELECT substr(t.source_id, 1, length(t.source_id)-2) as source_id
               FROM dots.Similarity s, dots.Transcript t,
                    dots.ExternalNaSequence ens,
                    core.TableInfo ti1, core.TableInfo ti2
