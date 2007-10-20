@@ -33,8 +33,11 @@
         <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
             SELECT distinct source_id, '@PROJECT_ID@' as project_id
-            FROM dots.NaSequence
+            FROM dots.NaSequence enas,
+                 sres.sequenceontology so
             WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
+            AND enas.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name in ('contig', 'supercontig')
            ]]>
         </sql>
     </sqlQuery>
