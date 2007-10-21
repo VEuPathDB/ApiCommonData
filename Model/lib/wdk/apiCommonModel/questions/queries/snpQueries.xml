@@ -56,6 +56,7 @@
 
         <sql>
             <![CDATA[
+select * from (
 SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
@@ -100,6 +101,7 @@ FROM
     AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)                             
     ) snpq                              
 GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+)
            ]]>
        </sql>
 
@@ -157,6 +159,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
         <sql>
             <![CDATA[
+select * from (
 SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
@@ -200,6 +203,7 @@ FROM
     AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)
     ) snpq                              
 GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
+)
            ]]>
        </sql>
     </sqlQuery>
@@ -243,6 +247,7 @@ GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allel
         <column name="major_strains"/>
         <sql>
             <![CDATA[
+select * from (
 select snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count,
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.allele END) AS apidb.varchartab), ', ') as minor_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.product END) AS apidb.varchartab), ', ') as minor_products,
@@ -272,6 +277,7 @@ FROM
     and sf.minor_allele is not null
     and sf.na_feature_id = sva.parent_id ) snpq 
 group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count
+)
            ]]>
        </sql>
     </sqlQuery>

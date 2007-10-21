@@ -673,8 +673,9 @@ order by project_id,sns2.source_id
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="met_pathways"/>
-        <sql includeProjects="PlasmoDBbroken">
+        <sql includeProjects="PlasmoDB">
             <![CDATA[
+              select * from (
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
 apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
@@ -687,26 +688,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             group by gf.source_id
-           ]]>
-        </sql>
- <sql includeProjects="PlasmoDB">
-            <![CDATA[
-              SELECT gf.source_id, '@PROJECT_ID@' as project_id,
-              ' ' as met_pathways
-            FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
-              (SELECT idrnf.na_feature_id
-               FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
-               WHERE idr.primary_identifier = $$metabolic_pathway$$
-                 AND idrnf.db_ref_id = idr.db_ref_id) internal
-            WHERE internal.na_feature_id = drnf.na_feature_id
-            AND gf.na_feature_id = drnf.na_feature_id
-            AND drnf.db_ref_id = dr.db_ref_id
-            group by gf.source_id
+            )
            ]]>
         </sql>
 
         <sql includeProjects="ToxoDB">
             <![CDATA[
+              select * from (
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
               apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
@@ -724,6 +712,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND taf.aa_feature_id = draf.aa_feature_id
             AND draf.db_ref_id = dr.db_ref_id
             GROUP BY gf.source_id
+            )
            ]]>
         </sql>
     </sqlQuery>
@@ -1650,6 +1639,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="num_queries" />
         <sql>
             <![CDATA[
+                select * from (
                 SELECT gf2.source_id, '@PROJECT_ID@' as project_id, count(*) as num_queries,
                     apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids,
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
@@ -1694,6 +1684,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   AND gf2.source_id != gf1.source_id
                   group  by gf2.source_id
                   having count(*) >= $$min_num_query_matches$$
+                )
            ]]>
        </sql>
     </sqlQuery>
@@ -1728,6 +1719,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="queries_matched"/>
         <sql>
             <![CDATA[
+                select * from (
                 SELECT gf2.source_id, '@PROJECT_ID@' as project_id, 
                   apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                   apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
@@ -1762,6 +1754,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                       where intds.dataset_id = $$ds_gene_ids$$)
                 GROUP BY gf2.source_id
                 HAVING count(*) >= $$min_num_query_matches$$
+              )
            ]]>
        </sql>
     </sqlQuery>

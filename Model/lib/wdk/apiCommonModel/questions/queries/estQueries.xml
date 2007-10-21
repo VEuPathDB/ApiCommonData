@@ -61,6 +61,7 @@
         </sqlParamValue>
         <sql excludeProjects="CryptoDB">
             <![CDATA[
+            select * from (
             SELECT accession as source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(
                      CAST(
@@ -79,6 +80,7 @@
             AND   percent_est_bases_aligned >= $$min_percent_est_aligned$$
             AND   library_id in ($$libraryId$$)
 	    GROUP BY accession
+            )
            ]]>
         </sql>
         <sql includeProjects="CryptoDB">
@@ -170,6 +172,7 @@
        <column name="genes"  excludeProjects="CryptoDB"/>
        <sql excludeProjects="CryptoDB">
             <![CDATA[
+              select * from (
               SELECT accession as source_id, '@PROJECT_ID@' as project_id,
                   apidb.tab_to_string(
                     CAST(
@@ -199,6 +202,7 @@
                 AND library_id in ($$libraryId$$)
             )          
             GROUP BY accession
+            )
            ]]>
        </sql>
 
