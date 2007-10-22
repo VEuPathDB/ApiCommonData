@@ -109,6 +109,7 @@
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
             WHERE nf.source_id=$$primaryKey$$
               AND nf.na_feature_id = nfc.na_feature_id
+              AND NOT to_char(comment_string) = 'NULL;'
             ]]>
             </sql>
             <sql includeProjects="CryptoDB"> 
