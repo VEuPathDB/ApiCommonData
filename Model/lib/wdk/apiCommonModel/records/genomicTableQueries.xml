@@ -34,7 +34,7 @@
             <sql>
             <![CDATA[
               SELECT DISTINCT c.comment_id, c.stable_id,
-                     NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
+                     c.headline AS headline,
                      (u.first_name || ' ' || u.last_name) AS user_name,
 					 u.organization,
                      c.comment_date
