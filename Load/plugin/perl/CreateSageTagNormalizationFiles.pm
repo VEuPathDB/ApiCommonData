@@ -137,14 +137,13 @@ sub makeDisplayNameHash {
 
   my %rv;
 
-  my $names = $self->getArg('assayToDisplayMapping');
+  if(my $names = $self->getArg('assayToDisplayMapping')) {
 
-  return unless($names);
+    foreach(@$names) {
+      my ($assayName, $displayName) = split(/\|/, $_);
 
-  foreach(@$names) {
-    my ($assayName, $displayName) = split(/\|/, $_);
-
-    $rv{$assayName} = $displayName;
+      $rv{$assayName} = $displayName;
+    }
   }
   return \%rv;
 }
