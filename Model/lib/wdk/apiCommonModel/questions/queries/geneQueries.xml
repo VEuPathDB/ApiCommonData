@@ -967,7 +967,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   ORDER BY gf.source_id
            ]]>
        </sql>
-    </sqlQuery>
+    </sqlQuery> 
+
+    <wsQuery name="GenesByMassSpec2" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+            isCacheable='true'>
+        <paramRef ref="geneParams.mass_spec_stage"/>
+        <paramRef ref="sharedParams.min_seq_coverage"/>
+        <paramRef ref="sharedParams.min_span_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <wsColumn name="source_id" />
+        <wsColumn name="project_id" />
+    </wsQuery>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
