@@ -4,8 +4,7 @@
 
         <!-- AssemblyRecordClasses.AssemblyRecordClass -->
         <recordClass idPrefix="" 
-          name="AssemblyRecordClass" type="EST Cluster"
-          attributeOrdering="reference">
+          name="AssemblyRecordClass" type="Assembly">
 
           <projectParamRef ref="recordParams.Project"/>
 
@@ -28,31 +27,40 @@
         <table name="AlignmentInfo"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
-            <columnAttribute inReportMaker="false" name="id" internal="true" />
-            <columnAttribute inReportMaker="false" name="contig"        internal="true" />
+            <columnAttribute inReportMaker="false" name="id"            internal="true" />
+            <columnAttribute inReportMaker="false" name="sequence_id"   internal="true" />
             <columnAttribute inReportMaker="false" name="target_start"  internal="true" />
             <columnAttribute inReportMaker="false" name="target_end"    internal="true" />
             <columnAttribute inReportMaker="false" name="context_start" internal="true" />
             <columnAttribute inReportMaker="false" name="context_end"   internal="true" />
-            <linkAttribute displayName="Genomic Seq" name="alignedcontig" visible="$$contig$$">
+
+            <linkAttribute displayName="Genomic Seq" name="alignedcontig" visible="$$sequence_id$$">
                  <url>
                     <![CDATA[
-                    showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$contig$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
+                    showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
                     ]]>
                  </url>
             </linkAttribute>
+
+            <columnAttribute inReportMaker="false" name="percent_identity" />
+            <columnAttribute inReportMaker="false" name="score" />
+            <columnAttribute inReportMaker="false" name="count" />
+            <columnAttribute inReportMaker="false" name="is_consistent" />
+            <columnAttribute inReportMaker="false" name="is_reversed" />
+
             <linkAttribute displayName="" name="alignmentlink" visible="View Alignment">
                  <url includeProjects="CryptoDB">
                     <![CDATA[
-                    /@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$contig$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
+                    /@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
                     ]]>
                  </url>
                  <url includeProjects="ToxoDB">
                     <![CDATA[
-                    /@CGI_OR_MOD@/gbrowse/toxodb/?name=$$contig$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
+                    /@CGI_OR_MOD@/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=AnnotatedGenes;label=DoTSAssemblies;h_feat=$$id$$
                     ]]>
                  </url>
             </linkAttribute>
+
         </table>  
       </recordClass>
     </recordClassSet>
