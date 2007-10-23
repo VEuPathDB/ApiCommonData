@@ -1275,8 +1275,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
                select gene_source_id as source_id, 
                       '@PROJECT_ID@' as project_id,
-                      sum(sense_count) as sense_count,
-                      sum(antisense_count) as antisense_count
+                      round(sum(sense_count),1) as sense_count,
+                      round(sum(antisense_count),1) as antisense_count
                from 
                  (select stg.gene_source_id, stg.tag_source_id,
                          stg.sense_count, stg.antisense_count
