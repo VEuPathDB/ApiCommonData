@@ -2542,6 +2542,26 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Internal questions for the combined winzeler query page  -->
   <!--===========================================================================-->
 
+
+ <question name="GenesByExpression" includeProjects="PlasmoDB"
+              displayName="All"
+              queryRef="GeneId.GenesByExpression"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <description>
+              Gene Expression on Affy chips, from the Winzeler lab
+        </description>
+         <attributesList
+              summary="product,winzelerPct"
+        /> 
+         <dynamicAttributes>
+             <columnAttribute name="max_percentile" displayName="Max Percentile"
+                              inReportMaker="false"/>
+             <columnAttribute name="min_percentile" displayName="Min Percentile"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+
     <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB"
                displayName="Asexual"
               queryRef="GeneId.GenesByIntraerythrocyticExpression"
