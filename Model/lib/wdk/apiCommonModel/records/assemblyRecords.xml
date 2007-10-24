@@ -27,14 +27,14 @@
         <table name="AlignmentInfo"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
-            <columnAttribute inReportMaker="false" name="id"            internal="true" />
-            <columnAttribute inReportMaker="false" name="sequence_id"   internal="true" />
-            <columnAttribute inReportMaker="false" name="target_start"  internal="true" />
-            <columnAttribute inReportMaker="false" name="target_end"    internal="true" />
-            <columnAttribute inReportMaker="false" name="context_start" internal="true" />
-            <columnAttribute inReportMaker="false" name="context_end"   internal="true" />
+            <columnAttribute name="id"            internal="true" />
+            <columnAttribute name="sequence_id"   internal="true" />
+            <columnAttribute name="target_start"  internal="true" />
+            <columnAttribute name="target_end"    internal="true" />
+            <columnAttribute name="context_start" internal="true" />
+            <columnAttribute name="context_end"   internal="true" />
 
-            <linkAttribute displayName="Genomic Seq" name="alignedcontig" visible="$$sequence_id$$">
+            <linkAttribute displayName="Genomic Sequence" name="alignedcontig" visible="$$sequence_id$$">
                  <url>
                     <![CDATA[
                     showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
@@ -42,13 +42,13 @@
                  </url>
             </linkAttribute>
 
-            <columnAttribute inReportMaker="false" name="percent_identity" />
-            <columnAttribute inReportMaker="false" name="score" />
-            <columnAttribute inReportMaker="false" name="count" />
-            <columnAttribute inReportMaker="false" name="is_consistent" />
-            <columnAttribute inReportMaker="false" name="is_reversed" />
+            <columnAttribute name="percent_identity" />
+            <columnAttribute name="score" />
+            <columnAttribute name="count" />
+            <columnAttribute name="is_consistent" />
+            <columnAttribute name="is_reversed" />
 
-            <linkAttribute displayName="" name="alignmentlink" visible="View Alignment">
+            <linkAttribute displayName="Alignment" name="alignmentlink" visible="view">
                  <url includeProjects="CryptoDB">
                     <![CDATA[
                     /@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
@@ -62,6 +62,18 @@
             </linkAttribute>
 
         </table>  
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- LibraryInfo -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <table name="LibraryInfo" includeProjects="ToxoDB"
+               displayName="Libraries"
+               queryRef="AssemblyTables.LibraryInfo">
+            <columnAttribute displayName="Library"  name="library"/>
+            <columnAttribute displayName="number of ESTs" name="est_count"/>
+        </table>  
+
+
       </recordClass>
     </recordClassSet>
 </wdkModel>

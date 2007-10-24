@@ -43,5 +43,27 @@
             ]]>
             </sql>
         </sqlQuery>
+
+
+        <!-- AssemblyTables.LibraryInfo -->
+        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="library" />
+            <column name="est_count" />
+            <sql>
+            <![CDATA[
+            SELECT l.dbest_name as library, count(e.est_id) as est_count
+            FROM   dots.est e, dots.library l, dots.assemblysequence a
+            WHERE  'TgDT.' || a.assembly_na_sequence_id || '.tmp' = $$primaryKey$$
+              AND  a.na_sequence_id = e.na_sequence_id
+              AND  e.library_id = l.library_id 
+            GROUP BY l.dbest_name
+            ORDER BY est_count desc
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
     </querySet>
 </wdkModel>
