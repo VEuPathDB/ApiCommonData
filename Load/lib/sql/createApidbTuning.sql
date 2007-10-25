@@ -988,7 +988,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
@@ -1120,7 +1120,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
@@ -1185,7 +1185,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        snp.source_id,
        snp.na_feature_id,
@@ -1270,7 +1270,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        SUBSTR(m.source_id, 1, 60) AS source_id,
        LOWER(SUBSTR(m.source_id, 1, 60)) AS lowercase_source_id,
@@ -1319,7 +1319,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        ens.source_id,
        e.seq_primer AS primer,
@@ -1378,7 +1378,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createBfmv.sql'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
