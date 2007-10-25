@@ -1487,13 +1487,13 @@ CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
 -- cleanup
 ---------------------------
 prompt Run these statements to test synonyms
-select 'select count(*) from ' || owner || '.' || synonym_name || ';'
+select 'select count(*) as ' || synonym_name || ' from ' || owner || '.' || synonym_name || ';'
        as "synonym tests"
 from all_synonyms
 where owner='APIDB';
 
 prompt These mviews appear superfluous (their names end in four digits but no synonym points at them).
-prompt Consider carefully dropping them.
+prompt Consider dropping them if all synonyms are OK.
 
 SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS drops
 FROM all_mviews
