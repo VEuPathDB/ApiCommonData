@@ -19,7 +19,7 @@
             <sql includeProjects="PlasmoDB">
                 SELECT gene as source_id
                 FROM apidb.GeneAlias
-                WHERE alias = $$primaryKey$$
+                WHERE lower(alias) = lower($$primaryKey$$)
             </sql>
             <sql excludeProjects="PlasmoDB">
                 SELECT $$primaryKey$$ as source_id
