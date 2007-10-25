@@ -17,7 +17,8 @@
             <column name="count" />
             <column name="is_consistent" />
             <column name="is_reversed" />
-            <sql>
+
+            <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT etn.source_id as sequence_id,
                    'TgDT.' || a.na_sequence_id || '.tmp' as id,
@@ -42,20 +43,59 @@
             ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
             ]]>
             </sql>
+
+            <sql includeProjects="CryptoDB">
+            <![CDATA[
+            SELECT etn.source_id as sequence_id,
+                   'TgDT.' || a.na_sequence_id || '.tmp' as id,
+                   blat.target_start,
+                   blat.target_end,
+                   blat.target_start - 10000 as context_start,
+                   blat.target_end + 10000 as context_end,
+                   decode(blat.is_consistent,0,'No',1,'Yes',blat.is_consistent) as is_consistent, 
+                   decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
+                   blat.percent_identity,       
+                   blat.score || '' score, 
+                   a.number_of_contained_sequences as count
+            FROM   dots.BlatAlignment blat, 
+                   dots.Assembly a, 
+                   dots.ExternalNASequence etn
+            WHERE  blat.query_na_sequence_id = a.na_sequence_id 
+              AND  blat.target_na_sequence_id = etn.na_sequence_id 
+              AND  etn.external_database_release_id = blat.target_external_db_release_id 
+              AND  (blat.target_end - blat.target_start ) < 5000 
+              AND  blat.is_best_alignment = 1 
+              AND a.na_sequence_id = 11834
+            ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
+            ]]>
+            </sql>
         </sqlQuery>
 
 
         <!-- AssemblyTables.LibraryInfo -->
-        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB">
+        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="library" />
             <column name="est_count" />
-            <sql>
+
+            <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT l.dbest_name as library, count(e.est_id) as est_count
             FROM   dots.est e, dots.library l, dots.assemblysequence a
             WHERE  'TgDT.' || a.assembly_na_sequence_id || '.tmp' = $$primaryKey$$
+              AND  a.na_sequence_id = e.na_sequence_id
+              AND  e.library_id = l.library_id 
+            GROUP BY l.dbest_name
+            ORDER BY est_count desc
+            ]]>
+            </sql>
+
+            <sql includeProjects="CryptoDB">
+            <![CDATA[
+            SELECT l.dbest_name as library, count(e.est_id) as est_count
+            FROM   dots.est e, dots.library l, dots.assemblysequence a
+            WHERE  a.assembly_na_sequence_id = $$primaryKey$$
               AND  a.na_sequence_id = e.na_sequence_id
               AND  e.library_id = l.library_id 
             GROUP BY l.dbest_name
