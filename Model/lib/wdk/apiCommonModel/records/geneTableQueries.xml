@@ -1217,7 +1217,7 @@
             <column name="comment_string"/>
             <sql>
 			<![CDATA[
-			SELECT content AS comment_string, '@PROJECT_ID@' as project_id
+			SELECT NVL(c.headline, '<i>none</i>') AS comment_string, '@PROJECT_ID@' as project_id
 			FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
 			WHERE c.stable_id = $$primaryKey$$
 				AND c.review_status_id = 'task'
