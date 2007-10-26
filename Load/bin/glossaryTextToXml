@@ -26,7 +26,8 @@ foreach my $term (@$glossArray) {
 
     # make links pointing to other entries in the glossary
     foreach my $term2 (keys %$glossHash) {
-	next if $term eq $term2;
+	next if $term2 eq $term;
+	next if $term2 eq 'Gene';  # just too common 
 	my $link = "<a href=\"#${term2}\">${term2}</a>";
 	# in following regex, avoid making substitution into links
 	# and, handle case insensitivity, plural and parantheses 
