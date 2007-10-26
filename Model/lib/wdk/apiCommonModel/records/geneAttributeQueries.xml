@@ -530,6 +530,39 @@
         </sql>
       </sqlQuery>
 
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Protein Id's and Linkouts -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="Protein_Linkout" isCacheable='true' includeProjects="CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="protein_id" />
+            <column name="linkout" />
+            <sql>
+            <![CDATA[           
+            SELECT 
+                  g.source_id,
+                  DECODE (
+                       protein_id, null, 
+                           '', 
+                           'Genbank Protein Record ' ||
+                           '(<a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=' ||
+                            protein_id         || 
+                            '">' || 
+                            protein_id         ||
+                            '</a>)'
+                       )
+                  as linkout, 
+                  t.protein_id
+            FROM  dots.transcript t, dots.genefeature g
+            WHERE g.source_id = $$primaryKey$$
+            AND   g.na_feature_id = t.parent_id(+)
+            ]]>
+            </sql>
+        </sqlQuery>
     </querySet>
 
 </wdkModel>

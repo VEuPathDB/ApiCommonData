@@ -566,7 +566,7 @@
           <!-- Pathways table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB"
+          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
                  displayName="Metabolic Pathways"
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
@@ -679,6 +679,15 @@
                  <url>$$gi_url$$</url>
             </linkAttribute>
           </table>
+
+          <attributeQueryRef ref="GeneAttributes.Protein_Linkout" includeProjects="CryptoDB">
+                <columnAttribute name="protein_id" displayName="Protein ID"
+                                 internal="true" />
+                <columnAttribute name="linkout"
+                                 inReportMaker="false"
+                                 internal="true" />
+          </attributeQueryRef>
+
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Gene linkouts table -->  
@@ -986,7 +995,15 @@
          </textAttribute>
 
 
-
+         <textAttribute name="ptoolsgeneurl" displayName="" 
+                          inReportMaker="false"
+                          internal="true" includeProjects="CryptoDB">
+             <text>
+                  <![CDATA[
+                      <a href="@PATHWAYTOOLS_GENE_URL@">CryptoCyc Metabolic Pathway Database</a>
+                  ]]>
+             </text>
+          </textAttribute>
 
         </recordClass>
 
