@@ -8,10 +8,13 @@ open(FILE, $glossaryTabFile) || die "can't open file '$glossaryTabFile'\n";
 
 # firt pass, make hash
 my $glossHash;
+my $glossArray;
 while(<FILE>) {
     chomp;
     my ($term,$def) = split(/\t/);
+    next unless $term;
     $glossHash->{$term} = $def;
+    push(@$glossArray, $term);
 }
 
 # embed links in definitions where they include references to other terms
@@ -19,11 +22,15 @@ print qq{<?xml version="1.0" encoding="UTF-8"?>
 <xmlAnswer>
 };
 
-foreach my $term (sort(keys(%$glossHash))) {
+foreach my $term (@$glossArray) {
+
+    # make links pointing to other entries in the glossary
     foreach my $term2 (keys %$glossHash) {
 	next if $term eq $term2;
-	my $link = "URLURL${term}URLURL";
-	$glossHash->{$term} =~ s/ $term2 / $link /g;
+	my $link = "<a href=\"#${term2}\">${term2}</a>";
+	# in following regex, avoid making substitution into links
+	# and, handle case insensitivity, plural and parantheses 
+	$glossHash->{$term} =~ s/([\s\W|\s])($term2)(s?)(\W)/$1<a href=\"#$term2\">$2$3<\/a>$4/gi;
     }
     
     my $wdkString = qq{
