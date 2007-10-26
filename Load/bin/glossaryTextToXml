@@ -15,24 +15,23 @@ while(<FILE>) {
 }
 
 # embed links in definitions where they include references to other terms
-print qq{
-<?xml version="1.0" encoding="UTF-8"?>
+print qq{<?xml version="1.0" encoding="UTF-8"?>
 <xmlAnswer>
 };
 
 foreach my $term (sort(keys(%$glossHash))) {
-    foreach my $term2 (%$glossHash) {
+    foreach my $term2 (keys %$glossHash) {
 	next if $term eq $term2;
-	my $link = "whatever";
-	$glossHash->{$term} =~ s/$term2/$link/g;
+	my $link = "URLURL${term}URLURL";
+	$glossHash->{$term} =~ s/ $term2 / $link /g;
     }
     
     my $wdkString = qq{
    <record>
-       <attribute name="tern">$term</attribute>
+       <attribute name="term">$term</attribute>
        <attribute name="definition">
          <![CDATA[
-$def
+$glossHash->{$term}
           ]]>
        </attribute>
     </record>
@@ -41,14 +40,14 @@ $def
     print $wdkString;
 }
 
-print "</xmlAnswer>";
+print "</xmlAnswer>\n";
 
 sub usage {
     print "
 convert glossary file in tab-delimited text to wdk record xml
 
-usage:
-glossaryTextToXml tabfile
+usage:glossaryTextToXml tabfile
+
 ";
     exit(1);
 }
