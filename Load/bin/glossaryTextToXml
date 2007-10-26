@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+use strict;
+
+my $glossaryTabFile = $ARGV[0];
+&usage() unless $glossaryTabFile;
+
+open(FILE, $glossaryTabFile) || die "can't open file '$glossaryTabFile'\n";
+
+# firt pass, make hash
+my $glossHash;
+while(<FILE>) {
+    chomp;
+    my ($term,$def) = split(/\t/);
+    $glossHash->{$term} = $def;
+}
+
+# embed links in definitions where they include references to other terms
+print qq{
+<?xml version="1.0" encoding="UTF-8"?>
+<xmlAnswer>
+};
+
+foreach my $term (sort(keys(%$glossHash))) {
+    foreach my $term2 (%$glossHash) {
+	next if $term eq $term2;
+	my $link = "whatever";
+	$glossHash->{$term} =~ s/$term2/$link/g;
+    }
+    
+    my $wdkString = qq{
+   <record>
+       <attribute name="tern">$term</attribute>
+       <attribute name="definition">
+         <![CDATA[
+$def
+          ]]>
+       </attribute>
+    </record>
+
+};
+    print $wdkString;
+}
+
+print "</xmlAnswer>";
+
+sub usage {
+    print "
+convert glossary file in tab-delimited text to wdk record xml
+
+usage:
+glossaryTextToXml tabfile
+";
+    exit(1);
+}
