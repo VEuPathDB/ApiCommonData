@@ -28,13 +28,30 @@ print qq{<?xml version="1.0" encoding="UTF-8"?>
 foreach my $term (@$glossArray) {
 
     # make links pointing to other entries in the glossary
-    foreach my $term2 (keys %$glossHash) {
+    # do it in two passes to avoid embedding links into links
+    my @termsSortedByLength = sort { length($a) > length($b) } @$glossArray;
+    my %tempReplacementsHash;
+    my $termsFoundCount;
+    # first pass: find all terms, and replace them w/ a temp place holder
+    foreach my $term2 (@termsSortedByLength) {
 	next if $term2 eq $term;
 	next if $term2 eq 'Gene';  # just too common 
-	my $link = "<a href=\"#${term2}\">${term2}</a>";
-	# in following regex, avoid making substitution into links
-	# and, handle case insensitivity, plural and parantheses 
-	$glossHash->{$term} =~ s/([\s\W|\s])($term2)(s?)(\W)/$1<a href=\"#$term2\">$2$3<\/a>$4/gi;
+	$termsFoundCount++;
+	# in following regex, avoid making substitution into hyper links
+	# and, handle case insensitivity and simple plurals
+	# also, only find the first occurance so as not to bore the user
+        # finding first also has the benefit of not finding terms embedded in hyperlinks (which
+        # in practice always come after real terms) 
+	if ($glossHash->{$term} =~ /\b($term2)(s?)\b/i) {
+	    my $foundTerm ="$1$2"; 
+	    my $tempReplacement = "FOUNDTERM_${termsFoundCount}_";
+	    $tempReplacementsHash{$tempReplacement} = "<a href=\"#$term2\">$1$2<\/a>";
+	    $glossHash->{$term} =~ s/$foundTerm/$tempReplacement/;
+	}
+    }
+    # second pass: replace temp place holders with links
+    foreach my $tempReplacement (keys %tempReplacementsHash) {
+	$glossHash->{$term} =~ s/$tempReplacement/$tempReplacementsHash{$tempReplacement}/;
     }
     
     my $wdkString = qq{
