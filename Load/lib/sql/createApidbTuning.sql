@@ -1335,7 +1335,8 @@ SELECT CASE
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
        ed.name AS external_db_name,
-       nvl(best.best_alignment_count, 0) AS best_alignment_count
+       nvl(best.best_alignment_count, 0) AS best_alignment_count,
+       l.library_id, l.dbest_name as library_dbest_name
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
