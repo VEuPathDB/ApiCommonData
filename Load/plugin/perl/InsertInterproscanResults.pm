@@ -67,6 +67,14 @@ sub getArgsDeclaration {
 	      enum => "ExternalAASequence, TranslatedAASequence",
 	     }),
 
+     stringArg({name => 'srcIdColumn',
+		descr => 'The column of the primary id for each protein used in the interproScan',
+		constraintFunc=> undef,
+		reqd  => 0,
+		isList => 0,
+                default => 'source_id',
+	       }),
+
      integerArg({name  => 'testnumber',
 		 descr => 'Number of query sequences to process for testing',
 		 reqd  => 0,
@@ -100,7 +108,7 @@ SYNTAX
   my $notes = <<NOTES;
 This plugin assumes that the AA sequences being analyzed are in TranslatedAASequence or ExternalAASequence, and, further, that the sourceIds in that table are unique. (To change this, add plugin args to get the ExtDb namd and release for the seqs, and add that to the query that gets the sequences).
 
-Also, the plugin doesn't handle huge interproscan result XML files.  It assumes that the result is broken into a number of files, each not-to-big
+Also, the plugin does not handle huge interproscan result XML files.  It assumes that the result is broken into a number of files, each not-to-big
 NOTES
 
   my $tablesAffected = <<AFFECT;
@@ -441,12 +449,14 @@ sub sourceId2aaSeqId {
 
   my $aaSeqTable = $self->getArg('aaSeqTable');
 
+  my $srcIdColumn = $self->getArg('srcIdColumn');
+
   unless ($self->{sourceId2aaSeqId}) {
 
     $self->{sourceId2aaSeqId} = {};
 
     my $sql = "
-SELECT source_id, aa_sequence_id
+SELECT $srcIdColumn, aa_sequence_id
 FROM Dots.$aaSeqTable
 ";
     my $stmt = $self->prepareAndExecute($sql);

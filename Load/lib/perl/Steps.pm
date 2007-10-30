@@ -4409,7 +4409,7 @@ sub startIprScanOnComputeCluster {
 
  #LoadIprscanResults.
  sub loadIprscanResults{
-   my ($mgr, $dir, $extDbName, $extDbRlsVer, $conf) = @_;
+   my ($mgr, $dir, $extDbName, $extDbRlsVer, $conf, $aaTable, $addedArgs) = @_;
 
    my $propertySet = $mgr->{propertySet};
 
@@ -4420,13 +4420,18 @@ sub startIprScanOnComputeCluster {
    
    my $goversion = $propertySet->getProp('iprscan.goversion');
 
+   my $aaSeqTable = $aaTable ? $aaTable : 'TranslatedAASequence';
+
+   
+
    my $args = <<"EOF";
 --resultFileDir=$resultFileDir \\
 --confFile=$conf \\
---aaSeqTable=TranslatedAASequence \\
+--aaSeqTable=$aaSeqTable \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
 --goVersion=\'$goversion\' \\
+$addedArgs \\
 EOF
 
    $mgr->runPlugin($signal, 
