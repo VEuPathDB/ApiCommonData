@@ -1156,7 +1156,6 @@ Find genes that are predicted to encode a signal peptide.
         </dynamicAttributes>
        <propertyList name="specificAttribution">
            <value>GO</value>
-           <value>GO_evidence_codes</value>
            <value>InterproscanData</value>
            <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
            <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
@@ -1185,9 +1184,6 @@ Find genes that are predicted to encode a signal peptide.
             Find genes from one or more species.
           ]]>
         </description>
-       <propertyList name="specificAttribution">
-           <value>taxonomy</value>
-       </propertyList>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1296,6 +1292,10 @@ Find genes that are predicted to encode a signal peptide.
        <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
            <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePbANKA_EstLibrary</value>
        </propertyList>
     </question>
 
@@ -2020,9 +2020,6 @@ References:
          <value>derisi_3D7_time_series</value>
          <value>derisi_HB3_time_series</value>
        </propertyList>
-       <propertyList name="genomeAttribution">
-         <value>P.falciparum_chromosomes</value>
-       </propertyList>
     </question>
 
 
@@ -2087,9 +2084,6 @@ References:
          <value>WinzelerGeneticVariationArray</value>
          <value>winzeler_cell_cycle</value>
        </propertyList>
-       <propertyList name="genomeAttribution">
-         <value>P.falciparum_chromosomes</value>
-       </propertyList>
     </question>
 
 
@@ -2147,9 +2141,6 @@ References:
          <value>winzeler_gametocyte_expression</value>
          <value></value>
        </propertyList>
-       <propertyList name="genomeAttribution">
-         <value>P.falciparum_chromosomes</value>
-       </propertyList>
     </question>
 
 
@@ -2187,10 +2178,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          <value>berghei_gss_time_series</value>
          <value>berghei_gss_time_seriesHPE</value>
        </propertyList>
-       <propertyList name="genomeAttribution">
-         <value>P.berghei_wholeGenomeShotgunSequence</value>
-         <value>P.berghei_Annotation</value>
-       </propertyList>
     </question>
 
 
@@ -2223,10 +2210,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         </description>
        <propertyList name="specificAttribution">
          <value>Waters_female_gametes</value>
-       </propertyList>
-       <propertyList name="genomeAttribution">
-         <value>P.berghei_wholeGenomeShotgunSequence</value>
-         <value>P.berghei_Annotation</value>
        </propertyList>
     </question>
 
@@ -2267,9 +2250,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          <value>Cowman_Subcellular_motifs</value>
          <value>Haldar_Subcellular_motifs</value>
          <value>ApicoplastTargeting</value>
-       </propertyList>
-       <propertyList name="genomeAttribution">
-          <value>P.falciparum_chromosomes</value>
        </propertyList>
     </question>
 
@@ -2361,11 +2341,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
        <propertyList name="specificAttribution">
          <value>MutualInformationScores_Pfalciparum</value>
        </propertyList>
-       <propertyList name="genomeAttribution">
-          <value>P.falciparum_chromosomes</value>
-          <value>P.yoelii_wholeGenomeShotgunSequence</value>
-          <value>P.yoelii_Annotation</value>
-       </propertyList>
     </question>
 
 
@@ -2434,9 +2409,6 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         </description>
        <propertyList name="specificAttribution">
          <value>MR4Reagents</value>
-       </propertyList>
-       <propertyList name="genomeAttribution">
-          <value>P.falciparum_chromosomes</value>
        </propertyList>
     </question>
 
@@ -2576,6 +2548,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
             ]]>
         </description>
+
+        <propertyList name="specificAttribution">
+        </propertyList>
     </question>
 
     <question name="GenesByMassSpecEvidence" displayName="Mass spectrometry evidence"
