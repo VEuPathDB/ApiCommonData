@@ -46,6 +46,14 @@
 					<useTermOnly value="true" includeProjects="CryptoDB"/>
 			  </flatVocabParam>
 
+        <flatVocabParam name="isolation_source"
+				         queryRef="isolationSourceVQ.withIsolates"
+								prompt="Isolation Source"
+								multiPick="true"
+								quote="false">
+					<useTermOnly value="true" includeProjects="CryptoDB"/>
+			  </flatVocabParam>
+
         <flatVocabParam name="product"
 				        queryRef="productVQ.withIsolates"
 								prompt="Product Name"
@@ -108,6 +116,29 @@
 					       SRes.ExternalDatabaseRelease edr,
 								 SRes.ExternalDatabase edb
 					WHERE  src.specific_host is not null
+					   AND edr.external_database_id = edb.external_database_id
+					   AND edr.external_database_release_id = etn.external_database_release_id
+						 AND edb.name = 'Isolates Data Test3'
+						 AND edr.version = '2007-10-18'
+						 AND src.na_sequence_id = etn.na_sequence_id
+					]]>
+					</sql>
+			</sqlQuery>
+	</querySet>
+
+  <querySet name="isolationSourceVQ">
+			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
+					<column name="internal"/>
+					<column name="term"/>
+					<sql>
+					<![CDATA[
+					SELECT distinct src.specimen_voucher AS term,
+					       src.specimen_voucher      AS internal
+					FROM   DoTS.Source src,
+					       DoTS.ExternalNASequence etn,
+					       SRes.ExternalDatabaseRelease edr,
+								 SRes.ExternalDatabase edb
+					WHERE  src.specimen_voucher is not null
 					   AND edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
 						 AND edb.name = 'Isolates Data Test3'
