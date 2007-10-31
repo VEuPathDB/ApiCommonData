@@ -967,8 +967,8 @@
             <sql>
             <![CDATA[
                select gf.source_id,
-               DECODE(ed.name,'Winzeler_OPI_clusters','Winzeler OPI Cluster',
-                      'Winzeler_Literature_References','Winzeler Literature DB') as dataset,
+               DECODE(ed.name,'Winzeler_OPI_clusters','Ontology Based pattern Identification',
+                      'Winzeler_Literature_References','Literature Database') as dataset,
                r.remark || gf.source_id as link_url
                from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
                dots.genefeature gf, sres.externaldatabase ed
