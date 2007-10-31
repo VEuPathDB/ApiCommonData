@@ -134,10 +134,10 @@
         <column name="source_id" />
         <column name="project_id"/>
         <sql>
-            SELECT enas.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.nasequence enas, dots.est e
-            WHERE enas.na_sequence_id = e.na_sequence_id
-            AND e.library_id in ($$libraryId$$)
+            SELECT ea.source_id, ea.project_id
+            FROM apidb.EstAttributes ea
+            WHERE ea.library_id in ($$libraryId$$)
+              AND ea.project_id = '@PROJECT_ID@'
        </sql>
     </sqlQuery>
 
