@@ -43,7 +43,7 @@
 -- GRANT REFERENCES ON <table> TO apidb;
 -- GRANT SELECT ON <table> TO apidb WITH GRANT OPTION;
 
-set time on timing on pagesize 50000
+set time on timing on pagesize 50000 linesize 100
 
 prompt apidb.GeneAlias;
 
@@ -206,7 +206,7 @@ select case
        nf.na_sequence_id, nf.na_feature_id,
        least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
        greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
-       nl.is_reversed, nf.parent_id
+       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
@@ -350,18 +350,17 @@ CREATE OR REPLACE SYNONYM apidb.EpitopeSummary
 prompt apidb.GeneCentromereDistance;
 
 CREATE MATERIALIZED VIEW apidb.GeneCentromereDistance&1 AS
-SELECT gf.source_id AS gene,
-       LEAST(ABS(cnl.start_min - gnl.end_max),
-             ABS(cnl.end_max - gnl.start_min)) AS centromere_distance,
-       ens.source_id AS genomic_sequence
-FROM dots.GeneFeature gf, dots.NaLocation gnl, dots.Miscellaneous m,
-     dots.NaLocation cnl, sres.SequenceOntology so, dots.ExternalNaSequence ens
-WHERE gf.na_sequence_id = m.na_sequence_id
-  AND m.na_feature_id = cnl.na_feature_id
-  AND gf.na_feature_id = gnl.na_feature_id
-  AND m.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name = 'centromere'
-  AND gf.na_sequence_id = ens.na_sequence_id;
+SELECT gfl.feature_source_id AS gene,
+       LEAST(ABS(mfl.start_min - gfl.end_max),
+             ABS(mfl.end_max - gfl.start_min)) AS centromere_distance,
+       gfl.sequence_source_id AS genomic_sequence
+FROM apidb.FeatureLocation gfl, apidb.FeatureLocation mfl,
+     sres.SequenceOntology so
+WHERE gfl.na_sequence_id = mfl.na_sequence_id
+  AND mfl.feature_type = 'Miscellaneous'
+  AND gfl.feature_type = 'GeneFeature'
+  AND mfl.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name = 'centromere';
 
 GRANT SELECT ON apidb.GeneCentromereDistance&1 TO gus_r;
 
