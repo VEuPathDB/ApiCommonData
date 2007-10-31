@@ -17,9 +17,10 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT est.accession AS source_id, '@PROJECT_ID@' as project_id
-            FROM dots.Est est
-            WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
+             SELECT ea.source_id, ea.project_id
+             FROM apidb.EstAttributes ea
+             WHERE LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
+               AND ea.project_id = '@PROJECT_ID@'
           ]]>
        </sql>
     </sqlQuery>
