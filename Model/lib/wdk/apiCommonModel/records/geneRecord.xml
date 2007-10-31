@@ -443,17 +443,20 @@
                  displayName="EC Number"
                  queryRef="GeneTables.EcNumber">
             <columnAttribute name="ec_number" internal="true"/>
+            <columnAttribute name="expasy_url" internal="true"/>
             <linkAttribute name="ec_number_link"
                            displayName="EC Number"
                            visible="$$ec_number$$">
-                 <url>
+                 <url excludeProjects="CryptoDB">
                     <![CDATA[$$expasy_url$$]]>
+                 </url>
+                 <url includeProjects="CryptoDB">
+                    <![CDATA[http://us.expasy.org/enzyme/$$ec_number$$]]>
                  </url>
             </linkAttribute>
             <columnAttribute displayName="Source" name="source"/>
             <columnAttribute displayName="EC Description"
                              name="ec_description"/>
-            <columnAttribute name="expasy_url" internal="true"/>
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -765,6 +768,13 @@
             </textAttribute>
           </table>
 
+          <attributeQueryRef ref="GeneAttributes.SGC_3D_Struct" includeProjects="CryptoDB">
+                <columnAttribute name="pdb_id" displayName="Structural Genomics Consortium 3D Structure"
+                                 inReportMaker="false"
+                                 internal="true"  />
+          </attributeQueryRef>
+
+
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Epitpotes table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1004,6 +1014,13 @@
                   ]]>
              </text>
           </textAttribute>
+
+          <attributeQueryRef ref="GeneAttributes.Translation" includeProjects="CryptoDB">
+                <columnAttribute name="translation" displayName="Predicted Protein Sequence" />
+                <columnAttribute name="molecular_weight_note"
+                                 internal="true"
+                                 inReportMaker="false" />
+           </attributeQueryRef>
 
         </recordClass>
 

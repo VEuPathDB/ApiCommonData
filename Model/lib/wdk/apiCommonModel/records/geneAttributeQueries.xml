@@ -563,6 +563,64 @@
             ]]>
             </sql>
         </sqlQuery>
+
+        <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="pdb_id"/>
+            <sql>
+              <![CDATA[
+            SELECT dr.primary_identifier AS pdb_id
+            FROM dots.GeneFeature gf,
+                 dots.DbRefNaFeature drnf,
+                 sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase ed
+            WHERE gf.source_id = $$primaryKey$$
+            AND gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            AND dr.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = 'Structural Genomics Consortium 3D Structures'
+            ORDER BY dr.primary_identifier
+              ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Translation" isCacheable='true' includeProjects="CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" />
+            <column name="translation" />
+            <column name="molecular_weight" />
+            <column name="molecular_weight_note" />
+            <sql>
+            <!-- UPPER(source_id) is a workaround to some unresolved bug where
+                 the translation doesn't get returned via webservices
+                 (UPPER removed until new sql munger updated to handle it) -->
+            <!-- The sql weirdness is to force a single row result set of null
+                 values when there is no translation (as is the case for 
+                 non-protein coding genes) - the WDK doesn't allow an empty result.    -->
+            <![CDATA[  SELECT g.source_id, tas.sequence as translation,
+                          tas.molecular_weight,
+                          DECODE (
+                            tas.molecular_weight, null,
+                            '',
+                            'Approximate protein mol. wt. (Daltons): <b>'  ||
+                            tas.molecular_weight  ||
+                            '</b><font size=''-1''><i> [computed from raw translation]</i></font>'
+                          ) as molecular_weight_note
+            FROM    dots.genefeature g,
+                    dots.translatedaasequence tas, 
+                    dots.translatedaafeature taf, 
+                    dots.transcript t
+            WHERE g.source_id = $$primaryKey$$
+            AND taf.aa_sequence_id = tas.aa_sequence_id 
+            AND taf.na_feature_id = t.na_feature_id
+            AND g.na_feature_id = t.parent_id         
+           
+            ]]>
+            </sql>
+        </sqlQuery>
+
     </querySet>
 
 </wdkModel>
