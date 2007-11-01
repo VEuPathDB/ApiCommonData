@@ -19,7 +19,7 @@
           <![CDATA[
              SELECT ea.source_id, ea.project_id
              FROM apidb.EstAttributes ea
-             WHERE LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE('$$est_id$$',' ',''), '*', '%'))
+             WHERE LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
                AND ea.project_id = '@PROJECT_ID@'
           ]]>
        </sql>
