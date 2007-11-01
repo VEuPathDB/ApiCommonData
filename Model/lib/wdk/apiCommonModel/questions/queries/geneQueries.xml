@@ -881,16 +881,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     
     <sqlQuery name="GenesByMassSpec" includeProjects="ToxoDB"
         isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id" />
+        <column name="project_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
         <sql>
             <![CDATA[
-            select distinct gf.source_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
                  dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
 		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
