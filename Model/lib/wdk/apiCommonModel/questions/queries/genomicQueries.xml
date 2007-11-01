@@ -37,7 +37,7 @@
                  sres.sequenceontology so
             WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
             AND enas.sequence_ontology_id = so.sequence_ontology_id
-            AND so.term_name in ('contig', 'supercontig')
+            AND so.term_name in ('contig', 'supercontig', 'chromosome')
            ]]>
         </sql>
     </sqlQuery>
