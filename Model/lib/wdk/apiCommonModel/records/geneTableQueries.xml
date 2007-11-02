@@ -1025,6 +1025,14 @@
                 and r.external_database_release_id = rel.external_database_release_id
                 and rel.external_database_id = ed.external_database_id
                 and ed.name like 'PASA%'
+                UNION
+                select source_id as source_id,
+                'TDRtargets Database' as dataset,
+                'http://tdrtargets.org/targets/view?gene_name='||source_id as link_url
+                FROM apidb.geneattributes 
+                where project_id = $$projectId$$
+                and source_id = $$primaryKey$$
+                and organism = 'Plasmodium falciparum 3D7'
                 ]]>
             </sql>
         </sqlQuery>
