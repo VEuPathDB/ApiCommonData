@@ -965,7 +965,39 @@
             </text>
          </textAttribute>
 
-         
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- mercator Mavid -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <textAttribute name="mercatorMultipleAlignment" includeProjects="ToxoDB"
+            displayName="Links to Other Web Pages" inReportMaker="false">
+           <text>
+                <![CDATA[
+                   <form action="@CGI_URL@/mavidAlign" method="get">
+                    <table border="0" cellpadding="5" cellspacing="1">
+                      <tr class="secondary3"><td>
+                        <table border="0" cellpadding="0">
+                        <tr><td colspan="2"><b>Retrieve the Multiple Alignment for this sequence</b>
+                                <input name='project_id' value=@PROJECT_ID@ size='20' type='hidden' />
+                                <input name='contig' value='$$sequence_id$$' size='20' type='hidden' />
+                        </td></tr>
+                        <tr><td colspan="2">Nucleotide positions:
+                                from <input type="text" name="start" value="$$start_min_text$$" maxlength="7" size="8"/>
+                                to <input type="text" name="stop" value="$$end_max_text$$" maxlength="7" size="8"/>
+                            </td></tr>
+                       <tr><td align="left"><input type="checkbox" name="revComp">Reverse complement</td>
+                           </tr>
+                       <tr>
+                           <td align="left">
+                           <input type="radio" name="type" value="clustal" checked>clustal
+                           <input type="radio" name="type" value="fasta_gapped">multi fasta (gapped)
+                           <input type="radio" name="type" value="fasta_ungapped">multi fasta
+                           </td><td align="right"><input type="submit" name='go' value='Go' /></td></tr>
+                    </table>
+                    </td></tr></table>
+                    </form>
+                ]]>
+           </text>
+        </textAttribute>         
 
          <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" includeProjects="PlasmoDB,ToxoDB">
             <text includeProjects="PlasmoDB">
