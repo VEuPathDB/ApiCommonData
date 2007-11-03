@@ -51,7 +51,7 @@
                 <columnAttribute inReportMaker="false" name="address"     internal="true" />
             </attributeQueryRef>
 
-            <attributeQueryRef ref="EstAttributes.Cluster" includeProjects="CryptoDB">
+            <attributeQueryRef ref="EstAttributes.Cluster" includeProjects="CryptoDB,ToxoDB">
                 <columnAttribute inReportMaker="false" name="na_sequence_id" internal="true" />
                 <columnAttribute inReportMaker="false" name="number_of_contained_sequences" internal="true" />
             </attributeQueryRef>
@@ -78,6 +78,14 @@
                    <font size="-1">$$author$$<br>$$affiliation$$<br> $$address$$</font>
                    ]]>
               </text>
+           </textAttribute>
+
+           <textAttribute name="linktocluster" displayName="EST Assembly Data" inReportMaker="false" internal="true">
+               <text includeProjects="ToxoDB">
+                    <![CDATA[
+                    <a href="showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=TgDT.$$na_sequence_id$$.tmp">View Assembly Containing this EST</a>
+                ]]>
+               </text>
            </textAttribute>
 
       <!-- =================================================================== -->
@@ -141,6 +149,20 @@
             </table>
 
 
+            <table name="ClusterMates" 
+                   displayName="Other ESTs that Cluster with this EST:" 
+                   queryRef="EstTables.ClusterMates">
+                <columnAttribute displayName="ID" name="mate_id" internal="true" />
+                <linkAttribute displayName="ID" name="mate_link" visible="$$mate_id$$">
+                     <url>
+                        <![CDATA[showRecord.do?name=EstRecordClasses.EstRecordClass&project_id=&primary_key=$$mate_id$$]]>
+                     </url>
+                </linkAttribute>
+                
+                <!-- not clustering with mRNA's this release, so turn off mate_type -->
+                <columnAttribute displayName="EST/mRNA" name="mate_type"  internal="true" />
+            </table>
+            
 
 
        </recordClass>

@@ -37,5 +37,31 @@
             ]]>
             </sql>
         </sqlQuery>
+
+        <!-- EstTables.ClusterMates -->
+        <sqlQuery name="ClusterMates"  includeProjects="CryptoDB,ToxoDB"
+              displayName="Other ESTs that Cluster with this EST:" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
+            <column name="mate_id" />
+            <column name="mate_type" />
+            <sql>
+            <![CDATA[           
+            select enas.source_id as mate_id, 'EST' as mate_type
+            from dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
+            where aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
+            and aseq.na_sequence_id = enas.na_sequence_id
+            and asmbly.na_sequence_id = 
+            (select asmbly.na_sequence_id from dots.assembly asmbly, 
+            dots.assemblysequence aseq, dots.ExternalNASequence enas
+            where aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
+            and aseq.na_sequence_id = enas.na_sequence_id
+            and enas.source_id = $$primaryKey$$)
+            and enas.source_id != $$primaryKey$$
+            order by enas.source_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
     </querySet>
 </wdkModel>
