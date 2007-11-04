@@ -80,7 +80,7 @@
               </text>
            </textAttribute>
 
-           <textAttribute name="linktocluster" displayName="EST Assembly Data" inReportMaker="false" internal="true">
+           <textAttribute name="linktocluster" displayName="EST Assembly Data" inReportMaker="false" internal="true" excludeProjects="ApiDB,PlasmoDB">
                <text includeProjects="ToxoDB">
                     <![CDATA[
                     <a href="showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=TgDT.$$na_sequence_id$$.tmp">View Assembly Containing this EST</a>
@@ -154,7 +154,7 @@
             </table>
 
 
-            <table name="ClusterMates" 
+            <table name="ClusterMates" excludeProjects="ApiDB,PlasmoDB" 
                    displayName="Other ESTs that Cluster with this EST:" 
                    queryRef="EstTables.ClusterMates">
                 <columnAttribute displayName="ID" name="mate_id" internal="true" />
