@@ -4441,6 +4441,31 @@ EOF
 }
 
 
+# load the OrthoMCL groups
+ sub loadOrthoMCLResults{
+   my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
+
+
+   my $orthoFileFullPath = "$mgr->{dataDir}/orthomcl/master/mainresult/$orthoFile";
+
+   my $signal = "loadOrthoMCLResult";
+   return if $mgr->startStep("Starting Data Load $signal", $signal);
+   
+
+   my $args = <<"EOF";
+--orthoFile=$orthoFileFullPath \\
+--extDbName='$extDbName' \\
+--extDbVersion='$extDbRlsVer' \\
+$addedArgs \\
+EOF
+
+   $mgr->runPlugin($signal, 
+         "OrthoMCLData::Load::Plugin::InsertOrthologousGroups", 
+         $args,
+         "Loading OrthoMCL output");
+}
+
+
 ## these are the old "steps specific" property
 ## declarations.  we intend to incorporate them into the steps that need them
 
