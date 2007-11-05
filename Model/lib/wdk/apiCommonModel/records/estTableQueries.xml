@@ -17,23 +17,26 @@
             <column name="is_reversed" />
             <sql>
             <![CDATA[
-            SELECT enas.source_id as sequence_id,
-                   e.accession,
-                   blat.target_start,
-                   blat.target_end,
-                   blat.target_start - 10000 as context_start,
-                   blat.target_end + 10000 as context_end,
-                   decode(blat.is_best_alignment,0,'No',1,'Yes',blat.is_best_alignment) as is_best_alignment, 
-                   decode(blat.is_consistent,0,'No',1,'Yes',blat.is_consistent) as is_consistent, 
-                   decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
-                   blat.percent_identity
-            FROM   dots.blatalignment blat,
-                   dots.est e,
-                   dots.nasequence enas
-            WHERE  blat.query_na_sequence_id = e.na_sequence_id
-              AND  blat.target_na_sequence_id = enas.na_sequence_id
-              AND  e.accession = $$primaryKey$$
-            ORDER BY blat.is_best_alignment desc, blat.is_consistent desc, blat.percent_identity desc
+            SELECT sequence_id, accession, target_start, target_end, context_start, context_end, 
+                   is_best_alignment, is_consistent, is_reversed, percent_identity
+            FROM (
+                   SELECT distinct (enas.source_id) as sequence_id,
+                          e.accession,
+                          blat.target_start,
+                          blat.target_end,
+                          blat.target_start - 10000 as context_start,
+                          blat.target_end + 10000 as context_end,
+                          decode(blat.is_best_alignment,0,'No',1,'Yes',blat.is_best_alignment) as is_best_alignment, 
+                          decode(blat.is_consistent,0,'No',1,'Yes',blat.is_consistent) as is_consistent, 
+                          decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
+                          blat.percent_identity
+                   FROM   dots.blatalignment blat,
+                          dots.est e,
+                          dots.nasequence enas
+                   WHERE  blat.query_na_sequence_id = e.na_sequence_id
+                     AND  blat.target_na_sequence_id = enas.na_sequence_id
+                     AND  e.accession = $$primaryKey$$ )
+                   ORDER BY sequence_id, is_best_alignment desc, is_consistent desc, percent_identity desc
             ]]>
             </sql>
         </sqlQuery>
