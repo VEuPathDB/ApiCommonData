@@ -999,9 +999,9 @@
                 and organism in ('Plasmodium knowlesi strain H','Plasmodium chabaudi chabaudi','Plasmodium berghei strain ANKA','Plasmodium falciparum 3D7')
                 UNION
                 select $$primaryKey$$ as source_id, 'OrthoMCL' as dataset,
-                'http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q="'||$$primaryKey$$||'"&groupredirect=1' as link_url
+                'http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q='||$$primaryKey$$||'&groupredirect=1' as link_url
                 from dual
-                UNION
+UNION
                 select gf.source_id,
                 'PlasmoMAP' as dataset,
                 r.remark as link_url
