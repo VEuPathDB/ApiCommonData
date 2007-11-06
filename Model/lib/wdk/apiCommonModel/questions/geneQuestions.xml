@@ -911,7 +911,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
         /> 
-        <summary includeProjects="PlasmoDB">
+        <summary includeProjects="PlasmoDB,ToxoDB">
         Find genes involved in a specific metabolic pathway.
         </summary>
        
@@ -2559,14 +2559,25 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               includeProjects="ApiDB,ToxoDB,PlasmoDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <summary>
+
+        <summary includeProjects="PlasmoDB">
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
             ]]>
         </summary>
-        <description>
+        <summary includeProjects="ApiDB,ToxoDB">
+           <![CDATA[
+           Find genes based on transcript expression data from microarray experiments.
+            ]]>
+        </summary>
+        <description includeProjects="PlasmoDB">
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on transcript expression data from microarray experiments.
+            ]]>
+        </description>
+        <description includeProjects="ApiDB,ToxoDB">
+           <![CDATA[
+           Find genes based on transcript expression data from microarray experiments.
             ]]>
         </description>
 
@@ -2578,14 +2589,24 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <summary>
+        <summary includeProjects="PlasmoDB">
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on protein expression data from mass spectrometry experiments.
             ]]>
         </summary>
-        <description>
+        <summary excludeProjects="PlasmoDB">
+           <![CDATA[
+           Find genes based on protein expression data from mass spectrometry experiments.
+            ]]>
+        </summary>
+        <description includeProjects="PlasmoDB">
            <![CDATA[
            Find <i>P. falciparum</i> and <i>P. berghei</i> genes based on protein expression data from mass spectrometry experiments.
+            ]]>
+        </description>
+        <description excludeProjects="PlasmoDB">
+           <![CDATA[
+           Findgenes based on protein expression data from mass spectrometry experiments.
             ]]>
         </description>
         <propertyList name="specificAttribution">
