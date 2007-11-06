@@ -987,7 +987,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
               isCacheable="true">
-        <paramRef ref="geneParams.single_gene_id"/>
+        <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
+        <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="49.m03105" />
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
