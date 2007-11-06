@@ -1023,7 +1023,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="sharedParams.end_point"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB">
+        <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
@@ -1033,6 +1033,22 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
               AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens,
+                 sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+            WHERE nl.na_feature_id = gf.na_feature_id
+              AND (ens.source_id = $$chromosomeOptional$$
+                   OR lower(ens.source_id) = lower($$sequenceId$$))
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND gf.external_database_release_id = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id 
+              AND ed.name in ('Chromosome Map - David Sibley','Roos Lab T. gondii apicoplast') 
            ]]>
        </sql>
         <sql includeProjects="GiardiaDB,TrichDB">
