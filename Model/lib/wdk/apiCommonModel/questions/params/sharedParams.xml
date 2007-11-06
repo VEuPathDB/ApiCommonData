@@ -822,15 +822,104 @@
     <!-- SNPs -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <flatVocabParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB"
-                     queryRef="SharedVQ.SnpStrainA"
+      <enumParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB"
 		     prompt="Reference"
                      multiPick="false">
-        <help>
-             Choose a reference from the list of strains.  Strains below the ---------- were sequenced at low or specific coverage
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
+      <help>
+             Choose a reference from the list of strains.  Strains are sorted by number of SNPs in descending order.
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
+        <enumValue>
+          <term>Pf-3D7</term>
+          <internal>3D7</internal>
+        </enumValue>
+        <enumValue>
+          <term>P. reichenowi (vs. 3D7 only)</term>
+          <internal>Preich</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-HB3</term>
+          <internal>HB3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-GHANA1</term>
+          <internal>GHANA1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-V1_S</term>
+          <internal>V1_S</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-DD2</term>
+          <internal>DD2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-7G8</term>
+          <internal>7G8</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-RO33</term>
+          <internal>RO-33</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-D10</term>
+          <internal>D10</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-K1</term>
+          <internal>K1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-D6</term>
+          <internal>D6</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCC-2</term>
+          <internal>FCC-2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 34.04</term>
+          <internal>SENEGAL3404</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-IT</term>
+          <internal>IT</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Santa Lucia</term>
+          <internal>SANTALUCIA</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCB</term>
+          <internal>FCB</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCR3</term>
+          <internal>FCR3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-106/1</term>
+          <internal>106_1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 35.04</term>
+          <internal>SENEGAL3504</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 31.01</term>
+          <internal>SENEGAL3101</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 51.02</term>
+          <internal>SENEGAL5102</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Malayan Camp</term>
+          <internal>MALAYAN</internal>
+        </enumValue>
+      </enumList>   
+      </enumParam>
 
       
       <enumParam name="snp_strain_a" includeProjects="ToxoDB"
@@ -892,105 +981,97 @@
                      multiPick="true"
                      excludeProjects="CryptoDB">
       <help>
-             Choose a comparator(s) from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
+             Choose a comparator(s) from the list to compare to your reference.  Strains are ordered by number of SNPs in descending order
       </help>
       <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>   
         <enumValue>
-          <term>Pf-7G8</term>
-          <internal>7G8</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-D10</term>
-          <internal>D10</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-DD2</term>
-          <internal>DD2</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-GHANA1</term>
-          <internal>GHANA1</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-HB3</term>
-          <internal>HB3</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-IT</term>
-          <internal>IT</internal>
+          <term>Pf-3D7</term>
+          <internal>3D7</internal>
         </enumValue>
         <enumValue>
           <term>P. reichenowi (vs. 3D7 only)</term>
           <internal>Preich</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-3D7</term>
-          <internal>3D7</internal>
+          <term>Pf-HB3</term>
+          <internal>HB3</internal>
         </enumValue>
         <enumValue>
-          <term>-----------</term>
-          <internal>foobar</internal>
+          <term>Pf-GHANA1</term>
+          <internal>GHANA1</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-106</term>
-          <internal>106</internal>
+          <term>Pf-V1_S</term>
+          <internal>V1_S</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-106/1</term>
-          <internal>106/1</internal>
+          <term>Pf-DD2</term>
+          <internal>DD2</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-D6</term>
-          <internal>D6</internal>
+          <term>Pf-7G8</term>
+          <internal>7G8</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-FCB</term>
-          <internal>FCB</internal>
+          <term>Pf-RO33</term>
+          <internal>RO-33</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-FCC-2</term>
-          <internal>FCC-2</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-FCR3</term>
-          <internal>FCR3</internal>
+          <term>Pf-D10</term>
+          <internal>D10</internal>
         </enumValue>
         <enumValue>
           <term>Pf-K1</term>
           <internal>K1</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-Malayan Camp</term>
-          <internal>Malayan Camp</internal>
+          <term>Pf-D6</term>
+          <internal>D6</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-RO33</term>
-          <internal>RO33</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-Santa Lucia</term>
-          <internal>Santa Lucia</internal>
-        </enumValue>
-        <enumValue>
-          <term>Pf-Senegal 31.01</term>
-          <internal>Senegal 31.01</internal>
+          <term>Pf-FCC-2</term>
+          <internal>FCC-2</internal>
         </enumValue>
         <enumValue>
           <term>Pf-Senegal 34.04</term>
-          <internal>Senegal 34.04</internal>
+          <internal>SENEGAL3404</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-IT</term>
+          <internal>IT</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Santa Lucia</term>
+          <internal>SANTALUCIA</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCB</term>
+          <internal>FCB</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-FCR3</term>
+          <internal>FCR3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-106/1</term>
+          <internal>106_1</internal>
         </enumValue>
         <enumValue>
           <term>Pf-Senegal 35.04</term>
-          <internal>Senegal 35.04</internal>
+          <internal>SENEGAL3504</internal>
+        </enumValue>
+        <enumValue>
+          <term>Pf-Senegal 31.01</term>
+          <internal>SENEGAL3101</internal>
         </enumValue>
         <enumValue>
           <term>Pf-Senegal 51.02</term>
-          <internal>Senegal 51.02</internal>
+          <internal>SENEGAL5102</internal>
         </enumValue>
         <enumValue>
-          <term>Pf-VS-1</term>
-          <internal>VS-1</internal>
+          <term>Pf-Malayan Camp</term>
+          <internal>MALAYAN</internal>
         </enumValue>
       </enumList>   
     </enumParam>
@@ -1432,20 +1513,20 @@ by the sequence generator.</help>
           <sql>
 	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S' )
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             union
             select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             and strain_a not like '%-NIH'
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             and strain_b not like '%-NIH'
             union
             select 'foobar' as internal, '-----------' as term, 2 as ord from dual

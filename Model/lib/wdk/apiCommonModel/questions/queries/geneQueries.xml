@@ -1085,7 +1085,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="sharedParams.snp_strain_a"/>
-        <paramRef ref="sharedParams.snp_strain_b"/>
+        <paramRef ref="sharedParams.snp_strain_m" multiPick="false"/>
         <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
@@ -1112,8 +1112,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               cds_length,round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density,
               total as total_snps
 	      FROM apidb.snpsummary
-	      WHERE ((strain_a = $$snp_strain_a$$ and strain_b = $$snp_strain_b$$ )
-                    or  (strain_a = $$snp_strain_b$$ and strain_b = $$snp_strain_a$$))
+	      WHERE ((strain_a = $$snp_strain_a$$ and strain_b = $$snp_strain_m$$ )
+                    or  (strain_a = $$snp_strain_m$$ and strain_b = $$snp_strain_a$$))
 	      AND non_synonymous / CASE synonymous
 	                          WHEN 0 THEN 1
 				  ELSE synonymous end >= $$dn_ds_ratio_lower$$
@@ -1130,7 +1130,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <wsQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="sharedParams.snp_strain_a"/>
-        <paramRef ref="sharedParams.snp_strain_b"/>
+        <paramRef ref="sharedParams.snp_strain_m" multiPick="false"/>
         <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
