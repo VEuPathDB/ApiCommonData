@@ -15,7 +15,7 @@ PURPOSEBRIEF
 my $purpose = <<PLUGIN_PURPOSE;
 Insert a processed result from RAD into the easy-to-query Profile tables
 PLUGIN_PURPOSE
-
+ 
 my $tablesAffected =
 	[['ApiDB.ProfileSet', ''],
         ['ApiDB.Profile', '']];
