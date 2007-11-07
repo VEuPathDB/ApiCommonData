@@ -2290,7 +2290,7 @@ sub InsertOntologyEntryFromMO {
 
 
 sub InsertExpressionProfileFromProcessedResult {
-  my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc, $numberOfChannels) = @_;
+  my ($mgr, $extDbName, $extDbRlsVer, $arrayName, $protocolName, $resultView, $desc, $numberOfChannels, $baseX) = @_;
 
   my $signal = "load_" . $extDbName;
   $signal =~ s/[\s\(\)]//g;
@@ -2300,6 +2300,8 @@ sub InsertExpressionProfileFromProcessedResult {
   $desc = $extDbName unless($desc);
 
   my $args = "--arrayDesignName '$arrayName' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --protocolName '$protocolName' --processingType '$resultView' --studyDescrip '$desc' --numberOfChannels $numberOfChannels";
+
+  $args = $args . " --baseX $baseX" if($baseX);
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::InsertExprProfileFromProcessedResult",
