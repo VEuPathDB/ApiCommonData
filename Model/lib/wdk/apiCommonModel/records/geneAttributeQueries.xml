@@ -544,7 +544,7 @@
             <sql>
             <![CDATA[           
             SELECT 
-                  g.source_id,
+                  g.source_id,$$projectId$$ as project_id,
                   DECODE (
                        protein_id, null, 
                            '', 
@@ -600,7 +600,7 @@
                  values when there is no translation (as is the case for 
                  non-protein coding genes) - the WDK doesn't allow an empty result.    -->
             <![CDATA[  SELECT g.source_id, tas.sequence as translation,
-                          tas.molecular_weight,
+                          tas.molecular_weight,$$projectId$$ as project_id,
                           DECODE (
                             tas.molecular_weight, null,
                             '',
