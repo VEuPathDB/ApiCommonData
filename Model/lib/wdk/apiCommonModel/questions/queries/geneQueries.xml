@@ -822,7 +822,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMassSpec" includeProjects="CryptoDB,PlasmoDB"
+    <sqlQuery name="GenesByMassSpec" 
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
@@ -832,7 +832,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
-        <sql>
+        <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
             select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
@@ -877,19 +877,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
        </sql>
-    </sqlQuery>
+ 
     
-    <sqlQuery name="GenesByMassSpec" includeProjects="ToxoDB"
-        isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
-        <paramRef ref="geneParams.ms_assay"/>
-        <paramRef ref="sharedParams.min_sequence_count"/>
-        <paramRef ref="sharedParams.min_spectrum_count"/>
-        <column name="source_id" />
-        <column name="project_id" />
-        <column name="sum_sequence_count" />
-        <column name="sum_spectrum_count" />
-        <sql>
+        <sql includeProjects="ToxoDB">
             <![CDATA[
             select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
