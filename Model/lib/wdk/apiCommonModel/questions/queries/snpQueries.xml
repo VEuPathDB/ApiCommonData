@@ -159,51 +159,79 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
         <sql>
             <![CDATA[
-select * from (
-SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
-  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
-  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
-  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
-  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a = snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as ref_strain,              
-  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.strain_b END) AS apidb.varchartab), ', ') as comp_strains 
-FROM                 
-  (SELECT hits.source_id as source_id,hits.seq_source_id || ':' || trim(to_char(hits.start_min,'999,999,999')) as snp_location,                               
-    sva.strain as ref_strain, svb.strain as comp_strain,                               
-    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele)                                  
-    ELSE sva.allele END as ref_allele,                 
-    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(svb.allele)                                 
-    ELSE svb.allele END as comp_all,                 
-    CASE WHEN sva.product = svb.product then 'syn' WHEN sva.product != svb.product then 'non-syn' ELSE 'non-coding' END as phenotype,                               
-    sva.product as ref_product, svb.product as comp_product,                           
-    hits.position_in_protein as prot_pos,
-    sva.allele as allele_a, svb.allele as allele_b, svb.strain as strain_b, gf.source_id as gene
-  FROM  dots.SeqVariation sva, dots.SeqVariation svb, dots.NALocation gene_loc, dots.GeneFeature gf,
-    (SELECT distinct isf.na_feature_id as na_feature_id, isf.source_id, isf.parent_id,
-      nas.source_id as seq_source_id,l.start_min,isf.position_in_protein
-     FROM sres.ExternalDatabase ed,sres.ExternalDatabaseRelease edr,dots.SeqVariation isva, dots.NALocation l,
-          dots.naSequence nas, dots.SeqVariation isvb, dots.SnpFeature isf    
-     WHERE nas.source_id = $$chromosome$$
-      AND isf.na_sequence_id = nas.na_sequence_id
-      AND edr.external_database_release_id = isf.external_database_release_id
-      AND edr.external_database_id = ed.external_database_id   
-      AND ed.name in (&&providers&&)
-      AND isf.na_feature_id = l.na_feature_id
-      AND l.end_max >= $$start_point$$
-      AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
-      AND isf.na_feature_id = isva.parent_id                               
-      AND isf.na_feature_id = isvb.parent_id                               
-      AND isva.strain = $$snp_strain_a$$                               
-      AND isvb.strain in ($$snp_strain_m$$)
-      AND isva.allele != isvb.allele ) hits 
-  WHERE  hits.parent_id = gf.na_feature_id(+)
-    AND gf.na_feature_id = gene_loc.na_feature_id(+)    
-    AND hits.na_feature_id = sva.parent_id 
-    AND hits.na_feature_id = svb.parent_id 
-    AND sva.strain = $$snp_strain_a$$
-    AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)
-    ) snpq                              
-GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
-)
+SELECT snpq.source_id, '@PROJECT_ID@' AS project_id, snpq.gene, snpq.snp_location,
+       snpq.prot_pos, snpq.ref_allele, snpq.ref_product,
+       apidb.tab_to_string(CAST(COLLECT(
+          DISTINCT CASE
+                     WHEN snpq.allele_a != snpq.allele_b
+                       THEN snpq.comp_all
+                   END) AS apidb.varchartab), ', ') AS comp_alleles,
+       apidb.tab_to_string(CAST(COLLECT(
+          DISTINCT CASE
+                     WHEN snpq.allele_a != snpq.allele_b
+                       THEN snpq.comp_product
+                   END) AS apidb.varchartab), ', ') AS comp_products,
+       apidb.tab_to_string(CAST(COLLECT(
+          DISTINCT CASE
+                     WHEN snpq.allele_a != snpq.allele_b
+                       THEN snpq.phenotype
+                   END) AS apidb.varchartab), ', ') AS phenotype,
+       apidb.tab_to_string(CAST(COLLECT(
+                   CASE
+                     WHEN snpq.allele_a = snpq.allele_b
+                       THEN snpq.strain_b
+                   END) AS apidb.varchartab), ', ') AS ref_strain,
+       apidb.tab_to_string(CAST(COLLECT(
+                   CASE
+                     WHEN snpq.allele_a != snpq.allele_b
+                       THEN snpq.strain_b
+                   END) AS apidb.varchartab), ', ') AS comp_strains 
+FROM (SELECT isf.source_id AS source_id, nas.source_id || ':'
+             || trim(to_char(l.start_min,'999,999,999')) AS snp_location,
+             isva.strain AS ref_strain, isvb.strain AS comp_strain,
+             CASE
+               WHEN gene_loc.is_reversed = 1
+                 THEN apidb.reverse_complement(isva.allele)
+                 ELSE isva.allele
+             END AS ref_allele,
+             CASE
+               WHEN gene_loc.is_reversed = 1
+                 THEN apidb.reverse_complement(isvb.allele)
+                 ELSE isvb.allele
+             END AS comp_all,
+             CASE
+               WHEN isva.product = isvb.product
+                 THEN 'syn'
+               WHEN isva.product != isvb.product
+                 THEN 'non-syn'
+               ELSE 'non-coding'
+             END AS phenotype,
+             isva.product AS ref_product, isvb.product AS comp_product,
+             isf.position_in_protein AS prot_pos, isva.allele AS allele_a,
+             isvb.allele AS allele_b, isvb.strain AS strain_b,
+             gene_loc.feature_source_id AS gene,
+                   isf.parent_id, nas.source_id AS seq_source_id,
+                   l.start_min,isf.position_in_protein
+            FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
+                 dots.SeqVariation isva, dots.NALocation l, dots.naSequence nas,
+                 dots.SeqVariation isvb, dots.SnpFeature isf,
+                 apidb.FeatureLocation gene_loc
+            WHERE nas.source_id = $$chromosome$$
+              AND isf.na_sequence_id = nas.na_sequence_id
+              AND edr.external_database_release_id = isf.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id
+              AND ed.name in (&&providers&&)
+              AND isf.na_feature_id = l.na_feature_id
+              AND l.end_max >= $$start_point$$
+              AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND isf.na_feature_id = isva.parent_id
+              AND isf.na_feature_id = isvb.parent_id
+              AND isva.strain = $$snp_strain_a$$
+              AND isvb.strain in ($$snp_strain_m$$)
+              AND isva.allele != isvb.allele
+              AND isf.parent_id = gene_loc.na_feature_id(+)) snpq
+GROUP BY snpq.source_id, snpq.gene, snpq.snp_location, snpq.prot_pos,
+         snpq.ref_allele, snpq.ref_product
            ]]>
        </sql>
     </sqlQuery>
