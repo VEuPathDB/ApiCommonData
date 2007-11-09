@@ -45,12 +45,20 @@
                 <columnAttribute name="sequence" displayName="Sequence" internal="true"/>
             </attributeQueryRef>
 
+            <table name="ReferenceInfo" queryRef="EstAttributes.Reference" excludeProjects="ApiDB">
+                <columnAttribute inReportMaker="false" name="source_id" displayName="Source ID"     internal="true" />
+                <columnAttribute inReportMaker="false" name="author"   displayName="Author"    internal="false" />
+                <columnAttribute inReportMaker="false" name="affiliation" displayName="Affiliation" internal="false" />
+                <columnAttribute inReportMaker="false" name="address"     displayName="Address" internal="false" />
+            </table>
+
+           <!--
             <attributeQueryRef ref="EstAttributes.Reference" excludeProjects="ApiDB">
                 <columnAttribute inReportMaker="false" name="author"      internal="true" />
                 <columnAttribute inReportMaker="false" name="affiliation" internal="true" />
                 <columnAttribute inReportMaker="false" name="address"     internal="true" />
             </attributeQueryRef>
-
+   -->
             <attributeQueryRef ref="EstAttributes.Cluster" includeProjects="CryptoDB,ToxoDB">
                 <columnAttribute inReportMaker="false" name="na_sequence_id" internal="true" />
                 <columnAttribute inReportMaker="false" name="number_of_contained_sequences" internal="true" />
@@ -72,13 +80,13 @@
            </textAttribute>
 
            <!-- custom record jsp page has a dependency on this attribute name. if you change here, change there -->
-           <textAttribute name="reference" displayName="Sequence Attribution" inReportMaker="false" internal="true">
+   <!--        <textAttribute name="reference" displayName="Sequence Attribution" inReportMaker="false" internal="true">
               <text>
                    <![CDATA[
                    <font size="-1">$$author$$<br>$$affiliation$$<br> $$address$$</font>
                    ]]>
               </text>
-           </textAttribute>
+           </textAttribute>-->
 
            <textAttribute name="linktocluster" displayName="EST Assembly Data" inReportMaker="false" internal="true" excludeProjects="ApiDB,PlasmoDB">
                <text includeProjects="ToxoDB">
