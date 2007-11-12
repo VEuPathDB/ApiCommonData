@@ -822,7 +822,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMassSpec" 
+    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB"
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
