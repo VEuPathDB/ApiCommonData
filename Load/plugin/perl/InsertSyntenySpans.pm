@@ -125,7 +125,7 @@ sub run {
     $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
     $count++;
 
-    if($count % 500) {
+    if($count && $count % 500 == 0) {
       $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
     }
 
