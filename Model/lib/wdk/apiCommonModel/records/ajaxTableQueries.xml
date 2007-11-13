@@ -304,5 +304,15 @@
              </sql>
         </sqlQuery>
 
+<!--=================================================================================-->
+<!-- AJAX TERM QUERIES-->
+<!--=====================================================================-->
+
+    <wsQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
+            <wsColumn name="internal" width="32" wsName="internal"/>
+            <wsColumn name="term" width="32" wsName="term"/>
+        </wsQuery>
      </querySet>
 </wdkModel>
