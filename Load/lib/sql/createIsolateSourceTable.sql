@@ -1,7 +1,9 @@
-DROP TABLE ApiDB.Isolatesource;
+DROP TABLE ApiDB.IsolateSource;
 
 CREATE TABLE ApiDB.IsolateSource (
+  NA_FEATURE_ID                NUMBER(10) not null,
   NA_SEQUENCE_ID               NUMBER(10) not null,
+  PARENT_ID                    NUMBER(10) not null,
   COUNTRY                      VARCHAR(50),
   EXTERNAL_DATABASE_RELEASE_ID NUMBER(10),
 	MODIFICATION_DATE 	         DATE, 
@@ -14,7 +16,10 @@ CREATE TABLE ApiDB.IsolateSource (
 	ROW_USER_ID                  NUMBER(12), 
 	ROW_GROUP_ID 	               NUMBER(4), 	
 	ROW_PROJECT_ID 	             NUMBER(4), 	
-	ROW_ALG_INVOCATION_ID 	     NUMBER(12) 	
+	ROW_ALG_INVOCATION_ID 	     NUMBER(12),
+CONSTRAINT ISOLATE_ID_PK  primary key (NA_FEATURE_ID) ENABLE,
+CONSTRAINT isolate_source_fk foreign key (PARENT_ID)
+references DOTS.NAFEATUREIMP (NA_FEATURE_ID) ENABLE
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.IsolateSource TO gus_w;
