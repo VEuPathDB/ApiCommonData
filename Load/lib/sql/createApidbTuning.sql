@@ -229,6 +229,18 @@ create or replace synonym apidb.FeatureLocation
 prompt apidb.GeneId;
 
 CREATE MATERIALIZED VIEW apidb.GeneId&1 AS
+SELECT lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) AS id,
+       gf.source_id AS gene
+FROM dots.Transcript t, dots.GeneFeature gf
+WHERE t.parent_id = gf.na_feature_id
+  AND lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) IS NOT NULL
+UNION
+SELECT lower(t.protein_id) AS id,
+       gf.source_id AS gene
+FROM dots.Transcript t, dots.GeneFeature gf
+WHERE t.parent_id = gf.na_feature_id
+  AND t.protein_id IS NOT NULL
+UNION
 SELECT LOWER(dr.primary_identifier) AS id, gf.source_id AS gene
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
