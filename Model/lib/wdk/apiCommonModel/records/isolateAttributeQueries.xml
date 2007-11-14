@@ -5,6 +5,7 @@
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="organism"/>
+            <column name="strain"/>
             <column name="specific_host"/>
             <column name="description"/>
             <column name="isolate_source"/>
@@ -12,7 +13,8 @@
             <column name="pcr_primer"/>
             <sql excludeProjects="ApiDB">
                SELECT etn.source_id, 
-							        src.organism || ' ' || src.strain as organism,
+							        src.organism as organism,
+							        src.strain || ' ' || src.isolate as strain,
 							        src.specific_host || src.lab_host specific_host,
 											src.specimen_voucher as isolate_source,
 											etn.description,
@@ -26,8 +28,8 @@
                WHERE  etn.na_sequence_id = src.na_sequence_id  
 							    AND edr.external_database_id = edb.external_database_id
 								  AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test5'
+									AND edr.version = '2007-11-14'
 							    AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
@@ -55,8 +57,8 @@
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
 								  AND edr.external_database_release_id = extq.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test5'
+									AND edr.version = '2007-11-14'
 							    AND sim.query_id = extq.na_sequence_id  
 							    AND sim.subject_id = extt.na_sequence_id
 									AND extq.source_id = $$primaryKey$$
@@ -78,9 +80,10 @@
                WHERE  etn.na_sequence_id = gf.na_sequence_id  
 							    AND edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test5'
+									AND edr.version = '2007-11-14'
 							    AND etn.source_id = $$primaryKey$$
+									AND gf.product is not null
            </sql>
       </sqlQuery>
 
@@ -103,8 +106,8 @@
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test5'
+									AND edr.version = '2007-11-14'
 							    AND trp.na_feature_id = taf.na_feature_id
 							    AND tas.aa_sequence_id = taf.aa_sequence_id
 							    AND trp.parent_id = gf.na_feature_id
@@ -138,8 +141,8 @@
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test5'
+									AND edr.version = '2007-11-14'
 							    AND nasr.reference_id = ref.reference_id
 							    AND etn.na_sequence_id = nasr.na_sequence_id
 							    AND etn.source_id = $$primaryKey$$
