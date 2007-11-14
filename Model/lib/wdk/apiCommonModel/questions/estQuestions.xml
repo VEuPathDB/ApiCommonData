@@ -25,7 +25,7 @@
 	      displayName="ID"
 	      queryRef="EstIds.EstBySourceId"
 	      recordClassRef="EstRecordClasses.EstRecordClass"
-              noSummaryOnSingleRecord="true">
+              noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
 
         <attributesList
            summary="organism,dbest_name"
@@ -44,13 +44,47 @@
           <value/>
        </propertyList>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
-           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="CryptoDB">CparvumESTs</value>
+           <value includeProjects="PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="PlasmoDB">WatanabePy17XL_EstLibrary</value>
+       </propertyList>
+
+  </question>
+
+  <question name="EstBySourceId"
+	      displayName="ID"
+	      queryRef="EstIds.EstBySourceId"
+	      recordClassRef="EstRecordClasses.EstRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+
+        <attributesList
+           summary="organism,dbest_name"
+        />
+        <summary>
+	Find ESTs by ID
+	</summary>
+
+	<description>
+	  <![CDATA[
+	    Find ESTs by ID
+	  ]]>
+	</description>
+
+       <propertyList name="genomeAttribution">
+          <value/>
+       </propertyList>
+       <propertyList name="specificAttribution">
+           <value>dbEST</value>
+           <value>CparvumESTs</value>
+           <value>ZhangGardnerPf3D7_EstLibrary</value>
+           <value>Florent_ESTLibrary</value>
+           <value>WatanabePf3D7_EstLibrary</value>
+           <value>WatanabePv_EstLibrary</value>
+           <value>WatanabePy17XL_EstLibrary</value>
        </propertyList>
 
   </question>

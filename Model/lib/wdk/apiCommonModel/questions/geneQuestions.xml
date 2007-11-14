@@ -1098,7 +1098,32 @@ Find genes that are predicted to encode a signal peptide.
          displayName="ID"
               queryRef="GeneId.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
-              noSummaryOnSingleRecord="true">
+              noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+        <attributesList
+              summary="organism,location_text,product,gene_type"
+              sorting="organism asc,location_text asc"
+        /> 
+        <summary>
+           Find a gene by its ID.
+        </summary>
+        <description>
+           <![CDATA[
+           Find a gene by its ID. The search is case
+           insensitive. Asterisks can be used as wild cards (e.g. ' PF11_* ').
+           Genes whose IDs have changed can be found by either  old or 
+           new ID. GI numbers (e.g. 23508535), Entrez Protein Locus IDs (e.g.
+           NP_701204.1), PDB IDs (e.g. 1HN6), or GenBank IDs (e.g. AAB36701.1)
+           can also be used.
+          ]]>
+        </description>
+    </question>
+
+     <question name="GeneBySingleLocusTag"
+         category="Other Attributes"
+         displayName="ID"
+              queryRef="GeneId.GeneBySingleLocusTag"
+              recordClassRef="GeneRecordClasses.GeneRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
         <attributesList
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"
@@ -1127,7 +1152,30 @@ Find genes that are predicted to encode a signal peptide.
          displayName="List of IDs"
               queryRef="GeneId.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
-              noSummaryOnSingleRecord="true">
+              noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+        <attributesList
+              summary="organism,location_text,product,gene_type"
+              sorting="organism asc,location_text asc"
+        /> 
+        <summary>
+           Find a gene by its ID.
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: "PF11_0344, PF11_0306"
+          ]]>
+        </description>
+    </question>
+
+     <question name="GeneByLocusTag"
+         category="Other Attributes"
+         displayName="List of IDs"
+              queryRef="GeneId.GeneByLocusTag"
+              recordClassRef="GeneRecordClasses.GeneRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
         <attributesList
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"

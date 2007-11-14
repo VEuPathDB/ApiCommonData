@@ -11,7 +11,7 @@
       displayName="Genomic Sequence ID"
       queryRef="SequenceIds.SequenceBySourceId"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass"
-      noSummaryOnSingleRecord="true">
+      noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
          
       <attributesList 
         summary="organism"
@@ -25,6 +25,26 @@
         Find genomic sequences (contigs) by ID.
       </description>
       <description includeProjects="PlasmoDB,ToxoDB,ApiDB">
+        Find genomic sequences (chromosomes or contigs) by ID.
+      </description>
+    </question>
+    
+    <question name="SequenceBySourceId"
+      category="Other Attributes"
+      displayName="Genomic Sequence ID"
+      queryRef="SequenceIds.SequenceBySourceId"
+      recordClassRef="SequenceRecordClasses.SequenceRecordClass"
+      noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+         
+      <attributesList 
+        summary="organism"
+      />
+      
+      <summary>
+        Find genomic sequences by ID.
+      </summary>
+
+      <description>
         Find genomic sequences (chromosomes or contigs) by ID.
       </description>
     </question>

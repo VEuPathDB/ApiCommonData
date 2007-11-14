@@ -12,7 +12,25 @@
               displayName="Isolates by ID"
               queryRef="IsolateIds.IsolateByIsolateId" 
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true">
+              noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+
+             <attributesList 
+               summary="organism, strain, product, specific_host, map"
+             />
+             <summary>
+               Find Isolates by ID.
+             </summary>
+             <description>
+               Find Isolates by ID. The IDs are usually the Gebank accession number
+             </description>
+    </question>
+
+    <question name="IsolateByIsolateId" 
+		          category="Other Attributes"
+              displayName="Isolates by ID"
+              queryRef="IsolateIds.IsolateByIsolateId" 
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
 
              <attributesList 
                summary="organism, strain, product, specific_host, map"
@@ -166,7 +184,18 @@
 						 displayName="Isolates by Author"
 						 queryRef="IsolateIds.IsolateByAuthor"
 						 recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-						 noSummaryOnSingleRecord="true">
+						 noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+		  <attributesList summary="organism, strain, product, specific_host, map" /> 
+		  <summary>Find Isolates by Author.</summary> 
+		  <description>Find Isolates by Author.</description> 
+		</question>
+
+	 <question name="IsolateByAuthor"
+					   category="Other Attributes"
+						 displayName="Isolates by Author"
+						 queryRef="IsolateIds.IsolateByAuthor"
+						 recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+						 noSummaryOnSingleRecord="false" includeProjects="ApiDB">
 		  <attributesList summary="organism, strain, product, specific_host, map" /> 
 		  <summary>Find Isolates by Author.</summary> 
 		  <description>Find Isolates by Author.</description> 
