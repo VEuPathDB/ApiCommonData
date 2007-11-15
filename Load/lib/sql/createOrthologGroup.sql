@@ -11,7 +11,8 @@ CREATE TABLE apidb.OrthologGroup (
  avg_connectivity             FLOAT(126),
  number_of_match_pairs        NUMBER,
  aa_seq_group_experiment_id   NUMBER(12),
- external_database_release_id NUMBER(10),
+ external_database_release_id NUMBER(10) NOT NULL,
+ mulple_sequence_alignment    CLOB,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -27,6 +28,10 @@ CREATE TABLE apidb.OrthologGroup (
 
 ALTER TABLE apidb.OrthologGroup
 ADD CONSTRAINT og_pk PRIMARY KEY (ortholog_group_id);
+
+ALTER TABLE apidb.OrthologGroup
+ADD CONSTRAINT og_fk1 FOREIGN KEY (external_database_release_id)
+REFERENCES sres.ExternalDatabaseRelease;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroup TO gus_w;
 GRANT SELECT ON apidb.OrthologGroup TO gus_r;
