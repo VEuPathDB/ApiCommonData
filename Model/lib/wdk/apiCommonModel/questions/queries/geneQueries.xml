@@ -1322,7 +1322,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
        <paramRef ref="sharedParams.libraryId"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
@@ -1386,7 +1386,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByESTOverlap" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-               <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+               <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
 	       <paramRef ref="sharedParams.libraryId"/>
 	       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
 	       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
