@@ -45,7 +45,7 @@
                 <columnAttribute name="sequence" displayName="Sequence" internal="true"/>
             </attributeQueryRef>
 
-            <table name="ReferenceInfo" queryRef="EstAttributes.Reference" excludeProjects="ApiDB">
+            <table name="ReferenceInfo" displayName="Reference" queryRef="EstAttributes.Reference" excludeProjects="ApiDB">
                 <columnAttribute inReportMaker="false" name="source_id" displayName="Source ID"     internal="true" />
                 <columnAttribute inReportMaker="false" name="author"   displayName="Author"    internal="false" />
                 <columnAttribute inReportMaker="false" name="affiliation" displayName="Affiliation" internal="false" />
@@ -59,10 +59,6 @@
                 <columnAttribute inReportMaker="false" name="address"     internal="true" />
             </attributeQueryRef>
    -->
-            <attributeQueryRef ref="EstAttributes.Cluster" includeProjects="CryptoDB,ToxoDB">
-                <columnAttribute inReportMaker="false" name="na_sequence_id" internal="true" />
-                <columnAttribute inReportMaker="false" name="number_of_contained_sequences" internal="true" />
-            </attributeQueryRef>
 
             <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
                <text>
@@ -88,18 +84,6 @@
               </text>
            </textAttribute>-->
 
-           <textAttribute name="linktocluster" displayName="EST Assembly Data" inReportMaker="false" internal="true" excludeProjects="ApiDB,PlasmoDB">
-               <text includeProjects="ToxoDB">
-                    <![CDATA[
-                    <a href="showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=TgDT.$$na_sequence_id$$.tmp">View Assembly Containing this EST</a>
-                ]]>
-               </text>
-               <text includeProjects="CryptoDB">
-                    <![CDATA[
-                    <a href="showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$na_sequence_id$$">View Assembly Containing this EST</a>
-                ]]>
-               </text>
-           </textAttribute>
 
       <!-- =================================================================== -->
       <!-- Tables ++++++++-->
@@ -177,6 +161,25 @@
             </table>
             
 
+            <table name="AssemblyInfo" excludeProjects="ApiDB,PlasmoDB" 
+                   displayName="Assembly for this EST" 
+                   queryRef="EstTables.AssemblyInfo">
+                <columnAttribute displayName="Assembly" name="assembly_id" internal="true" />
+                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_id$$" includeProjects="CryptoDB">
+                     <url>
+                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$assembly_id$$]]>
+                     </url>
+                </linkAttribute>
+                <linkAttribute displayName="Assembly" name="assembly_link" visible="TgDT.$$assembly_id$$.tmp" includeProjects="ToxoDB">
+                     <url >
+                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=TgDT.$$assembly_id$$.tmp]]>
+                     </url>
+                </linkAttribute>
+                
+                <columnAttribute inReportMaker="false" name="assembly_length" displayName="Length" />
+                <columnAttribute inReportMaker="false" name="number_of_contained_sequences" displayName="Number of ESTs" />
+            </table>
+            
 
        </recordClass>
     </recordClassSet>

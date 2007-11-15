@@ -90,26 +90,6 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="Cluster" includeProjects="CryptoDB,ToxoDB"
-              isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/> 
-            <column name="source_id" />
-            <column name="na_sequence_id" />
-            <column name="number_of_contained_sequences" />
-            <sql>
-            <![CDATA[           
-            SELECT enas.source_id, $$projectId$$ as project_id,
-                   asmbly.na_sequence_id, 
-                   asmbly.number_of_contained_sequences 
-            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
-            WHERE  aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
-            AND    aseq.na_sequence_id = enas.na_sequence_id
-            AND    enas.source_id = $$primaryKey$$
-            ]]>
-            </sql>
-        </sqlQuery>
-
 
     </querySet>
 

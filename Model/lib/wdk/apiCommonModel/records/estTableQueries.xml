@@ -43,7 +43,7 @@
 
         <!-- EstTables.ClusterMates -->
         <sqlQuery name="ClusterMates"  includeProjects="CryptoDB,ToxoDB"
-              displayName="Other ESTs that Cluster with this EST:" isCacheable='true'>
+              displayName="Other ESTs that Cluster with this EST" isCacheable='true'>
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
             <column name="mate_id" />
@@ -65,6 +65,31 @@
             ]]>
             </sql>
         </sqlQuery>
+
+
+        <!-- EstTables.AssemblyInfo -->
+        <sqlQuery name="AssemblyInfo"  includeProjects="CryptoDB,ToxoDB"
+              displayName="Assembly for this EST" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
+            <column name="assembly_id" />
+            <column name="assembly_length" />
+            <column name="number_of_contained_sequences" />
+
+            <sql>
+            <![CDATA[           
+            SELECT asmbly.na_sequence_id as assembly_id,
+                   asmbly.number_of_contained_sequences, 
+                   asmbly.length as assembly_length
+            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
+            WHERE  aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
+            AND    aseq.na_sequence_id = enas.na_sequence_id
+            AND    enas.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+
+        </sqlQuery>
+
 
     </querySet>
 </wdkModel>
