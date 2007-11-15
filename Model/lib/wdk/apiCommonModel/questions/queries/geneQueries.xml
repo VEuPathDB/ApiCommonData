@@ -1072,7 +1072,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Genes By Snps -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB"
+    <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
               isCacheable="true">
         <paramRef ref="sharedParams.snp_strain_a"/>
         <paramRef ref="sharedParams.snp_strain_m" multiPick="false"/>
@@ -1117,7 +1117,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <wsQuery name="GenesBy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="sharedParams.snp_strain_a"/>

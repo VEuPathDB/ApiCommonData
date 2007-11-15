@@ -1,11 +1,11 @@
 <wdkModel>
-    <querySet name="SnpTables" includeProjects="ToxoDB,PlasmoDB">
+    <querySet name="SnpTables" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Strains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB" 
+        <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
               isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -39,7 +39,7 @@
        <!-- Providers -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Providers" includeProjects="ToxoDB,PlasmoDB" 
+        <sqlQuery name="Providers" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -48,13 +48,13 @@
             <sqlParamValue name="name" includeProjects="PlasmoDB">
                 DECODE(ed.name,'Broad SNPs','Broad','Sanger falciparum SNPs','WTSI','Su SNPs','NIH', 'PlasmoDB combined SNPs', 'PlasmoDB','Sanger reichenowi SNPs','WTSI')
             </sqlParamValue>
-            <sqlParamValue name="name" includeProjects="ToxoDB">
+            <sqlParamValue name="name" includeProjects="ToxoDB,CryptoDB">
                       ed.name
             </sqlParamValue>
             <sqlParamValue name="filter" includeProjects="PlasmoDB">
                 and sb.source_id != $$primaryKey$$
             </sqlParamValue>
-            <sqlParamValue name="filter" includeProjects="ToxoDB">
+            <sqlParamValue name="filter" includeProjects="ToxoDB,CryptoDB">
             </sqlParamValue>
 
             <sql>

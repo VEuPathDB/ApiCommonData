@@ -1,11 +1,11 @@
 <wdkModel>
 
-  <querySet name="SnpsBy" includeProjects="PlasmoDB,ToxoDB,ApiDB">
+  <querySet name="SnpsBy" includeProjects="PlasmoDB,ToxoDB,ApiDB,CryptoDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <sqlQuery name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB"  isCacheable="true">
+      <sqlQuery name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB,CryptoDB"  isCacheable="true">
           <paramRef ref="snpParams.snp_id"/>
 	  <column name="source_id"/>
 	  <column name="project_id"/>
@@ -29,9 +29,10 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <sqlQuery name="SnpsByGeneId"  includeProjects="PlasmoDB,ToxoDB"
+      <sqlQuery name="SnpsByGeneId"  includeProjects="PlasmoDB,ToxoDB,CryptoDB"
              isCacheable="true">
-        <paramRef ref="sharedParams.ds_gene_ids"/>
+        <paramRef ref="sharedParams.ds_gene_ids" excludeProjects="CryptoDB"/>
+        <paramRef ref="sharedParams.ds_gene_ids" default="cgd3_510" includeProjects="CryptoDB"/>
         <paramRef ref="sharedParams.snp_strain_a"/>
         <paramRef ref="sharedParams.snp_strain_m"/>
         <column name="source_id"/>
@@ -47,12 +48,12 @@
         <column name="comp_products"/>
 
         <sqlParamValue name="providers" includeProjects="PlasmoDB">
-           'Sanger reichenowi SNPs','PlasmoDB combined SNPs'
+           AND ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')
         </sqlParamValue>
         <sqlParamValue name="providers" includeProjects="ToxoDB">
-
-            'Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford'
+          AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford')
         </sqlParamValue>
+        <sqlParamValue name="providers" includeProjects="CryptoDB"></sqlParamValue>
 
         <sql>
             <![CDATA[
@@ -86,7 +87,7 @@ FROM
       AND gf.na_feature_id = sf.parent_id                               
       AND edr.external_database_release_id = sf.external_database_release_id                               
       AND edr.external_database_id = ed.external_database_id                               
-      AND ed.name in (&&providers&&) 
+      &&providers&& 
       AND sf.na_feature_id = isva.parent_id                               
       AND sf.na_feature_id = isvb.parent_id                               
       AND isva.strain = $$snp_strain_a$$                               
@@ -129,8 +130,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB" isCacheable="true">
-          <paramRef ref="sharedParams.chromosome" multiPick="false"/>
+    <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB,CryptoDB" isCacheable="true">
+          <paramRef ref="sharedParams.chromosomeOptional" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
           <paramRef ref="sharedParams.snp_strain_a"/>
@@ -150,12 +151,12 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
 
         <sqlParamValue name="providers" includeProjects="PlasmoDB">
-           'Sanger reichenowi SNPs','PlasmoDB combined SNPs'
+           AND ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')
         </sqlParamValue>
         <sqlParamValue name="providers" includeProjects="ToxoDB">
-
-            'Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford'
+          AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford')
         </sqlParamValue>
+        <sqlParamValue name="providers" includeProjects="CryptoDB"></sqlParamValue>
 
         <sql>
             <![CDATA[
@@ -216,11 +217,11 @@ FROM (SELECT isf.source_id AS source_id, nas.source_id || ':'
                  dots.SeqVariation isva, dots.NALocation l, dots.naSequence nas,
                  dots.SeqVariation isvb, dots.SnpFeature isf,
                  apidb.FeatureLocation gene_loc
-            WHERE nas.source_id = $$chromosome$$
+            WHERE nas.source_id = $$chromosomeOptional$$
               AND isf.na_sequence_id = nas.na_sequence_id
               AND edr.external_database_release_id = isf.external_database_release_id
               AND edr.external_database_id = ed.external_database_id
-              AND ed.name in (&&providers&&)
+              &&providers&&
               AND isf.na_feature_id = l.na_feature_id
               AND l.end_max >= $$start_point$$
               AND (l.start_min <= $$end_point$$ OR $$end_point$$ = 0)
@@ -239,7 +240,7 @@ GROUP BY snpq.source_id, snpq.gene, snpq.snp_location, snpq.prot_pos,
     <wsQuery name="SnpsByLocation" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
           <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
-          <paramRef ref="sharedParams.chromosome" multiPick="false"/>
+          <paramRef ref="sharedParams.chromosomeOptional" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
           <paramRef ref="sharedParams.snp_strain_a"/>

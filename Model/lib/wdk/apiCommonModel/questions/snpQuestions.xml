@@ -5,7 +5,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <question name="SnpBySourceId" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+     <question name="SnpBySourceId" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
                displayName="ID"
                queryRef="SnpsBy.SnpBySourceId"
 	       recordClassRef="SnpRecordClasses.SnpRecordClass"
@@ -46,7 +46,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <question name="SnpsByGeneId" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+      <question name="SnpsByGeneId" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Gene"
               displayName="Gene ID"
               queryRef="SnpsBy.SnpsByGeneId"
@@ -75,6 +75,11 @@
             <![CDATA[
               Find SNPs between any two strains that are contained within a gene.
 	      <br> SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
+            ]]>
+        </description>
+	<description includeProjects="CryptoDB">
+            <![CDATA[
+              Find SNPs by chromosomal location. SNP data was provided by Giovanni Widmer.
             ]]>
         </description>
         <dynamicAttributes>
@@ -111,7 +116,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <question name="SnpsByLocation" includeProjects="ApiDB,PlasmoDB,ToxoDB"
+    <question name="SnpsByLocation" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Genomic Position"
               displayName="Chromosomal Location"
               queryRef="SnpsBy.SnpsByLocation"
@@ -141,6 +146,11 @@
 	<description includeProjects="ApiDB">
             <![CDATA[
               Find SNPs by chromosomal location. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>. <br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
+            ]]>
+        </description>
+	<description includeProjects="CryptoDB">
+            <![CDATA[
+              Find SNPs by chromosomal location. SNP data was provided by Giovanni Widmer.
             ]]>
         </description>
         <dynamicAttributes>

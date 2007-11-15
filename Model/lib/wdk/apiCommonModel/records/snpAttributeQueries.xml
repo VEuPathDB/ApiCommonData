@@ -1,5 +1,5 @@
 <wdkModel>
-    <querySet name="SnpAttributes" includeProjects="PlasmoDB,ToxoDB,ApiDB">
+    <querySet name="SnpAttributes" includeProjects="PlasmoDB,ToxoDB,ApiDB,CryptoDB">
 
         <sqlQuery name="Bfmv" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
@@ -58,6 +58,9 @@
                  'SNPs from alignments of GT1, VEG and RH (AmitAlignmentSnps)', 'Genomic Sequence SNPs', 
                  'John Boothroyd lab at Stanford (ME49_SNPs)', 'EST-based SNPs',
                  'Genetic Markers - David Sibley (GeneticMarkers_Sibley)', 'GeneticMarkers_Sibley'
+            </sqlParamValue>
+            <sqlParamValue includeProjects="CryptoDB" name="datasets">
+                'Widmer SNPs', 'Widmer_SNPs'
             </sqlParamValue>
             <sql>
             <![CDATA[
