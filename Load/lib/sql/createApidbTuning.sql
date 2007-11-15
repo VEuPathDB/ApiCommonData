@@ -1347,10 +1347,18 @@ SELECT CASE
        taxon.ncbi_tax_id,
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
-       l.library_id, l.dbest_name as library_dbest_name
+       l.library_id, l.dbest_name as library_dbest_name,
+       CASE
+         WHEN aseq.assembly_na_sequence_id IS NULL
+           THEN NULL
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'TgDT.' || aseq.assembly_na_sequence_id || '.tmp'
+         ELSE 'DT.' || aseq.assembly_na_sequence_id || '.tmp'
+       END AS assembly_id
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
+     dots.assemblysequence aseq,
      (SELECT query_na_sequence_id, COUNT(*) AS best_alignment_count
       FROM dots.BlatAlignment ba
       WHERE is_best_alignment = 1
@@ -1364,7 +1372,8 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND edr.external_database_id = ed.external_database_id
   AND ens.sequence_ontology_id = so.sequence_ontology_id
   AND so.term_name = 'EST'
-  AND best.query_na_sequence_id(+) = ens.na_sequence_id;
+  AND best.query_na_sequence_id(+) = ens.na_sequence_id
+  AND ens.na_sequence_id = aseq.na_sequence_id(+);
 
 GRANT SELECT ON apidb.EstAttributes&1 TO gus_r;
 
