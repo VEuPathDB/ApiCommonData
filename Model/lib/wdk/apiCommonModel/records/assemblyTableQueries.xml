@@ -22,7 +22,7 @@
             <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT etn.source_id as sequence_id,
-                   'TgDT.' || a.na_sequence_id || '.tmp' as id,
+                   a.na_sequence_id as id,
                    blat.target_start,
                    blat.target_end,
                    blat.target_start - 10000 as context_start,
@@ -109,6 +109,54 @@
             </sql>
         </sqlQuery>
 
+
+        <!-- AssemblyTables.EstInfo -->
+        <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="est" />
+            <column name="library" />
+            <column name="est_start" />
+            <column name="est_end" />
+            <column name="assembly_strand" />
+            <!-- column name="gapped_length" / -->
+
+            <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT enas.source_id as est, l.dbest_name as library,
+                   assembly_offset + 1 as est_start, 
+                   (length(gapped_sequence) + assembly_offset) as est_end,
+                   decode(assembly_strand,0,'+',1,'-',assembly_strand) as assembly_strand,
+                   length(gapped_sequence) as gapped_length
+            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
+                   dots.library l, dots.est e
+            WHERE  'TgDT.' || asmbly.na_sequence_id || '.tmp'  = $$primaryKey$$
+            AND    asmbly.na_sequence_id = aseq.assembly_na_sequence_id
+            AND    aseq.na_sequence_id = enas.na_sequence_id
+            AND    aseq.na_sequence_id = e.na_sequence_id
+            AND    e.library_id = l.library_id
+            ORDER BY l.dbest_name, assembly_offset
+            ]]>
+            </sql>
+
+            <sql includeProjects="CryptoDB">
+            <![CDATA[
+            SELECT enas.source_id as est, l.dbest_name as library,
+                   assembly_offset + 1 as est_start, 
+                   (length(gapped_sequence) + assembly_offset) as est_end,
+                   assembly_strand, length(gapped_sequence) as gapped_length
+            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
+                   dots.library l, dots.est e
+            WHERE  asmbly.na_sequence_id = $$primaryKey$$
+            AND    asmbly.na_sequence_id = aseq.assembly_na_sequence_id
+            AND    aseq.na_sequence_id = enas.na_sequence_id
+            AND    aseq.na_sequence_id = e.na_sequence_id
+            AND    e.library_id = l.library_id
+            ORDER BY l.dbest_name, assembly_offset
+            ]]>
+            </sql>
+
+        </sqlQuery>
 
     </querySet>
 </wdkModel>

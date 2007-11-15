@@ -72,6 +72,27 @@
                queryRef="AssemblyTables.LibraryInfo">
             <columnAttribute displayName="Library"  name="library"/>
             <columnAttribute displayName="number of ESTs" name="est_count"/>
+
+        </table>  
+
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- EstInfo -->  
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB"
+               displayName="ESTs in Assembly"
+               queryRef="AssemblyTables.EstInfo">
+            <columnAttribute displayName="EST" name="est"  internal="true" />
+            <linkAttribute displayName="EST" name="est_link" visible="$$est$$">
+                <url>
+                <![CDATA[showRecord.do?name=EstRecordClasses.EstRecordClass&primary_key=$$est$$]]>
+                </url>
+            </linkAttribute>
+            <columnAttribute name="est_start"/>
+            <columnAttribute name="est_end"/>
+            <columnAttribute displayName="strand" name="assembly_strand"/>
+            <!-- columnAttribute displayName="gapped_length" name="gapped_length"/ -->
+            <columnAttribute displayName="Library"  name="library"/>
         </table>  
 
 
