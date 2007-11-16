@@ -1027,12 +1027,13 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
             Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
            <br><br>
 
-           An <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a> analysis of the proteins of 87 species, including Plasmodia, placed each protein in an ortholog group. From a Plasmodium gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
+           An <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a> analysis of the proteins of 87 species, including Plasmodia, placed each protein in an ortholog group. 
+           From a Plasmodium gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
             <br><br>
             Use this query to define a pattern
             across those ortholog groups, and find genes that match that pattern.  The pattern is a
@@ -1054,6 +1055,63 @@ Find genes that are predicted to encode a signal peptide.
             35,603 genes).
            ]]>
         </description>
+        <description includeProjects="CryptoDB">
+            <![CDATA[
+            Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
+           <br><br>
+
+           An <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a> analysis of the proteins of 87 species, including <i>Cryptosporidium sp.</i>, placed each protein in an ortholog group. 
+           From a <i>Cryptosporidium</i> gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
+            <br><br>
+            Use this query to define a pattern
+            across those ortholog groups, and find genes that match that pattern.  The pattern is a
+            specification, for each species, of "include", "exclude", or "don't care."  Click on the
+            radio button next to a species to toggle through the three states.  (A
+            <img src="images/yes.gif"> means
+            "include", an <img src="images/no.gif"> means "exclude"
+            and <img src="images/dc.gif"> means "don't care".)
+            <br> <br>
+            For example, to find genes
+            that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
+            a <img src="images/yes.gif"> and click on <i>Homo
+            sapiens</i> until you see an
+            <img src="images/no.gif">.
+            <br> <br>
+            Note that this query can take some time because of the large number
+            of combinations of possible presence/absence calls (2<sup>87</sup>
+            possible combinations, of which 2,723 are associated with a total of
+            35,603 genes).
+           ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+            <![CDATA[
+            Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
+           <br><br>
+
+           An <a href="http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi">OrthoMCL</a> analysis of the proteins of 87 species, including <i>Toxoplasma sp.</i>, placed each protein in an ortholog group. 
+           From a <i>Toxoplasma</i> gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
+            <br><br>
+            Use this query to define a pattern
+            across those ortholog groups, and find genes that match that pattern.  The pattern is a
+            specification, for each species, of "include", "exclude", or "don't care."  Click on the
+            radio button next to a species to toggle through the three states.  (A
+            <img src="images/yes.gif"> means
+            "include", an <img src="images/no.gif"> means "exclude"
+            and <img src="images/dc.gif"> means "don't care".)
+            <br> <br>
+            For example, to find genes
+            that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
+            a <img src="images/yes.gif"> and click on <i>Homo
+            sapiens</i> until you see an
+            <img src="images/no.gif">.
+            <br> <br>
+            Note that this query can take some time because of the large number
+            of combinations of possible presence/absence calls (2<sup>87</sup>
+            possible combinations, of which 2,723 are associated with a total of
+            35,603 genes).
+           ]]>
+        </description>
+
 
        <propertyList name="specificAttribution">
            <value>OrthoMCL_Phyletic</value>
