@@ -88,9 +88,9 @@
                                 AND ga.source_id = ns.source_id
                                 AND ga.project_id = '@PROJECT_ID@' 
                                   ))) organisms,
-               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
                  UNION
@@ -180,9 +180,9 @@
                                 AND ga.source_id = ns.source_id
                                 AND ga.project_id = '@PROJECT_ID@'
                               ))) organisms,
-               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
                  UNION
@@ -238,9 +238,9 @@
                               AND ga.source_id = gf.source_id
                               AND ga.project_id = '@PROJECT_ID@' 
                               ))) organisms,
-               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
                  UNION
@@ -333,9 +333,9 @@
                               ANd ga.project_id = '@PROJECT_ID@'
                               AND nas.na_sequence_id = gf.na_sequence_id
                               ))) organisms,
-               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
                  UNION
@@ -468,9 +468,9 @@
                              (SELECT ns.taxon_id
                               FROM dots.NaSequence ns, dots.GeneFeature gf
                               WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
-               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
-                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
                  UNION
