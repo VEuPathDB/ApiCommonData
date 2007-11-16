@@ -1348,13 +1348,7 @@ SELECT CASE
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
        l.library_id, l.dbest_name as library_dbest_name,
-       CASE
-         WHEN aseq.assembly_na_sequence_id IS NULL
-           THEN NULL
-         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
-           THEN 'TgDT.' || aseq.assembly_na_sequence_id || '.tmp'
-         ELSE 'DT.' || aseq.assembly_na_sequence_id || '.tmp'
-       END AS assembly_id
+       aseq.assembly_na_sequence_id
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
