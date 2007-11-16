@@ -160,7 +160,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
         <sql>
             <![CDATA[
-SELECT snpq.source_id, '@PROJECT_ID@' AS project_id, snpq.gene, snpq.snp_location,
+       SELECT * from (SELECT snpq.source_id, '@PROJECT_ID@' AS project_id, snpq.gene, snpq.snp_location,
        snpq.prot_pos, snpq.ref_allele, snpq.ref_product,
        apidb.tab_to_string(CAST(COLLECT(
           DISTINCT CASE
@@ -229,10 +229,9 @@ FROM (SELECT isf.source_id AS source_id, nas.source_id || ':'
               AND isf.na_feature_id = isvb.parent_id
               AND isva.strain = $$snp_strain_a$$
               AND isvb.strain in ($$snp_strain_m$$)
-              AND isva.allele != isvb.allele
               AND isf.parent_id = gene_loc.na_feature_id(+)) snpq
 GROUP BY snpq.source_id, snpq.gene, snpq.snp_location, snpq.prot_pos,
-         snpq.ref_allele, snpq.ref_product
+         snpq.ref_allele, snpq.ref_product)
            ]]>
        </sql>
     </sqlQuery>
