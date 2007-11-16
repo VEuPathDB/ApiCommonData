@@ -129,6 +129,23 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location -->
+    <!-- 
+         This query contains two nested inline views.  The 
+         inner, named "hits", identifies SNPs within the given 
+         genomic region for which the reference strain has a 
+         different allele from at least one of the others.  The 
+         outer inline view, "snpq", has one row for each SNP for 
+         each strain (e.g. (100 SNPs) x (1 reference + 3 other 
+         strains) = 400 records).  At the top level, the query 
+         itself then groups all rows of a SNP into a single row 
+         (which, for the above example, would mean grouping four 
+         rows into one).
+         
+         It seems necessary to have these three levels in the 
+         query's structure, but it might be possible to optimize 
+         within each level.  For instance, the innermost query must 
+         join dots.SnpFeature to dots.NaLocation.  A big 
+         materialized view could precompute this join. -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB,CryptoDB" isCacheable="true">
           <paramRef ref="sharedParams.chromosomeOptional" multiPick="false"/>
