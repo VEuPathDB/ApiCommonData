@@ -78,7 +78,7 @@ GRANT SELECT ON apidb.GeneAlias&1 TO gus_r;
 CREATE INDEX apidb.GeneAlias_gene_idx&1 ON apidb.GeneAlias&1 (gene);
 CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias);
 
-drop materialized view apidb.GeneAlias;
+--drop materialized view apidb.GeneAlias;
 
 CREATE OR REPLACE SYNONYM apidb.GeneAlias
                           FOR apidb.GeneAlias&1;
@@ -93,7 +93,7 @@ CREATE INDEX apidb.SequenceAlias_idx&1 ON apidb.SequenceAlias&1(lowercase_source
 
 GRANT SELECT ON apidb.SequenceAlias&1 TO gus_r;
 
-drop materialized view apidb.SequenceAlias;
+--drop materialized view apidb.SequenceAlias;
 
 CREATE OR REPLACE SYNONYM apidb.SequenceAlias
                           FOR apidb.SequenceAlias&1;
@@ -139,7 +139,7 @@ CREATE INDEX apidb.GoTermSum_sourceId_idx&1 ON apidb.GoTermSummary&1 (source_id)
 
 GRANT SELECT ON apidb.GoTermSummary&1 TO gus_r;
 
-drop materialized view apidb.GoTermSummary;
+--drop materialized view apidb.GoTermSummary;
 
 CREATE OR REPLACE SYNONYM apidb.GoTermSummary
                           FOR apidb.GoTermSummary&1;
@@ -186,7 +186,7 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC);
 
 GRANT SELECT on apidb.PdbSimilarity&1 TO gus_r;
 
-drop materialized view apidb.PdbSimilarity;
+--drop materialized view apidb.PdbSimilarity;
 
 CREATE OR REPLACE SYNONYM apidb.PdbSimilarity
                           FOR apidb.PdbSimilarity&1;
@@ -220,7 +220,7 @@ grant select on apidb.FeatureLocation&1 TO gus_r;
 create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
              (feature_type, na_sequence_id, start_min, end_max, is_reversed);
 
-drop materialized view apidb.FeatureLocation;
+--drop materialized view apidb.FeatureLocation;
 
 create or replace synonym apidb.FeatureLocation
                           for apidb.FeatureLocation&1;
@@ -312,7 +312,7 @@ GRANT SELECT ON apidb.GeneId&1 TO gus_r;
 CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene);
 CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id);
 
-drop materialized view apidb.GeneId;
+--drop materialized view apidb.GeneId;
 
 CREATE OR REPLACE SYNONYM apidb.GeneId
                           FOR apidb.GeneId&1;
@@ -354,7 +354,7 @@ GRANT SELECT ON apidb.EpitopeSummary&1 TO gus_r;
 
 CREATE INDEX apidb.Epi_srcId_ix&1 ON apidb.EpitopeSummary&1 (source_id);
 
-drop materialized view apidb.EpitopeSummary;
+--drop materialized view apidb.EpitopeSummary;
 
 CREATE OR REPLACE SYNONYM apidb.EpitopeSummary
                           FOR apidb.EpitopeSummary&1;
@@ -379,7 +379,7 @@ GRANT SELECT ON apidb.GeneCentromereDistance&1 TO gus_r;
 CREATE INDEX apidb.GCent_loc_ix&1
        ON apidb.GeneCentromereDistance&1 (genomic_sequence, centromere_distance);
 
-drop materialized view apidb.GeneCentromereDistance;
+--drop materialized view apidb.GeneCentromereDistance;
 
 CREATE OR REPLACE SYNONYM apidb.GeneCentromereDistance
                           FOR apidb.GeneCentromereDistance&1;
@@ -489,7 +489,7 @@ from
 
 grant select on apidb.SageTagGene&1 to gus_r;
 
-drop materialized view apidb.SageTagGene;
+--drop materialized view apidb.SageTagGene;
 
 CREATE OR REPLACE SYNONYM apidb.SageTagGene
                           FOR apidb.SageTagGene&1;
