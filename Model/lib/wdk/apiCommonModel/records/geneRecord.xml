@@ -942,6 +942,10 @@
           <!-- Text  attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+          <attributeQueryRef ref="GeneAttributes.Chromosome" includeProjects="CryptoDB">
+                <columnAttribute name="chromosome" displayName="Chromosome" internal="false" />
+          </attributeQueryRef>
+
           <textAttribute name="overview" displayName="Overview" excludeProjects="ApiDB"
                          internal="true" inReportMaker="false">
 
@@ -956,7 +960,7 @@
                  This <b><i>$$organism$$</i></b> gene spans positions  
                  <b>$$start_min$$</b> - <b>$$end_max$$</b> of contig 
                  <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$"><b>$$sequence_id$$</b></a> 
-                 which maps to chromosome $$chromosome$$.</b><br><br>
+                 which maps to chromosome $$chromosome$$</b><br><br>
                  $$molecular_weight_note$$
                  ]]>
             </text>

@@ -293,6 +293,29 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+        <sqlQuery name="Chromosome" displayName="Chromosome" isCacheable="false" includeProjects="CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="chromosome"/>
+            <sql>
+            <![CDATA[SELECT g.source_id,
+                            src.chromosome as chromosome,
+                            $$projectId$$ as project_id
+                     FROM dots.genefeature g,
+                          dots.externalnasequence enas,
+                          dots.source src
+                     WHERE g.na_sequence_id= enas.na_sequence_id
+                     AND  enas.na_sequence_id = src.na_sequence_id
+                     AND g.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- protein sequence  -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -566,6 +589,7 @@
 
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
             <column name="pdb_id"/>
             <sql>
               <![CDATA[
