@@ -944,11 +944,23 @@
 
           <textAttribute name="overview" displayName="Overview" excludeProjects="ApiDB"
                          internal="true" inReportMaker="false">
-             <text>
+
+             <text excludeProjects="CryptoDB">
                   <![CDATA[
                      $$organism$$ $$gene_type$$ on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
                   ]]>
              </text>
+
+            <text includeProjects="CryptoDB">
+                 <![CDATA[
+                 This <b><i>$$organism$$</i></b> gene spans positions  
+                 <b>$$start_min$$</b> - <b>$$end_max$$</b> of contig 
+                 <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$"><b>$$sequence_id$$</b></a> 
+                 which maps to chromosome $$chromosome$$.</b><br><br>
+                 $$molecular_weight_note$$
+                 ]]>
+            </text>
+
          </textAttribute>
 
          <textAttribute name="dnaContext" displayName="Genomic Context"  includeProjects="ToxoDB,PlasmoDB"
