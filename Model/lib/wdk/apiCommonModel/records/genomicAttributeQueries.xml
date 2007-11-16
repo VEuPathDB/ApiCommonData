@@ -72,7 +72,7 @@
                     sortingColumn="database_name"
                     sortingTable="apidb.SequenceAttributes"/>
 
-            <column name="externalDbVersion" includeProjects="ToxoDB"
+            <column name="externalDbVersion" includeProjects="CryptoDB,ToxoDB"
                      sortingColumn="database_version"
                     sortingTable="apidb.SequenceAttributes"/>
 
@@ -118,7 +118,8 @@
                 instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
               ),
               'parvum', 'cparvum', 'hominis') as cryptocyc_db,
-            ed.name as externalDbname
+            ed.name as externalDbname,
+            edr.version AS externalDbVersion
             FROM dots.nasequence enas, 
             dots.source src, 
             sres.taxonname tn,
