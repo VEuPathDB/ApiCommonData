@@ -1099,6 +1099,30 @@
 
  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- SGC 3-D structure predictions                                --> 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="pdb_id"/>
+            <sql>
+              <![CDATA[
+            SELECT dr.primary_identifier AS pdb_id
+            FROM dots.GeneFeature gf,
+                 dots.DbRefNaFeature drnf,
+                 sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase ed
+            WHERE gf.source_id = '$$primaryKey$$'
+            AND gf.na_feature_id = drnf.na_feature_id
+            AND drnf.db_ref_id = dr.db_ref_id
+            AND dr.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = 'Structural Genomics Consortium 3D Structures'
+            ORDER BY dr.primary_identifier
+              ]]>
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- 3-D structure predictions -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
