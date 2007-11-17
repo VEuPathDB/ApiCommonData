@@ -76,7 +76,7 @@
                      sortingColumn="database_version"
                     sortingTable="apidb.SequenceAttributes"/>
 
-           <!--   <column name="cyc_db" includeProjects="CryptoDB" />  -->
+            <column name="cyc_db" includeProjects="CryptoDB" />
 
             <sql includeProjects="ApiDB">
               <![CDATA[
@@ -117,7 +117,7 @@
                 instr(ltrim(tn.name), ' ', 1, 1)+1, 
                 instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
               ),
-              'parvum', 'cparvum', 'hominis') as cryptocyc_db,
+              'parvum', 'cparvum', 'hominis') as cyc_db,
             ed.name as externalDbname,
             edr.version AS externalDbVersion
             FROM dots.nasequence enas, 
