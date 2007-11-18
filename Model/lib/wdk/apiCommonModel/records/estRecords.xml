@@ -33,6 +33,14 @@
                 <columnAttribute name="length"      displayName="length" internal="false" align="center"/>
                 <columnAttribute name="primer"      inReportMaker="false" internal="true"/>
                 <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
+
+                <columnAttribute name="assembly_id" internal="true" />
+                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_id$$" includeProjects="CryptoDB,ToxoDB">
+                     <url>
+                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$assembly_id$$]]>
+                     </url>
+                </linkAttribute>
+
                 <columnAttribute name="vector"      displayName="Vector" internal="false"/>
                 <columnAttribute name="stage"       displayName="Stage" internal="false"/>
                 <columnAttribute name="organism"    displayName="Organism" internal="true"/>
