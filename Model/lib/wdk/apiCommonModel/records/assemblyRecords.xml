@@ -27,7 +27,7 @@
         <table name="AlignmentInfo"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
-            <columnAttribute name="id"            internal="false" />
+            <columnAttribute name="id"            internal="true" />
             <columnAttribute name="organism" includeProjects="CryptoDB" />
             <columnAttribute name="sequence_id"   internal="true" />
             <columnAttribute name="target_start"  internal="true" />
@@ -35,6 +35,8 @@
             <columnAttribute name="context_start" internal="true" />
             <columnAttribute name="context_end"   internal="true" />
 
+            <columnAttribute displayName="Length" name="length"   internal="false" />
+            <columnAttribute displayName="Number of ESTs" name="count" />
             <linkAttribute displayName="Genomic Sequence" name="alignedcontig" visible="$$sequence_id$$">
                  <url>
                     <![CDATA[
@@ -45,7 +47,6 @@
 
             <columnAttribute name="percent_identity" />
             <columnAttribute name="score" />
-            <columnAttribute name="count" />
             <columnAttribute name="is_consistent" />
             <columnAttribute name="is_reversed" />
 

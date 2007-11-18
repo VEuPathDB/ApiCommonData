@@ -8,6 +8,7 @@
             <paramRef ref="recordParams.projectId"/>
             <column name="id" />
             <column name="sequence_id" />
+            <column name="length" />
             <column name="target_start" />
             <column name="target_end" />
             <column name="context_start" />
@@ -23,6 +24,7 @@
             <![CDATA[
             SELECT etn.source_id as sequence_id,
                    a.na_sequence_id as id,
+                   a.length,
                    blat.target_start,
                    blat.target_end,
                    blat.target_start - 10000 as context_start,
