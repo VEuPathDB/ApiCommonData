@@ -14,12 +14,14 @@
 -- It is sometimes desirable to change the definition of one of these mviews
 -- while it is being used by an application.  Simply dropping and re-creating
 -- the materialized view creates a time gap in which the application will
--- fail.  To handle this, the script gives the mviews names of the form
+-- fail.  To handle this, we gives the mviews names of the form
 -- "apidb.XAttributes1111", then creates a synonym, "apidb.XAttributes", which
 -- points to the mview.  To re-run this script while the mviews may be in use,
 -- change all occurrences of "1111" to any other four-digit number, for
 -- instance "1234".  The application will use the old mview until the "CREATE
 -- OR REPLACE SYNONYM" statement runs, and then switch seamlessly to the new.
+-- The four-digit synonym is passed as a command-line argument when this script
+-- is run.
 --
 -- A query at the end of this script looks for materialized views that end in
 -- a four-digit number but aren't pointed to by a synonym.  For convenience,
@@ -1338,7 +1340,8 @@ SELECT CASE
        ens.c_count,
        ens.g_count,
        ens.t_count,
-       (length - (a_count + c_count + g_count + t_count)) AS other_count,
+       (ens.length - (ens.a_count + ens.c_count + ens.g_count + ens.t_count))
+         AS other_count,
        ens.length,
        l.dbest_name,
        NVL(l.vector, 'unknown') AS vector,
@@ -1348,11 +1351,12 @@ SELECT CASE
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
        l.library_id, l.dbest_name as library_dbest_name,
-       aseq.assembly_na_sequence_id
+       aseq.assembly_na_sequence_id,
+       asm.number_of_contained_sequences AS assembly_est_count
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
-     dots.assemblysequence aseq,
+     dots.AssemblySequence aseq, dots.Assembly asm,
      (SELECT query_na_sequence_id, COUNT(*) AS best_alignment_count
       FROM dots.BlatAlignment ba
       WHERE is_best_alignment = 1
@@ -1367,7 +1371,8 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND ens.sequence_ontology_id = so.sequence_ontology_id
   AND so.term_name = 'EST'
   AND best.query_na_sequence_id(+) = ens.na_sequence_id
-  AND ens.na_sequence_id = aseq.na_sequence_id(+);
+  AND ens.na_sequence_id = aseq.na_sequence_id(+)
+  AND aseq.assembly_na_sequence_id = asm.na_sequence_id(+);
 
 GRANT SELECT ON apidb.EstAttributes&1 TO gus_r;
 
