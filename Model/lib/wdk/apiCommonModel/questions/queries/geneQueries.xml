@@ -66,7 +66,7 @@
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql excludeProjects="CryptoDB">
+        <sql>
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi
@@ -75,20 +75,6 @@
                                                '[[:space:]]', '')
             ]]>
         </sql>
-        <sql includeProjects="CryptoDB">
-            <![CDATA[
-            SELECT g.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.genefeature g,
-                 dots.rnatype r,
-                 dots.transcript t
-            WHERE g.na_feature_id = r.parent_id (+)
-            AND r.na_feature_id = t.parent_id (+)
-            AND (
-                LOWER(g.source_id) LIKE TRIM(LOWER(REPLACE($$single_gene_id$$, '*', '%')))
-                OR LOWER(t.protein_id) LIKE TRIM(LOWER(REPLACE($$single_gene_id$$, '*', '%'))) ||'%'
-            ) and g.source_id is not null
-           ]]>
-       </sql>
     </sqlQuery>
 
     <wsQuery name="GeneBySingleLocusTag" includeProjects="ApiDB"
