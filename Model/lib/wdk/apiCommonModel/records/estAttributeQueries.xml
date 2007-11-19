@@ -37,7 +37,7 @@
                     lowerCase="true"/>
             <column name="external_db_name" sortingTable="apidb.EstAttributes"
                     lowerCase="true"/>
-            <column name="est_num" excludeProjects="PlasmoDB"
+            <column name="est_num" sortingTable="apidb.EstAttributes" excludeProjects="PlasmoDB"
                     lowerCase="true"/>
             <sql includeProjects="PlasmoDB">
             <![CDATA[
@@ -67,10 +67,9 @@
                   REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
                     AS formatted_organism,
-                  bfmv.external_db_name, a.number_of_contained_sequences as est_num
-            FROM  apidb.EstAttributes bfmv, dots.assembly a
+                  bfmv.external_db_name, bfmv.assembly_est_count as est_num
+            FROM  apidb.EstAttributes bfmv
             WHERE bfmv.source_id = $$primaryKey$$
-            AND   bfmv.assembly_na_sequence_id = a.na_sequence_id
             ]]>
            </sql>
         </sqlQuery>
