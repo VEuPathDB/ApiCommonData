@@ -147,7 +147,8 @@
             SELECT enas.source_id as est, l.dbest_name as library,
                    assembly_offset + 1 as est_start, 
                    (length(gapped_sequence) + assembly_offset) as est_end,
-                   assembly_strand, length(gapped_sequence) as gapped_length
+                   decode(assembly_strand,0,'+',1,'-',assembly_strand) as assembly_strand,
+                   length(gapped_sequence) as gapped_length
             FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
                    dots.library l, dots.est e
             WHERE  asmbly.na_sequence_id = $$primaryKey$$
