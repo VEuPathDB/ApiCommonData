@@ -1351,7 +1351,7 @@ SELECT CASE
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
        l.library_id, l.dbest_name as library_dbest_name,
-       aseq.assembly_na_sequence_id,
+       aseq.assembly_na_sequence_id, asm.source_id as assembly_source_id,
        asm.number_of_contained_sequences AS assembly_est_count
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
