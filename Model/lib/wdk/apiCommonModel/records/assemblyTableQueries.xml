@@ -18,9 +18,9 @@
             <column name="count" />
             <column name="is_consistent" />
             <column name="is_reversed" />
-            <column name="organism" includeProjects="CryptoDB" />
+            <column name="organism" />
 
-            <sql includeProjects="ToxoDB">
+            <sql>
             <![CDATA[
             SELECT etn.source_id as sequence_id,
                    a.na_sequence_id as id,
@@ -33,50 +33,27 @@
                    decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
                    blat.percent_identity,       
                    blat.score || '' score, 
-                   a.number_of_contained_sequences as count
-            FROM   dots.BlatAlignment blat, 
-                   dots.Assembly a, 
-                   dots.VirtualSEQUENCE etn
-            WHERE  blat.query_na_sequence_id = a.na_sequence_id 
-              AND  blat.target_na_sequence_id = etn.na_sequence_id 
-              AND  etn.external_database_release_id = blat.target_external_db_release_id 
-              AND  (blat.target_end - blat.target_start ) < 5000 
-              AND  blat.is_best_alignment = 1 
-              AND 'TgDT.' || a.na_sequence_id || '.tmp' = $$primaryKey$$
-            ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
-            ]]>
-            </sql>
-
-            <sql includeProjects="CryptoDB">
-            <![CDATA[
-            SELECT etn.source_id as sequence_id,
-                   a.na_sequence_id as id,
-                   a.length,
-                   blat.target_start,
-                   blat.target_end,
-                   blat.target_start - 10000 as context_start,
-                   blat.target_end + 10000 as context_end,
-                   decode(blat.is_consistent,0,'No',1,'Yes',blat.is_consistent) as is_consistent, 
-                   decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
-                   blat.percent_identity,       
-                   blat.score || '' score, 
-                   ( SELECT DISTINCT
-                     CASE WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' ELSE 'Cryptosporidium hominis' END as organism
-                     FROM dots.externalNASequence enas, sres.taxonname taxn
+                   (SELECT DISTINCT
+                     CASE WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
+                          WHEN taxn.name like 'Cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
+                          WHEN taxn.name like 'Toxoplasma%' THEN 'Toxoplasma gondii'
+                     END as organism
+                     FROM sres.taxonname taxn
                      WHERE etn.taxon_id = taxn.taxon_id) organism,  
                    a.number_of_contained_sequences as count
             FROM   dots.BlatAlignment blat, 
                    dots.Assembly a, 
-                   dots.ExternalNASequence etn
+                   dots.NASequence etn
             WHERE  blat.query_na_sequence_id = a.na_sequence_id 
               AND  blat.target_na_sequence_id = etn.na_sequence_id 
               AND  etn.external_database_release_id = blat.target_external_db_release_id 
               AND  (blat.target_end - blat.target_start ) < 5000 
               AND  blat.is_best_alignment = 1 
-              AND  a.na_sequence_id = $$primaryKey$$
+              AND  a.source_id = $$primaryKey$$
             ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
             ]]>
             </sql>
+
         </sqlQuery>
 
 
@@ -86,25 +63,13 @@
             <paramRef ref="recordParams.projectId"/>
             <column name="library" />
             <column name="est_count" />
-
-            <sql includeProjects="ToxoDB">
+            <sql>
             <![CDATA[
             SELECT l.dbest_name as library, count(e.est_id) as est_count
-            FROM   dots.est e, dots.library l, dots.assemblysequence a
-            WHERE  'TgDT.' || a.assembly_na_sequence_id || '.tmp' = $$primaryKey$$
-              AND  a.na_sequence_id = e.na_sequence_id
-              AND  e.library_id = l.library_id 
-            GROUP BY l.dbest_name
-            ORDER BY est_count desc
-            ]]>
-            </sql>
-
-            <sql includeProjects="CryptoDB">
-            <![CDATA[
-            SELECT l.dbest_name as library, count(e.est_id) as est_count
-            FROM   dots.est e, dots.library l, dots.assemblysequence a
-            WHERE  a.assembly_na_sequence_id = $$primaryKey$$
-              AND  a.na_sequence_id = e.na_sequence_id
+            FROM   dots.est e, dots.library l, dots.assemblysequence aseq, dots.assembly asmbly
+            WHERE  asmbly.source_id = $$primaryKey$$
+              AND  asmbly.na_sequence_id = aseq.assembly_na_sequence_id
+              AND  aseq.na_sequence_id = e.na_sequence_id
               AND  e.library_id = l.library_id 
             GROUP BY l.dbest_name
             ORDER BY est_count desc
@@ -124,7 +89,7 @@
             <column name="assembly_strand" />
             <!-- column name="gapped_length" / -->
 
-            <sql includeProjects="ToxoDB">
+            <sql>
             <![CDATA[
             SELECT enas.source_id as est, l.dbest_name as library,
                    assembly_offset + 1 as est_start, 
@@ -133,7 +98,7 @@
                    length(gapped_sequence) as gapped_length
             FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
                    dots.library l, dots.est e
-            WHERE  'TgDT.' || asmbly.na_sequence_id || '.tmp'  = $$primaryKey$$
+            WHERE  asmbly.source_id  = $$primaryKey$$
             AND    asmbly.na_sequence_id = aseq.assembly_na_sequence_id
             AND    aseq.na_sequence_id = enas.na_sequence_id
             AND    aseq.na_sequence_id = e.na_sequence_id
@@ -141,25 +106,6 @@
             ORDER BY l.dbest_name, assembly_offset
             ]]>
             </sql>
-
-            <sql includeProjects="CryptoDB">
-            <![CDATA[
-            SELECT enas.source_id as est, l.dbest_name as library,
-                   assembly_offset + 1 as est_start, 
-                   (length(gapped_sequence) + assembly_offset) as est_end,
-                   decode(assembly_strand,0,'+',1,'-',assembly_strand) as assembly_strand,
-                   length(gapped_sequence) as gapped_length
-            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
-                   dots.library l, dots.est e
-            WHERE  asmbly.na_sequence_id = $$primaryKey$$
-            AND    asmbly.na_sequence_id = aseq.assembly_na_sequence_id
-            AND    aseq.na_sequence_id = enas.na_sequence_id
-            AND    aseq.na_sequence_id = e.na_sequence_id
-            AND    e.library_id = l.library_id
-            ORDER BY l.dbest_name, assembly_offset
-            ]]>
-            </sql>
-
         </sqlQuery>
 
     </querySet>
