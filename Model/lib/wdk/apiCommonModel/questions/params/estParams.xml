@@ -66,7 +66,7 @@
       <help>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
       </help>
-      <enumList excludeProjects="CryptoDB">   
+      <enumList>   
         <enumValue>
           <term>does overlap with a gene</term>
           <internal>INTERSECT</internal>
@@ -74,16 +74,6 @@
         <enumValue>
           <term>does not overlap with a gene</term>
           <internal>MINUS</internal>
-        </enumValue>
-      </enumList>   
-      <enumList includeProjects="CryptoDB">   
-        <enumValue>
-          <term>does overlap with a gene</term>
-          <internal>IN</internal>
-        </enumValue>
-        <enumValue>
-          <term>does not overlap with a gene</term>
-          <internal>NOT IN</internal>
         </enumValue>
       </enumList>   
     </enumParam>

@@ -242,18 +242,18 @@
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
         /> 
-        <attributesList includeProjects="ToxoDB"
+        <attributesList includeProjects="ToxoDB,CryptoDB"
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_source_id,est_num"
            sorting="formatted_organism asc,est_locations asc,assembly_source_id asc"
         /> 
-        <attributesList includeProjects="CryptoDB,ApiDB"
-           summary="formatted_organism,dbest_name"
+        <attributesList includeProjects="ApiDB"
+           summary="formatted_organism,dbest_name,assembly_source_id"
            sorting="formatted_organism asc"
         /> 
 <summary>Find ESTs in a Library that overlap or not with a gene.</summary>
         <description>Find ESTs that Overlap a Gene..</description>
 
-        <dynamicAttributes excludeProjects="CryptoDB,ApiDB">
+        <dynamicAttributes excludeProjects="ApiDB">
             <columnAttribute name="est_locations" displayName="EST location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
