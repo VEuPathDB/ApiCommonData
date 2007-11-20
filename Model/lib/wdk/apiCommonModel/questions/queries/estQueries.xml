@@ -175,15 +175,15 @@
             <![CDATA[
               select * from (
               SELECT accession as source_id, '@PROJECT_ID@' as project_id,
-                  apidb.tab_to_string(
+               CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'
                       || trim(to_char(target_start,'999,999,999'))
                       || '-' || trim(to_char(target_end,'999,999,999'))
                       || '(' || decode(is_reversed,0,'+',1,'-',null) || ')')
-                    AS apidb.varchartab), ', ') AS est_locations,
-                  apidb.tab_to_string(CAST(COLLECT(gene) 
-                                      AS apidb.varchartab), ', ') as genes
+                    AS apidb.varchartab), ', ') END AS est_locations,
+                  CASE WHEN count(distinct gene) > 20 THEN count(distinct gene)||' genes' 
+                       ELSE apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') END as genes
 	    FROM (
                 SELECT accession,gene ,target_start,target_end, is_reversed, target_sequence_source_id
                 FROM apidb.ESTALIGNMENTGENESUMMARY
