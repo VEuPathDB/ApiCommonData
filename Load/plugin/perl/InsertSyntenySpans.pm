@@ -117,28 +117,48 @@ sub run {
 
   my $count = 0;
 
-  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
+#  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
 
-  while (<IN>) {
-    chomp;
+#  while (<IN>) {
+#    chomp;
 
-    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
-    $count++;
+#    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+#    $count++;
 
-    if($count && $count % 500 == 0) {
-      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
-    }
+#    if($count && $count % 500 == 0) {
+#      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
+#    }
 
-    $self->undefPointerCache();
-  }
-  close(IN);
+#    $self->undefPointerCache();
+#  }
+#  close(IN);
 
   $self->insertAnchors($synDbRlsId, $extDbRlsIdA, $self->getArg('extDbRlsSpecA'));
   $self->insertAnchors($synDbRlsId, $extDbRlsIdB, $self->getArg('extDbRlsSpecB'));
 
   my $anchorCount = $self->getAnchorCount();
 
+  $self->testSql();
+
   return "inserted $count synteny spans and $anchorCount anchors ";
+}
+
+
+sub testSql {
+  my ($self) = @_;
+
+  my $sql = "select synteny_id, syntenic_loc, prev_ref_loc, ref_loc, next_ref_loc
+             from apidb.syntenyanchor order by ref_loc, syntenic_loc";
+
+  my $dbh = $self->getDbHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  while(my @a = $sh->fetchrow_array()) {
+    print join("\t", @a) . "\n";
+  }
+  $sh->finish();
+
 }
 
 #--------------------------------------------------------------------------------
@@ -274,6 +294,7 @@ and seq.na_sequence_id = syn.a_na_sequence_id
 and seq.external_database_release_id = $extDbRlsIdA
 ";
 
+
   my $syntenyStmt = $self->getDbHandle()->prepareAndExecute($retrieveSyntenySql);
 
   while(my $syntenyRow = $syntenyStmt->fetchrow_hashref) {
@@ -292,8 +313,16 @@ and seq.external_database_release_id = $extDbRlsIdA
 					     $gene2orthologGroup,
 					     $orthologGroup2refGenes);
 
-    $self->createSyntenyAnchors($syntenyRow, $genePairs);
+    my $syntenyObj = GUS::Model::ApiDB::Synteny->new({synteny_id => $syntenyRow->{SYNTENY_ID}});
+    $syntenyObj->retrieveFromDB();
 
+    my $anchors = $self->createSyntenyAnchors($syntenyObj, $genePairs);
+
+    foreach my $anchor (@$anchors) {
+      $self->addAnchorToGusObj($anchor, $syntenyObj);
+    }
+
+    $syntenyObj->submit();
     $self->undefPointerCache();
   }
   return 1;
@@ -303,50 +332,44 @@ and seq.external_database_release_id = $extDbRlsIdA
 
 
 sub createSyntenyAnchors {
-  my ($self, $syntenyRow, $genePairs) = @_;
+  my ($self, $syntenyObj, $genePairs) = @_;
 
-  my $rev = $syntenyRow->{IS_REVERSED};
-  my $syntenyId =  $syntenyRow->{SYNTENY_ID};
-
-  my $syntenyObj = GUS::Model::ApiDB::Synteny->new({synteny_id => $syntenyId});
-  $syntenyObj->retrieveFromDB();
+  my $rev = $syntenyObj->getIsReversed();
 
   my $anchors = [];
 
   my $anchorsCursor = 0;
 
-  $self->addAnchor($syntenyObj,
-                   $syntenyRow->{A_START},
-                   $syntenyRow->{$rev? 'B_END':'B_START'},
-                   $anchors, $anchorsCursor++,
+  my $synLoc = $rev ? $syntenyObj->getBEnd() : $syntenyObj->getBStart();
+  $self->addAnchor($syntenyObj->getAStart(),
+                   $synLoc,
+                   $anchors, 
+                   $anchorsCursor++,
                    0);
 
   foreach my $genePair (@$genePairs) {
 
-    if ($genePair->{refStart} > $syntenyRow->{A_START}) {
-      $self->addAnchor($syntenyObj, 
-                       $genePair->{refStart},
+    if ($genePair->{refStart} > $syntenyObj->getAStart()) {
+      $self->addAnchor($genePair->{refStart},
                        $genePair->{$rev? 'synEnd':'synStart'},
                        $anchors, $anchorsCursor++,
                        0);
     }
 
-    if ($genePair->{refEnd} < $syntenyRow->{A_END}) {
-      $self->addAnchor($syntenyObj,
-                       $genePair->{refEnd},
+    if ($genePair->{refEnd} < $syntenyObj->getAEnd()) {
+      $self->addAnchor($genePair->{refEnd},
                        $genePair->{$rev? 'synStart':'synEnd'},
                        $anchors, $anchorsCursor++,
                        0);
     }
   }
 
-  $self->addAnchor($syntenyObj,
-                   $syntenyRow->{A_END},
-                   $syntenyRow->{$rev? 'B_START':'B_END'},
+  $synLoc = $rev ? $syntenyObj->getBStart() : $syntenyObj->getBEnd();
+  $self->addAnchor($syntenyObj->getAEnd(),
+                   $synLoc,
                    $anchors, $anchorsCursor++,
                    1);
-
-  $syntenyObj->submit();
+  return $anchors;
 }
 
 #--------------------------------------------------------------------------------
@@ -412,7 +435,7 @@ B<Parameters:>
 
  $self(_PACKAGE_):
  $stmt(prepared dbi statement handle): Find all genes (and their start/end) for given genomic coordinates
- $na_sequence_id(NUMBER): Dots::NaSequence pk (contig/chromosome where we're looking)
+ $na_sequence_id(NUMBER): Dots::NaSequence pk (contig/chromosome where were looking)
  $start(NUMBER): Where the synteny begins
  $end(NUMBER): Where the synteny ends
 
@@ -473,7 +496,11 @@ sub findOrthologPairs {
       }
     }
   }
-  my @sortedPairs = sort {$a->{refStart} <=> $b->{refStart}} @genePairs;
+
+  # Sort by ref first then syn
+  my @sortedPairs = sort { $a->{refStart} <=> $b->{refStart} || 
+                             $a->{synStart} <=> $b->{synEnd} } @genePairs;
+
 
   return \@sortedPairs;
 }
@@ -481,38 +508,39 @@ sub findOrthologPairs {
 #--------------------------------------------------------------------------------
 
 sub addAnchor {
-  my ($self, $syntenyObj, $refLoc, $synLoc, $anchors, $anchorsCursor, $addFinalToo) = @_;
+  my ($self, $refLoc, $synLoc, $anchors, $anchorsCursor, $addFinalToo) = @_;
 
-  my $anchor = {prev_ref_loc=> -9999999999,
+  my $rightEdge = 9999999999;
+  my $leftEdge = -9999999999;
+
+  my $anchor = {prev_ref_loc=> $leftEdge,
                 ref_loc=> $refLoc,
-                next_ref_loc=> 9999999999,
+                next_ref_loc=> $rightEdge,
                 syntenic_loc=> $synLoc};
 
   $anchors->[$anchorsCursor] = $anchor;
+
   my $prevAnchor = $anchors->[$anchorsCursor - 1];
+  my $prevGeneAnchor = $anchorsCursor - 2 > 0 ? $anchors->[$anchorsCursor - 2] : undef;
 
   if ($anchorsCursor > 0) {
 
-    # Hack to avoid returning multiple rows in GBrowse for paralogs
-    if($prevAnchor->{ref_loc} == $anchor->{ref_loc}) {
-      $prevAnchor->{next_ref_loc} = -9999999999;
-      $anchor->{prev_ref_loc} = 9999999999;
+    # paralog group
+    if($prevGeneAnchor && $anchor->{ref_loc} == $prevGeneAnchor->{ref_loc}) {
+      $prevGeneAnchor->{next_ref_loc} = $leftEdge;
+      $prevAnchor->{next_ref_loc} = $leftEdge;
+      $anchor->{prev_ref_loc} = $rightEdge;
     }
     else {
       $prevAnchor->{next_ref_loc} = $refLoc;
       $anchor->{prev_ref_loc} = $prevAnchor->{ref_loc}; 
-   }
- 
-    $self->addAnchorToGusObj($prevAnchor, $syntenyObj);
-
-    if ($addFinalToo) {
-      $self->addAnchorToGusObj($anchor, $syntenyObj);
-      return 2;
     }
-    return 1;
-  }
 
-  return 0;
+    # take care of the last in a paralog group 
+    if($prevGeneAnchor && $anchor->{ref_loc} != $prevGeneAnchor->{ref_loc} && $prevAnchor->{prev_ref_loc} == $rightEdge) {
+      $prevGeneAnchor->{next_ref_loc} = $prevAnchor->{ref_loc};
+    }
+  }
 }
 
 #--------------------------------------------------------------------------------
