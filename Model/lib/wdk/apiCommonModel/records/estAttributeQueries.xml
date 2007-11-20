@@ -37,7 +37,7 @@
                     lowerCase="true"/>
             <column name="external_db_name" sortingTable="apidb.EstAttributes"
                     lowerCase="true"/>
-            <column name="est_num" sortingTable="apidb.EstAttributes" includeProjects="CryptoDB,ToxoDB"
+            <column name="assembly_est_count" sortingTable="apidb.EstAttributes" includeProjects="CryptoDB,ToxoDB"
                     lowerCase="true"/>
             <sql includeProjects="PlasmoDB">
             <![CDATA[
@@ -56,18 +56,18 @@
             ]]>
            </sql>
 
-            <sql excludeProjects="PlasmoDB">
+            <sql includeProjects="CryptoDB,ToxoDB">
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
                   bfmv.g_count, bfmv.t_count, bfmv.other_count, bfmv.length, 
-                  bfmv.assembly_source_id as assembly_source_id,
+                  bfmv.assembly_source_id as assembly_source_id, 
                   bfmv.dbest_name, bfmv.vector, bfmv.stage, bfmv.organism, 
                   bfmv.ncbi_tax_id,
                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
                   REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
                     AS formatted_organism,
-                  bfmv.external_db_name, bfmv.assembly_est_count as est_num
+                  bfmv.external_db_name, bfmv.assembly_est_count
             FROM  apidb.EstAttributes bfmv
             WHERE bfmv.source_id = $$primaryKey$$
             ]]>
