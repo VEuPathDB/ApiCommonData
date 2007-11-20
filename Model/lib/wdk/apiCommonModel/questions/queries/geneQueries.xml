@@ -2467,6 +2467,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByCentromereProximity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.max_centromere_distance"/>
         <paramRef ref="sharedParams.chromosome"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -2502,6 +2503,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByTelomereProximity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.distanceFromTelomere"/>
         <paramRef ref="sharedParams.chromosome"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -2535,6 +2537,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByNonnuclearGenomicRegion" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
         <paramRef ref="geneParams.nonnuclearSequence"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
