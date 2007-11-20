@@ -206,8 +206,8 @@
         <description>Find ESTs by Library Name</description>
 
         <attributesList
-              summary="formatted_organism,dbest_name"
-              sorting="formatted_organism asc,dbest_name asc"
+              summary="formatted_organism,dbest_name,assembly_source_id,est_num"
+              sorting="formatted_organism asc,dbest_name asc,assembly_source_id asc"
         /> 
 
        <propertyList name="genomeAttribution">
@@ -234,9 +234,13 @@
          queryRef="EstIds.EstsWithGeneOverlap"
          recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="CryptoDB,ApiDB"
+        <attributesList excludeProjects="CryptoDB,ToxoDB,ApiDB"
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
+        /> 
+        <attributesList includeProjects="ToxoDB"
+           summary="formatted_organism,dbest_name,est_locations,genes,assembly_source_id,est_num"
+           sorting="formatted_organism asc,est_locations asc,assembly_source_id asc"
         /> 
         <attributesList includeProjects="CryptoDB,ApiDB"
            summary="formatted_organism,dbest_name"
