@@ -117,21 +117,21 @@ sub run {
 
   my $count = 0;
 
-#  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
+  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
 
-#  while (<IN>) {
-#    chomp;
+  while (<IN>) {
+    chomp;
 
-#    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
-#    $count++;
+    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+    $count++;
 
-#    if($count && $count % 500 == 0) {
-#      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
-#    }
+    if($count && $count % 500 == 0) {
+      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
+    }
 
-#    $self->undefPointerCache();
-#  }
-#  close(IN);
+    $self->undefPointerCache();
+  }
+  close(IN);
 
   $self->insertAnchors($synDbRlsId, $extDbRlsIdA, $self->getArg('extDbRlsSpecA'));
   $self->insertAnchors($synDbRlsId, $extDbRlsIdB, $self->getArg('extDbRlsSpecB'));
@@ -141,24 +141,6 @@ sub run {
   $self->testSql();
 
   return "inserted $count synteny spans and $anchorCount anchors ";
-}
-
-
-sub testSql {
-  my ($self) = @_;
-
-  my $sql = "select synteny_id, syntenic_loc, prev_ref_loc, ref_loc, next_ref_loc
-             from apidb.syntenyanchor order by ref_loc, syntenic_loc";
-
-  my $dbh = $self->getDbHandle();
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  while(my @a = $sh->fetchrow_array()) {
-    print join("\t", @a) . "\n";
-  }
-  $sh->finish();
-
 }
 
 #--------------------------------------------------------------------------------
