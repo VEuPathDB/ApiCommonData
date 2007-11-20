@@ -138,8 +138,6 @@ sub run {
 
   my $anchorCount = $self->getAnchorCount();
 
-  $self->testSql();
-
   return "inserted $count synteny spans and $anchorCount anchors ";
 }
 
