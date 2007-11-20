@@ -23,7 +23,7 @@
                     lowerCase="true"/>
             <column name="dbest_name" sortingTable="apidb.EstAttributes"
                     lowerCase="true"/>
-            <column name="assembly_id" sortingTable="apidb.EstAttributes"
+            <column name="assembly_source_id" sortingTable="apidb.EstAttributes"
                     lowerCase="true"/>
             <column name="vector" sortingTable="apidb.EstAttributes"
                     lowerCase="true"/>
@@ -43,7 +43,7 @@
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
                   bfmv.g_count, bfmv.t_count, bfmv.other_count, bfmv.length, 
-                  bfmv.assembly_na_sequence_id as assembly_id,
+                  bfmv.assembly_source_id as assembly_source_id,
                   bfmv.dbest_name, bfmv.vector, bfmv.stage, bfmv.organism, 
                   bfmv.ncbi_tax_id,
                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
@@ -60,7 +60,7 @@
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
                   bfmv.g_count, bfmv.t_count, bfmv.other_count, bfmv.length, 
-                  bfmv.assembly_na_sequence_id as assembly_id,
+                  bfmv.assembly_source_id as assembly_source_id,
                   bfmv.dbest_name, bfmv.vector, bfmv.stage, bfmv.organism, 
                   bfmv.ncbi_tax_id,
                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||

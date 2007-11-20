@@ -34,10 +34,10 @@
                 <columnAttribute name="primer"      inReportMaker="false" internal="true"/>
                 <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
 
-                <columnAttribute name="assembly_id" internal="true" />
-                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_id$$" includeProjects="CryptoDB,ToxoDB">
+                <columnAttribute name="assembly_source_id" internal="true" />
+                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_source_id$$" includeProjects="CryptoDB,ToxoDB">
                      <url>
-                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$assembly_id$$]]>
+                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$assembly_source_id$$]]>
                      </url>
                 </linkAttribute>
                 <columnAttribute name="est_num"  displayName="# ESTs in Assembly" internal="false" 
@@ -174,15 +174,10 @@
             <table name="AssemblyInfo" excludeProjects="ApiDB,PlasmoDB" 
                    displayName="Assembly for this EST" 
                    queryRef="EstTables.AssemblyInfo">
-                <columnAttribute displayName="Assembly" name="assembly_id" internal="true" />
-                <linkAttribute displayName="Assembly" name="assembly_link" visible="CpDT.$$assembly_id$$.tmp" includeProjects="CryptoDB">
-                     <url>
-                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=CpDT.$$assembly_id$$.tmp]]>
-                     </url>
-                </linkAttribute>
-                <linkAttribute displayName="Assembly" name="assembly_link" visible="TgDT.$$assembly_id$$.tmp" includeProjects="ToxoDB">
+                <columnAttribute displayName="Assembly" name="assembly_source_id" internal="true" />
+                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_source_id$$">
                      <url >
-                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=TgDT.$$assembly_id$$.tmp]]>
+                        <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=&primary_key=$$assembly_source_id$$]]>
                      </url>
                 </linkAttribute>
                 

@@ -72,13 +72,13 @@
               displayName="Assembly for this EST" isCacheable='true'>
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
-            <column name="assembly_id" />
+            <column name="assembly_source_id" />
             <column name="assembly_length" />
             <column name="number_of_contained_sequences" />
 
             <sql>
             <![CDATA[           
-            SELECT asmbly.na_sequence_id as assembly_id,
+            SELECT asmbly.source_id as assembly_source_id,
                    asmbly.number_of_contained_sequences, 
                    asmbly.length as assembly_length
             FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
