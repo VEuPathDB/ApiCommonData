@@ -79,31 +79,26 @@
 
 
         <!-- AssemblyTables.EstInfo -->
-        <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
+            <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="est" />
             <column name="library" />
-            <column name="est_start" />
-            <column name="est_end" />
+            <column name="start" />
+            <column name="end" />
             <column name="assembly_strand" />
-            <!-- column name="gapped_length" / -->
+            <column name="gapped_length" />
 
             <sql>
             <![CDATA[
-            SELECT enas.source_id as est, l.dbest_name as library,
-                   assembly_offset + 1 as est_start, 
-                   (length(gapped_sequence) + assembly_offset) as est_end,
-                   decode(assembly_strand,0,'+',1,'-',assembly_strand) as assembly_strand,
-                   length(gapped_sequence) as gapped_length
-            FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas, 
-                   dots.library l, dots.est e
-            WHERE  asmbly.source_id  = $$primaryKey$$
-            AND    asmbly.na_sequence_id = aseq.assembly_na_sequence_id
-            AND    aseq.na_sequence_id = enas.na_sequence_id
-            AND    aseq.na_sequence_id = e.na_sequence_id
-            AND    e.library_id = l.library_id
-            ORDER BY l.dbest_name, assembly_offset
+
+              select att.source_id as est, length(aseq.gapped_sequence)  as gapped_length,aseq.assembly_offset + 1 as "start", aseq.assembly_offset + length(aseq.gapped_sequence) as "end",
+                     decode(assembly_strand,1,'+','-') as assembly_strand, library_dbest_name as library
+              from apidb.ESTATTRIBUTES att, dots.ASSEMBLYSEQUENCE aseq,dots.EXTERNALNASEQUENCE enas
+              where att.assembly_source_id = $$primaryKey$$
+              and aseq.na_sequence_id  = enas.na_sequence_id
+              and enas.source_id = att.source_id
+              order by aseq.assembly_offset
             ]]>
             </sql>
         </sqlQuery>
