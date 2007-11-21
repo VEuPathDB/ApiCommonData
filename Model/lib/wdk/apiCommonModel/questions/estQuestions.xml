@@ -154,18 +154,18 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ApiDB,CryptoDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB"
               summary="formatted_organism,dbest_name,est_location"
-              sorting="est_location asc"
+              sorting="formatted_organism asc, est_location asc"
         /> 
 
-        <attributesList includeProjects="CryptoDB,ApiDB"
-              summary="formatted_organism,dbest_name"
-              sorting="formatted_organism asc"
+        <attributesList includeProjects="ToxoDB,CryptoDB"
+              summary="formatted_organism,dbest_name,est_location,assembly_link,assembly_est_count"
+              sorting="formatted_organism asc, est_location asc"
         /> 
 
-        <dynamicAttributes excludeProjects="CryptoDB,ApiDB">
-          <columnAttribute name="est_location" displayName="EST location(s)"/>
+        <dynamicAttributes excludeProjects="ApiDB">
+            <columnAttribute name="est_location" displayName="EST location(s)"/>
         </dynamicAttributes>
 
         <summary>
@@ -287,17 +287,13 @@
          queryRef="EstIds.EstsWithGeneOverlap"
          recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="CryptoDB,ToxoDB,ApiDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB"
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
         /> 
         <attributesList includeProjects="ToxoDB,CryptoDB"
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_link,assembly_est_count"
-           sorting="formatted_organism asc,est_locations asc,assembly_link asc,assembly_est_count desc"
-        /> 
-        <attributesList includeProjects="ApiDB"
-           summary="formatted_organism,dbest_name"
-           sorting="formatted_organism asc"
+           sorting="formatted_organism asc,est_locations asc"
         /> 
 <summary>Find ESTs in a Library that overlap or not with a gene.</summary>
         <description>Find ESTs that Overlap a Gene..</description>
