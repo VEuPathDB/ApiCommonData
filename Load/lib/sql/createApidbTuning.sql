@@ -1377,6 +1377,7 @@ WHERE e.na_sequence_id = ens.na_sequence_id
 GRANT SELECT ON apidb.EstAttributes&1 TO gus_r;
 
 CREATE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id);
+CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source_id, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAttributes
                           FOR apidb.EstAttributes&1;
