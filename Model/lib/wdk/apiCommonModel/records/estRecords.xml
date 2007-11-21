@@ -70,6 +70,10 @@
             </attributeQueryRef>
    -->
 
+            <attributeQueryRef ref="EstAttributes.LinkOut" excludeProjects="ApiDB">
+                <columnAttribute inReportMaker="false" name="linkout"     internal="true" />
+            </attributeQueryRef>
+
             <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
                <text>
                     <![CDATA[
@@ -80,7 +84,7 @@
                     Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$,
                     <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
                     Length: $$length$$<br>
-                    Link out: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$source_id$$">NCBI</a>
+                    Link out: $$linkout$$
                 ]]>
                </text>
            </textAttribute>

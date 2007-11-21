@@ -91,6 +91,35 @@
            </sql>
         </sqlQuery>
 
+        <sqlQuery name="LinkOut" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/> 
+            <column name="source_id" />
+            <column name="linkout" />
+            <sql>
+            <![CDATA[
+            SELECT 
+                source_id,
+                $$projectId$$ as project_id,
+                CASE 
+                  WHEN bfmv.dbest_name = 'WatanabeCpHNJ-1' then
+                     '<a href="http://fullmal.hgc.jp/cgi-bin/fulcrypto_start.cgi?UID=11&SEE=1&MXX=750&VSP=&ONF=&SMF=0&VPLN=sp005%7Cstcrm%7Csp005%7Cgn0110%7Csp003%7Ccl0110%7Csp003%7Ccl0610%7Cscale%7Ccl0600%7Csp003%7Ccl0100%7Csp003%7Cgn0100%7C&SRH=1%21'|| bfmv.source_id || '">Full-Cryptosporidium</a>'
+                  WHEN bfmv.dbest_name = 'WatanabeTgRH' then 
+                      '<a href="http://fullmal.hgc.jp/cgi-bin/fulcrypto_start.cgi?UID=11&SEE=1&MXX=750&VSP=&ONF=&SMF=0&VPLN=sp005%7Cstcrm%7Csp005%7Cgn0210%7Csp003%7Cgn0310%7Csp003%7Cgn0410%7Csp003%7Cgn0510%7Csp003%7Ccl0210%7Csp003%7Ccl0110%7Csp003%7Ccl0610%7Cscale%7Ccl0600%7Csp003%7Ccl0100%7Csp003%7Ccl0200%7Csp003%7Cgn0500%7Csp003%7Cgn0400%7Csp003%7Cgn0200%7Csp003%7Cgn0300%7C&SRH=1%21' || bfmv.source_id || '">Full-Toxoplasma</a>'
+                  WHEN bfmv.dbest_name = 'WatanabePf3D7_cultured' then 
+                      '<a href="http://fullmal.hgc.jp/cgi-bin/fulmal_start.cgi?UID=11&SEE=1&MXX=750&VSP=&ONF=&SMF=0&VPLN=sp005%7Cstcrm%7Csp005%7Ccl0211%7Csp003%7Ccy0611%7Csp003%7Cyomch0%7Csp003%7Ccy0601%7Csp003%7Ccl0201%7Csp003%7Ccb0111%7Csp003%7Ccb0611%7Csp003%7Cct080%7Csp003%7Ccb0601%7Csp003%7Ccb0101%7Csp003%7Ccv0111%7Csp003%7Ccv0611%7Csp003%7Cct170%7Csp003%7Ccv0601%7Csp003%7Ccv0101%7Csp003%7Csp007%7Cgn0410%7Csp003%7Ccl0610%7Cscale%7Ccl0600%7Csp003%7Cgn0400%7Csp003%7C&SRH=1%21' || bfmv.source_id || '">Full-Malaria</a>'
+                  WHEN bfmv.external_db_name = 'C. parvum ESTs' then 
+                      '<a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=' || bfmv.source_id || '">NCBI</a>'
+                  WHEN bfmv.external_db_name = 'dbEST' then 
+                      '<a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=' || bfmv.source_id || '">NCBI</a>'
+                  ELSE 'none'
+                END
+                as linkout
+            FROM  apidb.EstAttributes bfmv
+            WHERE bfmv.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
 
         <sqlQuery name="Reference" isCacheable='true'>
             <paramRef ref="recordParams.primaryKey"/>
