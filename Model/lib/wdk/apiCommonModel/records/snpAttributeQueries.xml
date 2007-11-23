@@ -66,7 +66,13 @@
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.dataset,
                   DECODE(bfmv.dataset, &&datasets&&, bfmv.dataset) AS dataset_hidden,
-                  bfmv.seq_source_id, bfmv.start_min, bfmv.reference_strain,
+                  bfmv.seq_source_id, bfmv.start_min, 
+                  CASE
+                  WHEN bfmv.reference_strain = 'iowa_II' THEN 'IOWA II'
+                  WHEN bfmv.reference_strain = 'md' THEN 'MD'
+                  WHEN bfmv.reference_strain = 'tu114' THEN 'TU114'
+                  ELSE bfmv.reference_strain
+                  END as reference_strain,
                   bfmv.reference_na, bfmv.is_coding, bfmv.position_in_CDS,
                   bfmv.position_in_protein, bfmv.reference_aa, bfmv.has_nonsynonymous_allele,
                   bfmv.gene_source_id, bfmv.gene_strand, bfmv.lflank,

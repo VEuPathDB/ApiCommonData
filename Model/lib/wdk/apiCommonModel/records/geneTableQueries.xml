@@ -70,7 +70,7 @@
             ]]>
             </sql>
 
-            <sql includeProjects="ToxoDB,CryptoDB">
+            <sql includeProjects="ToxoDB">
             <![CDATA[
               SELECT  strain_a as strain_a_disp, '@PROJECT_ID@' as project_id,
               strain_b as strain_b_disp, 
@@ -92,6 +92,32 @@
               ORDER BY num_total desc
             ]]>
             </sql>
+
+            <sql includeProjects="CryptoDB">
+            <![CDATA[
+              SELECT  UPPER(strain_a) as strain_a_disp, '@PROJECT_ID@' as project_id,
+              UPPER(strain_b) as strain_b_disp, 
+              CASE 
+              WHEN strain_a = 'tu114' THEN 'TU114'
+              WHEN strain_a = 'md' THEN 'MD'
+              WHEN strain_a = 'iowa_II' THEN 'IOWA II'
+              ELSE strain_a END as strain_a_query,
+              CASE 
+              WHEN strain_b = 'tu114' THEN 'TU114'
+              WHEN strain_b = 'md' THEN 'MD'
+              WHEN strain_b = 'iowa_II' THEN 'IOWA II'
+              ELSE strain_b END as strain_b_query,
+              cds_length,source_id as gene_source_id,                
+              round(non_synonymous / CASE synonymous WHEN 0 THEN 1  ELSE synonymous end, 2) as dn_ds_ratio,              
+              non_synonymous as num_non_synonymous,synonymous as num_synonymous,              
+              stop as num_nonsense,non_coding as num_non_coding,total as num_total,              
+              round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density             
+              FROM apidb.SnpSummary ss
+              WHERE ss.source_id = $$primaryKey$$ 
+              ORDER BY num_total desc
+            ]]>
+            </sql>
+
         </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

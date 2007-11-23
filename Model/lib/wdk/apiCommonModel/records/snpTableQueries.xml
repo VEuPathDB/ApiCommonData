@@ -16,7 +16,13 @@
             <column name="product"/>
             <sql>
             <![CDATA[
-       SELECT    var.strain, var.allele,
+       SELECT    CASE
+                  WHEN var.strain = 'iowa_II' THEN 'IOWA II'
+                  WHEN var.strain = 'md' THEN 'MD'
+                  WHEN var.strain = 'tu114' THEN 'TU114'
+                  ELSE var.strain
+                 END as strain,
+                 var.allele,
                  CASE WHEN gene_info.is_reversed = 1 THEN apidb.reverse_complement(var.allele) 
                       WHEN gene_info.source_id is null THEN ''
                       ELSE var.allele END as allele_gene_strand,
