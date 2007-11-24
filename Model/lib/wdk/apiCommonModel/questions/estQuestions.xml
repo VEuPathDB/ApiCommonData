@@ -154,10 +154,15 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ToxoDB,CryptoDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB"
               summary="formatted_organism,dbest_name,est_location"
               sorting="formatted_organism asc, est_location asc"
         /> 
+<attributesList includeProjects="ApiDB"
+              summary="formatted_organism,dbest_name"
+              sorting="formatted_organism asc"
+        />
+
 
         <attributesList includeProjects="ToxoDB,CryptoDB"
               summary="formatted_organism,dbest_name,est_location,assembly_link,assembly_est_count"
@@ -287,10 +292,15 @@
          queryRef="EstIds.EstsWithGeneOverlap"
          recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ToxoDB,CryptoDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB"
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
         /> 
+<attributesList includeProjects="ApiDB"
+              summary="formatted_organism,dbest_name"
+              sorting="formatted_organism asc"
+        />
+
         <attributesList includeProjects="ToxoDB,CryptoDB"
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_link,assembly_est_count"
            sorting="formatted_organism asc,est_locations asc"
