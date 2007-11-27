@@ -26,8 +26,8 @@
 											 SRes.ExternalDatabase edb
                 WHERE  edr.external_database_id = edb.external_database_id
 								   AND edr.external_database_release_id = etn.external_database_release_id
-									 AND edb.name = 'Isolates Data Test5'
-									 AND edr.version = '2007-11-14'
+									 AND edb.name = 'Isolates Data Test4'
+									 AND edr.version = '2007-11-02'
 								   AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
             ]]>
         </sql>
@@ -54,8 +54,8 @@
 					WHERE  nasr.reference_id = ref.reference_id
 					   AND edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test5'
-						 AND edr.version = '2007-11-14'
+						 AND edb.name = 'Isolates Data Test4'
+						 AND edr.version = '2007-11-02'
 						 AND etn.na_sequence_id = nasr.na_sequence_id
 						 AND ref.author LIKE REPLACE($$author$$,'*','%')
 				 ]]>
@@ -67,7 +67,7 @@
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByTaxon" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates"/>
+			  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -80,14 +80,14 @@
 						WHERE  etn.na_sequence_id IN
 						       (SELECT sc.na_sequence_id
 						        FROM dots.source sc
-						        WHERE sc.organism in ('$$isolate_organism$$')
+						        WHERE sc.organism in ($$isolate_organism$$)
 							     )
 						   AND etn.source_id IS NOT NULL
 						   AND etn.na_sequence_id = src.na_sequence_id
 							 AND edr.external_database_id = edb.external_database_id
 							 AND edr.external_database_release_id = etn.external_database_release_id
-							 AND edb.name = 'Isolates Data Test5'
-							 AND edr.version = '2007-11-14'
+							 AND edb.name = 'Isolates Data Test4'
+							 AND edr.version = '2007-11-02'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -98,7 +98,7 @@
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByHost" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates"/>
+			  <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -117,8 +117,8 @@
 						    AND etn.na_sequence_id = src.na_sequence_id
 								AND edr.external_database_id = edb.external_database_id
 								AND edr.external_database_release_id = etn.external_database_release_id
-								AND edb.name = 'Isolates Data Test5'
-								AND edr.version = '2007-11-14'
+								AND edb.name = 'Isolates Data Test4'
+								AND edr.version = '2007-11-02'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -129,7 +129,7 @@
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByIsolationSource" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates"/>
+			  <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -141,27 +141,26 @@
 									 SRes.ExternalDatabase edb
 						WHERE etn.na_sequence_id IN
 						      (SELECT sc.na_sequence_id
-						       FROM dots.source sc
+						       FROM dots.Source sc
 						       WHERE sc.specimen_voucher in ('$$isolation_source$$')
-							     )
+							    )
 						    AND etn.source_id IS NOT NULL
 						    AND etn.na_sequence_id = src.na_sequence_id
 								AND edr.external_database_id = edb.external_database_id
 								AND edr.external_database_release_id = etn.external_database_release_id
-								AND edb.name = 'Isolates Data Test5'
-								AND edr.version = '2007-11-14'
+								AND edb.name = 'Isolates Data Test4'
+								AND edr.version = '2007-11-02'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
 		</sqlQuery>
-
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Product -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByProduct" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates"/>
+			  <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -178,8 +177,8 @@
 						  AND etn.source_id IS NOT NULL
 							AND edr.external_database_id = edb.external_database_id
 							AND edr.external_database_release_id = etn.external_database_release_id
-							AND edb.name = 'Isolates Data Test5'
-							AND edr.version = '2007-11-14'
+							AND edb.name = 'Isolates Data Test4'
+							AND edr.version = '2007-11-02'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -190,7 +189,7 @@
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByStudy" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates"/>
+			  <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -207,8 +206,8 @@
 						AND ref.title IS NOT NULL
 						AND edr.external_database_id = edb.external_database_id
 						AND edr.external_database_release_id = etn.external_database_release_id
-						AND edb.name = 'Isolates Data Test5'
-						AND edr.version = '2007-11-14'
+						AND edb.name = 'Isolates Data Test4'
+						AND edr.version = '2007-11-02'
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
@@ -219,7 +218,7 @@
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 		<sqlQuery name="IsolateByCountry" excludeProjects="ApiDB">
-			  <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates"/>
+			  <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
 				<sql excludeProjects="ApiDB">
@@ -231,10 +230,10 @@
 								   SRes.ExternalDatabase edb
 						WHERE  edr.external_database_id = edb.external_database_id
 						   AND edr.external_database_release_id = etn.external_database_release_id
-						   AND edb.name = 'Isolates Data Test5'
-						   AND edr.version = '2007-11-14'
+						   AND edb.name = 'Isolates Data Test4'
+						   AND edr.version = '2007-11-02'
 							 AND src.na_sequence_id = etn.na_sequence_id
-							 AND src.map IN ('$$country$$')
+							 AND src.map IN ($$country$$)
 						ORDER BY etn.source_id
 						]]>
 				 </sql>
