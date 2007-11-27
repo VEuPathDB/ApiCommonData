@@ -1787,7 +1787,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="geneParams.exprnsample"/>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
-       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
         <column name="project_id"/>
        <column name="source_id" />
        <column name="confidence" />
@@ -2015,7 +2015,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           isCacheable='true'>
        <paramRef ref="geneParams.diffMeanExpr_reference"/>
        <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
-       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+       <paramRef ref="geneParams.regulated_dir"/>
        <paramRef ref="geneParams.fold_change"/>
         <column name="project_id"/>
        <column name="source_id" />
