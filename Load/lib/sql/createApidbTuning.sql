@@ -957,20 +957,24 @@ CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 prompt apidb.GenomicSequence;
 
 CREATE MATERIALIZED VIEW apidb.GenomicSequence&1 AS
-  SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
-         LOWER(SUBSTR(source_id, 1, 40)) AS lowercase_source_id,
-         a_count, c_count, g_count, t_count, length,
-         SUBSTR(description, 1, 400) AS description,
-         external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
-         chromosome_order_num, sequence_ontology_id
-  FROM dots.ExternalNaSequence
-  WHERE -- see both? use the VirtualSequence.
-        source_id IN (SELECT source_id FROM dots.ExternalNaSequence
-                     MINUS
-                      SELECT source_id FROM dots.VirtualSequence)
+  SELECT ens.na_sequence_id, ens.taxon_id,
+         SUBSTR(ens.source_id, 1, 50) AS source_id,
+         LOWER(SUBSTR(ens.source_id, 1, 50)) AS lowercase_source_id,
+         ens.a_count, ens.c_count, ens.g_count, ens.t_count, ens.length,
+         SUBSTR(ens.description, 1, 400) AS description,
+         ens.external_database_release_id,
+         SUBSTR(ens.chromosome, 1, 40) AS chromosome,
+         ens.chromosome_order_num, ens.sequence_ontology_id
+  FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
+  WHERE ens.sequence_ontology_id = so.sequence_ontology_id
+    AND so.term_name != 'EST'
+    AND -- see both? use the VirtualSequence.
+        ens.source_id IN (SELECT source_id FROM dots.ExternalNaSequence
+                         MINUS
+                          SELECT source_id FROM dots.VirtualSequence)
 UNION
-  SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 40) AS source_id,
-         LOWER(SUBSTR(source_id, 1, 40)) AS lowercase_source_id,
+  SELECT na_sequence_id, taxon_id, SUBSTR(source_id, 1, 50) AS source_id,
+         LOWER(SUBSTR(source_id, 1, 50)) AS lowercase_source_id,
          a_count, c_count, g_count, t_count, length,
          SUBSTR(description, 1, 400) AS description,
          external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,

@@ -4,6 +4,9 @@
 CREATE INDEX dots.NaFeat_SubclassParent_ix
 ON dots.NaFeatureImp (subclass_view, parent_id, na_feature_id);
 
+CREATE INDEX dots.NaFeat_SubclassIds_ix
+ON dots.NaFeatureImp (subclass_view, source_id, na_feature_id, na_sequence_id);
+
 CREATE INDEX dots.aafeat_subclassparent_ix
 ON dots.AaFeatureImp (subclass_view, parent_id, aa_feature_id);
 
