@@ -5,7 +5,7 @@ CREATE TABLE apidb.OrthologGroup (
  description                  VARCHAR2(2000),
  number_of_members            NUMBER(12) NOT NULL,
  avg_percent_identity         FLOAT,
- avg_percent_coverage         FLOAT,
+ avg_percent_match            FLOAT,
  avg_evalue_mant              FLOAT,
  avg_evalue_exp               NUMBER,
  avg_connectivity             FLOAT(126),
