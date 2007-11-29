@@ -358,7 +358,8 @@
     <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
               isCacheable="true">
         <paramRef ref="sharedParams.historyId"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
+        <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
 
@@ -386,8 +387,15 @@
        <sql includeProjects="ApiDB">
             <![CDATA[
 
-SELECT DISTINCT sns2.source_id, '@PROJECT_ID@' as project_id, ext.name as project_id 
-FROM $$historyId$$ qr, dots.splicednasequence sns1, dots.sequencesequencegroup ssg1, dots.splicednasequence sns2, dots.sequencesequencegroup ssg2, core.tableinfo ti ,    sres.ExternalDatabaseRelease extr,  sres.ExternalDatabase ext 
+SELECT DISTINCT sns2.source_id, ext.name as project_id 
+FROM $$historyId$$ qr, 
+      dots.splicednasequence sns1, 
+      dots.sequencesequencegroup ssg1, 
+      dots.splicednasequence sns2, 
+      dots.sequencesequencegroup ssg2, 
+      core.tableinfo ti ,    
+      sres.ExternalDatabaseRelease extr,  
+      sres.ExternalDatabase ext 
 WHERE qr.source_id = sns1.source_id 
 AND sns1.na_sequence_id = ssg1.sequence_id 
 AND ssg1.source_table_id = ti.table_id 
@@ -397,7 +405,7 @@ AND ssg2.sequence_id = sns2.na_sequence_id
 AND sns2.taxon_id IN
        (select taxon_id from sres.taxon
        connect by parent_id = prior taxon_id
-       start with taxon_id in ($$organism$$)) 
+       start with taxon_id in ($$localorganism$$)) 
 AND ti.name = 'SplicedNASequence'  
 AND sns2.external_database_release_id=extr.external_database_release_id 
 AND extr.external_database_id=ext.external_database_id  
@@ -967,7 +975,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="49.m03105" />
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql>
+        <sql excludeProjects="ApiDB">
             <![CDATA[
                 SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
@@ -983,6 +991,28 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   AND ti.name = 'GeneFeature'
                   AND gf2.source_id != gf1.source_id
                 ORDER BY gf2.source_id
+           ]]>
+       </sql>
+<sql includeProjects="ApiDB">
+            <![CDATA[
+                SELECT DISTINCT snas2.source_id, ext.name as project_id 
+                FROM dots.splicednasequence snas1, dots.SequenceSequenceGroup ssg1,
+                     dots.SequenceSequenceGroup ssg2, dots.splicednasequence snas2,
+                     core.TableInfo ti,
+                       sres.ExternalDatabaseRelease extr, 
+                       sres.ExternalDatabase ext
+                WHERE snas1.source_id = $$single_gene_id$$ 
+                  AND snas1.na_sequence_id = ssg1.sequence_id
+                  AND ssg1.source_table_id = ti.table_id
+                  AND ssg1.sequence_group_id = ssg2.sequence_group_id
+                  AND ssg2.source_table_id = ti.table_id
+                  AND ssg2.sequence_id = snas2.na_sequence_id
+                  AND ti.name = 'SplicedNASequence'
+                  AND snas2.source_id != snas1.source_id
+                    AND snas2.external_database_release_id=extr.external_database_release_id
+                    AND extr.external_database_id=ext.external_database_id
+                 order by project_id,snas2.source_id
+
            ]]>
        </sql>
     </sqlQuery>
