@@ -75,15 +75,11 @@
           Find genes that are located in a specified genomic region.<br><br>
           Either select a <i>T. gondii</i> chromosome from the pull-down menu
           <b>or</b> enter a sequence ID of a chromosome (e.g. "VIIa") or a 
-          scaffold (e.g. "TGG_994746"). <br> 
+          scaffold (e.g. "TGG_995305"). <br> 
           If you enter both, your result will include the union.
           The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
-        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,ToxoDB">ME49_Annotation</value>
-           <value includeProjects="ApiDB,ToxoDB">TgondiiApicoplast</value>
-        </propertyList> 
        
     </question>
 
@@ -111,10 +107,6 @@
         <dynamicAttributes>
           <columnAttribute name="is_pseudo" displayName="Pseudogene" align="center"/>
         </dynamicAttributes>
-        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,ToxoDB">ME49_Annotation</value>
-           <value includeProjects="ApiDB,ToxoDB">TgondiiApicoplast</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -139,10 +131,6 @@
         Find genes having the given number of exons.
           ]]>
         </description>
-        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,ToxoDB">ME49_Annotation</value>
-           <value includeProjects="ApiDB,ToxoDB">TgondiiApicoplast</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -317,7 +305,6 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
         <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
            <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_Annotation</value>
         </propertyList> 
     </question>
 
@@ -452,6 +439,12 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
            ]]>
         </description>
 
+        <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>Waters_female_gametes</value>
+           <value>Waters_male_gametes</value>
+           <value>Waters_mixed_gametes</value>
+        </propertyList>
+        
         <description includeProjects="CryptoDB">
               <![CDATA[
              <p>
@@ -492,7 +485,7 @@ one time.
              Diseases, Istituto Superiore di Sanit&#224;, Rome, Italy.<br> 
              <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a>
              <br><br>
-             <sup>&#167;</sup>
+             <sup>&#165;</sup>
 <!-- description by Andras Fiser -->
 <i>Joseph Dybas, Dmitry Rykunov, Carlos Madrid, Edward Nieves, Fa-Yun Che, Hui Xiao, Kami Kim, Louis Weiss, Ruth Hogue Angeletti, Andr&#225;s Fiser (<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a>)</i>
 <br>
@@ -528,30 +521,6 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
-        <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB">Waters_female_gametes</value>
-           <value includeProjects="PlasmoDB">Waters_male_gametes</value>
-           <value includeProjects="PlasmoDB">Waters_mixed_gametes</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling1D_SDSPage</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling-1D_SDSPage-Soluble</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling-1D_SDSPage-Insoluble</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling-MudPIT-Soluble</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling-MudPIT-Insoluble</value>
-           <value includeProjects="ToxoDB,ApiDB">Wastling-Rhoptry</value>
-           <value includeProjects="ToxoDB,ApiDB">Murray-Roos_Proteomics_Conoid-enriched</value>
-           <value includeProjects="ToxoDB,ApiDB">Murray-Roos_Proteomics_Conoid-depleted</value>
-           <value includeProjects="ToxoDB,ApiDB">1D_tg_35bands_022706_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">Dec2006_Tg_membrane_Fayun_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">March2007Tg_Cyto_Proteins_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">Oct2006_Tg_membrane_Fayun_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">massspec_may02-03_2006_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">massspec_june30_2006_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">massspec_Oct2006_Tg_membrane_Fayun_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">massspec_may10_2006_Proteomics</value>
-           <value includeProjects="ToxoDB,ApiDB">massspec_1D_tg_1frac_020306_Proteomics</value>
-        </propertyList>
-        
-
     </question>
 
 
@@ -965,13 +934,6 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         Find genes involved in a specific metabolic pathway.
         </summary>
        
-        <description includeProjects="CryptoDB">
-              <![CDATA[
-                Maps of metabolic pathways were computationally constructed for <i>C. parvum</i>
-                and <i>C. hominis</i> with 
-                the <a href="http://bioinformatics.oxfordjournals.org/cgi/content/abstract/18/suppl_1/S225">Pathway Tools</a> software package.
-                ]]>
-        </description>
         <description includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
                 Find genes involved in a specific metabolic pathway. 
@@ -1000,6 +962,17 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
        </propertyList>
     </question>
 
+    <!-- CryptoDB GenesByMetabolicPathway is a dummy placeholder for a custom  
+         question page directing users to CryptoCyc -->
+    <question name="GenesByMetabolicPathway" includeProjects="CryptoDB"
+         displayName="Metabolic Pathway"
+         category="Putative Function"
+         queryRef="GeneId.GenesByExonCount"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+        Find genes involved in a specific metabolic pathway.
+        </summary>
+    </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Transmembrane domains -->
@@ -1358,10 +1331,6 @@ Find genes that are predicted to encode a signal peptide.
             Find all genes from one or more species. 
           ]]>
         </description>
-        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,ToxoDB">ME49_Annotation</value>
-           <value includeProjects="ApiDB,ToxoDB">TgondiiApicoplast</value>
-        </propertyList> 
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1475,7 +1444,6 @@ Find genes that are predicted to encode a signal peptide.
            <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
            <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
            <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
-           <value includeProjects="ApiDB,ToxoDB">WatanabeTgRH_EstLibrary</value>
        </propertyList>
     </question>
 
