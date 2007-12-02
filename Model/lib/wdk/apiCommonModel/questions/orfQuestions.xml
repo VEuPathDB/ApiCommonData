@@ -101,9 +101,65 @@
              <summary>
              Find ORFs by ID.
              </summary>
-             <description>
-             Find open reading frames (ORFs) by ID.  The IDs are generated based on the order of the ORF on the
-             genomic sequence.  The ORF IDs are not reliable from release to release.
+             <description includeProjects="ApiDB,CryptoDB">
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. AAEL01000259</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 5</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 3339-3085</li>
+             <li>Putting it all together: AAEL01000259-5-3339-3085</li>
+             </ul>
+             ]]>
+             </description>
+             <description includeProjects="GiardiaDB">
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. ctg02_243</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 6</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 1018-419</li>
+             <li>Putting it all together: ctg02_243-6-1018-419</li>
+             </ul>
+             ]]>
+             </description>
+             <description includeProjects="PlasmoDB">
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. MAL1</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 1</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 10639-11520</li>
+             <li>Putting it all together: MAL1-1-10639-11520</li>
+             </ul>
+             ]]>
+             </description>
+             <description includeProjects="ToxoDB">
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. Ia</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 1</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 1000180-1000404</li>
+             <li>Putting it all together: Ia-1-1000180-1000404</li>
+             </ul>
+             ]]>
+             </description>
+             <description includeProjects="TrichDB">
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. DS113375</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 1</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 114214-114468</li>
+             <li>Putting it all together: DS113375-1-114214-114468</li>
+             </ul>
+             ]]>
              </description>
        <propertyList name="specificAttribution">
        </propertyList>
@@ -178,7 +234,17 @@ one time.
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
        <propertyList name="specificAttribution">
-       </propertyList>
+           <value includeProjects="CryptoDB">Wastling1DGelLSMassSpec</value>
+           <value includeProjects="CryptoDB">Wastling2DGelLSMassSpec</value>
+           <value includeProjects="CryptoDB">WastlingMudPitSolMassSpec</value>
+           <value includeProjects="CryptoDB">WastlingMudPitInsolMassSpec</value>
+           <value includeProjects="ToxoDB">Wastling-Rhoptry</value>
+           <value includeProjects="ToxoDB">Wastling1D_SDSPage</value>
+           <value includeProjects="ToxoDB">Wastling-1D_SDSPage-Soluble</value>
+           <value includeProjects="ToxoDB">Wastling-1D_SDSPage-Insoluble</value>
+           <value includeProjects="ToxoDB">Wastling-MudPIT-Soluble</value>
+           <value includeProjects="ToxoDB">Wastling-MudPIT-Insoluble</value>
+           </propertyList>
     </question>
 
 
