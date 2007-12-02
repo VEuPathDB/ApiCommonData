@@ -222,6 +222,9 @@ grant select on apidb.FeatureLocation&1 TO gus_r;
 create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
              (feature_type, na_sequence_id, start_min, end_max, is_reversed);
 
+create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
+             (na_sequence_id, start_min, end_max, is_reversed);
+
 --drop materialized view apidb.FeatureLocation;
 
 create or replace synonym apidb.FeatureLocation
@@ -1507,6 +1510,24 @@ CREATE INDEX apidb.EstSumm_estSite_ix&1
 
 CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
                           FOR apidb.EstAlignmentGeneSummary&1;
+
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW apidb.FeatureSo&1 AS
+  SELECT t.na_feature_id, so.sequence_ontology_id, so.term_name
+  FROM dots.nafeature gf, dots.nafeature t, sres.sequenceontology so
+  WHERE  gf.na_feature_id =  t.parent_id
+  AND gf.sequence_ontology_id = so.sequence_ontology_id
+UNION
+  SELECT na_feature_id, so.sequence_ontology_id, so.term_name
+  FROM dots.miscellaneous misc, sres.sequenceontology so
+  WHERE misc.sequence_ontology_id = so.sequence_ontology_id;
+
+GRANT SELECT ON apidb.FeatureSo&1 TO gus_r;
+
+CREATE INDEX featso_id_ix&1 ON apidb.FeatureSo&1(na_feature_id);
+
+CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 
 ---------------------------
 -- cleanup
