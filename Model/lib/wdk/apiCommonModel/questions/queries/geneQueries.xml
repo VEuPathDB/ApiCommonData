@@ -919,11 +919,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByMassSpec" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
             isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <wsColumn name="source_id" />
+        <wsColumn name="project_id" />
         <wsColumn name="sum_sequence_count" />
         <wsColumn name="sum_spectrum_count" />
     </wsQuery>
