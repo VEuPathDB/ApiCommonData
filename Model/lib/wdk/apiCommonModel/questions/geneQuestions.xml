@@ -1567,7 +1567,7 @@ Find genes that are predicted to encode a signal peptide.
 
     <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
-              displayName="Differential Expression"
+              displayName="Differential Expression (T.g.)"
               queryRef="GeneId.GenesByDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -1618,7 +1618,7 @@ Find genes that are predicted to encode a signal peptide.
 
     <question name="ToxoGenesByExpressionPercentile" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
-              displayName="Expression Percentile"
+              displayName="Expression Percentile (T.g.)"
               queryRef="GeneId.ToxoGenesByExpressionPercentile" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -2166,8 +2166,11 @@ References:
          category="Transcript Expression"
          queryRef="GeneId.GenesByProfileSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList  includeProjects="PlasmoDB" 
          summary="organism,distance,time_shift,profilesGraph"
+        /> 
+<attributesList  includeProjects="ApiDB" 
+         summary="organism,distance,time_shift"
         /> 
          <summary>
             <![CDATA[
