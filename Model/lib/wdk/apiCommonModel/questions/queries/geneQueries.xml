@@ -1325,7 +1325,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 <paramRef ref="geneParams.st_min_tag_count"/>
                 <paramRef ref="geneParams.st_max_occurrences"/>
                 <paramRef ref="geneParams.sense_antisense"/>
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB,ApiDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf" includeProjects="ApiDB"/> 
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
                 <wsColumn name="project_id" width="32" wsName="project_id"/> 
                 <wsColumn name="source_id"  width="32" wsName="source_id"/>
