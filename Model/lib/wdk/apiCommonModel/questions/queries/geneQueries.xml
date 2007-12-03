@@ -537,7 +537,7 @@ order by project_id,sns2.source_id
                    processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 	        <paramRef ref="geneParams.min_isoelectric_point"/>
 	        <paramRef ref="geneParams.max_isoelectric_point"/>
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg"/>
 	        <wsColumn name="source_id" width="32" wsName="source_id"/>
 	        <wsColumn name="project_id" width="32" wsName="project_id"/>
 	 </wsQuery>
@@ -2403,6 +2403,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByMr4Reagents" includeProjects="PlasmoDB"
               isCacheable="true">
+
         <paramRef ref="geneParams.mr4_reagent_type"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -2430,6 +2431,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByMr4Reagents" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+<paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.mr4_reagent_type"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
