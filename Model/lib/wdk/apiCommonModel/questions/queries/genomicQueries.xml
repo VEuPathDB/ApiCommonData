@@ -18,7 +18,8 @@
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
         isCacheable="true">
         <paramRef ref="sharedParams.sequenceId" default="TGG_994746" includeProjects="ToxoDB"/> 
-        <paramRef ref="sharedParams.sequenceId" excludeProjects="ToxoDB"/> 
+        <paramRef ref="sharedParams.sequenceId" default="MAL4" includeProjects="PlasmoDB"/> 
+        <paramRef ref="sharedParams.sequenceId" excludeProjects="ToxoDB,PlasmoDB"/> 
         <column name="source_id"/>
         <column name="project_id"/>
         <sql includeProjects="CryptoDB">
