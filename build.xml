@@ -32,13 +32,6 @@
     </ant>
   </target>  
 
-  <target name="RAD-Installation">
-    <ant antfile="../RAD/build.xml" target="RAD-Installation">
-      <property name="project" value="RAD"/>
-      <property name="version" value="1"/>
-    </ant>
-  </target>  
-
   <target name="WDK-Checkout" unless="WDK.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false">
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
@@ -71,14 +64,6 @@
     </ant>
   </target>  
 
-  <target name="RAD-Checkout" unless="RAD.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/cbil/RAD" />
-      <property name="project" value="RAD"/>
-      <property name="version" value="??"/>
-    </ant>
-  </target>  
-
   
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
@@ -89,12 +74,10 @@
     <available file="../GUS" type="dir" property="GUS.present" />
     <available file="../DJob" type="dir" property="DJob.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
-    <available file="../RAD" type="dir" property="RAD.present" />
     <antcall target="WDK-Checkout" />
     <antcall target="GUS-Checkout" />
     <antcall target="DJob-Checkout" />
     <antcall target="DoTS-Checkout" />
-    <antcall target="RAD-Checkout" />
   </target>
   
   
@@ -115,9 +98,6 @@
     <ant target="defaultProjectUpdate">
       <property name="project" value="DoTS"/>
     </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="RAD"/>
-    </ant>
   </target>
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -128,7 +108,6 @@
                                             DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
-                                            RAD-Installation,
                                             ApiCommonData/Load-Installation,
                                             ApiCommonData/Model-Installation">
 
