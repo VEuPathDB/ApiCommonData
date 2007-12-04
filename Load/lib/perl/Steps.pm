@@ -4443,6 +4443,10 @@ EOF
 }
 
 
+################################################################################
+# OrthoMCL steps
+################################################################################
+
 # load the OrthoMCL groups
  sub loadOrthoMCLResults{
    my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
@@ -4465,6 +4469,35 @@ EOF
          "OrthoMCLData::Load::Plugin::InsertOrthologousGroups", 
          $args,
          "Loading OrthoMCL output");
+}
+
+# update ortholog group fields, and load MSA results
+sub updateOrthoMCLGroups {
+  my ($mgr, $seqTable, $msaName) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "updateOrthoMCLGroups";
+
+  return if $mgr->startStep("Updating the statistical fields of each group and load MSA results", $signal);
+
+  my $msaDir = "$mgr->{dataDir}/msa/$msaName/master/mainresult/";
+  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     orthoPlugin \\
+     \"$gusConfigFile\" \\
+     \"org.apidb.orthomcl.load.plugin.UpdateOrthologGroupPlugin\" \\
+     \"$seqTable\" \\
+     \"$msaDir\" \\
+     >> $logFile
+EOF
+
+  print STDERR "$cmd\n";
+print "GUS_HOME ".$ENV{GUS_HOME}."\n";
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
 }
 
 
