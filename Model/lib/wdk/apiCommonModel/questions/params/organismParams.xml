@@ -526,10 +526,8 @@
     <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum,Plasmodium knowlesi</sqlParamValue>
-      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
-      <sqlParamValue name="organism" includeProjects="CryptoDB,GiardiaDB,TrichDB">none at all</sqlParamValue>
-      <sql>
+      
+      <sql includeProjects="PlasmoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -543,10 +541,44 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name = '&&organism&&') organisms
+                  AND tn.name like 'Plasmodium %'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
+               (SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+      
+      <sql includeProjects="ToxoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name = 'Toxoplasma gondii' ) organisms
           ORDER BY organisms.name
         ]]>
       </sql>
+
     </sqlQuery>
 
     <wsQuery name="withPlasmoGenes-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
