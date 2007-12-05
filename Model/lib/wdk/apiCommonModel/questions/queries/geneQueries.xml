@@ -1860,7 +1860,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="geneParams.exprnsample"/>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
-       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="confidence" />
@@ -2154,7 +2154,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           isCacheable='true'>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
-       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
         <column name="project_id"/>
        <column name="source_id" />
        <column name="confidence" />
@@ -2198,7 +2198,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
-       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="confidence" />
