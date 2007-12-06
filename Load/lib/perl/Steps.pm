@@ -4495,7 +4495,34 @@ sub updateOrthoMCLGroups {
 EOF
 
   print STDERR "$cmd\n";
-print "GUS_HOME ".$ENV{GUS_HOME}."\n";
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
+# update ortholog group fields, and load MSA results
+sub createBioLayoutFiles {
+  my ($mgr, $seqTable, $blName) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "updateOrthoMCLGroups";
+
+  return if $mgr->startStep("Generating Biolayout files and images for each group", $signal);
+
+  my $blDir = "$mgr->{dataDir}/biolayout/$blName/";
+  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     orthoPlugin \\
+     \"$gusConfigFile\" \\
+     \"org.apidb.orthomcl.load.plugin.GenerateBioLayoutPlugin\" \\
+     \"$seqTable\" \\
+     \"$blDir\" \\
+     >> $logFile
+EOF
+
+  print STDERR "$cmd\n";
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
 }
