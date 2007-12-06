@@ -10,13 +10,14 @@
 <!--=====================================================================-->
   <querySet name="AjaxTables">
         <!-- AjaxTables.InterproTermList -->
-        <sqlQuery name="InterproTermList" isCacheable='true'> 
+        <sqlQuery name="InterproTermList" isCacheable='true' > 
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
             <column name="accession"/>
             <column name="name"/>
             <column name="description"/>
-            <sql>
+
+            <sql excludeProjects="ApiDB">
                 SELECT DISTINCT dr.primary_identifier AS accession,
                                 dr.primary_identifier AS name,
                                 dr.primary_identifier || ':' ||
@@ -30,6 +31,51 @@
                   AND edr.external_database_id = ed.external_database_id
                   AND ed.name = $$primaryKey$$
             </sql>
+
+         <sql includeProjects="ApiDB">
+ 
+           SELECT accession, name, description FROM 
+           ( (SELECT DISTINCT dr.primary_identifier AS accession,
+                                dr.primary_identifier AS name,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier || ' ' || dr.remark
+                                AS description
+                FROM dots.DbRefAaFeature@CRYPTO_DBLINK@ draf, sres.DbRef@CRYPTO_DBLINK@ dr,
+                     sres.ExternalDatabaseRelease@CRYPTO_DBLINK@ edr, sres.ExternalDatabase@CRYPTO_DBLINK@ ed
+                WHERE draf.db_ref_id = dr.db_ref_id
+                  AND dr.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+                  AND ed.name = $$primaryKey$$)
+               UNION
+              (SELECT DISTINCT dr.primary_identifier AS accession,
+                                dr.primary_identifier AS name,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier || ' ' || dr.remark
+                                AS description
+                FROM dots.DbRefAaFeature@PLASMO_DBLINK@ draf, sres.DbRef@PLASMO_DBLINK@ dr,
+                     sres.ExternalDatabaseRelease@PLASMO_DBLINK@ edr, sres.ExternalDatabase@PLASMO_DBLINK@ ed
+                WHERE draf.db_ref_id = dr.db_ref_id
+                  AND dr.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+                  AND ed.name = $$primaryKey$$)
+                UNION
+              (SELECT DISTINCT dr.primary_identifier AS accession,
+                                dr.primary_identifier AS name,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier || ' ' || dr.remark
+                                AS description
+                FROM dots.DbRefAaFeature@TOXO_DBLINK@ draf, sres.DbRef@TOXO_DBLINK@ dr,
+                     sres.ExternalDatabaseRelease@TOXO_DBLINK@ edr, sres.ExternalDatabase@TOXO_DBLINK@ ed
+                WHERE draf.db_ref_id = dr.db_ref_id
+                  AND dr.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+                  AND ed.name = $$primaryKey$$))
+            </sql>
+
+
         </sqlQuery>
 
 <!--====================================================================================-->
@@ -151,8 +197,8 @@
                  SELECT 'Plasmodium knowlesi' as term, 'P. knowlesi' as internal from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual
+                 SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii apicoplast' as term, 'Toxoplasma gondii apicoplast' as internal from dual
              </sql>
         </sqlQuery>
 
