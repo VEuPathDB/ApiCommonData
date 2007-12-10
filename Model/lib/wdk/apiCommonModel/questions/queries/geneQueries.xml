@@ -1309,7 +1309,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                  (select stg.gene_source_id, stg.tag_source_id,
                          stg.sense_count, stg.antisense_count
                   from apidb.SageTagGene stg
-                  where stg.analysis_id = $$sage_tag_library$$
+                  where stg.analysis_id in ($$sage_tag_library$$)
                   and stg.occurrence <= $$st_max_occurrences$$
                   and ((stg.direction = '5' and stg.distance <= $$st_max_five_prime_distance$$)
                      OR (stg.direction = '3' and stg.distance <= $$st_max_three_prime_distance$$))
