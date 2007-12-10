@@ -1801,6 +1801,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <wsQuery name="GenesByFunctionalInteraction" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
+<paramRef ref="sharedParams.signature"/>
         <paramRef ref="geneParams.min_interaction"/>
         <paramRef ref="geneParams.include_only_queries"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
