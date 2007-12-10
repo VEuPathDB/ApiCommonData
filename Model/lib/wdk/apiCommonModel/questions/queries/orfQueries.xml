@@ -110,7 +110,7 @@
     <!-- Motif search -->  
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsByMotifSearch" excludeProjects="ApiDB"
+    <wsQuery name="OrfsByMotifSearch"   excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression"/>
        <paramRef ref="orfSimilarityParams.motif_organism"/>
@@ -138,7 +138,7 @@
     <!-- BLAST -->  
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsBySimilarity" excludeProjects="ApiDB"
+    <wsQuery name="OrfsBySimilarity" 
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
@@ -156,6 +156,7 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
+<!--
     <wsQuery name="OrfsBySimilarity" includeProjects="ApiDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="orfParams.BlastDatabaseType"/>
@@ -173,6 +174,7 @@
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
+-->
 
     <!-- ************************************************************ -->
     <!-- Mass Spec. -->  
