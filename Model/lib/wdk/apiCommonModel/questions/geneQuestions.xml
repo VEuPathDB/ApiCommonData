@@ -2675,7 +2675,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--===========================================================================-->
   <!-- place holder for multi-query page used by winzeler expression percentile -->
   <!--===========================================================================-->
-    <question name="GenesByExpression" includeProjects="PlasmoDB"
+    <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="Expression Percentile (P.f.)"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2703,15 +2703,18 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--===========================================================================-->
 
 
- <question name="GenesByExpression" includeProjects="PlasmoDB"
+ <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="All"
               queryRef="GeneId.GenesByExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
               Gene Expression on Affy chips, from the Winzeler lab
         </description>
-         <attributesList
+        <attributesList includeProjects="PlasmoDB"
               summary="product,winzelerPct"
+        /> 
+         <attributesList includeProjects="ApiDB"
+              summary="product"
         /> 
          <dynamicAttributes>
              <columnAttribute name="max_percentile" displayName="Max Percentile"
@@ -2722,15 +2725,18 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
 
-    <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB"
+    <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
                displayName="Asexual"
               queryRef="GeneId.GenesByIntraerythrocyticExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
               Asexual cycle expression on Affy chips, from the Winzeler lab
         </description>
-        <attributesList
+        <attributesList includeProjects="PlasmoDB"
               summary="organism,winzelerPct"
+        /> 
+        <attributesList includeProjects="ApiDB"
+              summary="organism"
         /> 
          <dynamicAttributes>
              <columnAttribute name="max_percentile" displayName="Max Percentile"
@@ -2740,12 +2746,15 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          </dynamicAttributes>
     </question>
 
-    <question name="GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB"
+    <question name="GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="Sexual"
               queryRef="GeneId.GenesByExtraerythrocyticExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="PlasmoDB"
               summary="organism,winzelerPct"
+        /> 
+        <attributesList includeProjects="ApiDB"
+              summary="organism"
         /> 
         <description>
               Sexual cycle expression on Affy chips, from the Winzeler lab
