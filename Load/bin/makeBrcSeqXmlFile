@@ -8,19 +8,19 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffPrefix, $strain,
+my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
     $brcSubmitsToRefseq, $curatorsString);
 &GetOptions("extDbName=s" => \$extDbName,
 	    "extDbRlsVer=s" => \$extDbRlsVer,
 	    "brcSubmits=s" => \$brcSubmitsToRefseq,
-	    "gffPrefix=s" => \$gffPrefix,
+	    "gffFile=s" => \$gffFileName,
 	    "curators=s" => \$curatorsString,
             "strain=s" => \$strain,
             "changesFile=s" => \$changedSeqsFile
              );
 
-&usage() unless ($extDbName, $extDbRlsVer, $gffPrefix, $brcSubmitsToRefseq,
-		 $curatorsString);
+&usage() unless ($extDbName && $extDbRlsVer && $gffFileName &&
+		 $brcSubmitsToRefseq && $curatorsString);
 
 my $gusconfig = GUS::Supported::GusConfig->new();
 
@@ -38,7 +38,7 @@ my $curationXml = &makeCurationXml($curatorsString);
 
 my ($taxonId, $organism) = &getTaxonInfo($extDbName, $extDbRlsVer, $db);
 
-print &makeXml($organism, $taxonId, $strain, $gffPrefix, $extDbRlsVer,
+print &makeXml($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
       $brcSubmitsToRefseq, $seqXml, $curationXml);
 
 #################################################################
@@ -149,7 +149,7 @@ AND tn.taxon_id = t.taxon_id
 }
 
 sub makeXml {
-  my ($organism, $taxonId, $strain, $gffPrefix, $extDbRlsVer,
+  my ($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
       $brcSubmitsToRefseq, $seqInfo, $curationInfo) = @_;
 
   if ($strain) {
@@ -158,7 +158,6 @@ sub makeXml {
   } else {
     $strain = "";
   }
-  my $gffFileName = "${gffPrefix}_${extDbRlsVer}.gff";
 
   return qq{
 <source>
@@ -199,13 +198,12 @@ sub usage {
 Create an XML file to send to BRC Central specifying the sequence meta info 
 for a GFF file.
 
-usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffPrefix --brcSubmits --curators [--strain] [--changesFile file]
+usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffFile --brcSubmits --curators [--strain] [--changesFile file]
 
 where:
   extDbName:   ExternalDatabase.name for the genome sequence
   extDbRlsVer: ExternalDatabaseRelease.version for the genome sequence
-  gffPrefix:   the prefix of the gff file name, to which db name and version
-               will be appended)
+  gffFile:     name of gff file which this xml will describe.
   brcSubmits:  'yes' if the BRC submits this genome to refseq. 'no' otherwise
   strain:      optional. only needed if taxon name doesn't already include it
   curators:    '%%' delimited list of curation info.  each element is a '|'
