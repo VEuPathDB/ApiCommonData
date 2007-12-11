@@ -67,7 +67,7 @@ CREATE TABLE apidb.OrthomclTaxon (
  orthomcl_taxon_id             NUMBER(12) NOT NULL,
  parent_id                     NUMBER(12),
  taxon_id                      NUMBER(12),
- name                          VARCHAR(12),
+ name                          VARCHAR(255),
  three_letter_abbrev           VARCHAR(4) NOT NULL,
  is_species                    NUMBER(1) NOT NULL,
  depth_first_index             NUMBER(10) NOT NULL,
@@ -643,11 +643,11 @@ CREATE TABLE apidb.GroupTaxonMatrix (
 );
 
 ALTER TABLE apidb.GroupTaxonMatrix
-ADD CONSTRAINT ot_pk PRIMARY KEY (group_taxon_matrix_id);
+ADD CONSTRAINT gtm_pk PRIMARY KEY (group_taxon_matrix_id);
 
 ALTER TABLE apidb.GroupTaxonMatrix
-ADD CONSTRAINT ot_fk1 FOREIGN KEY (ortholog_group_id)
-REFERENCES dots.OrthologGroup (ortholog_group_id);
+ADD CONSTRAINT gtm_fk1 FOREIGN KEY (ortholog_group_id)
+REFERENCES apidb.OrthologGroup (ortholog_group_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GroupTaxonMatrix TO gus_w;
 GRANT SELECT ON apidb.GroupTaxonMatrix TO gus_r;
@@ -668,7 +668,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'GroupTaxonMatrix',
-       'Standard', 'GROUO_TAXON_MATRIX_ID',
+       'Standard', 'GROUP_TAXON_MATRIX_ID',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
