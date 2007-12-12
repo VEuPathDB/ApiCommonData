@@ -5,7 +5,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <question name="SnpBySourceId" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+     <question name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
                displayName="ID"
                queryRef="SnpsBy.SnpBySourceId"
 	       recordClassRef="SnpRecordClasses.SnpRecordClass"
@@ -41,6 +41,45 @@
            <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
            <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
            <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
+        </propertyList>
+        <propertyList name="genomeAttribution">
+          <value></value>
+        </propertyList>
+      </question>
+
+
+      <question name="SnpBySourceId" includeProjects="ApiDB"
+               displayName="ID"
+               queryRef="SnpsBy.SnpBySourceId"
+	       recordClassRef="SnpRecordClasses.SnpRecordClass"
+               noSummaryOnSingleRecord="false">
+
+        <attributesList
+              summary="snp_location,linkedGeneId,position_in_protein"
+              sorting="snp_location asc"
+        />  
+
+          <summary>
+            Find SNPs by ID
+          </summary>
+
+	  <description >
+              Find SNPs by SNP ID. 
+	  </description>
+         <propertyList name="organism">
+             <value >P. falciparum</value>
+             <value >T. gondii</value>
+         </propertyList>
+ 
+        <propertyList name="specificAttribution">
+           <value >Widmer_SNPs</value>
+           <value >Broad_SNPs</value>
+           <value >sangerItGhanaSnps</value>
+           <value >sangerReichenowiSnps</value>
+           <value >Su_SNPs</value>
+           <value >ME49_SNPs</value>
+           <value >AmitAlignmentSnps</value>
+           <value >GeneticMarkers_Sibley</value>
         </propertyList>
         <propertyList name="genomeAttribution">
           <value></value>

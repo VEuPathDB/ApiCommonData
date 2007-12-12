@@ -88,7 +88,7 @@
     <!-- Id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="OrfByOrfId" 
+    <question name="OrfByOrfId" excludeProjects="ApiDB" 
               displayName="Orfs by ID"
               queryRef="OrfIds.OrfByOrfId" 
               recordClassRef="OrfRecordClasses.OrfRecordClass"
@@ -101,7 +101,7 @@
              <summary>
              Find ORFs by ID.
              </summary>
-             <description includeProjects="ApiDB,CryptoDB">
+             <description includeProjects="CryptoDB">
              <![CDATA[
              Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
@@ -158,6 +158,35 @@
              <li>The Frame (1-6) the ORF was found in, e.g. 1</li>
              <li>The span, in nucleotides, encoding the ORF, e.g. 114214-114468</li>
              <li>Putting it all together: DS113375-1-114214-114468</li>
+             </ul>
+             ]]>
+             </description>
+       <propertyList name="specificAttribution">
+       </propertyList>
+    </question>
+
+    <question name="OrfByOrfId" includeProjects="ApiDB" 
+              displayName="Orfs by ID"
+              queryRef="OrfIds.OrfByOrfId" 
+              recordClassRef="OrfRecordClasses.OrfRecordClass"
+              noSummaryOnSingleRecord="false">
+
+             <attributesList 
+               summary="formatted_organism,orf_location_text,length"
+               sorting="formatted_organism asc, orf_location_text asc"
+             />
+             <summary>
+             Find ORFs by ID.
+             </summary>
+             <description >
+             <![CDATA[
+             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             The ORF naming system is designed to:
+             <ul>
+             <li>Specify the name of the DNA sequence producing the ORF, e.g. AAEL01000259</li>
+             <li>The Frame (1-6) the ORF was found in, e.g. 5</li>
+             <li>The span, in nucleotides, encoding the ORF, e.g. 3339-3085</li>
+             <li>Putting it all together: AAEL01000259-5-3339-3085</li>
              </ul>
              ]]>
              </description>
