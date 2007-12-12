@@ -1068,6 +1068,47 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
   $mgr->endStep($signal);
 }
 
+sub makeDoTSAssemblyDownloadFile {
+  my ($mgr, $species, $name, $ncbiTaxId, $project) = @_;
+
+  my $prefix = $species;
+  $prefix =~ s/\b(\w\w)\w+/$1/;
+
+
+  my $sql = <<"EOF";
+  SELECT  replace(tn.name, ' ', '_')
+                ||'|'||
+          '${prefix}DT.'|| a.na_sequence_id ||'.tmp'
+                ||'|'||
+          '(' || a.number_of_contained_sequences ||' sequences)'
+                ||'|'||
+          'length=' || a.length
+                ||'|'||
+          'DoTS assembly' as defline,
+          a.sequence
+       FROM dots.assembly a,
+            sres.taxonname tn,
+            sres.taxon t,
+            sres.sequenceontology so
+      WHERE t.ncbi_tax_id = $ncbiTaxId
+        AND t.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.taxon_id = a.taxon_id
+        AND a.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = '$name'
+EOF
+
+    my $fileName = $species . ucfirst($name);
+
+    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
+
+}
+
+
+
+
+
+
 
 sub makeTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
@@ -1529,9 +1570,13 @@ EOF
     $mgr->endStep($signal);
 }
 
-##for the following you need to check out and build WDK and ApiCommonWebsite
+##for the following you need to check out and build WDK and ApiCommonWebsite and ApiCommonData
 ##you also need to have in your gus_home config directory the following files or those that correspond to the project:
-##plasmoDbModel.xml,plasmoDbModel-config.xml (personalize this with your login and password), plasmoDbModel.prop 
+##PlasmoDB/model-config.xml (personalize this with your login and password and authentication login and password) and PlasmoDB/model.prop (make sure projectId is correct)
+##these files are made from the sample files 
+##If you have run wdk dump for genes previously and want to now rerun it, delete all rows in apidb.genetable with table_name not like 'gff%'
+##If you have run gff dump for genes previously and now want to rerun it, delete all rows in apidb.genetable with table_name like 'gff%'
+##clear the wdkCache, if there is no wdkCache (run describe queryinstance and if doesn't exist, run wdkCache -model PlasmoDB -new)
 
 sub clearWdkCache {
   my ($mgr, $model) = @_;
