@@ -30,11 +30,19 @@
             AND so.term_name in ('contig', 'supercontig')
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
+        <sql includeProjects="PlasmoDB,ToxoDB">
         <![CDATA[
             SELECT distinct source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence
             WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
+           ]]>
+        </sql>
+        <sql includeProjects="GiardiaDB,TrichDB">
+        <![CDATA[
+            SELECT distinct ns.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.NaSequence ns, apidb.sequenceAttributes sa
+            WHERE LOWER(ns.source_id) LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
+            AND sa.source_id=ns.source_id AND sa.project_id = '@PROJECT_ID@'
            ]]>
         </sql>
     </sqlQuery>
