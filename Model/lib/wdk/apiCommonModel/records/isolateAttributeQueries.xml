@@ -4,64 +4,43 @@
 	    <sqlQuery name="Sequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
-            <column name="organism"/>
-            <column name="strain"/>
-            <column name="specific_host"/>
-            <column name="description"/>
-            <column name="isolate_source"/>
-            <column name="sequence"/>
-            <column name="pcr_primer"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="organism" sortingTable="apidb.IsolateAttributes"/> 
+            <column name="strain" sortingTable="apidb.IsolateAttributes"/> 
+            <column name="specific_host" sortingTable="apidb.IsolateAttributes"/> 
+            <column name="description"/> 
+            <column name="isolation_source" sortingTable="apidb.IsolateAttributes"/> 
+            <column name="sequence"/> 
+            <column name="pcr_primers"/> 
+            <column name="query_name"/> 
+            <column name="target_name"/> 
+            <column name="min_subject_start"/> 
+            <column name="max_subject_end"/> 
+            <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql excludeProjects="ApiDB">
-               SELECT etn.source_id, 
-							        src.organism as organism,
-							        src.strain || ' ' || src.isolate as strain,
-							        src.specific_host || src.lab_host specific_host,
-											src.specimen_voucher as isolate_source,
-											etn.description,
-											src.label  pcr_primer,
-											etn.sequence,
+               SELECT iso.source_id, 
+							        iso.organism,
+							        iso.strain,
+							        iso.specific_host,
+											iso.isolation_source,
+											iso.description,
+											iso.pcr_primers,
+											iso.sequence,
+											iso.query_name, 
+							        iso.target_name, 
+											iso.min_subject_start,
+											iso.max_subject_end,
+							        iso.map, 
 							        $$projectId$$ as project_id
-               FROM   DoTS.ExternalNASequence etn,
-							        DoTS.Source src,
-											SRes.ExternalDatabaseRelease edr,
-											SRes.ExternalDatabase edb
-               WHERE  etn.na_sequence_id = src.na_sequence_id  
-							    AND edr.external_database_id = edb.external_database_id
-								  AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
-							    AND etn.source_id = $$primaryKey$$
-           </sql>
-      </sqlQuery>
-
-	    <sqlQuery name="Map" isCacheable='true'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="query_name"/>
-            <column name="target_name"/>
-            <column name="min_subject_start"/>
-            <column name="max_subject_end"/>
-            <column name="map"/>
-            <sql excludeProjects="ApiDB">
-               SELECT extq.source_id,
-							        extq.source_id query_name, 
-							        extt.source_id target_name, 
-											sim.min_subject_start - 1000 as min_subject_start,
-											sim.max_subject_end + 1000 as max_subject_end,
-							        extt.source_id || ':' || sim.min_subject_start || '..' || sim.max_subject_end as map, 
-							        $$projectId$$ as project_id
-               FROM   dots.SIMILARITY sim,
-											dots.EXTERNALNASEQUENCE extt,
-											dots.EXTERNALNASEQUENCE extq,
+               FROM   ApiDB.IsolateAttributes iso,
 											SRes.ExternalDatabaseRelease edr,
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
-								  AND edr.external_database_release_id = extq.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
-							    AND sim.query_id = extq.na_sequence_id  
-							    AND sim.subject_id = extt.na_sequence_id
-									AND extq.source_id = $$primaryKey$$
+								  AND edr.external_database_release_id = iso.external_database_release_id
+									AND edb.name = 'Isolates Data Test9'
+									AND edr.version = '2007-12-10'
+							    AND iso.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
@@ -80,8 +59,8 @@
                WHERE  etn.na_sequence_id = gf.na_sequence_id  
 							    AND edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test9'
+									AND edr.version = '2007-12-10'
 							    AND etn.source_id = $$primaryKey$$
 									AND gf.product is not null
            </sql>
@@ -106,8 +85,8 @@
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test9'
+									AND edr.version = '2007-12-10'
 							    AND trp.na_feature_id = taf.na_feature_id
 							    AND tas.aa_sequence_id = taf.aa_sequence_id
 							    AND trp.parent_id = gf.na_feature_id
@@ -141,8 +120,8 @@
 											SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
 							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test4'
-									AND edr.version = '2007-11-02'
+									AND edb.name = 'Isolates Data Test9'
+									AND edr.version = '2007-12-10'
 							    AND nasr.reference_id = ref.reference_id
 							    AND etn.na_sequence_id = nasr.na_sequence_id
 							    AND etn.source_id = $$primaryKey$$

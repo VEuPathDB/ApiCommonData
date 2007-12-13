@@ -88,14 +88,14 @@
 					<![CDATA[
 					SELECT distinct src.organism AS term,
 					       src.organism      AS internal
-					FROM   DoTS.Source src,
+					FROM   DoTS.IsolateSource src,
 					       DoTS.ExternalNASequence etn,
 					       SRes.ExternalDatabaseRelease edr,
 								 SRes.ExternalDatabase edb
 					WHERE  edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test4'
-						 AND edr.version = '2007-11-02'
+						 AND edb.name = 'Isolates Data Test9'
+						 AND edr.version = '2007-12-10'
 						 AND src.na_sequence_id = etn.na_sequence_id
 						 AND src.organism is not null
 					]]>
@@ -111,15 +111,15 @@
 					<![CDATA[
 					SELECT distinct src.specific_host AS term,
 					       src.specific_host      AS internal
-					FROM   DoTS.Source src,
+					FROM   DoTS.IsolateSource src,
 					       DoTS.ExternalNASequence etn,
 					       SRes.ExternalDatabaseRelease edr,
 								 SRes.ExternalDatabase edb
 					WHERE  src.specific_host is not null
 					   AND edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test4'
-						 AND edr.version = '2007-11-02'
+						 AND edb.name = 'Isolates Data Test9'
+						 AND edr.version = '2007-12-10'
 						 AND src.na_sequence_id = etn.na_sequence_id
 					]]>
 					</sql>
@@ -132,17 +132,17 @@
 					<column name="term"/>
 					<sql>
 					<![CDATA[
-					SELECT distinct src.specimen_voucher AS term,
-					       src.specimen_voucher      AS internal
-					FROM   DoTS.Source src,
+					SELECT distinct src.isolation_source AS term,
+					       src.isolation_source      AS internal
+					FROM   DoTS.IsolateSource src,
 					       DoTS.ExternalNASequence etn,
 					       SRes.ExternalDatabaseRelease edr,
 								 SRes.ExternalDatabase edb
-					WHERE  src.specimen_voucher is not null
+					WHERE  src.isolation_source is not null
 					   AND edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test4'
-						 AND edr.version = '2007-11-02'
+						 AND edb.name = 'Isolates Data Test9'
+						 AND edr.version = '2007-12-10'
 						 AND src.na_sequence_id = etn.na_sequence_id
 					]]>
 					</sql>
@@ -188,18 +188,18 @@
 					<column name="term"/>
 					<sql>
 					<![CDATA[
-					SELECT distinct src.map AS term,
-					       src.map AS internal
-					FROM   DoTS.Source src,
+					SELECT distinct src.country AS term,
+					       src.country AS internal
+					FROM   DoTS.IsolateSource src,
 					       DoTS.ExternalNASequence etn,
 					       SRes.ExternalDatabaseRelease edr,
 								 SRes.ExternalDatabase edb
 					WHERE  edr.external_database_id = edb.external_database_id
 					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test4'
-						 AND edr.version = '2007-11-02'
+						 AND edb.name = 'Isolates Data Test9'
+						 AND edr.version = '2007-12-10'
 						 AND src.na_sequence_id = etn.na_sequence_id
-						 AND src.map is not null
+						 AND src.country is not null
 					]]>
 					</sql>
 			</sqlQuery>
