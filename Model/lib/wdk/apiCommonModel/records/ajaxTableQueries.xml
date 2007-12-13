@@ -203,6 +203,17 @@
              </sql>
         </sqlQuery>
 
+        <!-- AjaxTables.BlastIsolateOrganismTermList -->
+				<sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true'>
+					  <paramRef ref="recordParams.primaryKey"/>
+					  <paramRef ref="recordParams.projectId"/>
+					  <column name="term"/>
+					  <column name="internal"/>
+					  <sql includeProjects="CryptoDB">
+						SELECT 'All Cryptosporidium Isolates' as term, 'All Cryptosporidium Isolates' as internal from dual 
+					  </sql>
+				</sqlQuery>
+
         <!-- AjaxTables.BlastESTOrganismTermList -->
         <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/> 
