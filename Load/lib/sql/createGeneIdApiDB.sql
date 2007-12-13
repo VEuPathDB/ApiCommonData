@@ -7,23 +7,23 @@ DROP MATERIALIZED VIEW apidb.GeneId;
 prompt *****CREATE MATERIALIZED VIEW apidb.GeneId
 CREATE MATERIALIZED VIEW apidb.GeneId AS
 (
-SELECT 'cryptodb' AS project_id, GeneId.* FROM  
-apidb.GeneId@CRYPTOB
+SELECT 'CryptoDB' AS project_id, GeneId.* FROM  
+apidb.GeneId@CRYPTO36UGA
 UNION
-SELECT 'plasmodb' AS project_id, GeneId.* FROM  
-apidb.GeneId@PLASBLD
+SELECT 'PlasmoDB' AS project_id, GeneId.* FROM  
+apidb.GeneId@PLASMO54
 UNION
-SELECT 'toxodb' AS project_id, GeneId.* FROM  
-apidb.GeneId@TOXOBLD
+SELECT 'ToxoDB' AS project_id, GeneId.* FROM  
+apidb.GeneId@TOXO43UGA
 );
 
-prompt *****select count(*) from apidb.geneid@CRYPTOB;
-select count(*) from apidb.geneid@CRYPTOB;
-prompt *****select count(*) from apidb.geneid@PLASBLD;
-select count(*) from apidb.geneid@PLASBLD;
-prompt *****select count(*) from apidb.geneid@TOXOBLD;
-select count(*) from apidb.geneid@TOXOBLD;
+prompt *****select count(*) from apidb.geneid@CRYPTO36UGA;
+select count(*) from apidb.geneid@CRYPTO36UGA;
+prompt *****select count(*) from apidb.geneid@PLASMO54;
+select count(*) from apidb.geneid@PLASMO54;
+prompt *****select count(*) from apidb.geneid@TOXO43UGA;
+select count(*) from apidb.geneid@TOXO43UGA;
 prompt *****select count(*) from apidb.geneid;
 select count(*) from apidb.geneid;
 
-exit
+
