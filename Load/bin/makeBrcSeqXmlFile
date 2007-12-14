@@ -9,14 +9,16 @@ use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
 my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
-    $brcSubmitsToRefseq, $curatorsString);
+    $brcSubmitsToRefseq, $curatorsString, $dbName, $submittedToGenbank);
 &GetOptions("extDbName=s" => \$extDbName,
 	    "extDbRlsVer=s" => \$extDbRlsVer,
 	    "brcSubmits=s" => \$brcSubmitsToRefseq,
+	    "submittedToGenbank!" => \$submittedToGenbank,
 	    "gffFile=s" => \$gffFileName,
 	    "curators=s" => \$curatorsString,
             "strain=s" => \$strain,
-            "changesFile=s" => \$changedSeqsFile
+            "changesFile=s" => \$changedSeqsFile,
+            "dbName=s" => \$dbName
              );
 
 &usage() unless ($extDbName && $extDbRlsVer && $gffFileName &&
@@ -24,7 +26,10 @@ my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
 
 my $gusconfig = GUS::Supported::GusConfig->new();
 
-my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+
+my $dsn = $dbName? "dbi:Oracle:$dbName" : $gusconfig->getDbiDsn();
+
+my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
                                         $gusconfig->getDatabaseLogin(),
                                         $gusconfig->getDatabasePassword(),
                                         0,0,1,
@@ -32,7 +37,8 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $changedSeqs = &parseChangedSeqs($changedSeqsFile);
 
-my $seqXml = &makeSeqXml($extDbName, $extDbRlsVer, $changedSeqs, $db);
+my $seqXml = &makeSeqXml($extDbName, $extDbRlsVer, $changedSeqs, $db,
+			 $submittedToGenbank);
 
 my $curationXml = &makeCurationXml($curatorsString);
 
@@ -61,7 +67,7 @@ sub parseChangedSeqs {
 }
 
 sub makeSeqXml {
-  my ($extDbName, $extDbRlsVer, $changedSeqsHash, $db) = @_;
+  my ($extDbName, $extDbRlsVer, $changedSeqsHash, $db, $submittedToGenbank) = @_;
 
   my $dbh = $db->getQueryHandle(0);
 
@@ -85,7 +91,7 @@ ORDER BY ens.source_id
   my @seqXmls;
   while(my ($sourceId) = $stmt->fetchrow_array()) {
     my $changed = 'no';
-    my $submit = 'no';
+    my $submit = $submittedToGenbank? 'yes' : 'no';
     if (defined($changedSeqsHash->{$sourceId})) {
       $changed = 'yes';
       $submit = 'yes' if $changedSeqsHash->{$sourceId};
@@ -196,9 +202,9 @@ sub makeXml {
 sub usage {
   print STDERR q{
 Create an XML file to send to BRC Central specifying the sequence meta info 
-for a GFF file.
+for a GFF file.  Uses $GUS_HOME/config/gus.config for db connection info.
 
-usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffFile --brcSubmits --curators [--strain] [--changesFile file]
+usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffFile --brcSubmits --curators [--strain] [--changesFile file] [--dbName]
 
 where:
   extDbName:   ExternalDatabase.name for the genome sequence
@@ -211,6 +217,8 @@ where:
                who_is_responsible_for_modifying 
   changesFile: a file with a list of sequences that have changed since
                    the original, as discussed below
+
+  dbName:      optional.  to override the db name in gus.config.  Example: toxo43penn
 
 Sample command line:
 % makeBrcSeqXmlFile --extDbName "Sanger P. falciparum chromosomes"  --extDbRlsVer "2005-09-26"  --gffPrefix PfalciparumGeneModels_PlasmoDB --brcSubmits no --curators "Sanger|Haiming%%TIGR|Mark"
