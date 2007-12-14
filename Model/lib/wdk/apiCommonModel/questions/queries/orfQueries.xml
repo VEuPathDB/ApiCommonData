@@ -77,7 +77,7 @@
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
-                 apidb.GenomicSequence gs
+                 apidb.GenomicSequence gs, apidb.sequenceAttributes sa
 	    WHERE m.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
             AND tas.length >= $$min_orf_length$$
@@ -89,6 +89,7 @@
 	    AND so.term_name = 'ORF'
 	    AND nal.end_max >= $$start_point$$  
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            AND sa.source_id = vs.source_id AND sa.project_id = '@PROJECT_ID@'
            ]]>
        </sql>
      </sqlQuery>

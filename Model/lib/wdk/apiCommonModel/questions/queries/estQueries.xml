@@ -15,11 +15,19 @@
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql>
+        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
           <![CDATA[
             SELECT est.accession AS source_id, '@PROJECT_ID@' as project_id
             FROM dots.Est est
             WHERE LOWER(accession) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
+          ]]>
+       </sql>
+        <sql includeProjects="GiardiaDB,TrichDB">
+          <![CDATA[
+            SELECT est.accession AS source_id, '@PROJECT_ID@' as project_id
+            FROM dots.Est est, apidb.estAttributes ea
+            WHERE LOWER(est.accession) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
+            AND ea.source_id= est.accession AND ea.project_id = '@PROJECT_ID@'
           ]]>
        </sql>
     </sqlQuery>
