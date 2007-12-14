@@ -47,22 +47,14 @@
 	    <sqlQuery name="Gene" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
-            <column name="product"/>
+            <column name="product" sortingTable="apidb.IsolateProductAttributes"/> 
             <sql excludeProjects="ApiDB">
-               SELECT etn.source_id,
-							        gf.product as product,
+               SELECT isp.source_id,
+							        isp.product, 
 							        $$projectId$$ as project_id
-               FROM   DoTS.ExternalNASequence etn,
-							        DoTS.Genefeature gf,
-											SRes.ExternalDatabaseRelease edr,
-											SRes.ExternalDatabase edb
-               WHERE  etn.na_sequence_id = gf.na_sequence_id  
-							    AND edr.external_database_id = edb.external_database_id
-							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test9'
-									AND edr.version = '2007-12-10'
-							    AND etn.source_id = $$primaryKey$$
-									AND gf.product is not null
+               FROM   ApiDB.IsolateProductAttributes isp
+               WHERE  isp.source_id = $$primaryKey$$
+									AND isp.product is not null
            </sql>
       </sqlQuery>
 
