@@ -58,7 +58,7 @@ DROP INDEX apidb.IsoProductAttr_idx;
 CREATE MATERIALIZED VIEW apidb.IsolateProductAttributes AS 
 (
 SELECT etn.source_id,
-       apidb.tab_to_string(cast(collect(gf.product) as apidb.varchartab), ' | ') as prod
+       apidb.tab_to_string(cast(collect(gf.product) as apidb.varchartab), ' | ') as product
 FROM   DoTS.ExternalNASequence etn,
 			 DoTS.Genefeature gf,
 			 SRes.ExternalDatabaseRelease edr,
