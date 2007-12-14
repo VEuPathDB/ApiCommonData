@@ -12,7 +12,7 @@
     <!-- Isolate ID -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="IsolateByIsolateId" excludeProjects="ApiDB"
+    <sqlQuery name="IsolateByIsolateId" includeProjects="CryptoDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="isolateParams.isolate_id"/>
         <column name="source_id"/>
@@ -37,7 +37,7 @@
 		<!-- Isolate Author -->
 		<!-- ************************************************************ -->
 
-		<sqlQuery name="IsolateByAuthor" excludeProjects="ApiDB"
+		<sqlQuery name="IsolateByAuthor" includeProjects="CryptoDB"
 							displayName="Author" isCacheable="true">
 							<paramRef ref="isolateParams.author"/>
 			<column name="source_id"/>
@@ -66,11 +66,11 @@
     <!-- Taxon (Species, Organism) -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByTaxon" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql>
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM   DoTS.IsolateSource src, 
@@ -97,11 +97,11 @@
     <!-- Host name (Specific_host) -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByHost" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByHost" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql >
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM   DoTS.IsolateSource src, 
@@ -128,11 +128,11 @@
     <!-- Isolation Source -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByIsolationSource" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByIsolationSource" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql >
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM   DoTS.IsolateSource src, 
@@ -159,11 +159,11 @@
     <!-- Isolate by Product -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByProduct" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByProduct" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql >
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM DoTS.ExternalNASequence etn, 
@@ -188,11 +188,11 @@
     <!-- Isolate by Study -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByStudy" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByStudy" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql>
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM DoTS.ExternalNASequence etn, 
@@ -217,11 +217,11 @@
     <!-- Isolate by Country -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByCountry" excludeProjects="ApiDB">
+		<sqlQuery name="IsolateByCountry" includeProjects="CryptoDB">
 			  <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
 				<column name="source_id"/>
 				<column name="project_id"/>
-				<sql excludeProjects="ApiDB">
+				<sql>
 					<![CDATA[
 						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
 						FROM   DoTS.ExternalNASequence etn, 
