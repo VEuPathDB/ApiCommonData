@@ -9,12 +9,14 @@ use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
 my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
-    $brcSubmitsToRefseq, $curatorsString, $dbName, $submittedToGenbank);
+    $brcSubmitsToRefseq, $curatorsString, $dbName, $submittedToGenbank,
+    $downloadedFrom);
 &GetOptions("extDbName=s" => \$extDbName,
 	    "extDbRlsVer=s" => \$extDbRlsVer,
 	    "brcSubmits=s" => \$brcSubmitsToRefseq,
 	    "submittedToGenbank!" => \$submittedToGenbank,
 	    "gffFile=s" => \$gffFileName,
+	    "downloadedFrom=s" => \$downloadedFrom,
 	    "curators=s" => \$curatorsString,
             "strain=s" => \$strain,
             "changesFile=s" => \$changedSeqsFile,
@@ -22,7 +24,7 @@ my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
              );
 
 &usage() unless ($extDbName && $extDbRlsVer && $gffFileName &&
-		 $brcSubmitsToRefseq && $curatorsString);
+		 $brcSubmitsToRefseq && $curatorsString && $downloadedFrom);
 
 my $gusconfig = GUS::Supported::GusConfig->new();
 
@@ -45,7 +47,7 @@ my $curationXml = &makeCurationXml($curatorsString);
 my ($taxonId, $organism) = &getTaxonInfo($extDbName, $extDbRlsVer, $db);
 
 print &makeXml($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
-      $brcSubmitsToRefseq, $seqXml, $curationXml);
+      $brcSubmitsToRefseq, $seqXml, $curationXml, $downloadedFrom);
 
 #################################################################
 
@@ -75,7 +77,7 @@ sub makeSeqXml {
 my $sql = "
 SELECT distinct ens.source_id
 FROM sres.ExternalDatabase ed,
-     sres.ExternalDatabaseRelease edr, dots.ExternalNaSequence ens,
+     sres.ExternalDatabaseRelease edr, dots.NaSequence ens,
      sres.SequenceOntology so
 WHERE ed.name = '$extDbName'
 AND edr.version = '$extDbRlsVer'
@@ -96,6 +98,15 @@ ORDER BY ens.source_id
       $changed = 'yes';
       $submit = 'yes' if $changedSeqsHash->{$sourceId};
     }
+    my $genbankXml;
+    if ($submittedToGenbank) {
+      $genbankXml = qq{
+      <genbank>
+        <parameter name="latest_accession">$sourceId</parameter>
+        <parameter name="latest_version">1</parameter>
+        <parameter name="owner">ApiDB</parameter>
+      </genbank>};
+    }
     my $seqXml = qq{
     <sequence>
       <internal>
@@ -104,11 +115,12 @@ ORDER BY ens.source_id
       <modified>
         <parameter name="sequence_changed">$changed</parameter>
         <parameter name="submitted_to_genbank">$submit</parameter>
-      </modified>
+      </modified>$genbankXml
     </sequence>
     };
     push(@seqXmls, $seqXml);
   }
+  scalar(@seqXmls) || die "\nerror: no sequences found\n";
   return join("\n", @seqXmls);
 }
 
@@ -156,7 +168,7 @@ AND tn.taxon_id = t.taxon_id
 
 sub makeXml {
   my ($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
-      $brcSubmitsToRefseq, $seqInfo, $curationInfo) = @_;
+      $brcSubmitsToRefseq, $seqInfo, $curationInfo, $downloadedFrom) = @_;
 
   if ($strain) {
     $strain = qw{
@@ -179,7 +191,7 @@ sub makeXml {
 
   <category name="gff3">
     <parameter name="corresponding_gff3_file">$gffFileName</parameter>
-    <parameter name="ftp_url">ftp://ftp.brc-central.org/xml/</parameter>
+    <parameter name="ftp_url">ftp://ftp.brc-central.org/</parameter>
   </category>
 
   <category name="submission">
@@ -192,6 +204,15 @@ sub makeXml {
 
   <category name="curatorship">
   $curationInfo
+  </category>
+
+  <category name="ownership">
+    <parameter name="original_source"/>
+    <parameter name="original_sequence"/>
+    <parameter name="original_annotation"/>
+    <parameter name="downloaded_from">$downloadedFrom</parameter>
+    <parameter name="date_of_download"/>
+    <parameter name="owner_url"/>
   </category>
 
 </source>
