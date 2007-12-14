@@ -1529,6 +1529,27 @@ CREATE INDEX featso_id_ix&1 ON apidb.FeatureSo&1(na_feature_id);
 
 CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 
+-------------------------------------------------------------------------------
+
+CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
+  SELECT ref.parent_id, ref.na_sequence_id,
+         substr(ref.strain, 1, 12) AS ref_strain,
+         substr(comp.strain, 1, 12) AS comp_strain,
+         nl.start_min AS start_min, nl.end_max AS end_max,
+         substr(ref.allele, 1, 1) AS ref_allele,
+         substr(comp.allele, 1, 1) AS comp_allele
+  FROM dots.SeqVariation ref, dots.SeqVariation comp, dots.NaLocation nl
+  WHERE ref.allele != comp.allele
+    AND ref.parent_id = comp.parent_id
+    AND ref.na_feature_id = nl.na_feature_id
+;
+
+GRANT SELECT ON apidb.Polymorphism&1 TO gus_r;
+
+CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, ref_strain, comp_strain, start_min);
+
+CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
+
 ---------------------------
 -- cleanup
 ---------------------------
