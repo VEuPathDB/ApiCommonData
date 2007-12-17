@@ -1,7 +1,7 @@
 <wdkModel>
     <querySet name="IsolateAttributes">
 
-	    <sqlQuery name="Sequence" isCacheable='true'>
+        <sqlQuery name="Sequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="project_id"/>
@@ -20,74 +20,76 @@
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql excludeProjects="ApiDB">
                SELECT iso.source_id, 
-							        iso.organism,
-							        iso.strain,
-							        iso.specific_host,
-											iso.isolation_source,
-											iso.description,
-											iso.pcr_primers,
-											iso.sequence,
-											iso.query_name, 
-							        iso.target_name, 
-											iso.min_subject_start,
-											iso.max_subject_end,
-							        iso.map, 
-							        $$projectId$$ as project_id
+                      iso.organism,
+                      iso.strain,
+                      iso.specific_host,
+                      iso.isolation_source,
+                      iso.description,
+                      iso.pcr_primers,
+                      iso.sequence,
+                      iso.query_name, 
+                      iso.target_name, 
+                      iso.min_subject_start,
+                      iso.max_subject_end,
+                      iso.map, 
+                      $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes iso,
-											SRes.ExternalDatabaseRelease edr,
-											SRes.ExternalDatabase edb
+                      SRes.ExternalDatabaseRelease edr,
+                      SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
-								  AND edr.external_database_release_id = iso.external_database_release_id
-									AND edb.name = 'Isolates Data Test9'
-									AND edr.version = '2007-12-10'
-							    AND iso.source_id = $$primaryKey$$
+                  AND edr.external_database_release_id = iso.external_database_release_id
+                  AND edb.name = 'Isolates Data Test9'
+                  AND edr.version = '2007-12-10'
+                  AND iso.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
-	    <sqlQuery name="Gene" isCacheable='false'>
+      <sqlQuery name="Gene" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
             <column name="product" sortingTable="apidb.IsolateProductAttributes"/> 
             <sql excludeProjects="ApiDB">
                SELECT isp.source_id,
-							        isp.product, 
-							        $$projectId$$ as project_id
+                      isp.product, 
+                      $$projectId$$ as project_id
                FROM   ApiDB.IsolateProductAttributes isp
                WHERE  isp.source_id = $$primaryKey$$
-									AND isp.product is not null
+                  AND isp.product is not null
            </sql>
       </sqlQuery>
 
-	    <sqlQuery name="ProteinSequence" isCacheable='true'>
+      <sqlQuery name="ProteinSequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="gene_description"/>
             <column name="protein_sequence"/>
             <sql excludeProjects="ApiDB">
                SELECT gf.source_id, 
-							        tas.description as gene_description,
-											tas.sequence as protein_sequence,
-							        $$projectId$$ as project_id
+                      tas.description as gene_description,
+                      tas.sequence as protein_sequence,
+                      $$projectId$$ as project_id
                FROM   DoTS.TranslatedAAFeature taf,
-							        DoTS.TranslatedAASequence tas,
-							        DoTS.Transcript trp, 
-							        DoTS.GeneFeature gf,
-											DoTS.ExternalNASequence etn,
-											SRes.ExternalDatabaseRelease edr,
-											SRes.ExternalDatabase edb
+                      DoTS.TranslatedAASequence tas,
+                      DoTS.Transcript trp, 
+                      DoTS.GeneFeature gf,
+                      DoTS.ExternalNASequence etn,
+                      SRes.ExternalDatabaseRelease edr,
+                      SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
-							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test9'
-									AND edr.version = '2007-12-10'
-							    AND trp.na_feature_id = taf.na_feature_id
-							    AND tas.aa_sequence_id = taf.aa_sequence_id
-							    AND trp.parent_id = gf.na_feature_id
-									AND etn.na_sequence_id = gf.na_sequence_id
-							    AND etn.source_id = $$primaryKey$$
+                  AND edr.external_database_release_id = etn.external_database_release_id
+                  AND edb.name = 'Isolates Data Test9'
+                  AND edr.version = '2007-12-10'
+                  AND trp.na_feature_id = taf.na_feature_id
+                  AND tas.aa_sequence_id = taf.aa_sequence_id
+                  AND trp.parent_id = gf.na_feature_id
+                  AND etn.na_sequence_id = gf.na_sequence_id
+                  AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
-	    <sqlQuery name="Reference" isCacheable='true'>
+      <sqlQuery name="Reference" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="title"/>
@@ -98,26 +100,26 @@
             <column name="journal_page"/>
             <sql excludeProjects="ApiDB">
                SELECT etn.source_id, 
-							        ref.title,
-											ref.author,
-											ref.year,
-											ref.journal_or_book_name,
-											ref.journal_vol,
-											ref.journal_page,
-							        $$projectId$$ as project_id
+                      ref.title,
+                      ref.author,
+                      ref.year,
+                      ref.journal_or_book_name,
+                      ref.journal_vol,
+                      ref.journal_page,
+                      $$projectId$$ as project_id
                FROM   DoTS.ExternalNASequence etn,
-							        DoTS.NASequenceRef nasr,
-							        SRES.Reference ref,
-											SRes.ExternalDatabaseRelease edr,
-											SRes.ExternalDatabase edb
+                      DoTS.NASequenceRef nasr,
+                      SRES.Reference ref,
+                      SRes.ExternalDatabaseRelease edr,
+                      SRes.ExternalDatabase edb
                WHERE  edr.external_database_id = edb.external_database_id
-							    AND edr.external_database_release_id = etn.external_database_release_id
-									AND edb.name = 'Isolates Data Test9'
-									AND edr.version = '2007-12-10'
-							    AND nasr.reference_id = ref.reference_id
-							    AND etn.na_sequence_id = nasr.na_sequence_id
-							    AND etn.source_id = $$primaryKey$$
-								  AND RowNum = 1
+                  AND edr.external_database_release_id = etn.external_database_release_id
+                  AND edb.name = 'Isolates Data Test9'
+                  AND edr.version = '2007-12-10'
+                  AND nasr.reference_id = ref.reference_id
+                  AND etn.na_sequence_id = nasr.na_sequence_id
+                  AND etn.source_id = $$primaryKey$$
+                  AND RowNum = 1
            </sql>
       </sqlQuery>
 
