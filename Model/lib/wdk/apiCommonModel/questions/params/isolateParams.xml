@@ -22,188 +22,192 @@
         </stringParam>
 
         <stringParam name="author"
-		                 prompt="Author">
-						<help> 
-						  Enter an Author name.  Wildcards (*) are allowed.  
-						</help> 
-						
-						<suggest includeProjects="CryptoDB" sample="Xiao*" default="Xiao*"/> 
-				</stringParam>
+                     prompt="Author">
+        <help> 
+          Enter an Author name.  Wildcards (*) are allowed.  
+        </help> 
+    
+        <suggest includeProjects="CryptoDB" sample="Xiao*" default="Xiao*"/> 
+        </stringParam>
 
         <flatVocabParam name="isolate_organism"
-				         queryRef="organismIQ.withIsolates"
-								prompt="Organism"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+             queryRef="organismIQ.withIsolates"
+            prompt="Organism"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="CryptoDB"/>
+        </flatVocabParam>
 
         <flatVocabParam name="specific_host"
-				         queryRef="hostVQ.withIsolates"
-								prompt="Host Name"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+             queryRef="hostVQ.withIsolates"
+             prompt="Host Name"
+             multiPick="true"
+             quote="false">
+             <useTermOnly value="true" includeProjects="CryptoDB"/>
+        </flatVocabParam>
 
         <flatVocabParam name="isolation_source"
-				         queryRef="isolationSourceVQ.withIsolates"
-								prompt="Isolation Source"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+             queryRef="isolationSourceVQ.withIsolates"
+             prompt="Isolation Source"
+             multiPick="true"
+             quote="false">
+             <useTermOnly value="true" includeProjects="CryptoDB"/>
+        </flatVocabParam>
 
         <flatVocabParam name="product"
-				        queryRef="productVQ.withIsolates"
-								prompt="Product Name"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+            queryRef="productVQ.withIsolates"
+            prompt="Product Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="CryptoDB"/>
+        </flatVocabParam>
 
         <flatVocabParam name="study"
-				        queryRef="studyVQ.withIsolates"
-								prompt="Study Name"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+            queryRef="studyVQ.withIsolates"
+            prompt="Study Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="CryptoDB"/>
+        </flatVocabParam>
 
         <flatVocabParam name="country"
-				        queryRef="countryVQ.withIsolates"
-								prompt="Country Name"
-								multiPick="true"
-								quote="false">
-					<useTermOnly value="true" includeProjects="CryptoDB"/>
-			  </flatVocabParam>
+            queryRef="countryVQ.withIsolates"
+            prompt="Country Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="CryptoDB"/>
+       </flatVocabParam>
 
-  </paramSet>
+    </paramSet>
 
-  <querySet name="organismIQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct src.organism AS term,
-					       src.organism      AS internal
-					FROM   DoTS.IsolateSource src,
-					       DoTS.ExternalNASequence etn,
-					       SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-					WHERE  edr.external_database_id = edb.external_database_id
-					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test9'
-						 AND edr.version = '2007-12-10'
-						 AND src.na_sequence_id = etn.na_sequence_id
-						 AND src.organism is not null
-					]]>
-					</sql>
-			</sqlQuery>
-	 </querySet>
+    <querySet name="organismIQ">
+      <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.organism AS term,
+             src.organism      AS internal
+      FROM   DoTS.IsolateSource src,
+             DoTS.ExternalNASequence etn,
+             SRes.ExternalDatabaseRelease edr,
+             SRes.ExternalDatabase edb
+      WHERE  edr.external_database_id = edb.external_database_id
+         AND edr.external_database_release_id = etn.external_database_release_id
+         AND edb.name = 'Isolates Data Test9'
+         AND edr.version = '2007-12-10'
+         AND src.na_sequence_id = etn.na_sequence_id
+         AND src.organism is not null
+     ]]>
+      </sql>
+    </sqlQuery>
+     </querySet>
 
   <querySet name="hostVQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct src.specific_host AS term,
-					       src.specific_host      AS internal
-					FROM   DoTS.IsolateSource src,
-					       DoTS.ExternalNASequence etn,
-					       SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-					WHERE  src.specific_host is not null
-					   AND edr.external_database_id = edb.external_database_id
-					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test9'
-						 AND edr.version = '2007-12-10'
-						 AND src.na_sequence_id = etn.na_sequence_id
-					]]>
-					</sql>
-			</sqlQuery>
-	</querySet>
+    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+    SELECT distinct src.specific_host AS term,
+           src.specific_host      AS internal
+    FROM   DoTS.IsolateSource src,
+           DoTS.ExternalNASequence etn,
+           SRes.ExternalDatabaseRelease edr,
+           SRes.ExternalDatabase edb
+    WHERE  src.specific_host is not null
+       AND edr.external_database_id = edb.external_database_id
+       AND edr.external_database_release_id = etn.external_database_release_id
+       AND edb.name = 'Isolates Data Test9'
+       AND edr.version = '2007-12-10'
+       AND src.na_sequence_id = etn.na_sequence_id
+    ]]>
+    </sql>
+    </sqlQuery>
+    </querySet>
 
   <querySet name="isolationSourceVQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct src.isolation_source AS term,
-					       src.isolation_source      AS internal
-					FROM   DoTS.IsolateSource src,
-					       DoTS.ExternalNASequence etn,
-					       SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-					WHERE  src.isolation_source is not null
-					   AND edr.external_database_id = edb.external_database_id
-					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test9'
-						 AND edr.version = '2007-12-10'
-						 AND src.na_sequence_id = etn.na_sequence_id
-					]]>
-					</sql>
-			</sqlQuery>
-	</querySet>
+    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+    SELECT distinct src.isolation_source AS term,
+           src.isolation_source      AS internal
+    FROM   DoTS.IsolateSource src,
+           DoTS.ExternalNASequence etn,
+           SRes.ExternalDatabaseRelease edr,
+           SRes.ExternalDatabase edb
+    WHERE  src.isolation_source is not null
+       AND edr.external_database_id = edb.external_database_id
+       AND edr.external_database_release_id = etn.external_database_release_id
+       AND edb.name = 'Isolates Data Test9'
+       AND edr.version = '2007-12-10'
+       AND src.na_sequence_id = etn.na_sequence_id
+    ]]>
+    </sql>
+    </sqlQuery>
+    </querySet>
 
   <querySet name="productVQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct trp.product AS term,
-					trp.product      AS internal
-					FROM DoTS.Transcript trp
-					WHERE 
-					 trp.product is not null and
-					 trp.row_alg_invocation_id > 1000
-					]]>
-					</sql>
-			</sqlQuery>
-	 </querySet>
+    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+          SELECT distinct gf.product as term,
+                 gf.product as internal
+          FROM   DoTS.ExternalNASequence etn,
+               DoTS.Genefeature gf,
+               SRes.ExternalDatabaseRelease edr,
+               SRes.ExternalDatabase edb
+          WHERE  etn.na_sequence_id = gf.na_sequence_id
+               AND edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data Test9'
+               AND edr.version = '2007-12-10'
+               AND gf.product is not null
+    ]]>
+    </sql>
+    </sqlQuery>
+     </querySet>
 
   <querySet name="studyVQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct ref.title AS term,
-					ref.title      AS internal
-					FROM SRES.Reference ref
-					WHERE 
-					 ref.row_alg_invocation_id > 1000
-					]]>
-					</sql>
-			</sqlQuery>
-	 </querySet>
+    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+    SELECT distinct ref.title AS term,
+           ref.title      AS internal
+    FROM SRES.Reference ref
+    WHERE ref.row_alg_invocation_id > 1000
+    ]]>
+    </sql>
+    </sqlQuery>
+  </querySet>
 
   <querySet name="countryVQ">
-			<sqlQuery name="withIsolates" excludeProjects="ApiDB">
-					<column name="internal"/>
-					<column name="term"/>
-					<sql>
-					<![CDATA[
-					SELECT distinct src.country AS term,
-					       src.country AS internal
-					FROM   DoTS.IsolateSource src,
-					       DoTS.ExternalNASequence etn,
-					       SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-					WHERE  edr.external_database_id = edb.external_database_id
-					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data Test9'
-						 AND edr.version = '2007-12-10'
-						 AND src.na_sequence_id = etn.na_sequence_id
-						 AND src.country is not null
-					]]>
-					</sql>
-			</sqlQuery>
-	</querySet>
+    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.country AS term,
+             src.country AS internal
+      FROM   DoTS.IsolateSource src,
+             DoTS.ExternalNASequence etn,
+             SRes.ExternalDatabaseRelease edr,
+             SRes.ExternalDatabase edb
+      WHERE  edr.external_database_id = edb.external_database_id
+         AND edr.external_database_release_id = etn.external_database_release_id
+         AND edb.name = 'Isolates Data Test9'
+         AND edr.version = '2007-12-10'
+         AND src.na_sequence_id = etn.na_sequence_id
+         AND src.country is not null
+      ]]>
+      </sql>
+    </sqlQuery>
+  </querySet>
 
 </wdkModel>
-
