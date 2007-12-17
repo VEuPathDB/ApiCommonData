@@ -179,14 +179,14 @@
     <sql>
     <![CDATA[
     SELECT distinct ref.title as term,
-		       ref.title as internal
+           ref.title as internal
     FROM   SRES.Reference ref,
-		       SRes.ExternalDatabaseRelease edr,
-		       SRes.ExternalDatabase edb
-		WHERE  ref.title IS NOT NULL
-		   AND edr.external_database_id = edb.external_database_id
-		   AND edb.name = 'Isolates Data Test9'
-		   AND edr.version = '2007-12-10'
+           SRes.ExternalDatabaseRelease edr,
+           SRes.ExternalDatabase edb
+    WHERE  ref.title IS NOT NULL
+       AND edr.external_database_id = edb.external_database_id
+       AND edb.name = 'Isolates Data Test9'
+       AND edr.version = '2007-12-10'
     ]]>
     </sql>
     </sqlQuery>
