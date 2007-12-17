@@ -19,7 +19,8 @@ SELECT etn.na_sequence_id,
 			 aln.target_name,
 			 aln.min_subject_start,
 			 aln.max_subject_end,
-			 aln.map
+			 aln.map,
+			 'CryptoDB' as project_id
 FROM   DoTS.ExternalNASequence etn,
 			 DoTS.IsolateSource src,
 			 SRes.ExternalDatabaseRelease edr,
@@ -58,6 +59,7 @@ DROP INDEX apidb.IsoProductAttr_idx;
 CREATE MATERIALIZED VIEW apidb.IsolateProductAttributes AS 
 (
 SELECT etn.source_id,
+			 'CryptoDB' as project_id,
        apidb.tab_to_string(cast(collect(gf.product) as apidb.varchartab), ' | ') as product
 FROM   DoTS.ExternalNASequence etn,
 			 DoTS.Genefeature gf,
@@ -68,7 +70,6 @@ WHERE  etn.na_sequence_id = gf.na_sequence_id
 	 AND edr.external_database_release_id = etn.external_database_release_id
 	 AND edb.name = 'Isolates Data Test9'
 	 AND edr.version = '2007-12-10'
-	 AND gf.product is not null 
 GROUP BY etn.source_id
 );
 
