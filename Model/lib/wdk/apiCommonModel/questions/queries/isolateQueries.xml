@@ -142,7 +142,7 @@
 						WHERE etn.na_sequence_id IN
 						      (SELECT sc.na_sequence_id
 						       FROM DoTS.IsolateSource sc
-						       WHERE sc.specimen_voucher in ($$isolation_source$$)
+						       WHERE sc.isolation_source in ($$isolation_source$$)
 							    )
 						    AND etn.source_id IS NOT NULL
 						    AND etn.na_sequence_id = src.na_sequence_id
