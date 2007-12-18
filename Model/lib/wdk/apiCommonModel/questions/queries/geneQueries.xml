@@ -36,7 +36,7 @@
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
         <column name="project_id"/>
-       <sql>
+       <sql excludeProjects="GiardiaDB,TrichDB">
              <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
@@ -46,6 +46,19 @@
                                                '[[:space:]]', '')
            ]]>
        </sql>
+
+        <sql includeProjects="GiardiaDB,TrichDB">
+             <![CDATA[
+            SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.GeneId gi, apidb.geneAttributes bfmv,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$ds_gene_ids$$ 
+              AND bfmv.project_id = '@PROJECT_ID@' 
+              AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+       </sql>
+
     </sqlQuery>
 
     <wsQuery name="GeneByLocusTag" includeProjects="ApiDB"
@@ -66,7 +79,7 @@
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql excludeProjects="CryptoDB">
+        <sql excludeProjects="CryptoDB,GiardiaDB,TrichDB">
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi
@@ -75,6 +88,18 @@
                                                '[[:space:]]', '')
             ]]>
         </sql>
+  
+ <sql includeProjects="GiardiaDB,TrichDB">
+            <![CDATA[
+            SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.GeneId gi, apidb.geneAttributes bfmv 
+            WHERE  bfmv.project_id = '@PROJECT_ID@'  
+              AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER($$single_gene_id$$),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+            ]]>
+        </sql>
+
         <sql includeProjects="CryptoDB">
             <![CDATA[
             SELECT g.source_id, '@PROJECT_ID@' as project_id
