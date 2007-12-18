@@ -47,13 +47,31 @@
            ]]>
        </sql>
 
-        <sql includeProjects="GiardiaDB,TrichDB">
+        <sql includeProjects="TrichDB">
              <![CDATA[
-            SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
-            FROM apidb.GeneId gi, apidb.geneAttributes bfmv,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
+            FROM dots.genefeature gf, sres.ExternalDatabaseRelease extr, sres.ExternalDatabase ext,
+                 @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE ds.dataset_id = $$ds_gene_ids$$ 
-              AND bfmv.project_id = '@PROJECT_ID@' 
-              AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+              AND gf.external_database_release_id=extr.external_database_release_id
+              AND extr.external_database_id=ext.external_database_id
+               AND ext.name = 'T. vaginalis scaffolds' 
+              AND gf.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+       </sql>
+
+ <sql includeProjects="GiardiaDB">
+             <![CDATA[
+            SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
+            FROM dots.genefeature gf, sres.ExternalDatabaseRelease extr, sres.ExternalDatabase ext,
+                 @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$ds_gene_ids$$ 
+              AND gf.external_database_release_id=extr.external_database_release_id
+              AND extr.external_database_id=ext.external_database_id
+               AND ext.name = 'G. lamblia contigs' 
+              AND gf.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,
                                                        '*', '%'),
                                                '[[:space:]]', '')
            ]]>
@@ -89,16 +107,37 @@
             ]]>
         </sql>
   
- <sql includeProjects="GiardiaDB,TrichDB">
+ <sql includeProjects="TrichDB">
             <![CDATA[
-            SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
-            FROM apidb.GeneId gi, apidb.geneAttributes bfmv 
-            WHERE  bfmv.project_id = '@PROJECT_ID@'  
-              AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER($$single_gene_id$$),
+            SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
+            FROM dots.genefeature gf, sres.ExternalDatabaseRelease extr, sres.ExternalDatabase ext
+            WHERE gf.source_id LIKE REGEXP_REPLACE(REPLACE($$single_gene_id$$,
                                                        '*', '%'),
                                                '[[:space:]]', '')
+              AND gf.external_database_release_id=extr.external_database_release_id
+              AND extr.external_database_id=ext.external_database_id
+               AND ext.name = 'T. vaginalis scaffolds'
             ]]>
         </sql>
+
+
+
+<sql includeProjects="GiardiaDB">
+            <![CDATA[
+            SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
+            FROM dots.genefeature gf, sres.ExternalDatabaseRelease extr, sres.ExternalDatabase ext
+            WHERE gf.source_id LIKE REGEXP_REPLACE(REPLACE($$single_gene_id$$,
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+              AND gf.external_database_release_id=extr.external_database_release_id
+              AND extr.external_database_id=ext.external_database_id
+               AND ext.name = 'G. lamblia contigs'
+            ]]>
+        </sql>
+
+
+
+
 
         <sql includeProjects="CryptoDB">
             <![CDATA[
