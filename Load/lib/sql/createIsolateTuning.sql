@@ -71,6 +71,21 @@ WHERE  etn.na_sequence_id = gf.na_sequence_id
 	 AND edb.name = 'Isolates Data Test9'
 	 AND edr.version = '2007-12-10'
 GROUP BY etn.source_id
+UNION
+SELECT etn.source_id,
+       'CryptoDB' as project_id,
+			 dbms_lob.substr(com.comment_string, 4000, 1) as product 
+FROM   DoTS.Repeats rpt,
+       DoTS.externalnasequence etn,
+       DoTS.nafeaturecomment com,
+       SRes.ExternalDatabaseRelease edr,
+       SRes.ExternalDatabase edb
+Where  rpt.na_sequence_id = etn.na_sequence_id
+   AND com.na_feature_id = rpt.na_feature_id
+   AND edr.external_database_id = edb.external_database_id
+   AND edr.external_database_release_id = rpt.external_database_release_id
+   AND edb.name = 'Isolates Data Test9'
+   AND edr.version = '2007-12-10'
 );
 
 CREATE INDEX apidb.IsoProductAttr_idx ON apidb.IsolateProductAttributes (source_id);
