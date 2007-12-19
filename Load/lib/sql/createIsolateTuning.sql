@@ -38,16 +38,16 @@ FROM   DoTS.ExternalNASequence etn,
                 SRes.ExternalDatabase edb
          WHERE  edr.external_database_id = edb.external_database_id 
             AND edr.external_database_release_id = extq.external_database_release_id 
-            AND edb.name = 'Isolates Data Test9' 
-            AND edr.version = '2007-12-10' 
+            AND edb.name = 'Isolates Data' 
+            AND edr.version = '2007-12-12' 
             AND sim.query_id = extq.na_sequence_id 
             AND sim.subject_id = extt.na_sequence_id) aln 
 WHERE  aln.source_id(+) = etn.source_id  and 
        etn.na_sequence_id = src.na_sequence_id
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data Test9'
-       AND edr.version = '2007-12-10'
+       AND edb.name = 'Isolates Data'
+       AND edr.version = '2007-12-12'
 );
 
 CREATE INDEX apidb.IsolateAttr_sourceId_idx ON apidb.IsolateAttributes (source_id);
@@ -68,8 +68,8 @@ FROM   DoTS.ExternalNASequence etn,
 WHERE  etn.na_sequence_id = gf.na_sequence_id
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data Test9'
-       AND edr.version = '2007-12-10'
+       AND edb.name = 'Isolates Data'
+       AND edr.version = '2007-12-12'
 GROUP BY etn.source_id
 UNION
 SELECT etn.source_id,
@@ -84,8 +84,8 @@ Where  rpt.na_sequence_id = etn.na_sequence_id
    AND com.na_feature_id = rpt.na_feature_id
    AND edr.external_database_id = edb.external_database_id
    AND edr.external_database_release_id = rpt.external_database_release_id
-   AND edb.name = 'Isolates Data Test9'
-   AND edr.version = '2007-12-10'
+   AND edb.name = 'Isolates Data'
+   AND edr.version = '2007-12-12'
 );
 
 CREATE INDEX apidb.IsoProductAttr_idx ON apidb.IsolateProductAttributes (source_id);
