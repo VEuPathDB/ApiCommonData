@@ -1637,12 +1637,40 @@ FROM   DoTS.Repeats rpt,
        DoTS.nafeaturecomment com,
        SRes.ExternalDatabaseRelease edr,
        SRes.ExternalDatabase edb
-Where  rpt.na_sequence_id = etn.na_sequence_id
+WHERE  rpt.na_sequence_id = etn.na_sequence_id
    AND com.na_feature_id = rpt.na_feature_id
    AND edr.external_database_id = edb.external_database_id
    AND edr.external_database_release_id = rpt.external_database_release_id
    AND edb.name = 'Isolates Data'
    AND edr.version = '2007-12-12'
+UNION
+SELECT etn.source_id,
+       'CryptoDB' as project_id,
+       com.comment_string as product
+FROM   DoTS.Miscellaneous misc,
+       DoTS.externalnasequence etn,
+       DoTS.nafeaturecomment com,
+       SRes.ExternalDatabaseRelease edr,
+       SRes.ExternalDatabase edb
+WHERE  etn.na_sequence_id = misc.na_sequence_id
+   AND com.na_feature_id = misc.na_feature_id
+   AND edr.external_database_id = edb.external_database_id
+   AND edr.external_database_release_id = etn.external_database_release_id
+   AND edb.name = 'Isolates Data'
+   AND edr.version = '2007-12-12'
+   AND etn.source_id NOT IN
+   (
+     SELECT ens.source_id
+     FROM   DoTS.genefeature gf,
+            DoTS.externalnasequence ens,
+            SRes.ExternalDatabaseRelease edr,
+            SRes.ExternalDatabase edb
+     WHERE  ens.na_sequence_id = gf.na_sequence_id
+        AND edr.external_database_id = edb.external_database_id
+        AND edr.external_database_release_id = ens.external_database_release_id
+        AND edb.name = 'Isolates Data'
+        AND edr.version = '2007-12-12'
+   )
 );
 
 CREATE INDEX apidb.IsoProductAttr_idx&1 ON apidb.IsolateProductAttributes&1 (source_id);
