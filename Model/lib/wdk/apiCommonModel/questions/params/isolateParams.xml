@@ -98,6 +98,7 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.organism is not null
+      ORDER BY src.organism
      ]]>
       </sql>
     </sqlQuery>
@@ -121,6 +122,7 @@
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
+    ORDER BY src.specific_host
     ]]>
     </sql>
     </sqlQuery>
@@ -144,6 +146,7 @@
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
+    ORDER BY src.isolation_source
     ]]>
     </sql>
     </sqlQuery>
@@ -167,6 +170,7 @@
                AND edb.name = 'Isolates Data'
                AND edr.version = '2007-12-12'
                AND gf.product is not null
+          ORDER BY gf.product
     ]]>
     </sql>
     </sqlQuery>
@@ -187,6 +191,7 @@
        AND edr.external_database_id = edb.external_database_id
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
+    ORDER BY ref.title
     ]]>
     </sql>
     </sqlQuery>
@@ -210,6 +215,7 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.country is not null
+      ORDER BY src.country
       ]]>
       </sql>
     </sqlQuery>
