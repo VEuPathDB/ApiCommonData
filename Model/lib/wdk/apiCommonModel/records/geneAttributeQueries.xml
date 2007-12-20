@@ -344,10 +344,11 @@
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-                  SELECT g.source_id, ext.name as project_id, g.sequence as translation
+                  SELECT g.source_id, ext.name as project_id, g.sequence as protein_sequence 
                   FROM dots.TranslatedAASequence g, 
                        sres.SequenceOntology s, 
                        sres.ExternalDatabaseRelease extr, 
@@ -383,7 +384,7 @@
        <!-- transcript sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="TranscriptSequence" isCacheable="false"
+        <sqlQuery name="TranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -399,12 +400,35 @@
             </sql>
         </sqlQuery>
 
+<sqlQuery name="TranscriptSequence" isCacheable="false"  includeProjects="ApiDB">
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="transcript_sequence"/>
+            <sql>
+                 (SELECT g.source_id, ext.name as project_id, g.sequence as transcript_sequence 
+                  from dots.SplicedNaSequence g, 
+                       sres.SequenceOntology s, 
+                       sres.ExternalDatabaseRelease extr, 
+                       sres.ExternalDatabase ext
+                  WHERE g.source_id = '$$primaryKey$$'
+                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                    AND s.term_name = 'processed_transcript'
+                    AND g.external_database_release_id=extr.external_database_release_id 
+                    AND extr.external_database_id=ext.external_database_id
+                    AND ext.name='$$projectId$$'
+                 )
+ 
+           </sql>
+        </sqlQuery>
+
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- cds sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="CDS" isCacheable="false"
+        <sqlQuery name="CDS" isCacheable="false" excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -427,6 +451,29 @@
             </sql>
         </sqlQuery>
 
+
+        <sqlQuery name="CDS" isCacheable="false"  includeProjects="ApiDB">
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="cds"/>
+            <sql>
+                 (SELECT g.source_id, ext.name as project_id, g.sequence as cds
+                  from dots.SplicedNaSequence g, 
+                       sres.SequenceOntology s, 
+                       sres.ExternalDatabaseRelease extr, 
+                       sres.ExternalDatabase ext
+                  WHERE g.source_id = '$$primaryKey$$'
+                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                    AND s.term_name = 'CDS'
+                    AND g.external_database_release_id=extr.external_database_release_id 
+                    AND extr.external_database_id=ext.external_database_id
+                    AND ext.name='$$projectId$$'
+                 )
+ 
+           </sql>
+        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- plasmo expression graphs -->  
