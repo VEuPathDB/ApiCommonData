@@ -204,12 +204,12 @@
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
-				<sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="CryptoDB">
+				<sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="CryptoDB,ApiDB">
 					  <paramRef ref="recordParams.primaryKey"/>
 					  <paramRef ref="recordParams.projectId"/>
 					  <column name="term"/>
 					  <column name="internal"/>
-					  <sql includeProjects="CryptoDB">
+					  <sql>
 						SELECT 'All Cryptosporidium Isolates' as term, 'All Cryptosporidium Isolates' as internal from dual 
 					  </sql>
 				</sqlQuery>
@@ -296,8 +296,8 @@
              </sql>
 
             <sql  includeProjects="ApiDB">
-SELECT 'Theileria parva' as term, 'Theileria parva' as internal from dual UNION
-SELECT 'Theileria annulata' as term, 'Theileria annulata' as internal from dual UNION
+                SELECT 'Theileria parva' as term, 'Theileria parva' as internal from dual UNION
+                SELECT 'Theileria annulata' as term, 'Theileria annulata' as internal from dual UNION
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION

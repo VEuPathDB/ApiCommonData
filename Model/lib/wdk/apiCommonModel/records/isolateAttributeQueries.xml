@@ -19,7 +19,7 @@
             <column name="min_subject_start"/> 
             <column name="max_subject_end"/> 
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
-            <sql excludeProjects="ApiDB">
+            <sql>
                SELECT iso.source_id, 
                       iso.organism,
                       iso.strain,
@@ -52,7 +52,7 @@
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="product" sortingTable="apidb.IsolateProductAttributes"/> 
-            <sql excludeProjects="ApiDB">
+            <sql>
                SELECT isp.source_id,
                       isp.product, 
                       $$projectId$$ as project_id
@@ -67,7 +67,7 @@
             <paramRef ref="recordParams.primaryKey"/>
             <column name="gene_description"/>
             <column name="protein_sequence"/>
-            <sql excludeProjects="ApiDB">
+            <sql>
                SELECT gf.source_id, 
                       tas.description as gene_description,
                       tas.sequence as protein_sequence,
@@ -100,7 +100,7 @@
             <column name="journal_or_book_name"/>
             <column name="journal_vol"/>
             <column name="journal_page"/>
-            <sql excludeProjects="ApiDB">
+            <sql>
 						   SELECT * FROM (
                SELECT etn.source_id, 
                       ref.title,
