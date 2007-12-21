@@ -16,7 +16,7 @@
         <help>
              Enter an Isolate ID.  Wildcards (*) are allowed.
         </help>
-            <suggest includeProjects="CryptoDB"
+            <suggest includeProjects="CryptoDB,ApiDB"
                      sample="AF527841, DQ1145002, DQ115*"
                      default="AF527841"/>
         </stringParam>
@@ -27,7 +27,7 @@
           Enter an Author name.  Wildcards (*) are allowed.  
         </help> 
     
-        <suggest includeProjects="CryptoDB" sample="Xiao*" default="Xiao*"/> 
+        <suggest includeProjects="CryptoDB,ApiDB" sample="Xiao*" default="Xiao*"/> 
         </stringParam>
 
         <flatVocabParam name="isolate_organism"
@@ -35,7 +35,7 @@
             prompt="Organism"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB"/>
+            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="specific_host"
@@ -43,7 +43,7 @@
              prompt="Host Name"
              multiPick="true"
              quote="false">
-             <useTermOnly value="true" includeProjects="CryptoDB"/>
+             <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="isolation_source"
@@ -51,7 +51,7 @@
              prompt="Isolation Source"
              multiPick="true"
              quote="false">
-             <useTermOnly value="true" includeProjects="CryptoDB"/>
+             <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="product"
@@ -59,7 +59,7 @@
             prompt="Product Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB"/>
+            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="study"
@@ -67,7 +67,7 @@
             prompt="Study Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB"/>
+            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="country"
@@ -75,13 +75,13 @@
             prompt="Country Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB"/>
+            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
        </flatVocabParam>
 
     </paramSet>
 
     <querySet name="organismIQ">
-      <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+      <sqlQuery name="withIsolates" includeProjects="CryptoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -102,10 +102,16 @@
      ]]>
       </sql>
     </sqlQuery>
-     </querySet>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
+  </querySet>
 
   <querySet name="hostVQ">
-    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -126,10 +132,16 @@
     ]]>
     </sql>
     </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
     </querySet>
 
   <querySet name="isolationSourceVQ">
-    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -150,10 +162,16 @@
     ]]>
     </sql>
     </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
     </querySet>
 
   <querySet name="productVQ">
-    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -174,10 +192,16 @@
     ]]>
     </sql>
     </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
      </querySet>
 
   <querySet name="studyVQ">
-    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -195,10 +219,16 @@
     ]]>
     </sql>
     </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
   </querySet>
 
   <querySet name="countryVQ">
-    <sqlQuery name="withIsolates" excludeProjects="ApiDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -219,6 +249,12 @@
       ]]>
       </sql>
     </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
   </querySet>
 
 </wdkModel>

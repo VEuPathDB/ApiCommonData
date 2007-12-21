@@ -33,13 +33,20 @@
         </sql>
     </sqlQuery>
 
+    <wsQuery name="IsolateByIsolateId" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.isolate_id"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
 		<!-- ************************************************************ -->
 		<!-- Isolate Author -->
 		<!-- ************************************************************ -->
 
 		<sqlQuery name="IsolateByAuthor" includeProjects="CryptoDB"
 							displayName="Author" isCacheable="true">
-							<paramRef ref="isolateParams.author"/>
+			<paramRef ref="isolateParams.author"/>
 			<column name="source_id"/>
 			<column name="project_id"/>
 			<sql includeProjects="CryptoDB">
@@ -61,6 +68,13 @@
 				 ]]>
 			</sql>
 		</sqlQuery>
+
+    <wsQuery name="IsolateByAuthor" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.author"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon (Species, Organism) -->
@@ -93,6 +107,14 @@
 				 </sql>
 		</sqlQuery>
 
+    <wsQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Host name (Specific_host) -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -123,6 +145,14 @@
 						]]>
 				 </sql>
 		</sqlQuery>
+
+    <wsQuery name="IsolateByHost" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolation Source -->
@@ -155,6 +185,14 @@
 				 </sql>
 		</sqlQuery>
 
+    <wsQuery name="IsolateByIsolationSource" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Product -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -183,6 +221,14 @@
 						]]>
 				 </sql>
 		</sqlQuery>
+
+    <wsQuery name="IsolateByProduct" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Study -->
@@ -213,6 +259,14 @@
 				 </sql>
 		</sqlQuery>
 
+    <wsQuery name="IsolateByStudy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Country -->
 	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -239,5 +293,13 @@
 				 </sql>
 		</sqlQuery>
 
+    <wsQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
   </querySet>
+
+
 </wdkModel>
