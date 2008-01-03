@@ -4545,15 +4545,17 @@ EOF
 }
 
 # update ortholog group fields, and load MSA results
-sub createBioLayoutFiles {
-  my ($mgr, $seqTable, $blName) = @_;
+sub createBiolayoutData {
+  my ($mgr, $rbhFile, $svgTemplate) = @_;
 
-  my $propertySet = $mgr->{propertySet};
-  my $signal = "updateOrthoMCLGroups";
-
+  my $signal = "createBiolayoutData";
   return if $mgr->startStep("Generating Biolayout files and images for each group", $signal);
+  
+  my $signalFile = "/tmp/$signal.finish";
+  unlink $signalFile if -e $signalFile;
 
-  my $blDir = "$mgr->{dataDir}/biolayout/$blName/";
+  # get the gus.config
+  my $propertySet = $mgr->{propertySet};
   my $gusConfigFile = $propertySet->getProp('gusConfigFile');
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
@@ -4562,13 +4564,20 @@ sub createBioLayoutFiles {
      orthoPlugin \\
      \"$gusConfigFile\" \\
      \"org.apidb.orthomcl.load.plugin.GenerateBioLayoutPlugin\" \\
-     \"$seqTable\" \\
-     \"$blDir\" \\
+     \"$rbhFile\" \\
+     \"$svgTemplate\" \\
+     \"$signalFile\" \\
      >> $logFile
 EOF
 
   print STDERR "$cmd\n";
-  $mgr->runCmd($cmd);
+  
+  # run the command multiple times till the signal file is created
+  do {
+      $mgr->runCmd($cmd);
+  } until(-e $signalFile);
+  unlink $signalFile;
+  
   $mgr->endStep($signal);
 }
 
