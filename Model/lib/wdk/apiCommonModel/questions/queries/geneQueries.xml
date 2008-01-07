@@ -97,7 +97,7 @@
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql excludeProjects="CryptoDB,GiardiaDB,TrichDB">
+        <sql excludeProjects="GiardiaDB,TrichDB">
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi
