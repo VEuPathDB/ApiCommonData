@@ -1532,26 +1532,26 @@ CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 -------------------------------------------------------------------------------
 
 CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
-  SELECT snp.na_feature_id AS snp_na_feature_id, snp.source_id AS snp_source_id, ref.na_sequence_id,
-         substr(ref.strain, 1, 12) AS ref_strain,
-         substr(comp.strain, 1, 12) AS comp_strain,
-         nl.start_min AS start_min, nl.end_max AS end_max,
-         substr(ref.allele, 1, 1) AS ref_allele,
-         substr(comp.allele, 1, 1) AS comp_allele,
-         substr(ref.product, 1, 1) AS ref_product,
-         substr(comp.product, 1, 1) AS comp_product,
-         snp.position_in_protein,
-         gf.na_feature_id as gene_na_feature_id, gf.source_id as gene_source_id
-  FROM dots.SnpFeature snp, dots.SeqVariation ref, dots.SeqVariation comp, dots.NaLocation nl, dots.GeneFeature gf
-  WHERE ref.allele != comp.allele
-    AND ref.parent_id = comp.parent_id
-    AND ref.parent_id = snp.na_feature_id
-    AND ref.na_feature_id = nl.na_feature_id
+  SELECT snp.na_feature_id AS snp_na_feature_id,
+         snp.source_id AS snp_source_id, sa.na_sequence_id,
+         substr(sa.strain, 1, 12) AS strain_a,
+         substr(sb.strain, 1, 12) AS strain_b,
+         nl.start_min AS start_min,
+         snp.external_database_release_id,
+         gf.na_feature_id as gene_na_feature_id
+  FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
+       dots.NaLocation nl, dots.GeneFeature gf
+  WHERE sa.strain < sb.strain
+    AND sa.allele != sb.allele
+    AND sa.parent_id = sb.parent_id
+    AND sa.parent_id = snp.na_feature_id
+    AND sa.na_feature_id = nl.na_feature_id
     AND snp.parent_id = gf.na_feature_id (+);
+CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
 
 GRANT SELECT ON apidb.Polymorphism&1 TO gus_r;
 
-CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, ref_strain, comp_strain, start_min);
+CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a, strain_b, start_min);
 
 CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 
