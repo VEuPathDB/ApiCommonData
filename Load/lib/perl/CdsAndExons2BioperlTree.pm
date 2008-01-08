@@ -6,7 +6,6 @@ use Bio::SeqFeature::Generic;
 use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 
-
 #input: CDS with join location (if multiple exons)
 #output: standard api tree: gene->transcript->exons
 #                                           ->CDS
@@ -32,6 +31,13 @@ sub preprocess {
 	my $t = $exon->primary_tag();
 	die "expected bioperl exon but got '$t'" unless $t = "exon";
 	$transcript->add_SeqFeature($exon);
+
+        # the frame loade to gus will be 1,2 or 3
+        my $frame = $exon->frame();
+        if($frame =~ /[012]/) {
+          $frame++;
+          $exon->add_tag_value('reading_frame', $frame);
+        }
       }
       # we have to remove the exons before adding the transcript b/c
       # remove_SeqFeatures() removes all subfeatures of the $gene
