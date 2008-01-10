@@ -206,8 +206,9 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-    SELECT distinct ref.title as term,
-           ref.title as internal
+		SELECT distinct term, internal from (
+    SELECT replace(ref.title, ',', ';') as term,
+           replace(ref.title, ',', ';') as internal
     FROM   SRES.Reference ref,
            SRes.ExternalDatabaseRelease edr,
            SRes.ExternalDatabase edb
@@ -215,7 +216,8 @@
        AND edr.external_database_id = edb.external_database_id
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
-    ORDER BY ref.title
+    )
+    ORDER BY term
     ]]>
     </sql>
     </sqlQuery>

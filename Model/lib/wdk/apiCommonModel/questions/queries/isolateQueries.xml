@@ -248,7 +248,7 @@
 								 SRes.ExternalDatabase edb
 						WHERE nasr.reference_id = ref.reference_id
 						AND nasr.na_sequence_id = etn.na_sequence_id
-						AND ref.title IN ($$study$$)
+						AND replace(ref.title, ',', ';') IN ($$study$$)
 						AND ref.title IS NOT NULL
 						AND edr.external_database_id = edb.external_database_id
 						AND edr.external_database_release_id = etn.external_database_release_id
