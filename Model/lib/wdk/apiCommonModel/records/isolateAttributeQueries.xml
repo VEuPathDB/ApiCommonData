@@ -18,6 +18,7 @@
             <column name="target_name"/> 
             <column name="min_subject_start"/> 
             <column name="max_subject_end"/> 
+            <column name="note"/> 
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql>
                SELECT iso.source_id, 
@@ -33,6 +34,7 @@
                       iso.target_name, 
                       iso.min_subject_start,
                       iso.max_subject_end,
+                      iso.note,
                       iso.map, 
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes iso,
