@@ -287,7 +287,7 @@
 						   AND edb.name = 'Isolates Data'
 						   AND edr.version = '2007-12-12'
 							 AND src.na_sequence_id = etn.na_sequence_id
-							 AND src.country IN ($$country$$)
+							 AND replace(src.country, ',', ';') IN ($$country$$)
 						ORDER BY etn.source_id
 						]]>
 				 </sql>

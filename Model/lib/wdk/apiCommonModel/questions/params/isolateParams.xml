@@ -235,8 +235,9 @@
       <column name="term"/>
       <sql>
       <![CDATA[
-      SELECT distinct src.country AS term,
-             src.country AS internal
+      SELECT distinct term, internal from (
+      SELECT replace(src.country, ',', ';') AS term,
+             replace(src.country, ',', ';') AS internal
       FROM   DoTS.IsolateSource src,
              DoTS.ExternalNASequence etn,
              SRes.ExternalDatabaseRelease edr,
@@ -247,7 +248,8 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.country is not null
-      ORDER BY src.country
+			)
+      ORDER BY term
       ]]>
       </sql>
     </sqlQuery>
