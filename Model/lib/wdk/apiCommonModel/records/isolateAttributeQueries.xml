@@ -103,7 +103,7 @@
             <column name="journal_vol"/>
             <column name="journal_page"/>
             <sql>
-						   SELECT * FROM (
+               SELECT * FROM (
                SELECT etn.source_id, 
                       ref.title,
                       ref.author,
@@ -124,8 +124,8 @@
                   AND nasr.reference_id = ref.reference_id
                   AND etn.na_sequence_id = nasr.na_sequence_id
                   AND etn.source_id = $$primaryKey$$
-							 ORDER BY ref.reference_id asc
-							 )
+               ORDER BY ref.reference_id asc
+               )
                WHERE RowNum = 1
            </sql>
       </sqlQuery>

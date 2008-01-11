@@ -146,7 +146,7 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-    SELECT distinct src.isolation_source AS term,
+    SELECT distinct upper(src.isolation_source) AS term,
            src.isolation_source      AS internal
     FROM   DoTS.IsolateSource src,
            DoTS.ExternalNASequence etn,
@@ -206,7 +206,7 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-		SELECT distinct term, internal from (
+    SELECT distinct term, internal from (
     SELECT replace(ref.title, ',', ';') as term,
            replace(ref.title, ',', ';') as internal
     FROM   SRES.Reference ref,
@@ -248,7 +248,7 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.country is not null
-			)
+      )
       ORDER BY term
       ]]>
       </sql>
