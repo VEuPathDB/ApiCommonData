@@ -88,7 +88,8 @@
 
     <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
+        <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
         <paramRef ref="sharedParams.chromosomeOptional"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
