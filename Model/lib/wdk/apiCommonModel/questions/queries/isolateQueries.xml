@@ -20,15 +20,15 @@
         <sql includeProjects="CryptoDB">
             <![CDATA[
                 SELECT distinct etn.source_id as source_id, 
-								       '@PROJECT_ID@' as project_id
+                       '@PROJECT_ID@' as project_id
                 FROM   DoTS.ExternalNASequence etn,
-								       SRes.ExternalDatabaseRelease edr,
-											 SRes.ExternalDatabase edb
+                       SRes.ExternalDatabaseRelease edr,
+                       SRes.ExternalDatabase edb
                 WHERE  edr.external_database_id = edb.external_database_id
-								   AND edr.external_database_release_id = etn.external_database_release_id
-									 AND edb.name = 'Isolates Data'
-									 AND edr.version = '2007-12-12'
-								   AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
+                   AND edr.external_database_release_id = etn.external_database_release_id
+                   AND edb.name = 'Isolates Data'
+                   AND edr.version = '2007-12-12'
+                   AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
             ]]>
         </sql>
     </sqlQuery>
@@ -40,34 +40,34 @@
     </wsQuery>
 
 
-		<!-- ************************************************************ -->
-		<!-- Isolate Author -->
-		<!-- ************************************************************ -->
+    <!-- ************************************************************ -->
+    <!-- Isolate Author -->
+    <!-- ************************************************************ -->
 
-		<sqlQuery name="IsolateByAuthor" includeProjects="CryptoDB"
-							displayName="Author" isCacheable="true">
-			<paramRef ref="isolateParams.author"/>
-			<column name="source_id"/>
-			<column name="project_id"/>
-			<sql includeProjects="CryptoDB">
-			<![CDATA[
-					SELECT distinct etn.source_id as source_id,
-							   '@PROJECT_ID@' as project_id
-					FROM   DoTS.ExternalNASequence etn,
-					       DoTS.NASequenceRef nasr,
-					  		 SRES.Reference ref,
-								 SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-					WHERE  nasr.reference_id = ref.reference_id
-					   AND edr.external_database_id = edb.external_database_id
-					   AND edr.external_database_release_id = etn.external_database_release_id
-						 AND edb.name = 'Isolates Data'
-						 AND edr.version = '2007-12-12'
-						 AND etn.na_sequence_id = nasr.na_sequence_id
-						 AND ref.author LIKE REPLACE($$author$$,'*','%')
-				 ]]>
-			</sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByAuthor" includeProjects="CryptoDB"
+              displayName="Author" isCacheable="true">
+      <paramRef ref="isolateParams.author"/>
+      <column name="source_id"/>
+      <column name="project_id"/>
+      <sql includeProjects="CryptoDB">
+      <![CDATA[
+          SELECT distinct etn.source_id as source_id,
+                 '@PROJECT_ID@' as project_id
+          FROM   DoTS.ExternalNASequence etn,
+                 DoTS.NASequenceRef nasr,
+                 SRES.Reference ref,
+                 SRes.ExternalDatabaseRelease edr,
+                 SRes.ExternalDatabase edb
+          WHERE  nasr.reference_id = ref.reference_id
+             AND edr.external_database_id = edb.external_database_id
+             AND edr.external_database_release_id = etn.external_database_release_id
+             AND edb.name = 'Isolates Data'
+             AND edr.version = '2007-12-12'
+             AND etn.na_sequence_id = nasr.na_sequence_id
+             AND ref.author LIKE REPLACE($$author$$,'*','%')
+         ]]>
+      </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByAuthor" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.author"/>
@@ -78,34 +78,34 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon (Species, Organism) -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql>
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM   DoTS.IsolateSource src, 
-						       DoTS.ExternalNASequence etn,
-									 SRes.ExternalDatabaseRelease edr,
-									 SRes.ExternalDatabase edb
-						WHERE  etn.na_sequence_id IN
-						       (SELECT sc.na_sequence_id
-						        FROM DoTS.IsolateSource sc
-						        WHERE sc.organism in ($$isolate_organism$$)
-							     )
-						   AND etn.source_id IS NOT NULL
-						   AND etn.na_sequence_id = src.na_sequence_id
-							 AND edr.external_database_id = edb.external_database_id
-							 AND edr.external_database_release_id = etn.external_database_release_id
-							 AND edb.name = 'Isolates Data'
-							 AND edr.version = '2007-12-12'
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql>
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.IsolateSource src, 
+                   DoTS.ExternalNASequence etn,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE  etn.na_sequence_id IN
+                   (SELECT sc.na_sequence_id
+                    FROM DoTS.IsolateSource sc
+                    WHERE sc.organism in ($$isolate_organism$$)
+                   )
+               AND etn.source_id IS NOT NULL
+               AND etn.na_sequence_id = src.na_sequence_id
+               AND edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data'
+               AND edr.version = '2007-12-12'
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
@@ -117,34 +117,34 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Host name (Specific_host) -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByHost" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql >
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM   DoTS.IsolateSource src, 
-						       DoTS.ExternalNASequence etn,
-									 SRes.ExternalDatabaseRelease edr,
-									 SRes.ExternalDatabase edb
-						WHERE etn.na_sequence_id IN
-						      (SELECT sc.na_sequence_id
-						       FROM DoTS.IsolateSource sc
-						       WHERE sc.specific_host in ($$specific_host$$)
-							     )
-						    AND etn.source_id IS NOT NULL
-						    AND etn.na_sequence_id = src.na_sequence_id
-								AND edr.external_database_id = edb.external_database_id
-								AND edr.external_database_release_id = etn.external_database_release_id
-								AND edb.name = 'Isolates Data'
-								AND edr.version = '2007-12-12'
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByHost" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql >
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.IsolateSource src, 
+                   DoTS.ExternalNASequence etn,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE etn.na_sequence_id IN
+                  (SELECT sc.na_sequence_id
+                   FROM DoTS.IsolateSource sc
+                   WHERE sc.specific_host in ($$specific_host$$)
+                   )
+                AND etn.source_id IS NOT NULL
+                AND etn.na_sequence_id = src.na_sequence_id
+                AND edr.external_database_id = edb.external_database_id
+                AND edr.external_database_release_id = etn.external_database_release_id
+                AND edb.name = 'Isolates Data'
+                AND edr.version = '2007-12-12'
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByHost" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
@@ -156,34 +156,34 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolation Source -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByIsolationSource" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql >
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM   DoTS.IsolateSource src, 
-						       DoTS.ExternalNASequence etn,
-									 SRes.ExternalDatabaseRelease edr,
-									 SRes.ExternalDatabase edb
-						WHERE etn.na_sequence_id IN
-						      (SELECT sc.na_sequence_id
-						       FROM DoTS.IsolateSource sc
-						       WHERE sc.isolation_source in ($$isolation_source$$)
-							    )
-						    AND etn.source_id IS NOT NULL
-						    AND etn.na_sequence_id = src.na_sequence_id
-								AND edr.external_database_id = edb.external_database_id
-								AND edr.external_database_release_id = etn.external_database_release_id
-								AND edb.name = 'Isolates Data'
-								AND edr.version = '2007-12-12'
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByIsolationSource" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql >
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.IsolateSource src, 
+                   DoTS.ExternalNASequence etn,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE etn.na_sequence_id IN
+                  (SELECT sc.na_sequence_id
+                   FROM DoTS.IsolateSource sc
+                   WHERE sc.isolation_source in ($$isolation_source$$)
+                  )
+                AND etn.source_id IS NOT NULL
+                AND etn.na_sequence_id = src.na_sequence_id
+                AND edr.external_database_id = edb.external_database_id
+                AND edr.external_database_release_id = etn.external_database_release_id
+                AND edb.name = 'Isolates Data'
+                AND edr.version = '2007-12-12'
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByIsolationSource" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
@@ -195,32 +195,32 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Product -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByProduct" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql >
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM DoTS.ExternalNASequence etn, 
-						     DoTS.GeneFeature gf,
-						     DoTS.Transcript trp,
-								 SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-						WHERE gf.na_feature_id = trp.parent_id 
-						  AND gf.na_sequence_id = etn.na_sequence_id
-						  AND trp.product IN ($$product$$)
-						  AND etn.source_id IS NOT NULL
-							AND edr.external_database_id = edb.external_database_id
-							AND edr.external_database_release_id = etn.external_database_release_id
-							AND edb.name = 'Isolates Data'
-							AND edr.version = '2007-12-12'
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByProduct" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql >
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM DoTS.ExternalNASequence etn, 
+                 DoTS.GeneFeature gf,
+                 DoTS.Transcript trp,
+                 SRes.ExternalDatabaseRelease edr,
+                 SRes.ExternalDatabase edb
+            WHERE gf.na_feature_id = trp.parent_id 
+              AND gf.na_sequence_id = etn.na_sequence_id
+              AND trp.product IN ($$product$$)
+              AND etn.source_id IS NOT NULL
+              AND edr.external_database_id = edb.external_database_id
+              AND edr.external_database_release_id = etn.external_database_release_id
+              AND edb.name = 'Isolates Data'
+              AND edr.version = '2007-12-12'
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByProduct" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
@@ -232,32 +232,32 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Study -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByStudy" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql>
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM DoTS.ExternalNASequence etn, 
-						     DoTS.NASequenceRef nasr,
-								 SRES.Reference ref,
-								 SRes.ExternalDatabaseRelease edr,
-								 SRes.ExternalDatabase edb
-						WHERE nasr.reference_id = ref.reference_id
-						AND nasr.na_sequence_id = etn.na_sequence_id
-						AND replace(ref.title, ',', ';') IN ($$study$$)
-						AND ref.title IS NOT NULL
-						AND edr.external_database_id = edb.external_database_id
-						AND edr.external_database_release_id = etn.external_database_release_id
-						AND edb.name = 'Isolates Data'
-						AND edr.version = '2007-12-12'
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByStudy" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql>
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM DoTS.ExternalNASequence etn, 
+                 DoTS.NASequenceRef nasr,
+                 SRES.Reference ref,
+                 SRes.ExternalDatabaseRelease edr,
+                 SRes.ExternalDatabase edb
+            WHERE nasr.reference_id = ref.reference_id
+            AND nasr.na_sequence_id = etn.na_sequence_id
+            AND replace(ref.title, ',', ';') IN ($$study$$)
+            AND ref.title IS NOT NULL
+            AND edr.external_database_id = edb.external_database_id
+            AND edr.external_database_release_id = etn.external_database_release_id
+            AND edb.name = 'Isolates Data'
+            AND edr.version = '2007-12-12'
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByStudy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
@@ -269,29 +269,29 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Country -->
-	  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<sqlQuery name="IsolateByCountry" includeProjects="CryptoDB">
-			  <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-				<column name="source_id"/>
-				<column name="project_id"/>
-				<sql>
-					<![CDATA[
-						SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-						FROM   DoTS.ExternalNASequence etn, 
-						       DoTS.IsolateSource src,
-								   SRes.ExternalDatabaseRelease edr,
-								   SRes.ExternalDatabase edb
-						WHERE  edr.external_database_id = edb.external_database_id
-						   AND edr.external_database_release_id = etn.external_database_release_id
-						   AND edb.name = 'Isolates Data'
-						   AND edr.version = '2007-12-12'
-							 AND src.na_sequence_id = etn.na_sequence_id
-							 AND replace(src.country, ',', ';') IN ($$country$$)
-						ORDER BY etn.source_id
-						]]>
-				 </sql>
-		</sqlQuery>
+    <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB">
+        <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <sql>
+          <![CDATA[
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.ExternalNASequence etn, 
+                   DoTS.IsolateSource src,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE  edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data'
+               AND edr.version = '2007-12-12'
+               AND src.na_sequence_id = etn.na_sequence_id
+               AND replace(src.country, ',', ';') IN ($$country$$)
+            ORDER BY etn.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
 
     <wsQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
