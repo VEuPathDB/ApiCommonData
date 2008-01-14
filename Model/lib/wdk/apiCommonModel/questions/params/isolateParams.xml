@@ -51,7 +51,7 @@
              prompt="Isolation Source"
              multiPick="true"
              quote="false">
-             <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="product"
@@ -146,7 +146,8 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-    SELECT distinct upper(src.isolation_source) AS term,
+		SELECT term, internal FROM (
+    SELECT upper(substr(src.isolation_source, 0, 1)) || substr(src.isolation_source, 2) || ' (' || count(src.isolation_source) || ' isolates)' AS term,
            src.isolation_source      AS internal
     FROM   DoTS.IsolateSource src,
            DoTS.ExternalNASequence etn,
@@ -158,7 +159,9 @@
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
-    ORDER BY src.isolation_source
+		GROUP BY src.isolation_source
+		)
+    ORDER BY term
     ]]>
     </sql>
     </sqlQuery>
