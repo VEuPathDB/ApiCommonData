@@ -35,7 +35,7 @@
             prompt="Organism"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+            <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="specific_host"
@@ -86,8 +86,8 @@
       <column name="term"/>
       <sql>
       <![CDATA[
-      SELECT distinct src.organism AS term,
-             src.organism      AS internal
+      SELECT src.organism || '  - (' || count(src.organism) || ' isolates)' AS term,
+             src.organism AS internal
       FROM   DoTS.IsolateSource src,
              DoTS.ExternalNASequence etn,
              SRes.ExternalDatabaseRelease edr,
@@ -98,6 +98,7 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.organism is not null
+      GROUP BY src.organism
       ORDER BY src.organism
      ]]>
       </sql>
@@ -146,7 +147,7 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-		SELECT term, internal FROM (
+    SELECT term, internal FROM (
     SELECT upper(substr(src.isolation_source, 0, 1)) || substr(src.isolation_source, 2) || ' (' || count(src.isolation_source) || ' isolates)' AS term,
            src.isolation_source      AS internal
     FROM   DoTS.IsolateSource src,
@@ -159,8 +160,8 @@
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
-		GROUP BY src.isolation_source
-		)
+    GROUP BY src.isolation_source
+    )
     ORDER BY term
     ]]>
     </sql>
