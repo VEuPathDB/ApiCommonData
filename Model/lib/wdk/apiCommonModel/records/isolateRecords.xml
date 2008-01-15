@@ -82,6 +82,18 @@
      </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- Isolates Publication table -->
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <table name="Reference" includeProjects="CryptoDB,ApiDB"
+            displayName="Isolates Publication"
+            queryRef="IsolateTables.Reference">
+        <columnAttribute displayName="Title" name="title"/>
+        <columnAttribute displayName="Author" name="author"/>
+        <columnAttribute displayName="Journal" name="journal_or_book_name"/>
+     </table>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- overview -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <textAttribute name="overview" displayName="Overview"
@@ -124,31 +136,6 @@
              <tr>
               <td>Isolation Source:</td>
               <td>$$isolation_source$$</td>
-             </tr>
-           </table>
-          ]]>
-          </text>
-     </textAttribute>
-
-     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <!-- attribution -->
-     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <textAttribute name="attribution" displayName="Attribution"
-          internal="true" inReportMaker="false">
-          <text>
-          <![CDATA[
-           <table>
-             <tr>
-              <td>Title:</td>
-              <td>$$title$$</td>
-             </tr>
-             <tr>
-              <td>Authors:</td>
-              <td>$$author$$</td>
-             </tr>
-             <tr>
-              <td>Journal:</td>
-              <td>$$journal_or_book_name$$ $$journal_vol$$ $$journal_page$$ $$year$$</td>
              </tr>
            </table>
           ]]>
