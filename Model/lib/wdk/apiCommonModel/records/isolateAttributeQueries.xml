@@ -1,7 +1,7 @@
 <wdkModel>
     <querySet name="IsolateAttributes">
 
-        <sqlQuery name="Sequence" isCacheable='true'>
+        <sqlQuery name="Sequence" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="project_id"/>
@@ -37,14 +37,8 @@
                       iso.note,
                       iso.map, 
                       $$projectId$$ as project_id
-               FROM   ApiDB.IsolateAttributes iso,
-                      SRes.ExternalDatabaseRelease edr,
-                      SRes.ExternalDatabase edb
-               WHERE  edr.external_database_id = edb.external_database_id
-                  AND edr.external_database_release_id = iso.external_database_release_id
-                  AND edb.name = 'Isolates Data'
-                  AND edr.version = '2007-12-12'
-                  AND iso.source_id = $$primaryKey$$
+               FROM   ApiDB.IsolateAttributes iso
+               WHERE  iso.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
