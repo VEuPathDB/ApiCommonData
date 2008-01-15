@@ -31,7 +31,7 @@
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
+    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB,TrichDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
@@ -92,7 +92,7 @@
   <!-- Single locus tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB"
+    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB,TrichDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
