@@ -1631,7 +1631,7 @@ GROUP BY etn.source_id
 UNION
 SELECT etn.source_id,
        'CryptoDB' as project_id,
-       dbms_lob.substr(com.comment_string, 1, 4000) as product 
+       dbms_lob.substr(com.comment_string, 4000, 1) as product 
 FROM   DoTS.Repeats rpt,
        DoTS.externalnasequence etn,
        DoTS.nafeaturecomment com,
@@ -1646,7 +1646,7 @@ WHERE  rpt.na_sequence_id = etn.na_sequence_id
 UNION
 SELECT etn.source_id,
        'CryptoDB' as project_id,
-       dbms_lob.substr(com.comment_string, 1, 4000) as product 
+       dbms_lob.substr(com.comment_string, 4000, 1) as product 
 FROM   DoTS.Miscellaneous misc,
        DoTS.externalnasequence etn,
        DoTS.nafeaturecomment com,
