@@ -1576,7 +1576,8 @@ SELECT A.na_sequence_id,
        A.max_subject_end,
        A.map,
        B.product,
-       A.project_id
+       A.project_id,
+       B.is_reference, B.product_alias
 FROM 
 (
 SELECT etn.na_sequence_id, 
@@ -1626,62 +1627,19 @@ WHERE  aln.source_id(+) = etn.source_id  and
        AND edr.version = '2007-12-12'
 ) A,
 (
-SELECT etn.source_id,
+SELECT etn.source_id, if.is_reference, if.product_alias,
        'CryptoDB' as project_id,
-       apidb.tab_to_string(cast(collect(gf.product) as apidb.varchartab), ' | ') as product
+       apidb.tab_to_string(cast(collect(if.product) as apidb.varchartab), ' | ') as product
 FROM   DoTS.ExternalNASequence etn,
-       DoTS.Genefeature gf,
+       DoTS.IsolateFeature if,
        SRes.ExternalDatabaseRelease edr,
        SRes.ExternalDatabase edb
-WHERE  etn.na_sequence_id = gf.na_sequence_id
+WHERE  etn.na_sequence_id = if.na_sequence_id
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
 GROUP BY etn.source_id
-UNION
-SELECT etn.source_id,
-       'CryptoDB' as project_id,
-       dbms_lob.substr(com.comment_string, 4000, 1) as product 
-FROM   DoTS.Repeats rpt,
-       DoTS.externalnasequence etn,
-       DoTS.nafeaturecomment com,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb
-WHERE  rpt.na_sequence_id = etn.na_sequence_id
-   AND com.na_feature_id = rpt.na_feature_id
-   AND edr.external_database_id = edb.external_database_id
-   AND edr.external_database_release_id = rpt.external_database_release_id
-   AND edb.name = 'Isolates Data'
-   AND edr.version = '2007-12-12'
-UNION
-SELECT etn.source_id,
-       'CryptoDB' as project_id,
-       dbms_lob.substr(com.comment_string, 4000, 1) as product 
-FROM   DoTS.Miscellaneous misc,
-       DoTS.externalnasequence etn,
-       DoTS.nafeaturecomment com,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb
-WHERE  etn.na_sequence_id = misc.na_sequence_id
-   AND com.na_feature_id = misc.na_feature_id
-   AND edr.external_database_id = edb.external_database_id
-   AND edr.external_database_release_id = etn.external_database_release_id
-   AND edb.name = 'Isolates Data'
-   AND edr.version = '2007-12-12'
-   AND etn.source_id NOT IN
-   (
-     SELECT ens.source_id
-     FROM   DoTS.genefeature gf,
-            DoTS.externalnasequence ens,
-            SRes.ExternalDatabaseRelease edr,
-            SRes.ExternalDatabase edb
-     WHERE  ens.na_sequence_id = gf.na_sequence_id
-        AND edr.external_database_id = edb.external_database_id
-        AND edr.external_database_release_id = ens.external_database_release_id
-        AND edb.name = 'Isolates Data'
-        AND edr.version = '2007-12-12'
-   )
 ) B
 WHERE A.source_id = B.source_id(+)
 );
