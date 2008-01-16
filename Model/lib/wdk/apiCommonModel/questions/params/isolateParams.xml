@@ -43,7 +43,7 @@
              prompt="Host Name"
              multiPick="true"
              quote="false">
-             <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="isolation_source"
@@ -75,7 +75,7 @@
             prompt="Country Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+            <useTermOnly value="true" includeProjects="ApiDB"/>
        </flatVocabParam>
 
     </paramSet>
@@ -117,8 +117,8 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-    SELECT distinct src.specific_host AS term,
-           src.specific_host      AS internal
+    SELECT upper(substr(src.specific_host, 0, 1)) || substr(src.specific_host, 2) || ' - (' || count(src.specific_host) || ' isolates)' AS term,
+           replace(src.specific_host, chr(39), ':') AS internal
     FROM   DoTS.IsolateSource src,
            DoTS.ExternalNASequence etn,
            SRes.ExternalDatabaseRelease edr,
@@ -129,7 +129,8 @@
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
-    ORDER BY src.specific_host
+    GROUP BY src.specific_host
+    ORDER BY upper(src.specific_host)
     ]]>
     </sql>
     </sqlQuery>
@@ -239,8 +240,7 @@
       <column name="term"/>
       <sql>
       <![CDATA[
-      SELECT distinct term, internal from (
-      SELECT replace(src.country, ',', ';') AS term,
+      SELECT replace(src.country, ',', ';') || ' - (' || count(src.country) || ' isolates)' AS term,
              replace(src.country, ',', ';') AS internal
       FROM   DoTS.IsolateSource src,
              DoTS.ExternalNASequence etn,
@@ -252,8 +252,8 @@
          AND edr.version = '2007-12-12'
          AND src.na_sequence_id = etn.na_sequence_id
          AND src.country is not null
-      )
-      ORDER BY term
+      GROUP BY src.country
+      ORDER BY src.country
       ]]>
       </sql>
     </sqlQuery>
