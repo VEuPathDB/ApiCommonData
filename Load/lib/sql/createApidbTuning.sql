@@ -1558,6 +1558,27 @@ CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 -------------------------------------------------------------------------------
 CREATE MATERIALIZED VIEW apidb.IsolateAttributes&1 AS 
 (
+SELECT A.na_sequence_id, 
+       A.external_database_release_id,
+       A.source_id,
+       A.organism,
+       A.strain,
+       A.specific_host,
+       A.isolation_source,
+       A.country,
+       A.note,
+       A.description,
+       A.pcr_primers,
+       A.sequence,
+       A.query_name,
+       A.target_name,
+       A.min_subject_start,
+       A.max_subject_end,
+       A.map,
+       B.product,
+       A.project_id
+FROM 
+(
 SELECT etn.na_sequence_id, 
        etn.external_database_release_id,
        etn.source_id,
@@ -1603,17 +1624,7 @@ WHERE  aln.source_id(+) = etn.source_id  and
        AND edr.external_database_release_id = etn.external_database_release_id
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
-);
-
-GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
-
-CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id);
-
-CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
-
--------------------------------------------------------------------------------
-
-CREATE MATERIALIZED VIEW apidb.IsolateProductAttributes&1 AS 
+) A,
 (
 SELECT etn.source_id,
        'CryptoDB' as project_id,
@@ -1671,13 +1682,15 @@ WHERE  etn.na_sequence_id = misc.na_sequence_id
         AND edb.name = 'Isolates Data'
         AND edr.version = '2007-12-12'
    )
+) B
+WHERE A.source_id = B.source_id(+)
 );
 
-CREATE INDEX apidb.IsoProductAttr_idx&1 ON apidb.IsolateProductAttributes&1 (source_id);
+GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
 
-GRANT SELECT ON apidb.IsolateProductAttributes&1 TO gus_r;
+CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id);
 
-CREATE OR REPLACE SYNONYM apidb.IsolateProductAttributes FOR apidb.IsolateProductAttributes&1;
+CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
 
 ---------------------------
 -- cleanup
