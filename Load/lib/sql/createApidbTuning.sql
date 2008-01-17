@@ -1577,7 +1577,8 @@ SELECT A.na_sequence_id,
        A.map,
        B.product,
        A.project_id,
-       B.is_reference, B.product_alias
+       A.is_reference,
+       B.product_alias
 FROM 
 (
 SELECT etn.na_sequence_id, 
@@ -1597,7 +1598,8 @@ SELECT etn.na_sequence_id,
        aln.min_subject_start,
        aln.max_subject_end,
        aln.map,
-       'CryptoDB' as project_id
+       'CryptoDB' as project_id,
+        src.is_reference
 FROM   DoTS.ExternalNASequence etn,
        DoTS.IsolateSource src,
        SRes.ExternalDatabaseRelease edr,
@@ -1627,9 +1629,10 @@ WHERE  aln.source_id(+) = etn.source_id  and
        AND edr.version = '2007-12-12'
 ) A,
 (
-SELECT etn.source_id, if.is_reference, if.product_alias,
+SELECT etn.source_id, 
        'CryptoDB' as project_id,
-       apidb.tab_to_string(cast(collect(if.product) as apidb.varchartab), ' | ') as product
+       if.product,
+       apidb.tab_to_string(cast(collect(if.product_alias) as apidb.varchartab), ' | ') as product_alias
 FROM   DoTS.ExternalNASequence etn,
        DoTS.IsolateFeature if,
        SRes.ExternalDatabaseRelease edr,
@@ -1639,9 +1642,10 @@ WHERE  etn.na_sequence_id = if.na_sequence_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND edb.name = 'Isolates Data'
        AND edr.version = '2007-12-12'
-GROUP BY etn.source_id
+       and if.name != 'misc_feature'
+GROUP BY etn.source_id,if.product
 ) B
-WHERE A.source_id = B.source_id(+)
+WHERE A.source_id = B.source_id(+) 
 );
 
 GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
