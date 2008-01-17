@@ -1557,96 +1557,64 @@ CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 
 -------------------------------------------------------------------------------
 CREATE MATERIALIZED VIEW apidb.IsolateAttributes&1 AS 
-(
-SELECT A.na_sequence_id, 
-       A.external_database_release_id,
-       A.source_id,
-       A.organism,
-       A.strain,
-       A.specific_host,
-       A.isolation_source,
-       A.country,
-       A.note,
-       A.description,
-       A.pcr_primers,
-       A.sequence,
-       A.query_name,
-       A.target_name,
-       A.min_subject_start,
-       A.max_subject_end,
-       A.map,
-       B.product,
-       A.project_id,
-       A.is_reference,
-       B.product_alias
-FROM 
-(
-SELECT etn.na_sequence_id, 
-       etn.external_database_release_id,
-       etn.source_id,
-       src.organism as organism,
-       src.strain || ' ' || src.isolate as strain,
-       src.specific_host || src.lab_host specific_host,
-       upper(substr(src.isolation_source,0,1)) || substr(isolation_source,2) as isolation_source,
-       src.country,
-       src.note,
-       etn.description,
-       src.pcr_primers,
-       etn.sequence,
-       aln.query_name,
-       aln.target_name,
-       aln.min_subject_start,
-       aln.max_subject_end,
-       aln.map,
-       'CryptoDB' as project_id,
-        src.is_reference
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateSource src,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb, 
-       ( SELECT extq.source_id,
-                extq.source_id query_name,
-                extt.source_id target_name,
-                sim.min_subject_start - 1500 as min_subject_start,
-                sim.max_subject_end + 1500 as max_subject_end,
-                extt.source_id || ':' || sim.min_subject_start || '..' || sim.max_subject_end as map
-         FROM   dots.SIMILARITY sim,
-                dots.EXTERNALNASEQUENCE extt,
-                dots.EXTERNALNASEQUENCE extq,
-                SRes.ExternalDatabaseRelease edr,
-                SRes.ExternalDatabase edb
-         WHERE  edr.external_database_id = edb.external_database_id 
-            AND edr.external_database_release_id = extq.external_database_release_id 
-            AND edb.name = 'Isolates Data' 
-            AND edr.version = '2007-12-12' 
-            AND sim.query_id = extq.na_sequence_id 
-            AND sim.subject_id = extt.na_sequence_id) aln 
-WHERE  aln.source_id(+) = etn.source_id  and 
-       etn.na_sequence_id = src.na_sequence_id
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-) A,
-(
-SELECT etn.source_id, 
-       'CryptoDB' as project_id,
-       if.product,
-       apidb.tab_to_string(cast(collect(if.product_alias) as apidb.varchartab), ' | ') as product_alias
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateFeature if,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb
-WHERE  etn.na_sequence_id = if.na_sequence_id
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-       and if.name != 'misc_feature'
-GROUP BY etn.source_id,if.product
-) B
-WHERE A.source_id = B.source_id(+) 
-);
+SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
+       A.organism, A.strain, A.specific_host, A.isolation_source, A.country,
+       A.note, A.description, A.pcr_primers, A.query_name, A.target_name,
+       A.min_subject_start, A.max_subject_end, A.map, B.product, A.project_id,
+       A.is_reference, B.product_alias
+FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
+             substr(etn.source_id, 1, 20) as source_id,
+             substr(src.organism, 1, 60) as organism,
+             substr(src.strain || ' ' || src.isolate, 1, 60) as strain,
+             substr(src.specific_host || src.lab_host, 1, 50) as specific_host,
+             substr(upper(substr(src.isolation_source,0,1))
+                    || substr(isolation_source,2), 1, 160) as isolation_source,
+             substr(src.country, 1, 80) as country,
+             substr(src.note, 1, 400) as note,
+             substr(etn.description, 1, 400) as description,
+             substr(src.pcr_primers, 1, 100) as pcr_primers,
+             substr(aln.query_name, 1, 20) as query_name,
+             substr(aln.target_name, 1, 20) as target_name,
+             aln.min_subject_start, aln.max_subject_end,
+             substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
+             src.is_reference
+      FROM dots.ExternalNASequence etn, dots.IsolateSource src,
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, 
+           (SELECT extq.source_id, extq.source_id query_name,
+                   extt.source_id target_name,
+                   sim.min_subject_start - 1500 as min_subject_start,
+                   sim.max_subject_end + 1500 as max_subject_end,
+                   extt.source_id || ':' || sim.min_subject_start || '..'
+                   || sim.max_subject_end as map
+            FROM dots.SIMILARITY sim, dots.EXTERNALNASEQUENCE extt,
+                 dots.ExternalNasequence extq,
+                 sres.ExternalDatabaseRelease edr,
+                 sres.ExternalDatabase edb
+            WHERE edr.external_database_id = edb.external_database_id 
+              AND edr.external_database_release_id = extq.external_database_release_id 
+              AND edb.name = 'Isolates Data' 
+              AND edr.version = '2007-12-12' 
+              AND sim.query_id = extq.na_sequence_id 
+              AND sim.subject_id = extt.na_sequence_id) aln 
+      WHERE aln.source_id(+) = etn.source_id
+        AND etn.na_sequence_id = src.na_sequence_id
+        AND edr.external_database_id = edb.external_database_id
+        AND edr.external_database_release_id = etn.external_database_release_id
+        AND edb.name = 'Isolates Data'
+        AND edr.version = '2007-12-12') A,
+     (SELECT etn.source_id, substr(if.product, 1, 60) as product,
+             substr(apidb.tab_to_string(cast(collect(distinct if.product_alias)
+                                        as apidb.varchartab), ' | '), 1, 400)
+               as product_alias
+      FROM dots.ExternalNASequence etn, dots.IsolateFeature if,
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb
+      WHERE etn.na_sequence_id = if.na_sequence_id
+        AND edr.external_database_id = edb.external_database_id
+        AND edr.external_database_release_id = etn.external_database_release_id
+        AND edb.name = 'Isolates Data'
+        AND edr.version = '2007-12-12'
+      GROUP BY etn.source_id, if.product) B
+WHERE A.source_id = B.source_id(+);
 
 GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
 
