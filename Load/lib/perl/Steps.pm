@@ -220,6 +220,22 @@ sub _createDir {
   $mgr->runCmd("chmod -R g+w $dir");
 }
 
+sub makeBrcSeqXmlFile {
+    my ($mgr, $extDbName, $extDbRlsVer, $gffFile, $brcSubmit, $curators, $outFile, $dbName, $downloadedFrom, $submitGenbank) = @_;
+    my $pipelineDir = $mgr->{myPipelineDir};
+    my $brcDir = "brcXmlFiles";
+
+    my $signal = "makeBrcSeqXmlFile${extDbName}-${extDbRlsVer}";
+
+    return if $mgr->startStep("Making BRC XML File ${outFile}", $signal);
+
+    &_createDir($mgr, "$pipelineDir/$brcDir");
+
+    $mgr->runCmd("makeBrcSeqXmlFile --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --gffFile $gffFile --brcSubmits $brcSubmit --curators '$curators' --dbName '$dbName' --downloadedFrom '$downloadedFrom' $submitGenbank > $pipelineDir/$brcDir/$outFile");
+
+    $mgr->endStep($signal);
+}
+
 sub createBlastMatrixDir {
   my ($mgr, $species, $queryFile, $subjectFile) = @_;
 
