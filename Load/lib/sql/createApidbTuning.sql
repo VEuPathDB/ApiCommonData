@@ -1602,7 +1602,10 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
         AND edr.external_database_release_id = etn.external_database_release_id
         AND edb.name = 'Isolates Data'
         AND edr.version = '2007-12-12') A,
-     (SELECT etn.source_id, substr(if.product, 1, 60) as product,
+     (SELECT etn.source_id,
+             substr(apidb.tab_to_string(cast(collect(distinct if.product)
+                                        as apidb.varchartab), ' | '), 1, 80)
+               as product,
              substr(apidb.tab_to_string(cast(collect(distinct if.product_alias)
                                         as apidb.varchartab), ' | '), 1, 400)
                as product_alias
@@ -1613,7 +1616,7 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
         AND edr.external_database_release_id = etn.external_database_release_id
         AND edb.name = 'Isolates Data'
         AND edr.version = '2007-12-12'
-      GROUP BY etn.source_id, if.product) B
+      GROUP BY etn.source_id) B
 WHERE A.source_id = B.source_id(+);
 
 GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
