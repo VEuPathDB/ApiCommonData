@@ -72,8 +72,9 @@ WHERE pairs.gene = gf.source_id
   AND gf.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', /*'tRNAscan-SE',*/ 'TwinScan predictions',
-                      'TwinScanEt predictions');
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
+                      'Pfalciparum workshop annotations reviewed and changed');
 
 GRANT SELECT ON apidb.GeneAlias&1 TO gus_r;
 
@@ -1105,8 +1106,11 @@ WHERE gf.na_feature_id = nl.na_feature_id
   -- skip toxo predictions (except tRNAs)
   AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                          'TigrScan', /*'tRNAscan-SE',*/
-                          'TwinScan predictions', 'TwinScanEt predictions'));
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions'))
+  -- skip new plasmo annotation
+  AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
+                      'Pfalciparum workshop annotations reviewed and changed');
 
 GRANT SELECT ON apidb.GeneAttributes&1 TO gus_r;
 
