@@ -29,6 +29,29 @@
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- TrackNewAnnotation -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+        <sqlQuery name="TrackNewAnnotation" isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="annotation_status"/>
+            <column name="new_product"/>
+            <column name="new_go"/>
+            <column name="new_ec"/>
+            <column name="new_protein"/>
+            <column name="new_product_string"/>
+            <sql>
+               select source_id, status as annotation_status, new_product, new_go, new_ec, new_protein, product as new_product_string
+               from Apidb.TRACKNEWANNOTATION 
+               where source_id = $$primaryKey$$
+            </sql>
+        </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!--  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
