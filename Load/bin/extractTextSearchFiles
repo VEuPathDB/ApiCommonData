@@ -84,6 +84,25 @@ my $sql;
 die "extractTextSearchFiles can't get comments through db_link.  Use extractCommentFile."
   if $justComments;
 
+# new product name
+$sql = <<SQL;
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id, newgf.product
+FROM dots.GeneFeature gf, dots.GeneFeature newgf, dots.NaSequence ns,
+     sres.TaxonName tn
+WHERE (newgf.source_id = gf.source_id || '_rev'
+       OR newgf.source_id = gf.source_id || '_changed')
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY gf.source_id
+SQL
+
+&extractFile($dbh, $outDir, "newprod.txt", $sql);
+
 # InterPro domains
 $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
