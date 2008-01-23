@@ -21,7 +21,6 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <attributeQueryRef ref="IsolateAttributes.Sequence">
-         <columnAttribute name="sequence" displayName="Sequence" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="pcr_primers" displayName="PCR primer" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="country" displayName="Country" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="CryptoDB,ApiDB"/>
@@ -34,15 +33,8 @@
          <columnAttribute name="min_subject_start" displayName="Target Start" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="max_subject_end" displayName="Target End" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="note" displayName="Note" internal="true" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="product" displayName="Product" internal="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="map" displayName="Mapping" internal="false" includeProjects="CryptoDB,ApiDB"/>
-      </attributeQueryRef>
-
-      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <!-- Gene Product attributes -->  
-      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-      <attributeQueryRef ref="IsolateAttributes.Gene">
-         <columnAttribute name="product" displayName="Product" internal="true" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -52,6 +44,14 @@
       <attributeQueryRef ref="IsolateAttributes.ProteinSequence">
          <columnAttribute name="protein_sequence" displayName="Protein Sequence" internal="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="gene_description" displayName="Gene Description" internal="false" includeProjects="CryptoDB,ApiDB"/>
+      </attributeQueryRef>
+
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- DNA Sequence attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="IsolateAttributes.DNASequence">
+         <columnAttribute name="sequence" displayName="DNA Sequence" internal="false" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

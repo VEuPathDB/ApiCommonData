@@ -11,7 +11,6 @@
             <column name="specific_host" sortingTable="apidb.IsolateAttributes"/> 
             <column name="description"/> 
             <column name="isolation_source" sortingTable="apidb.IsolateAttributes"/> 
-            <column name="sequence"/> 
             <column name="pcr_primers"/> 
             <column name="country"/> 
             <column name="query_name"/> 
@@ -19,6 +18,7 @@
             <column name="min_subject_start"/> 
             <column name="max_subject_end"/> 
             <column name="note"/> 
+            <column name="product"/> 
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql>
                SELECT iso.source_id, 
@@ -29,12 +29,12 @@
                       iso.description,
                       iso.pcr_primers,
                       iso.country,
-                      iso.sequence,
                       iso.query_name, 
                       iso.target_name, 
                       iso.min_subject_start,
                       iso.max_subject_end,
                       iso.note,
+                      iso.product,
                       iso.map, 
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes iso
@@ -42,19 +42,22 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="Gene" isCacheable='false'>
+      <sqlQuery name="DNASequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
-            <column name="project_id"/>
-            <column name="source_id"/> 
-            <column name="product" sortingTable="apidb.IsolateProductAttributes"/> 
+            <column name="sequence"/>
             <sql>
-               SELECT isp.source_id,
-                      isp.product, 
+               SELECT etn.source_id, 
+                      etn.sequence,
                       $$projectId$$ as project_id
-               FROM   ApiDB.IsolateProductAttributes isp
-               WHERE  isp.source_id = $$primaryKey$$
-                  AND isp.product is not null
+               FROM   DoTS.ExternalNASequence etn,
+                      SRes.ExternalDatabaseRelease edr,
+                      SRes.ExternalDatabase edb
+               WHERE  edr.external_database_id = edb.external_database_id
+                  AND edr.external_database_release_id = etn.external_database_release_id
+                  AND edb.name = 'Isolates Data'
+                  AND edr.version = '2007-12-12'
+                  AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
@@ -71,7 +74,7 @@
                FROM   DoTS.TranslatedAAFeature taf,
                       DoTS.TranslatedAASequence tas,
                       DoTS.Transcript trp, 
-                      DoTS.GeneFeature gf,
+                      DoTS.IsolateFeature gf,
                       DoTS.ExternalNASequence etn,
                       SRes.ExternalDatabaseRelease edr,
                       SRes.ExternalDatabase edb
