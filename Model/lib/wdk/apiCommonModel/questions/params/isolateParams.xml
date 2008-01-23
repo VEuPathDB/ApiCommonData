@@ -59,7 +59,7 @@
             prompt="Product Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+            <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="study"
@@ -181,10 +181,10 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-          SELECT distinct gf.product as term,
+          SELECT gf.product || ' (' || count(gf.product) || ' isolates)' as term,
                  gf.product as internal
           FROM   DoTS.ExternalNASequence etn,
-               DoTS.Genefeature gf,
+               DoTS.IsolateFeature gf,
                SRes.ExternalDatabaseRelease edr,
                SRes.ExternalDatabase edb
           WHERE  etn.na_sequence_id = gf.na_sequence_id
@@ -193,6 +193,7 @@
                AND edb.name = 'Isolates Data'
                AND edr.version = '2007-12-12'
                AND gf.product is not null
+          GROUP BY gf.product
           ORDER BY gf.product
     ]]>
     </sql>

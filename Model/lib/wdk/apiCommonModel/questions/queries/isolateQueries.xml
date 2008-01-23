@@ -191,8 +191,6 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
-
-
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Product -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -205,7 +203,7 @@
           <![CDATA[
             SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM DoTS.ExternalNASequence etn, 
-                 DoTS.GeneFeature gf,
+                 DoTS.IsolateFeature gf,
                  DoTS.Transcript trp,
                  SRes.ExternalDatabaseRelease edr,
                  SRes.ExternalDatabase edb
