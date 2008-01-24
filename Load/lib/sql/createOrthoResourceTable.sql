@@ -18,11 +18,14 @@ CREATE TABLE ApiDB.OrthomclResource (
  PRIMARY KEY (orthomcl_resource_id)
 );
 
-CREATE SEQUENCE ApiDB.OrthomclResource_sq;
-
 GRANT insert, select, update, delete ON ApiDB.OrthomclResource TO gus_w;
 GRANT select ON ApiDB.OrthomclResource TO gus_r;
 GRANT select ON ApiDB.OrthomclResource TO gus_w;
+
+CREATE SEQUENCE ApiDB.OrthomclResource_sq;
+
+GRANT SELECT ON apidb.OrthologGroup_sq TO gus_r;
+GRANT SELECT ON apidb.OrthologGroup_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
