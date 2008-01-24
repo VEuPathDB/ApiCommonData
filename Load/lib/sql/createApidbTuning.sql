@@ -1586,8 +1586,8 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, 
            (SELECT extq.source_id, extq.source_id query_name,
                    extt.source_id target_name,
-                   sim.min_subject_start - 1500 as min_subject_start,
-                   sim.max_subject_end + 1500 as max_subject_end,
+                   sim.min_subject_start min_subject_start,
+                   sim.max_subject_end max_subject_end,
                    extt.source_id || ':' || sim.min_subject_start || '..'
                    || sim.max_subject_end as map
             FROM dots.SIMILARITY sim, dots.EXTERNALNASEQUENCE extt,
