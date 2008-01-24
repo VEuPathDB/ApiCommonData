@@ -8,6 +8,30 @@
                displayName="Search Genes">
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- temporary question for modified annotation -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesWithModifiedAnnotation" 
+         includeProjects="PlasmoDB"
+         category="Temporary Questions"
+         displayName="Gene with updated annotation"
+              queryRef="GeneId.GenesWithModifiedAnnotation"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList
+              summary="location_text,product,new_product_string"
+              sorting="location_text asc"
+        />
+        <summary>
+           Find genes that have modified annotation based on the recent Plasmodium annotation workshop
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes that have modified annotation based on the recent Plasmodium annotation workshop.  Modified annotation includes gene models, GO and EC assignments and product names
+          ]]>
+        </description>
+    </question>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Location -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

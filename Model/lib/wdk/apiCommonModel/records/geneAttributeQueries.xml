@@ -36,17 +36,18 @@
         <sqlQuery name="TrackNewAnnotation" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
-            <column name="source_id"/>
-            <column name="annotation_status"/>
-            <column name="new_product"/>
-            <column name="new_go"/>
-            <column name="new_ec"/>
-            <column name="new_protein"/>
-            <column name="new_product_string"/>
+            <column name="project_id"/>
+            <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_product" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_go" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_ec" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_protein" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_product_string" sortingTable="apidb.trackNewAnnotation" sortingColumn="product"/>
             <sql>
-               select source_id, status as annotation_status, new_product, new_go, new_ec, new_protein, product as new_product_string
-               from Apidb.TRACKNEWANNOTATION 
-               where source_id = $$primaryKey$$
+               select $$projectId$$ as project_id,tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
+               from Apidb.TRACKNEWANNOTATION tna
+               where tna.source_id = $$primaryKey$$
             </sql>
         </sqlQuery>
 
