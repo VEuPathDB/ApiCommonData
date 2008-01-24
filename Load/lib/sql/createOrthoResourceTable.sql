@@ -20,7 +20,6 @@ CREATE TABLE ApiDB.OrthomclResource (
 
 GRANT insert, select, update, delete ON ApiDB.OrthomclResource TO gus_w;
 GRANT select ON ApiDB.OrthomclResource TO gus_r;
-GRANT select ON ApiDB.OrthomclResource TO gus_w;
 
 CREATE SEQUENCE ApiDB.OrthomclResource_sq;
 
