@@ -24,8 +24,8 @@ GRANT select ON ApiDB.OrthomclResource TO gus_w;
 
 CREATE SEQUENCE ApiDB.OrthomclResource_sq;
 
-GRANT SELECT ON apidb.OrthologGroup_sq TO gus_r;
-GRANT SELECT ON apidb.OrthologGroup_sq TO gus_w;
+GRANT SELECT ON ApiDB.OrthomclResource_sq TO gus_r;
+GRANT SELECT ON ApiDB.OrthomclResource_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
