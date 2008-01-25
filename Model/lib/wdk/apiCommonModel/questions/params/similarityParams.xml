@@ -17,6 +17,7 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Unified and Genomic BLAST database organism  -->  
+    <!-- ATTENTION: This param is being used ALSO when selecting isolates  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <enumParam name="BlastDatabaseOrganism"
                      prompt="Target Organism"
@@ -501,6 +502,7 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Unified and EST BLAST database organism  -->  
+    <!-- ATTENTION: This param is being used ALSO when selecting assemblies  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <enumParam name="BlastDatabaseOrganism"
                      prompt="Target Organism"
@@ -575,6 +577,11 @@
         <enumValue includeProjects="ApiDB,CryptoDB">
           <term>Cryptosporidium parvum</term>
           <internal>@CRYPTO_BLAST_PATH@/Cparvum</internal>
+        </enumValue>
+
+<enumValue includeProjects="ApiDB,CryptoDB">
+          <term>Cryptosporidium muris</term>
+          <internal>@CRYPTO_BLAST_PATH@/Cmuris</internal>
         </enumValue>
 
        <enumValue includeProjects="GiardiaDB">

@@ -221,7 +221,8 @@
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
-                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual
+                SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual
             </sql>
 <sql includeProjects="GiardiaDB">
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
