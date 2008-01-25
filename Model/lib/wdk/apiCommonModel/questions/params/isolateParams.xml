@@ -181,8 +181,8 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-          SELECT gf.product || ' (' || count(gf.product) || ' isolates)' as term,
-                 gf.product as internal
+          SELECT gf.product_alias || ' (' || count(gf.product_alias) || ' isolates)' as term,
+                 gf.product_alias as internal
           FROM   DoTS.ExternalNASequence etn,
                DoTS.IsolateFeature gf,
                SRes.ExternalDatabaseRelease edr,
@@ -192,9 +192,9 @@
                AND edr.external_database_release_id = etn.external_database_release_id
                AND edb.name = 'Isolates Data'
                AND edr.version = '2007-12-12'
-               AND gf.product is not null
-          GROUP BY gf.product
-          ORDER BY gf.product
+               AND gf.product_alias is not null
+          GROUP BY gf.product_alias
+          ORDER BY gf.product_alias
     ]]>
     </sql>
     </sqlQuery>

@@ -203,12 +203,10 @@
             SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM DoTS.ExternalNASequence etn, 
                  DoTS.IsolateFeature gf,
-                 DoTS.Transcript trp,
                  SRes.ExternalDatabaseRelease edr,
                  SRes.ExternalDatabase edb
-            WHERE gf.na_feature_id = trp.parent_id 
-              AND gf.na_sequence_id = etn.na_sequence_id
-              AND trp.product IN ($$product$$)
+            WHERE gf.na_sequence_id = etn.na_sequence_id
+              AND gf.product_alias IN ($$product$$)
               AND etn.source_id IS NOT NULL
               AND edr.external_database_id = edb.external_database_id
               AND edr.external_database_release_id = etn.external_database_release_id
@@ -312,7 +310,7 @@
                 DoTS.NaLocation nal,
                  (SELECT source_id, target_name, min_subject_start, 
                          max_subject_end 
-								  FROM ApiDB.IsolateAttributes) t
+                  FROM ApiDB.IsolateAttributes) t
          WHERE etn.na_sequence_id = gf.na_sequence_id
            AND nal.na_feature_id = gf.na_feature_id
            AND t.target_name = etn.source_id
