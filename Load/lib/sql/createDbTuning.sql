@@ -24,6 +24,9 @@ ON dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id,
 CREATE INDEX dots.AaSequenceImp_string2_ix
 ON dots.AaSequenceImp (string2, aa_sequence_id);
 
+CREATE INDEX dots.AaSequenceImp_classtax_ix
+ON dots.AaSequenceImp (subclass_view, taxon_id, aa_sequence_id);
+
 CREATE INDEX dots.NaFeat_SubclassSource_ix
 ON dots.NaFeatureImp (subclass_view, source_id);
 
