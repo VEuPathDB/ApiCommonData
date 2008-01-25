@@ -19,6 +19,7 @@
             <column name="max_subject_end"/> 
             <column name="note"/> 
             <column name="product"/> 
+            <column name="is_reference"/> 
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql>
                SELECT iso.source_id, 
@@ -35,6 +36,7 @@
                       iso.max_subject_end,
                       iso.note,
                       iso.product,
+                      decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
                       iso.map, 
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes iso
@@ -120,10 +122,39 @@
                   AND edr.version = '2007-12-12'
                   AND nasr.reference_id = ref.reference_id
                   AND etn.na_sequence_id = nasr.na_sequence_id
-                  AND etn.source_id = $$primaryKey$$
+                  AND etn.source_id = 
                ORDER BY ref.reference_id asc
                )
                WHERE RowNum = 1
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="GeneOverlap" isCacheable='true'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="gene"/>
+            <column name="isolate_product"/>
+            <column name="gene_product"/>
+            <sql>
+            <![CDATA[
+              SELECT t.source_id,
+                     t.product isolate_product,
+                     gf.product gene_product,
+                     gf.source_id as gene,
+                     $$projectId$$ as project_id
+              FROM   DoTS.GeneFeature gf,
+                     DoTS.ExternalNASequence etn,
+                     DoTS.NaLocation nal,
+                     (SELECT source_id, target_name, min_subject_start,
+                             max_subject_end, product 
+								  	  FROM   ApiDB.IsolateAttributes) t
+              WHERE etn.na_sequence_id = gf.na_sequence_id
+                AND nal.na_feature_id = gf.na_feature_id
+                AND t.target_name = etn.source_id
+                AND nal.start_min < t.max_subject_end -1500
+                AND nal.end_max > t.min_subject_start + 1500
+                AND t.source_id = $$primaryKey$$
+            ]]>
            </sql>
       </sqlQuery>
 

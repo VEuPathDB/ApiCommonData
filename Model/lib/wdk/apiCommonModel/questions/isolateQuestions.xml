@@ -26,6 +26,31 @@
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- With Gene Overlap -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="IsolateWithGeneOverlap"
+              category="Other Attributes"
+              displayName="Extent of Gene Overlap"
+              queryRef="IsolateIds.IsolateWithGeneOverlap"
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,ApiDB">
+
+      <attributesList includeProjects="CryptoDB,ApiDB"
+           summary="organism, isolate_product, map, gene, gene_product" />
+
+      <summary>
+         Find Isolates that overlap or not with a gene.
+      </summary> 
+
+      <description>
+        Find Isolates that Overlap a Gene.
+      </description> 
+    </question>
+
+
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
@@ -161,22 +186,23 @@
       Find isolates by country name.  
     ]]> 
     </description> 
-     </question>
-
-   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <!-- Author -->
-     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-     <question name="IsolateByAuthor"
-               category="Other Attributes"
-               displayName="Isolates by Author"
-               queryRef="IsolateIds.IsolateByAuthor"
-               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-               noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ApiDB">
-          <attributesList summary="organism, strain, product, specific_host, map" /> 
-          <summary>Find Isolates by Author.</summary> 
-          <description>Find Isolates by Author.</description> 
     </question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Author -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="IsolateByAuthor"
+              category="Other Attributes"
+              displayName="Isolates by Author"
+              queryRef="IsolateIds.IsolateByAuthor"
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ApiDB">
+       <attributesList summary="organism, strain, product, specific_host, map" /> 
+       <summary>Find Isolates by Author.</summary> 
+       <description>Find Isolates by Author.</description> 
+    </question>
+
 
   </questionSet>
 

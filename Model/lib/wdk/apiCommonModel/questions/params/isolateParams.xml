@@ -11,23 +11,23 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="isolate_id"
-                     prompt="Isolate ID">
-        <help>
-             Enter an Isolate ID.  Wildcards (*) are allowed.
-        </help>
+        <stringParam name="isolate_id" prompt="Isolate ID">
+            <help>Enter an Isolate ID.  Wildcards (*) are allowed.</help>
             <suggest includeProjects="CryptoDB,ApiDB"
                      sample="AF527841, DQ1145002, DQ115*"
                      default="AF527841"/>
         </stringParam>
 
-        <stringParam name="author"
-                     prompt="Author">
-        <help> 
-          Enter an Author name.  Wildcards (*) are allowed.  
-        </help> 
-    
-        <suggest includeProjects="CryptoDB,ApiDB" sample="Xiao*" default="Xiao*"/> 
+        <stringParam name="gene_id" prompt="Gene Name">
+            <help>Enter an Gene Name.  Wildcards (*) are allowed.</help>
+            <suggest includeProjects="CryptoDB,ApiDB"
+                     sample="cgd5_3160, cgd5_31*, *"
+                     default="cgd5_3160"/>
+        </stringParam>
+
+        <stringParam name="author" prompt="Author">
+            <help>Enter an Author name.  Wildcards (*) are allowed.</help> 
+            <suggest includeProjects="CryptoDB,ApiDB" sample="Xiao*" default="Xiao*"/> 
         </stringParam>
 
         <flatVocabParam name="isolate_organism"

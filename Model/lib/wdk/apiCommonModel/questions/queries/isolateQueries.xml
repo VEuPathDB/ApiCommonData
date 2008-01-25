@@ -153,7 +153,6 @@
     </wsQuery>
 
 
-
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolation Source -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -263,8 +262,6 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
-
-
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Country -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -297,7 +294,42 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
-  </querySet>
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolates with Gene Overlap  -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+    <sqlQuery name="IsolateWithGeneOverlap" includeProjects="CryptoDB"
+              displayName="Gene Name" isCacheable='true'>
+      <paramRef ref="isolateParams.gene_id"/>
+      <column name="source_id" />
+      <column name="project_id"/>
+      <sql>
+         <![CDATA[
+         SELECT distinct t.source_id,
+                '@PROJECT_ID@' as project_id
+         FROM   DoTS.GeneFeature gf, 
+                DoTS.ExternalNASequence etn, 
+                DoTS.NaLocation nal,
+                 (SELECT source_id, target_name, min_subject_start, 
+                         max_subject_end 
+								  FROM ApiDB.IsolateAttributes) t
+         WHERE etn.na_sequence_id = gf.na_sequence_id
+           AND nal.na_feature_id = gf.na_feature_id
+           AND t.target_name = etn.source_id
+           AND nal.start_min < t.max_subject_end -1500
+           AND nal.end_max > t.min_subject_start + 1500
+           AND gf.source_id LIKE REPLACE($$gene_id$$,'*','%') 
+        ]]>
+      </sql> 
+    </sqlQuery> 
+
+    <wsQuery name="IsolateWithGeneOverlap" includeProjects="ApiDB"
+        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="isolateParams.gene_id"/>
+        <wsColumn name="source_id" width="60" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
+  </querySet>
 
 </wdkModel>
