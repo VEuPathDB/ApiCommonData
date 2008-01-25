@@ -39,9 +39,10 @@
         <paramRef ref="geneParams.plasmo_new_ec" default="Do not care"/>
         <column name="source_id"/>
         <column name="project_id"/>
+        <column name="annot_status"/>
        <sql>
              <![CDATA[
-            SELECT DISTINCT na.source_id, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT na.source_id, '@PROJECT_ID@' as project_id, na.status as annot_status
             FROM apidb.trackNewAnnotation na
             where na.new_product in ($$plasmo_new_product$$)
             and na.new_go in ($$plasmo_new_go$$)
