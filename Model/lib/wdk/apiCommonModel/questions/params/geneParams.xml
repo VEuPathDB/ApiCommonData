@@ -139,7 +139,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <enumParam name="plasmo_new_product"
-                 prompt="New Product Name"
+                 prompt="Product Name"
                  multiPick="false"
                  quote="false">
         <help>
@@ -147,22 +147,22 @@
         </help>
         <enumList>
           <enumValue default="true">
-            <term>Yes</term>
+            <term>Updated</term>
             <internal>1</internal>
           </enumValue>
           <enumValue>
-            <term>No</term>
+            <term>Not changed</term>
             <internal>0</internal>
           </enumValue>
           <enumValue>
-            <term>Either</term>
+            <term>Don't care</term>
             <internal>0,1</internal>
           </enumValue>
         </enumList>
       </enumParam>
 
       <enumParam name="plasmo_new_ec"
-                 prompt="Workshop EC annotation"
+                 prompt="EC Numbers"
                  multiPick="false"
                  quote="false">
         <help>
@@ -170,22 +170,22 @@
         </help>
         <enumList>
           <enumValue>
-            <term>Yes</term>
+            <term>Updated</term>
             <internal>1</internal>
           </enumValue>
           <enumValue>
-            <term>No</term>
+            <term>Not changed</term>
             <internal>0</internal>
           </enumValue>
           <enumValue default="true">
-            <term>Either</term>
+            <term>Don't care</term>
             <internal>0,1</internal>
           </enumValue>
         </enumList>
       </enumParam>
 
       <enumParam name="plasmo_new_go"
-                 prompt="Workshop GO annotation"
+                 prompt="GO Functions"
                  multiPick="false"
                  quote="false">
         <help>
@@ -193,22 +193,22 @@
         </help>
         <enumList>
           <enumValue>
-            <term>Yes</term>
+            <term>Updated</term>
             <internal>1</internal>
           </enumValue>
           <enumValue>
-            <term>No</term>
+            <term>Not changed</term>
             <internal>0</internal>
           </enumValue>
           <enumValue default="true">
-            <term>Either</term>
+            <term>Don't Care</term>
             <internal>0,1</internal>
           </enumValue>
         </enumList>
       </enumParam>
 
       <enumParam name="plasmo_new_model"
-                 prompt="Altered Gene Model"
+                 prompt="Gene Model"
                  multiPick="false"
                  quote="false">
         <help>
@@ -216,16 +216,47 @@
         </help>
         <enumList>
           <enumValue>
-            <term>Yes</term>
+            <term>Updated</term>
             <internal>1</internal>
           </enumValue>
           <enumValue>
-            <term>No</term>
+            <term>Not changed</term>
             <internal>0</internal>
           </enumValue>
           <enumValue default="true">
-            <term>Either</term>
+            <term>Don't care</term>
             <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_annot_status"
+                 prompt="Re-annotation status"
+                 multiPick="false"
+                 quote="true">
+        <help>
+           Choose which genes to return based on their re-annotation status.
+        </help>
+        <enumList>
+          <enumValue default="true">
+            <term>Changed</term>
+            <internal>changed</internal>
+          </enumValue>
+          <enumValue>
+            <term>New</term>
+            <internal>new</internal>
+          </enumValue>
+          <enumValue>
+            <term>Reviewed - not changed</term>
+            <internal>reviewed</internal>
+          </enumValue>
+          <enumValue>
+            <term>Not reviewed</term>
+            <internal>not reviewed</internal>
+          </enumValue>
+          <enumValue>
+            <term>Don't care</term>
+            <internal>changed','new','reviewed','not reviewed</internal>
           </enumValue>
         </enumList>
       </enumParam>

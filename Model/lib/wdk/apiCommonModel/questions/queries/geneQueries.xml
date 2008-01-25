@@ -33,10 +33,11 @@
 
     <sqlQuery name="GenesWithModifiedAnnotation" includeProjects="PlasmoDB"
               isCacheable="true">
+        <paramRef ref="geneParams.plasmo_annot_status"/>
         <paramRef ref="geneParams.plasmo_new_product"/>
         <paramRef ref="geneParams.plasmo_new_model"/>
         <paramRef ref="geneParams.plasmo_new_go"/>
-        <paramRef ref="geneParams.plasmo_new_ec" default="Do not care"/>
+        <paramRef ref="geneParams.plasmo_new_ec"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="annot_status"/>
@@ -48,6 +49,7 @@
             and na.new_go in ($$plasmo_new_go$$)
             and na.new_ec in ($$plasmo_new_ec$$)
             and na.new_protein in ($$plasmo_new_model$$)
+            and na.status in ($$plasmo_annot_status$$)
            ]]>
        </sql>
     </sqlQuery>
