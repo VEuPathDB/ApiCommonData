@@ -37,6 +37,8 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroup TO gus_w;
 GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 
 CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id);
+CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id);
+
 ------------------------------------------------------------------------------
 
 CREATE SEQUENCE apidb.OrthologGroup_sq;
