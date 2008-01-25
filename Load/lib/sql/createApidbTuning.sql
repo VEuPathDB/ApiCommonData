@@ -1283,7 +1283,7 @@ CREATE OR REPLACE SYNONYM apidb.SnpAttributes
 prompt apidb.OrfAttributes;
 
 CREATE MATERIALIZED VIEW apidb.OrfAttributes&1 AS
-SELECT CASE
+SELECT distinct CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
          WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
@@ -1308,7 +1308,14 @@ SELECT CASE
 FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
      dots.TranslatedAaSequence tas, sres.Taxon, sres.TaxonName tn,
      sres.SequenceOntology so, dots.NaLocation nl,
-     apidb.GenomicSequence sequence
+     (  select gs.na_sequence_id, gs.source_id, gs.chromosome, gs.chromosome_order_num, gs.taxon_id
+        from apidb.GenomicSequence gs
+      union
+        select ens.na_sequence_id, ens.source_id, ens.chromosome, ens.chromosome_order_num, ens.taxon_id
+        from dots.ExternalNaSequence ens
+        where ens.na_sequence_id in (select distinct na_sequence_id from dots.Miscellaneous
+                                  minus select na_sequence_id
+                                        from apidb.GenomicSequence)) sequence
 WHERE m.na_feature_id = taaf.na_feature_id
   AND taaf.aa_sequence_id = tas.aa_sequence_id
   AND sequence.na_sequence_id = m.na_sequence_id
