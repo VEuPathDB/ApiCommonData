@@ -583,7 +583,8 @@ WHERE gf.na_feature_id = t.parent_id
       = gaiec.go_association_instance_id
   AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
   AND gt.go_term_id = o.go_term_id
-GROUP BY gf.source_id, o.ontology, gail.name;
+GROUP BY gf.source_id, o.ontology,
+         DECODE(gail.name, 'Interpro', 'predicted', 'annotated');
 
 ---------------------------
 
@@ -592,7 +593,7 @@ prompt apidb.GeneGoAttributes;
 DROP MATERIALIZED VIEW apidb.GeneGoAttributes;
 
 CREATE MATERIALIZED VIEW apidb.GeneGoAttributes AS
-SELECT gene.source_id,
+SELECT DISTINCT gene.source_id,
        annotated_go_component.go_terms AS annotated_go_component,
        annotated_go_function.go_terms AS annotated_go_function,
        annotated_go_process.go_terms AS annotated_go_process,
