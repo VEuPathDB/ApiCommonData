@@ -3,6 +3,8 @@ CREATE TABLE ApiDB.OrthomclResource (
  orthomcl_taxon_id             NUMBER(10) NOT NULL,
  resource_name                 VARCHAR(50) NOT NULL,
  resource_url                  VARCHAR(255) NOT NULL,
+ resource_version              VARCHAR(50),
+ strain                        VARCHAR(50),
  description                   VARCHAR(255),
  modification_date             DATE NOT NULL,
  user_read                     NUMBER(1) NOT NULL,
