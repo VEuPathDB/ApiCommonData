@@ -25,7 +25,9 @@ Creates new entries in table DoTS.AASequenceEnzymeClass to represent new aa sequ
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Takes in a tab delimited file of the order EC number, identifier, and creates new entries in table DoTS.AASequenceEnzymeClass to represent new aa sequence/enzyme class associations.  (Lost Functionality = If the identifier is not the primary identifier, we will map the EC number to the primary identifier via the NAGene table, which houses gene aliases.  The mapping then will be NAGene to NAFeatureNAGene to Transcript.)
+Takes in a tab delimited file of the order identifier, EC number and creates new entries in table DoTS.AASequenceEnzymeClass to represent new aa 
+sequence/enzyme 
+class associations.  (Lost Functionality = If the identifier is not the primary identifier, we will map the EC number to the primary identifier via the NAGene table, which houses gene aliases.  The mapping then will be NAGene to NAFeatureNAGene to Transcript.)
 PLUGIN_PURPOSE
 
 my $tablesAffected =
