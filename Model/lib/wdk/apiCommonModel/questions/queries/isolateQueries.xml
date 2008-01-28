@@ -206,7 +206,7 @@
                  SRes.ExternalDatabaseRelease edr,
                  SRes.ExternalDatabase edb
             WHERE gf.na_sequence_id = etn.na_sequence_id
-              AND gf.product_alias IN ($$product$$)
+              AND gf.product IN ($$product$$)
               AND etn.source_id IS NOT NULL
               AND edr.external_database_id = edb.external_database_id
               AND edr.external_database_release_id = etn.external_database_release_id
