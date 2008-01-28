@@ -419,16 +419,16 @@
           <table name="UserComments" excludeProjects="ApiDB"
                  displayName="User Comments"
                  queryRef="GeneTables.UserComments">
-		    <columnAttribute name="comment_id" internal="true"/>
-		    <columnAttribute name="stable_id" internal="true"/>
+        <columnAttribute name="comment_id" internal="true"/>
+        <columnAttribute name="stable_id" internal="true"/>
             <columnAttribute name="headline" internal="true"/>
-			<linkAttribute name="headline_link"
-							displayName="Headline"
-							visible="$$headline$$">
-				<url>
-				<![CDATA[showComment.do?projectId=@PROJECT_ID@&stableId=$$stable_id$$#$$comment_id$$]]>
-				</url>
-			</linkAttribute>
+      <linkAttribute name="headline_link"
+              displayName="Headline"
+              visible="$$headline$$">
+        <url>
+        <![CDATA[showComment.do?projectId=@PROJECT_ID@&stableId=$$stable_id$$#$$comment_id$$]]>
+        </url>
+      </linkAttribute>
             <columnAttribute name="user_name" displayName="Made by"/>
             <columnAttribute name="organization" displayName="Affiliation"/>
             <columnAttribute name="comment_date" displayName="Date"/>
@@ -797,6 +797,25 @@
             <columnAttribute name="confidence" displayName="Confidence"/>
           </table>
 
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Isolate Overlap Table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="IsolateOverlap" excludeProjects="ApiDB"
+                 displayName="Isolates"
+                 queryRef="GeneTables.IsolateOverlap">
+            <columnAttribute name="gene_id" displayName="Gene Name"/>
+            <columnAttribute name="total" internal="true"/>
+            <linkAttribute name="isolate_total_link" 
+                        displayName="Number of Isolates Overlap"
+                        visible="$$total$$">
+                <url>
+                    <![CDATA[
+                    showSummary.do?questionFullName=IsolateQuestions.IsolateWithGeneOverlap&myProp%28gene_id%29=$$gene_id$$
+                    ]]>
+                </url>
+            </linkAttribute>
+          </table>
 
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
