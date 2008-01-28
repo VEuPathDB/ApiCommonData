@@ -23,8 +23,8 @@ unless(-e $fn && $extDbName && $extDbVer) {
   exit;
 }
 
-unless(-d $gusConfig) {
-  print STDERR "gus home not found... using default\n";
+unless(-e $gusConfig) {
+  print STDERR "gus.config not found... using default\n";
   $gusConfig = $ENV{GUS_HOME} ."/config/gus.config";
 }
 
@@ -43,7 +43,7 @@ my $sql = "select f.na_feature_id, f.product
 from dots.ISOLATEFEATURE f, 
 Sres.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r 
 where f.external_database_release_id = r.external_database_release_id
-and r.external_database_id = e.external_database_id;
+and r.external_database_id = e.external_database_id
 and r.version = '$extDbVer'
 and e.name = '$extDbName'
 ";
@@ -55,11 +55,17 @@ my $updateSh = $dbh->prepare($update);
 
 my $count;
 while(my ($id, $product) = $sh->fetchrow_array()) {
-  if(my $new = $namesMap->{$product}) {
+
+  my $new = $namesMap->{$product};
+  die "Row in mapping file missing for product: $product" unless($new);
+
+  # only update if the product is different from the alias
+  if($new ne $product) {
     my $rowsUp = $updateSh->execute($new, $product, $id);
 
     $count = $count + $rowsUp;
   }
+
 }
 
 print STDERR "Updated $count rows in IsolateFeature\n";
