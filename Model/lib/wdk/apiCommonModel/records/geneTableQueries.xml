@@ -58,14 +58,14 @@
               CASE WHEN strain_b = 'Preich' THEN 'Sp. Pf-'||strain_a ELSE strain_a END as strain_a_disp,
               CASE WHEN strain_b = 'Preich' THEN 'Sp. P.reichenowi' ELSE strain_b END as strain_b_disp,
               CASE WHEN strain_b = 'Preich' THEN 0 ELSE total END as ord, cds_length,
-	      round(non_synonymous / CASE synonymous
-	         WHEN 0 THEN 1
-		 ELSE synonymous end, 2) as dn_ds_ratio,
+        round(non_synonymous / CASE synonymous
+           WHEN 0 THEN 1
+     ELSE synonymous end, 2) as dn_ds_ratio,
               non_synonymous as num_non_synonymous,synonymous as num_synonymous,
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density
-	      FROM apidb.snpsummary
-	      WHERE source_id = $$primaryKey$$
+        FROM apidb.snpsummary
+        WHERE source_id = $$primaryKey$$
               ORDER BY ord desc
             ]]>
             </sql>
@@ -327,22 +327,22 @@
 
             <sql includeProjects="ToxoDB">
             <![CDATA[
-	    SELECT DISTINCT dr.primary_identifier AS pathway_id,
+      SELECT DISTINCT dr.primary_identifier AS pathway_id,
                    decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
                    dr.remark as activity
-	    FROM dots.GeneFeature gf,dots.Transcript t, dots.DbRefaaFeature draf, 
-	         sres.DbRef dr, dots.TranslatedAaFeature taf,
-		 sres.ExternalDatabaseRelease edr,
-		 sres.ExternalDatabase ed
+      FROM dots.GeneFeature gf,dots.Transcript t, dots.DbRefaaFeature draf, 
+           sres.DbRef dr, dots.TranslatedAaFeature taf,
+     sres.ExternalDatabaseRelease edr,
+     sres.ExternalDatabase ed
             WHERE gf.source_id = $$primaryKey$$
-	    AND gf.na_feature_id = t.parent_id
-	    AND t.na_feature_id = taf.na_feature_id
+      AND gf.na_feature_id = t.parent_id
+      AND t.na_feature_id = taf.na_feature_id
             AND taf.aa_feature_id = draf.aa_feature_id
             AND draf.db_ref_id = dr.db_ref_id
-	    AND dr.external_database_release_id = edr.external_database_release_id
-	    AND edr.external_database_id = ed.external_database_id
-	    AND ed.name = 'Links to Pathway Maps'
-	    ORDER BY dr.primary_identifier
+      AND dr.external_database_release_id = edr.external_database_release_id
+      AND edr.external_database_id = ed.external_database_id
+      AND ed.name = 'Links to Pathway Maps'
+      ORDER BY dr.primary_identifier
             ]]>
             </sql>
         </sqlQuery>
@@ -410,6 +410,41 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Isolate Overlap  -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="IsolateOverlap" excludeProjects="ApiDB"
+                  isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="total"/>
+            <column name="gene_id"/>
+            <sql>
+            <![CDATA[
+            SELECT total, 
+                   gene_id,
+                   '@PROJECT_ID@' as project_id
+            FROM(
+            SELECT count(gf.source_id) as total,
+                   gf.source_id as gene_id
+            FROM   DoTS.GeneFeature gf,
+                    DoTS.ExternalNASequence etn,
+                    DoTS.NaLocation nal,
+                    (SELECT source_id, target_name, min_subject_start,
+                    max_subject_end
+                    FROM ApiDB.IsolateAttributes) t
+            WHERE etn.na_sequence_id = gf.na_sequence_id
+                    AND nal.na_feature_id = gf.na_feature_id
+                    AND t.target_name = etn.source_id
+                    AND nal.start_min < t.max_subject_end -1500
+                    AND nal.end_max > t.min_subject_start + 1500
+                    AND gf.source_id = $$primaryKey$$
+            GROUP BY gf.source_id
+            )
+            ]]>
+           </sql>
+       </sqlQuery>
  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Mass spec -->  
@@ -935,9 +970,9 @@
             WHERE p.source_id = $$primaryKey$$
             AND ps.name = 'berghei_proteomic_Sinden'
             AND ps.profile_set_id = p.profile_set_id
-	    AND ps.profile_set_id = pen.profile_set_id
+      AND ps.profile_set_id = pen.profile_set_id
             AND p.profile_id = pe.profile_id
-	    AND pen.element_order = pe.element_order
+      AND pen.element_order = pe.element_order
             ORDER BY pen.element_order
             ]]>
             </sql>
@@ -1219,7 +1254,7 @@
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
           SELECT lg.name as studyName,
-	      max(to_char(de.fold_change, '999.99')) as fold_change,
+        max(to_char(de.fold_change, '999.99')) as fold_change,
               max(to_char(de.confidence,'99.99')) as confidence, '@PROJECT_ID@' as project_id
             FROM Rad.LogicalGroup lg,
                  Rad.AnalysisInput ai,
@@ -1266,12 +1301,12 @@
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_string"/>
             <sql>
-			<![CDATA[
-			SELECT NVL(c.content, '<i>none</i>') AS comment_string, '@PROJECT_ID@' as project_id
-			FROM toxocomm.comments@COMMENT_DBLINK@ c
-			WHERE c.stable_id = $$primaryKey$$
-				AND c.review_status_id = 'task'
-			]]>
+      <![CDATA[
+      SELECT NVL(c.content, '<i>none</i>') AS comment_string, '@PROJECT_ID@' as project_id
+      FROM toxocomm.comments@COMMENT_DBLINK@ c
+      WHERE c.stable_id = $$primaryKey$$
+        AND c.review_status_id = 'task'
+      ]]>
             </sql>
         </sqlQuery>
 
