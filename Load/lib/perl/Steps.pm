@@ -4039,7 +4039,7 @@ sub reassembleTranscripts {
 
   return if $mgr->startStep("Reassemble ${species}${name}", $signal);
 
-  my $taxonId = $getTaxonId($mgr,$taxId);
+  my $taxonId = &getTaxonId($mgr,$taxId);
 
   my $sql = "select na_sequence_id from dots.assembly where taxon_id = $taxonId  and (assembly_consistency < 90 or length < 50 or length is null or description = 'ERROR: Needs to be reassembled')";
 
