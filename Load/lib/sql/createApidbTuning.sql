@@ -72,8 +72,9 @@ WHERE pairs.gene = gf.source_id
   AND gf.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', /*'tRNAscan-SE',*/ 'TwinScan predictions',
-                      'TwinScanEt predictions');
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
+                      'Pfalciparum workshop annotations reviewed and changed');
 
 GRANT SELECT ON apidb.GeneAlias&1 TO gus_r;
 
@@ -557,6 +558,7 @@ prompt apidb.GoTermList;
 DROP MATERIALIZED VIEW apidb.GoTermList;
 
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
+select * from (  -- work around sometime Oracle bug ORA-00942
 SELECT gf.source_id, o.ontology,
        DECODE(gail.name, 'Interpro', 'predicted', 'annotated') AS source,
        apidb.tab_to_string(CAST(COLLECT(DISTINCT gt.name) AS apidb.varchartab), ', ') AS go_terms
@@ -582,7 +584,9 @@ WHERE gf.na_feature_id = t.parent_id
       = gaiec.go_association_instance_id
   AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
   AND gt.go_term_id = o.go_term_id
-GROUP BY gf.source_id, o.ontology, gail.name;
+GROUP BY gf.source_id, o.ontology,
+         DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
+);
 
 ---------------------------
 
@@ -591,7 +595,7 @@ prompt apidb.GeneGoAttributes;
 DROP MATERIALIZED VIEW apidb.GeneGoAttributes;
 
 CREATE MATERIALIZED VIEW apidb.GeneGoAttributes AS
-SELECT gene.source_id,
+SELECT DISTINCT gene.source_id,
        annotated_go_component.go_terms AS annotated_go_component,
        annotated_go_function.go_terms AS annotated_go_function,
        annotated_go_process.go_terms AS annotated_go_process,
@@ -1105,8 +1109,11 @@ WHERE gf.na_feature_id = nl.na_feature_id
   -- skip toxo predictions (except tRNAs)
   AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                          'TigrScan', /*'tRNAscan-SE',*/
-                          'TwinScan predictions', 'TwinScanEt predictions'));
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions'))
+  -- skip new plasmo annotation
+  AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
+                      'Pfalciparum workshop annotations reviewed and changed');
 
 GRANT SELECT ON apidb.GeneAttributes&1 TO gus_r;
 
