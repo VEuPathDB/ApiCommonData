@@ -120,6 +120,57 @@
 
         </sqlQuery>
 
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Interpro -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="InterPro" isCacheable="false" includeProjects="PlasmoDB,ToxoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="interpro_name"/>
+            <column name="interpro_primary_id"/>
+            <column name="interpro_secondary_id"/>
+            <column name="interpro_start_min"/>
+            <column name="interpro_end_min"/>
+            <column name="interpro_e_value"/>
+            <sql>
+             select gf.source_id, xd1.name AS interpro_name,
+             dr.primary_identifier AS interpro_primary_id, dr.secondary_identifier AS interpro_secondary_id,
+             al.start_min AS interpro_start_min, al.end_min AS interpro_end_min,
+             case when df.e_value = 0 then '0' else to_char(df.e_value,'9.9EEEE') end AS interpro_e_value 
+             from
+             dots.aalocation al,
+             sres.externaldatabaserelease xdr1,
+             sres.externaldatabase xd1,
+             sres.externaldatabaserelease xdr3,
+             sres.externaldatabase xd3,
+             sres.dbref dr,
+             dots.DbRefAAFeature draf,
+             dots.domainfeature df,
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.translatedaasequence tas
+             where gf.source_id = $$primaryKey$$
+             and xd3.name = 'INTERPRO'
+             and xdr3.version = '14.1'
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = tas.aa_sequence_id
+             and tas.aa_sequence_id = df.aa_sequence_id
+             and df.aa_feature_id = draf.aa_feature_id
+             and df.aa_feature_id = al.aa_feature_id
+             and draf.db_ref_id = dr.db_ref_id
+             and dr.external_database_release_id = xdr1.external_database_release_id
+             and xdr1.external_database_id = xd1.external_database_id
+             and df.external_database_release_id = xdr3.external_database_release_id
+             and xdr3.external_database_id = xd3.external_database_id
+             ORDER BY interpro_name, interpro_start_min
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Notes -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
