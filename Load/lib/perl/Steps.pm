@@ -213,6 +213,9 @@ sub createDataDir {
  $mgr->endStep($signal);
 }
 
+
+
+
 sub _createDir {
   my ($mgr, $dir) = @_;
   return if (-e $dir);
@@ -797,7 +800,7 @@ sub moveSeqFile {
 
   my $release = $propertySet->getProp('release');
 
-  my $seqFile = "$projectDir/$release/$file";
+  my $seqFile = "$mgr->{dataDir}/seqfiles/$file";
 
   if (! -e $seqFile) { die "$seqFile doesn't exist\n";}
 
@@ -1027,7 +1030,7 @@ sub createEpitopeMapFiles {
 }
 
 sub extractNaSeq {
-  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql) = @_;
 
   my $type = ucfirst($seqType);
 
@@ -1044,6 +1047,12 @@ sub extractNaSeq {
             'length='||x.length,x.sequence
              from dots.$table x
              where x.external_database_release_id = $dbRlsId";
+
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
+
+  $sql .= " and taxon_id = $taxonId";
+
+  $sql = $altSql if $altSql;
 
   my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
@@ -1139,6 +1148,8 @@ sub makeTranscriptDownloadFile {
             '$dataType'
                 ||'|'||
             '$dataSource'
+                ||'|'||
+            'length=' || snas.length
                 ||'|'||
             '('|| so1.term_name || ')' || gf.product as defline,
             snas.sequence
@@ -3002,6 +3013,22 @@ sub formatBlastFile {
 sub xdformat {
   # Note '-C X' to handle invalid letter codes (e.g. J in Cparvum)
   #  xdformat -C X  -p -t CparvumProteins CparvumAnnotatedProteins.fsa 
+
+  my ($mgr,$type,$seqFile) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "xdFormat$seqFile";
+
+  return if $mgr->startStep("Formatting $seqFile for blast", $signal);
+
+  my $file = "$mgr->{dataDir}/seqfiles/$seqFile";
+
+  my $blastPath = $propertySet->getProp('wuBlastPath');
+
+  $mgr->runCmd("$blastPath/xdformat -$type $file");
+
+  $mgr->endStep($signal);
 }
 
 sub extractKeywordSearchFiles {
@@ -3722,6 +3749,60 @@ sub createDir {
   $mgr->endStep($signal);
 }
 
+
+
+sub makeBlastParamsFile {
+  my ($mgr,$dir,$blastParams) = @_;
+
+  my $signal = "write${dir}ParamsFile";
+
+  return if $mgr->startStep("Writing $dir blast params file", $signal);
+
+  my $file = "$mgr->{'dataDir'}/similarity/$dir/params";
+
+  open (FILE, "> $file");
+
+  print FILE "$blastParams";
+
+  close FILE;
+
+  die "Didn't make valid params file" unless (-e $file);
+
+  $mgr->endStep($signal);
+}
+
+ sub runLocalWuBlast {
+   my ($mgr, $blastType, $subjectFile, $queryFile, $simDir, $pValCutoff, $lengthCutoff, $percentCutoff, $outputType,$adjustMatchLength) = @_;
+
+   my $propertySet = $mgr->{propertySet};
+
+   my $signal = "run${simDir}WuBlast";
+
+   return if $mgr->startStep("Running $simDir WuBlast locally", $signal);
+
+   my $wuBlastDir = $propertySet->getProp('wuBlastPath');
+
+   my $adjust = $adjustMatchLength ? "--adjustMatchLength" : "";
+
+   chdir "$mgr->{'dataDir'}/similarity/$simDir" || die "Can't chdir to $mgr->{'dataDir'}/similarity/$simDir";
+
+   my $cmd = "blastSimilarity --blastProgram '$blastType' --pValCutoff $pValCutoff --lengthCutoff $lengthCutoff --percentCutoff $percentCutoff --database $mgr->{'dataDir'}/seqfiles/$subjectFile --seqFile $mgr->{'dataDir'}/seqfiles/$queryFile --blastVendor 'wuBlast' --blastParamsFile $mgr->{'dataDir'}/similarity/$simDir/params --blastFileDir $mgr->{'dataDir'}/similarity/$simDir --outputType '$outputType' $adjust --blastBinDir $wuBlastDir --regex '(\\S+)'";
+
+   print STDERR "$cmd\n";
+
+   $mgr->runCmd($cmd);
+
+   $mgr->runCmd("mv blastSimilarity.log $mgr->{myPipelineDir}/logs/");
+
+   $mgr->runCmd("mkdir -p $mgr->{'dataDir'}/similarity/$simDir/master/mainresult");
+
+   $mgr->runCmd("mv $mgr->{'dataDir'}/similarity/$simDir/blastSimilarity.out $mgr->{'dataDir'}/similarity/$simDir/master/mainresult/blastSimilarity.out");
+
+   chdir $mgr->{myPipelineDir} || die "Can't chdir to $mgr->{myPipelineDir}";
+
+   $mgr->endStep($signal);
+}
+
 sub documentTMHMM {
   my ($mgr,$version) = @_; 
 
@@ -3925,7 +4006,7 @@ sub splitCluster {
 }
 
 sub assembleTranscripts {
-  my ($mgr, $species, $old, $reassemble, $name) = @_;
+  my ($mgr, $species, $old, $reassemble, $name,$taxId) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${species}${name}Assemble";
@@ -3934,8 +4015,11 @@ sub assembleTranscripts {
 
   my $clusterFile = "$mgr->{dataDir}/cluster/$species$name/cluster.out";
 
-  &runAssemblePlugin($clusterFile, "big", $species, $name, $old, $reassemble, $mgr);
-  &runAssemblePlugin($clusterFile, "small", $species, $name, $old, $reassemble, $mgr);
+  &runAssemblePlugin($clusterFile, "big", $species, $name, $old, $reassemble, $taxId, $mgr);
+
+  $mgr->runCmd("sleep 10");
+
+  &runAssemblePlugin($clusterFile, "small", $species, $name, $old, $reassemble, $taxId, $mgr);
   $mgr->endStep($signal);
   my $msg =
     "EXITING.... PLEASE DO THE FOLLOWING:
@@ -3948,14 +4032,14 @@ sub assembleTranscripts {
 }
 
 sub reassembleTranscripts {
-  my ($mgr, $species, $name) = @_;
+  my ($mgr, $species, $name, $taxId) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${species}${name}Reassemble";
 
   return if $mgr->startStep("Reassemble ${species}${name}", $signal);
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
+  my $taxonId = $getTaxonId($mgr,$taxId);
 
   my $sql = "select na_sequence_id from dots.assembly where taxon_id = $taxonId  and (assembly_consistency < 90 or length < 50 or length is null or description = 'ERROR: Needs to be reassembled')";
 
@@ -3972,7 +4056,7 @@ sub reassembleTranscripts {
 
   $mgr->runCmd($cmd);
 
-  &runAssemblePlugin($clusterFile, $suffix, $species, $name, $old, $reassemble, $mgr);
+  &runAssemblePlugin($clusterFile, $suffix, $species, $name, $old, $reassemble, $taxId, $mgr);
 
   $mgr->endStep($signal);
   my $msg =
@@ -3985,10 +4069,10 @@ sub reassembleTranscripts {
 }
 
 sub runAssemblePlugin {
-  my ($file, $suffix, $species, $name, $assembleOld, $reassemble, $mgr) = @_;
+  my ($file, $suffix, $species, $name, $assembleOld, $reassemble, $taxId, $mgr) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
+  my $taxonId = &getTaxonId($mgr,$taxId);
   my $cap4Dir = $propertySet->getProp('cap4Dir');
   my $reass = $reassemble eq "yes"? "--reassemble" : "";
   my $args = "--clusterfile $file.$suffix $assembleOld $reass --taxon_id $taxonId --cap4Dir $cap4Dir";
