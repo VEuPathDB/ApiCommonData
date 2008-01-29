@@ -558,6 +558,7 @@ prompt apidb.GoTermList;
 DROP MATERIALIZED VIEW apidb.GoTermList;
 
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
+select * from (  -- work around sometime Oracle bug ORA-00942
 SELECT gf.source_id, o.ontology,
        DECODE(gail.name, 'Interpro', 'predicted', 'annotated') AS source,
        apidb.tab_to_string(CAST(COLLECT(DISTINCT gt.name) AS apidb.varchartab), ', ') AS go_terms
@@ -584,7 +585,8 @@ WHERE gf.na_feature_id = t.parent_id
   AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
   AND gt.go_term_id = o.go_term_id
 GROUP BY gf.source_id, o.ontology,
-         DECODE(gail.name, 'Interpro', 'predicted', 'annotated');
+         DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
+);
 
 ---------------------------
 
