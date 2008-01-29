@@ -14,7 +14,7 @@ CREATE TABLE ApiDB.OrthomclGroupKeyword (
  row_group_id                  NUMBER(3) NOT NULL,
  row_project_id                NUMBER(4) NOT NULL,
  row_alg_invocation_id         NUMBER(12) NOT NULL,
- FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroupAaSequence (ortholog_group_id),
+ FOREIGN KEY (ortholog_group_id) REFERENCES ApiDB.OrthologGroup (ortholog_group_id),
  PRIMARY KEY (orthomcl_keyword_id)
 );
 
@@ -25,6 +25,8 @@ CREATE SEQUENCE ApiDB.OrthomclGroupKeyword_sq;
 
 GRANT SELECT ON ApiDB.OrthomclGroupKeyword_sq TO gus_r;
 GRANT SELECT ON ApiDB.OrthomclGroupKeyword_sq TO gus_w;
+
+CREATE INDEX apidb.ogk_group_ix ON apidb.OrthomclGroupKeyword(ortholog_group_id);
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
