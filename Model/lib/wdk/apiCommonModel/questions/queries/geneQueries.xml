@@ -314,19 +314,14 @@
        <wsColumn name="is_pseudo" width="32" wsName="is_pseudo"/>
     </wsQuery>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- BLAST -->
+  <!-- BLAST   when apidb using apifed (instead of wublast), remember to set useTermOnly in the organism param, in similarityParams.xml   -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <wsQuery name="GenesBySimilarity" 
+    <wsQuery name="GenesBySimilarity"  excludeProjects="ApiDB"  
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="geneSimilarityParams.BlastDatabaseOrganism"/>
-
-<!--   <paramRef ref="sharedParams.BlastAlgorithm"/>
-       <paramRef ref="geneParams.BlastDatabaseType"/>
-       <paramRef ref="geneSimilarityParams.BlastDatabaseOrganism"/>-->
-
        <paramRef ref="sharedParams.BlastQuerySequence"/>
        <paramRef ref="sharedParams.-e"/>
        <paramRef ref="sharedParams.-v"/>
@@ -340,7 +335,7 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
-<!--
+
                      
     <wsQuery name="GenesBySimilarity" includeProjects="ApiDB" 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
@@ -359,7 +354,7 @@
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
--->
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Motif search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

@@ -135,10 +135,10 @@
     </wsQuery>
 
     <!-- ************************************************************ -->
-    <!-- BLAST -->  
+  <!-- BLAST   when apidb using apifed (instead of wublast), remember to set useTermOnly in the organism param, in similarityParams.xml   -->
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsBySimilarity" 
+    <wsQuery name="OrfsBySimilarity"  excludeProjects="ApiDB" 
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
@@ -156,10 +156,10 @@
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
 
-<!--
+
     <wsQuery name="OrfsBySimilarity" includeProjects="ApiDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="orfParams.BlastDatabaseType"/>
+       <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="sharedParams.BlastQuerySequence"/>
@@ -174,7 +174,7 @@
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
     </wsQuery>
--->
+
 
     <!-- ************************************************************ -->
     <!-- Mass Spec. -->  
