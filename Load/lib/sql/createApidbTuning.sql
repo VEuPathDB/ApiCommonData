@@ -1286,7 +1286,7 @@ CREATE OR REPLACE SYNONYM apidb.SnpAttributes
 prompt apidb.OrfAttributes;
 
 CREATE MATERIALIZED VIEW apidb.OrfAttributes&1 AS
-SELECT CASE
+SELECT distinct CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
          WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
@@ -1541,6 +1541,8 @@ CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
   SELECT snp.na_feature_id AS snp_na_feature_id,
          snp.source_id AS snp_source_id, sa.na_sequence_id,
+         sa.na_feature_id as na_feature_id_a,
+         sb.na_feature_id as na_feature_id_b,
          substr(sa.strain, 1, 12) AS strain_a,
          substr(sb.strain, 1, 12) AS strain_b,
          nl.start_min AS start_min,
@@ -1562,104 +1564,6 @@ CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a,
 
 CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 
--------------------------------------------------------------------------------
-CREATE MATERIALIZED VIEW apidb.IsolateAttributes&1 AS 
-(
-SELECT A.na_sequence_id, 
-       A.external_database_release_id,
-       A.source_id,
-       A.organism,
-       A.strain,
-       A.specific_host,
-       A.isolation_source,
-       A.country,
-       A.note,
-       A.description,
-       A.pcr_primers,
-       A.sequence,
-       A.query_name,
-       A.target_name,
-       A.min_subject_start,
-       A.max_subject_end,
-       A.map,
-       B.product,
-       A.project_id,
-       A.is_reference,
-       B.product_alias
-FROM 
-(
-SELECT etn.na_sequence_id, 
-       etn.external_database_release_id,
-       etn.source_id,
-       src.organism as organism,
-       src.strain || ' ' || src.isolate as strain,
-       src.specific_host || src.lab_host specific_host,
-       upper(substr(src.isolation_source,0,1)) || substr(isolation_source,2) as isolation_source,
-       src.country,
-       src.note,
-       etn.description,
-       src.pcr_primers,
-       etn.sequence,
-       aln.query_name,
-       aln.target_name,
-       aln.min_subject_start,
-       aln.max_subject_end,
-       aln.map,
-       'CryptoDB' as project_id,
-        src.is_reference
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateSource src,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb, 
-       ( SELECT extq.source_id,
-                extq.source_id query_name,
-                extt.source_id target_name,
-                sim.min_subject_start - 1500 as min_subject_start,
-                sim.max_subject_end + 1500 as max_subject_end,
-                extt.source_id || ':' || sim.min_subject_start || '..' || sim.max_subject_end as map
-         FROM   dots.SIMILARITY sim,
-                dots.EXTERNALNASEQUENCE extt,
-                dots.EXTERNALNASEQUENCE extq,
-                SRes.ExternalDatabaseRelease edr,
-                SRes.ExternalDatabase edb
-         WHERE  edr.external_database_id = edb.external_database_id 
-            AND edr.external_database_release_id = extq.external_database_release_id 
-            AND edb.name = 'Isolates Data' 
-            AND edr.version = '2007-12-12' 
-            AND sim.query_id = extq.na_sequence_id 
-            AND sim.subject_id = extt.na_sequence_id) aln 
-WHERE  aln.source_id(+) = etn.source_id  and 
-       etn.na_sequence_id = src.na_sequence_id
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-) A,
-(
-SELECT etn.source_id, 
-       'CryptoDB' as project_id,
-       if.product,
-       apidb.tab_to_string(cast(collect(if.product_alias) as apidb.varchartab), ' | ') as product_alias
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateFeature if,
-       SRes.ExternalDatabaseRelease edr,
-       SRes.ExternalDatabase edb
-WHERE  etn.na_sequence_id = if.na_sequence_id
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-       and if.name != 'misc_feature'
-GROUP BY etn.source_id,if.product
-) B
-WHERE A.source_id = B.source_id(+) 
-);
-
-GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
-
-CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id);
-
-CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
 
 ---------------------------
 -- cleanup
