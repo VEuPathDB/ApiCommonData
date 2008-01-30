@@ -1,7 +1,7 @@
 CREATE TABLE ApiDB.OrthomclGroupKeyword (
  orthomcl_keyword_id           NUMBER(10) NOT NULL,
  ortholog_group_id             NUMBER(10) NOT NULL,
- keyword                       VARCHAR(100) NOT NULL,
+ keyword                       VARCHAR(255) NOT NULL,
  frequency                     VARCHAR(255) NOT NULL,
  modification_date             DATE NOT NULL,
  user_read                     NUMBER(1) NOT NULL,
