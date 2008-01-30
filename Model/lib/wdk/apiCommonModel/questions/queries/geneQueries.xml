@@ -1431,32 +1431,24 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             ]]>
           </sql>
        <sql includeProjects="CryptoDB">
-           <!-- use CDATA because query includes angle brackets -->
+           <!-- 
+             AA555437 has a gap that spans a huge portion of AAEE01000003,
+             causing several genes to be erroneously returned as having overlap
+           -->
             <![CDATA[
-            SELECT gf.source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
-            FROM dots.genefeature gf, 
-                 dots.nalocation nal, 
-                 dots.blatalignment blat, 
-                 dots.est query,
-                 dots.library lib,
-                 dots.assemblysequence asbl,
-                 dots.nasequence target 
-            WHERE gf.na_feature_id = nal.na_feature_id 
-              AND gf.na_sequence_id = target.na_sequence_id 
-              AND target.na_sequence_id = blat.target_na_sequence_id 
-              AND query.na_sequence_id = blat.query_na_sequence_id 
-              AND (blat.target_end - nal.start_max) >= $$bp_overlap_gte$$ 
-              AND (nal.end_min - blat.target_start) >= $$bp_overlap_gte$$ 
-              AND (query_end - query_start) >= $$bp_overlap_gte$$ 
-              AND blat.max_target_gap < 10000 
-              AND query.library_id = lib.library_id
-              AND lib.library_id in ($$libraryId$$)
-              AND blat.is_best_alignment in ($$best_alignment_only$$)
-              AND blat.is_consistent in ($$high_confidence_only$$)
-              AND blat.query_na_sequence_id = asbl.na_sequence_id
-              AND blat.percent_identity >= $$min_percent_identity$$
-              AND ((blat.query_bases_aligned / (asbl.sequence_end - asbl.sequence_start + 1)) * 100) >= $$min_percent_est_aligned$$
-           GROUP BY gf.source_id
+            SELECT s.gene as source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
+            FROM apidb.EstAlignmentGeneSummary s, apidb.estattributes e
+            WHERE s.est_gene_overlap_length >= $$bp_overlap_gte$$
+            AND s.is_consistent in ($$high_confidence_only$$)
+            AND s.is_best_alignment in ($$best_alignment_only$$)
+            AND s.percent_identity >= $$min_percent_identity$$
+            AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND s.library_id in ($$libraryIdParvum$$)
+            AND s.target_taxon_id in ($$organism$$)
+            AND e.source_id = s.accession
+            AND e.best_alignment_count <= $$max_number_best_alignments$$
+            AND s.accession != 'AA555437'
+            GROUP by s.gene
            HAVING count(*) >= $$min_number_est_aligned$$
             ]]>
           </sql>
