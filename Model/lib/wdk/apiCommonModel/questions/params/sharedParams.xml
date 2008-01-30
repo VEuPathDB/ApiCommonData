@@ -773,6 +773,17 @@
         <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+      <flatVocabParam name="libraryIdParvum"
+                     queryRef="SharedVQ.EstLibrariesParvum"
+                     prompt="EST Library"
+                     multiPick="true"
+                     quote="false">
+        <help>
+             Select a clone library.
+        </help>
+        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- SNPs -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1525,6 +1536,20 @@ by the sequence generator.</help>
                        l.library_id AS internal
                 FROM apidb.estattributes att, dots.library l
                 WHERE att.dbest_name = l.dbest_name
+                AND att.project_id = '@PROJECT_ID@'
+                ORDER BY term
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="EstLibrariesParvum" includeProjects="CryptoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
+                       l.library_id AS internal
+                FROM apidb.estattributes att, dots.library l
+                WHERE att.dbest_name = l.dbest_name
+                AND att.ncbi_tax_id = '5807'
                 AND att.project_id = '@PROJECT_ID@'
                 ORDER BY term
             </sql>
