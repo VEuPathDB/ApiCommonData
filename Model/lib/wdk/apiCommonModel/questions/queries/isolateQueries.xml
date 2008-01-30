@@ -285,8 +285,8 @@
          WHERE etn.na_sequence_id = gf.na_sequence_id
            AND nal.na_feature_id = gf.na_feature_id
            AND t.target_name = etn.source_id
-           AND nal.start_min < t.max_subject_end -1500
-           AND nal.end_max > t.min_subject_start + 1500
+           AND nal.start_min <= t.max_subject_end 
+           AND nal.end_max >= t.min_subject_start
            AND gf.source_id LIKE REPLACE($$gene_id$$,'*','%') 
         ]]>
       </sql> 
