@@ -151,16 +151,8 @@
     SELECT term, internal FROM (
     SELECT upper(substr(src.isolation_source, 0, 1)) || substr(src.isolation_source, 2) || ' (' || count(src.isolation_source) || ' isolates)' AS term,
            src.isolation_source      AS internal
-    FROM   DoTS.IsolateSource src,
-           DoTS.ExternalNASequence etn,
-           SRes.ExternalDatabaseRelease edr,
-           SRes.ExternalDatabase edb
+    FROM   ApiDB.IsolateAttributes src
     WHERE  src.isolation_source is not null
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-       AND src.na_sequence_id = etn.na_sequence_id
     GROUP BY src.isolation_source
     )
     ORDER BY term

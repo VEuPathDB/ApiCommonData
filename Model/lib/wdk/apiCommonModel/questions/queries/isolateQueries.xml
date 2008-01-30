@@ -163,23 +163,10 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.IsolateSource src, 
-                   DoTS.ExternalNASequence etn,
-                   SRes.ExternalDatabaseRelease edr,
-                   SRes.ExternalDatabase edb
-            WHERE etn.na_sequence_id IN
-                  (SELECT sc.na_sequence_id
-                   FROM DoTS.IsolateSource sc
-                   WHERE sc.isolation_source in ($$isolation_source$$)
-                  )
-                AND etn.source_id IS NOT NULL
-                AND etn.na_sequence_id = src.na_sequence_id
-                AND edr.external_database_id = edb.external_database_id
-                AND edr.external_database_release_id = etn.external_database_release_id
-                AND edb.name = 'Isolates Data'
-                AND edr.version = '2007-12-12'
-            ORDER BY etn.source_id
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id
+            FROM   ApiDB.IsolateAttributes src 
+            WHERE  src.isolation_source in ($$isolation_source$$)
+            ORDER BY src.source_id
             ]]>
          </sql>
     </sqlQuery>
