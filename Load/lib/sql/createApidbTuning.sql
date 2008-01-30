@@ -1548,6 +1548,8 @@ CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
   SELECT snp.na_feature_id AS snp_na_feature_id,
          snp.source_id AS snp_source_id, sa.na_sequence_id,
+         sa.na_feature_id as na_feature_id_a,
+         sb.na_feature_id as na_feature_id_b,
          substr(sa.strain, 1, 12) AS strain_a,
          substr(sb.strain, 1, 12) AS strain_b,
          nl.start_min AS start_min,
