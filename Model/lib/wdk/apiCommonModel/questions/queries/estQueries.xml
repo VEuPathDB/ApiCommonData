@@ -136,8 +136,7 @@
 
     <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
             isCacheable='true'>
-       <paramRef ref="sharedParams.libraryId" excludeProjects="CryptoDB"/>
-       <paramRef ref="sharedParams.libraryIdParvum" includeProjects="CryptoDB"/>
+       <paramRef ref="sharedParams.libraryIdGenes" />
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="estParams.overlapOrNot"/>
        <paramRef ref="sharedParams.best_alignment_only" 

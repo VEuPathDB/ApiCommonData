@@ -1402,8 +1402,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs" excludeProjects="CryptoDB"/>
        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pf-tv-gl" includeProjects="CryptoDB"/>
-       <paramRef ref="sharedParams.libraryId" excludeProjects="CryptoDB"/>
-       <paramRef ref="sharedParams.libraryIdParvum" includeProjects="CryptoDB"/>
+       <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.max_number_best_alignments" groupRef="paramGroups.advancedParams" excludeProjects="CryptoDB"/>
