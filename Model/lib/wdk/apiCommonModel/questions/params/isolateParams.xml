@@ -181,17 +181,9 @@
     <column name="term"/>
     <sql>
     <![CDATA[
-          SELECT gf.product || ' (' || count(gf.product) || ' isolates)' as term,
+          SELECT decode(gf.product, '18S small subunit ribosomal RNA | 5.8S ribosomal RNA | internal transcribed spac', '5.8S rRNA | ITS1 | 18S rRNA', gf.product) || ' (' || count(gf.product) || ' isolates)' as term,
                  gf.product as internal
-          FROM   DoTS.ExternalNASequence etn,
-               DoTS.IsolateFeature gf,
-               SRes.ExternalDatabaseRelease edr,
-               SRes.ExternalDatabase edb
-          WHERE  etn.na_sequence_id = gf.na_sequence_id
-               AND edr.external_database_id = edb.external_database_id
-               AND edr.external_database_release_id = etn.external_database_release_id
-               AND edb.name = 'Isolates Data'
-               AND edr.version = '2007-12-12'
+          FROM  ApiDB.IsolateAttributes gf
           GROUP BY gf.product
           ORDER BY gf.product
     ]]>
