@@ -1583,9 +1583,10 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(src.organism, 1, 60) as organism,
              substr(src.strain || ' ' || src.isolate, 1, 60) as strain,
              substr(src.specific_host || src.lab_host, 1, 50) as specific_host,
-             substr(upper(substr(src.isolation_source,0,1))
-                    || substr(isolation_source,2), 1, 160) as isolation_source,
-             substr(src.country, 1, 80) as country,
+             decode(src.isolation_source, null, 'Unknown', 
+						        substr(upper(substr(src.isolation_source,0,1))
+                    || substr(src.isolation_source,2), 1, 160)) as isolation_source,
+             decode(src.country, null, 'Unknown', substr(src.country, 1, 80)) as country,
              substr(src.note, 1, 400) as note,
              substr(etn.description, 1, 400) as description,
              substr(src.pcr_primers, 1, 100) as pcr_primers,
