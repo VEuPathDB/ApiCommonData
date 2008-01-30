@@ -262,18 +262,10 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.ExternalNASequence etn, 
-                   DoTS.IsolateSource src,
-                   SRes.ExternalDatabaseRelease edr,
-                   SRes.ExternalDatabase edb
-            WHERE  edr.external_database_id = edb.external_database_id
-               AND edr.external_database_release_id = etn.external_database_release_id
-               AND edb.name = 'Isolates Data'
-               AND edr.version = '2007-12-12'
-               AND src.na_sequence_id = etn.na_sequence_id
-               AND replace(src.country, ',', ';') IN ($$country$$)
-            ORDER BY etn.source_id
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id
+            FROM   ApiDB.IsolateAttributes src
+            WHERE  replace(src.country, ',', ';') IN ($$country$$)
+            ORDER BY src.source_id
             ]]>
          </sql>
     </sqlQuery>

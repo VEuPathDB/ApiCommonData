@@ -234,16 +234,8 @@
       <![CDATA[
       SELECT replace(src.country, ',', ';') || ' - (' || count(src.country) || ' isolates)' AS term,
              replace(src.country, ',', ';') AS internal
-      FROM   DoTS.IsolateSource src,
-             DoTS.ExternalNASequence etn,
-             SRes.ExternalDatabaseRelease edr,
-             SRes.ExternalDatabase edb
-      WHERE  edr.external_database_id = edb.external_database_id
-         AND edr.external_database_release_id = etn.external_database_release_id
-         AND edb.name = 'Isolates Data'
-         AND edr.version = '2007-12-12'
-         AND src.na_sequence_id = etn.na_sequence_id
-         AND src.country is not null
+      FROM   ApiDB.IsolateAttributes src
+      WHERE  src.country is not null
       GROUP BY src.country
       ORDER BY src.country
       ]]>
