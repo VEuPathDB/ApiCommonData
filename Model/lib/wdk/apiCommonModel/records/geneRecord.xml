@@ -306,9 +306,19 @@
                              name="protein_sequence" internal="true"/>
           </attributeQueryRef>
 
+          <attributeQueryRef ref="GeneAttributes.NewAnnotationProteinSequence">
+            <columnAttribute displayName="Annotation Workshop Predicted Protein Sequence"
+                             name="workshop_protein_sequence" internal="true"/>
+          </attributeQueryRef>
+
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- transcript sequence attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <attributeQueryRef ref="GeneAttributes.NewAnnotationTranscriptSequence">
+            <columnAttribute displayName="Annotation Workshop Predicted RNA/mRNA Sequence (introns spliced out)"
+                             name="workshop_transcript_sequence" internal="true"/>
+          </attributeQueryRef>
 
           <attributeQueryRef ref="GeneAttributes.TranscriptSequence">
             <columnAttribute displayName="Predicted RNA/mRNA Sequence (introns spliced out)"
@@ -322,6 +332,11 @@
          <attributeQueryRef ref="GeneAttributes.CDS">
             <columnAttribute displayName="Coding Sequence" internal="true"
                     name="cds"/>
+          </attributeQueryRef>
+
+         <attributeQueryRef ref="GeneAttributes.NewAnnotationCDS">
+            <columnAttribute displayName="Annotation Workshop Coding Sequence" internal="true"
+                    name="workshop_cds"/>
           </attributeQueryRef>
 
 

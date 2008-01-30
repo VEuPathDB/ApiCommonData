@@ -345,6 +345,31 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="workshop_protein_sequence"/>
+            <sql>
+            <![CDATA[
+            SELECT gf.source_id,
+                   tas.sequence AS workshop_protein_sequence,'@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
+                 apidb.TRACKNEWANNOTATION tna
+            WHERE tna.source_id=$$primaryKey$$
+              AND tna.new_source_id = gf.source_id
+              AND t.parent_id = gf.na_feature_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = tas.aa_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
+
+
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -408,6 +433,24 @@
        <!-- transcript sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+
+        <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
+                       displayName="RNA Sequence">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="workshop_transcript_sequence"/>
+            <sql>
+            <![CDATA[
+              select gf.source_id, s.sequence as workshop_transcript_sequence,'@PROJECT_ID@' as project_id
+              from dots.genefeature gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
+              where tna.source_id = $$primaryKey$$
+              and tna.new_source_id = gf.source_id
+              and t.parent_id = gf.na_feature_id
+              and s.na_sequence_id = t.na_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
         <sqlQuery name="TranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
@@ -451,6 +494,35 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- cds sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+        <sqlQuery name="NewAnnotationCDS" isCacheable="false" excludeProjects="ApiDB" 
+                       displayName="New Annotation RNA Sequence">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="workshop_cds"/>
+            <sql>
+            <![CDATA[
+              SELECT gf.source_id,
+                     SUBSTR(s.sequence,
+                            tf.translation_start,
+                            tf.translation_stop - tf.translation_start + 1)
+                       AS workshop_cds,'@PROJECT_ID@' as project_id
+              FROM dots.genefeature gf, dots.transcript t,
+                   dots.splicednasequence s, dots.TranslatedAaFeature tf,
+                   apidb.TRACKNEWANNOTATION tna
+              WHERE tna.source_id = $$primaryKey$$
+                AND tna.new_source_id = gf.source_id
+                AND t.parent_id = gf.na_feature_id
+                AND s.na_sequence_id = t.na_sequence_id
+                AND t.na_feature_id = tf.na_feature_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
 
         <sqlQuery name="CDS" isCacheable="false" excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
