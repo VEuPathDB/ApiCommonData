@@ -323,6 +323,12 @@
             </sql>
         </sqlQuery>
 
+<wsQuery name="withESTs" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
         <sqlQuery name="withESTsAndGenes" excludeProjects="ApiDB">
             <column name="internal"/>
             <column name="term"/>
@@ -356,7 +362,7 @@
             </sql>
         </sqlQuery>
 
-    <wsQuery name="withESTs" includeProjects="ApiDB"
+    <wsQuery name="withESTsAndGenes" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
