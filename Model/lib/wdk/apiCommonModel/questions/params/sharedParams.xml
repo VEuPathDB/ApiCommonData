@@ -779,7 +779,7 @@
         <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
-      <flatVocabParam name="libraryIdParvum"
+      <flatVocabParam name="libraryIdParvum"  includeProjects="CryptoDB"
                      queryRef="SharedVQ.EstLibrariesParvum"
                      prompt="EST Library"
                      multiPick="true"
@@ -787,8 +787,7 @@
         <help>
              Select a clone library.
         </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/> 
-      </flatVocabParam>
+       </flatVocabParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- SNPs -->  
@@ -1565,12 +1564,6 @@ by the sequence generator.</help>
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
         </wsQuery>
-
- <wsQuery name="EstLibrariesParvum" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <wsColumn name="internal" width="100" wsName="internal"/>
-            <wsColumn name="term" width="100" wsName="term"/>
-        </wsQuery>
-
 
   </querySet>
 
