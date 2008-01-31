@@ -1127,13 +1127,14 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
-            WHERE nl.na_feature_id = gf.na_feature_id
+            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens,  Apidb.GeneAttributes ga
+            WHERE ga.source_id = gf.source_id
+              AND nl.na_feature_id = gf.na_feature_id
               AND (ens.source_id = $$chromosomeOptional$$
                    OR lower(ens.source_id) = lower($$sequenceId$$))
               AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND nl.end_max >= $$start_point$$ 
+              AND (nl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
         <sql includeProjects="ToxoDB">
@@ -2622,8 +2623,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
 	    SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
             trim(to_char(LEAST(s.length - l.end_max,l.start_min),'999,999')) as dist_telomere
-	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
-	    WHERE gf.na_sequence_id = s.na_sequence_id
+	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s, Apidb.GeneAttributes ga
+	    WHERE ga.source_id = gf.source_id
+             AND gf.na_sequence_id = s.na_sequence_id
 	     AND l.na_feature_id = gf.na_feature_id
 	     AND s.source_id  in ($$chromosome$$)
 	     AND (l.end_max >= s.length - $$distanceFromTelomere$$
