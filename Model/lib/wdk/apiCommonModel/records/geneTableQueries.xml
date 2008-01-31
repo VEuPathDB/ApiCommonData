@@ -288,7 +288,7 @@
                     lower(gts.evidence_code) AS lowercase_evidence_code, '@PROJECT_ID@' as project_id
             FROM apidb.GoTermSummary gts
             WHERE gts.source_id = $$primaryKey$$
-            ORDER BY gts.ontology, gts.go_id
+            ORDER BY gts.source,gts.ontology, gts.go_id
             ]]>
             </sql>
         </sqlQuery>
