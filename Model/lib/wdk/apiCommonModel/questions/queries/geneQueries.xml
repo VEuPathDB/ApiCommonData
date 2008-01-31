@@ -41,9 +41,11 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="annot_status"/>
+        <column name="new_product_desc"/>
        <sql>
              <![CDATA[
-            SELECT DISTINCT na.source_id, '@PROJECT_ID@' as project_id, na.status as annot_status
+            SELECT DISTINCT na.source_id, '@PROJECT_ID@' as project_id, 
+              na.status as annot_status, na.product as new_product_desc
             FROM apidb.trackNewAnnotation na
             where na.new_product in ($$plasmo_new_product$$)
             and na.new_go in ($$plasmo_new_go$$)
