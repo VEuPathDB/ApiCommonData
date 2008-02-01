@@ -4597,7 +4597,7 @@ EOF
    my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
 
 
-   my $orthoFileFullPath = "$mgr->{dataDir}/orthomcl/master/mainresult/$orthoFile";
+   my $orthoFileFullPath = "$mgr->{dataDir}/orthomclEng/master/mainresult/$orthoFile";
 
    my $signal = "loadOrthoMCLResult";
    return if $mgr->startStep("Starting Data Load $signal", $signal);
