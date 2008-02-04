@@ -11,49 +11,6 @@
   <querySet name="IsolateTables">
     
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- Isolate Mapping -->  
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-       <sqlQuery name="Mapping" isCacheable="true" includeProjects="CryptoDB,ApiDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
-            <column name="name"/>
-            <column name="organism"/>
-            <column name="strain"/>
-            <column name="specific_host"/>
-            <sql>
-            <![CDATA[
-             SELECT extq.source_id,
-                    extq.source_id name,
-                    src.organism,
-                    src.strain,
-                    src.specific_host,
-                    '@PROJECT_ID@' as project_id
-             FROM   dots.SIMILARITY sim,
-                    dots.SOURCE src,
-                    dots.EXTERNALNASEQUENCE extt,
-                    dots.EXTERNALNASEQUENCE extq,
-                    (SELECT extt.source_id target_name,
-                            sim.min_subject_start - 1000 as min_subject_start,
-                            sim.max_subject_end + 1000 as max_subject_end
-                     FROM   dots.SIMILARITY sim,
-                            dots.EXTERNALNASEQUENCE extt,
-                            dots.EXTERNALNASEQUENCE extq
-                     WHERE  sim.query_id = extq.na_sequence_id
-                        AND sim.subject_id = extt.na_sequence_id
-                        AND extq.source_id = $$primaryKey$$
-                    ) map
-              WHERE sim.query_id = extq.na_sequence_id
-                AND sim.subject_id = extt.na_sequence_id
-                AND extt.source_id = map.target_name
-                AND src.na_sequence_id = extq.na_sequence_id
-                AND sim.min_subject_start > map.min_subject_start
-                AND sim.max_subject_end < map.max_subject_end
-            ]]>
-            </sql>
-        </sqlQuery>
-
-       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolate Publication -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
