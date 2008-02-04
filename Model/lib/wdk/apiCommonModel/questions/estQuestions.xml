@@ -310,7 +310,12 @@
            sorting="formatted_organism asc,est_locations asc"
         /> 
 <summary>Find ESTs in a Library that overlap or not with a gene.</summary>
-        <description>Find ESTs that Overlap a Gene..</description>
+        <description excludeProjects="CryptoDB">Find ESTs that Overlap a Gene.</description>
+        <description includeProjects="CryptoDB">
+       <![CDATA[
+        Find ESTs that overlap a <i>C. parvum</i> gene.
+        ]]>
+        </description>
 
         <dynamicAttributes excludeProjects="ApiDB">
             <columnAttribute name="est_locations" displayName="EST location(s)"/>
