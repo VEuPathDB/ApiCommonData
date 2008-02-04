@@ -1,0 +1,52 @@
+#!/usr/bin/perl -w
+
+# This plugin takes a file in the format
+#
+# Pxchr  Pxstart Pxstop Pxstrand Pfchr Pfstart Pfstop Pf strand
+#
+# and reformats it as
+#
+# Pfchr Pxchr Pfstart Pflength Pxstart Pxlength Pfstrand
+
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long qw(GetOptions);
+
+my $verbose = 0;
+my $inputFile;
+my $outputFile;
+
+
+GetOptions("verbose!"        => \$verbose,
+           "inputFile=s" => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $inputFile){ die "Could not find file $inputFile: $!\n\nUSAGE: formatPxSyntenyFile --inputFile <FILEPATH> --outputFile <FILEPATH> [--verbose]\n";}
+
+
+open(FILE, "$inputFile") or die "Could not open file '$inputFile': $!\n";
+
+open(OUT, ">$outputFile") or die "Could not open file '$outputFile' for writing: $!\n";
+
+while(<FILE>){
+  chomp;
+
+  my @values = split("\t",$_);
+
+  my $pfChr = $values[4];
+  my $pxChr = $values[0];
+  my $pfStart = $values[5];
+  my $pfLength = $values[6] - $pfStart;
+  my $pxStart = $values[1];
+  my $pxLength = $values[2] - $pxStart;
+  my $pfStrand = $values[7];
+
+  print OUT "$pfChr\t$pxChr\t$pfStart\t$pfLength\t$pxStart\t$pxLength\t$pfStrand\n";
+}
+
+close(OUT);
+close(FILE);
