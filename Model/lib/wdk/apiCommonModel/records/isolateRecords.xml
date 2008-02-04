@@ -12,6 +12,10 @@
       <reporter name="tabular" displayName="Summary - TAB Delimited"
                 implementation="org.gusdb.wdk.model.report.TabularReporter" />
 
+      <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
+                  implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+
       <!-- =================================================================== -->
       <!--  Attributes  ++++++++-->
       <!-- =================================================================== -->
@@ -69,12 +73,12 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <attributeQueryRef ref="IsolateAttributes.Reference">
-         <columnAttribute name="title" displayName="Title" internal="true" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="author" displayName="Author" internal="true" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="year" displayName="Year" internal="true" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="journal_or_book_name" displayName="Journal Name" internal="true" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="journal_vol" displayName="Volume" internal="true" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="journal_page" displayName="Page" internal="true" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="title" displayName="Title" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="year" displayName="Year" internal="true"  inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="journal_or_book_name" displayName="Journal Name" inReportMaker="false" internal="true" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="journal_vol" displayName="Volume" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
+         <columnAttribute name="journal_page" displayName="Page" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
 
 
