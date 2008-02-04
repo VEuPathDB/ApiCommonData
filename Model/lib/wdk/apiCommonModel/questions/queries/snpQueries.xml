@@ -200,9 +200,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                   CASE WHEN ref.product = comp.product then 'syn' WHEN ref.product != comp.product THEN 'non-syn'
                        ELSE 'non-coding' END as phenotype,
                   ref.product AS ref_product, comp.product AS comp_product,
-                  p.position_in_protein as prot_pos,
+                  snp.position_in_protein as prot_pos,
                   ref.allele as allele_a, comp.allele as allele_b, p.strain_b, gene.source_id as gene
-                 FROM apidb.Polymorphism p, dots.NaSequence seq,
+                 FROM apidb.Polymorphism p, dots.SnpFeature snp, dots.NaSequence seq,
                       dots.SeqVariation ref, dots.SeqVariation comp,
                       dots.NaLocation gene_loc, sres.ExternalDatabaseRelease edr,
                       sres.ExternalDatabase ed, dots.GeneFeature gene
@@ -210,6 +210,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND p.gene_na_feature_id = gene_loc.na_feature_id(+)
                    AND p.external_database_release_id = edr.external_database_release_id
                    AND edr.external_database_id = ed.external_database_id
+                   AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.source_id = $$chromosomeOptional$$
                    AND p.strain_a = $$snp_strain_a$$ -- ref
                    AND p.strain_b in ($$snp_strain_m$$) -- comp
@@ -233,9 +234,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                   CASE WHEN ref.product = comp.product then 'syn' WHEN ref.product != comp.product THEN 'non-syn'
                        ELSE 'non-coding' END as phenotype,
                   ref.product AS ref_product, comp.product AS comp_product,
-                  p.position_in_protein as prot_pos,
+                  snp.position_in_protein as prot_pos,
                   ref.allele as allele_a, comp.allele as allele_b, p.strain_b, gene.source_id as gene
-                 FROM apidb.Polymorphism p, dots.NaSequence seq,
+                 FROM apidb.Polymorphism p, dots.SnpFeature snp, dots.NaSequence seq,
                       dots.SeqVariation ref, dots.SeqVariation comp,
                       dots.NaLocation gene_loc, sres.ExternalDatabaseRelease edr,
                       sres.ExternalDatabase ed, dots.GeneFeature gene
@@ -243,6 +244,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND p.gene_na_feature_id = gene_loc.na_feature_id(+)
                    AND p.external_database_release_id = edr.external_database_release_id
                    AND edr.external_database_id = ed.external_database_id
+                   AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.source_id = $$chromosomeOptional$$
                    AND p.strain_b = $$snp_strain_a$$ -- ref
                    AND p.strain_a in ($$snp_strain_m$$) -- comp
