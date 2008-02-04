@@ -64,7 +64,7 @@
              AND edb.name = 'Isolates Data'
              AND edr.version = '2007-12-12'
              AND etn.na_sequence_id = nasr.na_sequence_id
-             AND ref.author LIKE REPLACE($$author$$,'*','%')
+             AND LOWER(ref.author) LIKE LOWER(REPLACE($$author$$,'*','%'))
          ]]>
       </sql>
     </sqlQuery>
