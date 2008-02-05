@@ -148,6 +148,23 @@ sub UpdateGusTableWithXml {
 }
 
 
+sub dumpNaSequence {
+  my ($mgr, $mercatorDir, $shortName, $extDbName, $extDbVersion) = @_;
+
+  my $signal = "dumpSequence-$shortName";
+  my $outputFile = $shortName . ".fsa";
+
+  unless(-e $mercatorDir) {
+    $mgr->runCmd("mkdir -p $mercatorDir");
+  }
+
+  my $sql = "select source_id, sequence from Dots.NASEQUENCE s, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and s.external_database_release_id = r.external_database_release_id and r.version = '$extDbVersion' and e.name = '$extDbName'";
+
+  $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL $sql");
+
+  $mgr->endStep($signal);
+}
+
 
 sub initAmitoAnalysis {
   my ($propertyFile, $optionalArgs) = @_;
