@@ -566,9 +566,9 @@ order by project_id,sns2.source_id
 
     <sqlQuery name="GenesByIsoelectricPoint" excludeProjects="ApiDB,CryptoDB"
               isCacheable="true">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_isoelectric_point"/>
         <paramRef ref="geneParams.max_isoelectric_point"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="isoelectric_point"/>
@@ -1263,13 +1263,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	    includeProjects="ApiDB"        
 		isCacheable="true" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
 	        <paramRef ref="geneParams.min_coil"/>
 	        <paramRef ref="geneParams.max_coil"/>
 	        <paramRef ref="geneParams.min_strand"/>
 	        <paramRef ref="geneParams.max_strand"/>
 	        <paramRef ref="geneParams.min_helix"/>
 	        <paramRef ref="geneParams.max_helix"/>
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
 	        <wsColumn name="source_id" width="32" wsName="source_id"/>
 	        <wsColumn name="project_id" width="32" wsName="project_id"/>
 			<wsColumn name="percent_coil" width="32" wsName="percent_coil"/>
@@ -1380,15 +1380,15 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 	 <wsQuery name="GenesBySageTag" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf" includeProjects="ApiDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/>
                 <paramRef ref="geneParams.sage_tag_library"/>
                 <paramRef ref="geneParams.st_max_five_prime_distance"/>
                 <paramRef ref="geneParams.st_max_three_prime_distance"/>
                 <paramRef ref="geneParams.st_min_tag_count"/>
                 <paramRef ref="geneParams.st_max_occurrences"/>
                 <paramRef ref="geneParams.sense_antisense"/>
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf" includeProjects="ApiDB"/> 
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
                 <wsColumn name="project_id" width="32" wsName="project_id"/> 
                 <wsColumn name="source_id"  width="32" wsName="source_id"/>
                 <wsColumn name="sense_count" />
@@ -2716,9 +2716,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByPdbSimilarity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
