@@ -1126,6 +1126,9 @@ CREATE INDEX apidb.GeneAttr_exon_ix&1
 CREATE INDEX apidb.GeneAttr_loc_ix&1
        ON apidb.GeneAttributes&1 (na_sequence_id, start_min, end_max, is_reversed);
 
+CREATE INDEX apidb.GeneAttr_feat_ix&1
+       ON apidb.GeneAttributes&1 (na_feature_id);
+
 CREATE OR REPLACE SYNONYM apidb.GeneAttributes
                           FOR apidb.GeneAttributes&1;
 
