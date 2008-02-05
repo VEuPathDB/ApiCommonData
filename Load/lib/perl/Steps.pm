@@ -1582,6 +1582,35 @@ EOF
 
 }
 
+
+sub makeIsolateDownloadFile {
+  my ($mgr, $species, $name, $extDb, $extDbVer, $seqTable) =@_;
+
+   my $sql = <<"EOF";
+        SELECT
+        '$name'
+        ||'|'||
+        enas.source_id
+        ||'|'||
+        enas.description
+        ||'|'||
+        tn.name,
+        enas.sequence
+        From dots.$seqTable enas,
+             sres.taxonname tn,
+             sres.externaldatabase ed,
+             sres.externaldatabaserelease edr
+        Where enas.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+        AND enas.external_database_release_id = edr.external_database_release_id
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+  makeDownloadFile($mgr, $species, $name, $sql);
+
+}
+
 sub makeDownloadFile {
     my ($mgr, $species, $name, $sql, $project) = @_;
 
