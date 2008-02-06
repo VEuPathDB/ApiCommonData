@@ -680,6 +680,11 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
 WHERE 'grouptaxonmatrix' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where database_id = d.database_id);
+                                    
+------------------------------------------------------------------------------
+
+CREATE UNIQUE INDEX apidb.gtm_group_id 
+    ON apidb.GroupTaxonMatrix (ortholog_group_id);
 
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
