@@ -922,10 +922,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             and taaf.na_feature_id = t.na_feature_id
             and t.parent_id = gf.na_feature_id
             and gf.na_sequence_id = nas.na_sequence_id
-            and nas.taxon_id in 
-            (select taxon_id from sres.taxon
-             connect by parent_id = prior taxon_id
-             start with taxon_id in ($$organism$$))
+            and nas.taxon_id in ($$organism$$)
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
