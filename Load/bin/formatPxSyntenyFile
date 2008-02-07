@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
 # This plugin takes a file in the format
 #
@@ -20,31 +20,21 @@ use Getopt::Long qw(GetOptions);
 my $verbose = 0;
 my $inputFile;
 my $outputFile;
-my $agpFile;
 
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s" => \$inputFile,
            "outputFile=s"    => \$outputFile,
-           "ref_agp_file=s" => \$agpFile,
           );
 
-unless (-e $inputFile){ die "Could not find file $inputFile: $!\n\nUSAGE: formatPxSyntenyFile --inputFile <FILEPATH> --outputFile <FILEPATH> [--verbose]\n";}
+unless ($inputFile){ 
+  print STDERR "Please provide input file\n\nUSAGE: formatPxSyntenyFile --inputFile <FILEPATH> --outputFile <FILEPATH> [--verbose]\n";
+  exit;
+}
 
 
 open(FILE, "$inputFile") or die "Could not open file '$inputFile': $!\n";
 
 open(OUT, ">$outputFile") or die "Could not open file '$outputFile' for writing: $!\n";
-
-my @agp;
-if(-e $agpFile) {
-  open(AGP, $agpFile) or error("Cannot open file $agpFile for reading:$!");
-
-  while(<AGP>) {
-    chomp;
-    push @agp, $_;
-  }
-  close AGP;
-}
 
 while(<FILE>){
   chomp;
@@ -63,92 +53,14 @@ while(<FILE>){
   my $pxLength = $pxEnd - $pxStart;
 
   if($pfChr =~ /^assembled/) {
-    my $mapped = &replaceAssembled(\@agp, $pfChr, $pfStart, $pfEnd, $pfStrand);
-
-
-    my $shift = 0;
-    foreach(@$mapped) {
-      my $scale = scalar @$mapped > 1 ? 1 : 0;
-
-      $shift = &printLine(@$_, $pfLength, $pxChr, $pxStart, $pxLength, $scale, $shift);
-    }
+    die "Cannot use assembled as the reference genome";
   }
   else {
-    &printLine($pfChr, $pfStart, $pfEnd, $pfStrand, $pfLength, $pxChr, $pxStart, $pxLength, 0, 0);
+    print OUT "$pfChr\t$pxChr\t$pfStart\t$pfLength\t$pxStart\t$pxLength\t$pfStrand\n";  
   }
 }
 
 close(OUT);
 close(FILE);
 
-#--------------------------------------------------------------------------------
 
-sub printLine {
-  my ($pfChr, $pfStart, $pfEnd, $pfStrand, $pfLength, $pxChr, $pxStart, $pxLength, $scale, $shift) = @_;
-
-
-  if($scale) {
-    $pxLength = int ((($pfEnd - $pfStart) / $pfLength ) * $pxLength);
-    $pfLength = $pfEnd - $pfStart;
-    $pxStart = $pxStart + $shift;
-  }
-
-  print OUT "$pfChr\t$pxChr\t$pfStart\t$pfLength\t$pxStart\t$pxLength\t$pfStrand\n";  
-
-  return $pxStart + $pxLength;
-}
-
-#--------------------------------------------------------------------------------
-
-sub replaceAssembled {
-  my ($agp, $input, $start, $stop, $strand) = @_;
-
-  my @v;
-
-  foreach(@$agp) {
-    my @ar = split(/\t/, $_);
-
-    my $assembly = $ar[0];
-    my $assemblyStart = $ar[1];
-    my $assemblyStop = $ar[2];
-    my $type = $ar[4];
-
-    my $contig = $ar[5];
-    my $contigStart = $ar[6];
-    my $contigStop = $ar[7];
-    my $contigStrand = $ar[8];
-
-    next unless($type eq 'D');
-    my $shift = $assemblyStart - $contigStart;
-    my $checkShift = $assemblyStop - $contigStop;
-
-    die("Cannot determine shift") unless($shift == $checkShift);
-
-    if($assembly eq $input && 
-       (($start >= $assemblyStart && $start <= $assemblyStop) || ($stop >= $assemblyStart && $stop <= $assemblyStop))) {
-      
-      my ($newStart, $newStop, $newStrand);
-
-      # the +1 and -1 is because of a 1 off error in the sliceAlign program
-      if($contigStrand eq '+') {
-        $newStart = $start < $assemblyStart ? $contigStart : $start - $assemblyStart + $contigStart + 1;
-        $newStop = $stop > $assemblyStop ? $contigStop : $stop - $assemblyStart + $contigStart; 
-        $newStrand = $strand;
-      }
-      else {
-        $newStart = $start < $assemblyStart ? $contigStop : $assemblyStop - $start + $contigStart - 1;
-        $newStop = $stop > $assemblyStop ? $contigStart : $assemblyStop - $stop + $contigStart;  
-        $newStrand = $strand eq '+' ? '-' : '+';
-      }
-
-      if($newStart <= $newStop) {
-        push(@v, [$contig,$newStart,$newStop,$newStrand]);
-      }
-      else {
-        push(@v, [$contig,$newStop,$newStart,$newStrand]);
-      }
-    }
-  }
-
-  return \@v;
-}
