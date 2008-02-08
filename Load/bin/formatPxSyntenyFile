@@ -36,31 +36,106 @@ open(FILE, "$inputFile") or die "Could not open file '$inputFile': $!\n";
 
 open(OUT, ">$outputFile") or die "Could not open file '$outputFile' for writing: $!\n";
 
-while(<FILE>){
-  chomp;
 
-  my @values = split("\t",$_);
+my $prevSynteny;
 
-  my $pfChr = $values[4];
-  my $pfStart = $values[5];
-  my $pfEnd = $values[6];
-  my $pfStrand = $values[7];
-  my $pfLength = $pfEnd - $pfStart;
+while(my $line = <FILE>){
+  chomp $line;
 
-  my $pxChr = $values[0];
-  my $pxStart = $values[1];
-  my $pxEnd = $values[2];
-  my $pxLength = $pxEnd - $pxStart;
+  my @values = split("\t",$line);
 
-  if($pfChr =~ /^assembled/) {
+
+  my $a_seq = {contig => $values[0],
+               start => $values[1],
+               end => $values[2],
+               strand => $values[3],
+              };
+
+  my $b_seq = {contig => $values[4],
+               start => $values[5],
+               end => $values[6],
+               strand => $values[7],
+              };
+
+
+  unless($a_seq->{strand} eq '+') {
+    my $contig = $b_seq->{contig};
+    die "Expected [+] strand for the contig $contig";
+  }
+
+  my $synteny = [$a_seq, $b_seq];
+
+  if($b_seq->{contig} =~ /^assembled/) {
     die "Cannot use assembled as the reference genome";
   }
-  else {
-    print OUT "$pfChr\t$pxChr\t$pfStart\t$pfLength\t$pxStart\t$pxLength\t$pfStrand\n";  
+
+  if(my $newPrev = &combinePrev($prevSynteny, $synteny)) {
+    $prevSynteny = $newPrev;
+    next;
   }
+
+  &printLine(@$prevSynteny);
+  $prevSynteny = $synteny;
 }
+
+# dont' forget the last one
+&printLine(@$prevSynteny);
+
 
 close(OUT);
 close(FILE);
 
+#--------------------------------------------------------------------------------
 
+sub printLine {
+  my ($a, $b) = @_;
+
+  my $aContig = $a->{contig};
+  my $aStart = $a->{start};
+  my $aEnd = $a->{end};
+  my $aLength = $aEnd - $aStart;
+  my $aStrand = $a->{strand};
+
+  my $bContig = $b->{contig};
+  my $bStart = $b->{start};
+  my $bEnd = $b->{end};
+  my $bLength = $bEnd - $bStart;
+  my $bStrand = $b->{strand};
+
+  print OUT "$bContig\t$aContig\t$bStart\t$bLength\t$aStart\t$aLength\t$bStrand\n";    
+}
+
+#--------------------------------------------------------------------------------
+
+sub combinePrev {
+  my ($prev, $this) = @_;
+
+  # first row
+  if(!$prev) {
+    return $this;
+  }
+
+  my ($prevA, $prevB) = @$prev;
+  my ($thisA, $thisB) = @$this;
+
+  # is the previous line continuous with the current line?
+  if($prevA->{contig} eq $thisA->{contig} && $prevB->{contig} eq $thisB->{contig} && 
+     $prevB->{strand} eq $thisB->{strand} && $prevA->{end} + 1 == $thisA->{start}) {
+
+    if($prevB->{end} + 1 == $thisB->{start} && $prevB->{strand} eq '+') {
+
+      $prevA->{end} = $thisA->{end};
+      $prevB->{end} = $thisB->{end};
+
+      return [$prevA, $prevB];
+    }
+
+    if($prevB->{start} - 1 == $thisB->{end} && $prevB->{strand} eq '-') {
+
+      $prevA->{end} = $thisA->{end};
+      $prevB->{start} = $thisB->{start};
+
+      return [$prevA, $prevB];
+    }
+  }
+}
