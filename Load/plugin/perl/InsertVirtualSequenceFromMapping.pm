@@ -1,3 +1,4 @@
+
 package ApiCommonData::Load::Plugin::InsertVirtualSequenceFromMapping;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
@@ -72,6 +73,12 @@ stringArg({name => 'table',
        isList => 0,
        default => "DoTS::VirtualSequence",
       }),
+ stringArg({name => 'spacerNum',
+	    descr => 'Number of Ns inserted between each sequence piece',
+	    constraintFunc=> undef,
+	    reqd  => 1,
+	    isList => 0,
+	   }),
 
 ];
 
@@ -175,6 +182,8 @@ sub run {
 
   my $SOTermArg = $self->getArg("virtualSeqSOTerm");
 
+  my $spacerNum = $self->getArg("spacerNum");
+
   my $SOTerm = GUS::Model::SRes::SequenceOntology->new({ term_name => $SOTermArg });
   unless($SOTerm->retrieveFromDB()) {
     die "SO Term $SOTermArg not found in database.\n";
@@ -234,11 +243,13 @@ my $table = "GUS::Model::".$self->getArg('table');
 							      virtual_na_sequence_id => $virtSeqId,
 							      sequence_order         => $seqOrder,
 							      strand_orientation     => $orientation,
-							      distance_from_left     => 0, # number of N's
+							      distance_from_left     => $spacerNum, # number of N's
 							                                   # between this and
 							                                   # last piece
 							  });
 	$seqPiece->submit();
+
+      $seq .= "N" x $spacerNum if $seqOrder > 1;
 
       if ($target eq $sourceSeq->getSourceId()) {
 	  # for the case when scaffold does not map to any chromosome in mapping input file
@@ -255,7 +266,7 @@ my $table = "GUS::Model::".$self->getArg('table');
 	# (e.g. "NNNNN...");
 
 	$seq .= $pieceSeq;
-	$offset = $offset + length($pieceSeq);
+	$offset = $offset + length($pieceSeq) + $spacerNum;
       }
     }
 
