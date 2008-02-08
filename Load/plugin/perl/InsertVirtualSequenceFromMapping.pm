@@ -73,12 +73,12 @@ stringArg({name => 'table',
        isList => 0,
        default => "DoTS::VirtualSequence",
       }),
- stringArg({name => 'spacerNum',
-	    descr => 'Number of Ns inserted between each sequence piece',
-	    constraintFunc=> undef,
-	    reqd  => 1,
-	    isList => 0,
-	   }),
+ integerArg({name => 'spacerNum',
+       descr => 'Number of Ns inserted between each sequence piece',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0,
+      })
 
 ];
 
