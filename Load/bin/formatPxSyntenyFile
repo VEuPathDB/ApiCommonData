@@ -21,6 +21,8 @@ my $verbose = 0;
 my $inputFile;
 my $outputFile;
 
+my $JOIN_DISTANCE = 5000;
+
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s" => \$inputFile,
            "outputFile=s"    => \$outputFile,
@@ -102,6 +104,7 @@ sub printLine {
   my $bLength = $bEnd - $bStart;
   my $bStrand = $b->{strand};
 
+#  print OUT "$aContig\t$aStart\t$aEnd\t$aStrand\t$bContig\t$bStart\t$bEnd\t$bStrand\n";
   print OUT "$bContig\t$aContig\t$bStart\t$bLength\t$aStart\t$aLength\t$bStrand\n";    
 }
 
@@ -120,9 +123,9 @@ sub combinePrev {
 
   # is the previous line continuous with the current line?
   if($prevA->{contig} eq $thisA->{contig} && $prevB->{contig} eq $thisB->{contig} && 
-     $prevB->{strand} eq $thisB->{strand} && $prevA->{end} + 1 == $thisA->{start}) {
+     $prevB->{strand} eq $thisB->{strand} && $thisA->{start} - $prevA->{end} <= $JOIN_DISTANCE) {
 
-    if($prevB->{end} + 1 == $thisB->{start} && $prevB->{strand} eq '+') {
+    if($thisB->{start} - $prevB->{end} <= $JOIN_DISTANCE && $prevB->{strand} eq '+') {
 
       $prevA->{end} = $thisA->{end};
       $prevB->{end} = $thisB->{end};
@@ -130,7 +133,7 @@ sub combinePrev {
       return [$prevA, $prevB];
     }
 
-    if($prevB->{start} - 1 == $thisB->{end} && $prevB->{strand} eq '-') {
+    if($prevB->{start} - $thisB->{end} <= $JOIN_DISTANCE && $prevB->{strand} eq '-') {
 
       $prevA->{end} = $thisA->{end};
       $prevB->{start} = $thisB->{start};
