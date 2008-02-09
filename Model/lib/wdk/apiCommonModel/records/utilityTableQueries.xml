@@ -81,7 +81,6 @@
             <column name="cache_count" />
             <column name="first_time" />
             <column name="last_time" />
-            <column name="creation_time" />
            <sql> 
             <![CDATA[           
             SELECT count(*) as cache_count,
@@ -96,11 +95,23 @@
             THEN to_char(max(start_time), 'Dy DD-Mon-YYYY HH24:MI:SS') 
             ELSE 
                 '-'
-            END as last_time,
+            END as last_time
+            FROM queryinstance
+             ]]>
+           </sql>
+        </sqlQuery>
+
+        <!-- UtilityQueries.CacheCreateTime -->
+        <sqlQuery name="CacheCreateTime" isCacheable='false'>
+            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.projectId"/>
+            <column name="creation_time" />
+           <sql> 
+            <![CDATA[           
+            SELECT 
             to_char(o.created, 'Dy DD-Mon-YYYY HH24:MI:SS') creation_time
-            FROM queryinstance, user_objects o 
+            FROM user_objects o 
             WHERE o.object_name = 'QUERYINSTANCE'
-            GROUP BY o.created
              ]]>
            </sql>
         </sqlQuery>
