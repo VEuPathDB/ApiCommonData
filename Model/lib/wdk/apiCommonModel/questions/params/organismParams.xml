@@ -127,8 +127,7 @@
                 SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
-                 UNION
-                SELECT 'Cryptosporidium parvum Iowa II' AS name, 6 AS rank FROM dual) partial_ordering
+                ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -221,8 +220,7 @@
                 SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
-                UNION
-                SELECT 'Cryptosporidium parvum Iowa II' AS name, 6 AS rank FROM dual) partial_ordering
+                ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
@@ -281,8 +279,7 @@
                 SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
-                 UNION
-                SELECT 'Cryptosporidium parvum Iowa II' AS name, 6 AS rank FROM dual) partial_ordering
+                ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
