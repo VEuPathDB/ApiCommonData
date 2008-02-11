@@ -39,7 +39,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           isCacheable="true">
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -53,7 +53,7 @@
         <column name="est_location"/>
         <sqlParamValue name="chroOpt" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
-              (target_sequence_source_id IN ($$chromosomeOptional$$)
+              (target_sequence_source_id IN ($$chromosomeOptionalForEsts$$)
                OR lower(target_sequence_source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
@@ -90,7 +90,7 @@
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
-        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
