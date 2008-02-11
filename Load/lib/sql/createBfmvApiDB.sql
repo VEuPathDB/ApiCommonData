@@ -8,10 +8,10 @@ prompt *****CREATE MATERIALIZED VIEW apidb.GeneAttributes
 CREATE MATERIALIZED VIEW apidb.GeneAttributes AS
 (
 SELECT GeneAttributes.* FROM  
-apidb.GeneAttributes@CRYPTO36UGA
+apidb.GeneAttributes@CRYPTO37
 UNION
 SELECT GeneAttributes.* FROM  
-apidb.GeneAttributes@PLASMO54
+apidb.GeneAttributes@PLASMO541
 UNION
 SELECT GeneAttributes.* FROM  
 apidb.GeneAttributes@TOXO43UGA
@@ -20,10 +20,10 @@ SELECT GeneAttributes.* FROM
 apidb.GeneAttributes@AMITO10
 );
 
-prompt *****select count(*) from apidb.geneattributes@CRYPTO36UGA;
-select count(*) from apidb.geneattributes@CRYPTO36UGA;
-prompt *****select count(*) from apidb.geneattributes@PLASMO54;
-select count(*) from apidb.geneattributes@PLASMO54;
+prompt *****select count(*) from apidb.geneattributes@CRYPTO37;
+select count(*) from apidb.geneattributes@CRYPTO37;
+prompt *****select count(*) from apidb.geneattributes@PLASMO541;
+select count(*) from apidb.geneattributes@PLASMO541;
 prompt *****select count(*) from apidb.geneattributes@TOXO43UGA;
 select count(*) from apidb.geneattributes@TOXO43UGA;
 prompt *****select count(*) from apidb.geneattributes@AMITO10;
@@ -41,10 +41,10 @@ prompt *****CREATE MATERIALIZED VIEW apidb.SequenceAttributes
 CREATE MATERIALIZED VIEW apidb.SequenceAttributes AS
 (
 SELECT SequenceAttributes.* FROM  
-apidb.SequenceAttributes@CRYPTO36UGA
+apidb.SequenceAttributes@CRYPTO37
 UNION
 SELECT SequenceAttributes.* FROM  
-apidb.SequenceAttributes@PLASMO54
+apidb.SequenceAttributes@PLASMO541
 UNION
 SELECT SequenceAttributes.* FROM  
 apidb.SequenceAttributes@TOXO43UGA
@@ -95,10 +95,10 @@ FROM dots.ExternalNASequence enas
 WHERE enas.taxon_id = '88899'
 );
 
-prompt *****select count(*) from apidb.sequenceattributes@CRYPTO36UGA;
-select count(*) from apidb.sequenceattributes@CRYPTO36UGA;
-prompt *****select count(*) from apidb.sequenceattributes@PLASMO54;
-select count(*) from apidb.sequenceattributes@PLASMO54;
+prompt *****select count(*) from apidb.sequenceattributes@CRYPTO37;
+select count(*) from apidb.sequenceattributes@CRYPTO37;
+prompt *****select count(*) from apidb.sequenceattributes@PLASMO541;
+select count(*) from apidb.sequenceattributes@PLASMO541;
 prompt *****select count(*) from apidb.sequenceattributes@TOXO43UGA;
 select count(*) from apidb.sequenceattributes@TOXO43UGA;
 prompt *****select count(*) from apidb.sequenceattributes@AMITO10;
@@ -122,10 +122,10 @@ prompt *****CREATE MATERIALIZED VIEW apidb.EstAttributes
 CREATE MATERIALIZED VIEW apidb.EstAttributes AS
 (
 SELECT EstAttributes.* FROM  
-apidb.EstAttributes@CRYPTO36UGA
+apidb.EstAttributes@CRYPTO37
 UNION
 SELECT EstAttributes.* FROM  
-apidb.EstAttributes@PLASMO54
+apidb.EstAttributes@PLASMO541
 UNION
 SELECT EstAttributes.* FROM  
 apidb.EstAttributes@TOXO43UGA
@@ -142,10 +142,10 @@ SELECT EstAttributes.*,
 FROM  apidb.EstAttributes@AMITO10
 );
 
-prompt *****select count(*) from apidb.estattributes@CRYPTO36UGA;
-select count(*) from apidb.estattributes@CRYPTO36UGA;
-prompt *****select count(*) from apidb.estattributes@PLASMO54;
-select count(*) from apidb.estattributes@PLASMO54;
+prompt *****select count(*) from apidb.estattributes@CRYPTO37;
+select count(*) from apidb.estattributes@CRYPTO37;
+prompt *****select count(*) from apidb.estattributes@PLASMO541;
+select count(*) from apidb.estattributes@PLASMO541;
 prompt *****select count(*) from apidb.estattributes@TOXO43UGA;
 select count(*) from apidb.estattributes@TOXO43UGA;
 prompt *****select count(*) from apidb.estattributes@AMITO10;
@@ -169,10 +169,10 @@ prompt *****CREATE MATERIALIZED VIEW apidb.OrfAttributes
 CREATE MATERIALIZED VIEW apidb.OrfAttributes AS
 (
 SELECT OrfAttributes.* FROM  
-apidb.OrfAttributes@CRYPTO36UGA
+apidb.OrfAttributes@CRYPTO37
 UNION
 SELECT OrfAttributes.* FROM  
-apidb.OrfAttributes@PLASMO54
+apidb.OrfAttributes@PLASMO541
 UNION
 SELECT OrfAttributes.* FROM  
 apidb.OrfAttributes@TOXO43UGA
@@ -181,10 +181,10 @@ SELECT OrfAttributes.* FROM
 apidb.OrfAttributes@AMITO10
 );
 
-prompt *****select count(*) from apidb.orfattributes@CRYPTO36UGA;
-select count(*) from apidb.orfattributes@CRYPTO36UGA;
-prompt *****select count(*) from apidb.orfattributes@PLASMO54;
-select count(*) from apidb.orfattributes@PLASMO54;
+prompt *****select count(*) from apidb.orfattributes@CRYPTO37;
+select count(*) from apidb.orfattributes@CRYPTO37;
+prompt *****select count(*) from apidb.orfattributes@PLASMO541;
+select count(*) from apidb.orfattributes@PLASMO541;
 prompt *****select count(*) from apidb.orfattributes@TOXO43UGA;
 select count(*) from apidb.orfattributes@TOXO43UGA;
 prompt *****select count(*) from apidb.orfattributes@AMITO10;
@@ -208,10 +208,10 @@ prompt *****CREATE MATERIALIZED VIEW apidb.SnpAttributes
 CREATE MATERIALIZED VIEW apidb.SnpAttributes AS
 (
 SELECT SnpAttributes.* FROM  
-apidb.SnpAttributes@CRYPTO36UGA
+apidb.SnpAttributes@CRYPTO37
 UNION
 SELECT SnpAttributes.* FROM  
-apidb.SnpAttributes@PLASMO54
+apidb.SnpAttributes@PLASMO541
 UNION
 SELECT SnpAttributes.* FROM  
 apidb.SnpAttributes@TOXO43UGA
@@ -220,10 +220,10 @@ SELECT SnpAttributes.* FROM
 apidb.SnpAttributes@AMITO10
 );
 
-prompt *****select count(*) from apidb.snpattributes@CRYPTO36UGA;
-select count(*) from apidb.snpattributes@CRYPTO36UGA;
-prompt *****select count(*) from apidb.snpattributes@PLASMO54;
-select count(*) from apidb.snpattributes@PLASMO54;
+prompt *****select count(*) from apidb.snpattributes@CRYPTO37;
+select count(*) from apidb.snpattributes@CRYPTO37;
+prompt *****select count(*) from apidb.snpattributes@PLASMO541;
+select count(*) from apidb.snpattributes@PLASMO541;
 prompt *****select count(*) from apidb.snpattributes@TOXO43UGA;
 select count(*) from apidb.snpattributes@TOXO43UGA;
 prompt *****select count(*) from apidb.snpattributes@AMITO10;
@@ -235,3 +235,24 @@ select count(*) from apidb.snpattributes;
 
 
 
+---------------------------
+-- ISOLATES
+---------------------------
+
+prompt *****DROP MATERIALIZED VIEW apidb.IsolateAttributes;
+DROP MATERIALIZED VIEW apidb.IsolateAttributes;
+
+
+prompt *****CREATE MATERIALIZED VIEW apidb.IsolateAttributes
+CREATE MATERIALIZED VIEW apidb.IsolateAttributes AS
+(
+SELECT IsolateAttributes.* FROM  
+apidb.IsolateAttributes@CRYPTO37
+);
+
+prompt *****select count(*) from apidb.Isolateattributes@CRYPTO37;
+select count(*) from apidb.Isolateattributes@CRYPTO37;
+prompt *****select count(*) from apidb.Isolateattributes;
+select count(*) from apidb.Isolateattributes;
+
+----------------------------
