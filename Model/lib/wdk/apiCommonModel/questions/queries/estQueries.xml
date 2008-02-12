@@ -136,7 +136,7 @@
 
     <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
             isCacheable='true'>
-       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="estParams.overlapOrNot"/>
        <paramRef ref="sharedParams.best_alignment_only" 
@@ -171,7 +171,7 @@
                 AND is_best_alignment in ($$best_alignment_only$$)
                 AND percent_identity >= $$min_percent_identity$$
                 AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryId$$)
+                AND library_id in ($$libraryIdGenes$$)
              $$overlapOrNot$$                    
                SELECT i.accession,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ESTALIGNMENTGENESUMMARY i
@@ -180,7 +180,7 @@
                 AND is_best_alignment in ($$best_alignment_only$$)
                 AND percent_identity >= $$min_percent_identity$$
                 AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryId$$)
+                AND library_id in ($$libraryIdGenes$$)
             )          
             GROUP BY accession
             )
