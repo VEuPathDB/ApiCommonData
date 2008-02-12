@@ -388,12 +388,17 @@ sub findOrthologGroups {
   my ($self, $extDbRlsIdA) = @_;
 
 my $sql = "
-select ssg.sequence_id, ssg.sequence_group_id, g.external_database_release_id
+select g.na_feature_id as sequence_id, ssg.group_id as sequence_group_id, g.external_database_release_id
+from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
+where g.source_id = ssg.source_id
+union
+select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
 from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
 where t.name = 'GeneFeature' 
  and g.na_feature_id = ssg.sequence_id
  and t.table_id = ssg.source_table_id
 ";
+
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
   my $gene2orthologGroup = {};
