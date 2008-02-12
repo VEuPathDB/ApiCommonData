@@ -558,35 +558,37 @@ prompt apidb.GoTermList;
 DROP MATERIALIZED VIEW apidb.GoTermList;
 
 CREATE MATERIALIZED VIEW apidb.GoTermList AS
-select * from (  -- work around sometime Oracle bug ORA-00942
-SELECT gf.source_id, o.ontology,
-       DECODE(gail.name, 'Interpro', 'predicted', 'annotated') AS source,
-       apidb.tab_to_string(CAST(COLLECT(DISTINCT gt.name) AS apidb.varchartab), ', ') AS go_terms
-FROM dots.GeneFeature gf, dots.Transcript t,
-     dots.TranslatedAaFeature taf, dots.GoAssociation ga,
-     sres.GoTerm gt, dots.GoAssociationInstance gai,
-     dots.GoAssociationInstanceLoe gail,
-     dots.GoAssocInstEvidCode gaiec, sres.GoEvidenceCode gec,
-     (SELECT gr.child_term_id AS go_term_id, gp.name AS ontology
-      FROM sres.GoRelationship gr, sres.GoTerm gp
-      WHERE gr.parent_term_id = gp.go_term_id
-        AND gp.go_id in ('GO:0008150','GO:0003674','GO:0005575')) o
-WHERE gf.na_feature_id = t.parent_id
-  AND t.na_feature_id = taf.na_feature_id
-  AND taf.aa_sequence_id = ga.row_id
-  AND ga.table_id = (SELECT table_id
-                     FROM core.TableInfo
-                     WHERE name = 'TranslatedAASequence')
-  AND ga.go_term_id = gt.go_term_id
-  AND ga.go_association_id = gai.go_association_id
-  AND gai.go_assoc_inst_loe_id = gail.go_assoc_inst_loe_id
-  AND gai.go_association_instance_id
-      = gaiec.go_association_instance_id
-  AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
-  AND gt.go_term_id = o.go_term_id
-GROUP BY gf.source_id, o.ontology,
-         DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
-);
+SELECT *
+FROM (  -- work around sometime Oracle bug ORA-00942
+      SELECT source_id, ontology, source, 
+             apidb.tab_to_string(CAST(COLLECT(name) AS apidb.varchartab), ', ')
+               AS go_terms
+      FROM (SELECT DISTINCT gf.source_id, o.ontology, gt.name,
+                  	    DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
+                              AS source
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.GoAssociation ga,
+                 sres.GoTerm gt, dots.GoAssociationInstance gai,
+                 dots.GoAssociationInstanceLoe gail,
+                 dots.GoAssocInstEvidCode gaiec, sres.GoEvidenceCode gec,
+                 (SELECT gr.child_term_id AS go_term_id, gp.name AS ontology
+                  FROM sres.GoRelationship gr, sres.GoTerm gp
+                  WHERE gr.parent_term_id = gp.go_term_id
+                    AND gp.go_id in ('GO:0008150','GO:0003674','GO:0005575')) o
+            WHERE gf.na_feature_id = t.parent_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = ga.row_id
+              AND ga.table_id = (SELECT table_id
+                                 FROM core.TableInfo
+                                 WHERE name = 'TranslatedAASequence')
+              AND ga.go_term_id = gt.go_term_id
+              AND ga.go_association_id = gai.go_association_id
+              AND gai.go_assoc_inst_loe_id = gail.go_assoc_inst_loe_id
+              AND gai.go_association_instance_id
+                  = gaiec.go_association_instance_id
+              AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
+              AND gt.go_term_id = o.go_term_id)
+      GROUP BY source_id, ontology, source);
 
 ---------------------------
 
