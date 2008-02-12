@@ -1114,6 +1114,13 @@
                 select $$primaryKey$$ as source_id, 'OrthoMCL' as dataset,
                 'http://orthomcl.cbil.upenn.edu/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Keyword&q=%22'||$$primaryKey$$||'%22&groupredirect=1' as link_url
                 from dual
+               UNION
+               select $$primaryKey$$ as source_id, 'TDR Targets Database' as dataset,
+               'http://tdrtargets.org/targets/view?gene_name=' || source_id as link_url
+               from apidb.geneattributes
+               where source_id = $$primaryKey$$
+               and project_id = $$projectId$$
+               and organism = 'Plasmodium falciparum 3D7'
                 UNION
                 select gf.source_id,
                 'PlasmoMAP' as dataset,
