@@ -585,7 +585,7 @@ FROM (  -- work around sometime Oracle bug ORA-00942
               AND ga.go_association_id = gai.go_association_id
               AND gai.go_assoc_inst_loe_id = gail.go_assoc_inst_loe_id
               AND gai.go_association_instance_id
-b                  = gaiec.go_association_instance_id
+                  = gaiec.go_association_instance_id
               AND gaiec.go_evidence_code_id = gec.go_evidence_code_id
               AND gt.go_term_id = o.go_term_id)
       GROUP BY source_id, ontology, source);
