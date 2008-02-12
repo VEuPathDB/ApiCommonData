@@ -6,6 +6,8 @@ use GUS::Pipeline::NfsCluster;
 use GUS::Pipeline::SshCluster;
 use GUS::Pipeline::Manager;
 
+use File::Basename;
+
 chomp(my $pipelineScript = `basename $0`);
 
 ## NOTE: at the bottom of this file are the old "steps specific property
@@ -231,6 +233,31 @@ sub createDataDir {
  $mgr->endStep($signal);
 }
 
+
+sub sqlLoader {
+  my ($mgr, $ctrl) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $shortName = basename($ctrl);
+  my $signal = "bulkLoad-$shortName";
+  my $log = $ctrl. ".log";
+
+  return if $mgr->startStep("Bulk Loading $ctrl", $signal);
+
+  my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
+
+  my $u = $gusconfig->{props}->{databaseLogin};
+  my $pw = $gusconfig->{props}->{databasePassword};
+  my ($dbi,$oracle,$db) = split(':', $gusconfig->{props}->{dbiDsn});
+
+  $mgr->runCmd("sqlldr $u/$pw\@$db control=$ctrl log=$log");
+
+  $mgr->endStep($signal);
+}
 
 
 
