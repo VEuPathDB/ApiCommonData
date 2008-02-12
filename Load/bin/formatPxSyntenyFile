@@ -20,77 +20,133 @@ use Getopt::Long qw(GetOptions);
 my $verbose = 0;
 my $inputFile;
 my $outputFile;
+my $agpFile;
 
-my $JOIN_DISTANCE = 5000;
+my $JOIN_DISTANCE = 100;
 
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s" => \$inputFile,
            "outputFile=s"    => \$outputFile,
-          );
+           "agpFile=s" => \$agpFile,
+         );
 
 unless ($inputFile){ 
   print STDERR "Please provide input file\n\nUSAGE: formatPxSyntenyFile --inputFile <FILEPATH> --outputFile <FILEPATH> [--verbose]\n";
   exit;
 }
 
+$outputFile = $inputFile . "-synteny" unless($outputFile);
 
-open(FILE, "$inputFile") or die "Could not open file '$inputFile': $!\n";
+my $agp = &readAgpFile($agpFile) if($agpFile);
 
-open(OUT, ">$outputFile") or die "Could not open file '$outputFile' for writing: $!\n";
-
-
-my $prevSynteny;
-
-while(my $line = <FILE>){
-  chomp $line;
-
-  my @values = split("\t",$line);
+my $joined = &readInputFile($inputFile);
+&unassembleAndPrint($outputFile, $joined);
 
 
-  my $a_seq = {contig => $values[0],
-               start => $values[1],
-               end => $values[2],
-               strand => $values[3],
-              };
+#--------------------------------------------------------------------------------
 
-  my $b_seq = {contig => $values[4],
-               start => $values[5],
-               end => $values[6],
-               strand => $values[7],
-              };
+sub readInputFile {
+  my ($fn) = @_;
 
+  open(FILE, $fn) or die "Could not open file $fn for reading: $!\n";
 
-  unless($a_seq->{strand} eq '+') {
-    my $contig = $b_seq->{contig};
-    die "Expected [+] strand for the contig $contig";
+  my @lines;
+  my $prevSynteny;
+
+  while(<FILE>){
+    chomp;
+
+    my @values = split("\t",$_);
+
+    my $a_seq = {contig => $values[0],
+                 start => $values[1],
+                 end => $values[2],
+                 strand => $values[3],
+                };
+
+    my $b_seq = {contig => $values[4],
+                 start => $values[5],
+                 end => $values[6],
+                 strand => $values[7],
+                };
+
+    unless($a_seq->{strand} eq '+') {
+      my $contig = $b_seq->{contig};
+      die "Expected [+] strand for the contig $contig";
+    }
+
+    my $synteny = [$a_seq, $b_seq];
+
+    if(my $newPrev = &combinePrev($prevSynteny, $synteny)) {
+      $prevSynteny = $newPrev;
+      next;
+    }
+
+    push @lines, $prevSynteny;
+    $prevSynteny = $synteny;
   }
 
-  my $synteny = [$a_seq, $b_seq];
+  push @lines, $prevSynteny;
 
-  if($b_seq->{contig} =~ /^assembled/) {
-    die "Cannot use assembled as the reference genome";
-  }
+  close FILE;
 
-  if(my $newPrev = &combinePrev($prevSynteny, $synteny)) {
-    $prevSynteny = $newPrev;
-    next;
-  }
-
-  &printLine(@$prevSynteny);
-  $prevSynteny = $synteny;
+  return \@lines;
 }
 
-# dont' forget the last one
-&printLine(@$prevSynteny);
+#--------------------------------------------------------------------------------
 
+sub unassembleAndPrint {
+  my ($outFile, $lines) = @_;
 
-close(OUT);
-close(FILE);
+  open(OUT, ">$outFile") or die "Could not open file '$outFile' for writing: $!\n";
+
+  foreach my $synteny (@$lines) {
+    my ($a_seq, $b_seq) = @$synteny;
+
+    if($b_seq->{contig} =~ /^assembled/ && $agpFile) {
+      my $unassembled = &replaceAssembled($agp, $b_seq);
+
+      my $bLength = $b_seq->{end} - $b_seq->{start};
+
+      my $shift = 0;
+      foreach(@$unassembled) {
+        $_->{shift} = $shift;
+
+        $shift = printLine($a_seq, $_, $bLength);
+      }
+    }
+    elsif($b_seq->{contig} !~ /^assembled/) {
+      printLine($a_seq, $b_seq, 0);
+    }
+    else {
+      die "Cannot use assembled as the reference genome";
+    }
+  }
+  close OUT;
+}
+
+#--------------------------------------------------------------------------------
+
+sub readAgpFile {
+  my ($fn) = @_;
+
+  open(FILE, $fn) or die "Cannot open file $fn for reading:$!";
+
+  my @agp;
+
+  while(<FILE>) {
+    chomp;
+    push(@agp, $_);
+  }
+  close FILE;
+
+  return \@agp;
+}
 
 #--------------------------------------------------------------------------------
 
 sub printLine {
-  my ($a, $b) = @_;
+  my ($a, $b, $bTot) = @_;
 
   my $aContig = $a->{contig};
   my $aStart = $a->{start};
@@ -104,8 +160,18 @@ sub printLine {
   my $bLength = $bEnd - $bStart;
   my $bStrand = $b->{strand};
 
-#  print OUT "$aContig\t$aStart\t$aEnd\t$aStrand\t$bContig\t$bStart\t$bEnd\t$bStrand\n";
+  my $shift = $b->{shift};
+
+  if($bTot) {
+    $aLength = int ((($bEnd - $bStart) / $bTot ) * $aLength);
+    $bLength = $bEnd - $bStart;
+    $aStart = $aStart + $shift;
+  }
+
+  #print  "$aContig\t$aStart\t$aEnd\t$aStrand\t$bContig\t$bStart\t$bEnd\t$bStrand\n";
   print OUT "$bContig\t$aContig\t$bStart\t$bLength\t$aStart\t$aLength\t$bStrand\n";    
+
+  return $aStart + $aLength;
 }
 
 #--------------------------------------------------------------------------------
@@ -142,3 +208,74 @@ sub combinePrev {
     }
   }
 }
+
+#--------------------------------------------------------------------------------
+
+sub replaceAssembled { 
+  my ($agp, $seq) = @_; 
+ 
+  my $input = $seq->{contig};
+  my $start = $seq->{start};
+  my $stop = $seq->{end};
+  my $strand = $seq->{strand};
+
+  my @v; 
+ 
+
+  foreach(@$agp) { 
+    my @ar = split(/\t/, $_); 
+ 
+    my $assembly = $ar[0]; 
+    my $assemblyStart = $ar[1]; 
+    my $assemblyStop = $ar[2]; 
+    my $type = $ar[4]; 
+ 
+    my $contig = $ar[5]; 
+    my $contigStart = $ar[6]; 
+    my $contigStop = $ar[7]; 
+    my $contigStrand = $ar[8]; 
+
+    next unless($type eq 'D'); 
+    my $shift = $assemblyStart - $contigStart; 
+    my $checkShift = $assemblyStop - $contigStop; 
+ 
+    die("Cannot determine shift") unless($shift == $checkShift); 
+
+    if($assembly eq $input && ((($start >= $assemblyStart && $start <= $assemblyStop) 
+                                || ($stop >= $assemblyStart && $stop <= $assemblyStop)) ||  
+                               $start < $assemblyStart && $stop > $assemblyStop )) { 
+
+      my ($newStart, $newStop, $newStrand); 
+ 
+      # the +1 and -1 is because of a 1 off error in the sliceAlign program 
+      if($contigStrand eq '+') { 
+        $newStart = $start < $assemblyStart ? $contigStart : $start - $assemblyStart + $contigStart + 1; 
+        $newStop = $stop > $assemblyStop ? $contigStop : $stop - $assemblyStart + $contigStart;  
+        $newStrand = $strand; 
+      } 
+      else { 
+        $newStart = $start < $assemblyStart ? $contigStop : $assemblyStop - $start + $contigStart - 1; 
+        $newStop = $stop > $assemblyStop ? $contigStart : $assemblyStop - $stop + $contigStart;   
+        $newStrand = $strand eq '+' ? '-' : '+'; 
+      } 
+
+      my $new;
+      if($newStart <= $newStop) { 
+        $new = {contig => $contig,
+                start => $newStart,
+                end => $newStop,
+                strand => $newStrand,
+               };
+      } 
+      else { 
+        $new = {contig => $contig,
+                start => $newStop,
+                end => $newStart,
+                strand => $newStrand,
+               };
+      }
+      push @v, $new;
+    }
+  }
+  return \@v; 
+} 
