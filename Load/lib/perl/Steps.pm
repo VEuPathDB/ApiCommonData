@@ -3251,7 +3251,7 @@ sub modifyFile {
 }
 
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $bAgpFile) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntanySpans";
@@ -3262,7 +3262,10 @@ sub insertMercatorSyntenySpans {
 
   my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec'";
 
-  $mgr->runCmd("formatPxSyntenyFile --inputFile $file --outputFile $out");
+  my $formatCmd = "formatPxSyntenyFile --inputFile $file --outputFile $out";
+  $formatCmd = $formatCmd . " --agpFile $bAgpFile" if($bAgpFile);
+
+  $mgr->runCmd($formatCmd);
   $mgr->runPlugin($signal,
 		  "ApiCommonData::Load::Plugin::InsertSyntenySpans", $args,
 		  "Inserting mercator-MAVID Synteny Spans");
