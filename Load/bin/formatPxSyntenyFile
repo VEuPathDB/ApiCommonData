@@ -13,6 +13,8 @@ use warnings;
 
 use Data::Dumper;
 
+use List::Util qw[min max];
+
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 use Getopt::Long qw(GetOptions);
@@ -45,6 +47,19 @@ my $joined = &readInputFile($inputFile);
 
 #--------------------------------------------------------------------------------
 
+sub makeControledHash {
+  my ($contig, $start, $end, $strand) = @_;
+
+  return {contig => $contig,
+          start => min($start, $end),
+          end => max($start, $end),
+          strand => $strand,
+         };
+}
+
+
+#--------------------------------------------------------------------------------
+
 sub readInputFile {
   my ($fn) = @_;
 
@@ -58,17 +73,8 @@ sub readInputFile {
 
     my @values = split("\t",$_);
 
-    my $a_seq = {contig => $values[0],
-                 start => $values[1],
-                 end => $values[2],
-                 strand => $values[3],
-                };
-
-    my $b_seq = {contig => $values[4],
-                 start => $values[5],
-                 end => $values[6],
-                 strand => $values[7],
-                };
+    my $a_seq = &makeControledHash($values[0], $values[1], $values[2], $values[3]);
+    my $b_seq = &makeControledHash($values[4], $values[5], $values[6], $values[7]);
 
     unless($a_seq->{strand} eq '+') {
       my $contig = $b_seq->{contig};
@@ -106,7 +112,7 @@ sub unassembleAndPrint {
     if($b_seq->{contig} =~ /^assembled/ && $agpFile) {
       my $unassembled = &replaceAssembled($agp, $b_seq);
 
-      my $bLength = $b_seq->{end} - $b_seq->{start};
+      my $bLength = abs($b_seq->{end} - $b_seq->{start});
 
       my $shift = 0;
       foreach(@$unassembled) {
@@ -148,6 +154,8 @@ sub readAgpFile {
 sub printLine {
   my ($a, $b, $bTot) = @_;
 
+#  print "BTOT=$bTot\n";
+
   my $aContig = $a->{contig};
   my $aStart = $a->{start};
   my $aEnd = $a->{end};
@@ -168,6 +176,13 @@ sub printLine {
     $aStart = $aStart + $shift;
   }
 
+  if($aLength < 0 ) {
+    print "Btot=$bTot\n";
+    print "ALength=$aLength\n";
+    print Dumper $a;
+    print Dumper $b;
+    die "cannot have length < 0, $aLength";
+  }
   #print  "$aContig\t$aStart\t$aEnd\t$aStrand\t$bContig\t$bStart\t$bEnd\t$bStrand\n";
   print OUT "$bContig\t$aContig\t$bStart\t$bLength\t$aStart\t$aLength\t$bStrand\n";    
 
@@ -189,9 +204,10 @@ sub combinePrev {
 
   # is the previous line continuous with the current line?
   if($prevA->{contig} eq $thisA->{contig} && $prevB->{contig} eq $thisB->{contig} && 
-     $prevB->{strand} eq $thisB->{strand} && $thisA->{start} - $prevA->{end} <= $JOIN_DISTANCE) {
+     $prevB->{strand} eq $thisB->{strand} && $thisA->{start} - $prevA->{end} <= $JOIN_DISTANCE &&
+     $prevA->{start} < $thisA->{start}) {
 
-    if($thisB->{start} - $prevB->{end} <= $JOIN_DISTANCE && $prevB->{strand} eq '+') {
+    if($prevB->{start} < $thisB->{start} && $thisB->{start} - $prevB->{end} <= $JOIN_DISTANCE) {
 
       $prevA->{end} = $thisA->{end};
       $prevB->{end} = $thisB->{end};
@@ -199,8 +215,7 @@ sub combinePrev {
       return [$prevA, $prevB];
     }
 
-    if($prevB->{start} - $thisB->{end} <= $JOIN_DISTANCE && $prevB->{strand} eq '-') {
-
+    if($prevB->{start} > $thisB->{start} && $prevB->{start} - $thisB->{end} <= $JOIN_DISTANCE) {
       $prevA->{end} = $thisA->{end};
       $prevB->{start} = $thisB->{start};
 
@@ -213,17 +228,18 @@ sub combinePrev {
 
 sub replaceAssembled { 
   my ($agp, $seq) = @_; 
- 
+
+  my $strand = $seq->{strand}; 
   my $input = $seq->{contig};
-  my $start = $seq->{start};
-  my $stop = $seq->{end};
-  my $strand = $seq->{strand};
+  my $start = min($seq->{start}, $seq->{end}) ;
+  my $stop = max($seq->{start}, $seq->{end});
 
+#  print "$start\t$stop\t$input\t$strand\n";
   my @v; 
- 
 
-  foreach(@$agp) { 
-    my @ar = split(/\t/, $_); 
+  foreach my $line (@$agp) {
+
+    my @ar = split(/\t/, $line); 
  
     my $assembly = $ar[0]; 
     my $assemblyStart = $ar[1]; 
@@ -241,9 +257,11 @@ sub replaceAssembled {
  
     die("Cannot determine shift") unless($shift == $checkShift); 
 
-    if($assembly eq $input && ((($start >= $assemblyStart && $start <= $assemblyStop) 
-                                || ($stop >= $assemblyStart && $stop <= $assemblyStop)) ||  
-                               $start < $assemblyStart && $stop > $assemblyStop )) { 
+    if($assembly eq $input && (($start >= $assemblyStart && $start <= $assemblyStop) ||
+                               ($stop >= $assemblyStart && $stop <= $assemblyStop) ||  
+                               ($start < $assemblyStart && $stop > $assemblyStop))) { 
+
+#      print $line."\n";
 
       my ($newStart, $newStop, $newStrand); 
  
@@ -258,6 +276,15 @@ sub replaceAssembled {
         $newStop = $stop > $assemblyStop ? $contigStart : $assemblyStop - $stop + $contigStart;   
         $newStrand = $strand eq '+' ? '-' : '+'; 
       } 
+
+
+      if($newStart < 0) {
+        print "$start-$stop:$strand\n";
+        print "$newStart-$newStop:$newStrand\n";
+        print join("\t", @ar) . "\n";
+        die "Error in new start and end locations: $newStart-$newStop";
+      }
+
 
       my $new;
       if($newStart <= $newStop) { 
@@ -277,5 +304,7 @@ sub replaceAssembled {
       push @v, $new;
     }
   }
+#  print Dumper \@v;
+
   return \@v; 
 } 
