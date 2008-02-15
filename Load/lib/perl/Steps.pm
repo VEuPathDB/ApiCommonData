@@ -4721,6 +4721,25 @@ EOF
   $mgr->endStep($signal);
 }
 
+# generate and cache Domain keywords for each group
+sub generateOrthomclDomainKeywords{
+   my ($mgr, $addedArgs) = @_;
+
+   my $signal = "generateOrthomclDomainKeywords";
+   return if $mgr->startStep("Starting Data Load $signal", $signal);
+   
+
+   my $args = <<"EOF";
+$addedArgs \\
+EOF
+
+   $mgr->runPlugin($signal, 
+         "OrthoMCLData::Load::Plugin::InsertGroupDomains", 
+         $args,
+         "Generating Orthomcl Domain Keywords");
+}
+
+
 # update ortholog group fields, and load MSA results
 sub createBiolayoutData {
   my ($mgr, $rbhFile, $svgTemplate) = @_;
