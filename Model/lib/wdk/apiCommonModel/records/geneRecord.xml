@@ -357,11 +357,17 @@
             <linkAttribute name="LinkForStrainComparison"
                            displayName="Strains"
                            visible="$$strain_a_disp$$ vs $$strain_b_disp$$">
-                 <url>
+                 <url excludeProjects="ToxoDB">
                     <![CDATA[
                       processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=$$strain_a_query$$&myMultiProp%28snp_strain_m%29=$$strain_b_query$$&questionSubmit=Get+Answer
                     ]]>
                  </url>
+                 <url includeProjects="ToxoDB">
+                    <![CDATA[
+                      processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=Tg-$$strain_a_query$$&myMultiProp%28snp_strain_m%29=Tg-$$strain_b_query$$&questionSubmit=Get+Answer
+                    ]]>
+                 </url>
+
             </linkAttribute>
 
 
@@ -976,7 +982,8 @@
             </text>
             <text includeProjects="ToxoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+AlignmentSNPs;options=AlignmentSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SNPs+AlignmentSNPs;options=SNPs+AlignmentSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+
                 ]]>
             </text>
          </textAttribute>
