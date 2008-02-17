@@ -231,24 +231,30 @@
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual
             </sql>
+
 <sql includeProjects="GiardiaDB">
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
              </sql>
+
 <sql includeProjects="TrichDB">
                  SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
             </sql>
+
  <sql includeProjects="ToxoDB">
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
              </sql>
+
 <sql includeProjects="PlasmoDB">
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
              </sql>
+
             <sql  includeProjects="ApiDB">
 (
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 0 as idx from dual UNION
+                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal, 1 as idx from dual UNION
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal , 2 as idx from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal, 3 as idx  from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal , 4 as idx from dual UNION
@@ -368,6 +374,8 @@
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
+SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
+ SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
