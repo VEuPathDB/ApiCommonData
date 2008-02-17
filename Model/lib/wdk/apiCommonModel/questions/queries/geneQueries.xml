@@ -1342,8 +1342,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
-       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
+       <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.max_number_best_alignments" groupRef="paramGroups.advancedParams" excludeProjects="CryptoDB"/>
@@ -1363,7 +1363,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND s.is_best_alignment in ($$best_alignment_only$$)
             AND s.percent_identity >= $$min_percent_identity$$
             AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
-            AND s.library_id in ($$libraryId$$)
+            AND s.library_id in ($$libraryIdGenes$$)
             AND s.target_taxon_id in ($$organism$$)
             AND e.source_id = s.accession
             AND e.best_alignment_count <= $$max_number_best_alignments$$
@@ -1391,7 +1391,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND (query_end - query_start) >= $$bp_overlap_gte$$ 
               AND blat.max_target_gap < 10000 
               AND query.library_id = lib.library_id
-              AND lib.library_id in ($$libraryId$$)
+              AND lib.library_id in ($$libraryIdGenes$$)
               AND blat.is_best_alignment in ($$best_alignment_only$$)
               AND blat.is_consistent in ($$high_confidence_only$$)
               AND blat.query_na_sequence_id = asbl.na_sequence_id
@@ -1406,8 +1406,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByESTOverlap" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-               <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTs"/>
-	       <paramRef ref="sharedParams.libraryId"/>
+               <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
+	       <paramRef ref="sharedParams.libraryIdGenes"/>
 	       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
 	       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
 	       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>

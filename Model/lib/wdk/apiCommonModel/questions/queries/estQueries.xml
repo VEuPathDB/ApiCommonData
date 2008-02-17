@@ -39,7 +39,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           isCacheable="true">
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -53,7 +53,7 @@
         <column name="est_location"/>
         <sqlParamValue name="chroOpt" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
-              (target_sequence_source_id IN ($$chromosomeOptional$$)
+              (target_sequence_source_id IN ($$chromosomeOptionalForEsts$$)
                OR lower(target_sequence_source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
@@ -89,7 +89,7 @@
     <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
-        <paramRef ref="sharedParams.chromosomeOptional"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -135,7 +135,7 @@
 
     <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
             isCacheable='true'>
-       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="estParams.overlapOrNot"/>
        <paramRef ref="sharedParams.best_alignment_only" 
@@ -170,7 +170,7 @@
                 AND is_best_alignment in ($$best_alignment_only$$)
                 AND percent_identity >= $$min_percent_identity$$
                 AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryId$$)
+                AND library_id in ($$libraryIdGenes$$)
              $$overlapOrNot$$                    
                SELECT i.accession,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ESTALIGNMENTGENESUMMARY i
@@ -179,7 +179,7 @@
                 AND is_best_alignment in ($$best_alignment_only$$)
                 AND percent_identity >= $$min_percent_identity$$
                 AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryId$$)
+                AND library_id in ($$libraryIdGenes$$)
             )          
             GROUP BY accession
             )
@@ -191,7 +191,7 @@
 
     <wsQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="estParams.overlapOrNot"/>
        <wsColumn name="source_id" width="60" wsName="source_id"/>
