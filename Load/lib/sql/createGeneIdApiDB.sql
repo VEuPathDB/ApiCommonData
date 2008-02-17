@@ -8,21 +8,21 @@ prompt *****CREATE MATERIALIZED VIEW apidb.GeneId
 CREATE MATERIALIZED VIEW apidb.GeneId AS
 (
 SELECT 'CryptoDB' AS project_id, GeneId.* FROM  
-apidb.GeneId@CRYPTO36UGA
+apidb.GeneId@crypto
 UNION
 SELECT 'PlasmoDB' AS project_id, GeneId.* FROM  
-apidb.GeneId@PLASMO54
+apidb.GeneId@plasmo
 UNION
 SELECT 'ToxoDB' AS project_id, GeneId.* FROM  
-apidb.GeneId@TOXO43UGA
+apidb.GeneId@toxo
 );
 
-prompt *****select count(*) from apidb.geneid@CRYPTO36UGA;
-select count(*) from apidb.geneid@CRYPTO36UGA;
-prompt *****select count(*) from apidb.geneid@PLASMO54;
-select count(*) from apidb.geneid@PLASMO54;
-prompt *****select count(*) from apidb.geneid@TOXO43UGA;
-select count(*) from apidb.geneid@TOXO43UGA;
+prompt *****select count(*) from apidb.geneid@crypto;
+select count(*) from apidb.geneid@crypto;
+prompt *****select count(*) from apidb.geneid@plasmo;
+select count(*) from apidb.geneid@plasmo;
+prompt *****select count(*) from apidb.geneid@toxo;
+select count(*) from apidb.geneid@toxo;
 prompt *****select count(*) from apidb.geneid;
 select count(*) from apidb.geneid;
 
