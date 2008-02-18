@@ -75,11 +75,11 @@
               SELECT  strain_a as strain_a_disp, '@PROJECT_ID@' as project_id,
               strain_b as strain_b_disp, 
               CASE WHEN strain_a = 'ME49' THEN 'ME49 (type II)' 
-              WHEN strain_a = 'RH' THEN 'RH'
+              WHEN strain_a = 'RH' THEN 'RH (type I)'
               WHEN strain_a = 'VEG' THEN 'VEG (type III)'
               WHEN strain_a = 'GT1' THEN 'GT1 (type I)' ELSE strain_a END as strain_a_query,
               CASE WHEN strain_b = 'ME49' THEN 'ME49 (type II)' 
-              WHEN strain_b = 'RH' THEN 'RH'
+              WHEN strain_b = 'RH' THEN 'RH (type I)'
               WHEN strain_b = 'VEG' THEN 'VEG (type III)'
               WHEN strain_b = 'GT1' THEN 'GT1 (type I)' ELSE strain_b END as strain_b_query,
               cds_length,source_id as gene_source_id,                
