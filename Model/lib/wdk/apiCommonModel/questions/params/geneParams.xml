@@ -2655,8 +2655,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <enumParam name="ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB"
              prompt="Assay Type"
              multiPick="true"
-             visible="true"
-             displayType="checkBox">
+             visible="true">
+
+<!--             displayType="checkBox">  -->
+
       <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
           <enumValue includeProjects="ApiDB,CryptoDB">
@@ -2680,49 +2682,66 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <internal>Wastling MassSpec MudPit Insoluble</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[Insoluble Excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <display><![CDATA[Insoluble Excysted Fraction LC-MS/MS<sup>&#167;</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[Insoluble Non-excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <display><![CDATA[Insoluble Non-excysted Fraction LC-MS/MS<sup>&#167;</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[Soluble Excysted and Non-excysted Fraction LC-MS/MS<sup>&#167;</sup>]]></display>
+            <display><![CDATA[Soluble Excysted and Non-excysted Fraction LC-MS/MS<sup>&#167;</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</term>
             <internal>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[1D Gel germinated deglycosylated oocyst wall preparation 08-14-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[1D Gel germinated deglycosylated oocyst wall preparation 08-14-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>1D Gel germinated deglycosylated oocyst wall preparation 08-14-2006</term>
             <internal>1D Gel germinated deglycosylated oocyst wall preparation 08-14-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[1D Gel germinated oocyts wall preparation 05-16-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[1D Gel germinated oocyts wall preparation 05-16-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>1D Gel germinated oocyts wall preparation 05-16-2006</term>
             <internal>1D Gel germinated oocyts wall preparation 05-16-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[1D Gel germinated oocyst wall preparation 06-24-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[1D Gel germinated oocyst wall preparation 06-24-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>1D Gel germinated oocyst wall preparation 06-24-2006</term>
             <internal>1D Gel germinated oocyst wall preparation 06-24-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[MS Membrane fraction 10-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[MS Membrane fraction 10-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>MS Membrane fraction 10-2006</term>
             <internal>MS Membrane fraction 10-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[1D Gel Membrane fraction 10-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[1D Gel Membrane fraction 10-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>1D Gel Membrane fraction 10-2006</term>
             <internal>1D Gel Membrane fraction 10-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[1D Gel Membrane fraction 12-2006<sup>&#165;</sup>]]></display>
+            <display><![CDATA[1D Gel Membrane fraction 12-2006<sup>&#165;</sup> (C.p.)]]></display>
             <term>1D Gel Membrane fraction 12-2006</term>
             <internal>1D Gel Membrane fraction 12-2006</internal>
+          </enumValue>
+
+
+ <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Waters Female Gametes (P.b)]]></display>
+            <term>Waters Female Gametes</term>
+            <internal>Waters Female Gametes</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Waters Male Gametes (P.b)]]></display>
+            <term>Waters Male Gametes</term>
+            <internal>Waters Male Gametes</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Waters Mixed Gametes (P.b)]]></display>
+            <term>Waters Mixed Gametes</term>
+            <internal>Waters Mixed Gametes</internal>
           </enumValue>
 
           <enumValue includeProjects="ApiDB,ToxoDB">
@@ -2766,61 +2785,47 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <internal>Wastling Murray Conoid-depleted Fraction</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 12-2006<sup>3</sup>]]></display>
+            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 12-2006<sup>3</sup> (T.g)]]></display>
             <term>1D Gel Tachyzoite Membrane fraction 12-2006</term>
             <internal>1D Gel Tachyzoite Membrane fraction 12-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[1D Gel Tachyzoite Cytosolic fraction 03-2006<sup>3</sup>]]></display>
+            <display><![CDATA[1D Gel Tachyzoite Cytosolic fraction 03-2006<sup>3</sup> (T.g)]]></display>
             <term>1D Gel Tachyzoite Cytosolic fraction 03-2006</term>
             <internal>1D Gel Tachyzoite Cytosolic fraction 03-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 10-2006<sup>3</sup>]]></display>
+            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 10-2006<sup>3</sup> (T.g)]]></display>
             <term>1D Gel Tachyzoite Membrane fraction 10-2006</term>
             <internal>1D Gel Tachyzoite Membrane fraction 10-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[MS Tachyzoite Membrane fraction 05-02-2006<sup>3</sup>]]></display>
+            <display><![CDATA[MS Tachyzoite Membrane fraction 05-02-2006<sup>3</sup> (T.g)]]></display>
             <term>MS Tachyzoite Membrane fraction 05-02-2006</term>
             <internal>MS Tachyzoite Membrane fraction 05-02-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[MS Tachyzoite Membrane fraction 06-2006<sup>3</sup>]]></display>
+            <display><![CDATA[MS Tachyzoite Membrane fraction 06-2006<sup>3</sup> (T.g)]]></display>
             <term>MS Tachyzoite Membrane fraction 06-2006</term>
             <internal>MS Tachyzoite Membrane fraction 06-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[MS Tachyzoite Membrane fraction 10-2006<sup>3</sup>]]></display>
+            <display><![CDATA[MS Tachyzoite Membrane fraction 10-2006<sup>3</sup> (T.g)]]></display>
             <term>MS Tachyzoite Membrane fraction 10-2006</term>
             <internal>MS Tachyzoite Membrane fraction 10-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[MS Tachyzoite Membrane fraction 05-10-2006<sup>3</sup>]]></display>
+            <display><![CDATA[MS Tachyzoite Membrane fraction 05-10-2006<sup>3</sup> (T.g)]]></display>
             <term>MS Tachyzoite Membrane fraction 05-10-2006</term>
             <internal>MS Tachyzoite Membrane fraction 05-10-2006</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[MS Tachyzoite Membrane fraction 02-03-2006<sup>3</sup>]]></display>
+            <display><![CDATA[MS Tachyzoite Membrane fraction 02-03-2006<sup>3</sup> (T.g)]]></display>
             <term>MS Tachyzoite Membrane fraction 02-03-2006</term>
             <internal>MS Tachyzoite Membrane fraction 02-03-2006</internal>
           </enumValue>
 
-          <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Waters Female Gametes]]></display>
-            <term>Waters Female Gametes</term>
-            <internal>Waters Female Gametes</internal>
-          </enumValue>
-          <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Waters Male Gametes]]></display>
-            <term>Waters Male Gametes</term>
-            <internal>Waters Male Gametes</internal>
-          </enumValue>
-          <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Waters Mixed Gametes]]></display>
-            <term>Waters Mixed Gametes</term>
-            <internal>Waters Mixed Gametes</internal>
-          </enumValue>
+         
 
       </enumList>
     </enumParam>
