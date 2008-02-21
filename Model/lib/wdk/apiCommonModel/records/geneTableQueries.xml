@@ -17,7 +17,7 @@
        <!-- Gene Model -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="GeneModel" isCacheable="false" includeProjects="PlasmoDB,ToxoDBCryptoDB">
+       <sqlQuery name="GeneModel" isCacheable="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="type"/>
@@ -61,7 +61,6 @@
            order by case when gl.is_reversed = 1 then -1 * gm.start_min else gm.start_min end
             ]]>
             </sql>
-            <sql  includeProjects="PlasmoDB,CryptoDB">
         </sqlQuery>
 
 
