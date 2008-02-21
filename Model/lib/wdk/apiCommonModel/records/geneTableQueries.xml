@@ -192,6 +192,7 @@
             <column name="interpro_end_min"/>
             <column name="interpro_e_value"/>
             <sql>
+            <![CDATA[
              select gf.source_id, xd1.name AS interpro_name,
              dr.primary_identifier AS interpro_primary_id, dr.secondary_identifier AS interpro_secondary_id,
              al.start_min AS interpro_start_min, al.end_min AS interpro_end_min,
@@ -224,8 +225,141 @@
              and df.external_database_release_id = xdr3.external_database_release_id
              and xdr3.external_database_id = xd3.external_database_id
              ORDER BY interpro_name, interpro_start_min
+            ]]>
             </sql>
         </sqlQuery>
+
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Transmembrane Domains -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="TMHMM" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="tmf_name"/>
+            <column name="tmf_parent_id"/>
+            <column name="tmf_topology"/>
+            <column name="tmf_start_min"/>
+            <column name="tmf_end_max"/>
+
+            <sql>
+           <![CDATA[
+             select gf.source_id, tmf.aa_feature_id AS tmf_name,
+             tmf.parent_id AS tmf_parent_id, tmf.topology AS tmf_topology,
+             aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max
+             from
+             dots.aalocation aal,
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.transmembraneaafeature tmf
+             where gf.source_id = $$primaryKey$$
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = tmf.aa_sequence_id
+             and tmf.aa_feature_id = aal.aa_feature_id
+             ORDER BY tmf_start_min
+            ]]>           
+          </sql>
+        </sqlQuery>
+
+
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Signal Peptides -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="SignalP" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="spf_name"/>
+            <column name="spf_parent_id"/>
+            <column name="spf_start_min"/>
+            <column name="spf_end_max"/>
+
+            <sql>
+            <![CDATA[
+             select gf.source_id, spf.aa_feature_id AS spf_name,
+             spf.parent_id AS spf_parent_id,
+             1 AS spf_start_min, aal.end_max AS spf_end_max
+             from
+             dots.aalocation aal,
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.signalpeptidefeature spf
+             where gf.source_id = $$primaryKey$$
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = spf.aa_sequence_id
+             and spf.aa_feature_id = aal.aa_feature_id
+             and
+             ( spf.maxy_conclusion +
+               spf.maxc_conclusion +
+               spf.maxs_conclusion +
+               spf.means_conclusion
+             ) >= 3
+             ORDER BY spf_start_min
+             ]]>
+            </sql>
+        </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- BlastP Hits -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="BlastP" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="blastp_feature_id"/>
+            <column name="blastp_name"/>
+            <column name="blastp_parent_id"/>
+            <column name="blastp_score"/>
+            <column name="blastp_start"/>
+            <column name="blastp_end"/>
+            <column name="blastp_description"/>
+            <column name="blastp_expect_value"/>
+            <column name="blastp_percent_identity"/>
+            <column name="blastp_percent_positive"/>
+
+            <sql>
+            <![CDATA[
+             select gf.source_id, sim.similarity_id AS blastp_feature_id,
+             subj.source_id AS blastp_name, sim.query_id AS blastp_parent_id,
+             sim.score AS blastp_score,
+             sim.min_query_start AS blastp_start, sim.max_query_end AS blastp_end,
+             'E() = ' || sim.pvalue_mant || 'e' || sim.pvalue_exp || ', ' || round(100 * sim.number_identical / sim.total_match_length) || '% identity, ' || subj.description AS blastp_description,
+             case when sim.pvalue_mant = 0 then '0' else sim.pvalue_mant || 'e' || sim.pvalue_exp end AS blastp_expect_value,
+             round(sim.number_identical / sim.total_match_length) AS blastp_percent_identity,
+             round(sim.number_positive / sim.total_match_length) AS blastp_percent_positive
+             from
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.similarity sim,
+             core.tableinfo qti,
+             core.tableinfo sti,
+             dots.externalaasequence subj
+             where gf.source_id = $$primaryKey$$
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = sim.query_id
+             and qti.table_id = sim.query_table_id
+             and qti.name = 'TranslatedAASequence'
+             and sti.table_id = sim.subject_table_id
+             and sti.name = 'ExternalAASequence'
+             and subj.aa_sequence_id = sim.subject_id
+             ORDER BY sim.similarity_id
+             ]]>
+            </sql>
+        </sqlQuery>
+
+
+
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
