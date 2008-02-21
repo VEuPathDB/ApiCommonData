@@ -37,11 +37,13 @@
             from dots.GENEFEATURE gf, dots.NALOCATION gl, Dots.NASEQUENCE s,
              (
               select  'exon' as type, ef.parent_id as na_feature_id, el.start_min as start_min , el.end_max as end_max
-              FROM dots.EXONFEATURE ef, dots.NALOCATION el
+              FROM dots.EXONFEATURE ef, dots.NALOCATION el, dots.GENEFEATURE gf
               WHERE ef.na_feature_id = el.na_feature_id
+              and gf.na_feature_id = ef.parent_id
+              and gf.source_id =  $$primaryKey$$
               UNION
               select 'intron' as type, e.parent_id as na_feature_id, l.end_max + 1  as start_min, min(anchors.anchor) - 1 as end_max
-              from dots.EXONFEATURE e, dots.NALOCATION l,
+              from dots.EXONFEATURE e, dots.NALOCATION l,dots.GENEFEATURE gf,
                           (select e.parent_id, l.start_min as anchor
                            from Dots.EXONFEATURE e, Dots.NALOCATION l
                            where e.na_feature_id = l.na_feature_id 
@@ -50,13 +52,15 @@
                            from Dots.EXONFEATURE e, Dots.NALOCATION l
                            where e.na_feature_id = l.na_feature_id ) anchors
              where e.na_feature_id = l.na_feature_id
+             and gf.na_feature_id = e.parent_id
+             and gf.source_id =  $$primaryKey$$
              and anchors.parent_id = e.parent_id
              and anchors.anchor > l.end_max
              group by e.parent_id, l.end_max
              ) gm
            where gm.na_feature_id = gf.na_feature_id
            and s.na_sequence_id = gf.na_sequence_id
-           and gf.source_id = $$primaryKey$$
+           and gf.source_id =  $$primaryKey$$
            and gf.na_feature_id = gl.na_feature_id
            order by case when gl.is_reversed = 1 then -1 * gm.start_min else gm.start_min end
             ]]>
