@@ -1649,14 +1649,16 @@ sub makeDownloadFile {
     my $propertySet = $mgr->{propertySet};
     my $release = $propertySet->getProp('projectRelease');
     my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+    my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-    my $dlDir = "$mgr->{dataDir}/downloadSite/$species";
-    unless (-e $dlDir) {
-        mkdir $dlDir
-          or die "Can not make directory '$dlDir'\n";
-    }
+    my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+
+    $mgr->runCmd("mkdir -p $dlDir");
+
+    die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
     my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
+
     (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
     my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
