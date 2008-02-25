@@ -4672,7 +4672,7 @@ EOF
 ################################################################################
 
 # load the OrthoMCL groups
- sub loadOrthoMCLResults{
+sub loadOrthoMCLResults{
    my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
 
 
@@ -4697,12 +4697,36 @@ EOF
 
 # update ortholog group fields, and load MSA results
 sub updateOrthoMCLGroups {
-  my ($mgr, $seqTable, $msaName) = @_;
+  my ($mgr, $seqTable) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "updateOrthoMCLGroups";
 
-  return if $mgr->startStep("Updating the statistical fields of each group and load MSA results", $signal);
+  return if $mgr->startStep("Updating the statistical fields of each group", $signal);
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $cmd = <<"EOF";
+     orthoPlugin \\
+     \"$gusConfigFile\" \\
+     \"org.apidb.orthomcl.load.plugin.UpdateOrthologGroupPlugin\" \\
+     \"$seqTable\" \\
+     >> $logFile
+EOF
+
+  print STDERR "$cmd\n";
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
+# update ortholog group fields, and load MSA results
+sub loadMsaResult {
+  my ($mgr, $msaName) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "loadMsaResult";
+
+  return if $mgr->startStep("load MSA results", $signal);
 
   my $msaDir = "$mgr->{dataDir}/msa/$msaName/master/mainresult/";
   my $gusConfigFile = $propertySet->getProp('gusConfigFile');
@@ -4712,8 +4736,7 @@ sub updateOrthoMCLGroups {
   my $cmd = <<"EOF";
      orthoPlugin \\
      \"$gusConfigFile\" \\
-     \"org.apidb.orthomcl.load.plugin.UpdateOrthologGroupPlugin\" \\
-     \"$seqTable\" \\
+     \"org.apidb.orthomcl.load.plugin.LoadMsaPlugin\" \\
      \"$msaDir\" \\
      >> $logFile
 EOF
