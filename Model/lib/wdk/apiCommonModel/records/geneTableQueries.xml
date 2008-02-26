@@ -291,7 +291,7 @@
                spf.maxs_conclusion +
                spf.means_conclusion) as conclusion_score,
                ((spf.means_score + spf.maxy_score) / 2) as d_score,
-               spf.signal_probability as signal_probability
+               spf.signal_probability as signal_probability,
                             1 AS spf_start_min, aal.end_max AS spf_end_max
              from
              dots.aalocation aal,
