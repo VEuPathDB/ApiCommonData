@@ -422,6 +422,7 @@
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
+        <column name="orthologs" includeProjects="ApiDB"/>
 
         <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
@@ -447,7 +448,8 @@
        <sql includeProjects="ApiDB">
             <![CDATA[
 
-SELECT DISTINCT sns2.source_id, ext.name as project_id 
+SELECT DISTINCT sns2.source_id, ext.name as project_id,
+        apidb.tab_to_string(CAST(COLLECT(sns1.source_id) AS apidb.varchartab),',') as orthologs 
 FROM $$historyId$$ qr, 
       dots.splicednasequence sns1, 
       dots.sequencesequencegroup ssg1, 
@@ -469,6 +471,7 @@ AND sns2.taxon_id IN
 AND ti.name = 'SplicedNASequence'  
 AND sns2.external_database_release_id=extr.external_database_release_id 
 AND extr.external_database_id=ext.external_database_id  
+group by sns2.source_id, ext.name
 order by project_id,sns2.source_id
 
 
@@ -566,6 +569,8 @@ order by project_id,sns2.source_id
 	    <wsColumn name="source_id" width="32" wsName="source_id"/>
 	    <wsColumn name="project_id" width="32" wsName="project_id"/>
 	    <wsColumn name="sigp_sum_score" width="32" wsName="sigp_sum_score"/>
+            <wsColumn name="nn_d_score" width="32" wsName="nn_d_score"/>
+            <wsColumn name="hmm_signal_probability" width="32" wsName="hmm_signal_probability"/>
 	</wsQuery>   
 
 
