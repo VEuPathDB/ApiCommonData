@@ -1136,7 +1136,7 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
          queryRef="GeneId.GenesWithSignalPeptide"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="organism,location_text,product,sigp_sum_score"
+         summary="organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
          sorting="organism asc,sigp_sum_score desc,location_text asc"
         /> 
         <summary>
@@ -1151,7 +1151,11 @@ Find genes that are predicted to encode a signal peptide.
           ]]>
         </description>
         <dynamicAttributes>
-             <columnAttribute name="sigp_sum_score" displayName="Summary score" align="center"
+             <columnAttribute name="sigp_sum_score" displayName="NN Summary Score" align="center"
+                              inReportMaker="false"/>
+           <columnAttribute name="nn_d_score" displayName="NN D-Score" align="center"
+                              inReportMaker="false"/>
+           <columnAttribute name="hmm_signal_probability" displayName="HMM Signal Probability" align="center"
                               inReportMaker="false"/>
          </dynamicAttributes>
         <propertyList name="specificAttribution">
@@ -2750,7 +2754,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
   <questionSet name="InternalQuestions"
              displayName="Internal Questions"
-             internal="yes">
+             internal="true">
 
   <!--===========================================================================-->
   <!-- Internal questions for the combined winzeler query page  -->
@@ -2978,7 +2982,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
 
   <questionSet name="GeneDumpQuestions" excludeProjects="ApiDB"
              displayName="Gene Data Dump Questions"
-             internal="yes">
+             internal="true">
 
   <!--===========================================================================-->
   <!-- question that retrieves all genes by organism  -->

@@ -527,18 +527,24 @@ order by project_id,sns2.source_id
     <sqlQuery name="GenesWithSignalPeptide" excludeProjects="ApiDB">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.min_sigp_d_score" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.min_sigp_signal_probability" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="sigp_sum_score"/>
+        <column name="nn_d_score"/>
+        <column name="hmm_signal_probability"/>
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id,
              (spf.maxy_conclusion + spf.maxc_conclusion + 
-              spf.maxs_conclusion + spf.means_conclusion ) as sigp_sum_score
+              spf.maxs_conclusion + spf.means_conclusion ) as sigp_sum_score,
+              to_char((spf.means_score + maxy_score) / 2 , '0.99') as nn_d_score,
+              to_char(spf.signal_probability, '0.99') as hmm_signal_probability
             FROM dots.NaSequence ens, dots.GeneFeature gf, 
                  dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.SignalPeptideFeature spf
-            WHERE ens.taxon_id in ($$organism$$)
+            WHERE ens.taxon_id in ($$organism$$) 
               AND ens.na_sequence_id = gf.na_sequence_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
@@ -547,6 +553,8 @@ order by project_id,sns2.source_id
                    spf.maxc_conclusion +
                    spf.maxs_conclusion +
                    spf.means_conclusion ) >= $$min_sigp_sum_score$$ 
+              AND ((spf.means_score + spf.maxy_score) / 2) >= $$min_sigp_d_score$$
+              AND spf.signal_probability >= $$min_sigp_signal_probability$$
            ]]>
        </sql>
     </sqlQuery>
