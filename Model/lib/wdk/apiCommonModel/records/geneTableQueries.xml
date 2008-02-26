@@ -276,15 +276,23 @@
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="spf_name"/>
-            <column name="spf_parent_id"/>
             <column name="spf_start_min"/>
             <column name="spf_end_max"/>
+            <column name="conclusion_score"/>
+            <column name="d_score"/>
+            <column name="signal_probability"/>
 
             <sql>
             <![CDATA[
              select gf.source_id, spf.aa_feature_id AS spf_name,
              spf.parent_id AS spf_parent_id,
-             1 AS spf_start_min, aal.end_max AS spf_end_max
+             (spf.maxy_conclusion +
+               spf.maxc_conclusion +
+               spf.maxs_conclusion +
+               spf.means_conclusion) as conclusion_score,
+               ((spf.means_score + spf.maxy_score) / 2) as d_score,
+               spf.signal_probability as signal_probability
+                            1 AS spf_start_min, aal.end_max AS spf_end_max
              from
              dots.aalocation aal,
              dots.genefeature gf,
@@ -296,13 +304,6 @@
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = spf.aa_sequence_id
              and spf.aa_feature_id = aal.aa_feature_id
-             and
-             ( spf.maxy_conclusion +
-               spf.maxc_conclusion +
-               spf.maxs_conclusion +
-               spf.means_conclusion
-             ) >= 3
-             ORDER BY spf_start_min
              ]]>
             </sql>
         </sqlQuery>
