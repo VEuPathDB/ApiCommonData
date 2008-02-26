@@ -533,6 +533,7 @@ order by project_id,sns2.source_id
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.min_sigp_d_score" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.min_sigp_signal_probability" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.any_or_all_sigp" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="sigp_sum_score"/>
@@ -553,12 +554,12 @@ order by project_id,sns2.source_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = spf.aa_sequence_id
-              AND (spf.maxy_conclusion +
+              AND ((spf.maxy_conclusion +
                    spf.maxc_conclusion +
                    spf.maxs_conclusion +
                    spf.means_conclusion ) >= $$min_sigp_sum_score$$ 
-              AND ((spf.means_score + spf.maxy_score) / 2) >= $$min_sigp_d_score$$
-              AND spf.signal_probability >= $$min_sigp_signal_probability$$
+              $$any_or_all_sigp$$ ((spf.means_score + spf.maxy_score) / 2) >= $$min_sigp_d_score$$
+              $$any_or_all_sigp$$ spf.signal_probability >= $$min_sigp_signal_probability$$)
            ]]>
        </sql>
     </sqlQuery>

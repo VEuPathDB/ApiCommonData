@@ -299,6 +299,24 @@
             <suggest default="0.5"/>
         </stringParam>
 
+    <enumParam name="any_or_all_sigp"
+                     prompt="Matches any or all advanced parameters"
+                     multiPick="false"
+                     quote="false">
+      <help>Union or intersection of advanced parameters.</help>
+      <useTermOnly value="false"/>
+      <enumList>
+        <enumValue>
+          <term>all</term>
+          <internal>AND</internal>
+        </enumValue>  
+        <enumValue>
+          <term>any</term>
+          <internal>OR</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
