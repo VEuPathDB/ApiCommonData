@@ -2936,8 +2936,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          displayName="Genes Orthologous to Genes in a Query Result"
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ApiDB"
               summary="organism,product,orthologs"
+        />
+        <attributesList excludeProjects="ApiDB"
+              summary="organism,product"
         /> 
         <description includeProjects="ApiDB">
            <![CDATA[
