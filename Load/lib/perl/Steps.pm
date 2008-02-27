@@ -1583,7 +1583,7 @@ sub makeOrthomclFastaDownloadFile {
     my $sql = <<"EOF";
     SELECT ot.three_letter_abbrev
 	|| '|' || eas.source_id
-	|| ' | ' || nvl(og.name, 'no group')
+	|| ' | ' || nvl(og.name, 'no_group')
 	|| ' | ' || eas.description,
 	eas.sequence
 	FROM apidb.OrthologGroup og,
@@ -1616,7 +1616,7 @@ sub makeOrthomclGroupsDownloadFile {
 
     die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
-    my $seqFile = "$dlDir/all_orthomcl.out";
+    my $seqFile = "$dlDir/groups_orthomcl-2.txt";
     (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
     my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
