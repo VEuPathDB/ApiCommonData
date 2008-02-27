@@ -1577,8 +1577,58 @@ EOF
 
 }
 
+sub makeOrthomclFastaDownloadFile {
+    my ($mgr, $species, $name, $project) = @_;
 
+    my $sql = <<"EOF";
+    SELECT ot.three_letter_abbrev
+	|| '|' || eas.source_id
+	|| ' | ' || nvl(og.name, 'no group')
+	|| ' | ' || eas.description,
+	eas.sequence
+	FROM apidb.OrthologGroup og,
+	apidb.OrthologGroupAaSequence ogs,
+	dots.ExternalAaSequence eas,
+	apidb.OrthomclTaxon ot
+	WHERE og.ortholog_group_id(+) = ogs.ortholog_group_id
+	AND ogs.aa_sequence_id(+) = eas.aa_sequence_id
+	AND eas.taxon_id = ot.taxon_id
+EOF
 
+    makeDownloadFile($mgr, $species, $name, $sql, $project);
+}
+
+sub makeOrthomclGroupsDownloadFile {
+    my ($mgr, $species, $project) = @_;
+
+    my $signal = "OrthomclGroupsDownloadFile";
+
+    return if $mgr->startStep("Extracting group data from DB", $signal);
+
+    my $propertySet = $mgr->{propertySet};
+    my $release = $propertySet->getProp('projectRelease');
+    my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+    my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+    my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+
+    $mgr->runCmd("mkdir -p $dlDir");
+
+    die "Failed to create $dlDir.\n"  unless (-e $dlDir);
+
+    my $seqFile = "$dlDir/all_orthomcl.out";
+    (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
+
+    my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
+
+    my $cmd = <<"EOF";
+      ga OrthoMCLData::Load::Plugin::MakeGroupsFile --outputFile $seqFile \\
+      --verbose 2>> $logFile
+EOF
+
+    $mgr->runCmd($cmd);
+    $mgr->endStep($signal);
+}
 
 sub makeGenomicDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain,$project) = @_;
@@ -3058,7 +3108,38 @@ sub predictAndPrintPredictedTranscriptSequences {
 		  "Determine and print $species $type from prediction algorithm");
 }
 
+sub formatBlastDownloadFile {
+  my ($mgr,$inputFile,$inputFileDir,$link, $arg, $species, $project) = @_;
 
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $signal = "format$inputFile";
+
+  $signal =~ s/-$release//g;
+
+  return if $mgr->startStep("Formatting $inputFile for blast", $signal);
+
+  my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
+
+  my $inputFile1  = "$siteFileDir/$inputFileDir/$inputFile";
+
+  my $outputDir = "$siteFileDir/webServices/$projectDB/$release/$species";
+
+  $mgr->runCmd("mkdir -p $outputDir");
+
+  die "Failed to create $outputDir.\n" unless (-e $outputDir);
+
+  my $fastalink1 = "$outputDir/$link";
+
+  $mgr->runCmd("ln -s $inputFile1 $fastalink1");
+  $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
+  $mgr->runCmd("rm -rf $fastalink1");
+
+  $mgr->endStep($signal);
+}
 
 sub formatBlastFile {
   my ($mgr,$file,$fileDir,$link,$arg) = @_;
