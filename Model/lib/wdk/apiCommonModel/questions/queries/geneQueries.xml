@@ -450,7 +450,7 @@
             <![CDATA[
 
 SELECT DISTINCT sns2.source_id, ext.name as project_id,
-        apidb.tab_to_string(CAST(COLLECT(sns1.source_id) AS apidb.varchartab),',') as orthologs 
+        apidb.tab_to_string(CAST(COLLECT(qr.source_id) AS apidb.varchartab),',') as orthologs 
 FROM $$historyId$$ qr, 
       dots.splicednasequence sns1, 
       dots.sequencesequencegroup ssg1, 
@@ -1276,7 +1276,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	    includeProjects="ApiDB"        
 		isCacheable="true" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoTrichGiardiaGenes"/>
 	        <paramRef ref="geneParams.min_coil"/>
 	        <paramRef ref="geneParams.max_coil"/>
 	        <paramRef ref="geneParams.min_strand"/>
