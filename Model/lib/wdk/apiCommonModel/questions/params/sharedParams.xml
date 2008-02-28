@@ -822,6 +822,17 @@
         <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+<flatVocabParam name="libraryIdGenes"
+                     queryRef="SharedVQ.EstLibrariesGenes"
+                     prompt="EST Library"
+                     multiPick="true"
+                     quote="false">
+        <help>
+             Select a clone library.
+        </help>
+        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- SNPs -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1382,6 +1393,20 @@
                 ORDER BY term
             </sql>
         </sqlQuery>
+
+ <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
+                       l.library_id AS internal
+                FROM apidb.estattributes att, dots.library l
+                WHERE att.dbest_name = l.dbest_name
+                AND att.project_id = '@PROJECT_ID@'
+                ORDER BY term
+            </sql>
+        </sqlQuery>
+
 
         <wsQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="32" wsName="internal"/>

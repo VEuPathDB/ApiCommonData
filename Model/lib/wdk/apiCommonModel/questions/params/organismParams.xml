@@ -259,6 +259,55 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
 
+ <!--===================================================================-->
+    <!-- with ESTs and Genes  Feb 08 patch so portal can run the genes by est overlap with all sites  -->  
+    <!-- with ESTs and Genes  this query was using organism.withGenes, instead of withESTs, 
+                              but it really does not matter in this case (only Trich/Giardia) so I leave the SQL as in "withGenes"  -->  
+    <!--===================================================================-->
+ <sqlQuery name="withESTsAndGenes" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
+               (SELECT 'Cryptosporidium hominis' AS name, 1 AS rank FROM dual
+                 UNION
+                SELECT 'Cryptosporidium parvum' AS name, 2 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+    </sqlQuery>
+        
+
     <!--===================================================================-->
     <!-- with ESTs -->  
     <!--===================================================================-->
