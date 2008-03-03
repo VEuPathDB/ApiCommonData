@@ -15,6 +15,7 @@ my $projectHome = $ARGV[3];
 		   || $project eq "ToxoDB"
 		   || $project eq "GiardiaDB"
 		   || $project eq "TrichDB"
+		   || $project eq "OrthoMCL"
 		   || $project eq "Common"));
 
 my $urlRoot = "https://www.cbil.upenn.edu/svn";
@@ -26,6 +27,7 @@ my %web2data = ('ApiDB' => 'ApiDB',
 		'CryptoDB' => 'CryptoDB',
 		'PlasmoDB' => 'PlasmoDB',
 		'ToxoDB' => 'ToxoDB',
+		'OrthoMCL' => 'OrthoMCL',
 		'GiardiaDB' => 'AmitoDB',
 		'TrichDB' => 'AmitoDB',
 	       );
@@ -48,11 +50,6 @@ if ($type eq 'website') {
       $p = $web2data{$project} if $sub eq 'Data';
       &doIt("$urlRoot/apidb/$p$sub", "branches", "$project$sub");
     }
-    # until we move plasmodbwebservices into apicommonwebservices
-    if ($project eq 'PlasmoDB') {
-      &doIt("$urlRoot/apidb/PlasmoDBWebService", "branches", "PlasmoDBWebService");
-    }
-
   }
 } else {
 
@@ -96,10 +93,10 @@ sub cmd {
 
 sub usage {
   print STDERR "
-usage:  apiBranch dataprod|website ApiDB|CryptoDB|PlasmoDB|ToxoDB|GiardiaDB|TrichDB|Common <tag> <projectHome>
+usage:  apiBranch dataprod|website ApiDB|CryptoDB|PlasmoDB|ToxoDB|GiardiaDB|TrichDB|OrthoMCL|Common <tag> <projectHome>
 
 <tag>          = the tag to give the branch
-<projectHome>  = an empty project_home directory into which
+<projectHome>  = an empty project_home directory into which to check out the new branch
 
 Branch either the website or data production code for either your project or
 for the common code.  (The branch is created internally in svn, so it does not
