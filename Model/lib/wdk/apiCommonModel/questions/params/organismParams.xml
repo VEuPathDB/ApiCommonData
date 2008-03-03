@@ -446,6 +446,52 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
 
+
+ <!--===================================================================-->
+    <!-- cp-tg-pf-tv-gl
+
+         Choices must be a subset of
+         {Cryptosporidium parvum, Toxoplasma gondii, Plasmodium falciparum, Trichomonas vaginalis, Giardia lamblia }.
+
+         This is enforced with an sqlParamValue named "organism", which is
+         set as a function of the project
+                                                                           -->
+    <!--===================================================================-->
+
+    <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="TrichDB">Trichomonas vaginalis</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="GiardiaDB">Giardia lamblia</sqlParamValue>
+      <sql>
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name = '&&organism&&') organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+    </sqlQuery>
+
+    <wsQuery name="cp-tg-pf-tv-gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
+
     <!--===================================================================-->
     <!-- plasmoWithGenes  -->  
     <!--===================================================================-->
@@ -495,6 +541,170 @@
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
+
+
+
+<!--====================================================================-->
+<!-- withPlamsoTrichGiardiaGenes -->
+<!--====================================================================-->
+
+
+<sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
+                 UNION
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                ) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+    </sqlQuery>
+
+    <wsQuery name="withPlasmoTrichGiardiaGenes" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
+
+
+
+<!--===================================================================-->
+    <!-- tg withPlasmoGenes -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB,CryptoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      
+      <sql includeProjects="PlasmoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name like 'Plasmodium %'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms,
+               (SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+      
+      <sql includeProjects="ToxoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name = 'Toxoplasma gondii' ) organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+
+
+ <sql includeProjects="TrichDB,GiardiaDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
+                 UNION
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                ) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+
+    </sqlQuery>
+
 
     <!--===================================================================-->
     <!-- tg pf -->  
