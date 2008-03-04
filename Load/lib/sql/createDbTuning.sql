@@ -31,8 +31,10 @@ CREATE INDEX dots.NaFeat_SubclassSource_ix
 ON dots.NaFeatureImp (subclass_view, source_id);
 
 CREATE INDEX dots.loc_feat_ix
-       ON dots.NaLocation(na_feature_id, start_min, end_max, is_reversed);
+       ON dots.NaLocation (na_feature_id, start_min, end_max, is_reversed);
 
+CREATE INDEX dots.sim_pval_ix
+       ON dots.Similarity (query_id, pvalue_exp, pvalue_mant, subject_id);
 -------------------------------------------------------------------------------
 
 -- GUS table shortcomings

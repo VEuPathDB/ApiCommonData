@@ -45,7 +45,7 @@
 -- GRANT REFERENCES ON <table> TO apidb;
 -- GRANT SELECT ON <table> TO apidb WITH GRANT OPTION;
 
-set time on timing on pagesize 50000 linesize 100
+set time on timing on pagesize 50000 linesize 100 verify off
 
 prompt apidb.GeneAlias;
 
@@ -201,7 +201,9 @@ create materialized view apidb.FeatureLocation&1 as
 select case
          when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
-                          'TwinScanEt predictions') -- not 'tRNAscan-SE',
+                          'TwinScanEt predictions', -- not 'tRNAscan-SE',
+                          'P. falciparum Evigan Gene Models',
+                          'Pfalciparum workshop annotations reviewed and changed')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
