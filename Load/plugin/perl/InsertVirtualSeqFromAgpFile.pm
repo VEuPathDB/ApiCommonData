@@ -477,9 +477,7 @@ sub validateFileFormat {
     if ($arr[4] !~ /[NU]/ && ($arr[6] !~ /\d+/ || $arr[6] <= 0 || $arr[7] !~ /\d+/ || $arr[7] <= 0 )) { die "Check agp file format, columns 7 and 8 must be a positive numbers when a line represents a sequence piece";}
     if ($arr[4] !~ /[NUWPOG]/) {die "Check file format, the fifth column must be N,U,W,P,O,G, controlled designations of component types";}
     if ($arr[4] !~ /[NU]/ && ($arr[8] !~ /[+-0na]/)){die "Check agp file format lines with sequence pieces, not gaps, must have a 9th column that is +,-,0, or na for orientation/n";}
-    if ($arr[4] =~ /[NU]/ && (! $arr[0..7])){ die "Check agp file format, no gap columns should be empty except column 9";}
-    if ($arr[4] !~ /[NU]/ && (! $arr[0..8])){ die "Check agp file format, no sequence piece columns should be empty";}
-    if ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6])) { die "Check data,col 3 - col 2 should equal col 8 - col 7";}
+    if ($arr[5] !~ /[NU]/ && ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6]))) { die "Check data,col 3 - col 2 should equal col 8 - col 7";}
   }
   $self->log("File format validated\n");
 }
