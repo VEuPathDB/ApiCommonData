@@ -1649,6 +1649,43 @@ CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (sour
 
 CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
 
+-------------------------------------------------------------------------------
+CREATE MATERIALIZED VIEW apidb.SageTagAttributes&1 AS
+SELECT CASE
+         WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
+           THEN 'CryptoDB'
+         WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
+           THEN 'PlasmoDB'
+         WHEN SUBSTR(tn.name, 1, 4) = 'Toxo'
+           THEN 'ToxoDB'
+         WHEN SUBSTR(tn.name, 1, 5) = 'Trich'
+           THEN 'TrichDB'
+         WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in createApidbTuning.sql'
+       END as project_id,
+       s.source_id || '-' || l.start_min || '-' || l.end_max || '.' || l.is_reversed as source_id,
+       f.na_feature_id,
+       s.source_id as sequence_source_id, s.na_sequence_id,
+       l.start_min, l.end_max,
+       l.is_reversed, substr(tn.name, 1, 60) as organism
+from dots.SageTagFeature f, dots.NaLocation l, dots.NaSequence s,
+     sres.TaxonName tn
+where f.na_feature_id = l.na_feature_id
+  and s.na_sequence_id = f.na_sequence_id
+  and s.taxon_id = tn.taxon_id
+  and tn.name_class = 'scientific name';
+
+GRANT SELECT ON apidb.SageTagAttributes&1 TO gus_r;
+
+CREATE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
+             (source_id);
+
+CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
+             (na_sequence_id, start_min, end_max, is_reversed, source_id)
+
+CREATE OR REPLACE SYNONYM apidb.SageTagAttributes FOR apidb.SageTagAttributes&1;
+
 ---------------------------
 -- cleanup
 ---------------------------
