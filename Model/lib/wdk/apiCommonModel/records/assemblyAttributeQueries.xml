@@ -5,7 +5,7 @@
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name ="source_id"/>
-        <column name ="target_source_id"/>
+        <column name ="sequence_id"/>
         <column name ="project_id"/>
         <column name = "start_min" />
         <column name = "end_max" />
@@ -13,7 +13,7 @@
         <column name = "context_end" />
      <sql includeProjects="ToxoDB,CryptoDB">
       <![CDATA[ 
-      SELECT a.source_id, s.source_id AS target_source_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min,
+      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min,
       blat.target_end AS end_max, 
       trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
