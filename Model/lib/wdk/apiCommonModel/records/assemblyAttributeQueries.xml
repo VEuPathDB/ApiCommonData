@@ -1,0 +1,34 @@
+<wdkModel>
+
+    <querySet name="AssemblyAttributes">
+        <sqlQuery name="Bfmv" isCacheable="false">
+        <paramRef ref="recordParams.primaryKey"/>
+        <paramRef ref="recordParams.projectId"/>
+        <column name ="source_id"/>
+        <column name ="target_source_id"/>
+        <column name ="project_id"/>
+        <column name = "start_min" />
+        <column name = "end_max" />
+        <column name = "context_start" />
+        <column name = "context_end" />
+     <sql includeProjects="ToxoDB,CryptoDB">
+      <![CDATA[ 
+      SELECT a.source_id, s.source_id AS target_source_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min,
+      blat.target_end AS end_max, 
+      trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
+      trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
+      blat.target_start - 10000 as context_start,
+      blat.target_end + 10000 as context_end,
+      a.length, a.a_count,  a.c_count, 
+                  a.g_count, a.t_count, a.other_count 
+                  
+            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s
+            WHERE a.source_id = $$primaryKey$$
+           AND blat.query_na_sequence_id = a.na_sequence_id
+           AND blat.target_na_sequence_id = s.na_sequence_id
+     ]]>
+    </sql>
+    </sqlQuery>
+    </querySet>
+
+</wdkModel>
