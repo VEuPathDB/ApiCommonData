@@ -33,16 +33,16 @@
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <textAttribute name="dnaContext" includeProjects="ToxoDB,CryptoDB"
-                       displayName="Features"
+                        displayName="Genomic Context"  
                        inReportMaker="false">
            <text includeProjects="ToxoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=DoTSAssemblies;h_feat=$$primaryKey$$@thistle;width=600;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=DoTSAssemblies+AnnotatedGenes+EST;h_feat=$$primaryKey$$@thistle;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
           <text includeProjects="CryptoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=DoTSAssemblies;h_feat=$$primaryKey$$@thistle;width=600;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=DoTSAssemblies+AnnotatedGenes+EST;h_feat=$$primaryKey$$@thistle;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
         </textAttribute>
