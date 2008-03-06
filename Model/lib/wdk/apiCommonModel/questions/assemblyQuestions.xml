@@ -1,0 +1,44 @@
+<wdkModel>
+  <questionSet name="AssemblyQuestions" displayName="Search EST Assemblies">
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- By Library -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+  <question name="AssembliesByLibrary"
+              category="Transcript Expression"
+              displayName="Library"
+              queryRef="AssemblyIds.AssembliesByLibrary"
+              recordClassRef="EstRecordClasses.EstRecordClass">
+
+        <summary>Find EST Assemblies by Library Name</summary>
+        <description>Find EST Assemblies by Library Name</description>
+
+        <attributesList excludeProjects="CryptoDB,ToxoDB"
+              summary="formatted_organism,dbest_name"
+              sorting="formatted_organism asc"
+        /> 
+        <attributesList includeProjects="CryptoDB,ToxoDB"
+              summary="formatted_organism,dbest_name,assembly_link,assembly_est_count"
+              sorting="formatted_organism asc,dbest_name asc,assembly_link asc,assembly_est_count desc"
+        /> 
+
+       <propertyList name="genomeAttribution">
+          <value/>
+       </propertyList>
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="CryptoDB">dbEST</value>
+           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+       </propertyList>
+  </question>
+
+  </questionSet>
+
+</wdkModel>
