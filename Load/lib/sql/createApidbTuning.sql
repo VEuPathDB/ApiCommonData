@@ -508,14 +508,13 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
 
 create materialized view apidb.SageTagAnalysisAttributes&1 as
 select dtr.analysis_id, max(dtr.float_value) as tag_count,
-       max(ct.occurrence) as occurrence, st.tag as sequence,
+       max(ct.occurrence) as occurrence, substr(st.tag, 1, 30) as sequence,
        st.composite_element_id, a.name as library_name,
        library_total.total_count as library_total_tag_count,
        (max(dtr.float_value) * 100) / library_total.total_count
          as library_tag_percentage,
-       q.name as raw_experiment,
        r.tag_count as raw_count, tot.total_raw_count,
-       to_char(100 *(r.tag_count / tot.total_raw_count ), '990D00') || '%' as raw_percent
+       100 *(r.tag_count / tot.total_raw_count ) as raw_percent
 from dots.SageTagFeature stf, dots.NaLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
      rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
