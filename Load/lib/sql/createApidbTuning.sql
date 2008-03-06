@@ -507,16 +507,20 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
 -- and the short fixed sequence recognized by the enzyme (e.g. CATG)
 
 create materialized view apidb.SageTagAnalysisAttributes&1 as
-select stf.source_id, dtr.analysis_id, max(dtr.float_value) as tag_count,
+select dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, st.tag as sequence,
        st.composite_element_id, a.name as library_name,
        library_total.total_count as library_total_tag_count,
        (max(dtr.float_value) * 100) / library_total.total_count
-         as library_tag_percentage
+         as library_tag_percentage,
+       q.name as raw_experiment,
+       r.tag_count as raw_count, tot.total_raw_count,
+       to_char(100 *(r.tag_count / tot.total_raw_count ), '990D00') || '%' as raw_percent
 from dots.SageTagFeature stf, dots.NaLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
      rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
      rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
+     rad.SageTagResult r, rad.Quantification q,
      (select source_id , count(*) as occurrence
       from dots.SageTagFeature
       group by source_id) ct,
@@ -525,13 +529,19 @@ from dots.SageTagFeature stf, dots.NaLocation nl,
       where dt.analysis_id = a.analysis_id
         and a.protocol_id = p.protocol_id
         and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
-      group by dt.analysis_id) library_total
+      group by dt.analysis_id) library_total,
+     (select quantification_id, sum(tag_count) as total_raw_count
+      from rad.SageTagResult
+      group by quantification_id) tot
 where ti.name = 'SAGETag'
   and quant_ti.name = 'Assay'
   --and di.name = 'RAD'
   and dtr.table_id = ti.table_id
   and st.composite_element_id = dtr.row_id
   and stf.source_id = st.composite_element_id
+  and st.composite_element_id = r.composite_element_id
+  and q.quantification_id = r.quantification_id
+  and tot.quantification_id = r.quantification_id
   and nl.na_feature_id = stf.na_feature_id
   and ct.source_id = stf.source_id
   and dtr.analysis_id = ai.analysis_id
@@ -542,10 +552,10 @@ where ti.name = 'SAGETag'
   --and di.database_id = quant_ti.database_id
   and dtr.analysis_id = library_total.analysis_id
 group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
-         a.name, library_total.total_count;
+         a.name, library_total.total_count,
+         q.name, r.tag_count, tot.total_raw_count;
 
-
-create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, source_id);
+create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, composite_element_id);
 
 grant select on apidb.SageTagAnalysisAttributes&1 to gus_r;
 
@@ -1664,17 +1674,20 @@ SELECT CASE
            THEN 'GiardiaDB'
          ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
-       s.source_id || '-' || l.start_min || '-' || l.end_max || '.' || l.is_reversed as source_id,
-       f.na_feature_id,
-       s.source_id as sequence_source_id, s.na_sequence_id,
-       l.start_min, l.end_max,
+       substr(s.source_id || '-' || l.start_min || '-' || l.end_max || '.'
+              || l.is_reversed, 1, 40) as source_id,
+       f.na_feature_id, f.source_id as feature_source_id,
+       substr(s.source_id, 1, 40) as sequence_source_id, s.na_sequence_id,
+       l.start_min, l.end_max, substr(st.tag, 1, 20) as sequence,
+       st.composite_element_id, st.source_id as rad_source_id,
        l.is_reversed, substr(tn.name, 1, 60) as organism
 from dots.SageTagFeature f, dots.NaLocation l, dots.NaSequence s,
-     sres.TaxonName tn
+     sres.TaxonName tn, rad.SageTag st
 where f.na_feature_id = l.na_feature_id
   and s.na_sequence_id = f.na_sequence_id
   and s.taxon_id = tn.taxon_id
-  and tn.name_class = 'scientific name';
+  and tn.name_class = 'scientific name'
+  and f.source_id = st.composite_element_id;
 
 GRANT SELECT ON apidb.SageTagAttributes&1 TO gus_r;
 
