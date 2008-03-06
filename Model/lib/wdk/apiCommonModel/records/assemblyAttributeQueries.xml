@@ -9,11 +9,14 @@
         <column name ="project_id"/>
         <column name = "start_min" />
         <column name = "end_max" />
+        <column name = "start_min_text" />
+        <column name = "end_max_text" />
         <column name = "context_start" />
         <column name = "context_end" />
-     <sql includeProjects="ToxoDB,CryptoDB,ApiDB">
+        <column name = "organism" />
+     <sql includeProjects="ToxoDB">
       <![CDATA[ 
-      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min,
+      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Toxoplasma','T.') AS organism,
       blat.target_end AS end_max, 
       trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
@@ -22,10 +25,29 @@
       a.length, a.a_count,  a.c_count, 
                   a.g_count, a.t_count, a.other_count 
                   
-            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s
+            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s, sres.taxonname tn
             WHERE a.source_id = $$primaryKey$$
            AND blat.query_na_sequence_id = a.na_sequence_id
            AND blat.target_na_sequence_id = s.na_sequence_id
+           AND a.taxon_id = tn.taxon_id
+     ]]>
+    </sql>
+     <sql includeProjects="CryptoDB">
+      <![CDATA[ 
+      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Cryptosporidium','C.') AS organism,
+      blat.target_end AS end_max, 
+      trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
+      trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
+      blat.target_start - 10000 as context_start,
+      blat.target_end + 10000 as context_end,
+      a.length, a.a_count,  a.c_count, 
+                  a.g_count, a.t_count, a.other_count 
+                  
+            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s, sres.taxonname tn
+            WHERE a.source_id = $$primaryKey$$
+           AND blat.query_na_sequence_id = a.na_sequence_id
+           AND blat.target_na_sequence_id = s.na_sequence_id
+           AND a.taxon_id = tn.taxon_id
      ]]>
     </sql>
     </sqlQuery>
