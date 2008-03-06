@@ -1,6 +1,6 @@
 <wdkModel>
 
-    <querySet name="AssemblyAttributes">
+    <querySet name="AssemblyAttributes" includeProjects="CryptoDB,ToxoDB">
         <sqlQuery name="Bfmv" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
@@ -14,7 +14,7 @@
         <column name = "context_start" />
         <column name = "context_end" />
         <column name = "organism" />
-     <sql includeProjects="ToxoDB,ApiDB">
+     <sql includeProjects="ToxoDB">
       <![CDATA[ 
       SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Toxoplasma','T.') AS organism,
       blat.target_end AS end_max, 
