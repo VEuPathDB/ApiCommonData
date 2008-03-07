@@ -908,4 +908,28 @@ WHERE 'OrthomclGroupDomain' NOT IN (SELECT name FROM core.TableInfo
 
 --------------------------------------------------------------------------------
 
+
+CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
+    indextype IS ctxsys.ctxcat;
+    
+CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
+    indextype IS ctxsys.ctxcat;
+
+CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
+    indextype IS ctxsys.ctxcat;
+
+--------------------------------------------------------------------------------
+
+
+EXEC CTX_DDL.SYNC_INDEX('dots.aasequenceimp_ind_desc');
+EXEC CTX_DDL.OPTIMIZE_INDEX('dots.aasequenceimp_ind_desc','FULL');
+
+EXEC CTX_DDL.SYNC_INDEX('sres.dbref_ind_id2');
+EXEC CTX_DDL.OPTIMIZE_INDEX('sres.dbref_ind_id2');
+ 
+EXEC CTX_DDL.SYNC_INDEX('sres.dbref_ind_rmk');
+EXEC CTX_DDL.OPTIMIZE_INDEX('sres.dbref_ind_rmk');
+
+--------------------------------------------------------------------------------
+
 exit;

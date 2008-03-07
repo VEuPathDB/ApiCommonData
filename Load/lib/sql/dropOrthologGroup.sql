@@ -80,4 +80,15 @@ WHERE lower(name) =  'orthologgroup'
                       FROM core.DatabaseInfo
                       WHERE lower(name) = 'apidb');
 
+--------------------------------------------------------------------------------
+
+
+DROP INDEX dots.aasequenceimp_ind_desc;
+
+DROP INDEX sres.dbref_ind_id2;
+
+DROP INDEX sres.dbref_ind_rmk;
+
+--------------------------------------------------------------------------------
+
 exit;
