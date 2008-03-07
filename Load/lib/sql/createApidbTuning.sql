@@ -1179,7 +1179,7 @@ SELECT CASE
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num
+       sequence.chromosome_order_num, so.so_id
 FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      apidb.GenomicSequence sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
