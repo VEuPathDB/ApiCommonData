@@ -31,7 +31,7 @@
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB,TrichDB,GiardiaDB"
+    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
@@ -92,7 +92,7 @@
   <!-- Single locus tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB,TrichDB,GiardiaDB"
+    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
@@ -891,7 +891,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,GiardiaDB,TrichDB"
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>

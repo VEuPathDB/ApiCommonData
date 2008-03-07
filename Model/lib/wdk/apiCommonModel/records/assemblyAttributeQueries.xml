@@ -32,9 +32,14 @@
            AND a.taxon_id = tn.taxon_id
      ]]>
     </sql>
-     <sql includeProjects="CryptoDB">
+     <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
       <![CDATA[ 
-      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Cryptosporidium','C.') AS organism,
+      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, 
+      REPLACE(
+        REPLACE(
+          REPLACE(tn.name,'Cryptosporidium','C.' ),
+                          'Giardia',        'G.' ),
+                          'Trichomonas',    'T.' ) AS organism,
       blat.target_end AS end_max, 
       trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
