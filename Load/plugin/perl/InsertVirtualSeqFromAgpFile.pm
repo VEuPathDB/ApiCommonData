@@ -270,11 +270,11 @@ sub makeVirtualSequence {
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
 
-  my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({ source_id => $virAcc,
-							    external_database_release_id => $virDbRlsId,
-							    sequence_version => 1,
-							    sequence_ontology_id => $SOTermId,
-							    taxon_id => $taxonId});
+  my $virtualSeq = GUS::Model::DoTS::NASequence->new({ source_id => $virAcc,
+						       external_database_release_id => $virDbRlsId,
+						       sequence_version => 1,
+						       sequence_ontology_id => $SOTermId,
+						       taxon_id => $taxonId});
 
   my $sequence;
 
@@ -289,8 +289,9 @@ sub makeVirtualSequence {
     $sequence = $self->makeVir($virtualSeq,$virtual,$pieceDbRlsId,$gapSOId);
   }
 
-
+  $vitualSeq->retrieveFromDB();
   $virtualSeq->setSequence($sequence);
+  $virtualSeq->setSubclassView('VirtualSequence');
   my $submitted = $virtualSeq->submit();
   $virtualSeq->undefPointerCache();
 
