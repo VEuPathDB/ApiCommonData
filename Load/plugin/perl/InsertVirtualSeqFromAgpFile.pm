@@ -13,6 +13,7 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::VirtualSequence;
 use GUS::Model::DoTS::SequencePiece;
 use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::Taxon;
 
 use Bio::PrimarySeq;
 
@@ -120,6 +121,7 @@ Tab delimited
 cols are 1-object,2-object_beginning,3-object_end,4-part_number,5-component_type(N=gap w/known length,U-gap w/o known length,W=wgs contig,P=predraft,O=other seq,G=whole genome finishing),6-component_id if 5 not N(U) else gap_length,7-component_beg if 5 not N(U) else gap_type (fragment,etc),8-component_end if 5 not N(U) else yes/no gap is beetween adjacent lines,9-orientation(+=forward,-=reverse,0=unknown) if 5 not N(U) else not used
 All object and component distances should be sequential and non-overlapping, all beg <= end
 1-based (first base =1 and not 0)
+make sure there are not carriage returns in the file, ^M, if so run dos2unix
 NOTES
 
 my $tablesAffected = <<AFFECT;
@@ -140,6 +142,7 @@ RESTART
 
 my $failureCases = <<FAIL;
 file badly formatted
+file has dos characters which cause unpredictable behavior
 sequence pieces not in dots.externalnasequence
 db name and version for sequence piece incorrect
 FAIL
@@ -182,28 +185,28 @@ sub run {
 
   $self->validateFileFormat($file);
 
-  my $restart = $self->getArg('restart');
+  my $restart = $self->getArg('retart');
 
-  my %done;
+  my $done;
 
   if($restart){
     my $restartIds = join(",",@$restart);
-    %done = $self->restart($restartIds);
+    $done = $self->restart($restartIds);
     $self->log("Restarting with algorithm invocation IDs: $restartIds");
   }
 
-  my $results = $self->processFile($file,\%done);
+  my $results = $self->processFile($file,$done);
 
-  $self->log("$results\n");
+  my $stmt = "$results dots.VirtualSequence rows inserted\n";
 
-  return $results;
+  return $stmt;
 }
 
 
 sub processFile {
   my ($self,$file,$done) = @_;
 
-  my $virAcc = "";
+  my $virAcc;
 
   my $numVirInserted=0;
 
@@ -212,13 +215,17 @@ sub processFile {
   open(FILE, "<$file") or die "Couldn't open file '$file':\n";
 
   while (<FILE>) {
-    next if (m/^#/ || m/^\s*$/);
+    chomp;
+
+    next if ($_ =~ /^#/ || $_ =~ /^\s*$/);
 
     my @arr = split(/\t/, $_);
 
-    next if ($done->{$arr[0]} == 1);
+    $virAcc = $arr[0] if (! $virAcc);
 
-    if ($arr[0] ne $virAcc &&  $numVirInserted > 0) {
+    next if ($self->getArg('retart') && $done->{$arr[0]} == 1);
+
+    if ($arr[0] ne $virAcc) {
 
       $numVirInserted += $self->makeVirtualSequence(\%virtual,$virAcc);
 
@@ -229,10 +236,23 @@ sub processFile {
       %virtual = ();
     }
 
-    $virtual{$arr[3]}={'virtualBeg'=>$arr[1],'pieceType'=>$arr[4]};
+    $arr[8] =~ s/na/0/ unless $arr[4] =~ /[NU]/;
+    $arr[8] =~ s/\+/1/ unless $arr[4] =~ /[NU]/;
+    $arr[8] =~ s/\-/2/ unless $arr[4] =~ /[NU]/;
+
+    $virtual{$arr[3]}{'virtualBeg'} = $arr[1];
+    $virtual{$arr[3]}{'pieceType'} = $arr[4];
     $virtual{$arr[3]}{'gaplength'} = $arr[5] if ($arr[4] =~ /[NU]/);
-    $virtual{$arr[3]}= {'pieceId'=>$arr[5],'pieceBeg'=>$arr[6],'pieceEnd'=>$arr[7],'strand'=>$arr[8]} if ($arr[4] !~ /[NU]/);
+    $virtual{$arr[3]}{'pieceId'} = $arr[5] if ($arr[4] !~ /[NU]/);
+    $virtual{$arr[3]}{'pieceBeg'} = $arr[6] if ($arr[4] !~ /[NU]/);
+    $virtual{$arr[3]}{'pieceEnd'} = $arr[7] if ($arr[4] !~ /[NU]/);
+    $virtual{$arr[3]}{'strand'} = $arr[8] if ($arr[4] !~ /[NU]/);
+
   }
+
+ $numVirInserted += $self->makeVirtualSequence(\%virtual,$virAcc);
+
+  $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
   close (FILE);
 
@@ -255,14 +275,20 @@ sub makeVirtualSequence {
 							    sequence_version => 1,
 							    sequence_ontology_id => $SOTermId,
 							    taxon_id => $taxonId});
+
   my $sequence;
 
+  my $pieceDbRlsId = $self->getExtDbRlsId($self->getArg('seqPieceExtDbName'),$self->getArg('seqPieceExtDbRlsVer'));
+
+  my $gapSOId = $self->getSOTermId('gap');
+
   if ($self->getArg('spacerNum')) {
-    $sequence = $self->makeVirWithSpacer($virtualSeq,$virtual);
+    $sequence = $self->makeVirWithSpacer($virtualSeq,$virtual,$pieceDbRlsId,$gapSOId);
   }
   else {
-    $sequence = $self->makeVir($virtualSeq,$virtual);
+    $sequence = $self->makeVir($virtualSeq,$virtual,$pieceDbRlsId,$gapSOId);
   }
+
 
   $virtualSeq->setSequence($sequence);
   my $submitted = $virtualSeq->submit();
@@ -272,39 +298,40 @@ sub makeVirtualSequence {
 }
 
 sub makeVirWithSpacer {
-  my ($self,$virtualSeq,$virtual) = @_;
+  my ($self,$virtualSeq,$virtual,$pieceDbRlsId,$gapSOId) = @_;
 
-  my $sequence;
+  my $sequence = "";
 
   my $spacer = $self->getArg('spacerNum');
 
   my $totalPieces = scalar (keys %$virtual);
 
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
-    my $pieceObj = $self->getPieceObj($virtual,$pieceNumber);
+
+    my $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
 
     my $orderNum = $pieceNumber == 1 ? $pieceNumber : $pieceNumber + 2;
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,\$sequence);
+    my $length = length($sequence);
 
-    $seqPieceObj->setParent($pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
     my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-    $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
+    $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} =~ /2/;
 
     $sequence .= $pieceSeq;
 
-    my $gapObj = $self->getGapObj($spacer);
+    my $gapObj = $self->getGapObj($spacer,$gapSOId);
 
     last() if ($totalPieces == $pieceNumber);
 
     $orderNum = $pieceNumber + 1;
 
-    $seqPieceObj = $self->makeSequencePiece('+',$orderNum,\$sequence);
+    $length = length($sequence);
 
-    $seqPieceObj->setParent($pieceObj);
+    $seqPieceObj = $self->makeSequencePiece('1',$orderNum,$length,$gapObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -317,28 +344,31 @@ sub makeVirWithSpacer {
 }
 
 sub makeVir {
-  my ($self,$virtualSeq,$virtual) = @_;
+  my ($self,$virtualSeq,$virtual,$pieceDbRlsId,$gapSOId) = @_;
 
   my $sequence = "";
+
+  my $pieceSeq;
 
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
     my $pieceObj;
 
-    if ($virtual->{$pieceNumber}->{'pieceType'} eq 'N' || {$pieceNumber}->{'pieceType'} eq 'U'){
-      $pieceObj = $self->getGapObj($virtual->{$pieceNumber}->{'gaplength'});
+    if ($virtual->{$pieceNumber}->{'pieceType'} =~ /[NU]/){
+      my $gapLength = $virtual->{$pieceNumber}->{'gaplength'};
+      $pieceObj = $self->getGapObj($virtual->{$pieceNumber}->{'gaplength'},$gapSOId);
+      $pieceSeq = $pieceObj->getSequence();
     }
     else {
-      $pieceObj = $self->getPieceObj($virtual,$pieceNumber);
+      $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
+      $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
+      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} =~ /2/;
     }
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,\$sequence);
+    my $length = length($sequence);
 
-    $seqPieceObj->setParent($pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
-
-    my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-    $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
 
     $sequence .= $pieceSeq;
   }
@@ -347,14 +377,12 @@ sub makeVir {
 }
 
 sub getPieceObj {
-  my ($self,$virtual,$pieceNumber) = @_;
-
-  my $pieceDbRlsId = $self->getExtDbRlsId($self->getArg('seqPieceExtDbName'),$self->getArg('seqPieceExtDbRlsVer'));
+  my ($self,$virtual,$pieceNumber,$pieceDbRlsId) = @_;
 
   my $source_id = $virtual->{$pieceNumber}->{'pieceId'};
 
-  my $extNASeq =  GUS::Model::DoTS::ExternalNASEquence->new({ source_id => $source_id,
-							    external_database_release_id => $pieceDbRlsId});
+  my $extNASeq =  GUS::Model::DoTS::ExternalNASequence->new({'source_id' => $source_id,
+							    'external_database_release_id' => $pieceDbRlsId});
 
   unless ($extNASeq->retrieveFromDB()) {
     die "sequence not in Dots.ExternalNASequence: $source_id";
@@ -364,29 +392,31 @@ sub getPieceObj {
 }
 
 sub getGapObj {
-  my ($self,$length) = @_;
-
-  my $SOId = $self->getSOTermId('gap');
+  my ($self,$length,$SOId) = @_;
 
   my $sequence .= "N" x $length;
 
-  my $gap = GUS::Model::DoTS::ExternalNASEquence->new({'sequence_ontology_id' => $SOId, 
-						       'sequence' => $sequence,
+  my $gap = GUS::Model::DoTS::ExternalNASequence->new({'sequence_ontology_id' => $SOId, 
+						       'length' => $length,
 						       'sequence_version' => 1 });
 
-  $gap->submit() unless ($gap->retrieveFromDB());
+  if (! $gap->retrieveFromDB()) {
+    $gap ->setSequence($sequence);
+    $gap->submit();
+  }
 
   return $gap;
 }
 
 sub  makeSequencePiece {
-  my ($self, $orientation,$pieceNumber,$sequence) = @_;
+  my ($self, $orientation,$pieceNumber,$offset,$pieceObj) = @_;
 
-  my $offset = length($$sequence);
+  my $pieceId = $pieceObj->getId();
 
   my $seqPiece = GUS::Model::DoTS::SequencePiece->new({sequence_order => $pieceNumber,
 						       strand_orientation => $orientation,
-						       distance_from_left => $offset});
+						       distance_from_left => $offset,
+						       piece_na_sequence_id => $pieceId});
 
   return $seqPiece;
 }
@@ -432,7 +462,7 @@ sub getSOTermId {
     die "SO Term $SOTerm not found in sres.sequenceontology.term_name.\n";
   }
 
-  my $SOId = $SOTerm->getId();
+  my $SOId = $SO->getId();
 
   return $SOId;
 }
@@ -470,14 +500,16 @@ sub validateFileFormat {
       $num = 0;
     }
     $num++;
+    my $arrSize = @arr;
+
+    if ($arr[4] =~ /[NU]/ && $self->getArg('spacerNum')) {die "You have asked for insertion of gaps when there are already gaps in the file which is not allowed\n"};
     if ($num != $arr[3]){die "Check agp file, $arr[0], pieces should be in order and start with 1 for each virtual sequence\n";}
-    unless (@arr == 9){ die "Check agp file file format,tab delimited column number wrong there should be 9 columns";}
     if ($arr[1] !~ /\d+/ || $arr[1] <= 0 || $arr[2] !~ /\d+/  || $arr[2] <= 0  || $arr[3] !~ /\d+/  || $arr[3] <= 0 ){ die "Check agp file format, columns 2,3 and 4 must be positive number";}
     if ($arr[4] =~ /N/ && ($arr[5] !~ /\d+/ || $arr[5] <= 0)) { die "Check agp file format, column 6 must be a positive number when a line represents a gap";}
     if ($arr[4] !~ /[NU]/ && ($arr[6] !~ /\d+/ || $arr[6] <= 0 || $arr[7] !~ /\d+/ || $arr[7] <= 0 )) { die "Check agp file format, columns 7 and 8 must be a positive numbers when a line represents a sequence piece";}
     if ($arr[4] !~ /[NUWPOG]/) {die "Check file format, the fifth column must be N,U,W,P,O,G, controlled designations of component types";}
     if ($arr[4] !~ /[NU]/ && ($arr[8] !~ /[+-0na]/)){die "Check agp file format lines with sequence pieces, not gaps, must have a 9th column that is +,-,0, or na for orientation/n";}
-    if ($arr[5] !~ /[NU]/ && ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6]))) { die "Check data,col 3 - col 2 should equal col 8 - col 7";}
+    if ($arr[4] !~ /[NU]/ && ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6]))) { die "Check data,col 3 - col 2 should equal to col 8 - col 7";}
   }
   $self->log("File format validated\n");
 }
@@ -496,7 +528,7 @@ sub restart{
     }
     $sth->finish();
 
-  return %done;
+  return \%done;
 }
 
 
