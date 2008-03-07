@@ -14,6 +14,9 @@
         <column name = "context_start" />
         <column name = "context_end" />
         <column name = "organism" />
+        <column name= "est_count" />
+        <column name= "strand_plus_minus" />
+        <column name= "length" />
      <sql includeProjects="ToxoDB">
       <![CDATA[ 
       SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Toxoplasma','T.') AS organism,
@@ -22,6 +25,8 @@
       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
       blat.target_start - 10000 as context_start,
       blat.target_end + 10000 as context_end,
+      decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as strand_plus_minus, 
+      a.number_of_contained_sequences AS est_count,
       a.length, a.a_count,  a.c_count, 
                   a.g_count, a.t_count, a.other_count 
                   
@@ -45,6 +50,8 @@
       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
       blat.target_start - 10000 as context_start,
       blat.target_end + 10000 as context_end,
+      decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) AS strand_plus_minus, 
+      a.number_of_contained_sequences AS est_count,
       a.length, a.a_count,  a.c_count, 
                   a.g_count, a.t_count, a.other_count 
                   
