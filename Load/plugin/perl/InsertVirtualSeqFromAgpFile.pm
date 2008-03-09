@@ -438,7 +438,7 @@ sub getVirDbRlsId {
     $dbId = $newDatabase->getId();
   }
 
-  $sql = "select external_database_release_id from sres.externaldatabaserelease where external_database_id = $dbId and version = $dbVer";
+  $sql = "select external_database_release_id from sres.externaldatabaserelease where external_database_id = $dbId and version = '".$dbVer."'";
   $sth = $self->prepareAndExecute($sql);
   my ($dbRlsId) = $sth->fetchrow_array();
 
