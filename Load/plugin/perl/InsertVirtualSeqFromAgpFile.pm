@@ -7,6 +7,7 @@ use warnings;
 
 use GUS::PluginMgr::Plugin;
 
+use GUS::Model::DoTS::NASequence;
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
@@ -270,11 +271,13 @@ sub makeVirtualSequence {
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
 
-  my $virtualSeq = GUS::Model::DoTS::NASequence->new({ source_id => $virAcc,
+  my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({ source_id => $virAcc,
 						       external_database_release_id => $virDbRlsId,
 						       sequence_version => 1,
 						       sequence_ontology_id => $SOTermId,
 						       taxon_id => $taxonId});
+
+  $virtualSeq->retrieveFromDB();
 
   my $sequence;
 
@@ -289,9 +292,8 @@ sub makeVirtualSequence {
     $sequence = $self->makeVir($virtualSeq,$virtual,$pieceDbRlsId,$gapSOId);
   }
 
-  $virtualSeq->retrieveFromDB();
+
   $virtualSeq->setSequence($sequence);
-  $virtualSeq->setSubclassView('VirtualSequence');
   my $submitted = $virtualSeq->submit();
   $virtualSeq->undefPointerCache();
 
@@ -382,14 +384,14 @@ sub getPieceObj {
 
   my $source_id = $virtual->{$pieceNumber}->{'pieceId'};
 
-  my $extNASeq =  GUS::Model::DoTS::ExternalNASequence->new({'source_id' => $source_id,
+  my $NASeq =  GUS::Model::DoTS::NASequence->new({'source_id' => $source_id,
 							    'external_database_release_id' => $pieceDbRlsId});
 
-  unless ($extNASeq->retrieveFromDB()) {
+  unless ($NASeq->retrieveFromDB()) {
     die "sequence not in Dots.ExternalNASequence: $source_id";
   }
 
-  return $extNASeq;
+  return $NASeq;
 }
 
 sub getGapObj {
