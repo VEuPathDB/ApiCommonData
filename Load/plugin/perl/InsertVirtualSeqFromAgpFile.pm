@@ -289,7 +289,7 @@ sub makeVirtualSequence {
     $sequence = $self->makeVir($virtualSeq,$virtual,$pieceDbRlsId,$gapSOId);
   }
 
-  $vitualSeq->retrieveFromDB();
+  $virtualSeq->retrieveFromDB();
   $virtualSeq->setSequence($sequence);
   $virtualSeq->setSubclassView('VirtualSequence');
   my $submitted = $virtualSeq->submit();
