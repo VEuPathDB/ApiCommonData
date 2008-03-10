@@ -265,6 +265,7 @@
        </sql>
     </sqlQuery>
 
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Gene type -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -449,31 +450,37 @@
        <sql includeProjects="ApiDB">
             <![CDATA[
 
-SELECT DISTINCT sns2.source_id, ext.name as project_id,
-        apidb.tab_to_string(CAST(COLLECT(qr.source_id) AS apidb.varchartab),',') as orthologs 
-FROM $$historyId$$ qr, 
-      dots.splicednasequence sns1, 
-      dots.sequencesequencegroup ssg1, 
-      dots.splicednasequence sns2, 
-      dots.sequencesequencegroup ssg2, 
-      core.tableinfo ti ,    
-      sres.ExternalDatabaseRelease extr,  
-      sres.ExternalDatabase ext 
-WHERE qr.source_id = sns1.source_id 
-AND sns1.na_sequence_id = ssg1.sequence_id 
-AND ssg1.source_table_id = ti.table_id 
-AND ssg1.sequence_group_id = ssg2.sequence_group_id 
-AND ssg2.source_table_id = ti.table_id 
-AND ssg2.sequence_id = sns2.na_sequence_id 
-AND sns2.taxon_id IN
-       (select taxon_id from sres.taxon
-       connect by parent_id = prior taxon_id
-       start with taxon_id in ($$localorganism$$)) 
-AND ti.name = 'SplicedNASequence'  
-AND sns2.external_database_release_id=extr.external_database_release_id 
-AND extr.external_database_id=ext.external_database_id  
-group by sns2.source_id, ext.name
-order by project_id,sns2.source_id
+
+SELECT DISTINCT subq.source_id, subq.project_id,
+       apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
+apidb.varchartab),',') as orthologs
+FROM (SELECT distinct sns2.source_id, ext.name as project_id,
+            qr.source_id AS ortholog_id
+     FROM $$historyId$$ qr,
+           dots.splicednasequence sns1,
+           dots.sequencesequencegroup ssg1,
+           dots.splicednasequence sns2,
+           dots.sequencesequencegroup ssg2,
+           core.tableinfo ti ,   
+           sres.ExternalDatabaseRelease extr,
+           sres.ExternalDatabase ext
+     WHERE qr.source_id = sns1.source_id
+     AND sns1.na_sequence_id = ssg1.sequence_id
+     AND ssg1.source_table_id = ti.table_id
+     AND ssg1.sequence_group_id = ssg2.sequence_group_id
+     AND ssg2.source_table_id = ti.table_id
+     AND ssg2.sequence_id = sns2.na_sequence_id
+     AND sns2.taxon_id IN
+            (select taxon_id from sres.taxon
+            connect by parent_id = prior taxon_id
+            start with taxon_id in ($$localorganism$$))
+     AND ti.name = 'SplicedNASequence'
+     AND
+sns2.external_database_release_id=extr.external_database_release_id
+     AND extr.external_database_id=ext.external_database_id) subq
+     group by subq.source_id, subq.project_id
+     order by project_id, subq.source_id 
+
 
 
            ]]>
