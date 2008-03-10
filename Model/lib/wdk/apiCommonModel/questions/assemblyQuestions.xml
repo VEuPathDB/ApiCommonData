@@ -9,28 +9,23 @@
               category="Transcript Expression"
               displayName="Library"
               queryRef="AssemblyIds.AssembliesByLibrary"
-              recordClassRef="EstRecordClasses.EstRecordClass">
+              recordClassRef="AssemblyRecordClasses.AssemblyRecordClass">
 
         <summary>Find EST Assemblies by Library Name</summary>
         <description>Find EST Assemblies by Library Name</description>
 
-        <attributesList excludeProjects="CryptoDB,ToxoDB"
-              summary="formatted_organism,dbest_name"
-              sorting="formatted_organism asc"
-        /> 
         <attributesList includeProjects="CryptoDB,ToxoDB"
-              summary="formatted_organism,dbest_name,assembly_link,assembly_est_count"
-              sorting="formatted_organism asc,dbest_name asc,assembly_link asc,assembly_est_count desc"
+              summary="organism,est_count"
+              sorting="organism asc,est_count desc"
         /> 
 
        <propertyList name="genomeAttribution">
           <value/>
        </propertyList>
        <propertyList name="specificAttribution">
-           <value includeProjects="ToxoDB">dbEST</value>
+           <value includeProjects="ToxoDB,CryptoDB">dbEST</value>
            <value includeProjects="CryptoDB">CparvumESTs</value>
            <value includeProjects="CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
-           <value includeProjects="CryptoDB">dbEST</value>
        </propertyList>
   </question>
 

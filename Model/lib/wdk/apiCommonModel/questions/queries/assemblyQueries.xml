@@ -13,13 +13,22 @@
     <sqlQuery name="AssembliesByLibrary" includeProjects="CryptoDB,ToxoDB" 
              isCacheable='true'>
         <paramRef ref="sharedParams.libraryId"/>
+        <paramRef ref="sharedParams.min_ests_in_assembly"/>
+        <paramRef ref="sharedParams.min_lib_ests_in_assembly"/>
         <column name="source_id" />
         <column name="project_id"/>
+        <column name="library_count"/>
         <sql>
-            SELECT ea.source_id, ea.project_id
-            FROM apidb.EstAttributes ea
-            WHERE ea.library_id in ($$libraryId$$)
+            SELECT da.source_id, ea.project_id as project_id,
+                   count(*) as library_count
+            FROM apidb.EstAttributes ea,
+                 dots.Assembly da
+            WHERE da.source_id = ea.assembly_source_id
+              AND ea.library_id in ($$libraryId$$)
+              AND ea.assembly_est_count >= $$min_ests_in_assembly$$
               AND ea.project_id = '@PROJECT_ID@'
+            GROUP BY da.source_id, ea.project_id
+            HAVING count(*) >= $$min_lib_ests_in_assembly$$
        </sql>
     </sqlQuery>
 

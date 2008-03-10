@@ -1341,6 +1341,29 @@
                      default="CC6+RK"/>
         </stringParam>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Assembly search -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <stringParam name="min_ests_in_assembly"
+                     prompt="Number of ESTs >="
+                     quote="false"
+                     includeProjects="ToxoDB, CryptoDB">
+            <help>
+              Enter a minimum number of ESTs that is required per EST assembly.
+            </help>           
+            <suggest default="1"
+               allowEmpty="true" emptyValue="1" />
+        </stringParam>
+        <stringParam name="min_lib_ests_in_assembly"
+                     prompt="Number of library ESTs >="
+                     quote="false"
+                     includeProjects="ToxoDB, CryptoDB">
+            <help>
+              Enter a minimum number of ESTs from the selected libraries that is required per EST assembly.
+            </help>           
+            <suggest default="1"
+               allowEmpty="true" emptyValue="1" />
+        </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- mass spec -->  
