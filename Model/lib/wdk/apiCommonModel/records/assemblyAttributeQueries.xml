@@ -4,62 +4,38 @@
         <sqlQuery name="Bfmv" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
-        <column name ="source_id"/>
-        <column name ="sequence_id"/>
-        <column name ="project_id"/>
-        <column name = "start_min" />
-        <column name = "end_max" />
-        <column name = "start_min_text" />
-        <column name = "end_max_text" />
-        <column name = "context_start" />
-        <column name = "context_end" />
-        <column name = "organism" />
-        <column name= "est_count" />
-        <column name= "strand_plus_minus" />
-        <column name= "length" />
+        <column name="context_start" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="context_end"  sortingTable="apidb.AssemblyAttributes"/>
+        <column name="project_id" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="source_id" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="sequence_id" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="start_min_text" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="end_max_text" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="strand_plus_minus" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="organism"  sortingTable="apidb.AssemblyAttributes"/>
+        <column name="est_count"  sortingTable="apidb.AssemblyAttributes"/>
+        <column name="length" sortingTable="apidb.AssemblyAttributes"/>
      <sql includeProjects="ToxoDB">
       <![CDATA[ 
-      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, REPLACE(SUBSTR(tn.name, 1,   40),'Toxoplasma','T.') AS organism,
-      blat.target_end AS end_max, 
-      trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
-      trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
-      blat.target_start - 10000 as context_start,
-      blat.target_end + 10000 as context_end,
-      decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as strand_plus_minus, 
-      a.number_of_contained_sequences AS est_count,
-      a.length, a.a_count,  a.c_count, 
-                  a.g_count, a.t_count, a.other_count 
-                  
-            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s, sres.taxonname tn
-            WHERE a.source_id = $$primaryKey$$
-           AND blat.query_na_sequence_id = a.na_sequence_id
-           AND blat.target_na_sequence_id = s.na_sequence_id
-           AND a.taxon_id = tn.taxon_id
+      SELECT aa.source_id, aa.sequence_id, aa.project_id, REPLACE(SUBSTR(aa.organism, 1,   40),'Toxoplasma','T.') AS organism,
+      aa.start_min_text, aa.end_max_text, aa.start_min - 10000 as context_start, aa.end_max + 10000 as context_end,
+      aa.strand_plus_minus, aa.est_count, aa.length
+      FROM  apidb.AssemblyAttributes aa
+      WHERE aa.source_id = $$primaryKey$$
      ]]>
     </sql>
      <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
       <![CDATA[ 
-      SELECT a.source_id, s.source_id AS sequence_id, '@PROJECT_ID@' AS project_id, blat.target_start AS start_min, 
+      SELECT aa.source_id, aa.sequence_id, aa.project_id,
       REPLACE(
         REPLACE(
-          REPLACE(tn.name,'Cryptosporidium','C.' ),
+          REPLACE(aa.organism,'Cryptosporidium','C.' ),
                           'Giardia',        'G.' ),
                           'Trichomonas',    'T.' ) AS organism,
-      blat.target_end AS end_max, 
-      trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
-      trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
-      blat.target_start - 10000 as context_start,
-      blat.target_end + 10000 as context_end,
-      decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) AS strand_plus_minus, 
-      a.number_of_contained_sequences AS est_count,
-      a.length, a.a_count,  a.c_count, 
-                  a.g_count, a.t_count, a.other_count 
-                  
-            FROM  dots.assembly a, dots.blatalignment blat, dots.nasequence s, sres.taxonname tn
-            WHERE a.source_id = $$primaryKey$$
-           AND blat.query_na_sequence_id = a.na_sequence_id
-           AND blat.target_na_sequence_id = s.na_sequence_id
-           AND a.taxon_id = tn.taxon_id
+      aa.start_min_text, aa.end_max_text, aa.start_min - 10000 as context_start,
+      aa.end_max + 10000 as context_end, aa.strand_plus_minus, aa.est_count, aa.length
+      FROM  apidb.AssemblyAttributes aa
+      WHERE aa.source_id = $$primaryKey$$
      ]]>
     </sql>
     </sqlQuery>

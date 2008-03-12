@@ -17,17 +17,17 @@
         <paramRef ref="sharedParams.min_lib_ests_in_assembly"/>
         <column name="source_id" />
         <column name="project_id"/>
-        <column name="library_count"/>
+        <column name="est_library_count"/>
         <sql>
-            SELECT da.source_id, ea.project_id as project_id,
-                   count(*) as library_count
+            SELECT aa.source_id, aa.project_id,
+                   count(*) as est_library_count
             FROM apidb.EstAttributes ea,
-                 dots.Assembly da
-            WHERE da.source_id = ea.assembly_source_id
+                 apidb.AssemblyAttributes aa
+            WHERE aa.source_id = ea.assembly_source_id
               AND ea.library_id in ($$libraryId$$)
               AND ea.assembly_est_count >= $$min_ests_in_assembly$$
-              AND ea.project_id = '@PROJECT_ID@'
-            GROUP BY da.source_id, ea.project_id
+              AND aa.project_id = '@PROJECT_ID@'
+            GROUP BY aa.source_id, aa.project_id
             HAVING count(*) >= $$min_lib_ests_in_assembly$$
        </sql>
     </sqlQuery>
