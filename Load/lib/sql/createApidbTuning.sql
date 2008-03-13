@@ -1748,6 +1748,71 @@ CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
 
 CREATE OR REPLACE SYNONYM apidb.SageTagAttributes FOR apidb.SageTagAttributes&1;
 
+-------------------------------------------------------------------------------
+
+prompt apidb.AsmAlignmentGeneSummary;
+
+DROP MATERIALIZED VIEW apidb.AsmAlignmentGene;
+
+CREATE MATERIALIZED VIEW apidb.AsmAlignmentGene AS
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id,
+         ba.query_taxon_id, ba.target_na_sequence_id,
+         ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
+         least(ba.target_end, ga.end_max)
+         - greatest(ba.target_start, ga.start_min) + 1
+           AS assembly_gene_overlap_length,
+         ba.query_bases_aligned / (query_sequence.length)
+         * 100 AS percent_assembly_bases_aligned,
+         ga.source_id AS gene
+  FROM dots.blatalignment ba, dots.assembly a, 
+  apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+       dots.NaSequence query_sequence, sres.SequenceOntology so
+  WHERE a.na_sequence_id = ba.query_na_sequence_id
+    AND sequence.na_sequence_id = ba.target_na_sequence_id
+    AND ga.sequence_id = sequence.source_id
+    AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
+    AND query_sequence.na_sequence_id = ba.query_na_sequence_id
+    AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+    AND so.term_name = 'assembly'
+    AND ba.target_na_sequence_id = sequence.na_sequence_id;
+
+DROP MATERIALIZED VIEW apidb.AsmAlignmentNoGene;
+
+CREATE MATERIALIZED VIEW apidb.AsmAlignmentNoGene AS
+SELECT * from AsmAlignmentGene WHERE 1=0 UNION -- define datatype for null column
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id,
+         ba.query_taxon_id, ba.target_na_sequence_id,
+         ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+         ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+         sequence.source_id AS target_sequence_source_id,
+         NULL
+           AS assembly_gene_overlap_length,
+         ba.query_bases_aligned / (sequence.length)
+         * 100 AS percent_assembly_bases_aligned,
+         NULL AS gene
+  FROM dots.blatalignment ba, dots.assembly a, 
+      dots.NaSequence sequence
+  WHERE a.na_sequence_id = ba.query_na_sequence_id
+    AND sequence.na_sequence_id = ba.target_na_sequence_id
+    AND ba.blat_alignment_id IN
+   ( -- set of blat_alignment_ids not in in first leg of UNION
+    -- (because they overlap no genes)
+    SELECT ba.blat_alignment_id
+    FROM dots.BlatAlignment ba, dots.NaSequence query_sequence,
+         sres.SequenceOntology so
+    WHERE query_sequence.na_sequence_id = ba.query_na_sequence_id
+      AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+      AND so.term_name = 'assembly'
+  MINUS
+    SELECT blat_alignment_id FROM apidb.AsmAlignmentGene);
+
+CREATE MATERIALIZED VIEW AsmAlignmentGeneSummary&1 AS
+SELECT * FROM apidb.AsmAlignmentNoGene
+UNION
+SELECT * FROM apidb.AsmAlignmentGene;
+
 ---------------------------
 -- cleanup
 ---------------------------
