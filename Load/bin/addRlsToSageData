@@ -1,0 +1,114 @@
+#!/usr/bin/perl
+
+use strict;
+#use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Model::Core::UserInfo;
+
+# This script gets or makes an external_database_id and external_database_release_id and adds it to the data file as a column to the data file. 
+# It also add a header,external_database_release_id at the top of the column.
+# This was done because the LoadArrayDesign plugin requires that if a source_id is a column in the data, then a release id is also required.
+
+my ($extDbName, $extDbVer, $inFile, $outFile, $gusConfigFile, $verbose);
+&GetOptions("verbose!"=> \$verbose,
+            "extDbName=s"=> \$extDbName,
+	    "extDbVer=s" => \$extDbVer,
+	    "inFile=s" => \$inFile,
+	    "outFile=s" => \$outFile,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+die "usage: addRlsToSageData --extDbName <string> --extDbVer <string> --inFile <string> --outFile <string> --verbose --gusConfigFile [\$GUS_CONFIG_FILE]\n" 
+    unless ($extDbName && $extDbVer && $inFile && $outFile);
+
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName()
+				       );
+
+my $dbRlsId = &getDbRlsId($extDbName,$extDbVer);
+
+my $lineArr = &processFile($inFile,$dbRlsId);
+
+&printArray ($lineArr,$outFile);
+
+sub getDbRlsId {
+  my ($extDbName,$extDbVer) = @_;
+
+  my $dbh = $db->getQueryHandle();
+
+  my $sql = "select external_database_id from sres.externaldatabase where lower(name) like '" . lc($extDbName) ."'";
+  my $sth = $dbh->prepareAndExecute($sql);
+  my ($dbId) = $sth->fetchrow_array();
+  $sth->finish();
+
+  my $login = $gusconfig->getUserName;
+  my $user = GUS::Model::Core::UserInfo->new({login => $login});
+  $user->retrieveFromDB();
+  my $userId = $user->getId();
+
+  unless ($dbId){
+    my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({name => $extDbName, row_user_id => $userId, row_alg_invocation_id => 0});
+    $newDatabase->submit();
+    $dbId = $newDatabase->getId();
+  }
+
+  $sql = "select external_database_release_id from sres.externaldatabaserelease where external_database_id = $dbId and version = $extDbVer";
+  $sth = $dbh->prepareAndExecute($sql);
+  my ($dbRlsId) = $sth->fetchrow_array();
+
+  unless ($dbRlsId){
+    my $newDatabaseRelease = GUS::Model::SRes::ExternalDatabaseRelease->new({external_database_id => $dbId, version => $extDbVer, row_user_id => $userId, row_alg_invocation_id => 0});
+    $newDatabaseRelease->submit();
+    $dbRlsId = $newDatabaseRelease->getId();
+  }
+
+  $dbRlsId or die "Can't make virtual seq db release id for: $extDbName, $extDbVer";
+
+  return $dbRlsId;
+}
+
+sub processFile {
+  my ($inFile,$dbRlsId) = @_;
+
+  open (IN,$inFile) || die "Can't open $inFile for reading\n";
+
+  my @lines;
+
+  while (<IN>){
+    chomp;
+    my $line = $_;
+    if ($line =~ /#/ || $line =~ /^$/){next;}
+
+    if ($line =~ /tag/) {
+      $line = $line . "\texternal_database_release_id\n";
+      push (@lines,$line);
+    }
+    else {
+     $line = $line . "\t$dbRlsId\n";
+     push (@lines,$line);
+   }
+  }
+  return \@lines;
+}
+
+sub printArray {
+  my ($lineArr,$outFile) = @_;
+
+  open (OUT,">$outFile") || die "Can't open $outFile for writing\n";
+
+  foreach my $line (@{$lineArr}) {
+    print OUT "$line";
+  }
+}
