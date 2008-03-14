@@ -1810,7 +1810,6 @@ GRANT SELECT ON apidb.AsmAlignmentGeneSummary&1 TO gus_r;
 CREATE OR REPLACE SYNONYM apidb.AsmAlignmentGeneSummary
                           FOR apidb.AsmAlignmentGeneSummary&1;
 
--------------------------------------------------------------------------------
 ---------------------------
 -- cleanup
 ---------------------------
