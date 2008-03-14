@@ -1055,11 +1055,24 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
         /> 
-        <summary includeProjects="PlasmoDB,ToxoDB">
-        Find genes involved in a specific metabolic pathway.
+        <summary>
+        Find genes involved in a speific metabolic pathway.
         </summary>
        
-        <description includeProjects="PlasmoDB,ApiDB">
+ <description includeProjects="ApiDB">
+            <![CDATA[
+                Find genes involved in a specific metabolic pathway. 
+          <br><br>
+
+        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
+            <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .<br>
+ Metabolic Pathway Reconstruction  for <i> T. gondii</i> is
+            available on the KEGG Pathway site
+            <a href="http://roos-compbio2.bio.upenn.edu/~fengchen/pathway/">here</a>.
+           ]]>
+        </description>
+
+        <description includeProjects="PlasmoDB">
             <![CDATA[
                 Find genes involved in a specific metabolic pathway. 
           <br><br>
@@ -2025,7 +2038,7 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
 
         <description>
            <![CDATA[
-Find genes identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
+Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cbil.upenn.edu/plasmoMAP">plasmoMAP</a> project to have a functional interaction with the given gene.
 
 <br><br>Input a gene ID and a minimum interaction likelihood score.  Scores range from 2 to 9435, and increasing scores indicate higher confidence.  Generally, a likelihood score of 10 or more indicates a high-confidence interaction.
 
