@@ -1747,7 +1747,7 @@ prompt apidb.AsmAlignmentGeneSummary;
 DROP MATERIALIZED VIEW apidb.AsmAlignmentGene;
 
 CREATE MATERIALIZED VIEW apidb.AsmAlignmentGene AS
-SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id,
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_contained_sequences AS est_count, a.length,
          ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
@@ -1774,7 +1774,7 @@ DROP MATERIALIZED VIEW apidb.AsmAlignmentNoGene;
 
 CREATE MATERIALIZED VIEW apidb.AsmAlignmentNoGene AS
 SELECT * from AsmAlignmentGene WHERE 1=0 UNION -- define datatype for null column
-SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id,
+SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_contained_sequences AS est_count, a.length,
          ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
          ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
@@ -1805,6 +1805,12 @@ SELECT * FROM apidb.AsmAlignmentNoGene
 UNION
 SELECT * FROM apidb.AsmAlignmentGene;
 
+GRANT SELECT ON apidb.AsmAlignmentGeneSummary&1 TO gus_r;
+
+CREATE OR REPLACE SYNONYM apidb.AsmAlignmentGeneSummary
+                          FOR apidb.AsmAlignmentGeneSummary&1;
+
+-------------------------------------------------------------------------------
 ---------------------------
 -- cleanup
 ---------------------------
