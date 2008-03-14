@@ -47,24 +47,26 @@
               category="Transcript Expression"
               displayName="Library"
               queryRef="AssemblyIds.AssembliesByLibrary"
-              recordClassRef="AssemblyRecordClasses.AssemblyRecordClass">
+              recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
+              includeProjects="CryptoDB, ToxoDB">
 
         <summary>Find EST Assemblies by Library Name</summary>
         <description>Find EST Assemblies by Library Name</description>
 
-        <attributesList includeProjects="CryptoDB,ToxoDB"
-              summary="organism, est_count, est_library_count"
-              sorting="organism asc, est_count desc, est_library_count desc"
+        <attributesList
+              summary="organism,est_count,est_library_count"
+              sorting="organism asc,est_count desc,est_library_count desc"
         />
 
-       <propertyList name="genomeAttribution">
+        <propertyList name="genomeAttribution">
           <value/>
-       </propertyList>
-       <propertyList name="specificAttribution">
-           <value includeProjects="ToxoDB,CryptoDB">dbEST</value>
-           <value includeProjects="CryptoDB">CparvumESTs</value>
-           <value includeProjects="CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
-       </propertyList>
+        </propertyList>
+        <propertyList name="specificAttribution">
+          <value includeProjects="ToxoDB">dbEST</value>
+          <value includeProjects="CryptoDB">CparvumESTs</value>
+          <value includeProjects="CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+          <value includeProjects="CryptoDB">dbEST</value>    
+        </propertyList>
 
         <dynamicAttributes>
           <columnAttribute name="est_library_count" displayName="ESTs from Libraries" align="center"/>

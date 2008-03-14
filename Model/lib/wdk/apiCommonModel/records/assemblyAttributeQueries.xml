@@ -4,36 +4,29 @@
         <sqlQuery name="Bfmv" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
-        <column name="context_start" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="context_end"  sortingTable="apidb.AssemblyAttributes"/>
         <column name="project_id" sortingTable="apidb.AssemblyAttributes"/>
         <column name="source_id" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="sequence_id" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="start_min_text" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="end_max_text" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="strand_plus_minus" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="organism"  sortingTable="apidb.AssemblyAttributes"/>
+        <column name="organism" sortingTable="apidb.AssemblyAttributes" sortingColumn="organism"/>
         <column name="est_count"  sortingTable="apidb.AssemblyAttributes"/>
         <column name="length" sortingTable="apidb.AssemblyAttributes"/>
      <sql includeProjects="ToxoDB">
       <![CDATA[ 
-      SELECT aa.source_id, aa.sequence_id, aa.project_id, REPLACE(SUBSTR(aa.organism, 1,   40),'Toxoplasma','T.') AS organism,
-      aa.start_min_text, aa.end_max_text, aa.start_min - 10000 as context_start, aa.end_max + 10000 as context_end,
-      aa.strand_plus_minus, aa.est_count, aa.length
+      SELECT aa.source_id, aa.project_id,
+      REPLACE(SUBSTR(aa.organism, 1,   40),'Toxoplasma','T.') AS organism,
+      aa.est_count, aa.length
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
      ]]>
     </sql>
      <sql includeProjects="CryptoDB,GiardiaDB,TrichDB">
       <![CDATA[ 
-      SELECT aa.source_id, aa.sequence_id, aa.project_id,
+      SELECT aa.source_id, aa.project_id,
       REPLACE(
         REPLACE(
           REPLACE(aa.organism,'Cryptosporidium','C.' ),
                           'Giardia',        'G.' ),
                           'Trichomonas',    'T.' ) AS organism,
-      aa.start_min_text, aa.end_max_text, aa.start_min - 10000 as context_start,
-      aa.end_max + 10000 as context_end, aa.strand_plus_minus, aa.est_count, aa.length
+      aa.est_count, aa.length
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
      ]]>
