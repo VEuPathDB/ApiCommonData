@@ -1426,7 +1426,6 @@ prompt apidb.AssemblyAttributes;
 
 CREATE MATERIALIZED VIEW apidb.AssemblyAttributes&1 AS
 SELECT a.source_id,
-       s.source_id AS sequence_id,
        CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1441,11 +1440,6 @@ SELECT a.source_id,
          ELSE 'ERROR: setting project in createApidbTuning.sql'
        END as project_id,
        tn.name AS organism,
-       blat.target_start AS start_min,
-       blat.target_end AS end_max,
-       trim(to_char(blat.target_start,'999,999,999')) as start_min_text,
-       trim(to_char(blat.target_end,'999,999,999')) as end_max_text,
-       decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) AS strand_plus_minus, 
        a.number_of_contained_sequences AS est_count,
        a.length,
        a.a_count,
@@ -1453,10 +1447,8 @@ SELECT a.source_id,
        a.g_count,
        a.t_count,
        a.other_count
-FROM  dots.Assembly a, dots.BlatAlignment blat, dots.NaSequence s, sres.TaxonName tn
-WHERE blat.query_na_sequence_id = a.na_sequence_id
-  AND blat.target_na_sequence_id = s.na_sequence_id
-  AND a.taxon_id = tn.taxon_id
+FROM  dots.Assembly a, sres.TaxonName tn
+WHERE a.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
 ;
 
