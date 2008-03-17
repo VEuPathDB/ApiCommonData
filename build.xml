@@ -28,15 +28,7 @@
   <target name="WDK-Installation">
     <ant antfile="../WDK/build.xml" target="WDK-Installation">
       <property name="project" value="WDK"/>
-      <property name="version" value="1.8.1"/>
-    </ant>
-  </target>  
-
-  <target name="WDK-Checkout" unless="WDK.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
-      <property name="project" value="WDK"/>
-      <property name="version" value="WDK_version_1-10"/>
+      <property name="version" value="WDK_version_1-15"/>
     </ant>
   </target>  
 
@@ -61,6 +53,15 @@
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/DoTS" />
       <property name="project" value="DoTS"/>
       <property name="version" value="??"/>
+    </ant>
+  </target>  
+
+  <target name="WDK-Checkout" unless="WDK.present"> 
+    <ant target="defaultProjectCheckout" inheritAll="false">
+      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
+      <property name="project" value="WDK"/>
+      <property name="version" value="WDK_version_1-15"/>
+      <property name="useBranch" value=""/>
     </ant>
   </target>  
 
