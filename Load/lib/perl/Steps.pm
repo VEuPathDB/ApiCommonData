@@ -2798,10 +2798,8 @@ sub startProteinBlastOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue";
-  if($ppn){
-    $clusterCmdMsg .= " $ppn";
-  }
+  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $ppn $queue";
+
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
@@ -4823,7 +4821,7 @@ EOF
 
 # update ortholog group fields, and load MSA results
 sub updateOrthoMCLGroups {
-  my ($mgr, $seqTable) = @_;
+  my ($mgr, $seqTable,$gusConfigFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "updateOrthoMCLGroups";
