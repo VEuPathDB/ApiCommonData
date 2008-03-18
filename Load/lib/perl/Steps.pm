@@ -183,6 +183,19 @@ sub initAmitoAnalysis {
 }
 
 
+sub initGiardiaAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Glamblia';
+
+  my $taxId = ["Glamblia:184922"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
 sub initOrthomclAnalysis {
   my ($propertyFile, $optionalArgs) = @_;
 
@@ -826,7 +839,39 @@ sub copyPipelineDirToComputeCluster {
 
   $mgr->endStep($signal);
 }
+sub moveDownloadFile {
+  my ($mgr,$file,$dir) = @_;
 
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = $file;
+
+  $signal =~ s/\///g;
+
+  $signal = "move" . ucfirst($signal);
+
+ return if $mgr->startStep("Moving $file to $dir", $signal);
+
+  my $projectDir = $propertySet->getProp('projectDir');
+
+  my $release = $propertySet->getProp('release');
+
+  $file = "$projectDir/$release/resources_pipeline/primary/downloads/$file";
+
+  if (! -e $file) { die "$file doesn't exist\n";}
+
+  if ($file =~ /\.gz/) {
+    $mgr->runCmd("gunzip -f $file");
+
+    $file =~ s/\.gz//;
+  }
+
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/$dir");
+
+  $mgr->runCmd("mv $file $mgr->{dataDir}/$dir");
+
+  $mgr->endStep($signal);
+}
 
 sub moveSeqFile {
   my ($mgr,$file,$dir) = @_;
@@ -1095,7 +1140,7 @@ sub extractNaSeq {
 
   my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
 
-  $sql .= " and taxon_id = $taxonId";
+  $sql .= " and taxon_id = $taxonId" if $taxonId;
 
   $sql = $altSql if $altSql;
 
