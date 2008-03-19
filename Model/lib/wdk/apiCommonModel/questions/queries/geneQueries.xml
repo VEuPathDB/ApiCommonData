@@ -2543,10 +2543,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByExportPrediction" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.min_exportpred_score"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
-	  <wsColumn name="source_id" width="32" wsName="source_id"/>
-	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <paramRef ref="geneParams.min_exportpred_score"/>	
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="exportpred_score"/>
     </wsQuery>
 
