@@ -9,10 +9,10 @@
               displayName="ID"
               queryRef="AssemblyIds.AssembliesByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB, ToxoDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
 
         <attributesList
-           summary="organism,location_text,est_count,length"
+           summary="organism,est_count,length"
            sorting="organism asc,est_count desc"
         />
         <summary>
@@ -29,7 +29,7 @@
           <value/>
        </propertyList>
        <propertyList name="specificAttribution">
-           <value includeProjects="ToxoDB">dbEST</value>
+           <value includeProjects="ToxoDB,GiardiaDB">dbEST</value>
            <value includeProjects="CryptoDB">CparvumESTs</value>
            <value includeProjects="CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
            <value includeProjects="CryptoDB">dbEST</value>
@@ -48,7 +48,7 @@
               displayName="Library"
               queryRef="AssemblyIds.AssembliesByLibrary"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="CryptoDB, ToxoDB">
+              includeProjects="CryptoDB,ToxoDB,GiardiaDB">
 
         <summary>Find EST Assemblies by Library Name</summary>
         <description>Find EST Assemblies by Library Name</description>
@@ -62,7 +62,7 @@
           <value/>
         </propertyList>
         <propertyList name="specificAttribution">
-          <value includeProjects="ToxoDB">dbEST</value>
+          <value includeProjects="ToxoDB,GiardiaDB">dbEST</value>
           <value includeProjects="CryptoDB">CparvumESTs</value>
           <value includeProjects="CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
           <value includeProjects="CryptoDB">dbEST</value>    
@@ -72,6 +72,146 @@
           <columnAttribute name="est_library_count" displayName="ESTs from Libraries" align="center"/>
         </dynamicAttributes>
   </question>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Location -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+  <question name="AssembliesByLocation"
+              category="Genomic Position"
+              displayName="Chromosomal Location"
+              queryRef="AssemblyIds.AssembliesByLocation"
+              recordClassRef="AssemblyRecordClasses.AssemblyRecordClass">
+
+ 
+
+
+        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+              summary="organism, assembly_location,est_count"
+              sorting="organism asc, assembly_location asc"
+        /> 
+
+        <dynamicAttributes includeProjects="ToxoDB,CryptoDB,GiardiaDB">
+            <columnAttribute name="assembly_location" displayName="EST location(s)"/>
+        </dynamicAttributes>
+
+        <summary>
+            Find EST Assemblies that are located in a specified genomic region.
+        </summary>
+
+       <description includeProjects="CryptoDB">
+           <![CDATA[
+          Find genes within a given genomic region.<br>
+          Select a <i>C. parvum</i> chromosome from the pull-down menu or 
+          enter the name of a contig for either <i>C. parvum</i> or <i>C. hominis</i>(e.g."AAEL01000057").
+          If you enter both, your result will include the union. 
+          The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+          ]]>
+        </description>
+      
+        <description includeProjects="ToxoDB">
+	      <![CDATA[
+          Find EST assemblies that are located in a specified genomic region.<br><br>
+          Either select a <i>T. gondii</i> chromosome from the pull-down menu
+          <b>or</b> enter a sequence ID of a chromosome (e.g. "VIIa") or a 
+          scaffold (e.g. "TGG_995305"). <br> 
+          If you enter both, your result will include the union.
+          The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+          ]]>
+        </description>
+
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="CryptoDB">dbEST</value>
+           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+       </propertyList>
+    </question>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- With Gene Overlap -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="AssembliesWithGeneOverlap"
+         displayName="Extent of Gene Overlap"
+         queryRef="AssemblyIds.AssembliesWithGeneOverlap"
+         recordClassRef="AssemblyRecordClasses.AssemblyRecordClass">
+
+      
+        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+           summary="organism,assembly_locations,genes,est_count"
+           sorting="organism asc,assembly_locations asc"
+        /> 
+<summary>Find EST assemblies that overlap or not with a gene.</summary>
+        <description includeProjects="ToxoDB">Find EST assemblies that Overlap a Gene.</description>
+        <description includeProjects="CryptoDB">
+       <![CDATA[
+        Find EST assemblies that overlap a <i>C. parvum</i> gene.
+        ]]>
+        </description>
+
+        <dynamicAttributes includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+            <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
+            <columnAttribute name="genes" displayName="Gene(s)"/>
+        </dynamicAttributes>
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+       </propertyList>
+    </question>
+
+ <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- By Gene ID -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="AssembliesByGeneIDs"
+         displayName="Gene ID"
+         queryRef="AssemblyIds.AssembliesByGeneIDs"
+         recordClassRef="AssemblyRecordClasses.AssemblyRecordClass">
+
+      
+        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+           summary="organism,assembly_locations,genes,est_count"
+           sorting="organism asc,assembly_locations asc"
+        /> 
+        <summary>Find EST assemblies by gene id(s).</summary>
+        <description includeProjects="ToxoDB,GiardiaDB">Find EST assemblies by Gene ID(s).</description>
+        <description includeProjects="CryptoDB">
+       <![CDATA[
+        Find EST assemblies by <i>C. parvum</i> Gene ID(s).
+        ]]>
+        </description>
+
+        <dynamicAttributes includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+            <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
+            <columnAttribute name="genes" displayName="Gene(s)"/>
+        </dynamicAttributes>
+
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+       </propertyList>
+    </question>
 
   </questionSet>
 
