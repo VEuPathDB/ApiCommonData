@@ -1,0 +1,116 @@
+<wdkModel>
+    
+   <!-- notes
+
+      - need to review mass spec params (for possible redundancy)
+
+   -->
+
+    <paramSet name="assemblyParams">
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- best alignment only  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <enumParam name="best_alignment_only"
+                     prompt="Best alignments only"
+                     multiPick="false"
+                     quote="false">
+      <help>
+             Select yes to return only those EST assembly alignments that are the best alignment for the assembly.  Many of the assemblies align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each assembly
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
+        <enumValue>
+          <term>Yes</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>No</term>
+          <internal>0,1</internal>
+        </enumValue>
+      </enumList>   
+    </enumParam>
+
+        <stringParam name="max_number_best_alignments"
+                     prompt="Maximum number of best alignments"
+                     quote="false">
+            <help>
+              EST assembly sequences can have two (or more) best alignments that have the same percent identity, length and score.  This parameter allows you to specify the maximum number of these best alignments that will be considered for any assembly to be included in the query.  For example, if you specify 1 then all the assemblies that do not have a unique best alignment will be ignored in the query.
+            </help>           
+            <suggest default="1"
+               allowEmpty="true" emptyValue="1000" />
+        </stringParam>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- high confidence est only  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <enumParam name="high_confidence_only"
+                     prompt="Consistent alignments only"
+                     multiPick="false"
+                     quote="false">
+      <help>
+             Select yes to return only those EST assembly alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the assembly sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the assembly query.
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
+        <enumValue>
+          <term>No</term>
+          <internal>0,1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>1</internal>
+        </enumValue>
+      </enumList>   
+    </enumParam>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--  -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <stringParam name="min_percent_identity"
+                     prompt="Percent identity >="
+                     quote="false">
+            <help>You can specify a minimum percent identity of the alignment between the EST assembly and genomic DNA.  We only store alignments with >= 90% identity</help>           
+            <suggest default="90"/>
+        </stringParam>
+
+
+
+       <stringParam name="min_percent_assembly_aligned"
+                     prompt="Percent of EST assembly bases aligned >="
+                     quote="false">
+            <help>Enter the minimum percentage of bases in the assembly sequence that are aligned to genomic DNA in this alignment.</help>
+            <suggest default="20"
+                          />
+        </stringParam>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- overlap or not  -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <enumParam name="overlapOrNot"
+                     prompt="EST Assembly"
+                     multiPick="false"
+                     quote="false">
+      <help>
+             Select yes to return only those EST assembly alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the assembly sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the assembly query.
+      </help>
+   <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>   
+        <enumValue>
+          <term>does overlap with a gene</term>
+          <internal>INTERSECT</internal>
+        </enumValue>
+        <enumValue>
+          <term>does not overlap with a gene</term>
+          <internal>MINUS</internal>
+        </enumValue>
+      </enumList>   
+    </enumParam>
+
+
+
+
+</paramSet>
+</wdkModel>
