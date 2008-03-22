@@ -617,10 +617,10 @@ sns2.external_database_release_id=extr.external_database_release_id
                    includeProjects="ApiDB"
                    isCacheable="true" 
                    processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-	        <paramRef ref="geneParams.min_isoelectric_point"/>
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg"/>	  
+                <paramRef ref="geneParams.min_isoelectric_point"/>
 	        <paramRef ref="geneParams.max_isoelectric_point"/>
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg"/>
-	        <wsColumn name="source_id" width="32" wsName="source_id"/>
+                <wsColumn name="source_id" width="32" wsName="source_id"/>
 	        <wsColumn name="project_id" width="32" wsName="project_id"/>
 	 </wsQuery>
 
@@ -1413,6 +1413,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 <wsColumn name="source_id"  width="32" wsName="source_id"/>
                 <wsColumn name="sense_count" />
                 <wsColumn name="antisense_count" />
+<!--
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/>
+-->
 	 </wsQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
