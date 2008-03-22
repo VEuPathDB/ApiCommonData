@@ -44,6 +44,8 @@
                  AND nf.na_feature_id = tf.na_feature_id
                  AND ts.aa_sequence_id = tf.aa_sequence_id
            </sql>
+
+
            <sql includeProjects="ApiDB">
                   SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
                 	  from dots.TranslatedAASequence taas,
@@ -55,7 +57,7 @@
                     	  AND s.term_name = 'ORF'
                    	  AND taas.external_database_release_id=extr.external_database_release_id
                  	  AND extr.external_database_id=ext.external_database_id
-                   	  AND ext.name=LOWER($$projectId$$)
+                   	  AND ext.name= $$projectId$$ 
            </sql>
         </sqlQuery>
     </querySet>
