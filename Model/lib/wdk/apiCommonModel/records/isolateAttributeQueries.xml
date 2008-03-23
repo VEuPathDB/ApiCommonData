@@ -48,7 +48,7 @@
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="sequence"/>
-            <sql>
+            <sql includeProjects="CryptoDB">
                SELECT etn.source_id, 
                       etn.sequence,
                       $$projectId$$ as project_id
@@ -60,6 +60,13 @@
                   AND edb.name = 'Isolates Data'
                   AND edr.version = '2007-12-12'
                   AND etn.source_id = $$primaryKey$$
+           </sql>
+           <sql includeProjects="ApiDB">
+               SELECT etn.source_id, 
+                      etn.sequence,
+                      $$projectId$$ as project_id
+               FROM   DoTS.SplicedNASequence etn
+               WHERE  etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
