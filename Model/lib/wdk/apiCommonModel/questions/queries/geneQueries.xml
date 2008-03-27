@@ -898,7 +898,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,GiardiaDB,TrichDB"
+    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB" 
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
@@ -908,6 +908,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
+        <sqlParamValue name="externalDatabase" includeProjects="GiardiaDB">G. lamblia contigs from Genbank</sqlParamValue>
+        <sqlParamValue name="externalDatabase" includeProjects="ToxoDB">Chromosome Map - David Sibley</sqlParamValue>
         <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
             select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
@@ -952,7 +954,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
  
     
-        <sql includeProjects="ToxoDB">
+        <sql includeProjects="ToxoDB,GiardiaDB">
             <![CDATA[
             select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
@@ -989,11 +991,14 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             and t.parent_id = gf.na_feature_id
 	    and gf.external_database_release_id = edr.external_database_release_id
 	    and edr.external_database_id = ed.external_database_id
-	    and ed.name = 'Chromosome Map - David Sibley'
+	    and ed.name = '&&externalDatabase&&'
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
        </sql>
+       
+
+
     </sqlQuery>   
 
     <wsQuery name="GenesByMassSpec" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"

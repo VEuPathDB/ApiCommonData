@@ -413,7 +413,7 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
+    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB"
          displayName="Mass Spec. Evidence"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
@@ -446,10 +446,18 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
           ]]>
         </summary>
 
+ <summary includeProjects="GiardiaDB">
+           <![CDATA[
+            Find <i>G. lamblia</i> genes that have evidence for protein expression
+            in male and female gametocytes.
+          ]]>
+        </summary>
+
+
         <propertyList name="organism">
            <value includeProjects="PlasmoDB,ApiDB">P. berghei</value>
-           <value includeProjects="ToxoDB,ApiDB">C. parvum</value>
-           <value includeProjects="CryptoDB,ApiDB">T. gondii</value>
+           <value includeProjects="CryptoDB,ApiDB">C. parvum</value>
+           <value includeProjects="ToxoDB,ApiDB ">T. gondii</value>
         </propertyList>
 
         <description includeProjects="PlasmoDB">
@@ -496,6 +504,7 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
            <value includeProjects="ApiDB,ToxoDB">massspec_Oct2006_Tg_membrane_Fayun_Proteomics</value>
            <value includeProjects="ApiDB,ToxoDB">massspec_may10_2006_Proteomics</value>
            <value includeProjects="ApiDB,ToxoDB">massspec_1D_tg_1frac_020306_Proteomics</value>
+           <value includeProjects="ApiDB,GiardiaDB">DTASelect-filter_032108_Proteomics</value>
         </propertyList>
         
         <description includeProjects="CryptoDB">
@@ -622,13 +631,29 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
         </description>
 
 
+        <description includeProjects="GiardiaDB">
+              <![CDATA[
+             <p>
+             Find <i>Giardia lamblia</i> genes that have evidence of protein expression based on Mass Spec analyses.
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
+             <p>
+             <sup>1</sup>
+<!-- description by Ranter -->
+<i>Daniel Ratner</i>
+<br>
+
+             ]]>
+             </description>
+
+
         <description includeProjects="ToxoDB">
               <![CDATA[
              <p>
              Find <i>Toxoplasma</i> genes that have evidence of protein expression based on Mass Spec analyses.
              <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
              <p>
-             <sup>1</sup> <i>Proteomics data from JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
+             <sup>1</sup> <i>Proteomics data f<p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
+             <p>rom JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
              Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
              <br>
              <sup>*</sup><i>Bradley PJ, Ward C, Cheng SJ, Alexander DL, Coller S, Coombs GH, Dunn JD, Ferguson DJ, Sanderson SJ, Wastling JM,Boothroyd JC. 
@@ -651,7 +676,7 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
 Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-SDS-PAGE or 2D gel electrophoresis.  The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. A total of 2604 proteins were identified by mass spectrometry in T. gondii to date. The 2604 predicted proteins cluster into 1534 groups of overlapping gene predictions that were identified by 14455 mass spectrometry peptide hits that gave an average 13.2% sequence coverage.
              ]]>
              </description>
-	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
+	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB,GiardiaDB">
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
