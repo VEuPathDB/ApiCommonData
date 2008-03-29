@@ -186,7 +186,7 @@
     <!-- Mass Spec. -->  
     <!-- ************************************************************ -->
    
-    <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB" 
+    <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,GiardiaDB" 
               isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
         <paramRef ref="orfParams.orf_ms_assay"/>
@@ -196,7 +196,7 @@
         <column name="source_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" />
-        <sql includeProjects="ToxoDB">
+        <sql includeProjects="ToxoDB,GiardiaDB">
             <![CDATA[
             select distinct misc.source_id, '@PROJECT_ID@' as project_id,
                             seq.sum_sequence_count, spec.sum_spectrum_count

@@ -199,7 +199,7 @@
     <!-- Mass Spec -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,ApiDB" 
+    <question name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,ApiDB,GiardiaDB" 
               category="Other Attributes"
               displayName="Mass Spec. Evidence"
               queryRef="OrfIds.OrfsByMassSpec" 
@@ -306,6 +306,16 @@ one time.
              ]]>
              </description>
 
+
+<description includeProjects="GiardiaDB">
+              <![CDATA[
+             <p>
+             Find <i>Giardia intestinalis</i> ORFs that have evidence of protein expression based on Mass Spec analyses.
+             <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesByMassSpec"><b>Genes with Mass Spec. Evidence</b></a> query to find gene models which have mapped MS/MS peptides.  NOTE: This query only returns ORFs that contain peptides that could not be mapped onto an annotated gene model overlapping with the ORF.
+             ]]>
+             </description>
+
+
 	<dynamicAttributes>
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
@@ -321,6 +331,7 @@ one time.
            <value includeProjects="ToxoDB">Wastling-1D_SDSPage-Insoluble</value>
            <value includeProjects="ToxoDB">Wastling-MudPIT-Soluble</value>
            <value includeProjects="ToxoDB">Wastling-MudPIT-Insoluble</value>
+           <value includeProjects="GiardiaDB">DTASelect-filter_032108_Proteomics</value>
            </propertyList>
     </question>
 

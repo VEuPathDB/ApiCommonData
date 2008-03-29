@@ -1,5 +1,4 @@
 <wdkModel>
-
   <!-- notes
 
      - should ms_assay param be a controlled vocab pulled from the database?
@@ -69,7 +68,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- mass spec assay -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <enumParam name="orf_ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB"
+    <enumParam name="orf_ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB"
              prompt="Assay Type"
              multiPick="true"
              visible="true">
@@ -135,6 +134,13 @@
             <term>Murray Conoid-depleted Fraction</term>
             <internal>Murray Conoid-depleted Fraction</internal>
           </enumValue>
+
+          <enumValue includeProjects="ApiDB,GiardiaDB">
+           <display><![CDATA[DTA-Select Filter]]></display>
+           <term>DTASelect-filter_032108_Proteomics</term>
+           <internal>DTASelect-filter_032108_Proteomics</internal>
+          </enumValue>
+
       </enumList>
     </enumParam>
 
