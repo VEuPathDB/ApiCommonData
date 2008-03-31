@@ -1,0 +1,87 @@
+<wdkModel>
+    <recordClassSet name="SageTagRecordClasses">
+
+      <recordClass idPrefix="" name="SageTagRecordClass" type="SageTag">
+
+        <projectParamRef ref="recordParams.Project"/>
+
+      <!-- =============================================================== -->
+      <!--   Reporters -->
+      <!-- =============================================================== -->
+
+      <reporter name="tabular" displayName="Summary - TAB Delimited"
+                implementation="org.gusdb.wdk.model.report.TabularReporter" />
+
+      <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
+                  implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
+
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Sage Tag attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="SageTagAttributes.Attrs">
+         <columnAttribute name="tag_sequence" displayName="Tag Sequence" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="sequence_id" displayName="Sequence Id" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="start_min" displayName="Tag Start" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="end_max" displayName="Tag End" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="strand" displayName="Strand" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="context_start" displayName="Genomic Context Start" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="context_end" displayName="Genomic Context End" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="rad_source_id" displayName="External Identifier" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="project_id" displayName="Project Id" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+
+         <textAttribute name="location_text" displayName="Genomic Location">
+           <text>
+               <![CDATA[
+               $$sequence_id$$: $$start_min$$ - $$end_max$$ ($$strand$$)
+               ]]>
+           </text>
+         </textAttribute>
+      </attributeQueryRef>
+
+      <attributeQueryRef ref="SageTagAttributes.AlignmentCount">
+         <columnAttribute name="total_alignments" displayName="Total Number of Alignments" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+      </attributeQueryRef>
+
+      <attributeQueryRef ref="SageTagAttributes.Gene">
+         <columnAttribute name="gene_source_id" displayName="Within Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+      </attributeQueryRef>
+
+     <attributeQueryRef ref="SageTagAttributes.GeneCount">
+         <columnAttribute name="number_of_genes_hit" displayName="Total Number of Genes Hit" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+      </attributeQueryRef>
+
+      <!-- Need to add a text attribute for the genomic context -->
+
+
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Sage Tag Tables -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <table name="RawCounts" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+            displayName="Raw Data"
+            queryRef="SageTagTables.RawExperiments">
+         <columnAttribute displayName="Experiment" name="raw_experiment"/>
+         <columnAttribute displayName="Count" name="raw_count"/>
+         <columnAttribute displayName="Total" name="total_raw_count"/>
+         <columnAttribute displayName="Percent" name="raw_percent"/>
+     </table>
+
+     <table name="NormCounts" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+            displayName="Normalized Data"
+            queryRef="SageTagTables.NormExperiments">
+         <columnAttribute displayName="Experiment" name="norm_experiment"/>
+         <columnAttribute displayName="Count" name="norm_count"/>
+         <columnAttribute displayName="Total" name="total_norm_count"/>
+         <columnAttribute displayName="Percent" name="norm_percent"/>
+     </table>
+
+     <table name="Genes" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+            displayName="All Genes the Tag Aligns to"
+            queryRef="SageTagTables.AlignedGenes">
+         <columnAttribute displayName="Gene Source Id" name="gene_source_id" internal="true"/>
+         <columnAttribute displayName="Strand" name="gene_strand"/>
+         <columnAttribute displayName="Distance (bp) from gene" name="bp_from_gene"/>
+     </table>
+</wdkModel>
