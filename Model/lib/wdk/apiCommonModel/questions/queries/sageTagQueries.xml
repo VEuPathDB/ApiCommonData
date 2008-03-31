@@ -1,0 +1,37 @@
+<wdkModel>
+
+  <querySet name="SageTagIds">
+
+    <sqlQuery name="BySequence" includeProjects="ApiDB,PlasmoDB,GiardiaDB"
+              isCacheable="true">
+        <paramRef ref="sageTagParams.sequence"/>
+        <paramRef ref="sageTagParams.is_within_gene"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+         <![CDATA[
+         select distinct a.source_id, a.project_id 
+         from apidb.SageTagAttributes a, apidb.SageTagGene sg
+         where (lower(a.sequence) = lower($$sequence$$) 
+                 OR lower(a.sequence) = lower('catg' || $$sequence$$) )
+         and a.na_feature_id = sg.tag_feature_id $$is_within_gene$$ 
+         ]]>
+       </sql>
+
+    <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,PlasmoDB,GiardiaDB"
+              isCacheable="true">
+        <paramRef ref="sharedParams.ds_gene_ids"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+         <![CDATA[
+         select distinct a.source_id, a.project_id
+         from apidb.SageTagAttributes a, apidb.SageTagGene sg
+         where a.na_feature_id = sg.tag_feature_id
+         and sg.gene_source_id in ($$ds_gene_ids$$)
+         ]]>
+       </sql>
+
+  </querySet>
+
+</wdkModel>

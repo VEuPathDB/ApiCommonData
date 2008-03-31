@@ -1,0 +1,73 @@
+<wdkModel>
+
+  <questionSet name="SageTagQuestions"
+               displayName="Search Sage Tags">
+
+<!--
+
+
+1. Find sage tag by sequence
+2. Find sage tags by gene source_id
+3. Find sage tags by expression level 
+  - greater than some percentage or count in a given experiment
+  - r value
+4. Find all sage tags that align to less than some number of genes 
+       OR Find all sage tags that align globally to less than some number of places
+
+-->
+
+    <question name="SageTagBySequence" 
+              category="Other Attributes"
+              displayName="Sage Tags by Sequence"
+              queryRef="SageTagIds.BySequence" 
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="ToxoDB, PlasmoDB,CryptoDB,ApiDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,gene_source_id"
+             />
+             <summary>
+               Find Sage Tags By Sequence.
+             </summary>
+             <description>
+               Find Sage Tags By Sequence.
+             </description>
+
+            <propertyList name="specificAttribution">
+              <value includeProjects="ApiDB,CryptoDB">??????</value>
+              <value includeProjects="ApiDB,ToxoDB">??????</value>
+              <value includeProjects="ApiDB,PlasmoDB">??????</value>
+           </propertyList> 
+
+    </question>
+
+    <question name="SageTagByGeneSourceId" 
+              category="Other Attributes"
+              displayName="Sage Tags by Sequence"
+              queryRef="SageTagIds.ByGeneSourceId" 
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,gene_source_id"
+             />
+             <summary>
+               Find Sage Tags By Gene Identifier
+             </summary>
+             <description>
+               Find Sage Tags By Gene Identifier
+             </description>
+
+           <propertyList name="specificAttribution">
+              <value includeProjects="ApiDB,CryptoDB">??????</value>
+              <value includeProjects="ApiDB,ToxoDB">??????</value>
+              <value includeProjects="ApiDB,PlasmoDB">??????</value>
+           </propertyList> 
+
+    </question>
+
+  </questionSet>
+
+</wdkModel>

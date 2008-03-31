@@ -1,0 +1,36 @@
+<wdkModel>
+
+  <paramSet name="sageTabParams" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB">
+
+        <stringParam name="sequence"
+                     prompt="Tag Sequence"
+                     substitute="yes">
+            <help>
+               Enter a Sage Tag Sequence.
+            </help>
+           <suggest sample="CTCGGCAAAGG, CATGCTCGGCAAAGG"
+                    default="CATGCTCGGCAAAGG"/>
+        </stringParam>
+
+        <enumParam name="is_within_gene"
+                     prompt="Does the Sage Align to a Gene?"
+                     multiPick="false"
+                     quote="false">
+          <help>
+             Sage Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to sage tags falling within a gene.
+          </help>
+          <enumList>   
+            <enumValue>
+              <term>No</term>
+              <internal>(+)</internal>
+            </enumValue>
+            <enumValue>
+              <term>Yes</term>
+              <internal> </internal>
+            </enumValue>
+          </enumList>   
+        </enumParam>
+
+  </paramSet>
+
+</wdkModel>
