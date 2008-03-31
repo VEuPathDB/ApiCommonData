@@ -2,7 +2,7 @@
 
   <querySet name="SageTagIds">
 
-    <sqlQuery name="BySequence" includeProjects="ApiDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="BySequence" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.sequence"/>
         <paramRef ref="sageTagParams.is_within_gene"/>
@@ -18,7 +18,7 @@
          ]]>
        </sql>
 
-    <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
