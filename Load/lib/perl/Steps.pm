@@ -2120,31 +2120,29 @@ sub loadSplignResults {
 
 }
 
-sub extractSageNaSequences {
-  my ($mgr, $species, $table, $sequenceOntology) = @_;
+sub extractGenomeNaSequences {
+  my ($mgr, $species, $table, $sequenceOntology,$taxId) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
   $table = "Dots." . $table;
 
-  my $signal = "extract${species}SageNaSequences";
+  my $signal = "extract${species}GenomeNaSequences";
 
-  return if $mgr->startStep("Extracting $species sage na sequences from GUS", $signal);
+  return if $mgr->startStep("Extracting $species genome na sequences from GUS", $signal);
 
-  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
+  my $taxonId =  &getTaxonId($mgr,$taxId);
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
-
-  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
-    my $dbName =  $scaffolds->{name};
-    my $dbVer =  $scaffolds->{ver};
+  foreach my $genome (@{$mgr->{genomeNaSequences}->{$species}}) {
+    my $dbName =  $genome->{name};
+    my $dbVer =  $genome->{ver};
 
     my $name = $dbName;
     $name =~ s/\s/\_/g;
 
     my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbVer);
 
-    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${name}SageNaSequences.fsa";
+    my $genomeFile = "$mgr->{dataDir}/seqfiles/${name}GenomeNaSequences.fsa";
 
     my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
@@ -2156,7 +2154,7 @@ sub extractSageNaSequences {
              and x.sequence_ontology_id = s.sequence_ontology_id
              and lower(s.term_name) = '$sequenceOntology'";
 
-    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile --outputFile $scaffoldFile --idSQL \"$sql\" --verbose 2>> $logFile";
+    my $cmd = "gusExtractSequences --outputFile $genomeFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
     $mgr->runCmd($cmd);
   }
@@ -2632,8 +2630,6 @@ sub extractSageTags {
 
   return if $mgr->startStep("Extracting $species SAGE tags from GUS", $signal);
 
-  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
-
   foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
     my $dbName =  $sageArray->{name};
     my $dbVer =  $sageArray->{ver};
@@ -2651,7 +2647,7 @@ sub extractSageTags {
              and a.version = $dbVer
              and a.array_design_id = s.array_design_id";
 
-    my $cmd = "gusExtractSequences --gusConfigFile $gusConfigFile --outputFile $sageTagFile --idSQL \"$sql\" --verbose 2>> $logFile";
+    my $cmd = "gusExtractSequences --outputFile $sageTagFile --idSQL \"$sql\" --verbose 2>> $logFile";
 
     $mgr->runCmd($cmd);
   }
@@ -2666,15 +2662,15 @@ sub mapSageTagsToNaSequences {
 
   my $signal = "map${species}SageTags";
 
-  return if $mgr->startStep("Mapping SAGE tags to $species sage na sequences", $signal);
+  return if $mgr->startStep("Mapping SAGE tags to $species genome na sequences", $signal);
 
-  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
-    my $dbName =  $scaffolds->{name};
+  foreach my $genome (@{$mgr->{genomeNaSequences}->{$species}}) {
+    my $dbName =  $genome->{name};
 
-    my $scafName = $dbName;
-    $scafName =~ s/\s/\_/g;
+    my $genName = $dbName;
+    $genName =~ s/\s/\_/g;
 
-    my $scaffoldFile = "$mgr->{dataDir}/seqfiles/${scafName}SageNaSequences.fsa";
+    my $genomeFile = "$mgr->{dataDir}/seqfiles/${genName}GenomeNaSequences.fsa";
 
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
@@ -2684,9 +2680,9 @@ sub mapSageTagsToNaSequences {
 
       my $sageTagFile = "$mgr->{dataDir}/seqfiles/${tagName}SageTags.fsa";
 
-      my $output = "$mgr->{dataDir}/sage/${tagName}To${scafName}";
+      my $output = "$mgr->{dataDir}/sage/${tagName}To${genName}";
 
-      my $cmd = "tagToSeq.pl $scaffoldFile $sageTagFile 2>> $output";
+      my $cmd = "tagToSeq.pl $genomeFile $sageTagFile 2>> $output";
 
       $mgr->runCmd($cmd);
     }
@@ -2703,22 +2699,22 @@ sub loadSageTagMap {
 
   my $propertySet = $mgr->{propertySet};
 
-  foreach my $scaffolds (@{$mgr->{sageNaSequences}->{$species}}) {
-    my $dbName =  $scaffolds->{name};
-    my $scafName = $dbName;
-    $scafName =~ s/\s/\_/g;
+  foreach my $genome (@{$mgr->{genomeNaSequences}->{$species}}) {
+    my $dbName =  $genome->{name};
+    my $genName = $dbName;
+    $genName =~ s/\s/\_/g;
 
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
       my $tagName = $dbName;
       $tagName =~ s/\s/_/g;
-      my $inputFile = "$mgr->{dataDir}/sage/${tagName}To${scafName}";
+      my $inputFile = "$mgr->{dataDir}/sage/${tagName}To${genName}";
 
       my $args = "--tagToSeqFile $inputFile";
 
-      $mgr->runPlugin("load${tagName}To${scafName}SageTagMap",
+      $mgr->runPlugin("load${tagName}To${genName}SageTagMap",
 		      "ApiCommonData::Load::Plugin::LoadSageTagFeature", $args,
-		      "Loading ${tagName}To${scafName} SAGE Tag map results");
+		      "Loading ${tagName}To${genName} SAGE Tag map results");
     }
   }
     $mgr->endStep($signal);
@@ -4132,11 +4128,11 @@ sub insertNormSageTagFreqs {
 
     $cfg =~ s/\.dat/\.cfg/;
 
-    my $args = "--cfg_file $fileDir/$cfg --data_file $fileDir/$file --subclass_view RAD::DataTransformationResult";
+    my $args = "--cfg_file '$fileDir/$cfg' --data_file '$fileDir/$file' --subclass_view RAD::DataTransformationResult";
 
     $mgr->runPlugin("${file}Inserted",
-		    "GUS::Supported::Plugin::InsertRadAnalysis",
-		    $args,"Inserting $file for $name");
+ 		    "GUS::Supported::Plugin::InsertRadAnalysis",
+ 		    $args,"Inserting $file for $name");
   }
 
   $mgr->endStep($signal);
