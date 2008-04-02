@@ -1,6 +1,6 @@
 DROP TABLE ryanthib.messages; 
 DROP TABLE ryanthib.projects;
-DROP TABLE ryanthib.categories;
+DROP TABLE ryanthib.category;
 DROP TABLE ryanthib.message_projects;
 
 
@@ -32,10 +32,10 @@ CREATE TABLE ryanthib.category
 
 CREATE TABLE ryanthib.message_projects
 (
-  message_id NUMBER(3) NOT NULL;
-  project_id NUMBER(3) NOT NULL
+  message_id NUMBER(3) NOT NULL,
+  project_id NUMBER(3) NOT NULL,
   CONSTRAINT message_id_fkey FOREIGN KEY (message_id) REFERENCES ryanthib.messages(message_id),
-  CONSTRAINT project_id_fkey FOREIGN KEY (project_id) REFERENCES ryanthib.projects(project_id),
+  CONSTRAINT project_id_fkey FOREIGN KEY (project_id) REFERENCES ryanthib.projects(project_id)
 );
 
 CREATE SEQUENCE ryanthib.messages_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALUE;
