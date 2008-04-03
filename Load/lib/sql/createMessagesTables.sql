@@ -8,11 +8,11 @@ CREATE TABLE ryanthib.messages
 (
   message_id NUMBER(4) NOT NULL,
   message_text VARCHAR(4000) NOT NULL,
-  message_category NUMBER(2),
-  start_date DATE,
-  stop_date  DATE,
+  message_category VARCHAR(150) NOT NULL,
+  start_date DATE NOT NULL,
+  stop_date  DATE NOT NULL,
   admin_comments VARCHAR(4000),
-  time_submitted TIMESTAMP,
+  time_submitted TIMESTAMP NOT NULL,
   CONSTRAINT messages_pkey PRIMARY KEY (message_id)  
 );
 
