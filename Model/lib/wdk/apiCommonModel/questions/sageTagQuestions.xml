@@ -8,21 +8,21 @@
 
 1. Find sage tag by sequence
 2. Find sage tags by gene source_id
-3. Find sage tags by expression level 
+3. Find sage tags by expression level(count), experiment(library)
   - greater than some percentage or count in a given experiment
-  - r value
-4. Find all sage tags that align to less than some number of genes 
+4. Find sag tags by rad_source_id(include giardiadb only)
+5. Find all sage tags that align to less than some number of genes 
        OR Find all sage tags that align globally to less than some number of places
-
+6.R value
 -->
 
     <question name="SageTagBySequence" 
               category="Other Attributes"
-              displayName="Sage Tags by Sequence"
+              displayName="Sequence"
               queryRef="SageTagIds.BySequence" 
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB, PlasmoDB,CryptoDB,ApiDB">
+              includeProjects="ToxoDB, PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
@@ -36,19 +36,20 @@
 
             <propertyList name="specificAttribution">
               <value includeProjects="ApiDB,CryptoDB">??????</value>
-              <value includeProjects="ApiDB,ToxoDB">??????</value>
-              <value includeProjects="ApiDB,PlasmoDB">??????</value>
+              <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
+              <value includeProjects="ApiDB,PlasmoDB">RAD.SAGETag</value>
+              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
            </propertyList> 
 
     </question>
 
     <question name="SageTagByGeneSourceId" 
               category="Other Attributes"
-              displayName="Sage Tags by Sequence"
+              displayName="GeneSource Id"
               queryRef="SageTagIds.ByGeneSourceId" 
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB">
+              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
@@ -62,11 +63,73 @@
 
            <propertyList name="specificAttribution">
               <value includeProjects="ApiDB,CryptoDB">??????</value>
-              <value includeProjects="ApiDB,ToxoDB">??????</value>
-              <value includeProjects="ApiDB,PlasmoDB">??????</value>
+              <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
+              <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
+              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
            </propertyList> 
 
+    </question> 
+    
+   <question name="SageTagByExpressionLevel" 
+              category="Other Attributes"
+              displayName="Expression Level"
+              queryRef="SageTagIds.ByExpressionLevel" 
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,tag_count,tag_percentage, raw_count, raw_percentage, gene_source_id"
+             />
+             <summary>
+               Find Sage Tags By Expression Level
+             </summary>
+             <description>
+               Find Sage Tags By Expresion Level
+             </description>
+
+           <propertyList name="specificAttribution">
+              <value includeProjects="ApiDB,CryptoDB">??????</value>
+              <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
+              <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
+              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
+           </propertyList>
+
+           <dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB,GiardiaDB">
+	     <columnAttribute name="tag_count" displayName="Tag Count" align="center"/>
+	     <columnAttribute name="tag_percentage" displayName="Tag Percentage" align="center"/>
+             <columnAttribute name="raw_count" displayName="Tag Count" align="center"/>
+	     <columnAttribute name="raw_percentage" displayName="Tag Percentage" align="center"/>
+             <columnAttribute name="SAGE_library" displayName="Experiement Name" align="center"/>
+	</dynamicAttributes>
+
     </question>
+
+   <question name="SageTagByRadSourceId" 
+              category="Other Attributes"
+              displayName="ID"
+              queryRef="SageTagIds.ByRadSourceId" 
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="GiardiaDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,gene_source_id"
+             />
+             <summary>
+               Find Sage Tags By Rad Source Id
+             </summary>
+             <description>
+               Find Sage Tags By Rad Source Id
+             </description>
+
+           <propertyList name="specificAttribution">
+              <value includeProjects="GiardiaDB">Giardia lamblia SAGE tags</value>
+           </propertyList>
+
+    </question>
+
+
 
   </questionSet>
 
