@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <paramSet name="sageTabParams" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB">
+  <paramSet name="sageTagParams" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB">
 
         <stringParam name="sequence"
                      prompt="Tag Sequence"
@@ -8,12 +8,35 @@
             <help>
                Enter a Sage Tag Sequence.
             </help>
-           <suggest sample="CTCGGCAAAGG, CATGCTCGGCAAAGG"
+           <suggest includeProjects="ApiDB,CryptoDB"
+                    sample="CTCGGCAAAGG, CATGCTCGGCAAAGG"
                     default="CATGCTCGGCAAAGG"/>
+           <suggest includeProjects="ApiDB,ToxoDB"
+                    sample="CATGTTTGCTTGTC, CATGTTTGCTTGGC"
+                    default="CATGTTTGCTTGTC"/>
+           <suggest includeProjects="ApiDB,PlasmoDB"
+                    sample="GTAATAAATG, TAGAAAATTC"
+                    default="GTAATAAATG"/>
+           <suggest includeProjects="ApiDB,GiardiaDB"
+                    sample="GGGCTCTAGTG, CCTGTATTCTG"
+                    default="GGGCTCTAGTG"/>
         </stringParam>
 
+
+       <stringParam name="rad_source_id"
+                     prompt="ID"
+                     substitute="yes">
+            <help>
+               Enter a Sage Tag Rad Source Id.
+            </help>
+           <suggest includeProjects="GiardiaDB"
+                    sample="670,880"
+                    default="670"/>
+        </stringParam>
+
+
         <enumParam name="is_within_gene"
-                     prompt="Does the Sage Align to a Gene?"
+                     prompt="Aligns to a Gene"
                      multiPick="false"
                      quote="false">
           <help>
@@ -31,6 +54,56 @@
           </enumList>   
         </enumParam>
 
+       <stringParam name="st_min_count" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+                     prompt="Minimum tag count"
+                     substitute="yes"
+                     quote="false">
+            <help>Enter the minimum normalized/raw sage tag count.</help>
+             <suggest default="2"/>
+        </stringParam>
+      <enumParam name="raw_normalized"
+                     prompt="Data Type"
+                     multiPick="false"
+                     quote="false">
+          <help>
+             Choose normalized or raw data.
+          </help>
+          <enumList>   
+            <enumValue>
+              <term>Normalized</term>
+              <internal>n</internal>
+            </enumValue>
+            <enumValue>
+              <term>Raw</term>
+              <internal>r</internal>
+            </enumValue>
+          </enumList>   
+        </enumParam>
+
+
+       <flatVocabParam name="sage_experiment" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+                     queryRef="SAGEtgVQ.experimentname"
+                     prompt="Experiment Name"
+                     multiPick="false">
+        <help>
+           Choose SAGE tag experiment name.
+        </help>    
+       </flatVocabParam>
+
   </paramSet>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--  Vocab queries-->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+ <querySet name="SAGEtgVQ">
+   <sqlQuery name="experimentname" includeProjects="PlasmoDB,GiardiaDB,ToxoDB,ApiDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+              select distinct NAME as internal,NAME as term
+              from rad.ASSAY
+              order by name
+            </sql>
+        </sqlQuery>
+  </querySet>
 </wdkModel>
