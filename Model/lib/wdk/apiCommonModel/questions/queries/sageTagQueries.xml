@@ -17,10 +17,12 @@
          and a.na_feature_id = sg.tag_feature_id $$is_within_gene$$ 
          ]]>
        </sql>
-
+</sqlQuery>
     <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.ds_gene_ids"/>
+        <paramRef ref="geneParams.single_gene_id"/>
+        <paramRef ref="geneParams.st_max_five_prime_distance"/>
+        <paramRef ref="geneParams.st_max_three_prime_distance"/>
         <column name="source_id"/>
         <column name="project_id"/>
        <sql>
@@ -28,9 +30,54 @@
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a, apidb.SageTagGene sg
          where a.na_feature_id = sg.tag_feature_id
-         and sg.gene_source_id in ($$ds_gene_ids$$)
+         and sg.gene_source_id in ($$single_gene_id$$)
+         and ((sg.direction = '5' and sg.distance <= $$st_max_five_prime_distance$$)
+             OR (sg.direction = '3' and sg.distance <= $$st_max_three_prime_distance$$))
          ]]>
        </sql>
+</sqlQuery>
+ 
+ <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB"
+              isCacheable="true">
+        <paramRef ref="sageTagParams.rad_source_id"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+         <![CDATA[
+         select distinct a.source_id, a.project_id
+         from apidb.SageTagAttributes a
+         where a.rad_source_id in ($$rad_source_id$$)
+         ]]>
+       </sql>
+</sqlQuery>
+ 
+
+ <sqlQuery name="ByExpressionLevel" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+              isCacheable="true">
+        <paramRef ref="sageTagParams.st_min_count"/>
+        <paramRef ref="sageTagParams.raw_normalized"/>
+        <paramRef ref="sageTagParams.sage_experiment"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="tag_count" />
+        <column name="tag_percentage" />
+        <column name="raw_count" />
+        <column name="raw_percentage" />
+        <column name="SAGE_library" />
+       <sql>
+         <![CDATA[
+         select distinct a.source_id, a.project_id,to_char(staa.tag_count, '99999') as tag_count, to_char(staa.raw_count , '99999') as raw_count,
+         to_char(100*staa.library_tag_percentage,'990D00') || '%' as tag_percentage,
+         to_char(100*staa.raw_percent,'990D00') || '%' as raw_percentage,
+         staa.library_name as SAGE_library
+         from apidb.SageTagAttributes a, apidb.SageTagAnalysisAttributes staa
+         where (CASE '$$raw_normalized$$' WHEN 'n' THEN staa.tag_count ELSE staa.raw_count END)>= $$st_min_count$$ 
+         and staa.library_name = $$sage_experiment$$
+         and a.composite_element_id=staa.composite_element_id
+         ]]>
+       </sql>
+</sqlQuery>
+
 
   </querySet>
 
