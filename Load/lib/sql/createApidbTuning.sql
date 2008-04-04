@@ -1091,7 +1091,9 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
      apidb.WinzelerExpn WinzelerExpn,
      apidb.ToxoExpn ToxoExpn,
      apidb.GenomicSequence sequence,
-     (SELECT parent_id, count(*) AS exon_count
+     (SELECT parent_id, count(*) AS exon_count,
+             min(coding_start) as coding_start,
+             max(coding_end) as coding_end
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
      (SELECT nfc.na_feature_id,
