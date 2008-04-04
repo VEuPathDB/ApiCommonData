@@ -11,13 +11,13 @@
             <column name="raw_percent"/>
             <sql>
             <![CDATA[
-            select aa.library_name as norm_experiment, to_char(norm_tag_count, '99999') as norm_count,
-                   --to_char(library_total_tag_count, '99999') as total_norm_count, 
-                   --to_char(100 *(library_tag_percentage), '990D00') || '%' as norm_percent
+            select aa.library_name as raw_experiment, to_char(aa.raw_count, '99999') as raw_count,
+                   to_char(aa.total_raw_count, '99999') as total_raw_count, 
+                   to_char(100 *(aa.raw_percent), '990D00') || '%' as raw_percent
             from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a
             where a.source_id = $$primaryKey$$
             and a.composite_element_id = aa.composite_element_id
-            order by library_name
+            order by aa.library_name
             ]]>
            </sql>
       </sqlQuery>
@@ -31,14 +31,14 @@
             <column name="norm_percent"/>
             <sql>
             <![CDATA[
-            select a.library_name as norm_experiment, 
-                   to_char(a.tag_count, '99999') as norm_count,
-                   to_char(a.library_total_tag_count, '99999') as total_norm_count, 
-                   to_char(100 *(a.library_tag_percentage), '990D00') || '%' as norm_percent
-            from apidb.SAGETAGANALYSISATTRIBUTES, apidb.SAGETAGATTRIBUTES a
+            select aa.library_name as norm_experiment, 
+                   to_char(aa.tag_count, '99999') as norm_count,
+                   to_char(aa.library_total_tag_count, '99999') as total_norm_count, 
+                   to_char(100 *(aa.library_tag_percentage), '990D00') || '%' as norm_percent
+            from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a
             where a.source_id = $$primaryKey$$
             and aa.composite_element_id = a.composite_element_id
-            order by library_name
+            order by aa.library_name
             ]]>
            </sql>
       </sqlQuery>
@@ -55,10 +55,12 @@
                   sg.distance as bp_from_gene
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where a.na_feature_id = sg.tag_feature_id
+            and a.IS_REVERSED=sg.antisense
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes
                      where source_id = $$primaryKey$$)
+            group by sg.gene_source_id, sg.antisense, sg.distance
             ]]>
            </sql>
       </sqlQuery>

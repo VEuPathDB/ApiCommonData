@@ -17,40 +17,43 @@
             <column name="rad_source_id"/>
             <sql>
             <![CDATA[
-            select project_id,
-                   source_id, 
-                   'CATG' || sequence as tag_sequence,
-                   sequence_source_id as sequence_id,
-                   start_min,
-                   end_max,
-                   case when is_reversed = 1 then '-' when is_reversed = 0 then '+' else '.' end as strand
-                   start_min - 5000 as context_start,
-                   end_max + 5000 as context_end,
-                   organism,
-                   case when rad_source_id is null then 'N/A' else rad_source_id end as rad_source_id
-            from apidb.SageTagAttributes
-            where source_id = $$primaryKey$$
+            select sta.project_id,
+                   sta.source_id, 
+                   'CATG' || sta.sequence as tag_sequence,
+                   sta.sequence_source_id as sequence_id,
+                   sta.start_min,
+                   sta.end_max,
+                   case when sta.is_reversed = 1 then '-' when sta.is_reversed = 0 then '+' else '.' end as strand,
+                   sta.start_min - 5000 as context_start,
+                   sta.end_max + 5000 as context_end,
+                   sta.organism,
+                   case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id
+            from apidb.SageTagAttributes sta
+            where sta.source_id = $$primaryKey$$
             ]]>
            </sql>
       </sqlQuery>
 
-        <sqlQuery name="Gene" isCacheable='false'>
+
+      <sqlQuery name="Gene" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="gene_source_id"/>
             <sql>
             <![CDATA[
-            select distinct gene_source_id
+            select apidb.tab_to_string(CAST(COLLECT(distinct(sg.gene_source_id)) AS apidb.varchartab),', ') as gene_source_id, a.source_id, a.project_id
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where  sg.distance = 0
-            a.na_feature_id = sg.tag_feature_id
-            and source_id = $$primaryKey$$
+            and a.na_feature_id = sg.tag_feature_id
+            and a.is_reversed = sg.antisense
+            and a.source_id = $$primaryKey$$
+            group by a.source_id, a.project_id
             ]]>
            </sql>
       </sqlQuery>
 
 
-        <sqlQuery name="AlignmentCount" isCacheable='false'>
+      <sqlQuery name="AlignmentCount" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
             <column name="total_alignments"/>
@@ -58,7 +61,7 @@
             <![CDATA[
             select count(distinct na_feature_id) as total_alignments
             from apidb.SAGETAGATTRIBUTES
-            where a.source_id = $$primaryKey$$
+            where source_id = $$primaryKey$$
             ]]>
            </sql>
       </sqlQuery>
@@ -72,6 +75,7 @@
             select count(distinct sg.gene_source_id) as number_of_genes_hit
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where a.na_feature_id = sg.tag_feature_id
+            and a.IS_REVERSED=sg.antisense
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes

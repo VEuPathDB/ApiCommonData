@@ -48,6 +48,7 @@
          <columnAttribute name="gene_source_id" displayName="Within Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
+      
      <attributeQueryRef ref="SageTagAttributes.GeneCount">
          <columnAttribute name="number_of_genes_hit" displayName="Total Number of Genes Hit" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
@@ -80,10 +81,11 @@
      <table name="Genes" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
             displayName="All Genes the Tag Aligns to"
             queryRef="SageTagTables.AlignedGenes">
-         <columnAttribute displayName="Gene Source Id" name="gene_source_id" internal="true"/>
+         <columnAttribute displayName="Gene Source Id" name="gene_source_id"/>
          <columnAttribute displayName="Strand" name="gene_strand"/>
          <columnAttribute displayName="Distance (bp) from gene" name="bp_from_gene"/>
      </table>
+
     </recordClass>
 
     </recordClassSet>
