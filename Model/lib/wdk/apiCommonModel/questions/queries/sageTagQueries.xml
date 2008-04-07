@@ -20,7 +20,7 @@
 </sqlQuery>
     <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
-        <paramRef ref="geneParams.single_gene_id"/>
+        <paramRef ref="sageTagParams.single_gene_id"/>
         <paramRef ref="geneParams.st_max_five_prime_distance"/>
         <paramRef ref="geneParams.st_max_three_prime_distance"/>
         <column name="source_id"/>
@@ -30,6 +30,7 @@
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a, apidb.SageTagGene sg
          where a.na_feature_id = sg.tag_feature_id
+         and sg.antisense = a.is_reversed
          and sg.gene_source_id in ($$single_gene_id$$)
          and ((sg.direction = '5' and sg.distance <= $$st_max_five_prime_distance$$)
              OR (sg.direction = '3' and sg.distance <= $$st_max_three_prime_distance$$))
