@@ -152,7 +152,8 @@ sub _parseBlock {
 
   my ($self, $block) = @_;
 
-  my ($name) = $block =~ m/^exact_synonym:\s+(.*)/ms;
+#  my ($name) = $block =~ m/^exact_synonym:\s+(.*)/ms;
+  my ($name) = $block =~ m/^synonym:\s+(.*)/ms;
   if ($name) {
     ($name) = extract_quotelike($name);
     $name =~ s/\A"|"\Z//msg;
