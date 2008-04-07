@@ -60,22 +60,16 @@
       <!-- Sage Tag Tables -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="RawCounts" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+     <table name="AllCounts" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
             displayName="Raw Data"
-            queryRef="SageTagTables.RawExperiments">
-         <columnAttribute displayName="Experiment" name="raw_experiment"/>
-         <columnAttribute displayName="Count" name="raw_count"/>
-         <columnAttribute displayName="Total" name="total_raw_count"/>
-         <columnAttribute displayName="Percent" name="raw_percent"/>
-     </table>
-
-     <table name="NormCounts" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
-            displayName="Normalized Data"
-            queryRef="SageTagTables.NormExperiments">
-         <columnAttribute displayName="Experiment" name="norm_experiment"/>
-         <columnAttribute displayName="Count" name="norm_count"/>
-         <columnAttribute displayName="Total" name="total_norm_count"/>
-         <columnAttribute displayName="Percent" name="norm_percent"/>
+            queryRef="SageTagTables.Experiments">
+         <columnAttribute displayName="Library" name="experiment"/>
+         <columnAttribute displayName="Raw Count" name="raw_count"/>
+         <columnAttribute displayName="Raw Total" name="total_raw_count"/>
+         <columnAttribute displayName="Raw Percent" name="raw_percent"/>
+         <columnAttribute displayName="Normalized Count" name="norm_count"/>
+         <columnAttribute displayName="Normalized Total" name="total_norm_count"/>
+         <columnAttribute displayName="Normalized Percent" name="norm_percent"/>
      </table>
 
      <table name="Genes" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"

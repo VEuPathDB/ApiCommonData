@@ -2,18 +2,25 @@
 
   <querySet name="SageTagTables">
 
-       <sqlQuery name="RawExperiments" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB">
+       <sqlQuery name="Experiments" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
-            <column name="raw_experiment"/>
+            <column name="experiment"/>
+            <column name="norm_count"/>
+            <column name="total_norm_count"/>
+            <column name="norm_percent"/>
             <column name="raw_count"/>
             <column name="total_raw_count"/>
             <column name="raw_percent"/>
             <sql>
             <![CDATA[
-            select aa.library_name as raw_experiment, to_char(aa.raw_count, '99999') as raw_count,
+            select aa.library_name as experiment, 
+                   to_char(aa.raw_count, '99999') as raw_count,
                    to_char(aa.total_raw_count, '99999') as total_raw_count, 
-                   to_char(100 *(aa.raw_percent), '990D00') || '%' as raw_percent
+                   to_char(100 *(aa.raw_percent), '990D00') || '%' as raw_percent,
+                   to_char(aa.tag_count, '99999') as norm_count,
+                   to_char(aa.library_total_tag_count, '99999') as total_norm_count, 
+                   to_char(100 *(aa.library_tag_percentage), '990D00') || '%' as norm_percent
             from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a
             where a.source_id = $$primaryKey$$
             and a.composite_element_id = aa.composite_element_id
@@ -22,26 +29,8 @@
            </sql>
       </sqlQuery>
 
-       <sqlQuery name="NormExperiments" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
-            <column name="norm_experiment"/>
-            <column name="norm_count"/>
-            <column name="total_norm_count"/>
-            <column name="norm_percent"/>
-            <sql>
-            <![CDATA[
-            select aa.library_name as norm_experiment, 
-                   to_char(aa.tag_count, '99999') as norm_count,
-                   to_char(aa.library_total_tag_count, '99999') as total_norm_count, 
-                   to_char(100 *(aa.library_tag_percentage), '990D00') || '%' as norm_percent
-            from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a
-            where a.source_id = $$primaryKey$$
-            and aa.composite_element_id = a.composite_element_id
-            order by aa.library_name
-            ]]>
-           </sql>
-      </sqlQuery>
+
+
 
        <sqlQuery name="AlignedGenes" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
