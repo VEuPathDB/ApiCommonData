@@ -41,7 +41,7 @@
 -- since we first started running this as apidb, since you can't grant 
 -- privileges to yourself.
 -- GRANT CREATE TABLE TO apidb;
--- GRANT CREATE MATERIALIZED VIEW TO apidb;
+-- GRANT CREATE TABLE TO apidb;
 -- GRANT REFERENCES ON <table> TO apidb;
 -- GRANT SELECT ON <table> TO apidb WITH GRANT OPTION;
 
@@ -49,7 +49,7 @@ set time on timing on pagesize 50000 linesize 100 verify off
 
 prompt apidb.GeneAlias;
 
-CREATE MATERIALIZED VIEW apidb.GeneAlias&1 AS
+CREATE TABLE apidb.GeneAlias&1 AS
 SELECT DISTINCT pairs.alias, pairs.gene FROM
 (SELECT ng.name AS alias, gf.source_id AS gene
  FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
@@ -81,14 +81,12 @@ GRANT SELECT ON apidb.GeneAlias&1 TO gus_r;
 CREATE INDEX apidb.GeneAlias_gene_idx&1 ON apidb.GeneAlias&1 (gene);
 CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias);
 
---drop materialized view apidb.GeneAlias;
-
 CREATE OR REPLACE SYNONYM apidb.GeneAlias
                           FOR apidb.GeneAlias&1;
 -------------------------------------------------------------------------------
 prompt apidb.SequenceAlias;
 
-CREATE MATERIALIZED VIEW apidb.SequenceAlias&1 AS
+CREATE TABLE apidb.SequenceAlias&1 AS
 SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
 FROM dots.ExternalNaSequence ens;
 
@@ -96,15 +94,13 @@ CREATE INDEX apidb.SequenceAlias_idx&1 ON apidb.SequenceAlias&1(lowercase_source
 
 GRANT SELECT ON apidb.SequenceAlias&1 TO gus_r;
 
---drop materialized view apidb.SequenceAlias;
-
 CREATE OR REPLACE SYNONYM apidb.SequenceAlias
                           FOR apidb.SequenceAlias&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.GoTermSummary;
 
-CREATE MATERIALIZED VIEW apidb.GoTermSummary&1 AS
+CREATE TABLE apidb.GoTermSummary&1 AS
 SELECT gf.source_id, 
        decode(ga.is_not, 0, '', 1, 'not', ga.is_not) as is_not,
                  gt.go_id, o.ontology, gt.name AS go_term_name,
@@ -142,15 +138,13 @@ CREATE INDEX apidb.GoTermSum_sourceId_idx&1 ON apidb.GoTermSummary&1 (source_id)
 
 GRANT SELECT ON apidb.GoTermSummary&1 TO gus_r;
 
---drop materialized view apidb.GoTermSummary;
-
 CREATE OR REPLACE SYNONYM apidb.GoTermSummary
                           FOR apidb.GoTermSummary&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.PdbSimilarity;
 
-CREATE MATERIALIZED VIEW apidb.PdbSimilarity&1 AS
+CREATE TABLE apidb.PdbSimilarity&1 AS
 SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
        substr(eas.source_id, 1,
               instr(eas.source_id, '_', -1) - 1)
@@ -189,15 +183,13 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC);
 
 GRANT SELECT on apidb.PdbSimilarity&1 TO gus_r;
 
---drop materialized view apidb.PdbSimilarity;
-
 CREATE OR REPLACE SYNONYM apidb.PdbSimilarity
                           FOR apidb.PdbSimilarity&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.FeatureLocation;
 
-create materialized view apidb.FeatureLocation&1 as
+create table apidb.FeatureLocation&1 as
 select case
          when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
@@ -228,15 +220,13 @@ create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
 create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
              (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id);
 
---drop materialized view apidb.FeatureLocation;
-
 create or replace synonym apidb.FeatureLocation
                           for apidb.FeatureLocation&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.GeneId;
 
-CREATE MATERIALIZED VIEW apidb.GeneId&1 AS
+CREATE TABLE apidb.GeneId&1 AS
 SELECT lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) AS id,
        gf.source_id AS gene
 FROM dots.Transcript t, dots.GeneFeature gf
@@ -320,15 +310,13 @@ GRANT SELECT ON apidb.GeneId&1 TO gus_r;
 CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene);
 CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id);
 
---drop materialized view apidb.GeneId;
-
 CREATE OR REPLACE SYNONYM apidb.GeneId
                           FOR apidb.GeneId&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.EpitopeSummary;
 
-CREATE MATERIALIZED VIEW apidb.EpitopeSummary&1 AS
+CREATE TABLE apidb.EpitopeSummary&1 AS
 SELECT gf.source_id, dr.primary_identifier AS iedb_id,
        al.start_min||'-'||al.end_max AS location,
        mas.sequence, tn.name,
@@ -362,14 +350,12 @@ GRANT SELECT ON apidb.EpitopeSummary&1 TO gus_r;
 
 CREATE INDEX apidb.Epi_srcId_ix&1 ON apidb.EpitopeSummary&1 (source_id);
 
---drop materialized view apidb.EpitopeSummary;
-
 CREATE OR REPLACE SYNONYM apidb.EpitopeSummary
                           FOR apidb.EpitopeSummary&1;
 -------------------------------------------------------------------------------
 prompt apidb.GeneCentromereDistance;
 
-CREATE MATERIALIZED VIEW apidb.GeneCentromereDistance&1 AS
+CREATE TABLE apidb.GeneCentromereDistance&1 AS
 SELECT gfl.feature_source_id AS gene,
        LEAST(ABS(mfl.start_min - gfl.end_max),
              ABS(mfl.end_max - gfl.start_min)) AS centromere_distance,
@@ -387,14 +373,12 @@ GRANT SELECT ON apidb.GeneCentromereDistance&1 TO gus_r;
 CREATE INDEX apidb.GCent_loc_ix&1
        ON apidb.GeneCentromereDistance&1 (genomic_sequence, centromere_distance);
 
---drop materialized view apidb.GeneCentromereDistance;
-
 CREATE OR REPLACE SYNONYM apidb.GeneCentromereDistance
                           FOR apidb.GeneCentromereDistance&1;
 -------------------------------------------------------------------------------
 prompt apidb.SageTagGene;
 
-create materialized view apidb.SageTagGene&1 as
+create table apidb.SageTagGene&1 as
 select t.direction, t.gene_source_id, t.tag_source_id, t.distance,
        t.analysis_id, t.occurrence, t.gene_feature_id, t.tag_feature_id,
        t.tag_count, t.antisense,
@@ -497,8 +481,6 @@ from
 
 grant select on apidb.SageTagGene&1 to gus_r;
 
---drop materialized view apidb.SageTagGene;
-
 CREATE OR REPLACE SYNONYM apidb.SageTagGene
                           FOR apidb.SageTagGene&1;
 -------------------------------------------------------------------------------
@@ -506,7 +488,7 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
 -- this should be augmented to include number of elements in library,
 -- and the short fixed sequence recognized by the enzyme (e.g. CATG)
 
-create materialized view apidb.SageTagAnalysisAttributes&1 as
+create table apidb.SageTagAnalysisAttributes&1 as
 select dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, substr(st.tag, 1, 30) as sequence,
        st.composite_element_id, a.name as library_name,
@@ -567,8 +549,9 @@ CREATE OR REPLACE SYNONYM apidb.SageTagAnalysisAttributes
 prompt apidb.GoTermList;
 
 DROP MATERIALIZED VIEW apidb.GoTermList;
+DROP TABLE apidb.GoTermList;
 
-CREATE MATERIALIZED VIEW apidb.GoTermList AS
+CREATE TABLE apidb.GoTermList AS
 SELECT *
 FROM (  -- work around sometime Oracle bug ORA-00942
       SELECT source_id, ontology, source, 
@@ -606,8 +589,9 @@ FROM (  -- work around sometime Oracle bug ORA-00942
 prompt apidb.GeneGoAttributes;
 
 DROP MATERIALIZED VIEW apidb.GeneGoAttributes;
+DROP TABLE apidb.GeneGoAttributes;
 
-CREATE MATERIALIZED VIEW apidb.GeneGoAttributes AS
+CREATE TABLE apidb.GeneGoAttributes AS
 SELECT DISTINCT gene.source_id,
        annotated_go_component.go_terms AS annotated_go_component,
        annotated_go_function.go_terms AS annotated_go_function,
@@ -662,8 +646,9 @@ CREATE INDEX apidb.GeneGoAttr_sourceId ON apidb.GeneGoAttributes (source_id);
 prompt apidb.DerisiExpn;
 
 DROP MATERIALIZED VIEW apidb.DerisiExpn;
+DROP TABLE apidb.DerisiExpn;
 
-CREATE MATERIALIZED VIEW apidb.DerisiExpn AS
+CREATE TABLE apidb.DerisiExpn AS
 SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
        derisi_max_timing, derisi_min_timing, derisi_min_level
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
@@ -689,8 +674,9 @@ CREATE INDEX apidb.Derisi_sourceId ON apidb.DerisiExpn (source_id);
 prompt apidb.WinzelerExpn;
 
 DROP MATERIALIZED VIEW apidb.WinzelerExpn;
+DROP TABLE apidb.WinzelerExpn;
 
-CREATE MATERIALIZED VIEW apidb.WinzelerExpn AS
+CREATE TABLE apidb.WinzelerExpn AS
 SELECT gene.source_id, expn.winzeler_max_level, winzeler_max_pct,
        winzeler_max_timing, winzeler_min_timing, winzeler_min_level
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
@@ -716,8 +702,9 @@ CREATE INDEX apidb.Winzeler_sourceId ON apidb.WinzelerExpn (source_id);
 prompt apidb.ToxoExpn;
 
 DROP MATERIALIZED VIEW apidb.ToxoExpn;
+DROP TABLE apidb.ToxoExpn;
 
-CREATE MATERIALIZED VIEW apidb.ToxoExpn AS
+CREATE TABLE apidb.ToxoExpn AS
 SELECT gene.source_id, pru.expression AS pru, veg.expression AS veg,
        rh.expression AS rh, rh_high_glucose.expression AS rh_high_glucose,
        rh_no_glucose.expression AS rh_no_glucose,
@@ -922,8 +909,9 @@ CREATE INDEX apidb.Toxo_sourceId ON apidb.ToxoExpn (source_id);
 prompt apidb.GeneProteinAttributes;
 
 DROP MATERIALIZED VIEW apidb.GeneProteinAttributes;
+DROP TABLE apidb.GeneProteinAttributes;
 
-CREATE MATERIALIZED VIEW apidb.GeneProteinAttributes AS
+CREATE TABLE apidb.GeneProteinAttributes AS
 SELECT gene.source_id,
        protein.tm_count, protein.molecular_weight,
        protein.isoelectric_point, protein.min_molecular_weight,
@@ -976,7 +964,7 @@ CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id);
 ---------------------------
 prompt apidb.GenomicSequence;
 
-CREATE MATERIALIZED VIEW apidb.GenomicSequence&1 AS
+CREATE TABLE apidb.GenomicSequence&1 AS
   SELECT ens.na_sequence_id, ens.taxon_id,
          SUBSTR(ens.source_id, 1, 50) AS source_id,
          LOWER(SUBSTR(ens.source_id, 1, 50)) AS lowercase_source_id,
@@ -1013,7 +1001,7 @@ CREATE OR REPLACE SYNONYM apidb.GenomicSequence
 ---------------------------
 prompt apidb.GeneAttributes;
 
-CREATE MATERIALIZED VIEW apidb.GeneAttributes&1 AS
+CREATE TABLE apidb.GeneAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1155,7 +1143,7 @@ CREATE OR REPLACE SYNONYM apidb.GeneAttributes
 
 prompt apidb.SequenceAttributes;
 
-CREATE MATERIALIZED VIEW apidb.SequenceAttributes&1 AS
+CREATE TABLE apidb.SequenceAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1220,7 +1208,7 @@ CREATE OR REPLACE SYNONYM apidb.SequenceAttributes
 
 prompt apidb.SnpAttributes;
 
-CREATE MATERIALIZED VIEW apidb.SnpAttributes&1 AS
+CREATE TABLE apidb.SnpAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1305,7 +1293,7 @@ CREATE OR REPLACE SYNONYM apidb.SnpAttributes
 
 prompt apidb.OrfAttributes;
 
-CREATE MATERIALIZED VIEW apidb.OrfAttributes&1 AS
+CREATE TABLE apidb.OrfAttributes&1 AS
 SELECT distinct CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1361,7 +1349,7 @@ CREATE OR REPLACE SYNONYM apidb.OrfAttributes
 
 prompt apidb.EstAttributes;
 
-CREATE MATERIALIZED VIEW apidb.EstAttributes&1 AS
+CREATE TABLE apidb.EstAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1428,7 +1416,7 @@ CREATE OR REPLACE SYNONYM apidb.EstAttributes
 ---------------------------
 prompt apidb.AssemblyAttributes;
 
-CREATE MATERIALIZED VIEW apidb.AssemblyAttributes&1 AS
+CREATE TABLE apidb.AssemblyAttributes&1 AS
 SELECT a.source_id,
        CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
@@ -1470,7 +1458,7 @@ CREATE OR REPLACE SYNONYM apidb.AssemblyAttributes
 
 prompt apidb.ArrayElementAttributes;
 
-CREATE MATERIALIZED VIEW apidb.ArrayElementAttributes&1 AS
+CREATE TABLE apidb.ArrayElementAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1511,8 +1499,9 @@ CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
 prompt apidb.EstAlignmentGeneSummary;
 
 DROP MATERIALIZED VIEW apidb.EstAlignmentGene;
+DROP TABLE apidb.EstAlignmentGene;
 
-CREATE MATERIALIZED VIEW apidb.EstAlignmentGene AS
+CREATE TABLE apidb.EstAlignmentGene AS
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
@@ -1538,8 +1527,9 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
     AND ba.target_na_sequence_id = sequence.na_sequence_id;
 
 DROP MATERIALIZED VIEW apidb.EstAlignmentNoGene;
+DROP TABLE apidb.EstAlignmentNoGene;
 
-CREATE MATERIALIZED VIEW apidb.EstAlignmentNoGene AS
+CREATE TABLE apidb.EstAlignmentNoGene AS
 SELECT * from EstAlignmentGene WHERE 1=0 UNION -- define datatype for null column
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
        e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
@@ -1567,7 +1557,7 @@ WHERE e.na_sequence_id = ba.query_na_sequence_id
   MINUS
     SELECT blat_alignment_id FROM apidb.EstAlignmentGene);
 
-CREATE MATERIALIZED VIEW EstAlignmentGeneSummary&1 AS
+CREATE TABLE EstAlignmentGeneSummary&1 AS
 SELECT * FROM apidb.EstAlignmentNoGene
 UNION
 SELECT * FROM apidb.EstAlignmentGene;
@@ -1589,7 +1579,7 @@ CREATE OR REPLACE SYNONYM apidb.EstAlignmentGeneSummary
 
 -------------------------------------------------------------------------------
 
-CREATE MATERIALIZED VIEW apidb.FeatureSo&1 AS
+CREATE TABLE apidb.FeatureSo&1 AS
   SELECT t.na_feature_id, so.sequence_ontology_id, so.term_name
   FROM dots.nafeature gf, dots.nafeature t, sres.sequenceontology so
   WHERE  gf.na_feature_id =  t.parent_id
@@ -1607,7 +1597,7 @@ CREATE OR REPLACE SYNONYM apidb.FeatureSo FOR apidb.FeatureSo&1;
 
 -------------------------------------------------------------------------------
 
-CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
+CREATE TABLE apidb.polymorphism&1 AS
   SELECT snp.na_feature_id AS snp_na_feature_id,
          snp.source_id AS snp_source_id, sa.na_sequence_id,
          sa.na_feature_id as na_feature_id_a,
@@ -1625,7 +1615,7 @@ CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
     AND sa.parent_id = snp.na_feature_id
     AND sa.na_feature_id = nl.na_feature_id
     AND snp.parent_id = gf.na_feature_id (+);
-CREATE MATERIALIZED VIEW apidb.polymorphism&1 AS
+CREATE TABLE apidb.polymorphism&1 AS
 
 GRANT SELECT ON apidb.Polymorphism&1 TO gus_r;
 
@@ -1634,7 +1624,7 @@ CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a,
 CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 
 -------------------------------------------------------------------------------
-CREATE MATERIALIZED VIEW apidb.IsolateAttributes&1 AS 
+CREATE TABLE apidb.IsolateAttributes&1 AS 
 SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
        A.organism, A.strain, A.specific_host, A.isolation_source, A.country,
        A.note, A.description, A.pcr_primers, A.query_name, A.target_name,
@@ -1705,7 +1695,7 @@ CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (sour
 CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
 
 -------------------------------------------------------------------------------
-CREATE MATERIALIZED VIEW apidb.SageTagAttributes&1 AS
+CREATE TABLE apidb.SageTagAttributes&1 AS
 SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
@@ -1749,8 +1739,9 @@ CREATE OR REPLACE SYNONYM apidb.SageTagAttributes FOR apidb.SageTagAttributes&1;
 prompt apidb.AsmAlignmentGeneSummary;
 
 DROP MATERIALIZED VIEW apidb.AsmAlignmentGene;
+DROP TABLE apidb.AsmAlignmentGene;
 
-CREATE MATERIALIZED VIEW apidb.AsmAlignmentGene AS
+CREATE TABLE apidb.AsmAlignmentGene AS
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_contained_sequences AS est_count, a.length,
          ba.query_taxon_id, ba.target_na_sequence_id,
          ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
@@ -1775,8 +1766,9 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
     AND ba.target_na_sequence_id = sequence.na_sequence_id;
 
 DROP MATERIALIZED VIEW apidb.AsmAlignmentNoGene;
+DROP TABLE apidb.AsmAlignmentNoGene;
 
-CREATE MATERIALIZED VIEW apidb.AsmAlignmentNoGene AS
+CREATE TABLE apidb.AsmAlignmentNoGene AS
 SELECT * from AsmAlignmentGene WHERE 1=0 UNION -- define datatype for null column
 SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_contained_sequences AS est_count, a.length,
          ba.query_taxon_id, ba.target_na_sequence_id,
@@ -1804,7 +1796,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
   MINUS
     SELECT blat_alignment_id FROM apidb.AsmAlignmentGene);
 
-CREATE MATERIALIZED VIEW AsmAlignmentGeneSummary&1 AS
+CREATE TABLE AsmAlignmentGeneSummary&1 AS
 SELECT * FROM apidb.AsmAlignmentNoGene
 UNION
 SELECT * FROM apidb.AsmAlignmentGene;
@@ -1826,7 +1818,7 @@ where owner='APIDB';
 prompt These mviews appear superfluous (their names end in four digits but no synonym points at them).
 prompt Consider dropping them if all synonyms are OK.
 
-SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS drops
+SELECT 'drop materialized view ' || owner || '.' || mview_name || ';' AS "drop mviews"
 FROM all_mviews
 WHERE mview_name IN (SELECT mview_name
                      FROM all_mviews
@@ -1834,6 +1826,19 @@ WHERE mview_name IN (SELECT mview_name
                      SELECT table_name
                      FROM all_synonyms)
   AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
+      LIKE '%fournumbers';
+
+prompt These tables appear superfluous (their names end in four digits but no synonym points at them).
+prompt Consider dropping them if all synonyms are OK.
+
+SELECT 'drop table ' || owner || '.' || table_name || ';' AS "drop tables"
+FROM all_tables
+WHERE table_name IN (SELECT table_name
+                     FROM all_tables
+                    MINUS
+                     SELECT table_name
+                     FROM all_synonyms)
+  AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       LIKE '%fournumbers';
 
 exit
