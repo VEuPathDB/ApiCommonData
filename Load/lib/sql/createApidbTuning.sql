@@ -529,6 +529,7 @@ where ti.name = 'SAGETag'
   and ai.logical_group_id = lg.logical_group_id
   and lg.logical_group_id = ll.logical_group_id
   and ll.row_id = a.assay_id
+  and a.name = q.name
   and ll.table_id = quant_ti.table_id
   --and di.database_id = quant_ti.database_id
   and dtr.analysis_id = library_total.analysis_id
