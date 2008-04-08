@@ -20,7 +20,7 @@
        </sql>
     </sqlQuery>
 
-    <sqlQuery name="BySequence" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="BySequence" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.sequence"/>
         <paramRef ref="sageTagParams.is_within_gene"/>
@@ -36,8 +36,15 @@
          ]]>
        </sql>
     </sqlQuery>
+  <wsQuery name="BySequence" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sageTagParams.sequence"/>
+       <paramRef ref="sageTagParams.is_within_gene"/>
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+  </wsQuery> 
 
-    <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="ByGeneSourceId" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.single_gene_id"/>
         <paramRef ref="geneParams.st_max_five_prime_distance"/>
@@ -57,6 +64,15 @@
        </sql>
 </sqlQuery>
  
+  <wsQuery name="ByGeneSourceId" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sageTagParams.single_gene_id"/>
+       <paramRef ref="geneParams.st_max_five_prime_distance"/>
+       <paramRef ref="geneParams.st_max_three_prime_distance"/>
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+   </wsQuery> 
+
  <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.rad_source_id"/>
@@ -72,7 +88,7 @@
 </sqlQuery>
  
 
- <sqlQuery name="ByExpressionLevel" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+ <sqlQuery name="ByExpressionLevel" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.st_min_count"/>
         <paramRef ref="sageTagParams.raw_normalized"/>
@@ -97,6 +113,19 @@
          ]]>
        </sql>
 </sqlQuery>
+  <wsQuery name="ByExpressionLevel" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sageTagParams.st_min_count"/>
+       <paramRef ref="sageTagParams.raw_normalized"/>
+       <paramRef ref="sageTagParams.sage_experiment"/>
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="tag_count" width="32" wsName="tag_count" />
+       <wsColumn name="tag_percentage" width="32" wsName="tag_percentage"/>
+       <wsColumn name="raw_count" width="32" wsName="raw_count"/>
+       <wsColumn name="raw_percentage" width="32" wsName="raw_percentage"/>
+       <wsColumn name="SAGE_library" width="32" wsName="SAGE_library"/>
+   </wsQuery>
 
 
   </querySet>
