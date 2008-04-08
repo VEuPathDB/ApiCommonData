@@ -2,6 +2,24 @@
 
   <querySet name="SageTagIds">
 
+    <sqlQuery name="ByLocation" includeProjects="GiardiaDB"
+              isCacheable="true">
+        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+         <![CDATA[
+            SELECT distinct sta.source_id, '@PROJECT_ID@' as project_id
+            FROM   apidb.SageTagAttributes sta
+            WHERE  lower(sta.sequence_source_id) = lower($$sequenceId$$)
+              AND  end_max >= $$start_point$$ 
+              AND  (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+         ]]>
+       </sql>
+    </sqlQuery>
+
     <sqlQuery name="BySequence" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.sequence"/>
@@ -17,7 +35,8 @@
          and a.na_feature_id = sg.tag_feature_id $$is_within_gene$$ 
          ]]>
        </sql>
-</sqlQuery>
+    </sqlQuery>
+
     <sqlQuery name="ByGeneSourceId" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.single_gene_id"/>

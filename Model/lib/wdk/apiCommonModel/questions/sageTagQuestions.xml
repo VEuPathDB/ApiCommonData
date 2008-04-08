@@ -5,7 +5,7 @@
 
 <!--
 
-
+0. Find sage tags by genomic location
 1. Find sage tag by sequence
 2. Find sage tags by gene source_id
 3. Find sage tags by expression level(count), experiment(library)
@@ -15,6 +15,32 @@
        OR Find all sage tags that align globally to less than some number of places
 6.R value
 -->
+
+    <question name="SageTagByLocation"
+              category="Other Attributes"
+              displayName="Chromosomal Location"
+              queryRef="SageTagIds.ByLocation"
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="GiardiaDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,gene_source_id"
+             />
+             <summary>
+               Find Sage Tags that are located in a specified genomic region.
+             </summary>
+             <description>
+               Find Sage Tags that are located in a specified genomic region.
+             </description>
+
+            <propertyList name="specificAttribution">
+              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
+           </propertyList> 
+
+    </question>
+
+
 
     <question name="SageTagBySequence" 
               category="Other Attributes"
