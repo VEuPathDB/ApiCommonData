@@ -123,7 +123,7 @@
     <!--  Vocab queries-->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
  <querySet name="SAGEtgVQ">
-   <sqlQuery name="experimentname" includeProjects="PlasmoDB,GiardiaDB,ToxoDB,ApiDB">
+   <sqlQuery name="experimentname" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -131,6 +131,10 @@
               from rad.ASSAY
               order by name
             </sql>
-        </sqlQuery>
+   </sqlQuery>
+   <wsQuery name="experimentname" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="100"/>
+            <wsColumn name="term" width="100"/>
+   </wsQuery>
   </querySet>
 </wdkModel>
