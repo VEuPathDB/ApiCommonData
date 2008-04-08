@@ -38,17 +38,19 @@
             <column name="gene_source_id"/>
             <column name="gene_strand"/>
             <column name="bp_from_gene"/>
+            <column name="gene_sequence_id"/>
             <sql>
             <![CDATA[
-            select sg.gene_source_id, case when sg.antisense = 1 then 'antisense' else 'sense' end as gene_strand,
+             select distinct sg.gene_source_id, g.sequence_id as gene_sequence_id,
+                   case when sg.antisense = 1 then 'antisense' else 'sense' end as gene_strand,
                   sg.distance as bp_from_gene
-            from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
+            from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a, apidb.GENEATTRIBUTES g
             where a.na_feature_id = sg.tag_feature_id
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes
                      where source_id = $$primaryKey$$)
-            group by sg.gene_source_id, sg.antisense, sg.distance
+            and sg.gene_source_id = g.source_id
             ]]>
            </sql>
       </sqlQuery>

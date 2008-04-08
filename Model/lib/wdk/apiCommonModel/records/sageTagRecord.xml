@@ -25,8 +25,8 @@
          <columnAttribute name="start_min" displayName="Tag Start" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="end_max" displayName="Tag End" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="strand" displayName="Strand" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
-         <columnAttribute name="context_start" displayName="Genomic Context Start" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
-         <columnAttribute name="context_end" displayName="Genomic Context End" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="context_start" displayName="Genomic Context Start" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="context_end" displayName="Genomic Context End" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="rad_source_id" displayName="External Identifier" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="project_id" displayName="Project Id" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
@@ -55,16 +55,16 @@
       </attributeQueryRef>
 
       <attributeQueryRef ref="SageTagAttributes.AlignmentCount">
-         <columnAttribute name="total_alignments" displayName="Total Number of Alignments" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="total_alignments" displayName="Number of Genomic Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
       <attributeQueryRef ref="SageTagAttributes.Gene">
-         <columnAttribute name="gene_source_id" displayName="Within Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="gene_source_id" displayName="Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
       
      <attributeQueryRef ref="SageTagAttributes.GeneCount">
-         <columnAttribute name="number_of_genes_hit" displayName="Total Number of Genes Hit" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="number_of_genes_hit" displayName="Total Number of Gene Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
       <!-- Need to add a text attribute for the genomic context -->
@@ -90,6 +90,7 @@
             displayName="All Genes the Tag Aligns to"
             queryRef="SageTagTables.AlignedGenes">
          <columnAttribute  name="gene_source_id" internal="true"/>
+         <columnAttribute  name="gene_sequence_id" internal="true"/>
            <linkAttribute inReportMaker="false" displayName="Gene Source Id"
                           name="linkedSourceId"
                           visible="$$gene_source_id$$">
@@ -98,8 +99,17 @@
                     ]]>
              </url>
            </linkAttribute>
+           <linkAttribute inReportMaker="false" displayName="Gene Sequence Id"
+                          name="linkedSequenceId"
+                          visible="$$gene_sequence_id$$">
+             <url><![CDATA[
+                     showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=GiardiaDB&primary_key=$$gene_sequence_id$$
+                    ]]>
+             </url>
+           </linkAttribute>
          <columnAttribute displayName="Strand" name="gene_strand"/>
          <columnAttribute displayName="Distance (bp) from gene" name="bp_from_gene"/>
+
      </table>
 
     </recordClass>

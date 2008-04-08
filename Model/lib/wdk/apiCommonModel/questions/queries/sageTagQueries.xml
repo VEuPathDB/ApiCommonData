@@ -107,8 +107,8 @@
        <sql>
          <![CDATA[
          select distinct a.source_id, a.project_id,to_char(staa.tag_count, '99999') as tag_count, to_char(staa.raw_count , '99999') as raw_count,
-         to_char(100*staa.library_tag_percentage,'990D00') || '%' as tag_percentage,
-         to_char(100*staa.raw_percent,'990D00') || '%' as raw_percentage,
+         to_char(staa.library_tag_percentage,'990D00') || '%' as tag_percentage,
+         to_char(staa.raw_percent,'990D00') || '%' as raw_percentage,
          staa.library_name as SAGE_library
          from apidb.SageTagAttributes a, apidb.SageTagAnalysisAttributes staa
          where (CASE '$$raw_normalized$$' WHEN 'n' THEN staa.tag_count ELSE staa.raw_count END)>= $$st_min_count$$ 

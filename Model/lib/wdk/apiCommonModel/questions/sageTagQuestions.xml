@@ -26,6 +26,7 @@
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
+               sorting="organism asc, location_text asc"
              />
              <summary>
                Find Sage Tags that are located in a specified genomic region.
@@ -52,6 +53,7 @@
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
+               sorting="organism asc, sequence asc"
              />
              <summary>
                Find Sage Tags By Sequence.
@@ -79,6 +81,7 @@
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
+               sorting="organism asc"
              />
              <summary>
                Find Sage Tags By Gene Identifier
@@ -105,7 +108,8 @@
               includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
 
              <attributesList 
-               summary="organism,location_text,tag_sequence,tag_count,tag_percentage, raw_count, raw_percentage, gene_source_id"
+               summary="organism,location_text,tag_sequence, SAGE_library, tag_count,tag_percentage, gene_source_id"
+               sorting="organism asc, tag_count desc"
              />
              <summary>
                Find Sage Tags By Expression Level
@@ -122,10 +126,10 @@
            </propertyList>
 
            <dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB,GiardiaDB">
-	     <columnAttribute name="tag_count" displayName="Tag Count" align="center"/>
-	     <columnAttribute name="tag_percentage" displayName="Tag Percentage" align="center"/>
-             <columnAttribute name="raw_count" displayName="Tag Count" align="center"/>
-	     <columnAttribute name="raw_percentage" displayName="Tag Percentage" align="center"/>
+	     <columnAttribute name="tag_count" displayName="Normalized Tag Count" align="center"/>
+	     <columnAttribute name="tag_percentage" displayName="Normalized Tag Percentage" align="center"/>
+             <columnAttribute name="raw_count" displayName="Raw Tag Count" align="center"/>
+	     <columnAttribute name="raw_percentage" displayName="RawTag Percentage" align="center"/>
              <columnAttribute name="SAGE_library" displayName="Experiement Name" align="center"/>
 	</dynamicAttributes>
 
@@ -141,6 +145,7 @@
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
+               sorting="organism asc"
              />
              <summary>
                Find Sage Tags By Rad Source Id

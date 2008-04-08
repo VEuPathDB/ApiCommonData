@@ -1454,7 +1454,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 where library_name in ($$sage_tag_library_name$$)
                 group by library_name) n
                where g.tag_feature_id = a.na_feature_id
-                and g.antisense = a.is_reversed
+                and g.antisense = 0
                 and aa.library_name in ($$sage_tag_library_name$$)
                 and aa.composite_element_id = a.composite_element_id
                group by g.gene_source_id) f,
@@ -1463,7 +1463,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                where library_name in ($$sage_tag_library_name$$)
                group by library_name) library_count
          where g.tag_feature_id = a.na_feature_id
-          and g.antisense = a.is_reversed
+          and g.antisense = 0
           and aa.composite_element_id = a.composite_element_id
           and g.gene_source_id = f.gene_source_id
           and aa.library_name = library_count.library_name

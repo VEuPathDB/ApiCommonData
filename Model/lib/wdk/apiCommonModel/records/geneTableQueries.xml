@@ -792,12 +792,7 @@
             <sql>
             <![CDATA[
                SELECT distinct tg.tag_source_id,
-                      CASE
-                        WHEN t.library_name
-                             = 'Characterization of the Giardia intestinalis Transcriptome_Trophozoite_Cell_Culture'
-                          THEN 'Troph1'
-                        ELSE t.library_name 
-                      END as library, 
+                       t.library_name as library,
                       'CATG' || t.sequence as sequence, 
                       t.tag_count as frequency,
                       ROUND(t.tag_count / 38015 * 100, 3) as percent,
@@ -810,7 +805,7 @@
                  AND t.composite_element_id = tg.tag_source_id
                  AND tg.distance = 0
                  AND tg.direction = '3'
-               ORDER BY sense DESC
+               ORDER BY sequence, library, sense DESC
             ]]>
             </sql>
         </sqlQuery>

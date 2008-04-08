@@ -6,15 +6,15 @@
             <paramRef ref="recordParams.primaryKey"/>
             <column name="project_id"/>
             <column name="source_id"/>
-            <column name="tag_sequence"/> 
-            <column name="sequence_id"/>
-            <column name="start_min"/>
-            <column name="end_max"/>
-            <column name="strand"/>
+            <column name="tag_sequence" sortingTable="apidb.sagetagattributes" sortingColumn="sequence"/> 
+            <column name="sequence_id"  sortingTable="apidb.sagetagattributes" sortingColumn="sequence_source_id"/>
+            <column name="start_min"  sortingTable="apidb.sagetagattributes"/>
+            <column name="end_max"  sortingTable="apidb.sagetagattributes"/>
+            <column name="strand"  sortingTable="apidb.sagetagattributes" sortingColumn="is_reversed"/>
             <column name="context_start"/>
             <column name="context_end"/>
-            <column name="organism"/>
-            <column name="rad_source_id"/>
+            <column name="organism"  sortingTable="apidb.sagetagattributes"/>
+            <column name="rad_source_id"  sortingTable="apidb.sagetagattributes"/>
             <sql>
             <![CDATA[
             select sta.project_id,
@@ -59,9 +59,13 @@
             <column name="total_alignments"/>
             <sql>
             <![CDATA[
-            select count(distinct na_feature_id) as total_alignments
-            from apidb.SAGETAGATTRIBUTES
-            where source_id = $$primaryKey$$
+             select count(*) as total_alignments
+             from apidb.SAGETAGATTRIBUTES a
+             where a.composite_element_id in 
+                 (select composite_element_id 
+                  from apidb.SAGETAGATTRIBUTES 
+                  where source_id = $$primaryKey$$)
+            group by a.composite_element_id
             ]]>
            </sql>
       </sqlQuery>
