@@ -89,7 +89,15 @@
      <table name="Genes" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
             displayName="All Genes the Tag Aligns to"
             queryRef="SageTagTables.AlignedGenes">
-         <columnAttribute displayName="Gene Source Id" name="gene_source_id"/>
+         <columnAttribute  name="gene_source_id" internal="true"/>
+           <linkAttribute inReportMaker="false" displayName="Gene Source Id"
+                          name="linkedSourceId"
+                          visible="$$gene_source_id$$">
+             <url><![CDATA[
+                     showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$gene_source_id$$
+                    ]]>
+             </url>
+           </linkAttribute>
          <columnAttribute displayName="Strand" name="gene_strand"/>
          <columnAttribute displayName="Distance (bp) from gene" name="bp_from_gene"/>
      </table>
