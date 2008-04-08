@@ -113,6 +113,19 @@
 <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+
+      <flatVocabParam name="sage_tag_library_name" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+                     queryRef="GeneVQ.SageTagLibraryName"
+                     prompt="Sage Tag Library"
+                     multiPick="true">
+        <help>
+           Select the sage tag library for this query.
+        </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
+
+
       <enumParam name="sense_antisense"
                  prompt="Sense / Antisense"
                  multiPick="false"
@@ -133,6 +146,14 @@
           </enumValue>
         </enumList>
       </enumParam>
+
+        <stringParam name="sage_tag_min_r" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+                     prompt="R statistic Greater Than:"
+                     substitute="yes"
+                     quote="false">
+            <help>Choose a minimum R value to be returned.</help>
+             <suggest default="10"/>
+        </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- EC Number -->  
@@ -3770,6 +3791,27 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </sqlQuery>
 
         <wsQuery name="SageTagLibrary" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="100"/>
+            <wsColumn name="term" width="100"/>
+        </wsQuery>
+
+        <sqlQuery name="SageTagLibraryName" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            select q.name as term, q.name as internal
+            from rad.QUANTIFICATION q, rad.LOGICALGROUPLINK ll,
+                 rad.ANALYSISINPUT ai, rad.ANALYSIS a, rad.PROTOCOL p
+            where p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
+             and p.protocol_id = a.protocol_id
+             and a.analysis_id = ai.analysis_id
+             and ai.logical_group_id = ll.logical_group_id
+             and ll.row_id = q.quantification_id
+             order by term
+            </sql>
+        </sqlQuery>
+
+        <wsQuery name="SageTagLibraryName" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
         </wsQuery>

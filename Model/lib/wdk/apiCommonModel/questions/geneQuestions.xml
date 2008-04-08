@@ -1545,6 +1545,40 @@ Find genes that are predicted to encode a signal peptide.
        </propertyList>
     </question>
 
+
+    <question name="GenesBySageTagRStat"
+         category="Transcript Expression"
+         displayName="Sage Tag R statistic evidence"
+         queryRef="GeneId.GenesBySageTagRStat"
+         recordClassRef="GeneRecordClasses.GeneRecordClass"
+         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
+        <attributesList
+         summary="organism,location_text,product,R"
+         sorting="organism asc, R desc"
+        /> 
+        <summary>
+            Find genes with evidence of differential expression based on SAGE tag experiments.
+        </summary>
+        <description>
+           <![CDATA[
+            Find genes with evidence of differential expression based on SAGE tag experiments.  Choose libraries to compare across.  A large R value indicates differential expression.  Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&db=PubMed&list_uids=11116099">The comparison of gene expression from multiple cDNA libraries.</a>  Genome Res.  2000.  Dec:10(12):2055-61.
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="R" displayName="R"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
+    </question>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- EST overlap  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

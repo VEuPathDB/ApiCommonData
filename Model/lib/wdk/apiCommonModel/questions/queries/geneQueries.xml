@@ -1424,6 +1424,57 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 -->
 	 </wsQuery>
 
+    <sqlQuery name="GenesBySageTagRStat" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+      <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"
+                 includeProjects="GiardiaDB,ToxoDB"/> 
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
+       <paramRef ref="geneParams.sage_tag_library_name"/>
+       <paramRef ref="geneParams.sage_tag_min_r"/>
+       <column name="project_id"/> 
+       <column name="source_id" />
+       <column name="R" />
+       <sql>
+            <![CDATA[
+       select gene_source_id as source_id, 
+              '@PROJECT_ID@' as project_id,
+              to_char(sum(xij * log(10, (xij/(Ni * fj)))), '99999D0') as R
+       from (
+         select g.gene_source_id, aa.library_name, library_count.n as ni, f.frequency as fj, sum(aa.raw_count) as xij
+         from apidb.SAGETAGANALYSISATTRIBUTES aa, 
+              apidb.SAGETAGATTRIBUTES a,
+              (select distinct gene_source_id, tag_feature_id, antisense 
+               from apidb.SAGETAGGENE where distance = 0) g,
+              (select g.gene_source_id, sum(aa.raw_count) / max(n.n) as frequency
+               from apidb.SAGETAGANALYSISATTRIBUTES aa, 
+               apidb.SAGETAGATTRIBUTES a,
+               (select distinct gene_source_id, tag_feature_id, antisense 
+                from apidb.SAGETAGGENE where distance = 0) g,
+               (select sum(max(total_raw_count)) as n
+                from apidb.SAGETAGANALYSISATTRIBUTES
+                where library_name in ($$sage_tag_library_name$$)
+                group by library_name) n
+               where g.tag_feature_id = a.na_feature_id
+                and g.antisense = a.is_reversed
+                and aa.library_name in ($$sage_tag_library_name$$)
+                and aa.composite_element_id = a.composite_element_id
+               group by g.gene_source_id) f,
+              (select library_name, max(total_raw_count) as n
+               from apidb.SAGETAGANALYSISATTRIBUTES
+               where library_name in ($$sage_tag_library_name$$)
+               group by library_name) library_count
+         where g.tag_feature_id = a.na_feature_id
+          and g.antisense = a.is_reversed
+          and aa.composite_element_id = a.composite_element_id
+          and g.gene_source_id = f.gene_source_id
+          and aa.library_name = library_count.library_name
+         group by g.gene_source_id, aa.library_name, library_count.n, f.frequency
+         )
+       group by gene_source_id
+       having sum(xij * log(10, (xij/(Ni * fj)))) > $$sage_tag_min_r$$
+            ]]>
+          </sql>
+    </sqlQuery>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ESTOverlap -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
