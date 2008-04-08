@@ -45,7 +45,7 @@
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where  sg.distance = 0
             and a.na_feature_id = sg.tag_feature_id
-            and a.is_reversed = sg.antisense
+            and sg.antisense = 0
             and a.source_id = $$primaryKey$$
             group by a.source_id, a.project_id
             ]]>
@@ -75,7 +75,7 @@
             select count(distinct sg.gene_source_id) as number_of_genes_hit
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where a.na_feature_id = sg.tag_feature_id
-            and a.IS_REVERSED=sg.antisense
+            and sg.antisense = 0
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes

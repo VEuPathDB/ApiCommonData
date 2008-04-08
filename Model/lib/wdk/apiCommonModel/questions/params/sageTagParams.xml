@@ -54,7 +54,7 @@
                      prompt="ID"
                      substitute="yes">
             <help>
-               Enter a Sage Tag Rad Source Id.
+               Enter an external identifier.
             </help>
            <suggest includeProjects="GiardiaDB"
                     sample="670,880"
@@ -80,6 +80,26 @@
             </enumValue>
           </enumList>   
         </enumParam>
+
+        <enumParam name="is_within_gene_not"
+                     prompt="Within Genes Only"
+                     multiPick="false"
+                     quote="false">
+          <help>
+             Sage Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to sage tags falling within a gene.
+          </help>
+          <enumList>   
+            <enumValue>
+              <term>Yes</term>
+              <internal>not</internal>
+            </enumValue>
+            <enumValue>
+              <term>No</term>
+              <internal> </internal>
+            </enumValue>
+          </enumList>   
+        </enumParam>
+
 
        <stringParam name="st_min_count" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="Minimum tag count"

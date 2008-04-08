@@ -44,7 +44,6 @@
                   sg.distance as bp_from_gene
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
             where a.na_feature_id = sg.tag_feature_id
-            and a.IS_REVERSED=sg.antisense
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes
