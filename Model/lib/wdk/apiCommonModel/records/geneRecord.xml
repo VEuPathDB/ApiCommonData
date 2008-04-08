@@ -384,7 +384,7 @@
           <!-- Gene Model table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="GeneModel" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="GeneModel" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
                  displayName="Gene Model"
                  queryRef="GeneTables.GeneModel">
             <columnAttribute displayName="Type" name="type"/>
@@ -398,7 +398,7 @@
           <!-- InterPro table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="InterPro" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="InterPro" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
                  displayName="InterPro Domains"
                  queryRef="GeneTables.InterPro">
             <columnAttribute displayName="Name" name="interpro_name"/>
@@ -415,7 +415,7 @@
           <!-- Transmembrane Domains table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="TMHMM" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="TMHMM" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
                  displayName="Transmembrane Domains"
                  queryRef="GeneTables.TMHMM">
             <columnAttribute displayName="Name" name="tmf_name"/>
@@ -431,7 +431,7 @@
           <!-- Signal Peptide table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SignalP" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="SignalP" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
                  displayName="Signal Peptide"
                  queryRef="GeneTables.SignalP">
             <columnAttribute displayName="Name" name="spf_name"/>
@@ -447,7 +447,7 @@
           <!-- BlastP Hits table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="BlastP" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="BlastP" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
                  displayName="BlastP Hits"
                  queryRef="GeneTables.BlastP">
             <columnAttribute displayName="Feature ID" name="blastp_feature_id"/>
@@ -561,6 +561,14 @@
             <columnAttribute name="sequence_count" displayName="Sequences"/>
             <columnAttribute name="spectrum_count" displayName="Spectra"/>
           </table>
+
+         <table name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
+                 queryRef="GeneTables.MassSpec" includeProjects="GiardiaDB,ToxoDB,CryptoDB">
+            <columnAttribute name="experiment" displayName="Experiment Name"/>
+            <columnAttribute name="sequence" displayName="Sequences"/>
+            <columnAttribute name="sum_sequence_count" displayName="Sequence Count"/>
+            <columnAttribute name="sum_spectrum_count" displayName="Spectrum Count"/>
+         </table>
 
                  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
