@@ -151,9 +151,9 @@ sub _processBlock {
 sub _parseBlock {
 
   my ($self, $block) = @_;
-
+   $block =~ s/synonym:\s"<new synonym>"\sRELATED \[\]//;
 #  my ($name) = $block =~ m/^exact_synonym:\s+(.*)/ms;
-  my ($name) = $block =~ m/^synonym:\s+(.*)/ms;
+  my ($name) = $block =~ m/^synonym:\s+(.*)/ms ;
   if ($name) {
     ($name) = extract_quotelike($name);
     $name =~ s/\A"|"\Z//msg;
