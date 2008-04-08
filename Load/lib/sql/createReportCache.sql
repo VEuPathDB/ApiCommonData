@@ -1,5 +1,6 @@
 CREATE TABLE apidb.GeneTable (
  source_id  VARCHAR2(50),
+ project_id  VARCHAR2(50),
  table_name VARCHAR2(80),
  row_count  NUMBER(4),
  content    CLOB
