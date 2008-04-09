@@ -16,6 +16,37 @@
 6.R value
 -->
 
+    <question name="SageTagByRStat"
+              category="Other Attributes"
+              displayName="Differential Expression"
+              queryRef="SageTagIds.ByRStat"
+              recordClassRef="SageTagRecordClasses.SageTagRecordClass"
+              noSummaryOnSingleRecord="false" 
+              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+
+             <attributesList 
+               summary="organism,location_text,tag_sequence,gene_source_id,R"
+               sorting="organism asc, R desc"
+             />
+             <summary>
+               Find Sage Tags that are differentially expressed across 2 or more libraries.
+             </summary>
+             <description>
+               Find Sage Tags that are differentially expressed across 2 or more libraries.
+             </description>
+
+        <dynamicAttributes>
+             <columnAttribute name="R" displayName="R"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+
+            <propertyList name="specificAttribution">
+              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
+           </propertyList> 
+
+    </question>
+
+
     <question name="SageTagByLocation"
               category="Other Attributes"
               displayName="Chromosomal Location"

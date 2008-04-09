@@ -2,6 +2,48 @@
 
   <querySet name="SageTagIds">
 
+
+    <sqlQuery name="ByRStat" includeProjects="GiardiaDB"
+              isCacheable="true">
+       <paramRef ref="geneParams.sage_tag_library_name"/>
+       <paramRef ref="geneParams.sage_tag_min_r"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="R"/>
+       <sql>
+         <![CDATA[
+       select source_id,
+              '@PROJECT_ID@' as project_id, 
+              to_char(sum(xij * log(10, (xij/(Ni * fj)))), '99999D0') as R
+       from (
+         select a.source_id, aa.library_name, library_count.n as ni, f.frequency as fj, sum(aa.raw_count) as xij
+         from apidb.SAGETAGANALYSISATTRIBUTES aa, 
+              apidb.SAGETAGATTRIBUTES a,
+              (select a.source_id, sum(aa.raw_count) / max(n.n) as frequency
+               from apidb.SAGETAGANALYSISATTRIBUTES aa, 
+               apidb.SAGETAGATTRIBUTES a,
+               (select sum(max(total_raw_count)) as n
+                from apidb.SAGETAGANALYSISATTRIBUTES
+                where library_name in ($$sage_tag_library_name$$)
+                group by library_name) n
+               where aa.library_name in ($$sage_tag_library_name$$)
+                and aa.composite_element_id = a.composite_element_id
+               group by a.source_id) f,
+              (select library_name, max(total_raw_count) as n
+               from apidb.SAGETAGANALYSISATTRIBUTES
+               where library_name in ($$sage_tag_library_name$$)
+               group by library_name) library_count
+         where aa.composite_element_id = a.composite_element_id
+          and a.source_id = f.source_id
+          and aa.library_name = library_count.library_name
+         group by a.source_id, aa.library_name, library_count.n, f.frequency
+         )
+       group by source_id
+       having sum(xij * log(10, (xij/(Ni * fj)))) >  $$sage_tag_min_r$$
+         ]]>
+       </sql>
+    </sqlQuery>
+
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB"
               isCacheable="true">
         <paramRef ref="sharedParams.sequenceId"/>
