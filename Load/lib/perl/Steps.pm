@@ -1191,15 +1191,13 @@ sub makeDoTSAssemblyDownloadFile {
 
 
   my $sql = <<"EOF";
-  SELECT  replace(tn.name, ' ', '_')
-                ||'|'||
-          '${prefix}DT.'|| a.na_sequence_id ||'.tmp'
-                ||'|'||
-          '(' || a.number_of_contained_sequences ||' sequences)'
-                ||'|'||
-          'length=' || a.length
-                ||'|'||
-          'DoTS assembly' as defline,
+  SELECT  '${prefix}DT.'|| a.na_sequence_id 
+                ||' | organism='||
+          replace(tn.name, ' ', '_')
+                ||' | number of sequences='||
+          a.number_of_contained_sequences
+                ||' | length='||
+          a.length as defline,
           a.sequence
        FROM dots.assembly a,
             sres.taxonname tn,
@@ -1219,50 +1217,87 @@ EOF
 
 }
 
+sub makeESTDownloadFile {
+  my ($mgr, $species, $name, $ncbiTaxId, $dbName, $dbVer, $taxonHierarchy,$project) = @_;
 
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
 
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
+  my $sql = <<"EOF";
+    SELECT x.source_id
+           ||' | organism='||
+           replace(tn.name, ' ', '_')
+           ||' | length='||
+           x.length as defline,
+           x.sequence
+           FROM dots.externalnasequence x,
+                sres.taxonname tn,
+                sres.taxon t,
+                sres.sequenceontology so,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr
+           WHERE t.taxon_id in ($taxonIdList)
+            AND t.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND t.taxon_id = x.taxon_id
+            AND x.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = '$name'
+            AND x.external_database_release_id = edr. external_database_release_id
+            AND edr.version = '$dbVer'
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = '$dbName'
+EOF
 
+    my $fileName = $species . ucfirst($name);
 
+    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
+
+}
 
 sub makeTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
 
     my $sql = <<"EOF";
-    SELECT  replace(tn.name, ' ', '_')
-                ||'|'||
-            enas.source_id
+     SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                ||'|'||
-            '$dataType'
-                ||'|'||
-            '$dataSource'
-                ||'|'||
-            'length=' || snas.length
-                ||'|'||
-            '('|| so1.term_name || ')' || gf.product as defline,
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            nl.start_min
+                ||'-'||
+            nl.end_max
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            snas.length
+            as defline,
             snas.sequence
-       FROM dots.$seqTable enas,
-            dots.genefeature gf,
-            dots.transcript t,
-            dots.SplicedNaSequence snas,
-            sres.taxonname tn,
-            sres.sequenceontology so1,
-            sres.sequenceontology so2,
-            sres.externaldatabase ed,
-            sres.externaldatabaserelease edr
+           FROM dots.ExternalNASequence enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so,
+                dots.nalocation nl
       WHERE gf.na_feature_id = t.parent_id
-        AND gf.sequence_ontology_id = so2.sequence_ontology_id
-        AND so2.term_name != 'repeat_region'
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.SEQUENCE_ONTOLOGY_ID = so1.sequence_ontology_id
         AND snas.external_database_release_id = edr.external_database_release_id
-        AND gf.na_sequence_id = enas.na_sequence_id 
+        AND gf.na_sequence_id = enas.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name != 'repeat_region'
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
 EOF
 
     if ($genomeExtDb && $genomeExtDbVer) {
@@ -1271,45 +1306,51 @@ EOF
     }
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
-
 }
 
 sub makeRGTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
-
-    my $sql = <<"EOF";
-    SELECT  replace(tn.name, ' ', '_')
-                ||'|'||
-            enas.source_id
+    
+        my $sql = <<"EOF";
+     SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                ||'|'||
-            '$dataType'
-                ||'|'||
-            '$dataSource'
-                ||'|'||
-            '('|| so1.term_name || ')' || gf.product as defline,
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            nl.start_min
+                ||'-'||
+            nl.end_max
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            snas.length
+            as defline,
             snas.sequence
-       FROM dots.$seqTable enas,
-            dots.genefeature gf,
-            dots.transcript t,
-            dots.SplicedNaSequence snas,
-            sres.taxonname tn,
-            sres.sequenceontology so1,
-            sres.sequenceontology so2,
-            sres.externaldatabase ed,
-            sres.externaldatabaserelease edr
+           FROM dots.ExternalNASequence enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so,
+                dots.nalocation nl
       WHERE gf.na_feature_id = t.parent_id
-        AND gf.sequence_ontology_id = so2.sequence_ontology_id
-        AND so2.term_name = 'repeat_region'
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.SEQUENCE_ONTOLOGY_ID = so1.sequence_ontology_id
         AND snas.external_database_release_id = edr.external_database_release_id
-        AND gf.na_sequence_id = enas.na_sequence_id 
+        AND gf.na_sequence_id = enas.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'repeat_region'
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
 EOF
 
     if ($genomeExtDb && $genomeExtDbVer) {
@@ -1318,7 +1359,6 @@ EOF
     }
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
-
 }
 
 sub makeCdsDownloadFile {
@@ -1365,46 +1405,54 @@ EOF
 
 }
 
-
-
 sub makeDerivedCdsDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
     my $sql = <<"EOF";
-    SELECT replace(tn.name, ' ', '_')
+     SELECT '$dataSource'
                 ||'|'||
-           enas.source_id
-                ||'|'||
-           gf.source_id 
-                ||'|'||
-           'Annotation'
-                ||'|'||
-           '$dataSource'
-                ||'|'||
-           '(protein coding) ' || gf.product as defline,
+            gf.source_id
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            (nl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (nl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            (taaf.translation_stop - taaf.translation_start + 1)
+            as defline,
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM dots.$seqTable enas,
+           FROM dots.ExternalNASequence enas,
                 dots.genefeature gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                dots.TranslatedAaFeature taaf,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
                 sres.externaldatabaserelease edr,
-                sres.sequenceontology so
+                sres.sequenceontology so,
+                dots.nalocation nl,
+                dots.translatedaafeature taaf
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
-        AND t.na_feature_id = taaf.na_feature_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_sequence_id = enas.na_sequence_id
         AND gf.sequence_ontology_id = so.sequence_ontology_id
         AND so.term_name != 'repeat_region'
+        AND so.term_name = 'protein_coding'
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
+        AND t.na_feature_id = taaf.na_feature_id
 EOF
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -1414,83 +1462,104 @@ EOF
 sub makeRGDerivedCdsDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
-    my $sql = <<"EOF";
-    SELECT replace(tn.name, ' ', '_')
-                  ||'|'||
-           enas.source_id
-                  ||'|'||
-           gf.source_id
-                  ||'|'||
-           'Annotation'
-                  ||'|'||
-           '$dataSource'
-                  ||'|'||
-           '(protein coding) ' || gf.product as defline,
+        my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            (nl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (nl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            (taaf.translation_stop - taaf.translation_start + 1)
+            as defline,
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM dots.$seqTable enas,
+           FROM dots.ExternalNASequence enas,
                 dots.genefeature gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                dots.TranslatedAaFeature taaf,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
                 sres.externaldatabaserelease edr,
-                sres.sequenceontology so
-           WHERE gf.na_feature_id = t.parent_id
-                 AND t.na_sequence_id = snas.na_sequence_id
-                 AND t.na_feature_id = taaf.na_feature_id
-                 AND snas.external_database_release_id = edr.external_database_release_id
-                 AND gf.na_sequence_id = enas.na_sequence_id
-                 AND gf.sequence_ontology_id = so.sequence_ontology_id
-                 AND so.term_name = 'repeat_region'
-                 AND snas.taxon_id = tn.taxon_id
-                 AND tn.name_class = 'scientific name'
-                 AND edr.external_database_id = ed.external_database_id
-                 AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+                sres.sequenceontology so,
+                dots.nalocation nl,
+                dots.translatedaafeature taaf
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'repeat_region'
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
+        AND t.na_feature_id = taaf.na_feature_id
 EOF
 
-       makeDownloadFile($mgr, $species, $name, $sql,$project);
-}
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 
+}
 
 sub makeAnnotatedProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
-    my $sql = <<"EOF";
-    SELECT replace(tn.name, ' ', '_')
-        ||'|'||
-    enas.source_id
-        ||'|'||
-    gf.source_id
-        ||'|'||
-    'Annotation'
-        ||'|'||
-    '$dataSource'
-        ||'|'||
-    '(protein coding) ' || taas.description as defline,
-    taas.sequence
-       FROM dots.$seqTable enas,
-            dots.genefeature gf,
-            dots.transcript t,
-            dots.translatedaafeature taaf,
-            dots.translatedaasequence taas,
-            sres.taxonname tn,
-            sres.externaldatabase ed,
-            sres.externaldatabaserelease edr,
-            sres.sequenceontology so
-      WHERE t.na_feature_id = taaf.na_feature_id
-        AND gf.na_feature_id = t.parent_id
-        AND taaf.aa_sequence_id = taas.aa_sequence_id
-        AND enas.na_sequence_id = gf.na_sequence_id
+     my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            (nl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (nl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            taas.length
+            as defline,
+            taas.sequence
+           FROM dots.ExternalNASequence enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so,
+                dots.nalocation nl,
+                dots.translatedaafeature taaf,
+                dots.translatedaasequence taas
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id
         AND gf.sequence_ontology_id = so.sequence_ontology_id
         AND so.term_name != 'repeat_region'
-        AND taas.taxon_id = tn.taxon_id
+        AND so.term_name = 'protein_coding'
+        AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND t.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
+        AND t.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
 EOF
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -1500,45 +1569,55 @@ EOF
 sub makeRGAnnotatedProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
-    my $sql = <<"EOF";
-    SELECT replace(tn.name, ' ', '_')
-        ||'|'||
-    enas.source_id
-        ||'|'||
-    gf.source_id
-        ||'|'||
-    'Annotation'
-        ||'|'||
-    '$dataSource'
-        ||'|'||
-    '(protein coding) ' || taas.description as defline,
-    taas.sequence
-       FROM dots.$seqTable enas,
-            dots.genefeature gf,
-            dots.transcript t,
-            dots.translatedaafeature taaf,
-            dots.translatedaasequence taas,
-            sres.taxonname tn,
-            sres.externaldatabase ed,
-            sres.externaldatabaserelease edr,
-            sres.sequenceontology so
-      WHERE t.na_feature_id = taaf.na_feature_id
-        AND gf.na_feature_id = t.parent_id
-        AND taaf.aa_sequence_id = taas.aa_sequence_id
-        AND enas.na_sequence_id = gf.na_sequence_id
+         my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            enas.source_id
+                ||':'||
+            (nl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (nl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            taas.length
+            as defline,
+            taas.sequence
+           FROM dots.ExternalNASequence enas,
+                dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so,
+                dots.nalocation nl,
+                dots.translatedaafeature taaf,
+                dots.translatedaasequence taas
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_sequence_id = enas.na_sequence_id
         AND gf.sequence_ontology_id = so.sequence_ontology_id
         AND so.term_name = 'repeat_region'
-        AND taas.taxon_id = tn.taxon_id
+        AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND t.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND gf.na_feature_id = nl.na_feature_id
+        AND t.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
 EOF
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
-
 
 sub makeOrfProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
@@ -1583,22 +1662,27 @@ EOF
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$projectDB,$project) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
 
     my $sql = <<"EOF";
     SELECT
-    replace(substr(tn.name, 1, instr(tn.name || ' ', ' ') + 1), ' ', '_')
-        ||'||'||
-    m.source_id 
-        ||'|'||
-    'computed'
-        ||'|'||
-    '$projectDB'
-        ||'|'||
-    'length=' || taas.length || taas.description as defline,
-    taas.sequence
+       m.source_id
+        ||' | organism='||
+       replace(tn.name, ' ', '_')
+        ||' | location='||
+       enas.source_id
+        ||':'||
+       nl.start_min
+        ||'-'||
+       nl.end_max
+        ||'('||
+       decode(nl.is_reversed, 1, '-', '+')
+        ||') | length='||
+       taas.length as defline,
+       taas.sequence
        FROM dots.NASequence enas,
             dots.miscellaneous m,
+            dots.nalocation nl,
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
@@ -1606,13 +1690,14 @@ sub makeOrfDownloadFileWithAbrevDefline {
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr
       WHERE m.na_feature_id = taaf.na_feature_id
+        AND m.na_feature_id = nl.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND enas.na_sequence_id = m.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND m.sequence_ontology_id = so.sequence_ontology_id
         AND so.term_name = 'ORF'
-        AND taas.length > $length
+        AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
@@ -1679,17 +1764,17 @@ sub makeGenomicDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain,$project) = @_;
 
     my $sql = <<"EOF";
-        SELECT
-        replace(tn.name, ' ', '_')||'$strain'
-            ||'|'||
-        enas.source_id
-            ||'|'||
-        edr.version
-            ||'|'||
-        'ds-DNA'
-            ||'|'||
-        '$dataSource',
-        enas.sequence
+        SELECT '$dataSource'
+                ||'|'||
+               enas.source_id
+                ||' | organism='||
+               replace(tn.name, ' ', '_')||' $strain'
+                ||' | version='||
+               edr.version
+                ||' | length=' ||
+               enas.length
+               as defline,
+               enas.sequence
            FROM dots.$seqTable enas,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
