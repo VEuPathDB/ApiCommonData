@@ -1,6 +1,6 @@
 <wdkModel>
 
-    <recordClassSet name="AssemblyRecordClasses" includeProjects="CryptoDB,ToxoDB">
+    <recordClassSet name="AssemblyRecordClasses" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
 
         <!-- AssemblyRecordClasses.AssemblyRecordClass -->
         <recordClass idPrefix="" 
@@ -21,7 +21,7 @@
       <!-- =================================================================== -->
       <!--  Text Attributes  ++++++++-->
       <!-- =================================================================== -->
-       <attributeQueryRef ref="AssemblyAttributes.Bfmv" includeProjects="CryptoDB,ToxoDB">
+       <attributeQueryRef ref="AssemblyAttributes.Bfmv" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
         <columnAttribute name="project_id" internal="true" inReportMaker="false"/>
         <columnAttribute name="source_id" internal="true" inReportMaker="false"/>
         <columnAttribute name="organism" internal="true" inReportMaker="false"/>
@@ -33,7 +33,7 @@
         <!-- Overview -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <textAttribute name="overview" displayName="Overview" includeProjects="CryptoDB,ToxoDB"
+          <textAttribute name="overview" displayName="Overview" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
                          internal="true" inReportMaker="false">
 
              <text>
@@ -47,7 +47,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-<!--        <textAttribute name="dnaContext" includeProjects="ToxoDB,CryptoDB"
+<!--        <textAttribute name="dnaContext" includeProjects="ToxoDB,CryptoDB,GiardiaDB"
                         displayName="Genomic Context"  
                        inReportMaker="false">
            <text includeProjects="ToxoDB">
@@ -65,7 +65,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- GBrowse -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
- <!--       <textAttribute name="gbrowseLink"  includeProjects="ToxoDB,CryptoDB"
+ <!--       <textAttribute name="gbrowseLink"  includeProjects="ToxoDB,CryptoDB,GiardiaDB"
             inReportMaker="false">
             <text includeProjects="ToxoDB">
                  <![CDATA[
@@ -115,7 +115,12 @@
             <columnAttribute displayName="Is Reversed" name="is_reversed" />
 
             <linkAttribute displayName="Alignment" name="alignmentlink" visible="view">
-                 <url includeProjects="CryptoDB">
+                 <url includeProjects="GiardiaDB">
+                    <![CDATA[
+                    /@CGI_OR_MOD@/gbrowse/giardiadb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
+                    ]]>
+                 </url>
+ <url includeProjects="CryptoDB">
                     <![CDATA[
                     /@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=Gene;label=EST;label=Cluster;h_feat=$$id$$
                     ]]>
@@ -132,7 +137,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- LibraryInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB"
+        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB"
                displayName="Libraries"
                queryRef="AssemblyTables.LibraryInfo">
             <columnAttribute displayName="Library"  name="library"/>
@@ -144,7 +149,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- EstInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB"
+        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB"
                displayName="ESTs in Assembly"
                queryRef="AssemblyTables.EstInfo">
             <columnAttribute displayName="EST" name="est"  internal="true" />

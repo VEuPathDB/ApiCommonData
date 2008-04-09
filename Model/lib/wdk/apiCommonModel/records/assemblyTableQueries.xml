@@ -3,7 +3,7 @@
     <querySet name="AssemblyTables">
 
         <!-- AssemblyTables.AlignmentInfo -->
-        <sqlQuery name="AlignmentInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
+        <sqlQuery name="AlignmentInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="id" />
@@ -34,7 +34,8 @@
                    blat.percent_identity,       
                    blat.score || '' score, 
                    (SELECT DISTINCT
-                     CASE WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
+                     CASE WHEN taxn.name like 'Giardia lamblia%' THEN 'Giardia lamblia' 
+                          WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
                           WHEN taxn.name like 'Cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
                           WHEN taxn.name like 'Toxoplasma%' THEN 'Toxoplasma gondii'
                      END as organism
@@ -58,7 +59,7 @@
 
 
         <!-- AssemblyTables.LibraryInfo -->
-        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
+        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="library" />
@@ -79,7 +80,7 @@
 
 
         <!-- AssemblyTables.EstInfo -->
-            <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB">
+            <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="est" />
