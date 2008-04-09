@@ -1430,6 +1430,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
        <paramRef ref="geneParams.sage_tag_library_name"/>
        <paramRef ref="geneParams.sage_tag_min_r"/>
+       <paramRef ref="geneParams.st_max_five_prime_distance"/>
+       <paramRef ref="geneParams.st_max_three_prime_distance"/>
        <column name="project_id"/> 
        <column name="source_id" />
        <column name="R" />
@@ -1443,12 +1445,16 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
          from apidb.SAGETAGANALYSISATTRIBUTES aa, 
               apidb.SAGETAGATTRIBUTES a,
               (select distinct gene_source_id, tag_feature_id, antisense 
-               from apidb.SAGETAGGENE where distance = 0) g,
+               from apidb.SAGETAGGENE 
+               where ((direction = '5' and distance <= $$st_max_five_prime_distance$$) OR (direction = '3' and distance <= $$st_max_three_prime_distance$$))
+               ) g,
               (select g.gene_source_id, sum(aa.raw_count) / max(n.n) as frequency
                from apidb.SAGETAGANALYSISATTRIBUTES aa, 
                apidb.SAGETAGATTRIBUTES a,
                (select distinct gene_source_id, tag_feature_id, antisense 
-                from apidb.SAGETAGGENE where distance = 0) g,
+                from apidb.SAGETAGGENE
+                where ((direction = '5' and distance <= $$st_max_five_prime_distance$$) OR (direction = '3' and distance <= $$st_max_three_prime_distance$$))
+                ) g,
                (select sum(max(total_raw_count)) as n
                 from apidb.SAGETAGANALYSISATTRIBUTES
                 where library_name in ($$sage_tag_library_name$$)
@@ -1470,7 +1476,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
          group by g.gene_source_id, aa.library_name, library_count.n, f.frequency
          )
        group by gene_source_id
-       having sum(xij * log(10, (xij/(Ni * fj)))) > $$sage_tag_min_r$$
+       having sum(xij * log(10, (xij/(Ni * fj)))) >  $$sage_tag_min_r$$
             ]]>
           </sql>
     </sqlQuery>
