@@ -1,0 +1,40 @@
+#!/usr/bin/perl
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($gusConfigFile,$prefix,$suffix,$ncbiTaxId,$verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "prefix=s" => \$prefix,
+	    "suffix=s" => \$suffix,
+	    "verbose!" => \$verbose,
+	    "ncbiTaxId=s" => \$ncbiTaxId);
+
+die "updateAssSourceIdFromPK --prefix --suffix --ncbiTaxId {--verbose} {--gusConfigFile <file>}\n" if (!$ncbiTaxId);
+
+print STDERR "Establishing dbi login\n";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+
+my $sql = "update dots.assembly set source_id = = '$prefix' || na_sequence_id || '$suffix'";
+
+print STDERR "Updating source_id of dots.assembly with SQL: $sql\n";
+
+$dbh->do($sql) || die "Update failed.\nSQL: $sql";
+
+print STDERR "Committing delete\n";
+$dbh->commit();
+
+
+
+
