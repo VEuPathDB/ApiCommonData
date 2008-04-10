@@ -1191,7 +1191,7 @@ sub makeDoTSAssemblyDownloadFile {
 
 
   my $sql = <<"EOF";
-  SELECT  '${prefix}DT.'|| a.na_sequence_id 
+  SELECT  a.source_id
                 ||' | organism='||
           replace(tn.name, ' ', '_')
                 ||' | number of sequences='||
