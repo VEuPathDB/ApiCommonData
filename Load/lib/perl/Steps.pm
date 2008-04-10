@@ -1375,7 +1375,7 @@ sub makeInterproDownloadFile {
 
   die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
-  my $outFile = "$dlDir/${name}_$projectDB-${release}.txt";
+  my $outFile = "$dlDir/${species}${name}_$projectDB-${release}.txt";
 
   (-e $outFile) and die "'$outFile' already exists. Remove it before running this step.\n";
 
