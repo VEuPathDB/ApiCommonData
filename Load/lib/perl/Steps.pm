@@ -1301,7 +1301,7 @@ EOF
       $sql .= " and enas.external_database_release_id = $genomeDbRls";
     }
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+    makeDownloadgFile($mgr, $species, $name, $sql,$project);
 }
 
 sub makeRGTranscriptDownloadFile {
@@ -1356,6 +1356,87 @@ EOF
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
+
+sub makeInterproDownloadFile {
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB) = @_;
+
+  my $signal = "${species}InterproDownloadFile";
+
+  return if $mgr->startStep("Extracting $species Interpro results from GUS", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+
+  $mgr->runCmd("mkdir -p $dlDir");
+
+  die "Failed to create $dlDir.\n"  unless (-e $dlDir);
+
+  my $outFile = "$dlDir/${name}_$projectDB-${release}.txt";
+
+  (-e $outFile) and die "'$outFile' already exists. Remove it before running this step.\n";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $sql = <<"EOF";
+  SELECT gf.source_id
+           || chr9 ||
+         xd1.name
+           || chr9 ||
+         dr.primary_identifier
+           || chr9 ||
+         dr.secondary_identifier
+           || chr9 ||
+         al.start_min
+           || chr9 ||
+         al.end_min
+           || chr9 ||
+         to_char(df.e_value,'9.9EEEE')
+  FROM
+    dots.aalocation al,
+    sres.externaldatabaserelease xdr1,
+    sres.externaldatabase xd1,
+    sres.externaldatabaserelease xdr2,
+    sres.externaldatabase xd2,
+    sres.externaldatabaserelease xdr3,
+    sres.externaldatabase xd3,
+    sres.dbref dr,
+    dots.DbRefAAFeature draf, 
+    dots.domainfeature df, 
+    dots.genefeature gf,
+    dots.transcript t, 
+    dots.translatedaafeature taf,
+    dots.translatedaasequence tas 
+  WHERE
+   gf.external_database_release_id = xdr2.external_database_release_id 
+     AND xdr2.version = '$genomeExtDbVer' 
+     AND xdr2.external_database_id = xd2.external_database_id 
+     AND xd2.name = '$genomeExtDb'
+     AND gf.na_feature_id = t.parent_id 
+     AND t.na_feature_id = taf.na_feature_id 
+     AND taf.aa_sequence_id = tas.aa_sequence_id 
+     AND tas.aa_sequence_id = df.aa_sequence_id 
+     AND df.aa_feature_id = draf.aa_feature_id  
+     AND draf.db_ref_id = dr.db_ref_id 
+     AND dr.external_database_release_id = xdr1.external_database_release_id 
+     AND xdr1.external_database_id = xd1.external_database_id 
+     AND df.aa_feature_id = al.aa_feature_id 
+     AND df.external_database_release_id = xdr3.external_database_release_id 
+     AND xdr3.version = '$interproExtDbVer' 
+     AND xdr3.external_database_id = xd3.external_database_id 
+     AND xd3.name = '$interproExtDb';
+EOF
+
+    my $cmd = "makeFileWithSql --outFile $outFile --sql '$sql' 2>> $logFile";
+
+    $mgr->runCmd($cmd);
+    $mgr->endStep($signal);
+}
+
+
 
 sub makeCdsDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
@@ -4384,7 +4465,7 @@ sub updateAssemblySourceId {
 
   my $log = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  $mgr->runCmd("updateAssSourceIdFromPK --prefix $species --suffix '.tmp' --ncbiTaxId $ncbiTaxIdx 2>> $log");
+  $mgr->runCmd("updateAssSourceIdFromPK --prefix $species --suffix '.tmp' --ncbiTaxId $ncbiTaxId 2>> $log");
 
   $mgr->endStep($signal);
 }
