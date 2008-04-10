@@ -1186,10 +1186,6 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
 sub makeDoTSAssemblyDownloadFile {
   my ($mgr, $species, $name, $ncbiTaxId, $project) = @_;
 
-  my $prefix = $species;
-  $prefix =~ s/\b(\w\w)\w+/$1/;
-
-
   my $sql = <<"EOF";
   SELECT  a.source_id
                 ||' | organism='||
@@ -4371,6 +4367,26 @@ sub runAssemblePlugin {
 
   my $cmd = "runUpdateAssembliesPlugin --clusterFile $file.$suffix --pluginCmd \"$pluginCmd\" 2>> $logfile";
   $mgr->runCmdInBackground($cmd);
+}
+
+sub updateAssemblySourceId {
+  my ($mgr,$species,$ncbiTaxId) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "${species}UpdateAssSourceId";
+
+  return if $mgr->startStep("Updating dots.assembly.source_id", $signal);
+
+  $species =~ s/\b(\w\w)\w+/$1/;
+
+  $species = "${species}DT.";
+
+  my $log = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  $mgr->runCmd("updateAssSourceIdFromPK --prefix $species --suffix '.tmp' --ncbiTaxId $ncbiTaxIdx 2>> $log");
+
+  $mgr->endStep($signal);
 }
 
 sub deleteAssembliesWithNoTranscripts {
