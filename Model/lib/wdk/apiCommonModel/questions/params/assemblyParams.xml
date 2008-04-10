@@ -8,6 +8,30 @@
 
     <paramSet name="assemblyParams">
 
+    <stringParam name="single_gene_id"
+                     prompt="Gene ID"
+                     substitute="yes">
+            <help>Gene IDs (locus tags) are quite different for each species. We use the gene IDs provided by the sequence generator.</help>
+           <suggest includeProjects="PlasmoDB"
+					sample="PF11_0344, PY01656, Pv092275"
+                    default="PF11_0344"/>
+           <suggest includeProjects="CryptoDB"
+					sample="cgd7_230"
+                    default="cgd7_230"/>
+           <suggest includeProjects="ToxoDB"
+		    sample="49.m00014,65.m01111"
+                    default="49.m00014"/>
+           <suggest includeProjects="GiardiaDB"
+		    sample="GL50803_102438, GL50803_5213, GL50803_6262"
+                    default="GL50803_10019"/>
+           <suggest includeProjects="TrichDB"
+		    sample="TVAG_386080, TVAG_486660"
+                    default="TVAG_386080"/>
+           <suggest includeProjects="ApiDB"
+					sample="PF11_0344, cgd7_230, 65.m01111"
+                    default="cgd7_230"/>
+        </stringParam>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- best alignment only  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

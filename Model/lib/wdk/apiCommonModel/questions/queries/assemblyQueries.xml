@@ -1,8 +1,5 @@
 <wdkModel>
 
-  <!-- notes
-
-  -->
 
   <querySet name="AssemblyIds">
    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -177,7 +174,7 @@
     <sqlQuery name="AssembliesByGeneIDs" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
             isCacheable='true'>
       
-      <paramRef ref="sharedParams.ds_gene_ids"/>
+      <paramRef ref="assemblyParams.single_gene_id"/>
       <paramRef ref="sharedParams.bp_overlap_gte"/>
       <paramRef ref="sharedParams.min_ests_in_assembly"/>
        <paramRef ref="assemblyParams.best_alignment_only" 
@@ -207,9 +204,9 @@
                        ELSE apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') END as genes
 	    FROM (
                  
-               SELECT i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
+               SELECT distinct i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ASMALIGNMENTGENESUMMARY i, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE ds.dataset_id = $$ds_gene_ids$$
+                WHERE gi.gene = $$single_gene_id$$
                  AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
                                                        '*', '%'),
                                                '[[:space:]]', '')

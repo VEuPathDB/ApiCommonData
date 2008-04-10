@@ -34,7 +34,7 @@
                    blat.percent_identity,       
                    blat.score || '' score, 
                    (SELECT DISTINCT
-                     CASE WHEN taxn.name like 'Giardia lamblia%' THEN 'Giardia lamblia' 
+                     CASE WHEN taxn.name like 'Giardia lamblia%' or taxn.name like 'Giardia intestinalis%' THEN 'Giardia lamblia'
                           WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
                           WHEN taxn.name like 'Cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
                           WHEN taxn.name like 'Toxoplasma%' THEN 'Toxoplasma gondii'
