@@ -1301,7 +1301,7 @@ EOF
       $sql .= " and enas.external_database_release_id = $genomeDbRls";
     }
 
-    makeDownloadgFile($mgr, $species, $name, $sql,$project);
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
 
 sub makeRGTranscriptDownloadFile {
@@ -1383,17 +1383,17 @@ sub makeInterproDownloadFile {
 
   my $sql = <<"EOF";
   SELECT gf.source_id
-           || chr9 ||
+           || chr(9) ||
          xd1.name
-           || chr9 ||
+           || chr(9) ||
          dr.primary_identifier
-           || chr9 ||
+           || chr(9) ||
          dr.secondary_identifier
-           || chr9 ||
+           || chr(9) ||
          al.start_min
-           || chr9 ||
+           || chr(9) ||
          al.end_min
-           || chr9 ||
+           || chr(9) ||
          to_char(df.e_value,'9.9EEEE')
   FROM
     dots.aalocation al,
@@ -1427,10 +1427,10 @@ sub makeInterproDownloadFile {
      AND df.external_database_release_id = xdr3.external_database_release_id 
      AND xdr3.version = '$interproExtDbVer' 
      AND xdr3.external_database_id = xd3.external_database_id 
-     AND xd3.name = '$interproExtDb';
+     AND xd3.name = '$interproExtDb'
 EOF
 
-    my $cmd = "makeFileWithSql --outFile $outFile --sql '$sql' 2>> $logFile";
+    my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
     $mgr->runCmd($cmd);
     $mgr->endStep($signal);
