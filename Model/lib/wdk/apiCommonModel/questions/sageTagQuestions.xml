@@ -22,7 +22,7 @@
               queryRef="SageTagIds.ByRStat"
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+              includeProjects="ToxoDB,PlasmoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id,R"
@@ -80,7 +80,7 @@
               queryRef="SageTagIds.BySequence" 
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB, PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+              includeProjects="ToxoDB, PlasmoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
@@ -94,7 +94,6 @@
              </description>
 
             <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,CryptoDB">??????</value>
               <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
               <value includeProjects="ApiDB,PlasmoDB">RAD.SAGETag</value>
               <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
@@ -108,7 +107,7 @@
               queryRef="SageTagIds.ByGeneSourceId" 
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+              includeProjects="ToxoDB,PlasmoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence,gene_source_id"
@@ -122,7 +121,6 @@
              </description>
 
            <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,CryptoDB">??????</value>
               <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
               <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
               <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
@@ -136,7 +134,7 @@
               queryRef="SageTagIds.ByExpressionLevel" 
               recordClassRef="SageTagRecordClasses.SageTagRecordClass"
               noSummaryOnSingleRecord="false" 
-              includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB,GiardiaDB">
+              includeProjects="ToxoDB,PlasmoDB,ApiDB,GiardiaDB">
 
              <attributesList 
                summary="organism,location_text,tag_sequence, SAGE_library, tag_count,tag_percentage, gene_source_id"
@@ -150,13 +148,12 @@
              </description>
 
            <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,CryptoDB">??????</value>
               <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
               <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
               <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
            </propertyList>
 
-           <dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB,GiardiaDB">
+           <dynamicAttributes includeProjects="PlasmoDB,ToxoDB,ApiDB,GiardiaDB">
 	     <columnAttribute name="tag_count" displayName="Normalized Tag Count" align="center"/>
 	     <columnAttribute name="tag_percentage" displayName="Normalized Tag Percentage" align="center"/>
              <columnAttribute name="raw_count" displayName="Raw Tag Count" align="center"/>
