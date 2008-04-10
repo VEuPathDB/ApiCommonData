@@ -6,7 +6,7 @@ DROP TABLE ryanthib.message_projects;
 
 CREATE TABLE ryanthib.messages
 (
-  message_id NUMBER(4) NOT NULL,
+  message_id NUMBER(7) NOT NULL,
   message_text VARCHAR(4000) NOT NULL,
   message_category VARCHAR(150) NOT NULL,
   start_date DATE NOT NULL,
