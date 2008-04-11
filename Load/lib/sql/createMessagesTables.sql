@@ -11,6 +11,8 @@ CREATE TABLE ryanthib.messages
   message_category VARCHAR(150) NOT NULL,
   start_date DATE NOT NULL,
   stop_date  DATE NOT NULL,
+  start_time DATE NOT NULL,
+  stop_time DATE NOT NULL,
   admin_comments VARCHAR(4000),
   time_submitted TIMESTAMP NOT NULL,
   CONSTRAINT messages_pkey PRIMARY KEY (message_id)  
@@ -44,4 +46,16 @@ CREATE SEQUENCE ryanthib.projects_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALU
 
 CREATE SEQUENCE ryanthib.category_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALUE;
 
-exit
+INSERT INTO projects (project_id, project_name) VALUES (1, 'CryptoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (2, 'GiardiaDB');
+INSERT INTO projects (project_Id, project_name) VALUES (3, 'PlasmoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (4, 'ToxoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (5, 'TrichDB');
+
+INSERT INTO category (category_id, category_name) VALUES (1, 'General Information');
+INSERT INTO category (category_id, category_name) VALUES (2, 'System Degraded');
+INSERT INTO category (category_id, category_name) VALUES (3, 'System Down');
+
+
+
+
