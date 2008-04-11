@@ -3368,8 +3368,40 @@ sub formatBlastFile {
   $mgr->endStep($signal);
 }
 
+sub xdformatDownloadFileForBlastSite {
+  my ($mgr, $species, $inputFile, $formattedFile, $type) = @_;
+
+  my $signal = "${formattedFile}XDFormat";
+
+  return if $mgr->startStep("Formatting $species $formattedFile", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+  my $blastPath = $propertySet->getProp('wuBlastPath');
+
+  my $blastDir = "$siteFileDir/webServices/$projectDB/$release/$species/blastFiles";
+
+  $mgr->runCmd("mkdir -p $blastDir");
+
+  die "Failed to create $blastDir.\n"  unless (-e $blastDir);
+
+  my $inputFile = "$siteFileDir/downloadSite/$projectDB/$release/$species/$inputFile";
+
+  my $formattedFile = "${blastDir}/$formattedFile";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $inputFile 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
+##for the following you need to check out and build WDK and ApiCommonWebsite and ApiCommonData
+
 sub xdformat {
-  # Note '-C X' to handle invalid letter codes (e.g. J in Cparvum)
+# Note '-C X' to handle invalid letter codes (e.g. J in Cparvum)
   #  xdformat -C X  -p -t CparvumProteins CparvumAnnotatedProteins.fsa 
 
   my ($mgr,$type,$seqFile) = @_;
