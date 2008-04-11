@@ -1405,9 +1405,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 	 <wsQuery name="GenesBySageTag" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="GiardiaDB,ToxoDB"/> 
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="ApiDB"/> 
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/>
                 <paramRef ref="geneParams.sage_tag_library"/>
                 <paramRef ref="geneParams.st_max_five_prime_distance"/>
                 <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -1480,6 +1478,25 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             ]]>
           </sql>
     </sqlQuery>
+
+
+
+    <wsQuery name="GenesBySageTagRStat" includeProjects="ApiDB"
+			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl"/> 
+        <paramRef ref="geneParams.sage_tag_library_name"/>
+        <paramRef ref="geneParams.sage_tag_min_r"/>
+        <paramRef ref="geneParams.st_max_five_prime_distance"/>
+        <paramRef ref="geneParams.st_max_three_prime_distance"/>
+   
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="R" />
+
+    </wsQuery>
+
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ESTOverlap -->

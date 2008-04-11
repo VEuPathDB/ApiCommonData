@@ -1,6 +1,6 @@
 <wdkModel>
 
-    <recordClassSet name="AssemblyRecordClasses" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+    <recordClassSet name="AssemblyRecordClasses" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB">
 
         <!-- AssemblyRecordClasses.AssemblyRecordClass -->
         <recordClass idPrefix="" 
@@ -88,7 +88,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- AlignmentInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="AlignmentInfo"
+        <table name="AlignmentInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
             <columnAttribute name="id"            internal="true" />

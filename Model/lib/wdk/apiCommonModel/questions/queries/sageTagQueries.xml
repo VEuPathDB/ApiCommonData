@@ -44,6 +44,20 @@
        </sql>
     </sqlQuery>
 
+<wsQuery name="ByRStat" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
+      <paramRef ref="geneParams.sage_tag_library_name"/>
+       <paramRef ref="geneParams.sage_tag_min_r"/>
+
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="R"/>
+
+ </wsQuery> 
+
+
+
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB"
               isCacheable="true">
         <paramRef ref="sharedParams.sequenceId"/>
@@ -66,6 +80,19 @@
        </sql>
     </sqlQuery>
 
+<wsQuery name="ByLocation" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
+        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="sageTagParams.is_within_gene_not"/>
+
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+  </wsQuery> 
+
+
     <sqlQuery name="BySequence" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.sequence"/>
@@ -82,7 +109,8 @@
          ]]>
        </sql>
     </sqlQuery>
-  <wsQuery name="BySequence" includeProjects="ApiDB"
+
+<wsQuery name="BySequence" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sageTagParams.sequence"/>
        <paramRef ref="sageTagParams.is_within_gene"/>
@@ -90,6 +118,7 @@
        <wsColumn name="project_id" width="32" wsName="project_id"/>
   </wsQuery> 
 
+ 
     <sqlQuery name="ByGeneSourceId" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.single_gene_id"/>
@@ -110,15 +139,18 @@
        </sql>
 </sqlQuery>
  
-  <wsQuery name="ByGeneSourceId" includeProjects="ApiDB"
+<wsQuery name="ByGeneSourceId" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
        <paramRef ref="sageTagParams.single_gene_id"/>
        <paramRef ref="geneParams.st_max_five_prime_distance"/>
        <paramRef ref="geneParams.st_max_three_prime_distance"/>
+
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
    </wsQuery> 
 
+  
  <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.rad_source_id"/>
@@ -133,7 +165,15 @@
          ]]>
        </sql>
 </sqlQuery>
- 
+
+ <wsQuery name="ByRadSourceId" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sageTagParams.rad_source_id"/>
+
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+   </wsQuery> 
+
 
  <sqlQuery name="ByExpressionLevel" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
               isCacheable="true">
@@ -160,20 +200,23 @@
          ]]>
        </sql>
 </sqlQuery>
-  <wsQuery name="ByExpressionLevel" includeProjects="ApiDB"
+
+<wsQuery name="ByExpressionLevel" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+
        <paramRef ref="sageTagParams.st_min_count"/>
        <paramRef ref="sageTagParams.raw_normalized"/>
        <paramRef ref="sageTagParams.sage_experiment"/>
+
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
+
        <wsColumn name="tag_count" width="32" wsName="tag_count" />
        <wsColumn name="tag_percentage" width="32" wsName="tag_percentage"/>
        <wsColumn name="raw_count" width="32" wsName="raw_count"/>
        <wsColumn name="raw_percentage" width="32" wsName="raw_percentage"/>
        <wsColumn name="SAGE_library" width="32" wsName="SAGE_library"/>
    </wsQuery>
-
 
   </querySet>
 
