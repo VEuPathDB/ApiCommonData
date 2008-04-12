@@ -1968,7 +1968,12 @@ sub runGffDump {
 
   return if $mgr->startStep("Creating gff file from model $model for $organism", $signal);
 
-  my $dir = "$mgr->{dataDir}/downloadSite/$species";
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $dir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
@@ -2001,7 +2006,12 @@ sub runWdkRecordDump {
 
   return if $mgr->startStep("Creating wdk record from model $model for $organism", $signal);
 
-  my $dir = "$mgr->{dataDir}/downloadSite/$species";
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $dir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
