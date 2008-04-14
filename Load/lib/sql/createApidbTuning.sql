@@ -210,7 +210,43 @@ from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
       where edr.external_database_id = ed.external_database_id) db
 where nf.na_feature_id = nl.na_feature_id
   and nf.external_database_release_id = db.external_database_release_id(+)
-  and nf.na_sequence_id = ns.na_sequence_id;
+  and nf.na_sequence_id = ns.na_sequence_id
+union
+select -- virtual feature locations mapped through SequencePiece
+       case
+         when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+                          'TigrScan', 'TwinScan predictions',
+                          'TwinScanEt predictions', -- not 'tRNAscan-SE',
+                          'P. falciparum Evigan Gene Models',
+                          'Pfalciparum workshop annotations reviewed and changed')
+           then 'GenePrediction'
+         else nf.subclass_view
+       end as feature_type,
+       nf.source_id as feature_source_id, scaffold.source_id as sequence_source_id,
+       nf.na_sequence_id, nf.na_feature_id,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+           else least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+       end as start_min,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+         else greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+       end as end_max,
+       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id
+from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
+     dots.SequencePiece sp, dots.NaSequence scaffold,
+     (select edr.external_database_release_id, ed.name
+      from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+      where edr.external_database_id = ed.external_database_id) db
+where nf.na_feature_id = nl.na_feature_id
+  and nf.external_database_release_id = db.external_database_release_id(+)
+  and nf.na_sequence_id = contig.na_sequence_id
+  and nf.na_sequence_id = sp.piece_na_sequence_id
+  and sp.virtual_na_sequence_id = scaffold.na_sequence_id;
 
 grant select on apidb.FeatureLocation&1 TO gus_r;
 
@@ -1838,7 +1874,10 @@ WHERE table_name IN (SELECT table_name
                      FROM all_tables
                     MINUS
                      SELECT table_name
-                     FROM all_synonyms)
+                     FROM all_synonyms
+                    MINUS
+                     SELECT mview_name
+                     FROM all_mviews)
   AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       LIKE '%fournumbers';
 
