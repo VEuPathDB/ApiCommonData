@@ -61,7 +61,7 @@ my $argsDeclaration =
             descr => 'mapping file',
             reqd  => 1,
             constraintFunc=> undef,
-            isList=> 1
+            isList=> 0
             }),
  stringArg({name  => 'table',
             descr => 'table of sequences to which the external data are mapped, e.g. VirtualSequence',
