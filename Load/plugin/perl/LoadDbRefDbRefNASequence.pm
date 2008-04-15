@@ -132,7 +132,7 @@ sub run {
 
   my $fileHash = $self->makeFileHash();
 
-  my $dbRefNum = scalar (keys %{$fileHash});g
+  my $dbRefNum = scalar (keys %{$fileHash});
 
   my $dbRefRlsId = $self->getExternalDatabaseRelease($self->getArg('dbRefExtDbName'),$self->getArg('dbRefExtDbRlsVer'));
 
