@@ -261,7 +261,7 @@ sub getSeqId {
 
 
 sub getDbRefNASeq {
-  my ($self, $seqId);
+  my ($self, $seqId) = @_;
 
   my $newDbRefNASeq = GUS::Model::DoTS::DbRefNASequence->new ({'na_sequence_id'=>$seqId});
 
