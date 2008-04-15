@@ -119,7 +119,7 @@ SYNTAX
 my $notes = <<NOTES;
 The file:
 Tab delimited
-cols are 1-object,2-object_beginning,3-object_end,4-part_number,5-component_type(N=gap w/known length,U-gap w/o known length,W=wgs contig,P=predraft,O=other seq,G=whole genome finishing),6-component_id if 5 not N(U) else gap_length,7-component_beg if 5 not N(U) else gap_type (fragment,etc),8-component_end if 5 not N(U) else yes/no gap is beetween adjacent lines,9-orientation(+=forward,-=reverse,0=unknown) if 5 not N(U) else not used
+cols are 1-object,2-object_beginning,3-object_end,4-part_number,5-component_type(N=gap w/known length,U-gap w/o known length,W=wgs contig,P=predraft,O=other seq,G=whole genome finishing),6-component_id if 5 not N(U) else gap_length,7-component_beg if 5 not N(U) else gap_type (fragment,etc),8-component_end if 5 not N(U) else yes/no gap is beetween adjacent lines,9-orientation(+=forward,-=reverse,0=unknown, na=not applicable) if 5 not N(U) else not used
 All object and component distances should be sequential and non-overlapping, all beg <= end
 1-based (first base =1 and not 0)
 make sure there are not carriage returns in the file, ^M, if so run dos2unix
@@ -237,9 +237,9 @@ sub processFile {
       %virtual = ();
     }
 
-    $arr[8] =~ s/na/0/ unless $arr[4] =~ /[NU]/;
-    $arr[8] =~ s/\+/1/ unless $arr[4] =~ /[NU]/;
-    $arr[8] =~ s/\-/2/ unless $arr[4] =~ /[NU]/;
+    $arr[8] =~ s/[na0]// unless $arr[4] =~ /[NU]/;
+    #$arr[8] =~ s/\+/1/ unless $arr[4] =~ /[NU]/;
+    #$arr[8] =~ s/\-/2/ unless $arr[4] =~ /[NU]/;
 
     $virtual{$arr[3]}{'virtualBeg'} = $arr[1];
     $virtual{$arr[3]}{'pieceType'} = $arr[4];
@@ -334,7 +334,7 @@ sub makeVirWithSpacer {
 
     $length = length($sequence);
 
-    $seqPieceObj = $self->makeSequencePiece('1',$orderNum,$length,$gapObj);
+    $seqPieceObj = $self->makeSequencePiece('',$orderNum,$length,$gapObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
