@@ -3459,6 +3459,18 @@ sub extractKeywordSearchFiles {
   $mgr->endStep($signal);
 }
 
+
+sub loadDbRefAndDbRefNaSequence {
+  my ($mgr, $pattern1, $pattern2, $file, $seqDbName, $seqDbRlsVer,$dbrefDbName, $dbrefDbRlsVer, $table, $att) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $args = "--mappingfile $file --table $table --pattern1 '$pattern1' --pattern2 '$pattern2' --seqExtDbName $seqDbName --seExtDbRlsVer $seqDbRlsVer --dbRefExtDbName $dbrefDbName --dbRefExtDbRlsVer $dbrefDbRlsVer --seqAtt $att";
+
+  $mgr->runPlugin("loading$file", "ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence", $args, "loading $file mapping");
+}
+
+
 sub modifyDownloadFile {
   my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable,$seqExtDb, $seqExtDbVer) = @_;
 
