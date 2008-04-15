@@ -181,7 +181,7 @@ sub getExternalDatabaseRelease{
 
   my ($self, $name, $version) = @_;
 
-  my $externalDatabase = GUS::Model::SRes::ExternalDatabase->new({"name" => $name});
+  my $externalDatabase = GUS::Model::SRes::ExternalDatabase->new({'name' => '$name'});
   $externalDatabase->retrieveFromDB();
 
   if (! $externalDatabase->getExternalDatabaseId()) {
@@ -189,7 +189,7 @@ sub getExternalDatabaseRelease{
   }
   my $externalDbId = $externalDatabase->getExternalDatabaseId();
 
-  my $externalDatabaseRel = GUS::Model::SRes::ExternalDatabaseRelease->new ({'external_database_id'=>$externalDbId,'version'=>$version});
+  my $externalDatabaseRel = GUS::Model::SRes::ExternalDatabaseRelease->new ({'external_database_id'=>$externalDbId,'version'=>'$version'});
 
   $externalDatabaseRel->retrieveFromDB();
 
@@ -223,11 +223,11 @@ sub getDbRef {
 
   my ($self,$primaryId,$extDbRlsId) = @_;
 
-  $self->log('Making DbRef row for $primaryId');
+  $self->log("Making DbRef row for $primaryId");
 
   my $lowercasePrimaryId = lc($primaryId);
 
-  my $dbRef = GUS::Model::SRes::DbRef -> new ({'lowercase_primary_identifier'=>$lowercasePrimaryId, 'external_database_release_id'=>$extDbRlsId});
+  my $dbRef = GUS::Model::SRes::DbRef -> new ({'lowercase_primary_identifier'=>'$lowercasePrimaryId', 'external_database_release_id'=>'$extDbRlsId'});
   $dbRef->retrieveFromDB();
 
   if ($dbRef->getPrimaryIdentifier() ne $primaryId) {
