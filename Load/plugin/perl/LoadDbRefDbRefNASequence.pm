@@ -146,7 +146,7 @@ sub run {
 sub makeFileHash {
   my ($self) = @_;
 
-  my $file = $self->getArg('mappingFile');
+  my $file = $self->getArg('mappingfile');
 
   open (FILE,$file) || $self->userError("Can't open $file for reading");
 
