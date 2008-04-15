@@ -1,4 +1,4 @@
-package GUS::Community::Plugin::LoadDbRefDbRefNASequence;
+package ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
  
