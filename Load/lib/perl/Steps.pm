@@ -1908,7 +1908,7 @@ sub makeDownloadFile {
     my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
     my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-    my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+    my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
     $mgr->runCmd("mkdir -p $dlDir");
 
@@ -1973,7 +1973,7 @@ sub runGffDump {
   my $projectDB = $propertySet->getProp('projectDB');
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $dir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+  my $dir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
@@ -2011,7 +2011,7 @@ sub runWdkRecordDump {
   my $projectDB = $propertySet->getProp('projectDB');
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $dir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+  my $dir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
@@ -3391,7 +3391,7 @@ sub xdformatDownloadFileForBlastSite {
   my $siteFileDir = $propertySet->getProp('siteFileDir');
   my $blastPath = $propertySet->getProp('wuBlastPath');
 
-  my $blastDir = "$siteFileDir/webServices/$projectDB/$release/$species/blastFiles";
+  my $blastDir = "$siteFileDir/webServices/release-$projectDB/$release/blast";
 
   $mgr->runCmd("mkdir -p $blastDir");
 
@@ -3440,11 +3440,17 @@ sub extractKeywordSearchFiles {
 
   return if $mgr->startStep("Extracting flat files for keyword search", $signal);
 
-  my $dataDir = "$mgr->{dataDir}/blastSite/textSearch";
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  $mgr->runCmd("mkdir -p ${dataDir}");
+  my $textSearchDir = "$siteFileDir/webServices/$projectDB/release-$release/textSearch";
 
-  my $cmd = "extractTextSearchFiles  --outputDir $dataDir --outputPrefix $filePrefix  --projectId $projectId";
+  $mgr->runCmd("mkdir -p $textSearchDir");
+
+  die "Failed to create $textSearchDir.\n"  unless (-e $textSearchDir);
+
+  my $cmd = "extractTextSearchFiles  --outputDir $textSearchDir --outputPrefix $filePrefix  --projectId $projectId";
 
   $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
