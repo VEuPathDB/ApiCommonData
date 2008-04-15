@@ -132,11 +132,11 @@ sub run {
 
   my $fileHash = $self->makeFileHash();
 
-  my $dbRefNum = scalar (keys %{$fileHash});
+  my $dbRefNum = scalar (keys %{$fileHash});g
 
-  my $dbRefRlsId = $self->getExternalDatabaseRelease($self->getArg('dbRefExtDbName'),self->getArg('dbRefExtDbRlsVer'));
+  my $dbRefRlsId = $self->getExternalDatabaseRelease($self->getArg('dbRefExtDbName'),$self->getArg('dbRefExtDbRlsVer'));
 
-  my $seqRefRlsId = $self->getExternalDatabaseRelease($self->getArg('seqExtDbName'),self->getArg('seqExtDbRlsVer'));
+  my $seqRefRlsId = $self->getExternalDatabaseRelease($self->getArg('seqExtDbName'),$self->getArg('seqExtDbRlsVer'));
 
   my $rows = $self->processHash($fileHash,$dbRefRlsId,$seqRefRlsId);
 
