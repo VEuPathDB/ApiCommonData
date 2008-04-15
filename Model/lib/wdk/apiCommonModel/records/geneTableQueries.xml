@@ -794,9 +794,9 @@
                SELECT distinct tg.tag_source_id,
                        t.library_name as library,
                       'CATG' || t.sequence as sequence, 
-                      t.tag_count as frequency,
-                      ROUND(t.tag_count / 38015 * 100, 3) as percent,
-                      38015 as libraryTotalTagCount, 
+                      to_char(t.tag_count,'9990.9') as frequency,
+                      to_char((t.tag_count / t.library_total_tag_count * 100),'990D000' ) || '%'as percent,
+                      to_char(t.library_total_tag_count,'99999') as libraryTotalTagCount, 
                       t.occurrence as genomeOccurrences,
                       decode(tg.antisense,0,'sense',1,'antisense') as sense,
                       '@PROJECT_ID@' as project_id
