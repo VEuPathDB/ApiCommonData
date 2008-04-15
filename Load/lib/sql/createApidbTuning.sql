@@ -223,18 +223,18 @@ select -- virtual feature locations mapped through SequencePiece
          else nf.subclass_view
        end as feature_type,
        nf.source_id as feature_source_id, scaffold.source_id as sequence_source_id,
-       nf.na_sequence_id, nf.na_feature_id,
+       sp.virtual_na_sequence_id, nf.na_feature_id,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
                 - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
-           else least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+           else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as start_min,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
                 - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
-         else greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+         else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as end_max,
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
