@@ -130,7 +130,7 @@ sub run {
 
   my $self   = shift;
 
-  my $fileHash = $self->makeFileHsh();
+  my $fileHash = $self->makeFileHash();
 
   my $dbRefNum = scalar (keys %{$fileHash});
 
