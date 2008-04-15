@@ -246,9 +246,11 @@ sub getSeqId {
 
   my $att = $self->getArg('seqAttribute');
 
-  my $sql = "select na_sequence_id from dots.$table where external_database_release_id = $dbRlsId and $att = $ident";
+  my $sql = "select na_sequence_id from dots.$table where external_database_release_id = ? and $att = ?";
 
-  my $stmt = $dbh->prepareAndExecute($sql);
+  my $stmt = $dbh->prepare($sql);
+
+  $stmt->execute($dbRlsId,$ident);
 
   my $naSeqId  = $stmt->fetchrow_array();
 
