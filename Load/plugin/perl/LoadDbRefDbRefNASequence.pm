@@ -282,7 +282,7 @@ sub getDbRefNASeq {
 sub getDbRefNAFeat {
   my ($self, $featId) = @_;
 
-  my $newDbRefNAFeat = GUS::Model::DoTS::DbRefNAfeature->new ({'na_feat_id'=>$featId});
+  my $newDbRefNAFeat = GUS::Model::DoTS::DbRefNAFeature->new ({'na_feat_id'=>$featId});
 
   return $newDbRefNAFeat;
 }
