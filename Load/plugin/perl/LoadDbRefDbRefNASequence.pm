@@ -241,7 +241,7 @@ sub getDbRef {
   my $dbRef = GUS::Model::SRes::DbRef -> new ({'lowercase_primary_identifier'=>$lowercasePrimaryId, 'external_database_release_id'=>$extDbRlsId});
   $dbRef->retrieveFromDB();
 
-  if ($dbRef->getPrimaryIdentifier() ne $primaryId) {
+  if (! $dbRef->getPrimaryIdentifier() || ($dbRef->getPrimaryIdentifier() && $dbRef->getPrimaryIdentifier() ne $primaryId)) {
     $dbRef->setPrimaryIdentifier($primaryId);
   }
 
@@ -282,7 +282,7 @@ sub getDbRefNASeq {
 sub getDbRefNAFeat {
   my ($self, $featId) = @_;
 
-  my $newDbRefNAFeat = GUS::Model::DoTS::DbRefNAFeature->new ({'na_feat_id'=>$featId});
+  my $newDbRefNAFeat = GUS::Model::DoTS::DbRefNAFeature->new ({'na_feature_id'=>$featId});
 
   return $newDbRefNAFeat;
 }
