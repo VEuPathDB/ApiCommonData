@@ -11,8 +11,6 @@ CREATE TABLE ryanthib.messages
   message_category VARCHAR(150) NOT NULL,
   start_date DATE NOT NULL,
   stop_date  DATE NOT NULL,
-  start_time DATE NOT NULL,
-  stop_time DATE NOT NULL,
   admin_comments VARCHAR(4000),
   time_submitted TIMESTAMP NOT NULL,
   CONSTRAINT messages_pkey PRIMARY KEY (message_id)  
