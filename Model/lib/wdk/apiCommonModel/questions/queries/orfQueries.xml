@@ -72,7 +72,7 @@
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
-        <sql includeProjects="GiardiaDB,TrichDB"> 
+        <sql includeProjects="TrichDB"> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
@@ -89,6 +89,25 @@
 	    AND so.term_name = 'ORF'
 	    AND nal.end_max >= $$start_point$$  
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+        <sql includeProjects="GiardiaDB"> 
+            <![CDATA[
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
+	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
+	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, apidb.FeatureLocation fl,
+                 apidb.GenomicSequence gs
+	    WHERE m.na_feature_id = taaf.na_feature_id
+	    AND taaf.aa_sequence_id = tas.aa_sequence_id
+            AND tas.length >= $$min_orf_length$$
+	    AND vs.na_sequence_id = m.na_sequence_id
+	    AND vs.source_id = gs.source_id
+	    AND gs.lowercase_source_id = lower($$sequenceId$$)
+	    AND m.sequence_ontology_id = so.sequence_ontology_id
+	    AND m.na_feature_id = fl.na_feature_id
+	    AND so.term_name = 'ORF'
+	    AND fl.end_max >= $$start_point$$  
+	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
      </sqlQuery>

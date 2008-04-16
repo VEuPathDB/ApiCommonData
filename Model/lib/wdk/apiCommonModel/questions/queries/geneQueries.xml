@@ -1143,11 +1143,22 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND ed.name in ('Chromosome Map - David Sibley','Roos Lab T. gondii apicoplast') 
            ]]>
        </sql>
-        <sql includeProjects="GiardiaDB,TrichDB">
+        <sql includeProjects="TrichDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
             WHERE nl.na_feature_id = gf.na_feature_id
+              AND lower(ens.source_id) = lower($$sequenceId$$)
+              AND gf.na_sequence_id = ens.na_sequence_id
+              AND end_max >= $$start_point$$ 
+              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+       <sql includeProjects="GiardiaDB">
+            <![CDATA[
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, apidb.FeatureLocation fl, dots.NaSequence ens
+            WHERE fl.na_feature_id = gf.na_feature_id
               AND lower(ens.source_id) = lower($$sequenceId$$)
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= $$start_point$$ 
