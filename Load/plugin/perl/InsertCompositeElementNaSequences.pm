@@ -55,16 +55,26 @@ my $argsDeclaration =
   [
    stringArg({name => 'arrayDesignName',
 	      descr => 'Name of array design as found in RAD.ArrayDesign.name',
-	      reqd => 1,
+	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
+
    booleanArg({name => 'tolerateUnmappables',
 	      descr => 'Do not fail on composite elements that do not correspond to a gene',
 	      reqd => 0,
 	      default => 0,
 	      isList => 0,
 	     }),
+
+   fileArg({name => 'simpleMapFile',
+            descr => '2 column tab delimeted file.  The na_sequence_id should be for the transcript (spliced na sequence)',
+            constraintFunc=> undef,
+            reqd  => 0,
+            isList => 0,
+            mustExist => 1,
+            format => 'composite_element_id      na_sequence_id'
+           }),
   ];
 
 
@@ -86,7 +96,49 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $arrayDesignName = $self->getArg('arrayDesignName');
+  my $count = 0;
+  my $unmapped =0;
+
+  if(my $fn = $self->getArg('simpleMapFile')) {
+    $count = $self->doFromFile($fn);
+  }
+  elsif(my $arrayDesignName = $self->getArg('arrayDesignName')) {
+    ($count, $unmapped) = $self->doFromDb($arrayDesignName);
+  }
+  else {
+    $self->userError("Plugin Requires Either a simpleMapFile OR an arrayDesignName argument");
+  }
+
+  return("Inserted $count composite element na seqs.  $unmapped composite elements were not mappable to a transcript");
+}
+
+sub doFromFile {
+  my ($self, $fn) = @_;
+
+  my $count;
+
+  open(FILE, $fn) or die "Cannot open file $fn for reading:$!";
+
+  while(<FILE>) {
+    chomp;
+    $count++;
+    my ($compositeElementId, $transcriptSequenceId) = split(/\t/, $_);
+
+    my $compositeElementNaSeq = GUS::Model::RAD::CompositeElementNASequence->
+      new({composite_element_id=>$compositeElementId,
+           na_sequence_id => $transcriptSequenceId});
+    $compositeElementNaSeq->submit();
+  }
+  close FILE;
+
+  return $count;
+}
+
+sub doFromDb {
+  my ($self, $arrayDesignName) = @_;
+
+  my $count = 0;
+  my $unmapped = 0;
 
   my $sql = "
 SELECT sof.source_id, composite_element_id
@@ -97,8 +149,6 @@ AND sof.source_id is not null
 ";
 
   my $stmt = $self->prepareAndExecute($sql);
-  my $count = 0;
-  my $unmapped =0;
   while (my ($geneSourceId, $compositeElementId) = $stmt->fetchrow_array()) {
     if ($count % 1000 == 0) {
       $self->undefPointerCache();
@@ -112,7 +162,7 @@ AND sof.source_id is not null
       my $msg = "no transcript seq found for gene '$geneSourceId'";
 
       $self->error($msg)
-	unless $self->getArg('tolerateUnmappables');
+        unless $self->getArg('tolerateUnmappables');
 
       $self->log("WARN: $msg");
       $unmapped++;
@@ -120,16 +170,14 @@ AND sof.source_id is not null
     }
     my $compositeElementNaSeq = GUS::Model::RAD::CompositeElementNASequence->
       new({composite_element_id=>$compositeElementId,
-	   na_sequence_id => $transcriptSequenceId});
+           na_sequence_id => $transcriptSequenceId});
     $compositeElementNaSeq->submit();
   }
   $stmt->finish();
 
-  my $msg = "Inserted $count composite element na seqs.  $unmapped composite elements were not mappable to a transcript";
-
-  return $msg;
-
+  return($count, $unmapped);
 }
+
 
 sub undoTables {
   my ($self) = @_;
