@@ -179,16 +179,15 @@ WHERE s.external_database_release_id = ?
 ORDER BY s.name, a.name
 Sql
                  '2' => <<Sql,
-select distinct s.name, ap.value
+select distinct s.name, replace(an.name, 'Pre-processing of ',''), an.name
 from SRes.EXTERNALDATABASERELEASE r, study.STUDY s, Rad.STUDYASSAY sa, Rad.ACQUISITION a,
      Rad.QUANTIFICATION q, Core.TABLEINFO t, Rad.LogicalGroupLink ll,
-     Rad.ANALYSISINPUT ai, Rad.ANALYSIS an, Rad.PROTOCOLPARAM pp, 
-     Core.DATABASEINFO d, Rad.ANALYSISPARAM ap, Rad.Protocol p
+     Rad.ANALYSISINPUT ai, Rad.ANALYSIS an, 
+     Core.DATABASEINFO d, Rad.Protocol p
 where r.external_database_release_id = ?
  and p.name = ?
  and d.name = 'RAD'
  and t.name = 'Quantification'
- and pp.name = 'Analysis Name'
  and r.external_database_release_id = s.external_database_release_id
  and s.study_id = sa.study_id
  and sa.assay_id = a.assay_id
@@ -199,10 +198,7 @@ where r.external_database_release_id = ?
  and ll.logical_group_id = ai.logical_group_id
  and ai.analysis_id = an.analysis_id
  and an.protocol_id = p.protocol_id
- and p.protocol_id = pp.protocol_id
- and pp.protocol_param_id = ap.protocol_param_id
- and ap.analysis_id = an.analysis_id
-ORDER BY s.name, ap.value
+ORDER BY s.name, an.name
 Sql
                 );
 
@@ -270,11 +266,11 @@ WHERE s.external_database_release_id = ?
   ORDER BY g.source_id
 Sql
                  '2' => <<Sql,
-SELECT distinct gf.source_id, ap.value, cer.$resultColumn
+SELECT distinct gf.source_id, replace(a.name, 'Pre-processing of ',''), cer.$resultColumn
 FROM Study.Study s, RAD.StudyAssay sa, RAD.ACQUISITION ac, 
      RAD.QUANTIFICATION q, Core.TABLEINFO ti, Rad.LogicalGroupLink lgl,
-     Rad.ANALYSISINPUT ai, Rad.ANALYSIS a, Rad.PROTOCOLPARAM pp, 
-     Core.DATABASEINFO di, Rad.ANALYSISPARAM ap, Rad.Protocol p,
+     Rad.ANALYSISINPUT ai, Rad.ANALYSIS a, 
+     Core.DATABASEINFO di, Rad.Protocol p,
      RAD.ArrayDesign ad, RAD.ShortOligoFamily  ce, RAD.$resultViewName cer,
      DoTS.GeneFeature gf, RAD.CompositeElementNaSequence ces, DoTS.Transcript t
 WHERE s.external_database_release_id = ?
@@ -282,7 +278,6 @@ WHERE s.external_database_release_id = ?
   AND p.name = ?
   and di.name = 'RAD'
   and ti.name = 'Quantification'
-  and pp.name = 'Analysis Name'
   and s.study_id = sa.study_id
   and sa.assay_id = ac.assay_id
   and ac.acquisition_id = q.acquisition_id
@@ -292,9 +287,6 @@ WHERE s.external_database_release_id = ?
   and lgl.logical_group_id = ai.logical_group_id
   and ai.analysis_id = a.analysis_id
   and a.protocol_id = p.protocol_id
-  and p.protocol_id = pp.protocol_id
-  and pp.protocol_param_id = ap.protocol_param_id
-  and ap.analysis_id = a.analysis_id
   and a.analysis_id = cer.analysis_id
   and ad.array_design_id = ce.array_design_id
   and ce.composite_element_id = cer.row_id
