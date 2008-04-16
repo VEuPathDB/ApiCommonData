@@ -291,6 +291,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.DbRefNASequence',
+	  'DoTS.DbRefNAFeature',
 	  'SRes.DbRef',
 	 );
 }
