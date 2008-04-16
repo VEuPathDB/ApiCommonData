@@ -1104,7 +1104,8 @@ SELECT CASE
        ToxoExpn.pru, ToxoExpn.veg, ToxoExpn.rh, ToxoExpn.rh_high_glucose,
        ToxoExpn.rh_no_glucose, ToxoExpn.glucose_fold_change,
        ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
-       ToxoExpn.veg_rh_fold_change
+       ToxoExpn.veg_rh_fold_change,
+       nvl(deprecated.is_deprecated, 0) as is_deprecated
 FROM dots.GeneFeature gf, dots.NaLocation nl,
      sres.SequenceOntology so, sres.Taxon,
      sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
@@ -1127,7 +1128,8 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
              MAX(DBMS_LOB.SUBSTR(nfc.comment_string, 300, 1))
                AS comment_string
       FROM dots.NaFeatureComment nfc
-      GROUP BY nfc.na_feature_id) cmnt
+      GROUP BY nfc.na_feature_id) cmnt,
+     (SELECT source_id, 1 as is_deprecated from apidb.distinct_deprecated_genes) deprecated
 WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.na_sequence_id = sequence.na_sequence_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
@@ -1148,6 +1150,7 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
+  AND gf.source_id = deprecated.source_id(+)
   -- skip toxo predictions (except tRNAs)
   AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
