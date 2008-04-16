@@ -97,7 +97,7 @@
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql excludeProjects="GiardiaDB,TrichDB">
+        <sql excludeProjects="TrichDB">
             <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi
@@ -121,7 +121,7 @@
         </sql>
 
 
-
+<!--
 <sql includeProjects="GiardiaDB">
             <![CDATA[
             SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
@@ -134,7 +134,7 @@
                AND ext.name = 'G. lamblia contigs'
             ]]>
         </sql>
-
+-->
 
 
     </sqlQuery>
