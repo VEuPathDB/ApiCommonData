@@ -9,6 +9,7 @@ use GUS::PluginMgr::Plugin;
 
 use GUS::Model::SRes::DbRef;
 use GUS::Model::DoTS::DbRefNASequence;
+use GUS::Model::DoTS::DbRefNAFeature;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
@@ -19,11 +20,11 @@ sub new {
   bless($self,$class);
 
 my $purpose = <<PURPOSE;
-Puts rows in DbRef and maps them to rows in NASequence from a mapping file
+Puts rows in DbRef and maps them to rows in NASequence or NAFeature from a mapping file
 PURPOSE
 
 my $purposeBrief = <<PURPOSE_BRIEF;
-Maps rows in NASequence to rows in DbRef
+Maps rows in NASequence or NAFeature to rows in DbRef
 PURPOSE_BRIEF
 
 my $notes = <<NOTES;
@@ -31,12 +32,16 @@ NOTES
 
 my $tablesAffected = <<TABLES_AFFECTED;
     [ ['DoTS::DbRef', ''],
-      ['DoTS::DbRefNASequence', '']
+      ['DoTS::DbRefNASequence', ''],
+      ['DoTS::DbRefNAFeature', '']
     ];
 TABLES_AFFECTED
 
 my $tablesDependedOn = <<TABLES_DEPENDED_ON;
-  [ ['DoTS::NASequenceImp','']];
+  [ ['DoTS::NASequenceImp',''],
+    ['DoTS::NAFeatureImp','']
+  ];
+  
 TABLES_DEPENDED_ON
 
 my $howToRestart = <<RESTART;
@@ -110,7 +115,13 @@ my $argsDeclaration =
             reqd => 1,
             constraintFunc=> undef,
             isList=> 0
+            }),
+booleanArg({name => 'mapFeature',
+            descr => 'map dbref to dots.nafeature instead of nasequence',
+            reqd => 0,
+            constraintFunc=> undef
             })
+
 ];
 
   $self->initialize({requiredDbVersion => 3.5,
@@ -140,7 +151,7 @@ sub run {
 
   my $rows = $self->processHash($fileHash,$dbRefRlsId,$seqRefRlsId);
 
-  return "entered $rows DbRefNASequence rows for $dbRefNum dbRef identifiers";
+  return "entered $rows DbRefNASequence or DbRefNAFeature rows for $dbRefNum dbRef identifiers";
 }
 
 sub makeFileHash {
@@ -210,8 +221,8 @@ sub processHash {
     my $dbRefObj = $self->getDbRef($dbRefIdent,$dbRefRlsId);
     foreach my $seqIdent (@{$fileHash->{$dbRefIdent}}) {
       my $seqId = $self->getSeqId($seqIdent,$seqRefRlsId);
-      my $dbRefNASeqObj = $self->getDbRefNASeq($seqId);
-      $dbRefObj->addChild($dbRefNASeqObj);
+      my $dbRefNAObj = $self->getArg('mapFeature') ? $self->getDbRefNAFeat($seqId) : $self->getDbRefNASeq($seqId);
+      $dbRefObj->addChild($dbRefNAObj);
     }
     my $rows += $dbRefObj->submit();
   }
@@ -246,17 +257,17 @@ sub getSeqId {
 
   my $att = $self->getArg('seqAttribute');
 
-  my $sql = "select na_sequence_id from dots.$table where external_database_release_id = ? and $att = ?";
+  my $sql = $self->getArg('mapFeature') ? "select na_feature_id from dots.$table where external_database_release_id = ? and $att = ?" : "select na_sequence_id from dots.$table where external_database_release_id = ? and $att = ?";
 
   my $stmt = $dbh->prepare($sql);
 
   $stmt->execute($dbRlsId,$ident);
 
-  my $naSeqId  = $stmt->fetchrow_array();
+  my $id  = $stmt->fetchrow_array();
 
   $stmt->finish();
 
-  return $naSeqId;
+  return $id;
 }
 
 
@@ -266,6 +277,14 @@ sub getDbRefNASeq {
   my $newDbRefNASeq = GUS::Model::DoTS::DbRefNASequence->new ({'na_sequence_id'=>$seqId});
 
   return $newDbRefNASeq;
+}
+
+sub getDbRefNAFeat {
+  my ($self, $featId) = @_;
+
+  my $newDbRefNAFeat = GUS::Model::DoTS::DbRefNAfeature->new ({'na_feat_id'=>$featId});
+
+  return $newDbRefNAFeat;
 }
 
 sub undoTables {
