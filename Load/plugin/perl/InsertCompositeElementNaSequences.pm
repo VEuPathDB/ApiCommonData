@@ -122,6 +122,12 @@ sub doFromFile {
   while(<FILE>) {
     chomp;
     $count++;
+
+    if ($count % 1000 == 0) {
+      $self->undefPointerCache();
+      $self->log("processing oligo family number $count");
+    }
+
     my ($compositeElementId, $transcriptSequenceId) = split(/\t/, $_);
 
     my $compositeElementNaSeq = GUS::Model::RAD::CompositeElementNASequence->
