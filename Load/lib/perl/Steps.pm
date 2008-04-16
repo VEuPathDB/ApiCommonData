@@ -220,7 +220,7 @@ sub createDataDir {
   &_createDir($mgr, $dataDir);
 
   my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
-		     'sage', 'analysis', 'similarity', 'assembly', 'cluster');
+		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray');
 
   foreach my $subDir (@dataSubDirs) {
     &_createDir($mgr, "$dataDir/$subDir");
@@ -2777,7 +2777,9 @@ sub InsertExtNaSeqFromShortOligos {
 
 # map array elements to genes
 sub InsertCompositeElementNaSequences {
-  my ($mgr,$arrayName,$tolerateUnmappables) = @_;
+  my ($mgr,$arrayName,$tolerateUnmappables, $transcriptFileName) = @_;
+
+  $arrayName =~ s/\s/_/g;
 
   my $signal = "insertCompositeElementNaSeqs-$arrayName";
 
@@ -2785,7 +2787,15 @@ sub InsertCompositeElementNaSequences {
 
   return if $mgr->startStep("Loading CompostieElementSequences for $arrayName", $signal);
 
-  my $args = "--arrayDesignName '$arrayName' --tolerateUnmappables '$tolerateUnmappables'";
+  my $file = "$mgr->{dataDir}/microarray/${arrayName}To${transcriptFileName}.tab";
+
+  my $args;
+  if($transcriptFileName) {
+    $args = "--simpleMapFile $file";
+  }
+  else {
+    $args = "--arrayDesignName '$arrayName' --tolerateUnmappables '$tolerateUnmappables'";
+  }
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::InsertCompositeElementNaSequences", $args,
@@ -2827,6 +2837,34 @@ sub extractSageTags {
   $mgr->endStep($signal);
 }
 
+sub extractArrayElements {
+  my ($mgr, $species, $arrayDesignName, $arrayDesignVersion) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "ext${species}";
+
+  return if $mgr->startStep("Extracting $species $arrayDesignName Array Elements tags from GUS", $signal);
+
+  my $name = $arrayDesignName;
+  $name =~ s/\s/_/g;
+
+  my $outFile = "$mgr->{dataDir}/seqfiles/${name}ArrayElements.fsa";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/$signal${species}.log";
+
+  my $sql = "select s.composite_element_id, s.sequence 
+             from rad.SHORTOLIGO s, Rad.ARRAYDESIGN a
+             where s.sequence is not null
+              and a.array_design_id = s.array_design_id
+              and a.name = '$arrayDesignName'
+              and a.version = '$arrayDesignVersion'";
+
+  $mgr->runCmd("gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
 sub mapSageTagsToNaSequences {
   my ($mgr, $species) = @_;
 
@@ -2859,6 +2897,39 @@ sub mapSageTagsToNaSequences {
       $mgr->runCmd($cmd);
     }
   }
+  $mgr->endStep($signal);
+}
+
+sub mapArrayElementsToNaSequences {
+  my ($mgr, $species, $name, $seqType, $arrayDesignName, $minPercent, $minLength, $topOnly) = @_;
+
+  my $top = "-top" if($topOnly);
+
+  $arrayDesignName =~ s/\s/_/g;
+
+  my $type = ucfirst($seqType);
+  my $transcriptFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
+  my $blastDb = "$mgr->{dataDir}/microarray/${name}${type}.fsa";
+
+  my $arrayElementsFile =  "$mgr->{dataDir}/seqfiles/${arrayDesignName}ArrayElements.fsa";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $wuBlastPath = $propertySet->getProp('wuBlastPath');
+
+  my $signal = "map${species}ArrayElements";
+
+  return if $mgr->startStep("Mapping ArrayElement sequences to $species Transcript Spliced na sequences", $signal);
+
+  my $simOutput = "$mgr->{dataDir}/microarray/${arrayDesignName}To${name}";
+
+  my $tabOutput = "$mgr->{dataDir}/microarray/${arrayDesignName}To${name}.tab";
+  my $seqOutput = "$mgr->{dataDir}/microarray/${arrayDesignName}To${name}.seq";
+
+  $mgr->runCmd("$wuBlastPath/xdformat -n -o $blastDb $transcriptFile");  
+  $mgr->runCmd("$wuBlastPath/blastn $blastDb $arrayElementsFile $top > $simOutput");
+  $mgr->runCmd("blastnToSeq.pl --blast_result_file $simOutput --min_percent $minPercent --min_length $minLength >$tabOutput 2>$seqOutput");
+
   $mgr->endStep($signal);
 }
 
