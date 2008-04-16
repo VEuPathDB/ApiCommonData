@@ -224,7 +224,7 @@ sub processHash {
       my $dbRefNAObj = $self->getArg('mapFeature') ? $self->getDbRefNAFeat($seqId) : $self->getDbRefNASeq($seqId);
       $dbRefObj->addChild($dbRefNAObj);
     }
-    my $rows += $dbRefObj->submit();
+    $rows += $dbRefObj->submit();
   }
 
   return $rows;
