@@ -3775,21 +3775,22 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                   quote="false" />
                   
     <enumParam name="subType"
-               prompt="Query Level"
+               prompt="Include deprecated genes"
                quote="false"
                multiPick="false">
       <enumList>
-        <enumValue>
-          <term>Normal Genes</term>
+        <enumValue default="true">
+          <term>No</term>
           <internal>0</internal>
         </enumValue>
         <enumValue>
-          <term>Deprecated Genes</term>
-          <internal>1</internal>
+          <display>Yes</display>
+          <term>skip</term>
+          <internal>0,1</internal>
         </enumValue>
-        <enumValue default="true">
-          <term>Both Genes</term>
-          <internal>2</internal>
+        <enumValue>
+          <term>Deprecated Only</term>
+          <internal>1</internal>
         </enumValue>
       </enumList>
     </enumParam>

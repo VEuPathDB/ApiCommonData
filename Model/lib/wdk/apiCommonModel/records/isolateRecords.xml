@@ -1,7 +1,7 @@
 <wdkModel>
-    <recordClassSet name="IsolateRecordClasses">
+    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,ApiDB">
 
-      <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate">
+      <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,ApiDB">
 
         <projectParamRef ref="recordParams.Project"/>
 
@@ -24,7 +24,7 @@
       <!-- sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.Sequence">
+      <attributeQueryRef ref="IsolateAttributes.Sequence" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="pcr_primers" displayName="PCR primer" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="country" displayName="Country" internal="true" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="CryptoDB,ApiDB"/>
@@ -46,7 +46,7 @@
       <!-- Protein Sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.ProteinSequence">
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequence" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="protein_sequence" displayName="Protein Sequence" internal="true" includeProjects="CryptoDB"/>
          <columnAttribute name="gene_description" displayName="Gene Description" internal="true" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
@@ -63,7 +63,7 @@
       <!-- Gene Overlap attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.GeneOverlap">
+      <attributeQueryRef ref="IsolateAttributes.GeneOverlap" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="gene" displayName="Gene" internal="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="gene_product" displayName="Gene Product" internal="false" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
@@ -72,7 +72,7 @@
       <!-- Reference attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.Reference">
+      <attributeQueryRef ref="IsolateAttributes.Reference" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="title" displayName="Title" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="year" displayName="Year" internal="true"  inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
@@ -98,7 +98,7 @@
      <!-- overview -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <textAttribute name="overview" displayName="Overview"
-          internal="true" inReportMaker="false">
+          internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB">
           <text>
           <![CDATA[
            <table>

@@ -1115,21 +1115,24 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="sharedParams.end_point"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql includeProjects="PlasmoDB,CryptoDB">
+        <column name="dynamic_location"/>
+        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
             <![CDATA[
-            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
-            WHERE nl.na_feature_id = gf.na_feature_id
-              AND (ens.source_id = $$chromosomeOptional$$
-                   OR lower(ens.source_id) = lower($$sequenceId$$))
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
+              fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+            FROM apidb.featurelocation fl
+            WHERE (fl.sequence_source_id = $$chromosomeOptional$$
+                   OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
+              AND fl.feature_type = 'GeneFeature'
+              AND fl.end_max >= $$start_point$$ 
+              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
+
+<!-- NOTE, don't think we need the toxo specific one but redo if getting wrong things ...
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
             FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens,
                  sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
             WHERE nl.na_feature_id = gf.na_feature_id
@@ -1143,26 +1146,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND ed.name in ('Chromosome Map - David Sibley','Roos Lab T. gondii apicoplast') 
            ]]>
        </sql>
-        <sql includeProjects="TrichDB">
+-->
+
+        <sql includeProjects="TrichDB,GiardiaDB">
             <![CDATA[
-            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
-            WHERE nl.na_feature_id = gf.na_feature_id
-              AND lower(ens.source_id) = lower($$sequenceId$$)
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
-           ]]>
-       </sql>
-       <sql includeProjects="GiardiaDB">
-            <![CDATA[
-            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, apidb.FeatureLocation fl, dots.NaSequence ens
-            WHERE fl.na_feature_id = gf.na_feature_id
-              AND lower(ens.source_id) = lower($$sequenceId$$)
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
+              fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+            FROM apidb.featurelocation fl
+            WHERE lower(fl.sequence_source_id) = lower($$sequenceId$$)
+              AND fl.feature_type = 'GeneFeature'
+              AND fl.end_max >= $$start_point$$ 
+              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
     </sqlQuery>
@@ -1176,8 +1170,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	               <paramRef ref="sharedParams.sequenceId"/>
                        <paramRef ref="sharedParams.start_point"/>
                        <paramRef ref="sharedParams.end_point"/>
-	               <wsColumn name="source_id" width="32" wsName="source_id" />
+	               <wsColumn name="source_id" width="32" wsName="source_id"/>
 	               <wsColumn name="project_id" width="32" wsName="project_id"/>
+                       <wsColumn name="dynamic_location" width="32" wsName="source_id"/>
 	</wsQuery>
 
 

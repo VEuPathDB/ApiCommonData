@@ -18,9 +18,13 @@
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
        <attributesList 
-         summary="location_text,product"
-         sorting="location_text asc"
+         summary="dynamic_location,product"
+         sorting="dynamic_location asc"
         />
+
+        <dynamicAttributes>
+          <columnAttribute name="dynamic_location" displayName="Location" align="left"/>
+        </dynamicAttributes>
  
         <summary>
         Find genes that are located in a specified genomic region.
