@@ -80,6 +80,13 @@
 
 
        <!-- =================================================================== -->
+       <!--  subTypes  ++++++++-->
+       <!-- =================================================================== -->
+       <subType includeProjects="GiardiaDB"
+                filterQueryRef="GeneSubTypes.GenesByFilters"
+                subTypeIgnoreValue="Both Genes"/>
+
+       <!-- =================================================================== -->
        <!--  Attributes  ++++++++-->
        <!-- =================================================================== -->
 
@@ -97,6 +104,8 @@
                   ]]>
               </text>
             </textAttribute>
+            
+            <columnAttribute name="is_deprecated" displayName="Deprecated?" align="center" includeProjects="GiardiaDB"/>
 
             <columnAttribute name="strand" displayName="Gene Strand" internal="false"/>
             <columnAttribute name="gene_type" displayName="Gene Type" internal="false"/>

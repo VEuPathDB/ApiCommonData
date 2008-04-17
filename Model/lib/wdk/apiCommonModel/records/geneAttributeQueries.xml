@@ -98,6 +98,19 @@
             <column name="rh"  sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
             <column name="rh_no_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
             <column name="rh_high_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+
+            <column name="is_deprecated" sortingTable="apidb.GeneAttributes" includeProjects="GiardiaDB"/>
+            
+            <sqlParamValue name="is_deprecated" includeProjects="GiardiaDB">
+                <![CDATA[
+                DECODE(bfmv.is_deprecated, 0, 'No', 1, 'Yes') AS is_deprecated,
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="is_deprecated" excludeProjects="GiardiaDB">
+                <![CDATA[
+                ]]>
+            </sqlParamValue>
+
             <sql includeProjects="PlasmoDB">
             <![CDATA[
             SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
@@ -233,6 +246,7 @@
                    bfmv.annotated_go_process as ann_go_process,
                    bfmv.predicted_go_component as pred_go_component,
                    bfmv.predicted_go_function as pred_go_function,
+                   &&is_deprecated&&
                    bfmv.predicted_go_process as pred_go_process
             FROM apidb.GeneAttributes bfmv
             WHERE bfmv.source_id=$$primaryKey$$

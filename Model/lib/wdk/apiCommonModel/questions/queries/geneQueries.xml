@@ -2957,4 +2957,26 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </wsQuery>
 
   </querySet>
+  
+  <querySet name="GeneSubTypes">
+  
+    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB"
+              isCacheable="false">
+        <paramRef ref="geneParams.geneResult"/>
+        <paramRef ref="geneParams.subType"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT c.*
+            FROM ($$geneResult$$) c,
+                 apidb.GeneAttributes ga
+            WHERE c.source_id = ga.source_id
+              AND c.project_id = ga.project_id
+              AND ga.is_deprecated = $$subType$$
+            ]]>
+       </sql>
+    </sqlQuery>  
+    
+  </querySet>
 </wdkModel>
