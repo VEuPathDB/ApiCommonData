@@ -798,7 +798,7 @@
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl
               WHERE fl.feature_source_id = $$primaryKey$$
-              ORDER BY fl.is_top_level, fl.feature_source_id
+              ORDER BY fl.is_top_level desc
             ]]>
             </sql>
         </sqlQuery>
