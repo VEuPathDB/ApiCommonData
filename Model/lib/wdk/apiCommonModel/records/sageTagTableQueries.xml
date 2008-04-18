@@ -54,6 +54,37 @@
             ]]>
            </sql>
       </sqlQuery>
+
+     <sqlQuery name="Locations" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="sequence_source_id"/>
+            <column name="is_top_level"/>
+            <column name="start_min"/>
+            <column name="end_max"/>
+            <column name="is_reversed"/>
+            <column name="start_context"/>
+            <column name="end_context"/>
+            <column name="feature_source_id"/>
+            <sql>
+            <![CDATA[
+              SELECT sta.source_id feature_source_id,
+                     fl.sequence_source_id,
+                     Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
+                     fl.start_min,
+                     fl.end_max,
+                     Decode(fl.is_reversed, 0, '+', 1, '-') is_reversed,
+                    (fl.start_min-5000)as start_context,
+                    (fl.end_max+5000)as end_context
+              FROM apidb.featurelocation fl, apidb.sagetagattributes sta
+              WHERE sta.source_id=$$primaryKey$$
+                AND fl.feature_source_id = sta.feature_source_id
+              ORDER BY fl.is_top_level desc;
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
  </querySet>
 </wdkModel>
 

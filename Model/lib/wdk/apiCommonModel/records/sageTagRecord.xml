@@ -74,7 +74,36 @@
       <!-- Sage Tag Tables -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="AllCounts" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
+    
+      <table name="Locations" includeProjects="GiardiaDB"
+                 displayName="Sage Tag Location"
+                 queryRef="SageTagTables.Locations">
+            <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
+            <columnAttribute displayName= "Genomic Sequence" name="sequence_source_id" internal="false"/>
+            <textAttribute inReportMaker="true" name="location" displayName="Location">
+                  <text>
+                    <![CDATA[
+                      $$start_min$$ - $$end_max$$ ($$is_reversed$$)
+                    ]]>
+                  </text>
+            </textAttribute>
+ 
+            <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
+                   <url includeProjects="GiardiaDB">
+                    <![CDATA[
+                      /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
+                        ]]>
+                   </url>
+            </linkAttribute>
+            <columnAttribute displayName= "start" name="start_min" internal="true"/>
+            <columnAttribute displayName= "end" name="end_max" internal="true"/>
+            <columnAttribute displayName= "is_reversed" name="is_reversed" internal="true"/>
+            <columnAttribute displayName= "start_context" name="start_context" internal="true"/>
+            <columnAttribute displayName= "end_context" name="end_context" internal="true"/>
+            <columnAttribute displayName= "Feature ID" name="feature_source_id" internal="true"/>
+          </table>
+
+      <table name="AllCounts" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
             displayName="Raw Data"
             queryRef="SageTagTables.Experiments">
          <columnAttribute displayName="Library" name="experiment"/>
