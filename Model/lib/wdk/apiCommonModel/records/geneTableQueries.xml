@@ -789,6 +789,7 @@
             <column name="libraryTotalTagCount"/>
             <column name="genomeOccurrences"/>
             <column name="sense"/>
+            <column name="source_id"/>
             <sql>
             <![CDATA[
                SELECT distinct tg.tag_source_id,
@@ -799,10 +800,12 @@
                       to_char(t.library_total_tag_count,'99999') as libraryTotalTagCount, 
                       t.occurrence as genomeOccurrences,
                       decode(tg.antisense,0,'sense',1,'antisense') as sense,
+                      sta.source_id,
                       '@PROJECT_ID@' as project_id
-               FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg
+               FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg, apidb.SageTagAttributes sta
                WHERE tg.gene_source_id = $$primaryKey$$
                  AND t.composite_element_id = tg.tag_source_id
+                 AND tg.tag_feature_id = sta.na_feature_id
                  AND tg.distance = 0
                  AND tg.direction = '3'
                ORDER BY sequence, library, sense DESC

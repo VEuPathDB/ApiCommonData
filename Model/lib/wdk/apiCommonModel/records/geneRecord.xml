@@ -481,8 +481,16 @@
          <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB"
                  displayName="Sage Tags"
                  queryRef="GeneTables.SageTags">
-            <columnAttribute displayName= "Temporary External ID"
-                             name="tag_source_id"/>
+            <columnAttribute displayName= "tag_source_id"
+                             name="tag_source_id" internal="true"/>
+            <columnAttribute displayName= "source id"
+                             name="source_id" internal="true"/>
+            <linkAttribute displayName="Temporary External ID" name="tag_link" visible="$$tag_source_id$$"
+                   inReportMaker="false" internal="false" >
+                     <url>
+                        <![CDATA[showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
+                     </url>
+                </linkAttribute>
             <columnAttribute displayName= "Sequence"
                              name="sequence"/>
             <columnAttribute displayName= "Library"
