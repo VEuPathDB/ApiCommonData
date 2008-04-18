@@ -546,6 +546,25 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- giardia expression graphs -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="graph_stress" />
+            <sql>
+            <![CDATA[
+               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
+                      NVL(MAX(graph_stress), 0) AS graph_stress
+               FROM apidb.ExpressionGraphSummary egs
+               WHERE egs.source_id = $$primaryKey$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- GFF sequence -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
