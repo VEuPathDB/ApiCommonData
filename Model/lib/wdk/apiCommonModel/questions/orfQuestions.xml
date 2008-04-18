@@ -14,15 +14,19 @@
               recordClassRef="OrfRecordClasses.OrfRecordClass">
 
       <attributesList 
-             summary="formatted_organism,orf_location_text,length"
-             sorting="formatted_organism asc,orf_location_text asc"
+             summary="formatted_organism,dynamic_location,length"
+             sorting="formatted_organism asc,dynamic_location asc"
       />
+
+      <dynamicAttributes>
+          <columnAttribute name="dynamic_location" displayName="Location" align="left"/>
+      </dynamicAttributes>
 
       <summary>
           Find Orfs that are located in a specified genomic region.
       </summary>
 
-  <description includeProjects="CryptoDB">
+        <description includeProjects="CryptoDB">
            <![CDATA[
           Find ORFs within a given genomic region.<br>
           Select a <i>C. parvum</i> chromosome from the pull-down menu or

@@ -52,9 +52,10 @@
         <paramRef ref="orfParams.min_orf_length"/>
         <column name="project_id"/>
         <column name="source_id"/>
+        <column name="dynamic_location"/>
         <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB"> 
             <![CDATA[
-	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
@@ -72,9 +73,9 @@
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
-        <sql includeProjects="TrichDB"> 
+        <sql includeProjects="TrichDB"> <!-- should be same as giardia -->
             <![CDATA[
-	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
@@ -93,21 +94,18 @@
        </sql>
         <sql includeProjects="GiardiaDB"> 
             <![CDATA[
-	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id
-	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
-	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, apidb.FeatureLocation fl,
-                 apidb.GenomicSequence gs
-	    WHERE m.na_feature_id = taaf.na_feature_id
+            SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
+            fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+	    FROM dots.TranslatedAaFeature taaf, apidb.orfattributes oa,
+	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
+	    WHERE fl.feature_type = 'Miscellaneous'
+            AND lower(fl.sequence_source_id) = lower($$sequenceId$$)
+            AND fl.end_max >=  $$start_point$$ 
+	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            AND fl.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
             AND tas.length >= $$min_orf_length$$
-	    AND vs.na_sequence_id = m.na_sequence_id
-	    AND vs.source_id = gs.source_id
-	    AND gs.lowercase_source_id = lower($$sequenceId$$)
-	    AND m.sequence_ontology_id = so.sequence_ontology_id
-	    AND m.na_feature_id = fl.na_feature_id
-	    AND so.term_name = 'ORF'
-	    AND fl.end_max >= $$start_point$$  
-	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            and oa.source_id = fl.feature_source_id
            ]]>
        </sql>
      </sqlQuery>
