@@ -56,9 +56,14 @@
               includeProjects="GiardiaDB">
 
              <attributesList 
-               summary="organism,location_text,tag_sequence,gene_source_id"
-               sorting="organism asc, location_text asc"
+               summary="dynamic_location,tag_sequence,gene_source_id"
+               sorting="dynamic_location asc"
              />
+
+            <dynamicAttributes>
+              <columnAttribute name="dynamic_location" displayName="Location" align="left"/>
+            </dynamicAttributes>
+ 
              <summary>
                Find Sage Tags that are located in a specified genomic region.
              </summary>
