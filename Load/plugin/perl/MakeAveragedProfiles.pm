@@ -194,6 +194,7 @@ sub averageProfiles{
 
     if ($count % 100 == 0){
       $self->log("Created $count new averaged profiles.");
+      $self->undefPointerCache();
     }
   }
 
