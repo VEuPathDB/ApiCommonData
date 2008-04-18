@@ -203,7 +203,8 @@ select case
        nf.na_sequence_id, nf.na_feature_id,
        least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
        greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
-       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id
+       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
+       cast (null as number) as is_top_level
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
@@ -236,7 +237,8 @@ select -- virtual feature locations mapped through SequencePiece
                 - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
          else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as end_max,
-       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id
+       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
+       cast (null as number) as is_top_level
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
      dots.SequencePiece sp, dots.NaSequence scaffold,
      (select edr.external_database_release_id, ed.name
@@ -247,6 +249,15 @@ where nf.na_feature_id = nl.na_feature_id
   and nf.na_sequence_id = contig.na_sequence_id
   and nf.na_sequence_id = sp.piece_na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id;
+
+update apidb.FeatureLocation&1
+set is_top_level = 1;
+
+update apidb.FeatureLocation&1
+set is_top_level = 0
+where na_sequence_id in (select piece_na_sequence_id from dots.SequencePiece);
+
+commit;
 
 grant select on apidb.FeatureLocation&1 TO gus_r;
 
@@ -1056,8 +1067,8 @@ SELECT CASE
        REPLACE(so.term_name, '_', ' ') AS gene_type,
        SUBSTR(gf.product, 1, 200) AS product,
        gf.is_pseudo,
-       LEAST(nl.start_min, nl.start_max, nl.end_min, nl.end_max) AS start_min,
-       GREATEST(nl.start_min, nl.start_max, nl.end_min, nl.end_max) AS end_max,
+       LEAST(nl.start_min, nl.end_max) AS start_min,
+       GREATEST(nl.start_min, nl.end_max) AS end_max,
        exons.coding_start,
        exons.coding_end,
        nl.is_reversed,
@@ -1106,7 +1117,7 @@ SELECT CASE
        ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
        ToxoExpn.veg_rh_fold_change,
        nvl(deprecated.is_deprecated, 0) as is_deprecated
-FROM dots.GeneFeature gf, dots.NaLocation nl,
+FROM dots.GeneFeature gf, apidb.FeatureLocation nl,
      sres.SequenceOntology so, sres.Taxon,
      sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t,
@@ -1131,7 +1142,8 @@ FROM dots.GeneFeature gf, dots.NaLocation nl,
       GROUP BY nfc.na_feature_id) cmnt,
      (SELECT source_id, 1 as is_deprecated from apidb.distinct_deprecated_genes) deprecated
 WHERE gf.na_feature_id = nl.na_feature_id
-  AND gf.na_sequence_id = sequence.na_sequence_id
+  AND nl.is_top_level = 1
+  AND nl.na_sequence_id = sequence.na_sequence_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
