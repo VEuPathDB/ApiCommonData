@@ -11,13 +11,11 @@
             <column name="norm_percent"/>
             <column name="raw_count"/>
             <column name="total_raw_count"/>
-            <column name="raw_percent"/>
             <sql>
             <![CDATA[
             select aa.library_name as experiment, 
                    to_char(aa.raw_count, '99999') as raw_count,
                    to_char(aa.total_raw_count, '99999') as total_raw_count, 
-                   to_char(aa.raw_percent, '990D00000') || '%' as raw_percent,
                    to_char(aa.tag_count, '99990.99') as norm_count,
                    to_char(aa.library_total_tag_count, '99999.99') as total_norm_count, 
                    to_char(aa.library_tag_percentage, '990D00000') || '%' as norm_percent
