@@ -532,9 +532,6 @@ CREATE OR REPLACE SYNONYM apidb.SageTagGene
                           FOR apidb.SageTagGene&1;
 -------------------------------------------------------------------------------
 
--- this should be augmented to include number of elements in library,
--- and the short fixed sequence recognized by the enzyme (e.g. CATG)
-
 create table apidb.SageTagAnalysisAttributes&1 as
 select dtr.analysis_id, max(dtr.float_value) as tag_count,
        max(ct.occurrence) as occurrence, substr(st.tag, 1, 30) as sequence,
@@ -544,7 +541,7 @@ select dtr.analysis_id, max(dtr.float_value) as tag_count,
          as library_tag_percentage,
        r.tag_count as raw_count, tot.total_raw_count,
        100 *(r.tag_count / tot.total_raw_count ) as raw_percent
-from dots.SageTagFeature stf, dots.NaLocation nl,
+from dots.SageTagFeature stf, -- apidb.FeatureLocation nl,
      rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
      rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
      rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
@@ -570,7 +567,7 @@ where ti.name = 'SAGETag'
   and st.composite_element_id = r.composite_element_id
   and q.quantification_id = r.quantification_id
   and tot.quantification_id = r.quantification_id
-  and nl.na_feature_id = stf.na_feature_id
+--  and nl.na_feature_id = stf.na_feature_id
   and ct.source_id = stf.source_id
   and dtr.analysis_id = ai.analysis_id
   and ai.logical_group_id = lg.logical_group_id
@@ -1313,17 +1310,19 @@ SELECT CASE
        taxon.ncbi_tax_id,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
        sequence.chromosome_order_num
-FROM dots.NaSequence ns, dots.SnpFeature snp, dots.NaLocation snp_loc,
+FROM dots.NaSequence ns, dots.SnpFeature snp, apidb.FeatureLocation snp_loc,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, sres.Taxon,
      sres.TaxonName tn,
      apidb.GenomicSequence sequence,
-     (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id
-      FROM dots.GeneFeature gene, dots.NaLocation gene_loc
-      WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
+     (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id,
+             gene_loc.na_sequence_id
+      FROM dots.GeneFeature gene, apidb.FeatureLocation gene_loc
+      WHERE gene.na_feature_id = gene_loc.na_feature_id
+            and gene_loc.is_top_level = 1) gene_info
 WHERE edr.external_database_release_id = snp.external_database_release_id
   AND ed.external_database_id = edr.external_database_id
-  AND ns.na_sequence_id = snp.na_sequence_id
-  AND sequence.na_sequence_id = snp.na_sequence_id
+  AND ns.na_sequence_id = gene_info.na_sequence_id
+  AND gene_info.na_sequence_id = snp_loc.na_sequence_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
@@ -1367,10 +1366,10 @@ SELECT distinct CASE
        tas.length,
        nl.start_min, nl.end_max, nl.is_reversed,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num
+       sequence.chromosome_order_num, sequence.na_sequence_id
 FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
      dots.TranslatedAaSequence tas, sres.Taxon, sres.TaxonName tn,
-     sres.SequenceOntology so, dots.NaLocation nl,
+     sres.SequenceOntology so, apidb.FeatureLocation nl,
      (  select gs.na_sequence_id, gs.source_id, gs.chromosome, gs.chromosome_order_num, gs.taxon_id
         from apidb.GenomicSequence gs
       union
@@ -1381,11 +1380,12 @@ FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
                                         from apidb.GenomicSequence)) sequence
 WHERE m.na_feature_id = taaf.na_feature_id
   AND taaf.aa_sequence_id = tas.aa_sequence_id
-  AND sequence.na_sequence_id = m.na_sequence_id
+  AND sequence.na_sequence_id = nl.na_sequence_id
   AND sequence.taxon_id = tn.taxon_id
   AND sequence.taxon_id = taxon.taxon_id
   AND m.sequence_ontology_id = so.sequence_ontology_id
   AND m.na_feature_id = nl.na_feature_id
+  AND nl.is_top_level = 1
   AND so.term_name = 'ORF'
   AND tn.name_class='scientific name';
 
@@ -1768,10 +1768,11 @@ SELECT CASE
        l.start_min, l.end_max, substr(st.tag, 1, 20) as sequence,
        st.composite_element_id, st.source_id as rad_source_id,
        l.is_reversed, substr(tn.name, 1, 60) as organism
-from dots.SageTagFeature f, dots.NaLocation l, dots.NaSequence s,
+from dots.SageTagFeature f, apidb.FeatureLocation l, dots.NaSequence s,
      sres.TaxonName tn, rad.SageTag st
 where f.na_feature_id = l.na_feature_id
-  and s.na_sequence_id = f.na_sequence_id
+  and l.is_top_level = 1
+  and s.na_sequence_id = l.na_sequence_id
   and s.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
   and f.source_id = st.composite_element_id;
