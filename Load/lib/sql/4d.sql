@@ -1,3 +1,5 @@
+set pagesize 50000
+
 /*
    4d.sql -- Show digits embedded in table names (including materialized views)
              (See updateApidbTuning.sql for why we care).
