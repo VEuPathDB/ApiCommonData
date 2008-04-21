@@ -73,7 +73,8 @@
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
-        <sql includeProjects="TrichDB"> <!-- should be same as giardia -->
+<!-- should be same as giardia 
+        <sql includeProjects="TrichDB"> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
@@ -92,6 +93,7 @@
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
+-->
         <sql includeProjects="GiardiaDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
@@ -124,6 +126,7 @@
         <paramRef ref="orfParams.min_orf_length"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="dynamic_location" width="32" wsName="dynamic_location"/>
     </wsQuery>
 
 
