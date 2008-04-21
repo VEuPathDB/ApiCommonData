@@ -2030,6 +2030,52 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <wsColumn name="fold_change" />
     </wsQuery> 
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- GenesByDifferentialExpression -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GiardiaGenesByDifferentialExpression" includeProjects="GiardiaDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.gl_exprnsample"/>
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="confidence" />
+       <column name="fold_change" />
+       <sql>
+            <![CDATA[
+            select g.source_id,  '@PROJECT_ID@' as project_id, 
+                   max(round(de.fold_change, 2)) as fold_change,
+                   max(round(de.confidence, 2)) as confidence
+            from rad.DIFFERENTIALEXPRESSION de, Core.TABLEINFO ti, 
+                 rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, dots.GENEFEATURE g
+            where ti.name = 'ShortOligoFamily'
+              and de.table_id = ti.table_id
+              and de.row_id = cs.composite_element_id
+              and cs.na_sequence_id = t.na_sequence_id
+              and t.parent_id = g.na_feature_id
+              and de.analysis_id = $$gl_exprnsample$$
+              AND de.confidence >= $$confidence$$
+              AND ($$regulated_dir$$ (de.fold_change) >= $$fold_change$$)
+             group by g.source_id
+            ]]>
+          </sql>
+    </sqlQuery>  
+
+    <wsQuery name="GiardiaGenesByDifferentialExpression" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="geneParams.gl_exprnsample"/>
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="confidence" />
+       <wsColumn name="fold_change" />
+    </wsQuery> 
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ToxoGenesByExpressionPercentile -->

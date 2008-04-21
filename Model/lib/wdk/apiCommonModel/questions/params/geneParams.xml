@@ -3712,6 +3712,15 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
  <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+      <flatVocabParam name="gl_exprnsample" includeProjects="GiardiaDB,ApiDB"
+                     queryRef="GeneVQ.GiardiaAnalyses"
+                     prompt="Comparison"
+                     multiPick="false">
+        <help>
+            Choose Conditions to be compared.  
+        </help>
+      </flatVocabParam>
+
     <enumParam name="exprnsample"
                prompt="Expression of :"
                multiPick="false">
@@ -3804,6 +3813,18 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!--===========================================================================-->
 
     <querySet name="GeneVQ">
+
+        <sqlQuery name="GiardiaAnalyses" includeProjects="GiardiaDB,ToxoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            select a.analysis_id internal, replace(a.name, 'PaGE Analysis - ', '') as term
+            from rad.ANALYSIS a, rad.PROTOCOL p
+            where p.protocol_id = a.protocol_id
+            and p.name = 'PaGE'
+            </sql>
+        </sqlQuery>
+
 
         <sqlQuery name="SageTagLibrary" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
             <column name="internal"/>
