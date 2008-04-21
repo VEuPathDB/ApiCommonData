@@ -18,133 +18,37 @@ use  GUS::ObjRelP::DbiDatabase;
 
 use Data::Dumper;
 
-=head1 NAME
-
-ApiCommonData::Load::GeneConfTwoClassPaGE;
-
-=head1 SYNOPSIS
-
-  my $args = {arrayDesignName => 'ARRAYDESIGN',
-              ...
-             };
-
-  my $processer = ApiCommonData::Load::GeneConfTwoClassPaGE->new($args);
-  my $results = $processer->process();
-
-=head1 CONFIG ARGS
-
-=over 4
-
-=item C<arrayDesignName>
-
-RAD::ArrayDesign name
-
-=item C<quantificationUrisConditionA>
-
-**OPTIONAL  RAD::Quantification uris
-
-=item C<quantificationUrisConditionB>
-
-**OPTIONAL RAD::Quantification uris
-
-=item C<analysisNamesConditionA>
-
-**OPTIONAL  (Analyses do not have names... must use analysisparam)
-
-=item C<analysisNamesConditionB>
-
-**OPTIONAL (Analyses do not have names... must use analysisparam)
-
-=item C<studyName>
-
-Study::Study Name
-
-=item C<nameConditionA>
-
-The name for the input (RAD::LogicalGroup)
-
-=item C<nameConditionB>
-
-**OPTIONAL The name for the input (RAD::LogicalGroup)
-
-=item C<numberOfChannels>
-
-Parameter for page (1 or 2)
-
-=item C<isDataLogged>
-
-Parameter for page (1 or 0)
-
-=item C<isDataPaired>
-
-Parameter for page (1 or 0)
-
-=item C<pageInputFile>
-
-How should the input file be named??
-
-=item C<baseX>
-
-If the data is logged... what base?
-
-=item C<design>
-
-If this is a 2 channel experiment  (R for Reference, D for DyeSwap)
-
-=item C<referenceCondition>
-
-**OPTIONAL What is in the NUMERATOR of the ratio (or log2(ratio))
-
-=back
-
-=head1 DESCRIPTION
-
-Subclass of GUS::Community::RadAnalysis::AbstractProcessor which implements the process().
-Query Database to create a PageInput file and then Run Page.
-
-=head1 TODO
-
-  -Get Data from Analysis Tables (2 channel Experiments)
-
-=cut
-
 my $RESULT_VIEW = 'RAD::DifferentialExpression';
 my $XML_TRANSLATOR = 'unloggedPageGeneConf';
 my $PAGE = 'PaGE_5.1.6_modifiedConfOutput.pl';
 my $LEVEL_CONFIDENCE = 0.8;
 my $MIN_PRESCENCE = 2;
 
-
 #--------------------------------------------------------------------------------
 
 sub new {
-  my ($class, $argsHash) = @_;
+  my ($class, $args) = @_;
 
-  unless(ref($argsHash) eq 'HASH') {
+  unless(ref($args) eq 'HASH') {
     GUS::Community::RadAnalysis::InputError->new("Must provide a hashref to the constructor of TwoClassPage")->throw();
   }
 
-  my $args = $argsHash;
+  my $requiredParams = ['arrayDesignName',
+                        'analysisName',
+                        'studyName',
+                        'numberOfChannels',
+                        'pageInputFile',
+                       ];
 
-  $args->{translator} = $XML_TRANSLATOR unless($args->{translator});
+  my $self = $class->SUPER::new($args, $requiredParams);
 
-  $args->{quantificationUrisConditionA} = [] unless($argsHash->{quantificationUrisConditionA});
-  $args->{quantificationUrisConditionB} = [] unless($argsHash->{quantificationUrisConditionB});
+  $self->{translator} = $XML_TRANSLATOR unless($args->{translator});
 
-  $args->{analysisNamesConditionA} = [] unless($argsHash->{analysisNamesConditionA});
-  $args->{analysisNamesConditionB} = [] unless($argsHash->{analysisNamesConditionB});
+  $self->{quantificationUrisConditionA} = [] unless($args->{quantificationUrisConditionA});
+  $self->{quantificationUrisConditionB} = [] unless($args->{quantificationUrisConditionB});
 
-  unless($args->{arrayDesignName}) {
-    GUS::Community::RadAnalysis::InputError->new("Parameter [arrayDesignName] is missing in the config file")->throw();
-  }
-
-  unless($args->{studyName}) {
-    GUS::Community::RadAnalysis::InputError->new("Parameter [studyName] is missing in the config file")->throw();
-  }
-
-  unless($args->{numberOfChannels}) {
-    GUS::Community::RadAnalysis::InputError->new("Parameter [numberOfChannels] is missing in the config file")->throw();
-  }
+  $self->{analysisNamesConditionA} = [] unless($args->{analysisNamesConditionA});
+  $self->{analysisNamesConditionB} = [] unless($args->{analysisNamesConditionB});
 
   unless($args->{isDataLogged} == 1 || $args->{isDataLogged} == 0) {
     GUS::Community::RadAnalysis::InputError->new("Parameter [isDataLogged] is missing in the config file")->throw();
@@ -195,6 +99,7 @@ sub getBaseX {$_[0]->{baseX}}
 
 sub getReferenceCondition {$_[0]->{referenceCondition}}
 sub getTranslator {$_[0]->{translator}}
+sub getAnalysisName {$_[0]->{analysisName}}
 
 #--------------------------------------------------------------------------------
 
@@ -235,6 +140,7 @@ sub process {
   $result->setResultView($RESULT_VIEW);
 
   $result->setXmlTranslator($self->getTranslator());
+  $result->setAnalysisName($self->getAnalysisName());
 
   my $translatorArgs = { numberOfChannels => $self->getNumberOfChannels(),
                          design => $self->getDesign(),
