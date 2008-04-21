@@ -138,6 +138,19 @@
             <columnAttribute name="winz_max_pct" displayName="Pf-iRBC+Spz+Gam max expr %ile (Affy)" align="center" includeProjects="PlasmoDB"/>
             <columnAttribute name="winz_max_timing" displayName="Pf-iRBC+Spz+Gam max expr stage (Affy)" align="center" includeProjects="PlasmoDB"/>
 
+
+           <textAttribute name="giardiaMicroarrayStress"
+                            displayName="Stress Response Trophozoites - Graph"
+                           inReportMaker="false" truncateTo="100000" sortable="false"
+                           includeProjects="GiardiaDB">
+              <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Stress::Ver1&project_id=GiardiaDB&model=giardia&fmt=png&id=$$primaryKey$$&vp=hist"/>
+                ]]>
+              </text>
+            </textAttribute>
+
+
             <textAttribute name="derisiOverlayPct"
                             displayName="Pf-iRBC expr profile graph (GS array)"
                            inReportMaker="false" truncateTo="100000" sortable="false"
