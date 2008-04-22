@@ -32,19 +32,27 @@
                Find Sage Tags that are differentially expressed across 2 or more libraries.
              </summary>
              <description>
-               Find Sage Tags that are differentially expressed across 2 or more libraries.
+           <![CDATA[
+               <p>Find Sage Tags that are differentially expressed across 2 or more libraries.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagRStat"><b>Genes by Differential Expression of Sage Tag Evidence</b></a> query for summing sage tag counts within predicted genes.
+</p>
+          ]]>
              </description>
 
         <dynamicAttributes>
              <columnAttribute name="R" displayName="R"
                               inReportMaker="false"/>
          </dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
-            <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList> 
-
-    </question>
+     </question>
 
 
     <question name="SageTagByLocation"
@@ -71,9 +79,15 @@
                Find Sage Tags that are located in a specified genomic region.
              </description>
 
-            <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList> 
+      <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
     </question>
 
@@ -98,11 +112,15 @@
                Find Sage Tags Alignments By their Sequence.
              </description>
 
-            <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,ToxoDB,PlasmoDB">RAD.SAGETag</value>
-            <!--  <value includeProjects="ApiDB,PlasmoDB">RAD.SAGETag</value> -->
-              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList> 
+     <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
     </question>
 
@@ -125,11 +143,15 @@
                Find Sage Tags By Gene Identifier
              </description>
 
-           <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
-              <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
-              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList> 
+    <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
     </question> 
     
@@ -149,14 +171,11 @@
                Find Sage Tags By Expression Level in a given library.
              </summary>
              <description>
-               Find Sage Tags By Expression Level in a given library.
+         <![CDATA[
+               <p>Find Sage Tags By Expression Level in a given library.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTag"><b>Genes by Sage Tag Evidence</b></a> query for summing sage tag counts within predicted genes.
+</p>
+          ]]>
              </description>
-
-           <propertyList name="specificAttribution">
-              <value includeProjects="ApiDB,ToxoDB">RAD.SAGETag</value>
-              <value includeProjects="ApiDB,PlasmoDB">>RAD.SAGETag</value>
-              <value includeProjects="ApiDB,GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList>
 
            <dynamicAttributes includeProjects="PlasmoDB,ToxoDB,ApiDB,GiardiaDB">
 	     <columnAttribute name="tag_count" displayName="Normalized Tag Count" align="center"/>
@@ -165,6 +184,16 @@
 	     <columnAttribute name="raw_percentage" displayName="RawTag Percentage" align="center"/>
              <columnAttribute name="SAGE_library" displayName="Experiement Name" align="center"/>
 	</dynamicAttributes>
+
+    <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
     </question>
 
@@ -187,9 +216,15 @@
                Find Sage Tags By Identifier
              </description>
 
-           <propertyList name="specificAttribution">
-              <value includeProjects="GiardiaDB">Giardia lamblia SAGE tags</value>
-           </propertyList>
+    <propertyList name="specificAttribution">
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+       </propertyList>
 
     </question>
 
