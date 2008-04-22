@@ -254,11 +254,13 @@
              dots.genefeature gf,
              dots.transcript t,
              dots.translatedaafeature taf,
+             dots.translatedaasequence tas,
              dots.transmembraneaafeature tmf
              where gf.source_id = $$primaryKey$$
              and gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
-             and taf.aa_sequence_id = tmf.aa_sequence_id
+             and taf.aa_sequence_id = tas.aa_sequence_id
+             and tas.aa_sequence_id = tmf.aa_sequence_id
              and tmf.aa_feature_id = aal.aa_feature_id
              ORDER BY tmf_start_min
             ]]>           
@@ -298,16 +300,56 @@
              dots.genefeature gf,
              dots.transcript t,
              dots.translatedaafeature taf,
+             dots.translatedaasequence tas,
              dots.signalpeptidefeature spf
              where gf.source_id = $$primaryKey$$
              and gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
-             and taf.aa_sequence_id = spf.aa_sequence_id
+             and taf.aa_sequence_id = tas.aa_sequence_id
+             and tas.aa_sequence_id = spf.aa_sequence_id
              and spf.aa_feature_id = aal.aa_feature_id
              ]]>
             </sql>
         </sqlQuery>
 
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Low Complexity Regions -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+       <sqlQuery name="LowComplexity" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="lc_name"/>
+            <column name="lc_parent_id"/>
+            <column name="lc_start_min"/>
+            <column name="lc_end_max"/>
+
+            <sql>
+            <![CDATA[
+             select gf.source_id, lc.aa_feature_id AS lc_name,
+             lc.aa_sequence_id AS lc_parent_id,
+             aal.start_min AS lc_start_min, aal.end_max AS lc_end_max
+             from
+             dots.aalocation aal,
+             dots.genefeature gf,
+             dots.transcript t,
+             dots.translatedaafeature taf,
+             dots.translatedaasequence tas,
+             dots.lowcomplexityaafeature lc
+             where gf.source_id = $$primaryKey$$
+             and gf.na_feature_id = t.parent_id
+             and t.na_feature_id = taf.na_feature_id
+             and taf.aa_sequence_id = tas.aa_sequence_id
+             and tas.aa_sequence_id = lc.aa_sequence_id
+             and lc.aa_feature_id = aal.aa_feature_id
+             ORDER BY lc_start_min            
+
+             ]]>
+            </sql>
+        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- BlastP Hits -->  

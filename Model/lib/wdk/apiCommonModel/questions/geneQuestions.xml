@@ -95,8 +95,12 @@
          displayName="Gene Type"
               queryRef="GeneId.GenesByGeneType"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-         <attributesList
+         <attributesList includeProjects="GiardiaDB"
               summary="organism,location_text,product,is_pseudo,is_deprecated"
+              sorting="organism asc,location_text asc"
+        />
+         <attributesList excludeProjects="GiardiaDB"
+              summary="organism,location_text,product,is_pseudo"
               sorting="organism asc,location_text asc"
         />
         <summary>
