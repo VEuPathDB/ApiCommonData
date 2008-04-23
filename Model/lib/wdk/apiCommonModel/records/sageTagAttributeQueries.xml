@@ -15,6 +15,8 @@
             <column name="context_end"/>
             <column name="organism"  sortingTable="apidb.sagetagattributes"/>
             <column name="rad_source_id"  sortingTable="apidb.sagetagattributes"/>
+            <column name="gene_source_id" sortingTable="apidb.sagetagattributes"/>
+            <column name="gene_count" sortingTable="apidb.sagetagattributes"/>
             <sql>
             <![CDATA[
             select sta.project_id,
@@ -27,27 +29,11 @@
                    sta.start_min - 5000 as context_start,
                    sta.end_max + 5000 as context_end,
                    sta.organism,
-                   case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id
+                   case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id,
+                   gene_source_id,
+                   gene_count
             from apidb.SageTagAttributes sta
             where sta.source_id = $$primaryKey$$
-            ]]>
-           </sql>
-      </sqlQuery>
-
-
-      <sqlQuery name="Gene" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="gene_source_id"/>
-            <sql>
-            <![CDATA[
-            select apidb.tab_to_string(CAST(COLLECT(distinct(sg.gene_source_id)) AS apidb.varchartab),', ') as gene_source_id, a.source_id, a.project_id
-            from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
-            where  sg.distance = 0
-            and a.na_feature_id = sg.tag_feature_id
-            and sg.antisense = 0
-            and a.source_id = $$primaryKey$$
-            group by a.source_id, a.project_id
             ]]>
            </sql>
       </sqlQuery>
@@ -70,23 +56,6 @@
            </sql>
       </sqlQuery>
 
-       <sqlQuery name="GeneCount" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="number_of_genes_hit"/>
-            <sql>
-            <![CDATA[
-            select count(distinct sg.gene_source_id) as number_of_genes_hit
-            from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a
-            where a.na_feature_id = sg.tag_feature_id
-            and sg.antisense = 0
-            and a.composite_element_id in
-                    (select composite_element_id
-                     from apidb.SageTagAttributes
-                     where source_id = $$primaryKey$$)
-            ]]>
-           </sql>
-      </sqlQuery>
  </querySet>
 
 </wdkModel>
