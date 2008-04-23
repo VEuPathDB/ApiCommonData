@@ -89,7 +89,7 @@
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = $$primaryKey$$
-                AND bfmv.project_id = $$projectId$$
+                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
 
@@ -144,7 +144,7 @@
                     bfmv.database_version
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = $$primaryKey$$
-                AND bfmv.project_id = $$projectId$$
+                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
 
@@ -157,7 +157,7 @@
                        bfmv.database_version AS externalDbVersion
                 FROM apidb.SequenceAttributes bfmv
                 WHERE bfmv.source_id = $$primaryKey$$
-                  AND bfmv.project_id = $$projectId$$
+                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
         </sqlQuery>
