@@ -1220,7 +1220,9 @@ SELECT CASE
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num, so.so_id
+       sequence.chromosome_order_num, so.so_id,
+       nvl(virtualization.is_top_level, 1) as is_top_level,
+       sequence.na_sequence_id
 FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      apidb.GenomicSequence sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
@@ -1235,7 +1237,9 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      (SELECT edr.external_database_release_id,
              edr.version AS database_version, ed.name AS database_name
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-      WHERE edr.external_database_id = ed.external_database_id) db
+      WHERE edr.external_database_id = ed.external_database_id) db,
+     (SELECT piece_na_sequence_id, 0 as is_top_level
+      FROM dots.SequencePiece) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
@@ -1243,7 +1247,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND so.term_name IN ('chromosome', 'contig', 'supercontig')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
-;
+  AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+);
 
 GRANT SELECT ON apidb.SequenceAttributes&1 TO gus_r;
 
