@@ -53,35 +53,36 @@
         <column name="est_location"/>
         <sqlParamValue name="chroOpt" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
-              (target_sequence_source_id IN ($$chromosomeOptionalForEsts$$)
-               OR lower(target_sequence_source_id) = lower($$sequenceId$$))
+              (s.source_id IN ($$chromosomeOptionalForEsts$$)
+               OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
-           <![CDATA[ lower(target_sequence_source_id) = lower($$sequenceId$$)]]>
+           <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
         <sql>
             <![CDATA[
             select * from (
-            SELECT accession as source_id, '@PROJECT_ID@' as project_id,
+            SELECT eags.accession as source_id, 'GiardiaDB' as project_id,
                    apidb.tab_to_string(
                      CAST(
-                       COLLECT(target_sequence_source_id || ':'
-                       || trim(to_char(target_start,'999,999,999'))
-                       || '-' || trim(to_char(target_end,'999,999,999'))
-                       || '(' || decode(is_reversed,0,'+',1,'-',null)
+                       COLLECT(s.source_id || ':'
+                       || trim(to_char(b.target_start,'999,999,999'))
+                       || '-' || trim(to_char(b.target_end,'999,999,999'))
+                       || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS est_location
-	    FROM  apidb.ESTALIGNMENTGENESUMMARY
+            FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, dots.NASEQUENCE s
             WHERE &&chroOpt&&
-            AND target_start >= $$start_point$$
-            AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
-            AND   is_consistent in ($$high_confidence_only$$)
-            AND   is_best_alignment in ($$best_alignment_only$$)
-            AND   percent_identity >= $$min_percent_identity$$
-            AND   percent_est_bases_aligned >= $$min_percent_est_aligned$$
-            AND   library_id in ($$libraryId$$)
-	    GROUP BY accession
-            )
+            AND   s.na_sequence_id = b.target_na_sequence_id
+            AND   b.target_start >=  $$start_point$$
+            AND   (b.target_end <= $$end_point$$ OR $$end_point$$ = 0)
+            AND   b.is_consistent in ($$high_confidence_only$$)
+            AND   b.is_best_alignment in ($$best_alignment_only$$)
+            AND   b.percent_identity >= $$min_percent_identity$$
+            AND   b.blat_alignment_id = eags.BLAT_ALIGNMENT_ID
+            AND   eags.percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND   eags.library_id in ($$libraryId$$)
+            GROUP BY eags.accession)
            ]]>
         </sql>
     </sqlQuery>
