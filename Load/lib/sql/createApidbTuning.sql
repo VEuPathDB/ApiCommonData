@@ -1771,10 +1771,19 @@ SELECT CASE
        substr(s.source_id, 1, 40) as sequence_source_id, s.na_sequence_id,
        l.start_min, l.end_max, substr(st.tag, 1, 20) as sequence,
        st.composite_element_id, st.source_id as rad_source_id,
-       l.is_reversed, substr(tn.name, 1, 60) as organism
+       l.is_reversed, substr(tn.name, 1, 60) as organism,
+       gene.gene_source_id, nvl(gene.gene_count, 0)
 from dots.SageTagFeature f, apidb.FeatureLocation l, dots.NaSequence s,
-     sres.TaxonName tn, rad.SageTag st
-where f.na_feature_id = l.na_feature_id
+     sres.TaxonName tn, rad.SageTag st,
+     (select a.na_feature_id,
+       apidb.tab_to_string(CAST(COLLECT(distinct(sg.gene_source_id)) AS apidb.varchartab),', ') as gene_source_id,
+       count(distinct sg.gene_source_id) as gene_count
+from dots.SAGETAGFEATURE a left join apidb.SAGETAGGENE sg on a.na_feature_id = sg.tag_feature_id 
+where (sg.distance = 0 or sg.distance is null)
+and (sg.antisense = 0 or sg.antisense is null)
+group by na_feature_id, sg.distance, sg.antisense) gene
+where f.na_feature_id = gene.na_feature_id (+)
+  and f.na_feature_id = l.na_feature_id
   and l.is_top_level = 1
   and s.na_sequence_id = l.na_sequence_id
   and s.taxon_id = tn.taxon_id
