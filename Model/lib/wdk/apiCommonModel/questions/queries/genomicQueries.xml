@@ -162,5 +162,27 @@
     </sqlQuery>
 
   </querySet>
+
+  <querySet name="SequenceSubTypes">
+  
+    <sqlQuery name="SequenceTypeFilter" includeProjects="GiardiaDB"
+              isCacheable="false">
+        <paramRef ref="genomicParams.genomicResult"/>
+        <paramRef ref="genomicParams.genomicSequenceType"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT c.*
+            FROM ($$genomicResult$$) c,
+                 apidb.sequenceattributes sa
+            WHERE c.source_id = sa.source_id
+              AND c.project_id = sa.project_id
+              AND sa.database_name = $$genomicSequenceType$$
+            ]]>
+       </sql>
+    </sqlQuery>  
+    
+  </querySet>
     
 </wdkModel>

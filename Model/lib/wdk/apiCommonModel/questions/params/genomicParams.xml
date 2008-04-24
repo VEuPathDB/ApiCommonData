@@ -30,12 +30,41 @@
       </enumList>
     </enumParam>
 
+
+
+    <!--===========================================================================-->
+    <!-- params for subType filters  -->
+    <!--===========================================================================-->
+    <stringParam name="genomicResult"
+                  prompt="Query History:"
+                  quote="false" />
+                  
+    <enumParam name="genomicSequenceType"
+                     prompt="Sequence Type"
+                     multiPick="false">
+      <help>
+             Type of genomic sequence (chromosome, scaffold, contig, ...)
+      </help>
+   <useTermOnly value="true" includeProjects="ApiDB"/>
+
+      <enumList>
+      <enumValue>
+          <term>scaffolds and contigs</term>
+          <internal>G. lamblia contigs from Genbank,Giardia scaffolds</internal>
+        </enumValue>
+       <enumValue>
+          <term>scaffolds</term>
+          <internal>Giardia scaffolds</internal>
+        </enumValue>
+       <enumValue>
+          <term>contigs</term>
+          <internal>G. lamblia contigs from Genbank</internal>
+        </enumValue>
+  
+       </enumList>
+    </enumParam>
+
   </paramSet>
     
-  <!--===========================================================================-->
-  <!-- Vocab queries  -->
-  <!--===========================================================================-->
-
-
 
 </wdkModel>
