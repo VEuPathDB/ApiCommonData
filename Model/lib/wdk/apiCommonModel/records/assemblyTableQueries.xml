@@ -20,10 +20,39 @@
             <column name="is_reversed" />
             <column name="organism" />
 
+            <sqlParamValue name="alignment_location" includeProjects="GiardiaDB">
+               <![CDATA[
+                apidb.BlatAlignmentLocation
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="alignment_location" excludeProjects="GiardiaDB">
+                <![CDATA[
+                dots.blatalignment
+                ]]>
+            </sqlParamValue>
+
+            <sqlParamValue name="sequence_level" includeProjects="GiardiaDB">
+               <![CDATA[
+                AND  blat.location_mapping='virtual'
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="sequence_level" excludeProjects="GiardiaDB">
+                <![CDATA[
+                ]]>
+            </sqlParamValue>
+           <sqlParamValue name="extdbrid" includeProjects="GiardiaDB">
+               <![CDATA[
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="extdbrid" excludeProjects="GiardiaDB">
+                <![CDATA[
+                 AND  etn.external_database_release_id = blat.target_external_db_release_id 
+                ]]>
+            </sqlParamValue>
             <sql>
             <![CDATA[
             SELECT etn.source_id as sequence_id,
-                   a.na_sequence_id as id,
+                   a.source_id as id,
                    a.length,
                    blat.target_start,
                    blat.target_end,
@@ -42,15 +71,16 @@
                      FROM sres.taxonname taxn
                      WHERE etn.taxon_id = taxn.taxon_id) organism,  
                    a.number_of_contained_sequences as count
-            FROM   dots.BlatAlignment blat, 
+            FROM   &&alignment_location&& blat, 
                    dots.Assembly a, 
                    dots.NASequence etn
             WHERE  blat.query_na_sequence_id = a.na_sequence_id 
               AND  blat.target_na_sequence_id = etn.na_sequence_id 
-              AND  etn.external_database_release_id = blat.target_external_db_release_id 
+              &&extdbrid&&
               AND  (blat.target_end - blat.target_start ) < 5000 
               AND  blat.is_best_alignment = 1 
               AND  a.source_id = $$primaryKey$$
+              &&sequence_level&&
             ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
             ]]>
             </sql>
