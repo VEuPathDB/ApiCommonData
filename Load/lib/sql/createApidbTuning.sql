@@ -4,7 +4,7 @@
 -- includes the former contents of createBfmv.sql (Big F{-at, -reakin',
 -- -unctional, -ast} Materialized Views)
 --
--- This script creates materialized views which denormalize GUS tables for
+-- This script creates tables which denormalize GUS tables for
 -- the sake of performance.  Each record type X has at least an mview named
 -- apidb.XAttributes, which has one row for each X record (that is, each
 -- distinct source_id for an X), and columns for different attributes.
@@ -13,7 +13,7 @@
 --
 -- It is sometimes desirable to change the definition of one of these mviews
 -- while it is being used by an application.  Simply dropping and re-creating
--- the materialized view creates a time gap in which the application will
+-- the table creates a time gap in which the application will
 -- fail.  To handle this, we gives the mviews names of the form
 -- "apidb.XAttributes1111", then creates a synonym, "apidb.XAttributes", which
 -- points to the mview.  To re-run this script while the mviews may be in use,
@@ -23,9 +23,9 @@
 -- The four-digit synonym is passed as a command-line argument when this script
 -- is run.
 --
--- A query at the end of this script looks for materialized views that end in
+-- A query at the end of this script looks for tables that end in
 -- a four-digit number but aren't pointed to by a synonym.  For convenience,
--- the query result is in the form of "DROP MATERIALIZED VIEW" statements.  If
+-- the query result is in the form of "DROP TABLE" statements.  If
 -- this script terminates successfully, these statements can be run, dropping
 -- the disused mviews.
 --
@@ -1566,7 +1566,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          least(ba.target_end, ga.end_max)
          - greatest(ba.target_start, ga.start_min) + 1
            AS est_gene_overlap_length,
-         ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+         ba.query_bases_aligned / (query_sequence.length)
          * 100 AS percent_est_bases_aligned,
          ga.source_id AS gene
   FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
@@ -1593,12 +1593,13 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
        ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
        sequence.source_id AS target_sequence_source_id,
        NULL AS est_gene_overlap_length,
-       ba.query_bases_aligned / (aseq.sequence_end - aseq.sequence_start + 1)
+       ba.query_bases_aligned / (query_sequence.length)
        * 100 AS percent_est_bases_aligned,
        NULL AS gene
 FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
-     dots.NaSequence sequence
+     dots.NaSequence sequence, dots.NaSequence query_sequence
 WHERE e.na_sequence_id = ba.query_na_sequence_id
+  AND e.na_sequence_id = query_sequence.na_sequence_id
   AND aseq.na_sequence_id = ba.query_na_sequence_id
   AND ba.target_na_sequence_id = sequence.na_sequence_id
   AND ba.blat_alignment_id IN
@@ -1843,7 +1844,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
          sequence.source_id AS target_sequence_source_id,
          NULL
            AS assembly_gene_overlap_length,
-         ba.query_bases_aligned / (sequence.length)
+         ba.query_bases_aligned / (assembly.length)
          * 100 AS percent_assembly_bases_aligned,
          NULL AS gene
   FROM dots.blatalignment ba, dots.assembly a, 
