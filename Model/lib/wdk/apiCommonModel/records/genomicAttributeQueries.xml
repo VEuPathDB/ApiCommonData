@@ -68,11 +68,11 @@
                     sortingTable="apidb.SequenceAttributes"
                     lowerCase="true"/>
 
-            <column name="externalDbName" includeProjects="CryptoDB,ToxoDB"
+            <column name="externalDbName" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
                     sortingColumn="database_name"
                     sortingTable="apidb.SequenceAttributes"/>
 
-            <column name="externalDbVersion" includeProjects="CryptoDB,ToxoDB"
+            <column name="externalDbVersion" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
                      sortingColumn="database_version"
                     sortingTable="apidb.SequenceAttributes"/>
 
@@ -134,7 +134,7 @@
              ]]>
            </sql>
 
-            <sql includeProjects="GiardiaDB,TrichDB">
+            <sql includeProjects="TrichDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
@@ -170,7 +170,7 @@
              ]]>
            </sql>
 
-           <sql includeProjects="ToxoDB">
+           <sql includeProjects="ToxoDB,GiardiaDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count,
                        bfmv.c_count, bfmv.g_count, bfmv.t_count,

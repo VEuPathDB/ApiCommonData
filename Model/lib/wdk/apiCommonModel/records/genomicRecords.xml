@@ -96,10 +96,10 @@
             <columnAttribute name="genbank_accession"  includeProjects="ApiDB,PlasmoDB" 
                  displayName="GenBank" internal="true"/>
 
-            <columnAttribute name="externalDbName" includeProjects="ToxoDB,CryptoDB"
+            <columnAttribute name="externalDbName" includeProjects="ToxoDB,CryptoDB,GiardiaDB"
                  displayName="External DB Name" internal="true" inReportMaker="false"/>
 
-            <columnAttribute name="externalDbVersion" includeProjects="ToxoDB,CryptoDB" 
+            <columnAttribute name="externalDbVersion" includeProjects="ToxoDB,CryptoDB,GiardiaDB" 
                  displayName="External DB Version" internal="true" inReportMaker="false"/>
 
             <columnAttribute name="cyc_db" includeProjects="CryptoDB" 
@@ -223,6 +223,15 @@
            </text>
         </textAttribute>
 
+        <textAttribute name="gbrowseLink"  includeProjects="GiardiaDB"
+            inReportMaker="false">
+           <text>
+                <![CDATA[
+                @CGI_URL@/gbrowse/giardiadb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes
+                ]]>
+           </text>
+        </textAttribute>
+
         <textAttribute name="gbrowseLink" includeProjects="ToxoDB" 
             inReportMaker="false" internal="true">
            <text>
@@ -244,7 +253,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB"
+         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
             displayName="Links to Other Web Pages" inReportMaker="false">
            <text>
                 <![CDATA[
