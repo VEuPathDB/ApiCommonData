@@ -196,7 +196,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB"
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB"
                        displayName="Features"
                        inReportMaker="false">
            <text includeProjects="PlasmoDB">
@@ -207,6 +207,11 @@
            <text includeProjects="ToxoDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/toxodb/?name=$$primaryKey$$;embed=1;type=AnnotatedGenes;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+           <text includeProjects="GiardiaDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/giardiadb/?name=$$primaryKey$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
         </textAttribute>
@@ -227,7 +232,7 @@
             inReportMaker="false">
            <text>
                 <![CDATA[
-                @CGI_URL@/gbrowse/giardiadb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes
+                @CGI_URL@/gbrowse/giardiadb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotationDensity
                 ]]>
            </text>
         </textAttribute>
