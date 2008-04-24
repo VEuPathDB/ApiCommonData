@@ -5,40 +5,23 @@
         <sqlQuery name="Bfmv" isCacheable='true'>
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/> 
-            <column name="source_id" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="a_count" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="c_count" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="g_count" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="t_count" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="other_count" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="length" sortingTable="apidb.EstAttributes"
-                    lowerCase="false"/>
-            <column name="primer" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="dbest_name" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="assembly_source_id" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="vector" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="stage" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="organism" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="formatted_organism" sortingTable="apidb.EstAttributes"
-                    sortingColumn="organism" lowerCase="true"/>
-            <column name="ncbi_tax_id" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="external_db_name" sortingTable="apidb.EstAttributes"
-                    lowerCase="true"/>
-            <column name="assembly_est_count" sortingTable="apidb.EstAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
-                    lowerCase="true"/>
+            <column name="source_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="a_count" sortingTable="apidb.EstAttributes"/>
+            <column name="c_count" sortingTable="apidb.EstAttributes"/>
+            <column name="g_count" sortingTable="apidb.EstAttributes"/>
+            <column name="t_count" sortingTable="apidb.EstAttributes"/>
+            <column name="other_count" sortingTable="apidb.EstAttributes"/>
+            <column name="length" sortingTable="apidb.EstAttributes"/>
+            <column name="primer" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="dbest_name" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="assembly_source_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="vector" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="stage" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="organism" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="formatted_organism" sortingTable="apidb.EstAttributes" sortingColumn="organism" lowerCase="true"/>
+            <column name="ncbi_tax_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="external_db_name" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="assembly_est_count" sortingTable="apidb.EstAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB"/>
             <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
