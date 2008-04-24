@@ -66,7 +66,7 @@
             <column name="feature_source_id"/>
             <sql>
             <![CDATA[
-              SELECT sta.source_id feature_source_id,
+              SELECT sta.feature_source_id,
                      fl.sequence_source_id,
                      Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
                      fl.start_min,

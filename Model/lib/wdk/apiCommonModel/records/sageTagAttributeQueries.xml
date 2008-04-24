@@ -17,6 +17,7 @@
             <column name="rad_source_id"  sortingTable="apidb.sagetagattributes"/>
             <column name="gene_source_id" sortingTable="apidb.sagetagattributes"/>
             <column name="gene_count" sortingTable="apidb.sagetagattributes"/>
+            <column name="feature_source_id" sortingTable="apidb.sagetagattributes"/>
             <sql>
             <![CDATA[
             select sta.project_id,
@@ -31,7 +32,8 @@
                    sta.organism,
                    case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id,
                    gene_source_id,
-                   gene_count
+                   gene_count,
+                   feature_source_id
             from apidb.SageTagAttributes sta
             where sta.source_id = $$primaryKey$$
             ]]>
