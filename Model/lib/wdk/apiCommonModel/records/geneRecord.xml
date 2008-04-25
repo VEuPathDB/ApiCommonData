@@ -525,7 +525,7 @@
             <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
                    <url includeProjects="GiardiaDB">
                     <![CDATA[
-                      /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
+                      /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
                         ]]>
                    </url>
             </linkAttribute>
@@ -550,7 +550,7 @@
                              name="tag_source_id" internal="true"/>
             <columnAttribute displayName= "source id"
                              name="source_id" internal="true"/>
-            <linkAttribute displayName="Temporary External ID" name="tag_link" visible="$$tag_source_id$$"
+            <linkAttribute displayName="External ID" name="tag_link" visible="$$tag_source_id$$"
                    inReportMaker="false" internal="false" >
                      <url>
                         <![CDATA[showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
