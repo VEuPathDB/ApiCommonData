@@ -1,18 +1,18 @@
 <wdkModel>
 
   <questionSet name="SageTagQuestions"
-               displayName="Search Sage Tags">
+               displayName="Search SAGE Tags">
 
 <!--
 
-0. Find sage tags by genomic location
-1. Find sage tag by sequence
-2. Find sage tags by gene source_id
-3. Find sage tags by expression level(count), experiment(library)
+0. Find SAGE tags by genomic location
+1. Find SAGE tag by sequence
+2. Find SAGE tags by gene source_id
+3. Find SAGE tags by expression level(count), experiment(library)
   - greater than some percentage or count in a given experiment
-4. Find sag tags by rad_source_id(include giardiadb only)
-5. Find all sage tags that align to less than some number of genes 
-       OR Find all sage tags that align globally to less than some number of places
+4. Find SAGE tags by rad_source_id(include giardiadb only)
+5. Find all SAGE tags that align to less than some number of genes 
+       OR Find all SAGE tags that align globally to less than some number of places
 6.R value
 -->
 
@@ -29,11 +29,11 @@
                sorting="organism asc, R desc"
              />
              <summary>
-               Find Sage Tags that are differentially expressed across 2 or more libraries.
+               Find SAGE Tags that are differentially expressed across 2 or more libraries.
              </summary>
              <description>
            <![CDATA[
-               <p>Find Sage Tags that are differentially expressed across 2 or more libraries.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagRStat"><b>Genes by Differential Expression of Sage Tag Evidence</b></a> query for summing sage tag counts within predicted genes.
+               <p>Find SAGE Tags that are differentially expressed across 2 or more libraries.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagRStat"><b>Genes by Differential Expression of SAGE Tag Evidence</b></a> query for summing SAGE tag counts within predicted genes.
 </p>
           ]]>
              </description>
@@ -73,10 +73,10 @@
             </dynamicAttributes>
  
              <summary>
-               Find Sage Tags that are located in a specified genomic region.
+               Find SAGE Tags that are located in a specified genomic region.
              </summary>
              <description>
-               Find Sage Tags that are located in a specified genomic region.
+               Find SAGE Tags that are located in a specified genomic region.
              </description>
 
       <propertyList name="specificAttribution">
@@ -106,10 +106,10 @@
                sorting="organism asc, tag_sequence asc"
              />
              <summary>
-               Find Sage Tags Alignments By their Sequence.
+               Find SAGE Tags Alignments By their Sequence.
              </summary>
              <description>
-               Find Sage Tags Alignments By their Sequence.
+               Find SAGE Tags Alignments By their Sequence.
              </description>
 
      <propertyList name="specificAttribution">
@@ -137,13 +137,12 @@
                sorting="organism asc"
              />
              <summary>
-               Find Sage Tags By Gene Identifier
+               Find SAGE Tags By Gene Identifier
              </summary>
              <description>
-               Find Sage Tags By Gene Identifier
+               Find SAGE Tags By Gene Identifier
              </description>
-
-    <propertyList name="specificAttribution">
+      <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
            <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
@@ -168,11 +167,11 @@
                sorting="organism asc, tag_count desc"
              />
              <summary>
-               Find Sage Tags By Expression Level in a given library.
+               Find SAGE Tags By Expression Level in a given library.
              </summary>
              <description>
          <![CDATA[
-               <p>Find Sage Tags By Expression Level in a given library.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTag"><b>Genes by Sage Tag Evidence</b></a> query for summing sage tag counts within predicted genes.
+               <p>Find SAGE Tags By Expression Level in a given library.</p>  <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTag"><b>Genes by SAGE Tag Evidence</b></a> query for summing SAGE tag counts within predicted genes.
 </p>
           ]]>
              </description>
@@ -185,7 +184,7 @@
              <columnAttribute name="SAGE_library" displayName="Experiement Name" align="center"/>
 	</dynamicAttributes>
 
-    <propertyList name="specificAttribution">
+       <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
            <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
@@ -210,13 +209,13 @@
                sorting="organism asc"
              />
              <summary>
-               Find Sage Tags By Identifier
+               Find SAGE Tags By Identifier
              </summary>
              <description>
-               Find Sage Tags By Identifier
+               Find SAGE Tags By Identifier
              </description>
 
-    <propertyList name="specificAttribution">
+   <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
            <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
@@ -225,7 +224,6 @@
            <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
            <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
        </propertyList>
-
     </question>
 
 
