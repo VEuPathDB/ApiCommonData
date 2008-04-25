@@ -1569,7 +1569,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
          ba.query_bases_aligned / (query_sequence.length)
          * 100 AS percent_est_bases_aligned,
          ga.source_id AS gene
-  FROM dots.blatalignment ba, dots.est e, dots.AssemblySequence aseq,
+  FROM apidb.BlatAlignmentLocation ba, dots.est e, dots.AssemblySequence aseq,
        apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
        dots.NaSequence query_sequence, sres.SequenceOntology so
   WHERE e.na_sequence_id = ba.query_na_sequence_id
@@ -1773,7 +1773,7 @@ SELECT CASE
        l.start_min, l.end_max, substr(st.tag, 1, 20) as sequence,
        st.composite_element_id, st.source_id as rad_source_id,
        l.is_reversed, substr(tn.name, 1, 60) as organism,
-       gene.gene_source_id, nvl(gene.gene_count, 0)
+       gene.gene_source_id, nvl(gene.gene_count, 0) gene_count
 from dots.SageTagFeature f, apidb.FeatureLocation l, dots.NaSequence s,
      sres.TaxonName tn, rad.SageTag st,
      (select a.na_feature_id,
@@ -1820,7 +1820,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
          ba.query_bases_aligned / (query_sequence.length)
          * 100 AS percent_assembly_bases_aligned,
          ga.source_id AS gene
-  FROM dots.blatalignment ba, dots.assembly a, 
+  FROM apidb.BlatAlignmentLocation ba, dots.assembly a, 
   apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
        dots.NaSequence query_sequence, sres.SequenceOntology so
   WHERE a.na_sequence_id = ba.query_na_sequence_id
@@ -1844,7 +1844,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
          sequence.source_id AS target_sequence_source_id,
          NULL
            AS assembly_gene_overlap_length,
-         ba.query_bases_aligned / (assembly.length)
+         ba.query_bases_aligned / (a.length)
          * 100 AS percent_assembly_bases_aligned,
          NULL AS gene
   FROM dots.blatalignment ba, dots.assembly a, 
