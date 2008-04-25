@@ -65,7 +65,7 @@
         </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- Sage Tag params -->  
+    <!-- SAGE Tag params -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <stringParam name="st_max_five_prime_distance" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
@@ -90,7 +90,7 @@
                      prompt="Minimum tag count"
                      substitute="yes"
                      quote="false">
-            <help>Enter the minimum number of times the sage tags meeting your criteria were seen.  </help>
+            <help>Enter the minimum number of times the SAGE tags meeting your criteria were seen.  </help>
             <suggest default="1" includeProjects="GiardiaDB"/>
             <suggest default="2" excludeProjects="GiardiaDB"/>
         </stringParam>
@@ -99,16 +99,16 @@
                      prompt="Maximum occurrences in genome"
                      substitute="yes"
                      quote="false">
-            <help>Enter the maximum number of times the sequence for this sage tag is present in the genome.</help>
+            <help>Enter the maximum number of times the sequence for this SAGE tag is present in the genome.</help>
              <suggest default="2"/>
         </stringParam>
 
       <flatVocabParam name="sage_tag_library" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      queryRef="GeneVQ.SageTagLibrary"
-                     prompt="Sage Tag Library"
+                     prompt="SAGE Tag Library"
                      multiPick="true">
         <help>
-           Select the sage tag library for this query.
+           Select the SAGE tag library for this query.
         </help>
 <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
@@ -116,10 +116,10 @@
 
       <flatVocabParam name="sage_tag_library_name" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      queryRef="GeneVQ.SageTagLibraryName"
-                     prompt="Sage Tag Library"
+                     prompt="SAGE Tag Library"
                      multiPick="true">
         <help>
-           Select the sage tag library for this query.
+           Select the SAGE tag library for this query.
         </help>
 <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
@@ -3836,7 +3836,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="internal"/>
             <column name="term"/>
             <sql>
-              select ai.analysis_id as internal, lg.name as term
+              select ai.analysis_id as internal, 
+              CASE WHEN lg.name like '%Giardia intestinalis%' THEN REPLACE(lg.name,'Giardia intestinalis','Giardia lamblia') ELSE lg.name END as term
               from rad.ANALYSIS a, Rad.ANALYSISINPUT ai, Rad.LOGICALGROUP lg, Rad.PROTOCOL p
               where a.analysis_id = ai.analysis_id
                and a.protocol_id = p.protocol_id

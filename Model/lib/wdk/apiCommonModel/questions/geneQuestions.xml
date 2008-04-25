@@ -1514,12 +1514,12 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- SageTags-->
+  <!-- SAGETags-->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesBySageTag"
          category="Transcript Expression"
-         displayName="Sage Tag evidence"
+         displayName="SAGE Tag evidence"
          queryRef="GeneId.GenesBySageTag"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
@@ -1533,7 +1533,7 @@ Find genes that are predicted to encode a signal peptide.
         <description>
            <![CDATA[
             <p>Find genes with evidence of expression based on SAGE tag experiments.  Set the 5' and 3' distance to greater than 0 to include tags in the UTRs (or beyond).  The result includes a column showing the summed frequency of all tags thus associated with a gene.</p>
-<p>This query sums the counts of sage tags falling within/near a gene.  See the related <a href="showQuestion.do?questionFullName=SageTagQuestions.SageTagByExpressionLevel"><b>Sage Tags by Expression Level</b></a> query to find counts for a specific sage tag and also for interrogating sage tags which don't align to predicted genes.
+<p>This query sums the counts of SAGE tags falling within/near a gene.  See the related <a href="showQuestion.do?questionFullName=SageTagQuestions.SageTagByExpressionLevel"><b>SAGE Tags by Expression Level</b></a> query to find counts for a specific SAGE tag and also for interrogating SAGE tags which don't align to predicted genes.
 </p>
           ]]>
         </description>
@@ -1544,20 +1544,20 @@ Find genes that are predicted to encode a signal peptide.
                               inReportMaker="false"/>
          </dynamicAttributes>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
-           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
-           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
-           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
-           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
-           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSAGETagArrayDesign</value>
+           <value includeProjects="ApiDB,GiardiaDB">GiardiaSAGETagFreqs</value>
+           <value includeProjects="ApiDB,ToxoDB">3primeToxoSAGETags</value>
+           <value includeProjects="ApiDB,ToxoDB">5primeToxoSAGETags</value>
+           <value includeProjects="ApiDB,ToxoDB">ToxoSAGETagFreqs</value>
+           <value includeProjects="ApiDB,PlasmoDB">SAGETagArrayDesign</value>
+           <value includeProjects="ApiDB,PlasmoDB">PlasmoSAGETagFreqs</value>
        </propertyList>
     </question>
 
 
     <question name="GenesBySageTagRStat"
          category="Transcript Expression"
-         displayName="Differential Expression By Sage Tag evidence"
+         displayName="Differential Expression By SAGE Tag evidence"
          queryRef="GeneId.GenesBySageTagRStat"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
@@ -1570,11 +1570,11 @@ Find genes that are predicted to encode a signal peptide.
         </summary>
         <description>
            <![CDATA[
-            <p>Find genes with evidence of differential expression based on SAGE tag experiments by choosing libraries (more than one) to compare across.  A large R value indicates differential expression (Antisense SageTags are NOT included in the calculation). 
+            <p>Find genes with evidence of differential expression based on SAGE tag experiments by choosing libraries (more than one) to compare across.  A large R value indicates differential expression (Antisense SAGE tags are NOT included in the calculation). 
 
 Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&db=PubMed&list_uids=11116099">The comparison of gene expression from multiple cDNA libraries.</a>  Genome Res.  2000.  Dec:10(12):2055-61.
 </p>
-<p>This query sums the counts of sage tags falling within/near a gene.  See the related <a href="showQuestion.do?questionFullName=SageTagQuestions.SageTagByRStat"><b>Sage Tags by Differential Expression</b></a> query to find differences in expression for a specific sage tag and also for interrogating sage tags which don't align to predicted genes.
+<p>This query sums the counts of SAGE tags falling within/near a gene.  See the related <a href="showQuestion.do?questionFullName=SageTagQuestions.SageTagByRStat"><b>SAGE Tags by Differential Expression</b></a> query to find differences in expression for a specific SAGE tag and also for interrogating SAGE tags which don't align to predicted genes.
 </p>
 
           ]]>
@@ -3033,7 +3033,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
 
-   <question name="GenesBySageTagEvidence" displayName="Sage Tag evidence"
+   <question name="GenesBySageTagEvidence" displayName="SAGE Tag evidence"
               includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
