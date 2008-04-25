@@ -1,6 +1,37 @@
 <wdkModel>
     <querySet name="SequenceTables">
 
+        <sqlQuery name="SequencePieces" includeProjects="GiardiaDB"
+               isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="start_min" />
+            <column name="end_max" />
+            <column name="piece_source_id" />
+            <column name="piece_min" />
+            <column name="piece_max" />
+            <column name="piece_strand" />
+            <sql>
+            <![CDATA[
+            select vs.source_id as source_id, 
+                   sp.distance_from_left + 1 as start_min, 
+                   es.length + sp.distance_from_left as end_max,
+                   case when es.source_id is null then '(N)-' || es.length else es.source_id end as piece_source_id,
+                   1 as piece_min,
+                   es.length as piece_max,
+                   sp.strand_orientation as piece_strand
+            from Dots.SEQUENCEPIECE sp, Dots.NASEQUENCE vs, Dots.NASEQUENCE es
+            where vs.na_sequence_id = sp.virtual_na_sequence_id
+            and es.na_sequence_id = sp.piece_na_sequence_id
+            and (vs.source_id = $$primaryKey$$ or es.source_id = $$primaryKey$$)
+            order by vs.source_id, sp.sequence_order
+             ]]>
+           </sql>
+        </sqlQuery>
+
+
+
         <sqlQuery name="Centromere" includeProjects="PlasmoDB"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
