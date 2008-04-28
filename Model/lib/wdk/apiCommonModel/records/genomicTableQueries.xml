@@ -24,6 +24,7 @@
             from Dots.SEQUENCEPIECE sp, Dots.NASEQUENCE vs, Dots.NASEQUENCE es
             where vs.na_sequence_id = sp.virtual_na_sequence_id
             and es.na_sequence_id = sp.piece_na_sequence_id
+            and sp.strand_orientation is not null
             and (vs.source_id = $$primaryKey$$ or es.source_id = $$primaryKey$$)
             order by vs.source_id, sp.sequence_order
              ]]>

@@ -184,6 +184,21 @@
            </sql>
         </sqlQuery>
 
+        <sqlQuery name="GeneCount" isCacheable="false" excludeProjects="ApiDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="gene_count"/>
+            <sql>
+            <![CDATA[
+            select sa.source_id, count(*) as gene_count
+            from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
+            where ga.sequence_id = sa.source_id
+             and sa.source_id = $$primaryKey$$
+            group by sa.source_id
+             ]]>
+           </sql>
+        </sqlQuery>
+
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Attribution -->  
@@ -297,7 +312,6 @@
               and tn.name_class = 'scientific name'
         </sql>
     </sqlQuery>
-
 
   </querySet>
 

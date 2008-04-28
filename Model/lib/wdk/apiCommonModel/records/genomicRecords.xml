@@ -113,6 +113,11 @@
 
         </attributeQueryRef>
 
+       <attributeQueryRef ref="SequenceAttributes.GeneCount">
+            <columnAttribute name="gene_count" excludeProjects="ApiDB"  displayName="Gene Count" internal="true"   />
+        </attributeQueryRef>
+
+
                 
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- data dump attributes -->  
@@ -238,7 +243,7 @@
             inReportMaker="false">
            <text>
                 <![CDATA[
-                <a href="/@CGI_URL@/gbrowse/giardiadb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotationDensity">view</a>
+                /cgi-bin/gbrowse/giardiadb/?name=$$primaryKey$$%3A1-$$length$$;width=550;label=Gene;label=DeprecatedGene
                 ]]>
            </text>
         </textAttribute>
@@ -302,10 +307,27 @@
         <table name="SequencePieces" includeProjects="GiardiaDB"
                displayName="Genomic Assembly"
                queryRef="SequenceTables.SequencePieces">
-            <columnAttribute name="source_id" displayName="Sequence ID"/>
+            <columnAttribute name="source_id" internal="true" displayName="Sequence ID"/>
+           <linkAttribute inReportMaker="false" displayName="Sequence ID"
+                          name="linkedSequenceId"
+                          visible="$$source_id$$">
+             <url><![CDATA[
+                     showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$source_id$$&project_id=@PROJECT_ID@
+                    ]]>
+             </url>
+           </linkAttribute>
+
             <columnAttribute name="start_min" displayName="Start"/>
             <columnAttribute name="end_max" displayName="End"/>
-            <columnAttribute name="piece_source_id" displayName="Piece ID"/>
+            <columnAttribute name="piece_source_id" internal="true" displayName="Piece ID"/>
+           <linkAttribute inReportMaker="false" displayName="Piece ID"
+                          name="linkedSequencePieceId"
+                          visible="$$piece_source_id$$">
+             <url><![CDATA[
+                     showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$piece_source_id$$&project_id=@PROJECT_ID@
+                    ]]>
+             </url>
+           </linkAttribute>
             <columnAttribute name="piece_min" displayName="Start"/>
             <columnAttribute name="piece_max" displayName="End"/>
             <columnAttribute name="piece_strand" displayName="Strand"/>
