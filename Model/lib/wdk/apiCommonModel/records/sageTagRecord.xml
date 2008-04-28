@@ -33,17 +33,6 @@
          <columnAttribute name="gene_count" displayName="Total Number of Gene Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="gene_source_id" displayName="Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="feature_source_id" displayName="Feature source id" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
-         <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
-           <text>
-                <![CDATA[
-                Tag Sequence: $$tag_sequence$$<br>
-                Sequence Id: $$sequence_id$$<br>
-                Tag Start: $$start_min$$<br>
-                Tag End: $$end_max$$<br>
-                External Identifier: $$rad_source_id$$
-                ]]>
-           </text>
-         </textAttribute>
 
          <textAttribute name="location_text" displayName="Genomic Location">
            <text>
@@ -57,6 +46,20 @@
       <attributeQueryRef ref="SageTagAttributes.AlignmentCount">
          <columnAttribute name="total_alignments" displayName="Number of Genomic Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
+
+
+      <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
+        <text>
+             <![CDATA[
+             Tag Sequence: $$tag_sequence$$<br>
+             External Identifier: $$rad_source_id$$<br>
+             Sequence Id: $$sequence_id$$<br>
+             Tag Start: $$start_min$$<br>
+             Tag End: $$end_max$$<br>
+             Total Number of Genomic Alignments:  $$total_alignments$$
+             ]]>
+        </text>
+      </textAttribute>
 
 
       <!-- Need to add a text attribute for the genomic context -->
@@ -109,24 +112,26 @@
      <table name="Genes" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
             displayName="All Genes the Tag Aligns to"
             queryRef="SageTagTables.AlignedGenes">
+         <columnAttribute  name="source_id" internal="true"/>
          <columnAttribute  name="gene_source_id" internal="true"/>
-         <columnAttribute  name="gene_sequence_id" internal="true"/>
-           <linkAttribute inReportMaker="false" displayName="Gene Source Id"
+           <linkAttribute inReportMaker="false" displayName="Sage Tag Alignment"
                           name="linkedSourceId"
+                          visible="$$source_id$$">
+             <url><![CDATA[
+                     showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$
+                    ]]>
+             </url>
+           </linkAttribute>
+           <linkAttribute inReportMaker="false" displayName="Gene Source Id"
+                          name="linkedGeneSourceId"
                           visible="$$gene_source_id$$">
              <url><![CDATA[
                      showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$gene_source_id$$
                     ]]>
              </url>
            </linkAttribute>
-           <linkAttribute inReportMaker="false" displayName="Gene Sequence Id"
-                          name="linkedSequenceId"
-                          visible="$$gene_sequence_id$$">
-             <url><![CDATA[
-                     showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=GiardiaDB&primary_key=$$gene_sequence_id$$
-                    ]]>
-             </url>
-           </linkAttribute>
+         <columnAttribute  name="gene_product" internal="false"/>
+         <columnAttribute  name="gene_location" internal="false"/>
          <columnAttribute displayName="Strand" name="gene_strand"/>
          <columnAttribute displayName="Distance (bp) from gene" name="bp_from_gene"/>
 

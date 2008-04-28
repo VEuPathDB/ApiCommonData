@@ -33,13 +33,19 @@
        <sqlQuery name="AlignedGenes" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
             <column name="gene_source_id"/>
+            <column name="gene_product"/>
+            <column name="gene_location"/>
             <column name="gene_strand"/>
             <column name="bp_from_gene"/>
-            <column name="gene_sequence_id"/>
             <sql>
             <![CDATA[
-             select distinct sg.gene_source_id, g.sequence_id as gene_sequence_id,
+         select distinct a.source_id, sg.gene_source_id, g.product as gene_product,
+                   g.sequence_id || ':' || g.start_min || '-' || g.end_max || '(' || 
+                       case when g.is_reversed = 1 then '-' 
+                            when g.is_reversed = 0 then '+'
+                            else '' end || ')' as gene_location,
                    case when sg.antisense = 1 then 'antisense' else 'sense' end as gene_strand,
                   sg.distance as bp_from_gene
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a, apidb.GENEATTRIBUTES g
@@ -49,6 +55,7 @@
                      from apidb.SageTagAttributes
                      where source_id = $$primaryKey$$)
             and sg.gene_source_id = g.source_id
+            order by gene_strand desc, bp_from_gene asc, a.source_id
             ]]>
            </sql>
       </sqlQuery>
