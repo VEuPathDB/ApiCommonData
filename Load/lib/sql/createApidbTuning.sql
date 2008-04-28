@@ -237,7 +237,13 @@ select -- virtual feature locations mapped through SequencePiece
                 - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
          else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as end_max,
-       nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
+       case
+         when sp.strand_orientation in ('-', '-1')
+         then decode(nvl(nl.is_reversed, 0),
+                     0, 1,  1, 0,  1)
+         else nl.is_reversed
+       end as is_reversed,
+       nf.parent_id, nf.sequence_ontology_id,
        cast (null as number) as is_top_level
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
      dots.SequencePiece sp, dots.NaSequence scaffold,
@@ -301,7 +307,7 @@ WHERE dr.primary_identifier IS NOT NULL
                   'NRDB_ref_dbXRefBySeqIdentity',
                   'NRDB_sp_dbXRefBySeqIdentity',
                   'Predicted protein structures',
-                  'GenBank')
+                  'GenBank', 'gb', 'GI')
 UNION
 SELECT LOWER(dr.secondary_identifier) AS id, gf.source_id AS gene
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
@@ -359,6 +365,37 @@ CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id);
 
 CREATE OR REPLACE SYNONYM apidb.GeneId
                           FOR apidb.GeneId&1;
+-------------------------------------------------------------------------------
+
+prompt apidb.SequenceId;
+
+CREATE TABLE apidb.SequenceId&1 AS
+SELECT DISTINCT substr(id, 1, 50) as id, substr(sequence, 1, 50) AS sequence
+FROM (
+  SELECT lower(source_id) as id, source_id as sequence
+  FROM dots.NaSequence ns, sres.sequenceontology so
+  WHERE ns.sequence_ontology_id = so.sequence_ontology_id
+    AND so.term_name in ('contig', 'supercontig', 'chromosome')
+UNION
+  SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
+  FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
+       sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase ed
+  WHERE dr.primary_identifier IS NOT NULL
+    AND ns.na_sequence_id = drnf.na_sequence_id
+    AND drnf.db_ref_id = dr.db_ref_id
+    AND dr.external_database_release_id
+          = edr.external_database_release_id
+    AND edr.external_database_id = ed.external_database_id
+);
+
+GRANT SELECT ON apidb.SequenceId&1 TO gus_r;
+
+CREATE INDEX apidb.SequenceId_sequence_idx&1 ON apidb.SequenceId&1 (sequence);
+CREATE INDEX apidb.SequenceId_id_idx&1 ON apidb.SequenceId&1 (id);
+
+CREATE OR REPLACE SYNONYM apidb.SequenceId
+                          FOR apidb.SequenceId&1;
 -------------------------------------------------------------------------------
 
 prompt apidb.EpitopeSummary;
