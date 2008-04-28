@@ -141,9 +141,13 @@
             <column name="internal"/>
             <column name="term"/>
             <sql>
-              select distinct NAME as internal,NAME as term
-              from rad.ASSAY
-              order by name
+         <![CDATA[
+            select q.name as internal, q.name as term
+            from core.TABLEINFO t, rad.QUANTIFICATION q
+            where t.table_id = q.result_table_id
+            and t.name = 'SAGETagResult'
+            order by term 
+         ]]>
             </sql>
    </sqlQuery>
    <wsQuery name="experimentname" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
