@@ -1292,7 +1292,7 @@ sub makeTranscriptDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
 EOF
 
@@ -1306,12 +1306,13 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project) = @_;
 
     my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
+                || decode(gf.is_deprecated, 1, '(deprecated)', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1328,31 +1329,24 @@ sub makeTranscriptDownloadFileTransformed {
             snas.length
             as defline,
             snas.sequence
-           FROM dots.genefeature gf,
+           FROM apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
                 sres.taxonname tn,
                 sres.externaldatabase ed,
                 sres.externaldatabaserelease edr,
-                sres.sequenceontology so,
                 apidb.featurelocation fl
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_feature_id = fl.na_feature_id
-        AND gf.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name != 'repeat_region'
+        AND gf.so_term_name != 'repeat_region'
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND fl.is_top_level = 1
 EOF
-
-    if ($genomeExtDb && $genomeExtDbVer) {
-      my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
-      $sql .= " and enas.external_database_release_id = $genomeDbRls";
-    }
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
@@ -1404,7 +1398,7 @@ sub makeRGTranscriptDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
 EOF
 
@@ -1576,7 +1570,7 @@ sub makeDerivedCdsDownloadFile {
                 sres.sequenceontology so,
                 dots.nalocation nl,
                 dots.translatedaafeature taaf
-      WHERE gf.na_feature_id = t.parent_id
+      WHERE gf.na_feature_id = t.parent_idx
         AND t.na_sequence_id = snas.na_sequence_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_sequence_id = enas.na_sequence_id
@@ -1586,9 +1580,62 @@ sub makeDerivedCdsDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
         AND t.na_feature_id = taaf.na_feature_id
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
+
+sub makeDerivedCdsDownloadFileTransformed {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+
+    my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                || decode(gf.is_deprecated, 1, '(deprecated)', '')
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            fl.sequence_source_id
+                ||':'||
+            (fl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (fl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(fl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            (taaf.translation_stop - taaf.translation_start + 1)
+            as defline,
+           SUBSTR(snas.sequence,
+                  taaf.translation_start,
+                  taaf.translation_stop - taaf.translation_start + 1)
+           FROM apidb.featurelocation fl,
+                apidb.geneattributes gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                dots.translatedaafeature taaf
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_feature_id = fl.na_feature_id
+        AND gf.so_term_name != 'repeat_region'
+        AND gf.so_term_name = 'protein_coding'
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND t.na_feature_id = taaf.na_feature_id
+        AND fl.is_top_level = 1
 EOF
 
     makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -1639,7 +1686,7 @@ sub makeRGDerivedCdsDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
         AND t.na_feature_id = taaf.na_feature_id
 EOF
@@ -1692,7 +1739,7 @@ sub makeAnnotatedProteinDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -1745,7 +1792,7 @@ sub makeRGAnnotatedProteinDownloadFile {
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND gf.na_feature_id = nl.na_feature_id
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -1794,7 +1841,6 @@ sub makeOrfProteinDownloadFile {
 EOF
 
     makeDownloadFile($mgr, $species, $name, $sql);
-
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
