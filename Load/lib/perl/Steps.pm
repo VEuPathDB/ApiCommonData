@@ -1304,6 +1304,65 @@ EOF
     makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
 
+
+sub makeTranscriptDownloadFileTransformed {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
+
+    my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            fl.sequence_source_id
+                ||':'||
+            fl.start_min
+                ||'-'||
+            fl.end_max
+                ||'('||
+            decode(nl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            snas.length
+            as defline,
+            snas.sequence
+           FROM dots.genefeature gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                sres.sequenceontology so,
+                apidb.featurelocation fl
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_feature_id = fl.na_feature_id
+        AND gf.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name != 'repeat_region'
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = 'G. lamblia contigs from Genbank' AND edr.version = '2007-09-24'
+        AND fl.is_top_level = 1
+EOF
+
+    if ($genomeExtDb && $genomeExtDbVer) {
+      my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
+      $sql .= " and enas.external_database_release_id = $genomeDbRls";
+    }
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+}
+
+
+
+
+
+
+
 sub makeRGTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
     
