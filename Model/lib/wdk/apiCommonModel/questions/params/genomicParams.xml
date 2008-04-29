@@ -30,15 +30,6 @@
       </enumList>
     </enumParam>
 
-
-
-    <!--===========================================================================-->
-    <!-- params for subType filters  -->
-    <!--===========================================================================-->
-    <stringParam name="genomicResult"
-                  prompt="Query History:"
-                  quote="false" />
-                  
     <enumParam name="genomicSequenceType"
                      prompt="Sequence Type"
                      multiPick="false">
@@ -64,7 +55,46 @@
        </enumList>
     </enumParam>
 
+      <flatVocabParam name="sequenceTypes" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+                     queryRef="genomicVQ.sequenceTypes"
+                     prompt="Sequence Type"
+                     multiPick="true">
+        <help>
+         Type of genomic sequence (chromosome, scaffold, contig, ...)
+        </help>    
+       </flatVocabParam>
+
   </paramSet>
-    
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--  Vocab queries-->  
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+ <querySet name="genomicVQ">
+   <sqlQuery name="sequenceTypes" includeProjects="PlasmoDB,GiardiaDB,ToxoDB,CryptoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+         <![CDATA[
+            select distinct so.so_id as internal, so.term_name || 's' as term,
+            case when so.term_name = 'chromosome' then 1
+                 when so.term_name = 'supercontig' then 2
+                 when so.term_name = 'contig' then 3
+              else 4 end as order_num
+            from sres.SEQUENCEONTOLOGY so, apidb.SEQUENCEATTRIBUTES sa
+            where sa.so_id = so.so_id
+            and (so.term_name = 'chromosome' 
+                   OR so.term_name = 'supercontig'
+                   OR so.term_name = 'contig')
+            order by order_num
+         ]]>
+            </sql>
+   </sqlQuery>
+
+   <wsQuery name="sequenceTypes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="100"/>
+            <wsColumn name="term" width="100"/>
+   </wsQuery>
+  </querySet>    
 
 </wdkModel>

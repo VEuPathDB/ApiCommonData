@@ -59,9 +59,10 @@
     <sqlQuery name="SequencesByTaxon" excludeProjects="ApiDB"
         isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
+        <paramRef ref="genomicParams.sequenceTypes" includeProjects="GiardiaDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql excludeProjects="ApiDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB">
             <![CDATA[
             SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens, sres.SequenceOntology so
@@ -72,6 +73,18 @@
               AND (so.term_name = 'chromosome' 
                    OR so.term_name = 'supercontig'
                    OR so.term_name = 'contig')
+            ORDER BY ens.source_id           
+           ]]>
+        </sql>
+       <sql includeProjects="GiardiaDB">
+            <![CDATA[
+            SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.NaSequence ens, sres.SequenceOntology so
+            WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
+               CONNECT BY parent_id = prior taxon_id
+               START WITH taxon_id in ($$organism$$))
+               AND ens.sequence_ontology_id = so.sequence_ontology_id
+              AND so.so_id in ($$sequenceTypes$$)
             ORDER BY ens.source_id           
            ]]>
         </sql>
@@ -163,26 +176,4 @@
 
   </querySet>
 
-  <querySet name="SequenceSubTypes">
-  
-    <sqlQuery name="SequenceTypeFilter" includeProjects="GiardiaDB"
-              isCacheable="false">
-        <paramRef ref="genomicParams.genomicResult"/>
-        <paramRef ref="genomicParams.genomicSequenceType"/>
-        <column name="project_id"/>
-        <column name="source_id"/>
-        <sql>
-            <![CDATA[
-            SELECT c.*
-            FROM ($$genomicResult$$) c,
-                 apidb.sequenceattributes sa
-            WHERE c.source_id = sa.source_id
-              AND c.project_id = sa.project_id
-              AND sa.database_name = $$genomicSequenceType$$
-            ]]>
-       </sql>
-    </sqlQuery>  
-    
-  </querySet>
-    
 </wdkModel>

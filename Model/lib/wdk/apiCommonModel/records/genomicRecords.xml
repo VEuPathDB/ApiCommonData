@@ -41,13 +41,6 @@
                     implementation=""/>
 
        <!-- =================================================================== -->
-       <!--  subTypes  ++++++++-->
-       <!-- =================================================================== -->
-       <subType includeProjects="GiardiaDB"
-                filterQueryRef="SequenceSubTypes.SequenceTypeFilter"
-                subTypeIgnoreValue="scaffolds and contigs"/>
-
-       <!-- =================================================================== -->
        <!--  Attributes  ++++++++-->
        <!-- =================================================================== -->
 
@@ -184,7 +177,7 @@
         <!-- overview -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="overview" displayName="Overview"
-                         inReportMaker="false">
+                         inReportMaker="false" internal="true">
            <text includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
               <![CDATA[
                   Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$,
@@ -240,7 +233,7 @@
         </textAttribute>
 
         <textAttribute name="GBrowse"  includeProjects="GiardiaDB"
-            inReportMaker="false">
+            inReportMaker="false" internal="true">
            <text>
                 <![CDATA[
                 /cgi-bin/gbrowse/giardiadb/?name=$$primaryKey$$%3A1-$$length$$;width=550;label=Gene;label=DeprecatedGene
@@ -270,7 +263,7 @@
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
-            displayName="Links to Other Web Pages" inReportMaker="false">
+            displayName="Links to Other Web Pages" inReportMaker="false" internal="true">
            <text>
                 <![CDATA[
                     <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
