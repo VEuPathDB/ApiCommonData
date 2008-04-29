@@ -1323,7 +1323,7 @@ sub makeTranscriptDownloadFileTransformed {
                 ||'-'||
             fl.end_max
                 ||'('||
-            decode(nl.is_reversed, 1, '-', '+')
+            decode(fl.is_reversed, 1, '-', '+')
                 ||') | length='||
             snas.length
             as defline,
