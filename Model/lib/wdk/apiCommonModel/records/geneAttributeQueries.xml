@@ -610,30 +610,27 @@
         <column name="gff_attr_size"/>
         <sql>
           <![CDATA[
-            select gf.source_id, $$projectId$$ as project_id,
-                   'apidb|' || ns.source_id as gff_seqid,
+            select ga.source_id, $$projectId$$ as project_id,
+                   'apidb|' || ga.sequence_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'gene' as gff_type,
-                   least(nl.start_min, nl.end_max) as gff_fstart,
-                   greatest(nl.start_min, nl.end_max) as gff_fend,
+                   least(ga.start_min, ga.end_max) as gff_fstart,
+                   greatest(ga.start_min, ga.end_max) as gff_fend,
                    '.' as gff_score,
-                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
+                   decode(ga.is_reversed, 1, '-', '+') as gff_strand,
                    '.' as gff_phase,
-                   'apidb|' || gf.source_id as gff_attr_id,
-                   gf.source_id as gff_attr_web_id,
-                   gf.source_id as gff_attr_name,
-                   gf.product as gff_attr_description,
-                   gf.source_id as gff_attr_locus_tag,
-                   (greatest(nl.start_min, nl.end_max)
-                   - least(nl.start_min, nl.end_max) + 1) as gff_attr_size
-            from DoTS.GeneFeature gf, 
-                 DoTS.NaLocation nl, 
-                 DoTS.NaSequence ns,
-                 DoTS.Transcript rna
-            where gf.source_id = $$primaryKey$$
-                  and gf.na_feature_id = nl.na_feature_id
-                  and gf.na_sequence_id = ns.na_sequence_id
-                  and gf.na_feature_id = rna.parent_id
+                   'apidb|' || ga.source_id as gff_attr_id,
+                   ga.source_id as gff_attr_web_id,
+                   ga.source_id as gff_attr_name,
+                   case
+                     when ga.is_deprecated = 1 then ga.product || ' (deprecated)'
+                     else ga.product
+                   end as gff_attr_description,
+                   ga.source_id as gff_attr_locus_tag,
+                   (greatest(ga.start_min, ga.end_max)
+                   - least(ga.start_min, ga.end_max) + 1) as gff_attr_size
+            from apidb.GeneAttributes ga
+            where ga.source_id = $$primaryKey$$
           ]]>
         </sql>
       </sqlQuery>

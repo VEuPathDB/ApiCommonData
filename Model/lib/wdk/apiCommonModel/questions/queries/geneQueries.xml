@@ -2838,6 +2838,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                  MAX(ens.taxon_id) AS gene_taxon_id
             FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
+                 /*  join to TranslatedAaSequence seems unneccessary */
                  core.TableInfo tas_ti, dots.Similarity s,
                  core.TableInfo eas_ti, dots.ExternalAaSequence eas,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,

@@ -247,9 +247,10 @@
         <sql>
             select ns.source_id, $$projectId$$ AS project_id,
                    ns.sequence as gff_sequence
-            from apidb.GenomicSequence gs,
+            from apidb.SequenceAttributes gs,
                  dots.NaSequence ns
             where gs.source_id = $$primaryKey$$
+              and gs.is_top_level = 1
               and ns.na_sequence_id = gs.na_sequence_id
         </sql>
     </sqlQuery>
@@ -299,12 +300,13 @@
                    11 as gff_attr_translation_table,
                    'linear' as gff_attr_topology,
                    'nuclear' as gff_attr_localization
-            from apidb.GenomicSequence gs,
+            from apidb.SequenceAttributes gs,
                  dots.NaSequence ns,
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.TaxonName tn
             where gs.source_id = $$primaryKey$$
+              and gs.is_top_level = 1
               and ns.na_sequence_id = gs.na_sequence_id
               and ns.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
