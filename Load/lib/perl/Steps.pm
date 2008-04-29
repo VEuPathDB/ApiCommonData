@@ -1749,6 +1749,61 @@ EOF
 
 }
 
+
+sub makeAnnotatedProteinDownloadFileTransformed {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+
+     my $sql = <<"EOF";
+     SELECT '$dataSource'
+                ||'|'||
+            gf.source_id
+                || decode(gf.is_deprecated, 1, '(deprecated)', '')
+                ||' | organism='||
+            replace(tn.name, ' ', '_')
+                ||' | product='||
+            gf.product
+                ||' | location='||
+            fl.sequence_source_id
+                ||':'||
+            (fl.start_min + taaf.translation_start - 1)
+                ||'-'||
+            (fl.end_max - (snas.length - taaf.translation_stop))
+                ||'('||
+            decode(fl.is_reversed, 1, '-', '+')
+                ||') | length='||
+            taas.length
+            as defline,
+            taas.sequence
+           FROM apidb.featurelocation fl,
+                apidb.geneattributes gf,
+                dots.transcript t,
+                dots.splicednasequence snas,
+                sres.taxonname tn,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                dots.translatedaafeature taaf,
+                dots.translatedaasequence taas
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.external_database_release_id = edr.external_database_release_id
+        AND gf.na_feature_id = fl.na_feature_id
+        AND gf.so_term_name != 'repeat_region'
+        AND gf.so_term_name = 'protein_coding'
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND t.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND fl.is_top_level = 1
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
+
+
 sub makeRGAnnotatedProteinDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
@@ -1888,6 +1943,55 @@ EOF
     makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
+
+
+sub makeOrfDownloadFileWithAbrevDeflineTransformed {
+    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+
+    my $sql = <<"EOF";
+    SELECT
+       m.source_id
+        ||' | organism='||
+       replace(tn.name, ' ', '_')
+        ||' | location='||
+       fl.sequence_source_id
+        ||':'||
+       fl.start_min
+        ||'-'||
+       fl.end_max
+        ||'('||
+       decode(fl.is_reversed, 1, '-', '+')
+        ||') | length='||
+       taas.length as defline,
+       taas.sequence
+       FROM dots.miscellaneous m,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr,
+            apidb.featurelocation fl,
+            dots.nasequence enas
+      WHERE m.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND m.na_feature_id = fl.na_feature_id
+        AND fl.is_top_level = 1
+        AND enas.na_sequence_id = fl.na_sequence_id 
+        AND enas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
+        AND taas.length >= $length
+        AND m.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+    makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
 
 sub makeOrthomclFastaDownloadFile {
     my ($mgr, $species, $name, $project) = @_;
@@ -3567,13 +3671,13 @@ sub xdformatDownloadFileForBlastSite {
   my $siteFileDir = $propertySet->getProp('siteFileDir');
   my $blastPath = $propertySet->getProp('wuBlastPath');
 
-  my $blastDir = "$siteFileDir/webServices/release-$projectDB/$release/blast";
+  my $blastDir = "$siteFileDir/webServices/$projectDB/release-$release/blast";
 
   $mgr->runCmd("mkdir -p $blastDir");
 
   die "Failed to create $blastDir.\n"  unless (-e $blastDir);
 
-  my $inputFile = "$siteFileDir/downloadSite/$projectDB/$release/$species/$inputFile";
+  my $inputFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$species/$inputFile";
 
   my $formattedFile = "${blastDir}/$formattedFile";
 
