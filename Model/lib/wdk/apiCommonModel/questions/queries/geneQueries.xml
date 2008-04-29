@@ -418,7 +418,7 @@
 
     <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.historyId"/>
+        <paramRef ref="sharedParams.geneHistoryId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
@@ -429,7 +429,7 @@
             <![CDATA[
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
-            FROM $$historyId$$ qr, dots.GeneFeature gf1,
+            FROM $$geneHistoryId$$ qr, dots.GeneFeature gf1,
                  dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
                  dots.GeneFeature gf2, dots.NaSequence ens,
                  core.TableInfo ti
@@ -456,7 +456,7 @@ SELECT DISTINCT subq.source_id, subq.project_id,
 apidb.varchartab),',') as orthologs
 FROM (SELECT distinct sns2.source_id, ext.name as project_id,
             qr.source_id AS ortholog_id
-     FROM $$historyId$$ qr,
+     FROM $$geneHistoryId$$ qr,
            dots.splicednasequence sns1,
            dots.sequencesequencegroup ssg1,
            dots.splicednasequence sns2,
@@ -3002,13 +3002,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   
   <querySet name="GeneSubTypes">
   
-    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB"
+    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB,ToxoDB"
               isCacheable="false">
         <paramRef ref="geneParams.geneResult"/>
         <paramRef ref="geneParams.subType"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql>
+        <sql includeProjects="GiardiaDB">
             <![CDATA[
             SELECT c.*
             FROM ($$geneResult$$) c,
@@ -3017,8 +3017,46 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND c.project_id = ga.project_id
               AND ga.is_deprecated = $$subType$$
             ]]>
+        </sql>
+        <!-- in the case below, ga.strand as strain/organism, ga.tm_count as 
+             the reference id
+        -->
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT c.*
+            FROM ($$geneResult$$) c,
+                 (SELECT MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.strand, 'forward', 1, 'reverse', 2)) AS source_id
+                  FROM ($$geneResult$$) c, apidb.GeneAttributes ga
+                  WHERE c.source_id = ga.source_id
+                  GROUP BY ga.tm_count) f
+            WHERE c.source_id = f.source_id
+            ]]>
+        </sql>
+    </sqlQuery>  
+  
+    <sqlQuery name="GenesByTransformers" includeProjects="ToxoDB"
+              isCacheable="false">
+        <paramRef ref="geneParams.geneResult"/>
+        <paramRef ref="organismParams.organism" 
+                  queryRef="organismVQ.withStrains"
+                  default="reverse,forward"
+                  allowEmpty="true"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            <![CDATA[
+            SELECT ga.source_id, '@PROJECT_ID@' AS project_id
+            FROM apidb.GeneAttributes ga
+            WHERE ga.tm_count IN
+                    (SELECT ga.tm_count
+                     FROM apidb.GeneAttributes ga, ($$geneResult$$) c
+                     WHERE ga.source_id = c.source_id)
+              AND ga.strand IN ($$organism$$)
+            ]]>
        </sql>
     </sqlQuery>  
     
   </querySet>
+
 </wdkModel>

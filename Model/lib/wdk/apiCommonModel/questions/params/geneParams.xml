@@ -3780,14 +3780,20 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!--===========================================================================-->
     <!-- params for subType filters  -->
     <!--===========================================================================-->
+    <!-- the value for this param will be either cacheTable name (for WsQuery), 
+         or the whole ID query (for SqlQuery). The value is fetched by WDK
+         automatically
+    -->
     <stringParam name="geneResult"
-                  prompt="Query History:"
-                  quote="false" />
-                  
+                  prompt="Input for filter"
+                  quote="false"
+                  includeProjects="GiardiaDB,ToxoDB" />
+                 
     <enumParam name="subType"
                prompt="Include deprecated genes"
                quote="false"
-               multiPick="false">
+               multiPick="false" 
+               includeProjects="GiardiaDB">
       <enumList>
         <enumValue default="true">
           <term>No</term>
@@ -3801,6 +3807,24 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <enumValue>
           <term>Deprecated Only</term>
           <internal>1</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+                  
+    <enumParam name="subType"
+               prompt="Include redundant genes"
+               quote="false"
+               multiPick="false"
+               includeProjects="ToxoDB">
+      <enumList>
+        <enumValue default="true">
+          <term>No</term>
+          <internal>0</internal>
+        </enumValue>
+        <enumValue>
+          <display>Yes</display>
+          <term>skip</term>
+          <internal>0,1</internal>
         </enumValue>
       </enumList>
     </enumParam>

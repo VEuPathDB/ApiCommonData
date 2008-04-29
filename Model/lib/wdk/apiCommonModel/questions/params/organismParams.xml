@@ -927,6 +927,23 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
 
+
+    <!--===================================================================-->
+    <!-- strain flatvocab query -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withStrains" includeProjects="ToxoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+          SELECT 'forward' as term, 'forward' as internal FROM dual
+          UNION
+          SELECT 'reverse' as term, 'reverse' as internal FROM dual
+        ]]>
+      </sql>
+    </sqlQuery>
+
   </querySet>
 
 </wdkModel>

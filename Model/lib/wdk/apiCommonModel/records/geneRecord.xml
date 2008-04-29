@@ -84,7 +84,12 @@
        <!-- =================================================================== -->
        <subType includeProjects="GiardiaDB"
                 filterQueryRef="GeneSubTypes.GenesByFilters"
-                subTypeIgnoreValue="skip"/>
+                termToSkip="skip"/>
+                
+       <subType includeProjects="ToxoDB"
+                filterQueryRef="GeneSubTypes.GenesByFilters"
+                transformQueryRef="GeneSubTypes.GenesByTransformers"
+                termToSkip="skip"/>
 
        <!-- =================================================================== -->
        <!--  Attributes  ++++++++-->
