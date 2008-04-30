@@ -1081,6 +1081,12 @@ CREATE OR REPLACE SYNONYM apidb.GenomicSequence
                           FOR apidb.GenomicSequence&1;
 
 ---------------------------
+prompt try (just in case) to create DeprecatedGenes
+create table apidb.DeprecatedGenes (source_id varchar2(50));
+
+grant select on apidb.DeprecatedGenes to gus_r;
+
+---------------------------
 prompt apidb.GeneAttributes;
 
 CREATE TABLE apidb.GeneAttributes&1 AS
@@ -1174,7 +1180,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl,
                AS comment_string
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
-     (SELECT source_id, 1 as is_deprecated from apidb.distinct_deprecated_genes) deprecated
+     (SELECT source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated
 WHERE gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
@@ -1586,6 +1592,28 @@ CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
                           FOR apidb.ArrayElementAttributes&1;
 
 ---------------------------
+prompt try (just in case) to create BlatAlignmentLocation
+
+create table apidb.BlatAlignmentLocation as
+select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+       query_table_id, query_taxon_id, query_external_db_release_id,
+       target_table_id, target_taxon_id, target_external_db_release_id,
+       is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+       unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+       is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+       number_of_spans, query_start, query_end, target_start, target_end,
+       is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+       is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+       tstarts, 'virtual' as location_mapping
+from dots.BlatAlignment
+where 1 = 0;
+
+grant select on apidb.BlatAlignmentLocation to gus_r;
+grant insert, update, delete on apidb.BlatAlignmentLocation to gus_w;
+
+grant select on apidb.BlatAlignmentLocation to gus_r;
+
+---------------------------
 -- EstAlignmentGeneSummary
 ---------------------------
 
@@ -1946,6 +1974,7 @@ WHERE table_name IN (SELECT table_name
                      SELECT mview_name
                      FROM all_mviews)
   AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
-      LIKE '%fournumbers';
+      LIKE '%fournumbers'
+  AND owner != 'SYS';
 
 exit

@@ -40,6 +40,7 @@ WHERE table_name IN (SELECT table_name
                      SELECT mview_name
                      FROM all_mviews)
   AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
-      LIKE '%fournumbers';
+      LIKE '%fournumbers'
+  AND owner != 'SYS';
 
 exit
