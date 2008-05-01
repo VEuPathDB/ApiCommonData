@@ -5445,6 +5445,25 @@ EOF
 }
 
 
+sub blastSimOutput2ApidbSimSequences {
+  my ($mgr, $simFile) = @_;
+
+  my $shortFn = basename($simFile);
+
+  my $signal = "loadApidbSimSequences_$shortFn";
+  return if $mgr->startStep("Converting $shortFn for bulk load into Apidb.similarsequences", $signal);
+
+  my $bulkLoaderInput = $simFile . ".blkLd";
+
+  $mgr->runCmd("blastSimOutput2simSeqsInput $simFile >$bulkLoaderInput");
+
+  &sqlLoader($mgr, $bulkLoaderInput);
+
+  $mgr->endStep($signal);
+}
+
+
+
 ## these are the old "steps specific" property
 ## declarations.  we intend to incorporate them into the steps that need them
 
