@@ -59,4 +59,16 @@ CREATE TABLE apidb.CoOrtholog (
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.coortholog TO gus_w;
 GRANT SELECT ON apidb.coortholog TO gus_r;
 
+
+create view apidb.InterTaxonMatch as
+select ss.query_id, ss.subject_id, ss.subject_taxon_id,
+       ss.evalue_mant, ss.evalue_exp
+from apidb.SimilarSequences ss
+where ss.subject_taxon_id != ss.query_taxon_id;
+
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.interTaxonMatch TO gus_w;
+GRANT SELECT ON apidb.InterTaxonMatch TO gus_r;
+
+
 exit;
