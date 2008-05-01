@@ -136,7 +136,7 @@
          from apidb.SageTagAttributes a, apidb.SageTagGene sg
          where a.na_feature_id = sg.tag_feature_id
          and sg.antisense = 0
-         and sg.gene_source_id in ($$single_gene_id$$)
+         and sg.gene_source_id LIKE REGEXP_REPLACE(REPLACE($$single_gene_id$$,'*', '%'),'[[:space:]]', '')
          and ((sg.direction = '5' and sg.distance <= $$st_max_five_prime_distance$$)
              OR (sg.direction = '3' and sg.distance <= $$st_max_three_prime_distance$$))
          ]]>
@@ -164,7 +164,7 @@
          <![CDATA[
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a
-         where a.rad_source_id = $$rad_source_id$$
+         where a.rad_source_id LIKE REGEXP_REPLACE(REPLACE($$rad_source_id$$,'*', '%'),'[[:space:]]', '')
            or a.source_id = $$rad_source_id$$
          ]]>
        </sql>
