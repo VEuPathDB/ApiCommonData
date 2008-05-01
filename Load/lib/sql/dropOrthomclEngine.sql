@@ -6,4 +6,4 @@ DROP TABLE apidb.Ortholog;
  
 DROP TABLE apidb.CoOrtholog;
 
-
+exit;

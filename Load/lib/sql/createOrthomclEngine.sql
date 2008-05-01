@@ -13,7 +13,6 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SimilarSequences TO gus_w;
 GRANT SELECT ON apidb.SimilarSequences TO gus_r;
 
 CREATE INDEX apidb.ss_qtaxexp_ix ON apidb.SimilarSequences(query_id, subject_taxon_id, evalue_exp, evalue_mant, query_taxon_id, subject_id);
-
 CREATE INDEX apidb.ss_seqs_ix on apidb.SimilarSequences(query_id, subject_id, evalue_exp, evalue_mant);
 
 -----------------------------------------------------------
@@ -26,6 +25,8 @@ CREATE TABLE apidb.Inparalog (
  NORMALIZED_SCORE        NUMBER    
 );
 
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Inparalog TO gus_w;
+GRANT SELECT ON apidb.Inparalog TO gus_r;
 
 ------------------------------------------------------------
 
@@ -39,8 +40,11 @@ CREATE TABLE apidb.Ortholog (
 );
 
 CREATE INDEX apidb.ortholog_seq_a_ix on apidb.ortholog(sequence_id_a);
-
 CREATE INDEX apidb.ortholog_seq_b_ix on apidb.ortholog(sequence_id_b);
+
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ortholog TO gus_w;
+GRANT SELECT ON apidb.ortholog TO gus_r;
 
 ------------------------------------------------------------
  
@@ -51,3 +55,8 @@ CREATE TABLE apidb.CoOrtholog (
  NORMALIZED_SCORE        NUMBER    
 );
 
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.coortholog TO gus_w;
+GRANT SELECT ON apidb.coortholog TO gus_r;
+
+exit;
