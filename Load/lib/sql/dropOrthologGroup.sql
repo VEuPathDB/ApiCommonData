@@ -82,6 +82,18 @@ WHERE lower(name) =  'orthologgroup'
 
 --------------------------------------------------------------------------------
 
+DROP TABLE apidb.OrthomclTaxon;
+
+DROP SEQUENCE apidb.OrthomclTaxon_sq;
+
+DELETE FROM core.TableInfo
+WHERE lower(name) =  'ortholomcltaxon'
+  AND database_id IN (SELECT database_id
+                      FROM core.DatabaseInfo
+                      WHERE lower(name) = 'apidb');
+
+--------------------------------------------------------------------------------
+
 
 DROP INDEX dots.aasequenceimp_ind_desc;
 
@@ -90,5 +102,4 @@ DROP INDEX sres.dbref_ind_id2;
 DROP INDEX sres.dbref_ind_rmk;
 
 --------------------------------------------------------------------------------
-
 exit;
