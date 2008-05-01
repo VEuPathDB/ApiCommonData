@@ -1207,10 +1207,17 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'TwinScan predictions',
-                      'TwinScanEt predictions'))
+                      'TwinScanEt predictions',
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01'))
   -- skip new plasmo annotation
   AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
                       'Pfalciparum workshop annotations reviewed and changed');
+
+alter table apidb.geneattributes&1
+ add gene_id NUMBER(10);
+
+update apidb.geneattributes&1 ga
+set ga.gene_id = (select gi.gene_id from dots.geneinstance gi where ga.na_feature_id = gi.na_feature_id);
 
 GRANT SELECT ON apidb.GeneAttributes&1 TO gus_r;
 
