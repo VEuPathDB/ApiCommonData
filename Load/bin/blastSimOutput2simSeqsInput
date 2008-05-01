@@ -16,14 +16,14 @@ use strict;
 my $query_id;
 my $query_taxon;
 
-print "
-LOAD DATA
+print "LOAD DATA
 INFILE *
 INTO TABLE ApiDB.SimilarSequences
 FIELDS TERMINATED BY ', '
 (query_id, subject_id, query_taxon_id, subject_taxon_id, evalue_mant, evalue_exp, percent_identity, percent_match)
 BEGINDATA
 ";
+
 while (<>) {
 
   # if new query
