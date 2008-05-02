@@ -1312,7 +1312,7 @@ sub makeTranscriptDownloadFileTransformed {
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, '(deprecated)', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1597,7 +1597,7 @@ sub makeDerivedCdsDownloadFileTransformed {
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, '(deprecated)', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1757,7 +1757,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, '(deprecated)', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -3857,7 +3857,7 @@ sub removeFile {
 
   return if $mgr->startStep("removing $file from $fileDir", $signal);
 
-  $mgr->runCmd("rm -f $mgr->{dataDir}/${fileDir}/$file");
+  $mgr->runCmd("rm -rf $mgr->{dataDir}/${fileDir}/$file");
 
   $mgr->endStep($signal);
 }
