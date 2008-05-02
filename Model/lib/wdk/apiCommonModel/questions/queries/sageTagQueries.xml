@@ -165,7 +165,7 @@
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a
          where a.rad_source_id LIKE REGEXP_REPLACE(REPLACE($$rad_source_id$$,'*', '%'),'[[:space:]]', '')
-           or a.source_id = $$rad_source_id$$
+           or a.source_id LIKE REGEXP_REPLACE(REPLACE($$rad_source_id$$,'*', '%'),'[[:space:]]', '')
          ]]>
        </sql>
 </sqlQuery>
