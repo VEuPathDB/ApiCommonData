@@ -937,9 +937,8 @@
       <column name="term"/>
       <sql>
         <![CDATA[
-          SELECT 'forward' as term, 'forward' as internal FROM dual
-          UNION
-          SELECT 'reverse' as term, 'reverse' as internal FROM dual
+          SELECT distinct organism AS term, ncbi_tax_id AS internal
+          FROM apidb.GeneAttributes
         ]]>
       </sql>
     </sqlQuery>

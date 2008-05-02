@@ -3026,10 +3026,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             SELECT c.*
             FROM ($$geneResult$$) c,
                  (SELECT MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
-                            DECODE(ga.strand, 'forward', 1, 'reverse', 2)) AS source_id
+                            DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
+                                                'Toxoplasma gondii GT1', 2,
+                                                'Toxoplasma gondii VEG', 3)) AS source_id
                   FROM ($$geneResult$$) c, apidb.GeneAttributes ga
                   WHERE c.source_id = ga.source_id
-                  GROUP BY ga.tm_count) f
+                  GROUP BY ga.gene_id) f
             WHERE c.source_id = f.source_id
             ]]>
         </sql>
@@ -3040,7 +3042,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.geneResult"/>
         <paramRef ref="organismParams.organism" 
                   queryRef="organismVQ.withStrains"
-                  default="reverse,forward"
+                  default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
                   allowEmpty="true"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -3048,11 +3050,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
             SELECT ga.source_id, '@PROJECT_ID@' AS project_id
             FROM apidb.GeneAttributes ga
-            WHERE ga.tm_count IN
-                    (SELECT ga.tm_count
+            WHERE ga.gene_id IN
+                    (SELECT ga.gene_id
                      FROM apidb.GeneAttributes ga, ($$geneResult$$) c
                      WHERE ga.source_id = c.source_id)
-              AND ga.strand IN ($$organism$$)
+              AND ga.ncbi_tax_id IN ($$organism$$)
             ]]>
        </sql>
     </sqlQuery>  
