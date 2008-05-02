@@ -1306,13 +1306,13 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1348,7 +1348,7 @@ sub makeTranscriptDownloadFileTransformed {
         AND fl.is_top_level = 1
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
 
 
@@ -1358,9 +1358,9 @@ EOF
 
 
 sub makeRGTranscriptDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
     
-        my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
@@ -1402,12 +1402,12 @@ sub makeRGTranscriptDownloadFile {
         AND gf.na_feature_id = nl.na_feature_id
 EOF
 
-    if ($genomeExtDb && $genomeExtDbVer) {
-      my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
-      $sql .= " and enas.external_database_release_id = $genomeDbRls";
-    }
+  if ($genomeExtDb && $genomeExtDbVer) {
+    my $genomeDbRls = getDbRlsId($mgr,$genomeExtDb,$genomeExtDbVer);
+    $sql .= " and enas.external_database_release_id = $genomeDbRls";
+  }
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
 
 sub makeInterproDownloadFile {
@@ -1483,18 +1483,18 @@ sub makeInterproDownloadFile {
      AND xd3.name = '$interproExtDb'
 EOF
 
-    my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
+  my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
-    $mgr->runCmd($cmd);
-    $mgr->endStep($signal);
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
 }
 
 
 
 sub makeCdsDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
     SELECT  replace(tn.name, ' ', '_')
                 ||'|'||
             enas.source_id
@@ -1531,14 +1531,14 @@ sub makeCdsDownloadFile {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+  makeDownloadFile($mgr, $species, $name, $sql);
 
 }
 
 sub makeDerivedCdsDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
@@ -1585,19 +1585,19 @@ sub makeDerivedCdsDownloadFile {
         AND t.na_feature_id = taaf.na_feature_id
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1638,14 +1638,14 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 sub makeRGDerivedCdsDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
 
-        my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
@@ -1691,14 +1691,14 @@ sub makeRGDerivedCdsDownloadFile {
         AND t.na_feature_id = taaf.na_feature_id
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 sub makeAnnotatedProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
-     my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
@@ -1745,19 +1745,19 @@ sub makeAnnotatedProteinDownloadFile {
         AND taaf.aa_sequence_id = taas.aa_sequence_id
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
-     my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, ' | deprecated=true |', '')
+                || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
             replace(tn.name, ' ', '_')
                 ||' | product='||
@@ -1798,16 +1798,16 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND fl.is_top_level = 1
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 
 
 sub makeRGAnnotatedProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
-         my $sql = <<"EOF";
+  my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
             gf.source_id
@@ -1853,14 +1853,14 @@ sub makeRGAnnotatedProteinDownloadFile {
         AND taaf.aa_sequence_id = taas.aa_sequence_id
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 sub makeOrfProteinDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
     SELECT
     replace(tn.name, ' ', '_') 
         ||'|'||
@@ -1895,13 +1895,13 @@ sub makeOrfProteinDownloadFile {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql);
+  makeDownloadFile($mgr, $species, $name, $sql);
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
     SELECT
        m.source_id
         ||' | organism='||
@@ -1940,15 +1940,15 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-    my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
     SELECT
        m.source_id
         ||' | organism='||
@@ -1988,15 +1988,15 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
 
 sub makeOrthomclFastaDownloadFile {
-    my ($mgr, $species, $name, $project) = @_;
+  my ($mgr, $species, $name, $project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
     SELECT ot.three_letter_abbrev
 	|| '|' || eas.source_id
 	|| ' | ' || nvl(og.name, 'no_group')
@@ -2011,45 +2011,45 @@ sub makeOrthomclFastaDownloadFile {
 	AND eas.taxon_id = ot.taxon_id
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql, $project);
+  makeDownloadFile($mgr, $species, $name, $sql, $project);
 }
 
 sub makeOrthomclGroupsDownloadFile {
-    my ($mgr, $species, $project) = @_;
+  my ($mgr, $species, $project) = @_;
 
-    my $signal = "OrthomclGroupsDownloadFile";
+  my $signal = "OrthomclGroupsDownloadFile";
 
-    return if $mgr->startStep("Extracting group data from DB", $signal);
+  return if $mgr->startStep("Extracting group data from DB", $signal);
 
-    my $propertySet = $mgr->{propertySet};
-    my $release = $propertySet->getProp('projectRelease');
-    my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
-    my $siteFileDir = $propertySet->getProp('siteFileDir');
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-    my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
 
-    $mgr->runCmd("mkdir -p $dlDir");
+  $mgr->runCmd("mkdir -p $dlDir");
 
-    die "Failed to create $dlDir.\n"  unless (-e $dlDir);
+  die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
-    my $seqFile = "$dlDir/groups_orthomcl-2.txt";
-    (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
+  my $seqFile = "$dlDir/groups_orthomcl-2.txt";
+  (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
-    my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
 
-    my $cmd = <<"EOF";
+  my $cmd = <<"EOF";
       ga OrthoMCLData::Load::Plugin::MakeGroupsFile --outputFile $seqFile \\
       --verbose 2>> $logFile
 EOF
 
-    $mgr->runCmd($cmd);
-    $mgr->endStep($signal);
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
 }
 
 sub makeGenomicDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $strain,$project) = @_;
 
-    my $sql = <<"EOF";
+  my $sql = <<"EOF";
         SELECT '$dataSource'
                 ||'|'||
                enas.source_id
@@ -2072,7 +2072,7 @@ sub makeGenomicDownloadFile {
             AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
 
-    makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
 
 }
 
@@ -2080,7 +2080,7 @@ EOF
 sub makeIsolateDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer, $seqTable) =@_;
 
-   my $sql = <<"EOF";
+  my $sql = <<"EOF";
         SELECT
         '$name'
         ||'|'||
@@ -2106,37 +2106,37 @@ EOF
 }
 
 sub makeDownloadFile {
-    my ($mgr, $species, $name, $sql, $project) = @_;
+  my ($mgr, $species, $name, $sql, $project) = @_;
 
-    my $signal = "${name}DownloadFile";
+  my $signal = "${name}DownloadFile";
 
-    return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
+  return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
 
-    my $propertySet = $mgr->{propertySet};
-    my $release = $propertySet->getProp('projectRelease');
-    my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
-    my $siteFileDir = $propertySet->getProp('siteFileDir');
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-    my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
-    $mgr->runCmd("mkdir -p $dlDir");
+  $mgr->runCmd("mkdir -p $dlDir");
 
-    die "Failed to create $dlDir.\n"  unless (-e $dlDir);
+  die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
-    my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
+  my $seqFile = "$dlDir/${name}_$projectDB-${release}.fasta";
 
-    (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
+  (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
 
-    my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
 
-    my $cmd = <<"EOF";
+  my $cmd = <<"EOF";
       gusExtractSequences --outputFile $seqFile \\
       --idSQL \"$sql\" \\
       --verbose 2>> $logFile
 EOF
 
-    $mgr->runCmd($cmd);
-    $mgr->endStep($signal);
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
 }
 
 ##for the following you need to check out and build WDK and ApiCommonWebsite and ApiCommonData
@@ -2234,7 +2234,7 @@ sub runWdkRecordDump {
 EOF
 
   print STDERR "$cmd\n";
-print "GUS_HOME ".$ENV{GUS_HOME}."\n";
+  print "GUS_HOME ".$ENV{GUS_HOME}."\n";
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
 }
@@ -2246,20 +2246,20 @@ print "GUS_HOME ".$ENV{GUS_HOME}."\n";
 # all download files are made. OK to call again, rsync will 
 # only copy diffs. Though you'll need to remove the pipeline signal.
 sub syncDownloadDirToSite {
-    my ($mgr, $site) = @_;
+  my ($mgr, $site) = @_;
 
-    my $signal = "syncDownloadDir";
+  my $signal = "syncDownloadDir";
 
-    return if $mgr->startStep("Syncronizing download files to website", $signal);
-    my $propertySet = $mgr->{propertySet};
-    my $parentDir = 'release-' . $propertySet->getProp('projectRelease');
+  return if $mgr->startStep("Syncronizing download files to website", $signal);
+  my $propertySet = $mgr->{propertySet};
+  my $parentDir = 'release-' . $propertySet->getProp('projectRelease');
 
-    my $cmd = "rsync -ae ssh $mgr->{dataDir}/downloadSite/ $site/$parentDir";
+  my $cmd = "rsync -ae ssh $mgr->{dataDir}/downloadSite/ $site/$parentDir";
 
-    $mgr->runCmd($cmd);
-    # do we really need a signal? rysnc won't re-copy files already in place
-    # if this step is called again.
-    #$mgr->endStep($signal);
+  $mgr->runCmd($cmd);
+  # do we really need a signal? rysnc won't re-copy files already in place
+  # if this step is called again.
+  #$mgr->endStep($signal);
 }
 
 sub extractAnnotatedTranscriptSeq {
@@ -2632,22 +2632,22 @@ sub loadFastaSequences {
 
 sub documentProfileAveraging {
   my ($mgr) = @_;
-#my $documentation =
-# { name => "Average Expression Profiles",
-#   input => "",
-#   output => "Averaged expression profiles.",
-#   descrip => "",
-#   tools => [
-#      { name => "",
-#        version => "",
-#        params => "",
-#        url => "",
-#        pubmedIds => "",
-#        credits => ""
-#      },
-#     ]
-#   };
-#$mgr->documentStep('profileAveraging', $documentation);
+  #my $documentation =
+  # { name => "Average Expression Profiles",
+  #   input => "",
+  #   output => "Averaged expression profiles.",
+  #   descrip => "",
+  #   tools => [
+  #      { name => "",
+  #        version => "",
+  #        params => "",
+  #        url => "",
+  #        pubmedIds => "",
+  #        credits => ""
+  #      },
+  #     ]
+  #   };
+  #$mgr->documentStep('profileAveraging', $documentation);
 
 }
 
@@ -2666,7 +2666,7 @@ sub findTandemRepeats {
 
   $mgr->runCmd("mkdir -p $trfDir");
 
-#  $mgr->runCmd($cmd) if $cmd;
+  #  $mgr->runCmd($cmd) if $cmd;
 
   if ($file =~ /\.gz/) {
 
@@ -2745,7 +2745,7 @@ sub loadTandemRepeats {
 
   my $signal = "load${file}.TRF";
 
-my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
+  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$dbName' --extDbVersion '$dbRlsVer'";
 
   $mgr->runPlugin($signal,
                   "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args,
@@ -2767,7 +2767,7 @@ sub runBLASTZ {
 
   $mgr->runCmd("mkdir $mgr->{dataDir}/similarity/blastz_${targetFile}");
 
-  while(my $file = readdir(DIR)) {
+  while (my $file = readdir(DIR)) {
 
     next if -d $file;
 
@@ -2817,7 +2817,7 @@ sub loadBLASTZResults {
 
   my $args;
 
-  while(my $file = readdir(DIR)) {
+  while (my $file = readdir(DIR)) {
 
     next if ($file !~ /\.laj/);
 
@@ -2853,22 +2853,22 @@ sub  loadAveragedProfiles {
 
 sub documentExpressionStatistics {
   my ($mgr) = @_;
-#my $documentation =
-# { name => "Expression Profile Statistics",
-#   input => "",
-#   output => "",
-#   descrip => "",
-#   tools => [
-#      { name => "",
-#        version => "",
-#        params => "",
-#        url => "",
-#        pubmedIds => "",
-#        credits => ""
-#      },
-#     ]
-#   };
-#$mgr->documentStep('expressionStats', $documentation);
+  #my $documentation =
+  # { name => "Expression Profile Statistics",
+  #   input => "",
+  #   output => "",
+  #   descrip => "",
+  #   tools => [
+  #      { name => "",
+  #        version => "",
+  #        params => "",
+  #        url => "",
+  #        pubmedIds => "",
+  #        credits => ""
+  #      },
+  #     ]
+  #   };
+  #$mgr->documentStep('expressionStats', $documentation);
 
 
 }
@@ -2999,10 +2999,9 @@ sub InsertCompositeElementNaSequences {
   my $file = "$mgr->{dataDir}/microarray/${arrayName}To${transcriptFileName}.tab";
 
   my $args;
-  if($transcriptFileName) {
+  if ($transcriptFileName) {
     $args = "--simpleMapFile $file";
-  }
-  else {
+  } else {
     $args = "--arrayDesignName '$arrayName' --tolerateUnmappables '$tolerateUnmappables'";
   }
 
@@ -3169,31 +3168,31 @@ sub loadSageTagMap {
 		      "Loading ${tagName}To${genName} SAGE Tag map results");
     }
   }
-    $mgr->endStep($signal);
+  $mgr->endStep($signal);
 }
 
 
 
 sub concatFiles {
-   my ($mgr,$files,$catFile,$fileDir) = @_;
+  my ($mgr,$files,$catFile,$fileDir) = @_;
 
-   $files =~ s/(\S+)/$mgr->{dataDir}\/$1/g;
+  $files =~ s/(\S+)/$mgr->{dataDir}\/$1/g;
 
-   my $propertySet = $mgr->{propertySet};
+  my $propertySet = $mgr->{propertySet};
 
-   my $projRel = $propertySet->getProp('release');
+  my $projRel = $propertySet->getProp('release');
 
-   my $signal = "concat$catFile";
+  my $signal = "concat$catFile";
 
-   $signal =~ s/-$projRel//g;
+  $signal =~ s/-$projRel//g;
 
-   return if $mgr->startStep("Creating concatenated file, $catFile", $signal);
+  return if $mgr->startStep("Creating concatenated file, $catFile", $signal);
 
-   my $cmd = "cat $files > $mgr->{dataDir}/$fileDir/$catFile";
+  my $cmd = "cat $files > $mgr->{dataDir}/$fileDir/$catFile";
 
-   $mgr->runCmd($cmd);
+  $mgr->runCmd($cmd);
 
-   $mgr->endStep($signal);
+  $mgr->endStep($signal);
 }
 
 sub extractNRDB {
@@ -3392,8 +3391,8 @@ sub loadHMMPfamOutput {
 sub loadProteinBlast {
   my ($mgr, $name, $queryTable, $subjectTable, 
       $queryTableSrcIdCol,$subjectTableSrcIdCol, # optional, use '' to bypass
-      $queryDbName, $queryDbRlsVer,  # optional if no queryTableSrcIdCol
-      $subjectDbName, $subjectDbRlsVer, # optional if no subjectTableSrcIdCol
+      $queryDbName, $queryDbRlsVer, # optional if no queryTableSrcIdCol
+      $subjectDbName, $subjectDbRlsVer,	# optional if no subjectTableSrcIdCol
       $addedArgs,$restart) = @_;
       
   my $file = (-e "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz") ? "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out.gz" : "$mgr->{dataDir}/similarity/$name/master/mainresult/blastSimilarity.out";
@@ -3405,10 +3404,10 @@ sub loadProteinBlast {
 
 ##takes in a file name
 sub loadBlastSimilarities {
-  my ($mgr, $name, $file, $queryTable, $subjectTable,  # $name is the name of the signal
+  my ($mgr, $name, $file, $queryTable, $subjectTable, # $name is the name of the signal
       $queryTableSrcIdCol,$subjectTableSrcIdCol, # optional, use '' to bypass
-      $queryDbName, $queryDbRlsVer,  # optional if no queryTableSrcIdCol
-      $subjectDbName, $subjectDbRlsVer, # optional if no subjectTableSrcIdCol
+      $queryDbName, $queryDbRlsVer, # optional if no queryTableSrcIdCol
+      $subjectDbName, $subjectDbRlsVer,	# optional if no subjectTableSrcIdCol
       $addedArgs,$restart) = @_;
       
   
@@ -3533,15 +3532,15 @@ sub loadExportPredResults {
 sub documentGeneAliases {
   my ($mgr) = @_;
 
-#   my $documentation =
-#     { name => "Tracking of Gene Aliases",
-#       input => "Gene identifiers and other aliases",
-#       output => "a corrected list of gene aliases",
-#       descrip => "Gene identifiers (or IDs) have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including older, outdated IDs.  Each gene has exactly one current 'systematic' ID.  All other IDs are treated as 'aliases.'  To ensure the uniqueness of each alias, we remove any that could refer to more than one current systematic ID.",
-#       tools => []
-#     };
+  #   my $documentation =
+  #     { name => "Tracking of Gene Aliases",
+  #       input => "Gene identifiers and other aliases",
+  #       output => "a corrected list of gene aliases",
+  #       descrip => "Gene identifiers (or IDs) have evolved over time.  PlasmoDB attempts to provide a consistent set of IDs for each Gene, including older, outdated IDs.  Each gene has exactly one current 'systematic' ID.  All other IDs are treated as 'aliases.'  To ensure the uniqueness of each alias, we remove any that could refer to more than one current systematic ID.",
+  #       tools => []
+  #     };
 
-#   $mgr->documentStep('geneAliases', $documentation);
+  #   $mgr->documentStep('geneAliases', $documentation);
 
 
 }
