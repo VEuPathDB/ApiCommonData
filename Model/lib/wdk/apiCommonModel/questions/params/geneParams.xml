@@ -3811,6 +3811,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
                   
+<!--
     <enumParam name="subType"
                prompt="Include redundant genes"
                quote="false"
@@ -3823,6 +3824,36 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </enumValue>
         <enumValue>
           <display>Yes</display>
+          <term>skip</term>
+          <internal>1</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+-->
+    <enumParam name="subType"
+               prompt="Gene Instances Returned"
+               quote="false"
+               multiPick="false"
+               includeProjects="ToxoDB">
+      <enumList>
+        <enumValue default="true">
+          <term>Nonredundant representative (ME49 > GT1 > VEG)</term>
+          <internal>508771,507601,432359</internal>
+        </enumValue>
+        <enumValue>
+          <term>  Nonredundant ME49 only</term>
+          <internal>508771</internal>
+        </enumValue>
+        <enumValue>
+          <term>  Nonredundant GT1 only</term>
+          <internal>507601</internal>
+        </enumValue>
+        <enumValue>
+          <term>  Nonredundant VEG only</term>
+          <internal>432359</internal>
+        </enumValue>
+        <enumValue>
+          <display>Redundant instances (returns all instances)</display>
           <term>skip</term>
           <internal>1</internal>
         </enumValue>

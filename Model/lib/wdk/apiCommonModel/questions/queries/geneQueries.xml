@@ -3018,9 +3018,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND ga.is_deprecated = $$subType$$
             ]]>
         </sql>
-        <!-- in the case below, ga.strand as strain/organism, ga.tm_count as 
-             the reference id
-        -->
         <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT c.*
@@ -3031,6 +3028,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
                   FROM ($$geneResult$$) c, apidb.GeneAttributes ga
                   WHERE c.source_id = ga.source_id
+                  AND ncbi_tax_id in ($$subType$$)
                   GROUP BY ga.gene_id) f
             WHERE c.source_id = f.source_id
             ]]>
