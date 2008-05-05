@@ -13,7 +13,7 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-             SELECT aa.source_id, aa.project_id
+             SELECT distinct aa.source_id, aa.project_id
              FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa
              WHERE LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
                AND ea.assembly_source_id = aa.source_id
