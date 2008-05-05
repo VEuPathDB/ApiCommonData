@@ -476,7 +476,7 @@
                       '@PROJECT_ID@' as project_id
                FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg
                WHERE tg.gene_source_id = $$primaryKey$$
-                 AND t.source_id = tg.tag_source_id
+                 AND t.composite_element_id = tg.tag_source_id
                  AND tg.distance = 0
                  AND tg.direction = '3'
                ORDER BY sense DESC
