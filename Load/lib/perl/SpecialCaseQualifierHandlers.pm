@@ -1,7 +1,4 @@
 package ApiCommonData::Load::SpecialCaseQualifierHandlers;
-@ISA = qw(GUS::Supported::SpecialCaseQualifierHandlers);
-
-## NOTE: this is a subclass .... many methods are present in the super class
 
 use strict;
 
@@ -22,10 +19,34 @@ my $soTerms = ({"SECIS_element" => 1,
 	       });
 
 
-sub undoAll{
-  my ($self, $algoInvocIds, $dbh) = @_;
+sub new {
+  my ($class) = @_;
+  my $self = {};
 
-  $self->initUndo($algoInvocIds, $dbh);
+  bless($self, $class);
+
+  $self->{standardSCQH} = GUS::Supported::SpecialCaseQualifierHandlers->new();
+  return $self;
+}
+
+sub setPlugin{
+  my ($self, $plugin) = @_;
+  $self->{plugin} = $plugin;
+
+}
+
+sub initUndo{
+  my ($self, $algoInvocIds, $dbh, $commit) = @_;
+
+  $self->{'algInvocationIds'} = $algoInvocIds;
+  $self->{'dbh'} = $dbh;
+  $self->{'commit'} = $commit;
+  $self->{standardSCQH}->initUndo($algoInvocIds, $dbh, $commit);
+}
+
+sub undoAll{
+  my ($self, $algoInvocIds, $dbh, $commit) = @_;
+  $self->initUndo($algoInvocIds, $dbh, $commit);
 
   $self->_undoFunction();
   $self->_undoProduct();
@@ -126,6 +147,9 @@ sub sourceIdAndTranscriptSeq {
     $splicedNaSeq->setSequence($transcriptSequence);
 
     if($bioperlFeature->primary_tag() eq "coding_gene"){
+      print STDERR $transcript->toString();
+
+
       my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
       my $transcriptLoc = $transcript->getChild('DoTS::NALocation');
       my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
@@ -296,6 +320,57 @@ sub setSecondaryId {
 
 sub _undoSecondaryId{
   my ($self) = @_;
+}
+
+################ Gene ###############################3
+# we wrap these methods so that we don't call the standard SCQH directly, to
+# have finer control over the order of undoing
+sub gene {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return $self->{standardSCQH}->gene($tag, $bioperlFeature, $feature);
+}
+
+sub _undoGene{
+  my ($self) = @_;
+  return $self->{standardSCQH}->_undoGene();
+}
+
+################ dbXRef ###############################
+
+sub dbXRef {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return $self->{standardSCQH}->dbXRef($tag, $bioperlFeature, $feature);
+}
+
+sub _undoDbXRef{
+  my ($self) = @_;
+  return $self->{standardSCQH}->_undoDbXRef();
+}
+
+
+################ Gap Length ###############################
+
+sub gapLength {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return $self->{standardSCQH}->gapLength($tag, $bioperlFeature, $feature);
+}
+
+sub _undoGapLength{
+  my ($self) = @_;
+  return $self->{standardSCQH}->_undoGapLength();
+}
+
+
+################ Note ########################################
+
+sub note {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  return $self->{standardSCQH}->note($tag, $bioperlFeature, $feature);
+}
+
+sub _undoNote{
+  my ($self) = @_;
+  return $self->{standardSCQH}->_undoNote();
 }
 
 ############### Pseudo  ###############################
@@ -526,7 +601,7 @@ sub _getSOPrimaryKey {
 sub _deleteFromTable{
    my ($self, $tableName) = @_;
 
-  &GUS::Supported::Plugin::InsertSequenceFeaturesUndo::deleteFromTable($tableName, $self->{'algInvocationIds'}, $self->{'dbh'});
+  &GUS::Supported::Plugin::InsertSequenceFeaturesUndo::deleteFromTable($tableName, $self->{'algInvocationIds'}, $self->{'dbh'}, $self->{'commit'});
 }
 
 sub _getTranslationStart{
