@@ -1849,12 +1849,18 @@ SELECT CASE
 from dots.SageTagFeature f, apidb.FeatureLocation l, dots.NaSequence s,
      sres.TaxonName tn, rad.SageTag st,
      (select a.na_feature_id,
-       apidb.tab_to_string(CAST(COLLECT(distinct(sg.gene_source_id)) AS apidb.varchartab),', ') as gene_source_id,
-       count(distinct sg.gene_source_id) as gene_count
-from dots.SAGETAGFEATURE a left join apidb.SAGETAGGENE sg on a.na_feature_id = sg.tag_feature_id 
-where (sg.distance = 0 or sg.distance is null)
-and (sg.antisense = 0 or sg.antisense is null)
-group by na_feature_id, sg.distance, sg.antisense) gene
+             apidb.tab_to_string(CAST(COLLECT(b.gene_source_id) AS apidb.varchartab),', ') as gene_source_id,
+             count(b.gene_source_id) as gene_count
+      from apidb.SAGETAGATTRIBUTES a, (
+                             select distinct a.na_feature_id,
+                                            sg.gene_source_id as gene_source_id
+                             from dots.SAGETAGFEATURE a left join apidb.SAGETAGGENE sg on a.na_feature_id = sg.tag_feature_id 
+                             where (sg.distance = 0 or sg.distance is null)
+                             and (sg.antisense = 0 or sg.antisense is null)
+                             ) b
+       where a.na_feature_id = b.na_feature_id
+       group by a.na_feature_id
+      ) gene
 where f.na_feature_id = gene.na_feature_id (+)
   and f.na_feature_id = l.na_feature_id
   and l.is_top_level = 1
