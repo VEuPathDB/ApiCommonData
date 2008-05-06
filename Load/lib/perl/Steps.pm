@@ -3937,6 +3937,30 @@ sub grepMercatorGff {
   
 }
 
+sub makeCodonUsage {
+  my ($mgr, $species, $dir) = @_;
+
+  my $signal = "${species}MakeCodonUsage";
+
+  return if $mgr->startStep("Running CodonUsage for $species", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${species}MakeCodonUsage.log";
+
+  # inFile (input file) is to be CDS fasta file, **without pseudogenes**.
+  my $inFile = "$mgr->{dataDir}/seqfiles/${species}CDS_no_pseudogenes.fsa";
+
+  my $outFile = "$mgr->{dataDir}/downloadSite/$dir/${dir}CodonUsage.txt";
+
+  my $cmd = "makeCodonUsage --infile $inFile --outfile $outFile 2>>$logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
 sub extractAnnotatedProteinsBySpecies {
   my ($mgr, $species,$dbName,$dbRlsVer) = @_;
 
