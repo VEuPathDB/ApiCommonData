@@ -40,7 +40,13 @@ CREATE INDEX dots.sim_pval_ix
 -- GUS table shortcomings
 
 ALTER TABLE core.AlgorithmParam MODIFY (string_value VARCHAR2(2000));
+ALTER TABLE coreVer.AlgorithmParamVer MODIFY (string_value VARCHAR2(2000));
 
 ALTER TABLE sres.DbRef MODIFY (secondary_identifier varchar2(100));
+ALTER TABLE sresVer.DbRefVer MODIFY (secondary_identifier varchar2(100));
+
+ALTER TABLE sres.GoSynonym MODIFY (text VARCHAR2(1000));
+ALTER TABLE sresVer.GoSynonymVer MODIFY (text VARCHAR2(1000));
+
 
 exit
