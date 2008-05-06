@@ -3036,7 +3036,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </sqlQuery>  
   
     <sqlQuery name="GenesByTransformers" includeProjects="ToxoDB"
-              isCacheable="false">
+              isCacheable="true">
         <paramRef ref="geneParams.geneResult"/>
         <paramRef ref="organismParams.organism" 
                   queryRef="organismVQ.withStrains"
@@ -3050,7 +3050,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             FROM apidb.GeneAttributes ga
             WHERE ga.gene_id IN
                     (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, ($$geneResult$$) c
+                     FROM apidb.GeneAttributes ga, $$geneResult$$ c
                      WHERE ga.source_id = c.source_id)
               AND ga.ncbi_tax_id IN ($$organism$$)
             ]]>
