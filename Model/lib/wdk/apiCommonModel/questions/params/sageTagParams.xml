@@ -99,7 +99,7 @@
                      prompt="Minimum tag count"
                      substitute="yes"
                      quote="false">
-            <help>Enter the minimum normalized/raw SAGE tag count.</help>
+            <help>Enter the minimum frequency of the SAGE tags meeting your criteria (raw/normalized).  Tags must have this minimum frequency in at least one selected SAGE library.</help>
              <suggest default="2"/>
         </stringParam>
       <enumParam name="raw_normalized"
@@ -120,7 +120,6 @@
             </enumValue>
           </enumList>   
         </enumParam>
-
 
        <flatVocabParam name="sage_experiment" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      queryRef="SAGEtgVQ.experimentname"
@@ -146,7 +145,7 @@
             from core.TABLEINFO t, rad.QUANTIFICATION q
             where t.table_id = q.result_table_id
             and t.name = 'SAGETagResult'
-            order by term 
+            order by quantification_id
          ]]>
             </sql>
    </sqlQuery>

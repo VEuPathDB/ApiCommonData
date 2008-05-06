@@ -90,7 +90,7 @@
                      prompt="Minimum tag count"
                      substitute="yes"
                      quote="false">
-            <help>Enter the minimum number of times the SAGE tags meeting your criteria were seen.  </help>
+            <help>Enter the minimum frequency of the SAGE tags meeting your criteria.  Tags must have this minimum frequency in at least one selected SAGE library.</help>
             <suggest default="1" includeProjects="GiardiaDB"/>
             <suggest default="2" excludeProjects="GiardiaDB"/>
         </stringParam>
@@ -151,7 +151,7 @@
                      prompt="R statistic Greater Than:"
                      substitute="yes"
                      quote="false">
-            <help>Choose a minimum R value to be returned.</help>
+            <help>Choose a minimum R value to be returned. Stekel et al.’s R-statistic (Stekel, Git, and Falciani 2000) scores SAGE tags on differential expression among libraries (more variable tags have higher R values), with no assignment of significance values.</help>
              <suggest default="10"/>
         </stringParam>
 
@@ -3893,11 +3893,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <sql>
               select ai.analysis_id as internal, 
               CASE WHEN lg.name like '%Giardia intestinalis%' THEN REPLACE(lg.name,'Giardia intestinalis','Giardia lamblia') ELSE lg.name END as term
-              from rad.ANALYSIS a, Rad.ANALYSISINPUT ai, Rad.LOGICALGROUP lg, Rad.PROTOCOL p
+              from rad.ANALYSIS a, Rad.ANALYSISINPUT ai, Rad.LOGICALGROUP lg, Rad.PROTOCOL p, Rad.LOGICALGROUPLINK ll
               where a.analysis_id = ai.analysis_id
                and a.protocol_id = p.protocol_id
                and ai.logical_group_id = lg.logical_group_id
+               and lg.logical_group_id = ll.logical_group_id
                and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
+              order by ll.row_id
             </sql>
         </sqlQuery>
 
@@ -3918,7 +3920,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
              and a.analysis_id = ai.analysis_id
              and ai.logical_group_id = ll.logical_group_id
              and ll.row_id = q.quantification_id
-             order by term
+             order by q.quantification_id
             </sql>
         </sqlQuery>
 

@@ -19,10 +19,11 @@
                    to_char(aa.tag_count, '99990.99') as norm_count,
                    to_char(aa.library_total_tag_count, '99999.99') as total_norm_count, 
                    to_char(aa.library_tag_percentage, '990D00000') || '%' as norm_percent
-            from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a
+            from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a, Rad.Assay ra
             where a.source_id = $$primaryKey$$
             and a.composite_element_id = aa.composite_element_id
-            order by aa.library_name
+            and ra.name = aa.library_name
+            order by ra.assay_id
             ]]>
            </sql>
       </sqlQuery>
