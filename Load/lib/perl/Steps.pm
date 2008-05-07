@@ -1306,7 +1306,7 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project,$deprecated) = @_;
 
   my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -1346,6 +1346,7 @@ sub makeTranscriptDownloadFileTransformed {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND fl.is_top_level = 1
+        AND gf.is_deprecated = $deprecated
 EOF
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -1591,7 +1592,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project, $deprecated) = @_;
 
   my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -1636,6 +1637,7 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
         AND t.na_feature_id = taaf.na_feature_id
         AND fl.is_top_level = 1
+        AND gf.is_deprecated = $deprecated
 EOF
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -1751,7 +1753,7 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project,$deprecated) = @_;
 
   my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -1796,6 +1798,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND fl.is_top_level = 1
+        AND gf.is_deprecated = $deprecated
 EOF
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -3171,7 +3174,21 @@ sub loadSageTagMap {
   $mgr->endStep($signal);
 }
 
+sub concatFilesGeneral {
+  my ($mgr, $files, $fileDir, $catFile, $catFileDir) = @_;
 
+  $files =~ s/(\S+)/$fileDir\/$1/g;
+
+  my $signal = "concat$catFile";
+
+  return if $mgr->startStep("Creating concatenated file, $catFile in $catFileDir", $signal);
+
+  my $cmd = "cat $files > $catFileDir/$catFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
 
 sub concatFiles {
   my ($mgr,$files,$catFile,$fileDir) = @_;
