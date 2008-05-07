@@ -1356,31 +1356,42 @@ SELECT CASE
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
-       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 60, snp_loc.start_min - 60), 1, 60)
+       SUBSTR(DBMS_LOB.SUBSTR(sequence.sequence, 60, snp_loc.start_min - 60), 1, 60)
          AS lflank,
-       SUBSTR(DBMS_LOB.SUBSTR(ns.sequence, 60, snp_loc.start_min + 1), 1, 60)
+       SUBSTR(DBMS_LOB.SUBSTR(sequence.sequence, 60, snp_loc.start_min + 1), 1, 60)
          AS rflank,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id,
-       SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num
-FROM dots.NaSequence ns, dots.SnpFeature snp, apidb.FeatureLocation snp_loc,
+       SUBSTR(chromosome_info.chromosome, 1, 20) AS chromosome,
+       chromosome_info.chromosome_order_num
+FROM dots.SnpFeature snp, apidb.FeatureLocation snp_loc,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, sres.Taxon,
-     sres.TaxonName tn,
-     apidb.GenomicSequence sequence,
+     sres.TaxonName tn, dots.NaSequence sequence,
      (SELECT gene.source_id, gene_loc.is_reversed, gene.na_feature_id,
              gene_loc.na_sequence_id
       FROM dots.GeneFeature gene, apidb.FeatureLocation gene_loc
       WHERE gene.na_feature_id = gene_loc.na_feature_id
-            and gene_loc.is_top_level = 1) gene_info
+            and gene_loc.is_top_level = 1) gene_info,
+     (SELECT na_sequence_id, chromosome, chromosome_order_num
+      FROM dots.ExternalNaSequence
+     UNION
+      SELECT na_sequence_id, chromosome, chromosome_order_num
+      FROM dots.VirtualSequence
+     UNION
+      SELECT na_sequence_id, null as chromosome, null as chromosome_order_num
+      FROM dots.NaSequence
+      WHERE subclass_view not in ('ExternalNASequence', 'VirtualSequence')
+     ) chromosome_info
 WHERE edr.external_database_release_id = snp.external_database_release_id
   AND ed.external_database_id = edr.external_database_id
-  AND ns.na_sequence_id = gene_info.na_sequence_id
   AND gene_info.na_sequence_id = snp_loc.na_sequence_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND snp_loc.na_feature_id = snp.na_feature_id
+  AND snp_loc.is_top_level = 1
+  AND sequence.na_sequence_id = snp_loc.na_sequence_id
+  AND chromosome_info.na_sequence_id = snp_loc.na_sequence_id
   AND gene_info.na_feature_id(+) = snp.parent_id;
 
 GRANT SELECT ON apidb.SnpAttributes&1 TO gus_r;
