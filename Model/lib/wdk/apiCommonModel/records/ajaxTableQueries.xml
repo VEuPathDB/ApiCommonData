@@ -131,7 +131,7 @@
 <!-- BLAST ALGORITHM QUERIES -->
 <!--=====================================================================-->
 
-        <!-- AjaxTables.Blast_Transcripts_Gemone_Est_TermList -->
+        <!-- AjaxTables.Blast_Transcripts_Genome_Est_TermList -->
         <sqlQuery name="Blast_Transcripts_Genome_Est_TermList" isCacheable='true'> 
             <paramRef ref="recordParams.primaryKey"/>  
             <paramRef ref="recordParams.projectId"/> 
@@ -399,11 +399,14 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
         </sqlQuery>
 
         <!-- AjaxTables.BlastAssembliesOrganismTermList -->
-	<sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="CryptoDB,ToxoDB,ApiDB">
+	<sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,ApiDB">
 	    <paramRef ref="recordParams.primaryKey"/>
 	    <paramRef ref="recordParams.projectId"/>
 	    <column name="term"/>
 	    <column name="internal"/>
+ <sql includeProjects="GiardiaDB">
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 8 as idx from dual
+	    </sql>
 	    <sql includeProjects="CryptoDB">
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual
 	    </sql>
