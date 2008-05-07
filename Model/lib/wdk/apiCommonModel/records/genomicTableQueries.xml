@@ -41,7 +41,7 @@
               FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.NaSequence ens
-              WHERE u.email = c.email
+              WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'genome'
                     AND c.stable_id = ens.source_id
                     AND ens.source_id = $$primaryKey$$
