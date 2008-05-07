@@ -48,5 +48,8 @@ ALTER TABLE sresVer.DbRefVer MODIFY (secondary_identifier varchar2(100));
 ALTER TABLE sres.GoSynonym MODIFY (text VARCHAR2(1000));
 ALTER TABLE sresVer.GoSynonymVer MODIFY (text VARCHAR2(1000));
 
+ALTER TABLE sres.GoEvidenceCode MODIFY (description VARCHAR2(4000));
+ALTER TABLE sresVer.GoEvidenceCodeVer MODIFY (description VARCHAR2(4000));
+
 
 exit
