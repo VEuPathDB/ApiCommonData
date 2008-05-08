@@ -16,6 +16,7 @@
             <column name="organism"  sortingTable="apidb.sagetagattributes"/>
             <column name="rad_source_id"  sortingTable="apidb.sagetagattributes"/>
             <column name="gene_source_id" sortingTable="apidb.sagetagattributes"/>
+            <column name="gene_product" sortingTable="apidb.sagetagattributes"/>
             <column name="gene_count" sortingTable="apidb.sagetagattributes"/>
             <column name="feature_source_id" sortingTable="apidb.sagetagattributes"/>
             <sql>
@@ -32,6 +33,7 @@
                    sta.organism,
                    case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id,
                    gene_source_id,
+                   gene_product,
                    gene_count,
                    feature_source_id
             from apidb.SageTagAttributes sta

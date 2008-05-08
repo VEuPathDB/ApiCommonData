@@ -881,14 +881,15 @@
                       t.occurrence as genomeOccurrences,
                       decode(tg.antisense,0,'sense',1,'antisense') as sense,
                       sta.source_id,
-                      '@PROJECT_ID@' as project_id
-               FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg, apidb.SageTagAttributes sta
+                      '@PROJECT_ID@' as project_id, a.assay_id
+               FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg, apidb.SageTagAttributes sta, rad.assay a
                WHERE tg.gene_source_id = $$primaryKey$$
                  AND t.composite_element_id = tg.tag_source_id
                  AND tg.tag_feature_id = sta.na_feature_id
+                 AND a.name = t.library_name
                  AND tg.distance = 0
                  AND tg.direction = '3'
-               ORDER BY sequence, library, sense DESC
+              ORDER BY sense desc, a.assay_id asc, frequency desc
             ]]>
             </sql>
         </sqlQuery>
