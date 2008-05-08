@@ -36,7 +36,7 @@
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
         <column name="project_id"/>
-       <sql excludeProjects="GiardiaDB,TrichDB">
+       <sql excludeProjects="TrichDB">
              <![CDATA[
             SELECT DISTINCT gi.gene AS source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GeneId gi, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
@@ -62,6 +62,7 @@
            ]]>
        </sql>
 
+<!--
  <sql includeProjects="GiardiaDB">
              <![CDATA[
             SELECT DISTINCT gf.source_id AS source_id, '@PROJECT_ID@' as project_id
@@ -76,6 +77,7 @@
                                                '[[:space:]]', '')
            ]]>
        </sql>
+-->
 
     </sqlQuery>
 
