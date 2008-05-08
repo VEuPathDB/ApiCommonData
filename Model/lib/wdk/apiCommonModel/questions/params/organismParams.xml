@@ -354,9 +354,11 @@
              <sql>
                 SELECT orgs.term, orgs.internal
                 FROM (SELECT CASE 
-                        WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
-                        else tn.name
-                      END as term, t.taxon_id AS internal
+                         WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
+                         ELSE tn.name END as term,
+                        CASE WHEN tn.name like 'Giardia%' THEN
+                         (SELECT taxon_id FROM sres.taxonName where name = 'Giardia lamblia ATCC 50803')
+                          ELSE t.taxon_id END AS internal
                       FROM sres.TaxonName tn, sres.taxon t
                       WHERE tn.name_class='scientific name'
                         AND t.taxon_id = tn.taxon_id
