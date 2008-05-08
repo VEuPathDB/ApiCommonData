@@ -172,8 +172,12 @@
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
             </sql>
             <sql includeProjects="GiardiaDB">
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual
              </sql>
+
+                 
+
 <sql includeProjects="TrichDB">
                  SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION
                  SELECT 'Trichomonas vaginalis (Repeated Genes)' as term, 'Trichomonas vaginalis (Repeated Genes)' as internal from dual
