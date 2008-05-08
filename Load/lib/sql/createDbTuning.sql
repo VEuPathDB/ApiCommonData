@@ -35,6 +35,9 @@ CREATE INDEX dots.loc_feat_ix
 
 CREATE INDEX dots.sim_pval_ix
        ON dots.Similarity (query_id, pvalue_exp, pvalue_mant, subject_id);
+
+CREATE INDEX dots.nasequenceimp_string1_idx
+       ON dots.NaSequenceImp (string1, na_sequence_id);
 -------------------------------------------------------------------------------
 
 -- GUS table shortcomings
