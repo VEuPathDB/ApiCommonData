@@ -1965,6 +1965,235 @@ GRANT SELECT ON apidb.AsmAlignmentGeneSummary&1 TO gus_r;
 CREATE OR REPLACE SYNONYM apidb.AsmAlignmentGeneSummary
                           FOR apidb.AsmAlignmentGeneSummary&1;
 
+-------------------------------------------------------------------------------
+
+prompt PlasmoExpressionGraphs
+
+CREATE TABLE apidb.PlasmoExpressionGraphs&1 AS
+SELECT gf.source_id,
+       COUNT(derisi_winzeler) AS graph_derisi_winzeler,
+       COUNT(winzeler) AS graph_winzeler, COUNT(ThreeD7) AS graph_3d7,
+       COUNT(HB3) AS graph_hb3, COUNT(Dd2) AS graph_dd2,
+       COUNT(waters) AS graph_waters, COUNT(gametocyte) as graph_gametocyte,
+       COUNT(cowman) AS graph_cowman, COUNT(mexp128) AS graph_mexp128,
+       COUNT(mexp494) AS graph_mexp494
+FROM dots.GeneFeature gf,
+     (SELECT p1.source_id, 1 AS derisi_winzeler
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3,
+           apidb.profile p4, apidb.profileSet ps4,
+           apidb.profile p5, apidb.profileSet ps5,
+           apidb.profile p6, apidb.profileSet ps6,
+           apidb.profile p7, apidb.profileSet ps7,
+           apidb.profile p8, apidb.profileSet ps8,
+           apidb.profile p9, apidb.profileSet ps9,
+           apidb.profile p10, apidb.profileSet ps10
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p4.profile_set_id = ps4.profile_set_id
+        AND p5.profile_set_id = ps5.profile_set_id
+        AND p6.profile_set_id = ps6.profile_set_id
+        AND p7.profile_set_id = ps7.profile_set_id
+        AND p8.profile_set_id = ps8.profile_set_id
+        AND p9.profile_set_id = ps9.profile_set_id
+        AND p10.profile_set_id = ps10.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND p1.source_id = p4.source_id
+        AND p1.source_id = p5.source_id
+        AND p1.source_id = p6.source_id
+        AND p1.source_id = p7.source_id
+        AND p1.source_id = p8.source_id
+        AND p1.source_id = p9.source_id
+        AND p1.source_id = p10.source_id
+        AND ps1.name = 'DeRisi HB3 Smoothed Averaged'
+        AND ps2.name = 'DeRisi HB3 Percents Averaged'
+        AND ps3.name = 'DeRisi 3D7 Smoothed Averaged'
+        AND ps4.name = 'DeRisi 3D7 Percents Averaged'
+        AND ps5.name = 'DeRisi Dd2 Smoothed Averaged'
+        AND ps6.name = 'DeRisi Dd2 Percents Averaged'
+        AND ps7.name = 'winzeler_cc_sorbExp'
+        AND ps8.name = 'winzeler_cc_sorbPct'
+        AND ps9.name = 'winzeler_cc_tempExp'
+        AND ps10.name = 'winzeler_cc_tempPct') combo,
+     (SELECT p1.source_id, 1 AS winzeler
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3,
+           apidb.profile p4, apidb.profileSet ps4,
+           apidb.profile p5, apidb.profileSet ps5,
+           apidb.profile p6, apidb.profileSet ps6,
+           apidb.profile p7, apidb.profileSet ps7,
+           apidb.profile p8, apidb.profileSet ps8
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p4.profile_set_id = ps4.profile_set_id
+        AND p5.profile_set_id = ps5.profile_set_id
+        AND p6.profile_set_id = ps6.profile_set_id
+        AND p7.profile_set_id = ps7.profile_set_id
+        AND p8.profile_set_id = ps8.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND p1.source_id = p4.source_id
+        AND p1.source_id = p5.source_id
+        AND p1.source_id = p6.source_id
+        AND p1.source_id = p7.source_id
+        AND p1.source_id = p8.source_id
+        AND ps1.name = 'winzeler_cc_sorbExp'
+        AND ps2.name = 'winzeler_cc_sorbPct'
+        AND ps3.name = 'winzeler_cc_sorbLgp'
+        AND ps4.name = 'winzeler_cc_tempExp'
+        AND ps5.name = 'winzeler_cc_tempPct'
+        AND ps6.name = 'winzeler_cc_tempLgp'
+        AND ps7.name = 'winzeler_cc_sporExp'
+        AND ps8.name = 'winzeler_cc_sporPct') winzeler,
+     (SELECT p1.source_id, 1 AS threeD7
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND ps1.name = 'DeRisi 3D7 Smoothed Averaged'
+        AND ps2.name = 'DeRisi 3D7 Normalized repsCollapsed Averaged'
+         AND ps3.name = 'DeRisi 3D7 Percents Averaged') threeD7,
+     (SELECT p1.source_id, 1 AS HB3
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND ps1.name = 'DeRisi HB3 Smoothed Averaged'
+        AND ps2.name = 'DeRisi HB3 Normalized repsCollapsed Averaged'
+         AND ps3.name = 'DeRisi HB3 Percents Averaged') HB3,
+     (SELECT p1.source_id, 1 AS Dd2
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND ps1.name = 'DeRisi Dd2 Smoothed Averaged'
+        AND ps2.name = 'DeRisi Dd2 Normalized repsCollapsed Averaged'
+         AND ps3.name = 'DeRisi Dd2 Percents Averaged') Dd2,
+     (SELECT p1.source_id, 1 AS waters
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3,
+           apidb.profile p4, apidb.profileSet ps4,
+           apidb.profile p5, apidb.profileSet ps5
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p4.profile_set_id = ps4.profile_set_id
+        AND p5.profile_set_id = ps5.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND p1.source_id = p3.source_id
+        AND p1.source_id = p4.source_id
+        AND p1.source_id = p5.source_id
+        AND ps1.name = 'Waters HPE Percents Averaged'
+        AND ps2.name = 'Waters HP Timecourse Averaged'
+        AND ps3.name = 'Waters HP Percents Averaged'
+        AND ps4.name = 'Waters HPE Timecourse Averaged'
+        AND ps5.name = 'Waters HPE Percents Averaged') waters,
+     (SELECT p1.source_id, 1 AS gametocyte
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p1.source_id = p2.source_id
+        AND ps1.name = 'winzeler_NF54_gametocyte'
+        AND ps2.name = 'winzeler_3D7_gametocyte') gametocyte,
+    (SELECT p.source_id, 1 AS cowman
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'P.falciparum strain 3D7, SIR2 knockout'
+        AND p.profile_set_id = ps.profile_set_id) cowman,
+    (SELECT p.source_id, 1 AS mexp128
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4 at ring, trophozite and schizont stages.-Averaged'
+        AND p.profile_set_id = ps.profile_set_id) mexp128,
+    (SELECT p.source_id, 1 AS mexp494
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum'
+        AND p.profile_set_id = ps.profile_set_id) mexp494
+  WHERE gf.source_id = combo.source_id(+)
+  AND gf.source_id = winzeler.source_id(+)
+  AND gf.source_id = threeD7.source_id(+)
+  AND gf.source_id = HB3.source_id(+)
+  AND gf.source_id = Dd2.source_id(+)
+  AND gf.source_id = waters.source_id(+)
+  AND gf.source_id = gametocyte.source_id(+)
+  AND gf.source_id = cowman.source_id(+)
+  AND gf.source_id = mexp128.source_id(+)
+  AND gf.source_id = mexp494.source_id(+)
+GROUP BY gf.source_id;
+
+GRANT SELECT ON apidb.PlasmoExpressionGraphs&1 TO gus_r;
+
+CREATE INDEX apidb.PlasmoExp_sourceId_idx&1 ON apidb.PlasmoExpressionGraphs&1 (source_id);
+
+
+CREATE OR REPLACE SYNONYM apidb.PlasmoExpressionGraphs FOR apidb.PlasmoExpressionGraphs&1;
+
+-------------------------------------------------------------------------------
+
+prompt ToxoExpressionGraphs
+
+CREATE TABLE apidb.ToxoExpressionGraphs&1 AS
+SELECT ga.source_id,
+       COUNT(starvation) as graph_starvation, COUNT(archetypal) AS graph_archetypal
+FROM apidb.GeneAttributes ga,
+     (SELECT p.source_id, 1 AS starvation
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Effects of Glucose Starvation in Toxoplasma gondii'
+        AND p.profile_set_id = ps.profile_set_id) starvation,
+     (SELECT p.source_id, 1 AS archetypal
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
+        AND p.profile_set_id = ps.profile_set_id) archetypal
+  WHERE ga.source_id = starvation.source_id(+)
+    AND ga.source_id = archetypal.source_id(+)
+GROUP BY ga.source_id;
+
+GRANT SELECT ON apidb.ToxoExpressionGraphs&1 TO gus_r;
+
+CREATE INDEX apidb.ToxoExp_sourceId_idx&1 ON apidb.ToxoExpressionGraphs&1 (source_id);
+
+
+CREATE OR REPLACE SYNONYM apidb.ToxoExpressionGraphs FOR apidb.ToxoExpressionGraphs&1;
+
+-------------------------------------------------------------------------------
+
+prompt GiardiaExpressionGraphs
+
+CREATE TABLE apidb.GiardiaExpressionGraphs&1 AS
+SELECT ga.source_id,
+       COUNT(stress) as graph_stress
+FROM apidb.GeneAttributes ga,
+     (SELECT p.source_id, 1 AS stress
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Stress Response in Giardia lamblia Trophozoites-Averaged'
+        AND p.profile_set_id = ps.profile_set_id) stress
+  WHERE ga.source_id = stress.source_id(+)
+GROUP BY ga.source_id;
+
+GRANT SELECT ON apidb.GiardiaExpressionGraphs&1 TO gus_r;
+
+CREATE INDEX apidb.ExpGraphSum_sourceId_idx&1 ON apidb.GiardiaExpressionGraphs&1 (source_id);
+
+
+CREATE OR REPLACE SYNONYM apidb.GiardiaExpressionGraphs FOR apidb.GiardiaExpressionGraphs&1;
+
 ---------------------------
 -- cleanup
 ---------------------------

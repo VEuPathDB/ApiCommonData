@@ -12,6 +12,7 @@ select distinct regexp_replace(table_name, '[^0-9]*', '')
 from all_tables
 where regexp_replace(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       like '%fournumbers'
+  AND owner != 'SYS'
 order by regexp_replace(table_name, '[^0-9]*', '');
 
 exit;

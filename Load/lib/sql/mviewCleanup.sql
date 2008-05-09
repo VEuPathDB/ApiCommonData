@@ -24,7 +24,8 @@ WHERE mview_name IN (SELECT mview_name
                      SELECT table_name
                      FROM all_synonyms)
   AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
-      LIKE '%fournumbers';
+      LIKE '%fournumbers'
+  AND owner != 'SYS';
 
 prompt These tables appear superfluous (their names end in four digits but no synonym points at them).
 prompt Consider dropping them if all synonyms are OK.
