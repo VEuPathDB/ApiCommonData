@@ -626,5 +626,14 @@ sub fetchTaxonId {
   $self->{taxonId} = $taxon->getTaxonId();
 }
 
+sub undoTables {
+  qw(
+    DoTS.EST
+    DoTS.ExternalNASequence
+    DoTS.Library
+    SRes.Contact
+    );
+}
+
 
 1;
