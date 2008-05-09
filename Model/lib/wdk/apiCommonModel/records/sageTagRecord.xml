@@ -30,7 +30,6 @@
          <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="rad_source_id" displayName="External Identifier" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="project_id" displayName="Project Id" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
-         <columnAttribute name="gene_count" displayName="Total Number of Gene Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="gene_source_id" displayName="Gene" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="gene_product" displayName="Gene Product" internal="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
          <columnAttribute name="feature_source_id" displayName="Feature source id" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
@@ -48,6 +47,10 @@
          <columnAttribute name="total_alignments" displayName="Number of Genomic Alignments" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
+      <attributeQueryRef ref="SageTagAttributes.GeneAlignmentCount">
+         <columnAttribute name="total_gene_alignments" displayName="Gene Count" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+      </attributeQueryRef>
+
 
       <textAttribute name="overview" displayName="Overview" inReportMaker="false" internal="true">
         <text>
@@ -57,8 +60,8 @@
              Sequence Id: $$sequence_id$$<br>
              Tag Start: $$start_min$$<br>
              Tag End: $$end_max$$<br>
-             Total Number of Genomic Alignments:  $$total_alignments$$
-             Total Number of Gene Alignments:  $$gene_count$$
+             Number of Genomic Alignments:  $$total_alignments$$<br>
+             Number of Genes Hit:  $$total_gene_alignments$$
              ]]>
         </text>
       </textAttribute>

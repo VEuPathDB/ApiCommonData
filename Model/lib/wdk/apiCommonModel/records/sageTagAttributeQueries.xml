@@ -17,7 +17,6 @@
             <column name="rad_source_id"  sortingTable="apidb.sagetagattributes"/>
             <column name="gene_source_id" sortingTable="apidb.sagetagattributes"/>
             <column name="gene_product" sortingTable="apidb.sagetagattributes"/>
-            <column name="gene_count" sortingTable="apidb.sagetagattributes"/>
             <column name="feature_source_id" sortingTable="apidb.sagetagattributes"/>
             <sql>
             <![CDATA[
@@ -34,7 +33,6 @@
                    case when sta.rad_source_id is null then 'N/A' else sta.rad_source_id end as rad_source_id,
                    gene_source_id,
                    gene_product,
-                   gene_count,
                    feature_source_id
             from apidb.SageTagAttributes sta
             where sta.source_id = $$primaryKey$$
@@ -50,6 +48,23 @@
             <sql>
             <![CDATA[
              select count(*) as total_alignments
+             from apidb.SAGETAGATTRIBUTES a
+             where a.composite_element_id in 
+                 (select composite_element_id 
+                  from apidb.SAGETAGATTRIBUTES 
+                  where source_id = $$primaryKey$$)
+            group by a.composite_element_id
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="GeneAlignmentCount" isCacheable='false'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="total_gene_alignments"/>
+            <sql>
+            <![CDATA[
+             select sum(gene_count) as total_gene_alignments
              from apidb.SAGETAGATTRIBUTES a
              where a.composite_element_id in 
                  (select composite_element_id 
