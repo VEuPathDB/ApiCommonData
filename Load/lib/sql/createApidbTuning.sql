@@ -2194,6 +2194,76 @@ CREATE INDEX apidb.ExpGraphSum_sourceId_idx&1 ON apidb.GiardiaExpressionGraphs&1
 
 CREATE OR REPLACE SYNONYM apidb.GiardiaExpressionGraphs FOR apidb.GiardiaExpressionGraphs&1;
 
+-------------------------------------------------------------------------------
+
+prompt NaSynteny
+
+CREATE TABLE apidb.NaSynteny&1 AS
+SELECT
+    sim.similarity_id,
+    extq.na_sequence_id query_na_sequence_id,
+    extt.na_sequence_id target_na_sequence_id,
+    extq.source_id query_source_id,
+    extt.source_id target_source_id,
+    sim.min_subject_start ,
+    sim.max_subject_end ,
+    sim.min_query_start ,
+    sim.max_query_end,
+    sim.IS_REVERSED,
+    sim.score,
+    sim.pvalue_mant,
+    sim.pvalue_exp
+FROM
+    DoTS.Similarity sim,
+    DoTS.ExternalNASequence extt,
+    DoTS.ExternalNASequence extq,
+    Core.TableInfo qtab,
+    Core.TableInfo stab
+WHERE
+    sim.query_id = extq.na_sequence_id and
+    sim.subject_id = extt.na_sequence_id and
+    sim.subject_table_id = stab.table_id and 
+    stab.name = 'ExternalNASequence'and 
+    sim.query_table_id  = qtab.table_id and 
+    qtab.name = 'ExternalNASequence'
+UNION
+SELECT
+    sim.similarity_id,
+    extt.na_sequence_id query_na_sequence_id,
+    extq.na_sequence_id target_na_sequence_id,
+    extt.source_id query_source_id,
+    extq.source_id target_source_id,
+    sim.min_query_start min_subject_start,
+    sim.max_query_end max_subject_end,
+    sim.min_subject_start min_query_start,
+    sim.max_subject_end max_query_end,
+    sim.IS_REVERSED,
+    sim.score,
+    sim.pvalue_mant,
+    sim.pvalue_exp
+FROM
+    DoTS.Similarity sim,
+    DoTS.ExternalNASequence extt,
+    DoTS.ExternalNASequence extq,
+    Core.TableInfo qtab,
+    Core.TableInfo stab
+WHERE
+    sim.query_id = extq.na_sequence_id and
+    sim.subject_id = extt.na_sequence_id and
+    sim.subject_table_id = stab.table_id and 
+    stab.name = 'ExternalNASequence'and 
+    sim.query_table_id  = qtab.table_id and 
+    qtab.name = 'ExternalNASequence'
+;
+
+GRANT SELECT ON apidb.NaSynteny&1 TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON apidb.NaSynteny&1 TO gus_w;
+
+CREATE BITMAP INDEX apidb.syn_query_ix&1 ON apidb.NaSynteny&1(query_na_sequence_id);
+CREATE BITMAP INDEX apidb.syn_target_ix&1 ON apidb.NaSynteny&1(target_na_sequence_id);
+
+CREATE OR REPLACE SYNONYM apidb.NaSynteny FOR apidb.NaSynteny&1;
+
 ---------------------------
 -- cleanup
 ---------------------------

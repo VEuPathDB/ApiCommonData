@@ -13,6 +13,7 @@ from all_tables
 where regexp_replace(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       like '%fournumbers'
   AND owner != 'SYS'
+  AND table_name not like 'QUERY_RESULT_%'
 order by regexp_replace(table_name, '[^0-9]*', '');
 
 exit;
