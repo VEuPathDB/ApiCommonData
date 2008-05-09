@@ -1325,9 +1325,13 @@ Find genes that are predicted to encode a signal peptide.
         </description>
 
 
-       <propertyList name="specificAttribution">
+       <propertyList name="specificAttribution" excludeProjects="GiardiaDB">
            <value>OrthoMCL_Phyletic</value>
            <value>OrthoMCL</value>
+       </propertyList>
+       <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+           <value>OrthoMCLV2_Phyletic</value>
+           <value>OrthoMCLV2</value>
        </propertyList>
     </question>
 
@@ -1354,8 +1358,9 @@ Find genes that are predicted to encode a signal peptide.
         </description>
 
        <propertyList name="specificAttribution">
-           <value excludeProjects="GiardiaDB">PhylogeneticTrees_Giardia</value>
+           <value includeProjects="GiardiaDB">PhylogeneticTrees_Giardia</value>
        </propertyList>
+
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
