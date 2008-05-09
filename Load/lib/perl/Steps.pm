@@ -3955,7 +3955,7 @@ sub grepMercatorGff {
 }
 
 sub makeCodonUsage {
-  my ($mgr, $species, $dir) = @_;
+  my ($mgr, $species, $name) = @_;
 
   my $signal = "${species}MakeCodonUsage";
 
@@ -3963,12 +3963,19 @@ sub makeCodonUsage {
 
   my $propertySet = $mgr->{propertySet};
 
+  my $release = $propertySet->getProp('projectRelease');
+
+  my $projectDB = $propertySet->getProp('projectDB');
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species"; 
+
   my $logFile = "$mgr->{myPipelineDir}/logs/${species}MakeCodonUsage.log";
 
-  # inFile (input file) is to be CDS fasta file, **without pseudogenes**.
-  my $inFile = "$mgr->{dataDir}/seqfiles/${species}CDS_no_pseudogenes.fsa";
+  my $inFile = "$dlDir/${species}${name}_$projectDB-${release}.fasta";
 
-  my $outFile = "$mgr->{dataDir}/downloadSite/$dir/${dir}CodonUsage.txt";
+  my $outFile = "$dlDir/${species}CodonUsage_$projectDB-${release}.txt";
 
   my $cmd = "makeCodonUsage --infile $inFile --outfile $outFile 2>>$logFile";
 
