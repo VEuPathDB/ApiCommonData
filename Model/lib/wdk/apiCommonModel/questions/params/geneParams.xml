@@ -3791,10 +3791,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                   includeProjects="GiardiaDB,ToxoDB" />
                  
     <enumParam name="subType"
-               prompt="Include deprecated genes"
+               prompt="Include deprecated (demoted) genes"
                quote="false"
                multiPick="false" 
                includeProjects="GiardiaDB">
+      <help>Genes with little or no evidence that overlapped (or were subsumed by) larger genes for which there was evidence such as protein similarities, expression evidence from EST alignments, SAGE or proteomics data were marked as deprecated.  These genes will likely be removed in a subsequent release of GiardiaDB (and in GenBank) unless additional evidence is provided indicating they should be moved into the real gene category.  Please add a user comment to those deprecated genes for which you have experimental evidence indicating that they are real. </help>
       <enumList>
         <enumValue default="true">
           <term>No</term>
