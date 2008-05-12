@@ -388,6 +388,10 @@ sub findOrthologGroups {
   my ($self, $extDbRlsIdA) = @_;
 
 my $sql = "
+select g.na_feature_id, gi.gene_id as sequence_group_id, g.external_database_release_id
+from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
+where g.na_feature_id = gi.na_feature_id
+union
 select g.na_feature_id as sequence_id, ssg.group_id as sequence_group_id, g.external_database_release_id
 from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
 where g.source_id = ssg.source_id
