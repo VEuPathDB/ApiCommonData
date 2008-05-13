@@ -54,6 +54,14 @@ my $argsDeclaration =
 	      reqd => 1,
 	      isList => 0
 	     }),
+   enumArg({name => 'organism',
+              descr => 'Species to insert synteny data for',
+              constraintFunc=> undef,
+              reqd  => 1,
+              isList => 0,
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium",
+             }),
+
   ];
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -387,22 +395,33 @@ B<Return Type:> ARRAY
 sub findOrthologGroups {
   my ($self, $extDbRlsIdA) = @_;
 
-#union
-#select g.na_feature_id as sequence_id, ssg.group_id as sequence_group_id, g.external_database_release_id
-#from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
-#where g.source_id = ssg.source_id
+my $sql;
 
-my $sql = "
-select g.na_feature_id as sequence_id, to_char(gi.gene_id) as sequence_group_id, g.external_database_release_id
-from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
-where g.na_feature_id = gi.na_feature_id
-union
-select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
-from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
-where t.name = 'GeneFeature' 
- and g.na_feature_id = ssg.sequence_id
- and t.table_id = ssg.source_table_id
-";
+  if ($self->getArg('organism') eq 'Plasmodium'){
+    $sql = "select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
+    from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
+    where t.name = 'GeneFeature'
+    and g.na_feature_id = ssg.sequence_id
+    and t.table_id = ssg.source_table_id
+    ";
+  }else if($self->getArg('organism') eq 'Toxoplasma'){
+    $sql = "
+    select g.na_feature_id as sequence_id, to_char(gi.gene_id) as sequence_group_id, g.external_database_release_id
+    from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
+    where g.na_feature_id = gi.na_feature_id";
+  }else if($self->getArg('organism') eq 'Cryptosporidium'){
+    $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
+    from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
+    where g.source_id = ssg.source_id
+    UNION
+    select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
+    from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
+    where t.name = 'GeneFeature'
+    and g.na_feature_id = ssg.sequence_id
+    and t.table_id = ssg.source_table_id
+    ";
+  }
+
 
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
