@@ -1384,7 +1384,6 @@ FROM dots.SnpFeature snp, apidb.FeatureLocation snp_loc,
      ) chromosome_info
 WHERE edr.external_database_release_id = snp.external_database_release_id
   AND ed.external_database_id = edr.external_database_id
-  AND gene_info.na_sequence_id = snp_loc.na_sequence_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
