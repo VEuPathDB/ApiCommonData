@@ -93,7 +93,7 @@ create table ApiDB.Profile (
 );
 
 CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id);
-CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id);
+CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id, profile_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Profile TO gus_w;
 GRANT SELECT ON ApiDB.Profile TO gus_r;
