@@ -3894,7 +3894,7 @@ sub insertMercatorSyntenySpans {
   my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $bAgpFile) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
-  $signal .= "SyntanySpans";
+  $signal .= "SyntenySpans";
 
   return if $mgr->startStep("inserting $signal", $signal);
 
