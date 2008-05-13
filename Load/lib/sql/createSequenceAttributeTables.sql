@@ -47,6 +47,15 @@ FROM dual,
 WHERE 'AaSequenceAttribute' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
+CREATE INDEX apidb.AaSeqAttr_iep_idx
+ON apidb.AaSequenceAttribute (isoelectric_point, aa_sequence_attribute_id);
+
+CREATE INDEX apidb.AaSeqAttr_minmolwt_idx
+ON apidb.AaSequenceAttribute (min_molecular_weight, aa_sequence_attribute_id);
+
+CREATE INDEX apidb.AaSeqAttr_maxmolwt_idx
+ON apidb.AaSequenceAttribute (max_molecular_weight, aa_sequence_attribute_id);
+
 ------------------------------------------------------------------------------
 
 CREATE TABLE ApiDB.NaSequenceAttribute (
