@@ -23,6 +23,7 @@ INSERT INTO core.DatabaseInfo
 SELECT core.databaseinfo_sq.nextval, 'ApiDB',
        'Application-specific data for the ApiDB websites', sysdate,
        1, 1, 1, 1, 1, 1, 1, 1, p.project_id, 0
-FROM dual, (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p;
+FROM dual, (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p
+WHERE lower('ApiDB') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
 
 exit
