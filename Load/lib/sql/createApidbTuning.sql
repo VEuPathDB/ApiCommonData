@@ -2263,6 +2263,40 @@ CREATE BITMAP INDEX apidb.syn_target_ix&1 ON apidb.NaSynteny&1(target_na_sequenc
 
 CREATE OR REPLACE SYNONYM apidb.NaSynteny FOR apidb.NaSynteny&1;
 
+-------------------------------------------------------------------------------
+
+prompt Subcellular
+
+CREATE TABLE apidb.Subcellular&1 AS
+select ga.source_id, 'ht' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
+where ed.name = 'subcellular motif from Haldar'
+  and ed.external_database_id = edr.external_database_id
+  and edr.external_database_release_id = paf.external_database_release_id
+  and paf.source_id = ga.source_id
+union
+select ga.source_id, 'pexel' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
+where ed.name = 'subcellular motif from Cowman'
+  and ed.external_database_id = edr.external_database_id
+  and edr.external_database_release_id = paf.external_database_release_id
+  and paf.source_id = ga.source_id
+union
+select ga.source_id, 'apicoplast' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
+where ed.name = 'apicoplast targeting data from 4.4'
+  and ed.external_database_id = edr.external_database_id
+  and edr.external_database_release_id = paf.external_database_release_id
+  and paf.source_id = ga.source_id;
+
+
+GRANT SELECT ON apidb.Subcellular&1 TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON apidb.Subcellular&1 TO gus_w;
+
+CREATE INDEX apidb.subc_ix&1 ON apidb.Subcellular&1(source_id);
+
+CREATE OR REPLACE SYNONYM apidb.Subcellular FOR apidb.Subcellular&1;
+
 ---------------------------
 -- cleanup
 ---------------------------
