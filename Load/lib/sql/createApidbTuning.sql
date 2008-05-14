@@ -2297,6 +2297,102 @@ CREATE INDEX apidb.subc_ix&1 ON apidb.Subcellular&1(source_id);
 
 CREATE OR REPLACE SYNONYM apidb.Subcellular FOR apidb.Subcellular&1;
 
+-------------------------------------------------------------------------------
+
+prompt Expression
+
+CREATE TABLE apidb.Expression&1 AS
+SELECT pct_p.source_id, pct_pe.value, pct_ps.name AS profile_set_name,
+       pct_pe.element_order, pen.name AS element_name
+FROM apidb.ProfileSet pct_ps,
+     apidb.Profile pct_p, apidb.ProfileElement pct_pe,
+     apidb.ProfileSet exp_ps,
+     apidb.Profile exp_p, apidb.ProfileElement exp_pe,
+     apidb.ProfileSet lgp_ps,
+     apidb.Profile lgp_p, apidb.ProfileElement lgp_pe,
+     apidb.ProfileElementName pen
+WHERE pct_ps.profile_set_id = pct_p.profile_set_id
+  AND pct_p.profile_id = pct_pe.profile_id
+  AND exp_ps.profile_set_id = exp_p.profile_set_id
+  AND exp_p.profile_id = exp_pe.profile_id
+  AND exp_pe.element_order = pct_pe.element_order
+  AND exp_p.source_id = pct_p.source_id
+  AND exp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Exp')
+  AND exp_pe.value > 10
+  AND lgp_ps.profile_set_id = lgp_p.profile_set_id
+  AND lgp_p.profile_id = lgp_pe.profile_id
+  AND lgp_pe.element_order = exp_pe.element_order
+  AND lgp_p.source_id = pct_p.source_id
+  AND lgp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Lgp')
+  AND lgp_ps.name LIKE '%Lgp'
+  AND lgp_pe.value < -0.5
+  AND pct_ps.profile_set_id = pen.profile_set_id
+  AND exp_pe.element_order = pen.element_order;
+
+GRANT SELECT ON apidb.Expression&1 TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON apidb.Expression&1 TO gus_w;
+
+CREATE INDEX apidb.Exp_value_ix&1 ON apidb.Expression&1 (value, element_order, source_id);
+CREATE INDEX apidb.Exp_element_ix&1 ON apidb.Expression&1 (element_order, source_id);
+
+CREATE OR REPLACE SYNONYM apidb.Expression FOR apidb.Expression&1;
+
+-------------------------------------------------------------------------------
+
+prompt SnpSummary
+
+CREATE TABLE apidb.SnpSummary&1 AS
+SELECT cds_length, na_feature_id, source_id,
+       strain_a, strain_b,
+       sum(synonymous) as synonymous, 
+       sum(non_synonymous) as non_synonymous, 
+       sum(non_coding) as non_coding,
+       sum(stop) as stop,
+       sum(non_coding) + sum(synonymous) + sum(non_synonymous) as total
+FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
+              - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
+              gf.na_feature_id, gf.source_id,
+              edr.external_database_release_id,
+              SUBSTR(sva.strain, 1, 30) AS strain_a,
+              SUBSTR(svb.strain, 1, 30) AS strain_b, 
+              CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
+              CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
+              CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
+              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop
+       FROM dots.SeqVariation sva, dots.SeqVariation svb, dots.SnpFeature sf,
+            dots.SplicedNaSequence cds, dots.Transcript, dots.GeneFeature gf,
+            dots.TranslatedAaFeature taf, sres.ExternalDatabase ed,
+            sres.ExternalDatabaseRelease edr
+       WHERE ed.name NOT IN ('Broad SNPs', 'Sanger falciparum SNPs',
+                             'Su SNPs')
+         AND sva.strain  < svb.strain
+         AND sva.allele != svb.allele
+         AND sva.parent_id = svb.parent_id
+         AND sva.parent_id = sf.na_feature_id
+         AND sf.parent_id = gf.na_feature_id
+         AND sf.external_database_release_id = edr.external_database_release_id
+         AND edr.external_database_id = ed.external_database_id
+         AND gf.na_feature_id = transcript.parent_id
+         AND transcript.na_sequence_id = cds.na_sequence_id
+         AND transcript.na_feature_id = taf.na_feature_id
+)
+GROUP BY cds_length, na_feature_id, source_id,
+         strain_a, strain_b;
+
+GRANT SELECT ON apidb.SnpSummary&1 TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON apidb.SnpSummary&1 TO gus_w;
+
+CREATE INDEX apidb.SnpSummary_idx&1
+       ON apidb.SnpSummary&1(na_feature_id, source_id);
+CREATE INDEX apidb.SnpSummary_strain_idx&1
+       ON apidb.SnpSummary&1(strain_a, strain_b, source_id);
+CREATE INDEX apidb.SnpSummary_strainb_idx&1
+       ON apidb.SnpSummary&1(strain_b, strain_a, source_id);
+CREATE INDEX apidb.SnpSummary_srcId_idx&1
+       ON apidb.SnpSummary&1(source_id, na_feature_id);
+
+CREATE OR REPLACE SYNONYM apidb.SnpSummary FOR apidb.SnpSummary&1;
+
 ---------------------------
 -- cleanup
 ---------------------------
