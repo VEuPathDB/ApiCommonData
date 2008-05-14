@@ -705,7 +705,7 @@ CREATE TABLE apidb.OrthologGroupAaSequence (
 );
 
 ALTER TABLE apidb.OrthologGroupAaSequence
-ADD CONSTRAINT ogas_pk PRIMARY KEY (ortholog_group_id);
+ADD CONSTRAINT ogas_pk PRIMARY KEY (ortholog_group_aa_sequence_id);
 
 ALTER TABLE apidb.OrthologGroupAaSequence
 ADD CONSTRAINT ogas_fk1 FOREIGN KEY (ortholog_group_id)
