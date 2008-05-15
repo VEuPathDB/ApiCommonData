@@ -12,7 +12,7 @@ my ($gusConfigFile, $drop, $create, $db);
 	   "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
-  die "usage: commondbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+  die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -50,7 +50,7 @@ my @create = qw( enterDbVersion.sql
                  createTransmembraneTable.sql
                  2aryStructCallPct.sql
                  createUserTables.sql
-                 createDbTuning.sql
+                 createGusTuning.sql
                  createArrayElementFeature.sql
 	       );
 
@@ -90,7 +90,7 @@ if ($create) {
 sub runSql {
   my ($login, $password, $db, $file) = @_;
 
-  my $fullFile = "$ENV{GUS_HOME}/lib/sql/$file";
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
   -e $fullFile || die "File '$fullFile' does not exist";
 
