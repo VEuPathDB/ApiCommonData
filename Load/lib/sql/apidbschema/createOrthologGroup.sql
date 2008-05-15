@@ -713,7 +713,7 @@ REFERENCES apidb.OrthologGroup;
 
 ALTER TABLE apidb.OrthologGroupAaSequence
 ADD CONSTRAINT ogas_fk2 FOREIGN KEY (aa_sequence_id)
-REFERENCES dots.AaSequence;
+REFERENCES dots.AaSequenceImp;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroupAaSequence TO gus_w;
 GRANT SELECT ON apidb.OrthologGroupAaSequence TO gus_r;
