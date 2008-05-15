@@ -2393,6 +2393,57 @@ CREATE INDEX apidb.SnpSummary_srcId_idx&1
 
 CREATE OR REPLACE SYNONYM apidb.SnpSummary FOR apidb.SnpSummary&1;
 
+-------------------------------------------------------------------------------
+
+prompt Scaffold_Map
+
+CREATE TABLE apidb.Scaffold_Map&1 AS
+     SELECT 
+      na_sequence_id as virtual_na_sequence_id, 
+      parent_id as virtual_source_id,
+      piece_na_sequence_id,
+      source_id as piece_source_id,
+      (offset + 1) as startm,
+      (offset + length) as end,
+      strand_orientation,
+      length, 
+      sequence_order
+FROM (
+(SELECT vs.na_sequence_id, vs.source_id as parent_id, ens.source_id, 
+       sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length as chr_length, sp.strand_orientation,
+       0 as offset
+ FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+     dots.ExternalNaSequence ens
+ WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
+  and ens.na_sequence_id = sp.piece_na_sequence_id
+  and sp.sequence_order = 1 
+GROUP by vs.na_sequence_id, vs.source_id, ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length, sp.strand_orientation)
+UNION
+(SELECT vs.na_sequence_id, vs.source_id as parent_id, ens.source_id, 
+       sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length as chr_length, sp.strand_orientation,
+       sum(predecessors.length) as offset
+ FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+     dots.ExternalNaSequence ens,
+     (select sp2.virtual_na_sequence_id, sp2.sequence_order, ens2.length
+      from dots.SequencePiece sp2,
+           dots.ExternalNaSequence ens2
+      where sp2.piece_na_sequence_id = ens2.na_sequence_id) predecessors
+ WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
+  and ens.na_sequence_id = sp.piece_na_sequence_id
+  and vs.na_sequence_id = predecessors.virtual_na_sequence_id(+)
+  and sp.sequence_order > predecessors.sequence_order
+GROUP by vs.source_id, vs.na_sequence_id, ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
+       ens.length, vs.length, sp.strand_orientation )
+ORDER by na_sequence_id, offset, sequence_order);
+
+GRANT SELECT ON apidb.Scaffold_Map&1 TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON apidb.Scaffold_Map&1 TO gus_w;
+
+CREATE OR REPLACE SYNONYM apidb.Scaffold_Map FOR apidb.Scaffold_Map&1;
+
 ---------------------------
 -- cleanup
 ---------------------------

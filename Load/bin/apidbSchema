@@ -26,7 +26,9 @@ my @create = qw( enterDbVersion.sql
                  removeNullConstraintsFromSimilarityTables.sql
                  fixGusTableCapitalization.sql
                  createChromosome6Orthology.sql
+                 createDbLinks.sql
                  createDbRefAaFeature.sql
+                 createDbUser.sql
                  createDifferentialExpression.sql
                  createExpressionProfileTables.sql
                  createGeneInteractionTables.sql
@@ -34,6 +36,7 @@ my @create = qw( enterDbVersion.sql
                  createIsolateFeature.sql
                  createIsolateSourceTable.sql
                  createMassSpecSummary.sql
+                 createMassSpecSummaryTable.sql
                  createNaSequenceViews.sql
                  createOrthologGroup.sql
                  createOrthomclEngine.sql
@@ -42,11 +45,13 @@ my @create = qw( enterDbVersion.sql
                  createRadExpressionProfile.sql
                  createRelatedNaFeature.sql
                  createReportCache.sql
+                 createRodentChrColors.sql
                  createSequenceAttributeTables.sql
                  createSeqVariation.sql
                  createSnpFeature.sql
                  createStoredProcedures.sql
                  createSyntenyTables.sql
+                 createToxodbGenesView.sql
                  createTranscriptView.sql
                  createTranslatedAaFeature.sql
                  createTransmembraneTable.sql
@@ -56,7 +61,9 @@ my @create = qw( enterDbVersion.sql
                  createArrayElementFeature.sql
 	       );
 
-my @delete = qw( dropDbRefAaFeature.sql
+my @delete = qw( dropDbLinks.sql
+                 dropDbRefAaFeature.sql
+                 dropDbUser.sql
                  dropExpressionProfileTables.sql
                  dropGeneInteractionTables.sql
                  dropGeneMappingView.sql
@@ -67,10 +74,11 @@ my @delete = qw( dropDbRefAaFeature.sql
                  dropSequenceAttributeTables.sql
                  dropSnpFeature.sql
                  dropSyntenyTables.sql
+                 dropToxodbGenesView.sql
                  dropTransmembraneTable.sql
                  dropArrayElementFeature.sql
                  restoreNullConstraintsFromSimilarityTables.sql
-                 dropDbTuning.sql
+                 dropGusTuning.sql
                  dropStoredProcedures.sql
                  dropApidbSchema.sql
 	       );
