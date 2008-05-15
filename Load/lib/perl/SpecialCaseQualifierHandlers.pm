@@ -10,6 +10,7 @@ use GUS::Model::DoTS::AALocation;
 use GUS::Supported::Plugin::InsertSequenceFeaturesUndo;
 use GUS::Model::DoTS::AASequenceEnzymeClass;
 use GUS::Model::DoTS::NAFeatureComment;
+use GUS::Model::DoTS::Repeats;
 use ApiCommonData::Load::Util;
 
 # this is the list of so terms that this file uses.  we have them here so we
@@ -64,6 +65,8 @@ sub undoAll{
   $self->_undoTranscriptProteinId();
   $self->_undoTranscriptTranslExcept();
   $self->_undoProvidedOrfTranslation();
+  $self->_undoRptUnit();
+  $self->_undoCommentNterm();
 }
 
 
@@ -345,6 +348,48 @@ sub dbXRef {
 sub _undoDbXRef{
   my ($self) = @_;
   return $self->{standardSCQH}->_undoDbXRef();
+}
+
+################ rpt_unit ################################
+
+# create a comma delimited list of rpt_units
+sub rptUnit {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  my $rptUnit = join(", ", @tagValues);
+  $feature->setRptUnit($rptUnit);
+  return [];
+}
+
+# nothing special to do
+sub _undoRptUnit{
+  my ($self) = @_;
+
+}
+
+################ comment_Nterm ################################
+
+# map a consensus comment to the rpt_unit column, ignore every other value
+sub commentNterm {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+
+  foreach my $tagValue (@tagValues){
+    if ($tagValue =~ /consensus/){
+      my @tagSplit = split("consensus", $tagValue);
+      $tagSplit[1] =~ s/\s//g;
+      $feature->setRptUnit($tagSplit[1]);
+    }
+  }
+  return [];
+}
+
+# nothing special to do
+sub _undoCommentNterm{
+  my ($self) = @_;
+
 }
 
 
