@@ -230,6 +230,29 @@
         </enumList>
       </enumParam>
 
+      <enumParam name="plasmo_snapshot_changed"
+                 prompt="Updated since February 1, 2008 re-annotation snapshot"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes that have been updated since the last re-annotation snapshot was provided in PlasmoDB. The actual annotation may not have changed if a gene has now been reviewd that had not been reviewed previously.
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
       <enumParam name="plasmo_annot_status"
                  prompt="Re-annotation status"
                  multiPick="true"
