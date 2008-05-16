@@ -228,20 +228,12 @@
         <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.NaSequence ns, apidb.geneattributes ga,
-                 (SELECT t.parent_id, COUNT(*) AS tm_count
-                  FROM dots.Transcript t, dots.TranslatedAaFeature tlaf,
-                       dots.TransmembraneAaFeature tmaf, dots.AaLocation al
-                  WHERE t.na_feature_id = tlaf.na_feature_id
-                    AND tlaf.aa_sequence_id = tmaf.aa_sequence_id
-                    AND tmaf.aa_feature_id = al.aa_feature_id
-                  GROUP BY t.parent_id, t.na_feature_id, tlaf.aa_feature_id
-                  HAVING COUNT(*) >= $$min_tm$$ AND COUNT(*) <= $$max_tm$$) tms
-            WHERE tms.parent_id = gf.na_feature_id
-              AND gf.na_sequence_id = ns.na_sequence_id
-              AND ns.taxon_id IN ($$organism$$)
-              AND gf.source_id = ga.source_id
-            ORDER BY ga.tm_count, gf.source_id
+            from dots.genefeature gf, dots.nasequence nas, apidb.geneattributes ga
+            where ga.tm_count >= $$min_tm$$ 
+            AND ga.tm_count <= $$max_tm$$
+            AND ga.na_feature_id  = gf.na_feature_id
+            AND nas.na_sequence_id = gf.na_sequence_id
+            AND nas.taxon_id IN ($$organism$$)
            ]]>
         </sql>
         <sql includeProjects="CryptoDB">
