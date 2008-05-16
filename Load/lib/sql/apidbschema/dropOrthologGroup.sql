@@ -10,7 +10,7 @@ WHERE lower(name) =  'orthologgroupaasequence'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE TABLE apidb.OrthomclGroupDomain;
+DROP TABLE apidb.OrthomclGroupDomain;
 
 DROP SEQUENCE apidb.OrthomclGroupDomain_sq;
 
@@ -22,7 +22,7 @@ WHERE lower(name) =  'OrthomclGroupDomain'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE TABLE apidb.OrthomclGroupKeyword;
+DROP TABLE apidb.OrthomclGroupKeyword;
 
 DROP SEQUENCE apidb.OrthomclGroupKeyword_sq;
 
@@ -34,7 +34,7 @@ WHERE lower(name) =  'OrthomclGroupKeyword'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE TABLE apidb.OrthomclResource;
+DROP TABLE apidb.OrthomclResource;
 
 DROP SEQUENCE apidb.OrthomclResource_sq;
 
@@ -46,7 +46,7 @@ WHERE lower(name) =  'OrthomclResource'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE TABLE apidb.GroupTaxonMatrix;
+DROP TABLE apidb.GroupTaxonMatrix;
 
 DROP SEQUENCE apidb.GroupTaxonMatrix_sq;
 
@@ -58,7 +58,7 @@ WHERE lower(name) =  'GroupTaxonMatrix'
 
 --------------------------------------------------------------------------------
 
-DROP TABLE TABLE apidb.OrthomclTaxon;
+DROP TABLE apidb.OrthomclTaxon;
 
 DROP SEQUENCE apidb.OrthomclTaxon_sq;
 
