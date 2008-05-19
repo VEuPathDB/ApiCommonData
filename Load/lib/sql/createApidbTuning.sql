@@ -1158,6 +1158,7 @@ SELECT CASE
        DerisiExpn.derisi_max_timing,
        DerisiExpn.derisi_min_timing,
        DerisiExpn.derisi_min_level,
+       DerisiExpn.derisi_max_fold_induction,
        WinzelerExpn.winzeler_max_level,
        WinzelerExpn.winzeler_max_pct,
        WinzelerExpn.winzeler_max_timing,
