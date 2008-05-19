@@ -217,6 +217,7 @@ ORDER BY en.element_order
   while (my @row = $sth->fetchrow_array()) {
     push(@header, $row[0]);
   }
+
   return \@header;
 }
 
@@ -231,9 +232,15 @@ sub makeProfileHash {
   my %h;
   for (my $i=0; $i<scalar(@$profile); $i++) {
     my $h = $header->[$i];
-    $h =~ s/[^\d]//g if $h =~ /\d/;
-    $h{$h} = $profile->[$i];
+
+    my $profileKey = $h;
+    if($h =~ /0?(\d+)/) {
+      $profileKey = $1;
+    }
+
+    $h{$profileKey} = $profile->[$i];
   }
+
   return \%h;
 }
 
