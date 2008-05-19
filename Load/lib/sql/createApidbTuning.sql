@@ -650,24 +650,36 @@ CREATE INDEX apidb.GeneGoAttr_sourceId ON apidb.GeneGoAttributes (source_id);
 
 prompt apidb.DerisiExpn;
 
+DROP MATERIALIZED VIEW apidb.DerisiExpn;
 DROP TABLE apidb.DerisiExpn;
 
 CREATE TABLE apidb.DerisiExpn AS
 SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
-       derisi_max_timing, derisi_min_timing, derisi_min_level
+       derisi_max_timing, derisi_min_timing, derisi_min_level,
+       max_fold_induction as derisi_max_fold_induction
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
      (SELECT p.source_id,
              p.max_expression AS derisi_max_level,
-             p.max_percentile AS derisi_max_pct,
              p.equiv_max AS derisi_max_timing,
              p.equiv_min AS derisi_min_timing,
-             p.min_expression AS derisi_min_level
-      FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
-      WHERE ps.name = 'DeRisi 3D7 Smoothed Averaged'
-        AND ti.name = 'GeneFeature'
+             p.min_expression AS derisi_min_level,
+             p.ind_ratio as max_fold_induction
+      FROM apidb.Profile p, apidb.ProfileSet ps
+      WHERE ps.name like 'DeRisi % Smoothed Averaged'
         AND p.profile_set_id = ps.profile_set_id
-        AND ti.table_id = p.subject_table_id) expn
-WHERE gene.source_id = expn.source_id(+);
+        AND p.ind_ratio =
+          (SELECT max(p2.ind_ratio)
+           FROM apidb.Profile p2, apidb.ProfileSet ps
+           WHERE ps.name LIKE 'DeRisi % Smoothed Averaged'
+             AND p2.profile_set_id = ps.profile_set_id
+             AND p2.source_id = p.source_id)) expn,
+     (SELECT p.source_id, max(p.max_percentile) as derisi_max_pct
+      FROM apidb.Profile p, apidb.ProfileSet ps
+      WHERE ps.name like 'DeRisi % Smoothed Averaged'
+        AND p.profile_set_id = ps.profile_set_id
+      GROUP BY p.source_id) percentile
+WHERE gene.source_id = expn.source_id(+)
+  AND gene.source_id = percentile.source_id(+);
 
 GRANT SELECT ON apidb.DerisiExpn TO gus_r;
 
@@ -1058,6 +1070,7 @@ SELECT CASE
        DerisiExpn.derisi_max_timing,
        DerisiExpn.derisi_min_timing,
        DerisiExpn.derisi_min_level,
+       DerisiExpn.derisi_max_fold_induction,
        WinzelerExpn.winzeler_max_level,
        WinzelerExpn.winzeler_max_pct,
        WinzelerExpn.winzeler_max_timing,
