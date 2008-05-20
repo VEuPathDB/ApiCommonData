@@ -87,6 +87,7 @@
             <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing" includeProjects="PlasmoDB"/>
             <column name="der_max_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_timing" includeProjects="PlasmoDB"/>
             <column name="der_max_pct" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_pct" includeProjects="PlasmoDB"/>
+            <column name="der_max_fold_induction" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_fold_induction" includeProjects="PlasmoDB"/>
             <column name="winz_min_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_level" includeProjects="PlasmoDB"/>
             <column name="winz_max_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_level" includeProjects="PlasmoDB"/>
             <column name="winz_min_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_timing" includeProjects="PlasmoDB"/>
@@ -154,6 +155,7 @@
                    bfmv.derisi_min_level as der_min_level,
                    bfmv.derisi_min_timing as der_min_timing,
                    bfmv.derisi_max_timing as der_max_timing,
+                   to_char(bfmv.derisi_max_fold_induction, '999.99') as der_max_fold_induction,
                    TO_CHAR(bfmv.derisi_max_pct * 100, '99.9') as der_max_pct,
                    bfmv.winzeler_max_level as winz_max_level,
                    bfmv.winzeler_min_level as winz_min_level,
