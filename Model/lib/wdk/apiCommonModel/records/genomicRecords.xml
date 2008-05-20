@@ -193,7 +193,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB"
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,TrichDB"
                        displayName="Features"
                        inReportMaker="false">
            <text includeProjects="PlasmoDB">
@@ -204,6 +204,11 @@
            <text includeProjects="ToxoDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/toxodb/?name=$$primaryKey$$;embed=1;type=AnnotatedGenes;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+           <text includeProjects="TrichDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/trichdb/?name=$$primaryKey$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
         </textAttribute>
@@ -237,6 +242,16 @@
                 ]]>
             </text>
          </textAttribute>
+
+        <textAttribute name="gbrowseLink"  includeProjects="TrichDB"
+            inReportMaker="false">
+           <text>
+                <![CDATA[
+                @CGI_URL@/gbrowse/trichdb/?name=$$primaryKey$$:1-$$length$$;enable=Gene
+                ]]>
+           </text>
+        </textAttribute>
+
 
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
