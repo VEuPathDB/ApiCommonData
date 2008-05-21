@@ -1076,7 +1076,7 @@
         </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Pf-DD2</term>
-          <internal>DD2</internal>
+          <internal>Dd2</internal>
         </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Pf-7G8</term>
@@ -1246,7 +1246,7 @@
         </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Pf-DD2</term>
-          <internal>DD2</internal>
+          <internal>Dd2</internal>
         </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Pf-7G8</term>
@@ -1740,20 +1740,20 @@ by the sequence generator.</help>
           <sql>
 	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_a in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            where strain_a in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_b in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
+            where strain_b in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10')
             union
             select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            where strain_a not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_a not like '%-NIH'
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
+            where strain_b not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich')
             and strain_b not like '%-NIH'
             union
             select 'foobar' as internal, '-----------' as term, 2 as ord from dual
@@ -1772,20 +1772,20 @@ by the sequence generator.</help>
           <sql>
 	    select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_a in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S' )
+            where strain_a in ('Preich', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S' )
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 1 as ord
 	    from apidb.snpsummary
-            where strain_b in ('Preich', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
+            where strain_b in ('Preich', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             union
             select distinct strain_a as internal, CASE WHEN strain_a = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_a END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_a not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
+            where strain_a not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             and strain_a not like '%-NIH'
             union
 	    select distinct strain_b as internal, CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-' || strain_b END as term, 3 as ord
 	    from apidb.snpsummary
-            where strain_b not in ('3D7', 'DD2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
+            where strain_b not in ('3D7', 'Dd2', 'GHANA1', 'HB3', 'IT', '7G8', 'D10', 'Preich','D6','FCC-2','K1','RO-33','SANTALUCIA','SENEGAL3404','V1_S')
             and strain_b not like '%-NIH'
             union
             select 'foobar' as internal, '-----------' as term, 2 as ord from dual
