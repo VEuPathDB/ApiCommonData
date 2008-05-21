@@ -53,7 +53,6 @@ do
 done
 
 #--------------------------------------------------------------------------------
-
 FASTA_DIR=$MERCATOR_DIR/fasta
 GFF_DIR=$MERCATOR_DIR/gff
 ALIGN_DIR=$MERCATOR_DIR/alignDir
@@ -74,7 +73,6 @@ MAP_DRAFT=$CNDSRC_DIR/map_draft
 export PATH=$CNDSRC_DIR:$PATH
 
 #--------------------------------------------------------------------------------
-
 # Check that directories are there and make the ones you need if they're not
 for X in $MERCATOR_DIR $CNDSRC_DIR $FASTA_DIR $GFF_DIR $ALIGN_DIR $MERCATOR_INPUT $MERCATOR_OUTPUT
   do
@@ -143,14 +141,15 @@ $MAVIDALIGNDIRS --init-dir $ALIGN_DIR --mavidpath $MAVID_EXE
 
 $OMAP2COORDINATES --map-dir $ALIGN_DIR < $ALIGN_DIR/map > $ALIGN_DIR/coordinates
 
-for X in ${BASENAMES[@]} 
+for (( i = 1 ; i < ${#BASENAMES[@]} ; i++ )) 
   do
-    if [ $X != $REFERENCE_GENOME ]; then
-      AGP_FILE=$MERCATOR_OUTPUT/$X.agp
-      OUT=$MERCATOR_DIR/$X-$REFERENCE_GENOME.align
+    for (( j = i+1 ; j <= ${#BASENAMES[@]} ; j++ )) 
+     do
+       AGP_FILE=$MERCATOR_OUTPUT/${BASENAMES[$i]}.agp
+       OUT=$MERCATOR_DIR/${BASENAMES[$i]}-${BASENAMES[$j]}.align
 
-      $MAP_DRAFT $X $REFERENCE_GENOME $AGP_FILE $ALIGN_DIR >$OUT
-    fi
+       $MAP_DRAFT ${BASENAMES[$i]} ${BASENAMES[$j]} $AGP_FILE $ALIGN_DIR >$OUT
+     done
   done
  
 echo "Finished aligning multiple genomes with Mercator and MAVID"
