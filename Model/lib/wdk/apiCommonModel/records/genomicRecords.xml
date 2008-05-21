@@ -210,7 +210,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB"
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
                        displayName="Features" internal="true"
                        inReportMaker="false">
            <text includeProjects="PlasmoDB">
@@ -226,6 +226,11 @@
            <text includeProjects="GiardiaDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/giardiadb/?name=$$primaryKey$$;embed=1;type=Contigs;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+           <text includeProjects="TrichDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/trichdb/?name=$$primaryKey$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
         </textAttribute>
@@ -269,10 +274,19 @@
             </text>
          </textAttribute>
 
+         <textAttribute name="gbrowseLink"  includeProjects="TrichDB"
+             inReportMaker="false">
+            <text>
+                 <![CDATA[
+                 @CGI_URL@/gbrowse/trichdb/?name=$$primaryKey$$:1-$$length$$;enable=Gene
+                 ]]>
+            </text>
+         </textAttribute>
+
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
+         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB"
             displayName="Links to Other Web Pages" inReportMaker="false" internal="true">
            <text>
                 <![CDATA[
