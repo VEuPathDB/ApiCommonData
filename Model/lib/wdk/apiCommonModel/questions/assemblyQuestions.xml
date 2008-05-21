@@ -9,7 +9,7 @@
               displayName="ID"
               queryRef="AssemblyIds.AssembliesByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+              noSummaryOnSingleRecord="true" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
 
         <attributesList
            summary="organism,est_count,length"
@@ -48,7 +48,7 @@
               displayName="Library"
               queryRef="AssemblyIds.AssembliesByLibrary"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
 
         <summary>Find EST Assemblies by Library Name</summary>
         <description>Find EST Assemblies by Library Name</description>
@@ -83,7 +83,7 @@
               displayName="Chromosomal Location"
               queryRef="AssemblyIds.AssembliesByLocation"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
 
  
 
@@ -93,7 +93,7 @@
               sorting="organism asc, assembly_location asc"
         /> 
 
-        <dynamicAttributes includeProjects="ToxoDB,CryptoDB,GiardiaDB">
+        <dynamicAttributes includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB">
             <columnAttribute name="assembly_location" displayName="EST location(s)"/>
         </dynamicAttributes>
 
@@ -122,7 +122,7 @@
           ]]>
         </description>
 
-        <description includeProjects="GiardiaDB">
+        <description includeProjects="ApiDB,GiardiaDB">
            <![CDATA[
           Find EST assemblies that are located in a specific genomic region.<br>
           Enter a sequence ID of a chromosome (e.g. "AACB02000002").<br>
@@ -151,7 +151,7 @@
          displayName="Extent of Gene Overlap"
          queryRef="AssemblyIds.AssembliesWithGeneOverlap"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
 
       
         <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
@@ -159,14 +159,14 @@
            sorting="organism asc,assembly_locations asc"
         /> 
 <summary>Find EST assemblies that overlap or not with a gene.</summary>
-        <description includeProjects="ToxoDB,GiardiaDB">Find EST assemblies that Overlap a Gene.</description>
+        <description includeProjects="ApiDB,ToxoDB,GiardiaDB">Find EST assemblies that Overlap a Gene.</description>
         <description includeProjects="CryptoDB">
        <![CDATA[
         Find EST assemblies that overlap a <i>C. parvum</i> gene.
         ]]>
         </description>
 
-        <dynamicAttributes includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
             <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
@@ -191,10 +191,10 @@
          displayName="Gene ID"
          queryRef="AssemblyIds.AssembliesByGeneIDs"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
 
       
-        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB"
            summary="organism,assembly_locations,genes,est_count"
            sorting="organism asc,assembly_locations asc"
         /> 
@@ -206,7 +206,7 @@
         ]]>
         </description>
 
-        <dynamicAttributes includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
             <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
