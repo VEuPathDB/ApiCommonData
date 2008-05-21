@@ -2976,7 +2976,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summary="organism,product"
+              summary="organism,product,orthologs"
         /> 
         <description includeProjects="ApiDB">
            <![CDATA[
@@ -3008,6 +3008,10 @@ The typical use of this query is to begin by having an interesting <i>P. falcipa
 Ortholog groups were generated from 61 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the <a href="http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi">OrthoMCL DB site</a> plus <i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin).  The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
           ]]>
         </description>
+        <dynamicAttributes>
+            <columnAttribute name="orthologs" displayName="Matching Input" align="left" inReportMaker="false"/>
+        </dynamicAttributes>
+
     </question>
 
   </questionSet>

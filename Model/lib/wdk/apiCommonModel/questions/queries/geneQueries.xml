@@ -1,4 +1,4 @@
-<wdkModel>
+u<wdkModel>
 
 <querySet name="GeneId">
 
@@ -449,25 +449,29 @@
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
+        <column name="orthologs"/>
 
         <sql includeProjects="CryptoDB,PlasmoDB">
             <![CDATA[
-            SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
-            FROM $$historyId$$ qr, dots.GeneFeature gf1,
-                 dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
-                 dots.GeneFeature gf2, dots.NaSequence ens,
-                 core.TableInfo ti
-            WHERE qr.source_id = gf1.source_id
-              AND gf1.na_feature_id = ssg1.sequence_id
-              AND ssg1.source_table_id = ti.table_id
-              AND ssg1.sequence_group_id = ssg2.sequence_group_id
-              AND ssg2.source_table_id = ti.table_id
-              AND ssg2.sequence_id = gf2.na_feature_id
-              AND gf2.na_sequence_id = ens.na_sequence_id
-              AND ens.taxon_id in ($$organism$$)
-              AND ti.name = 'GeneFeature'
-            GROUP BY gf2.source_id
-            ORDER BY gf2.source_id
+          SELECT DISTINCT subq.source_id, subq.project_id,
+                 apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS apidb.varchartab),',') as orthologs
+            FROM (SELECT distinct gf2.source_id, '@PROJECT_ID@' as project_id,
+                         qr.source_id AS ortholog_id
+                    FROM $$historyId$$ qr, dots.GeneFeature gf1,
+                         dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
+                         dots.GeneFeature gf2, dots.NaSequence ens,
+                         core.TableInfo ti
+                   WHERE qr.source_id = gf1.source_id
+                     AND gf1.na_feature_id = ssg1.sequence_id
+                     AND ssg1.source_table_id = ti.table_id
+                     AND ssg1.sequence_group_id = ssg2.sequence_group_id
+                     AND ssg2.source_table_id = ti.table_id
+                     AND ssg2.sequence_id = gf2.na_feature_id
+                     AND gf2.na_sequence_id = ens.na_sequence_id
+                     AND ens.taxon_id in ($$organism$$)
+                     AND ti.name = 'GeneFeature') subq
+          GROUP BY subq.source_id, subq.project_id
+          ORDER BY project_id, subq.source_id
            ]]>
        </sql>
 
