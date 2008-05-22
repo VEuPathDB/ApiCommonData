@@ -7,13 +7,14 @@ use XML::Simple;
 use DBI;
 use Getopt::Long qw(GetOptions);
 
-my ($configFile, $instance, $dbuser, $password, $verbose);
+my ($configFile, $instance, $dbuser, $password, $verbose, $debug);
 
 GetOptions("configFile=s" => \$configFile,
            "instance=s" => \$instance,
            "dbuser=s" => \$dbuser,
            "password=s" => \$password,
            "verbose!" => \$verbose,
+           "debug!" => \$debug,
 	  );
 
 &usage unless ($configFile && $dbuser && $password);
@@ -31,14 +32,15 @@ sub usage {
 q{
 Create unions of database tables, potentially across multiple instances.
 
-Usage: unionizer --configFile <unionizerConfigFile> --instance <dbInstance> --dbuser <dbUser> --password <dbPassword> [ --verbose ]
+Usage: unionizer --configFile <unionizerConfigFile> --instance <dbInstance> --dbuser <dbUser> --password <dbPassword> [ --verbose ] [ --debug ]
 
 Where:
-  configFile       an xml file describing tables to be created and data sources
-  instance         the database instance to login and craete objects in
-  dbuser           database user to log in as
-  password         database login password
-  verbose          print status and debugging info
+  configFile  an xml file describing tables to be created and data sources
+  instance    the database instance to login and craete objects in
+  dbuser      database user to log in as
+  password    database login password
+  verbose     print status info
+  debug       print debugging info
 
 Sample config file XML:
 <unionization>
@@ -75,15 +77,15 @@ sub parseConfigFile {
   # use forcearray so elements with one child are still arrays
   # and, use keyattr so that unions are given as an ordered list
   # rather than a hash
-  my $data = $simple->XMLin($configFile,
+  my $config = $simple->XMLin($configFile,
 			    forcearray => 1,
 			    KeyAttr => {sqlValue=>'+name'});
-  if ($verbose) {
-    print Dumper($data);
+  if ($debug) {
+    print Dumper($config);
     print "\n\n";
   }
 
-  return ($data);
+  return ($config);
 }
 
 sub getDbHandle {
@@ -97,7 +99,7 @@ sub getDbHandle {
                 ) or die "Can't connect to the database: $DBI::errstr\n";
   $dbh->{LongReadLen} = 1000;
   $dbh->{LongTruncOk} = 1;
-  print "db info:\n  dsn=$instance\n  login=$dbuser\n\n" if $verbose;
+  print "db info:\n  dsn=$instance\n  login=$dbuser\n\n" if $debug;
   return $dbh;
 }
 
@@ -162,7 +164,7 @@ SQL
       $stmt->finish();
     }
 
-    if ($verbose) {
+    if ($debug) {
       print "--== COLUMNS ==--\n";
       print Dumper(@columns);
       print "\n\n";
