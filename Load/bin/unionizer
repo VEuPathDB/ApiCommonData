@@ -1,0 +1,207 @@
+#!/usr/bin/perl
+
+use strict;
+# use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
+use XML::Simple;
+use DBI;
+use Getopt::Long qw(GetOptions);
+
+my ($configFile, $instance, $dbuser, $password, $verbose);
+
+GetOptions("configFile=s" => \$configFile,
+           "instance=s" => \$instance,
+           "dbuser=s" => \$dbuser,
+           "password=s" => \$password,
+           "verbose!" => \$verbose,
+	  );
+
+&usage unless ($configFile && $dbuser && $password);
+
+my $dbh = getDbHandle($instance, $dbuser, $password);
+
+my ($config) = &parseConfigFile($configFile);
+
+&makeUnions($dbh, $config);
+
+###############################################################################
+
+sub usage {
+  die
+q{
+Create unions of database tables, potentially across multiple instances.
+
+Usage: unionizer --configFile <unionizerConfigFile> --instance <dbInstance> --dbuser <dbUser> --password <dbPassword> [ --verbose ]
+
+Where:
+  configFile       an xml file describing tables to be created and data sources
+  instance         the database instance to login and craete objects in
+  dbuser           database user to log in as
+  password         database login password
+  verbose          print status and debugging info
+
+Sample config file XML:
+<unionization>
+  <union name="apidb.EstAttributes">
+    <source dblink="PLASMO541.PITAYA.RCC.UGA.EDU"/>
+    <source dblink="CRYPTOBLD.DB.CBIL.UPENN.EDU"/>
+    <source dblink="TOXO43UGA.PITAYA.RCC.UGA.EDU"/>
+    <source>
+      <query>
+        <![CDATA[
+          SELECT 'ApiDB' as PROJECT_ID, enas.SOURCE_ID, enas.A_COUNT,
+                 enas.C_COUNT, enas.G_COUNT, enas.T_COUNT, enas.OTHER_COUNT,
+                 enas.LENGTH, 'Ncbi dbEST' as DBEST_NAME,
+                 'Other Apicomplexan (no Cmp,Pbfvy,Tg)' as ORGANISM,
+                 5794 as NCBI_TAX_ID,
+                 'Other Apicomplexan ESTs' as EXTERNAL_DB_NAME,
+                 CAST(9999 as NUMBER(5)) as LIBRARY_ID
+          FROM dots.ExternalNASequence enas 
+          WHERE enas.taxon_id in ('88165', '88839', '88899')
+        ]]>
+      <query/>
+    <source/>
+  </union>
+<unionization/>
+};
+}
+
+sub parseConfigFile {
+  my ($configFile) = @_;
+
+  open(FILE, $configFile) || die "can't open configuration file '$configFile' for reading\n";
+  my $simple = XML::Simple->new();
+
+  # use forcearray so elements with one child are still arrays
+  # and, use keyattr so that unions are given as an ordered list
+  # rather than a hash
+  my $data = $simple->XMLin($configFile,
+			    forcearray => 1,
+			    KeyAttr => {sqlValue=>'+name'});
+  if ($verbose) {
+    print Dumper($data);
+    print "\n\n";
+  }
+
+  return ($data);
+}
+
+sub getDbHandle {
+  my ($instance, $dbuser, $password) = @_;
+
+  my $dbh = DBI->connect(
+                "dbi:Oracle:" . $instance,
+                $dbuser,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+  $dbh->{LongReadLen} = 1000;
+  $dbh->{LongTruncOk} = 1;
+  print "db info:\n  dsn=$instance\n  login=$dbuser\n\n" if $verbose;
+  return $dbh;
+}
+
+
+
+sub makeUnions {
+  my ($dbh, $config) = @_;
+
+  foreach my $union (@{$config->{union}}) {
+
+    my %coltype;
+    my @columns;
+    my %columnSet;
+    my $sourceNumber;
+    my @froms;
+
+    foreach my $source (@{$union->{source}}) {
+
+      $sourceNumber++;
+
+      my $dblink = $source->{dblink};
+      $dblink = "@" . $dblink if $dblink;
+      my $table = $source->{name};
+      $table = $union->{name} if !$table;
+      $froms[$sourceNumber] = "$table$dblink";
+
+      my ($owner, $simpleTable) = split(/\./, $table);
+
+      my $sql = <<SQL;
+         select column_name, data_type, char_col_decl_length
+         from all_tab_columns$dblink
+         where owner=upper('$owner')
+           and table_name=upper('$simpleTable')
+         union
+         select tab.column_name, tab.data_type, tab.char_col_decl_length
+         from all_synonyms$dblink syn, all_tab_columns$dblink tab
+         where syn.table_owner = tab.owner
+           and syn.table_name = tab.table_name
+           and syn.owner=upper('$owner')
+           and syn.synonym_name=upper('$simpleTable')
+SQL
+      print "$sql\n\n" if $verbose;
+
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+
+      while (my ($columnName, $dataType, $charLen) = $stmt->fetchrow_array()) {
+
+	# add this to the list of columns and store its datatype declaration
+	if (! $coltype{$columnName}) {
+	  push(@columns, $columnName);
+	  if ($dataType eq "VARCHAR2") {
+	    $coltype{$columnName} = 'VARCHAR2('.$charLen.')';
+	  } else {
+	    $coltype{$columnName} = $dataType;
+	  }
+	}
+
+	# note that this table has this column
+	$columnSet{$sourceNumber}->{$columnName} = 1;
+      }
+      $stmt->finish();
+    }
+
+    if ($verbose) {
+      print "--== COLUMNS ==--\n";
+      print Dumper(@columns);
+      print "\n\n";
+
+      print "--== COLTYPE ==--\n";
+      foreach my $key (keys(%coltype)) {
+	print '%coltype{' . $key . '} = ' . $coltype{$key} . "\n";
+      }
+      print "\n\n";
+
+      print "--== COLUMNSET ==--\n";
+      print Dumper(%columnSet);
+      print "\n\n";
+    }
+
+    # build create table
+    my @unionMembers; # array of query statements to be UNIONed
+    $sourceNumber = 0;
+
+    foreach my $source (@{$union->{source}}) {
+
+      $sourceNumber++;
+
+      my @selectees;  # array of terms for the SELECT clause
+
+      foreach my $column (@columns) {
+
+	if ($columnSet{$sourceNumber}->{$column}) {
+	  push(@selectees, $column);
+	} else {
+	  push(@selectees, 'cast (null as ' . $coltype{$column} . ') as ' . $column);
+	}
+      }
+      push(@unionMembers, 'select ' . join(', ', @selectees) . "\nfrom ". $froms[$sourceNumber]);
+    }
+
+    my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
+
+    print $createTable if $verbose;
+  }
+  print "unionizer finished\n" if $verbose;
+}
