@@ -2379,7 +2379,7 @@ References:
          queryRef="GeneId.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="PlasmoDB"
-         summary="organism,product,derisiOverlayPct"
+         summary="organism,product,max_fc,derisiOverlayPct"
         /> 
         <attributesList includeProjects="ApiDB"
          summary="organism,product"
@@ -2403,6 +2403,10 @@ References:
               glass slide array and analyze HB3, 3D7, and Dd2 parasites.
           ]]>
         </description>
+        <dynamicAttributes>
+           <columnAttribute name="max_fc" displayName="Max Fold Induction"
+                             inReportMaker="false"/>
+        </dynamicAttributes>
        <propertyList name="specificAttribution">
          <value>DeRisi_oligos</value>
          <value>derisi_3D7_time_series</value>
