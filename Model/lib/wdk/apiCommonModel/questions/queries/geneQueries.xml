@@ -1676,23 +1676,22 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.expressionPct"/>
         <column name="project_id"/>
         <column name="source_id"/>
+        <column name="max_fc"/>
         <sql>
           <![CDATA[
-          SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+          SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc,'@PROJECT_ID@' as project_id
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
-          WHERE (($$minOrMax$$ = 'min')
-                 OR ((abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
-                      OR (abs($$maxExprHour$$ - pr.equiv_max) >= (48 - $$maxPlusMinusHours$$))))
-          AND (($$minOrMax$$ = 'max')
-               OR ((abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
-                   OR (abs($$minExprHour$$ - pr.equiv_min) >= (48 -$$minPlusMinusHours$$))))
+          WHERE ($$minOrMax$$ = 'min'
+                 OR abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
+          AND ($$minOrMax$$ = 'max'
+                 OR abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
           AND pr.ind_ratio >= $$inductionFold$$
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
           AND prs.name like ($$profileSet$$)
-          ORDER BY gf.source_id
+          group BY gf.source_id
           ]]>
       </sql>
     </sqlQuery>
