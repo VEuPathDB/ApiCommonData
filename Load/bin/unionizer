@@ -129,24 +129,26 @@ sub makeUnions {
       my ($owner, $simpleTable) = split(/\./, $table);
 
       my $sql = <<SQL;
-         select column_name, data_type, char_col_decl_length
+         select column_name, data_type, char_col_decl_length, column_id
          from all_tab_columns$dblink
          where owner=upper('$owner')
            and table_name=upper('$simpleTable')
          union
-         select tab.column_name, tab.data_type, tab.char_col_decl_length
+         select tab.column_name, tab.data_type, tab.char_col_decl_length,
+                tab.column_id
          from all_synonyms$dblink syn, all_tab_columns$dblink tab
          where syn.table_owner = tab.owner
            and syn.table_name = tab.table_name
            and syn.owner=upper('$owner')
            and syn.synonym_name=upper('$simpleTable')
+         order by column_id
 SQL
       print "$sql\n\n" if $verbose;
 
       my $stmt = $dbh->prepare($sql);
       $stmt->execute();
 
-      while (my ($columnName, $dataType, $charLen) = $stmt->fetchrow_array()) {
+      while (my ($columnName, $dataType, $charLen, $column_id) = $stmt->fetchrow_array()) {
 
 	# add this to the list of columns and store its datatype declaration
 	if (! $coltype{$columnName}) {
@@ -203,7 +205,7 @@ SQL
 
     my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
 
-    print $createTable if $verbose;
+    print "$createTable\n" if $verbose;
   }
   print "unionizer finished\n" if $verbose;
 }
