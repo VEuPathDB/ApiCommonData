@@ -194,7 +194,6 @@
             from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
             where ga.sequence_id = sa.source_id
              and sa.source_id = $$primaryKey$$
-             and sa.project_Id = $$projectId$$
             group by sa.source_id, sa.project_id
              ]]>
            </sql>
