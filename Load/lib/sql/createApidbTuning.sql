@@ -735,21 +735,17 @@ SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
        derisi_max_timing, derisi_min_timing, derisi_min_level,
        max_fold_induction as derisi_max_fold_induction
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
-     (SELECT p.source_id,
-             p.max_expression AS derisi_max_level,
-             p.equiv_max AS derisi_max_timing,
-             p.equiv_min AS derisi_min_timing,
-             p.min_expression AS derisi_min_level,
-             p.ind_ratio as max_fold_induction
-      FROM apidb.Profile p, apidb.ProfileSet ps
-      WHERE ps.name like 'DeRisi % Smoothed Averaged'
-        AND p.profile_set_id = ps.profile_set_id
-        AND p.ind_ratio =
-          (SELECT max(p2.ind_ratio)
-           FROM apidb.Profile p2, apidb.ProfileSet ps
-           WHERE ps.name LIKE 'DeRisi % Smoothed Averaged'
-             AND p2.profile_set_id = ps.profile_set_id
-             AND p2.source_id = p.source_id)) expn,
+     (SELECT * FROM (SELECT p.source_id,
+                            p.max_expression AS derisi_max_level,
+                            p.equiv_max AS derisi_max_timing,
+                            p.equiv_min AS derisi_min_timing,
+                            p.min_expression AS derisi_min_level,
+                            p.ind_ratio as max_fold_induction,
+                            row_number() over (partition by p.source_id order by p.ind_ratio desc) row_number
+                     FROM apidb.Profile p, apidb.ProfileSet ps
+                     WHERE ps.name like 'DeRisi % Smoothed Averaged'
+                       AND p.profile_set_id = ps.profile_set_id)
+      WHERE row_number = 1) expn,
      (SELECT p.source_id, max(p.max_percentile) as derisi_max_pct
       FROM apidb.Profile p, apidb.ProfileSet ps
       WHERE ps.name like 'DeRisi % Smoothed Averaged'
