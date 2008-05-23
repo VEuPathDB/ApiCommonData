@@ -6,7 +6,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Model::DoTS::ExternalNASequence;
-use GUS::Model::RAD::ELEMENTNASEQUENCE;
+use GUS::Model::RAD::ElementNASequence;
 use GUS::Model::ApiDB::MassSpecSummary;
 use ApiCommonData::Load::Util;
 use Data::Dumper;
