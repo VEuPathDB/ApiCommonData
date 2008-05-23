@@ -184,17 +184,18 @@
            </sql>
         </sqlQuery>
 
-        <sqlQuery name="GeneCount" isCacheable="false" excludeProjects="ApiDB">
+        <sqlQuery name="GeneCount" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="gene_count"/>
             <sql>
             <![CDATA[
-            select sa.source_id, count(*) as gene_count
+           select sa.source_id, sa.project_id, count(*) as gene_count
             from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
             where ga.sequence_id = sa.source_id
              and sa.source_id = $$primaryKey$$
-            group by sa.source_id
+             and sa.project_Id = $$projectId$$
+            group by sa.source_id, sa.project_id
              ]]>
            </sql>
         </sqlQuery>
