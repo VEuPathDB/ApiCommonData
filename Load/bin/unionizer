@@ -110,6 +110,48 @@ sub makeUnions {
 
   foreach my $union (@{$config->{union}}) {
 
+    my ($coltypeRef, $columnsRef, $columnSetRef, $sourceNumber, $fromsRef)
+      = getColumnInfo($dbh, $config, $union);
+
+    my %coltype = %{$coltypeRef};
+    my %columnSet = %{$columnSetRef};
+    my @columns = @{$columnsRef};
+    my @froms = @{$fromsRef};
+
+    # build create table
+    my @unionMembers; # array of query statements to be UNIONed
+    $sourceNumber = 0;
+
+    foreach my $source (@{$union->{source}}) {
+
+      $sourceNumber++;
+
+      my @selectees;  # array of terms for the SELECT clause
+      my $notAllNulls = 0; # TRUE if at least one column is really there (else skip the whole unionMember)
+
+      foreach my $column (@columns) {
+
+	if ($columnSet{$sourceNumber}->{$column}) {
+	  $notAllNulls = 1;
+	  push(@selectees, $column);
+	} else {
+	  push(@selectees, 'cast (null as ' . $coltype{$column} . ') as ' . $column);
+	}
+      }
+      push(@unionMembers, 'select ' . join(', ', @selectees) . "\nfrom ". $froms[$sourceNumber])
+	if $notAllNulls;
+    }
+
+    my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
+
+    print "$createTable\n" if $verbose;
+  }
+  print "unionizer finished\n" if $verbose;
+}
+
+sub getColumnInfo {
+  my ($dbh, $config, $union) = @_;
+
     my %coltype;
     my @columns;
     my %columnSet;
@@ -182,30 +224,6 @@ SQL
       print "\n\n";
     }
 
-    # build create table
-    my @unionMembers; # array of query statements to be UNIONed
-    $sourceNumber = 0;
+  return (\%coltype, \@columns, \%columnSet, $sourceNumber, \@froms);
 
-    foreach my $source (@{$union->{source}}) {
-
-      $sourceNumber++;
-
-      my @selectees;  # array of terms for the SELECT clause
-
-      foreach my $column (@columns) {
-
-	if ($columnSet{$sourceNumber}->{$column}) {
-	  push(@selectees, $column);
-	} else {
-	  push(@selectees, 'cast (null as ' . $coltype{$column} . ') as ' . $column);
-	}
-      }
-      push(@unionMembers, 'select ' . join(', ', @selectees) . "\nfrom ". $froms[$sourceNumber]);
-    }
-
-    my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
-
-    print "$createTable\n" if $verbose;
-  }
-  print "unionizer finished\n" if $verbose;
 }
