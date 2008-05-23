@@ -1996,6 +1996,55 @@ EOF
 }
 
 
+sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+
+  my $sql = <<"EOF";
+    SELECT
+       m.source_id
+        ||' | organism='||
+       replace(tn.name, ' ', '_')
+        ||' | location='||
+       fl.sequence_source_id
+        ||':'||
+       fl.start_min
+        ||'-'||
+       fl.end_max
+        ||'('||
+       decode(fl.is_reversed, 1, '-', '+')
+        ||') | length='||
+       (fl.end_max - fl.start_min + 1 ) as defline,
+       decode(fl.is_reversed,1, apidb.reverse_complement_clob(SUBSTR(enas.sequence,fl.start_min,fl.end_max - fl.start_min +1)),SUBSTR(enas.sequence,fl.start_min,fl.end_max - fl.start_min + 1))
+       FROM dots.miscellaneous m,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr,
+            apidb.featurelocation fl,
+            dots.nasequence enas
+      WHERE m.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND m.na_feature_id = fl.na_feature_id
+        AND fl.is_top_level = 1
+        AND enas.na_sequence_id = fl.na_sequence_id 
+        AND enas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
+        AND taas.length >= $length
+        AND m.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+
+  makeDownloadFile($mgr, $species, $name, $sql,$project);
+
+}
+
+
+
 sub makeOrthomclFastaDownloadFile {
   my ($mgr, $species, $name, $project) = @_;
 
