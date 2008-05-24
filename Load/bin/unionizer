@@ -145,6 +145,7 @@ sub makeUnions {
     my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
 
     print "$createTable\n" if $verbose;
+    runSql($dbh, $createTable);
   }
   print "unionizer finished\n" if $verbose;
 }
@@ -165,8 +166,20 @@ sub getColumnInfo {
       my $dblink = $source->{dblink};
       $dblink = "@" . $dblink if $dblink;
       my $table = $source->{name};
-      $table = $union->{name} if !$table;
-      $froms[$sourceNumber] = "$table$dblink";
+
+      my $tempTable;
+
+      if ($source->{query}) {
+	my $queryString = $source->{query}[0]->{content};
+	print "query: >" . $queryString . "<\n";
+	$tempTable = 'apidb.UnionizerTemp';
+	$table = $tempTable;
+	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString);
+	$froms[$sourceNumber] = '(' . $queryString . ')';
+      } else {
+	$table = $union->{name} if !$table;
+	$froms[$sourceNumber] = "$table$dblink";
+      }
 
       my ($owner, $simpleTable) = split(/\./, $table);
 
@@ -206,6 +219,8 @@ SQL
 	$columnSet{$sourceNumber}->{$columnName} = 1;
       }
       $stmt->finish();
+
+      runSql($dbh, 'drop table ' . $tempTable) if ($tempTable);
     }
 
     if ($debug) {
@@ -226,4 +241,13 @@ SQL
 
   return (\%coltype, \@columns, \%columnSet, $sourceNumber, \@froms);
 
+}
+
+sub runSql {
+
+  my ($dbh, $sql) = @_;
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  $stmt->finish();
 }
