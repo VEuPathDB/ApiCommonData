@@ -1229,7 +1229,7 @@ set ga.gene_id = (select gi.gene_id from dots.geneinstance gi where ga.na_featur
 
 GRANT SELECT ON apidb.GeneAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.GeneAttr_sourceId&1
+CREATE UNIQUE INDEX apidb.GeneAttr_sourceId&1
        ON apidb.GeneAttributes&1 (source_id);
 
 CREATE INDEX apidb.GeneAttr_exon_ix&1
@@ -1309,7 +1309,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
 
 GRANT SELECT ON apidb.SequenceAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (source_id);
+CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.SequenceAttributes
                           FOR apidb.SequenceAttributes&1;
@@ -1403,7 +1403,7 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
 
 GRANT SELECT ON apidb.SnpAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id);
+CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id);
 
 CREATE INDEX apidb.Snp_Seq_ix&1
        ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min, na_feature_id);
@@ -1463,7 +1463,7 @@ WHERE m.na_feature_id = taaf.na_feature_id
 
 GRANT SELECT ON apidb.OrfAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id);
+CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.OrfAttributes
                         FOR apidb.OrfAttributes&1;
@@ -1529,7 +1529,7 @@ WHERE e.na_sequence_id = ens.na_sequence_id
 
 GRANT SELECT ON apidb.EstAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id);
+CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id);
 CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source_id, source_id);
 
 CREATE OR REPLACE SYNONYM apidb.EstAttributes
@@ -1570,7 +1570,7 @@ WHERE a.taxon_id = tn.taxon_id
 
 GRANT SELECT ON apidb.AssemblyAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.AsmAttr_source_id&1
+CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
 ON apidb.AssemblyAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.AssemblyAttributes
@@ -1610,7 +1610,7 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
 
 GRANT SELECT ON apidb.ArrayElementAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.AEAttr_source_id&1
+CREATE UNIQUE INDEX apidb.AEAttr_source_id&1
 ON apidb.ArrayElementAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.ArrayElementAttributes
@@ -1837,7 +1837,7 @@ WHERE A.source_id = B.source_id(+);
 
 GRANT SELECT ON apidb.IsolateAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id);
+CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id);
 
 CREATE OR REPLACE SYNONYM apidb.IsolateAttributes FOR apidb.IsolateAttributes&1;
 
@@ -1892,7 +1892,7 @@ where f.na_feature_id = gene.na_feature_id (+)
 
 GRANT SELECT ON apidb.SageTagAttributes&1 TO gus_r;
 
-CREATE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
+CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
              (source_id);
 
 CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
