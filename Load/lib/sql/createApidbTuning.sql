@@ -1219,7 +1219,8 @@ WHERE gf.na_feature_id = nl.na_feature_id
                       'Annotation for T. gondii ME49 - typeII:2005-08-01'))
   -- skip new plasmo annotation
   AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
-                      'Pfalciparum workshop annotations reviewed and changed');
+                      'Pfalciparum workshop annotations reviewed and changed'
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01');
 
 alter table apidb.geneattributes&1
  add gene_id NUMBER(10);
