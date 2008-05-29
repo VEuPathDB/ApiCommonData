@@ -170,7 +170,7 @@ sub getColumnInfo {
       my $tempTable;
 
       if ($source->{query}) {
-	my $queryString = $source->{query}[0]->{content};
+	my $queryString = $source->{query}[0];
 	print "query: >" . $queryString . "<\n";
 	$tempTable = 'apidb.UnionizerTemp';
 	$table = $tempTable;
