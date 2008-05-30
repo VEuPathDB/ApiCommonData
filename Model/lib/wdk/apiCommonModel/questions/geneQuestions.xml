@@ -17,12 +17,18 @@
          queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
-       <attributesList 
+       <attributesList  excludeProjects="ApiDB" 
          summary="dynamic_location,product"
          sorting="dynamic_location asc"
         />
 
-        <dynamicAttributes>
+<!-- portal will use static attribute in mat view until all projects have dynamic location on -->
+        <attributesList  includeProjects="ApiDB"
+         summary="location_text,product"
+         sorting="location_text asc"
+        />
+
+        <dynamicAttributes  excludeProjects="ApiDB">
           <columnAttribute name="dynamic_location" displayName="Location" align="left"/>
         </dynamicAttributes>
  
