@@ -1,0 +1,61 @@
+<unionization>
+
+  <union name="apidb.SequenceAttributes">
+    <source dblink="CRYPTO"/>
+    <source dblink="GIARDIA"/>
+    <source dblink="PLASMO"/>  
+    <source dblink="TOXO"/>  
+
+<source>
+      <query> 
+        <![CDATA[ 
+          select * from apidb.SequenceAttributes@AMITO where project_id = 'TrichDB' 
+        ]]> 
+      </query>
+    </source>
+
+
+ <source>
+      <query> 
+        <![CDATA[ 
+          
+SELECT 
+     CAST('ApiDB' as VARCHAR2(47)) as PROJECT_ID, 
+     CAST(enas.SOURCE_ID as VARCHAR2(50)) as SOURCE_ID,
+     enas.LENGTH,
+     CAST('Theileria parva strain Muguga' as VARCHAR2(40)) as ORGANISM,
+     CAST(333668 as NUMBER(10)) as NCBI_TAX_ID,
+     CAST(enas.DESCRIPTION as VARCHAR2(400)) as SEQUENCE_DESCRIPTION,
+     CAST(enas.SOURCE_ID as VARCHAR2(20)) as GENBANK_ACCESSION
+FROM dots.ExternalNASequence enas
+WHERE enas.taxon_id = '88839'
+
+        ]]> 
+      </query>
+    </source>
+
+
+<source>
+      <query> 
+        <![CDATA[ 
+        
+SELECT
+     CAST('ApiDB' as VARCHAR2(47)) as PROJECT_ID, 
+     CAST(enas.SOURCE_ID as VARCHAR2(50)) as SOURCE_ID,
+     enas.LENGTH,
+     CAST('Theileria annulata strain Ankara' as VARCHAR2(40)) as ORGANISM,
+     CAST(353154 as NUMBER(10)) as NCBI_TAX_ID,
+     CAST(enas.DESCRIPTION as VARCHAR2(400)) as SEQUENCE_DESCRIPTION,
+     CAST(enas.SOURCE_ID as VARCHAR2(20)) as GENBANK_ACCESSION
+FROM dots.ExternalNASequence enas
+WHERE enas.taxon_id = '88899'
+
+        ]]> 
+      </query>
+    </source>
+
+
+
+  </union>
+
+<unionization/>

@@ -1,0 +1,19 @@
+<unionization>
+
+  <union name="apidb.OrfAttributes">
+    <source dblink="CRYPTO"/>
+    <source dblink="GIARDIA"/>
+    <source dblink="PLASMO"/>  
+    <source dblink="TOXO"/>  
+
+    <source>
+      <query> 
+        <![CDATA[ 
+          select * from apidb.OrfAttributes@AMITO where project_id = 'TrichDB' 
+        ]]> 
+      </query>
+    </source>
+
+  </union>
+
+<unionization/>
