@@ -1011,6 +1011,20 @@
         <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+
+ <flatVocabParam name="libraryIdAssemblies"
+                     queryRef="SharedVQ.EstLibrariesAssemblies"
+                     prompt="EST Library"
+                     multiPick="true"
+                     quote="false">
+        <help>
+             Select a clone library.
+        </help>
+        <useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
+
+
       <flatVocabParam name="libraryIdGenes"
                      queryRef="SharedVQ.EstLibrariesGenes"
                      prompt="EST Library"
@@ -1798,6 +1812,10 @@ by the sequence generator.</help>
             <wsColumn name="term" width="32" wsName="term"/>
         </wsQuery>
 
+
+
+
+
         <sqlQuery name="EstLibraries" excludeProjects="ApiDB">
             <column name="internal"/>
             <column name="term"/>
@@ -1815,6 +1833,31 @@ by the sequence generator.</help>
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
         </wsQuery>
+
+
+
+ <sqlQuery name="EstLibrariesAssemblies" includeProjects="GiardiaDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
+                       l.library_id AS internal
+                FROM apidb.estattributes att, dots.library l
+                WHERE att.dbest_name = l.dbest_name
+                AND att.project_id = '@PROJECT_ID@'
+                ORDER BY term
+            </sql>
+        </sqlQuery>
+
+  <wsQuery name="EstLibrariesAssemblies" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="100" wsName="internal"/>
+            <wsColumn name="term" width="100" wsName="term"/>
+        </wsQuery>
+
+
+
+
+
 
         <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" >
             <column name="internal"/>
