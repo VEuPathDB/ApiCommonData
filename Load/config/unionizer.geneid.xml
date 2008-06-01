@@ -1,0 +1,23 @@
+<unionization>
+
+  <union name="apidb.GeneId">
+    <source dblink="CRYPTO"/>
+    <source dblink="GIARDIA"/>
+    <source dblink="PLASMO"/>  
+    <source dblink="TOXO"/>  
+
+    <source>
+      <query> 
+        <![CDATA[ 
+          select gi.id,gi.gene  
+          from apidb.geneid@AMITO gi, apidb.geneattributes@AMITO ga 
+          where gi.gene = ga.source_id 
+          and ga.project_id = 'TrichDB'
+        ]]> 
+      </query>
+    </source>
+
+
+  </union>
+
+<unionization/>
