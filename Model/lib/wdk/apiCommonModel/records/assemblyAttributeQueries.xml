@@ -6,13 +6,18 @@
         <paramRef ref="recordParams.projectId"/>
         <column name="project_id" sortingTable="apidb.AssemblyAttributes"/>
         <column name="source_id" sortingTable="apidb.AssemblyAttributes"/>
-        <column name="organism" sortingTable="apidb.AssemblyAttributes" sortingColumn="organism"/>
+        <column name="organism" sortingTable="apidb.AssemblyAttributes"  lowerCase="true"/>
+        <column name="formatted_organism" sortingTable="apidb.AssemblyAttributes" sortingColumn="organism" lowerCase="true"/>
         <column name="est_count"  sortingTable="apidb.AssemblyAttributes"/>
         <column name="length" sortingTable="apidb.AssemblyAttributes"/>
      <sql includeProjects="ToxoDB">
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
       REPLACE(SUBSTR(aa.organism, 1,   40),'Toxoplasma','T.') AS organism,
+ '<i>' || SUBSTR(aa.organism, 1, 1) || '.' ||
+                  REGEXP_REPLACE(SUBSTR(aa.organism, INSTR(aa.organism, ' ')), '[[:space:]]+',
+                                 chr(38) || 'nbsp;') || '</i>'
+                    AS formatted_organism,
       aa.est_count, aa.length
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
@@ -26,6 +31,10 @@
           REPLACE(aa.organism,'Cryptosporidium','C.' ),
                           'Giardia',        'G.' ),
                           'Trichomonas',    'T.' ) AS organism,
+ '<i>' || SUBSTR(aa.organism, 1, 1) || '.' ||
+                  REGEXP_REPLACE(SUBSTR(aa.organism, INSTR(aa.organism, ' ')), '[[:space:]]+',
+                                 chr(38) || 'nbsp;') || '</i>'
+                    AS formatted_organism,
       aa.est_count, aa.length
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
