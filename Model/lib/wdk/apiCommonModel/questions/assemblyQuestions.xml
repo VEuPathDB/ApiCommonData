@@ -2,14 +2,14 @@
   <questionSet name="AssemblyQuestions" displayName="Search EST Assemblies">
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- By Id -->
+  <!-- By Id :  only for component sites with  noSummaryOnSingleRecord="true"  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
   <question name="AssembliesByEstAccession"
               displayName="ID"
               queryRef="AssemblyIds.AssembliesByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
 
         <attributesList
            summary="organism,est_count,length"
@@ -37,6 +37,40 @@
        </propertyList>
 
   </question>
+
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- By Id :    only for portal with  noSummaryOnSingleRecord="false"  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+  <question name="AssembliesByEstAccession"
+              displayName="ID"
+              queryRef="AssemblyIds.AssembliesByEstAccession"
+              recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+
+        <attributesList
+           summary="organism,est_count,length"
+           sorting="organism asc,est_count desc"
+        />
+        <summary>
+        Find EST Clusters by EST accession
+        </summary>
+
+        <description>
+          <![CDATA[
+            Find EST Clusters by EST accession
+          ]]>
+        </description>
+
+       <propertyList name="genomeAttribution">
+          <value/>
+       </propertyList>
+     
+
+  </question>
+
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
