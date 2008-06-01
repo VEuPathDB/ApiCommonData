@@ -58,7 +58,7 @@
 
  <wsQuery name="AssembliesByLibrary" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="sharedParams.libraryId"/>
+       <paramRef ref="sharedParams.libraryIdAssemblies"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
         <paramRef ref="sharedParams.min_lib_ests_in_assembly"/>
 
@@ -133,14 +133,22 @@
     </sqlQuery>
 
    
+<!-- while these queries only exist in Giardia we use a hidden organism param to go only there -->
+<!-- Once other sites have assembly queries, we will use the regular organism param instead -->
+
  <wsQuery name="AssembliesByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
-         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-         <paramRef ref="sharedParams.chromosomeOptional"/>
-         <paramRef ref="sharedParams.sequenceId"/>
-         <paramRef ref="sharedParams.start_point"/>
-         <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="organismParams.hiddenOrganismGiardia"/>
+       
+        <paramRef ref="sharedParams.sequenceId" default="CH991779"/>
+        <paramRef ref="sharedParams.start_point"/>
+        <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="sharedParams.min_ests_in_assembly"/>
+        <paramRef ref="assemblyParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="assemblyParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="assemblyParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="assemblyParams.min_percent_assembly_aligned" groupRef="paramGroups.advancedParams"/>
 
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
