@@ -20,8 +20,8 @@
 		    sample="TVAG_386080, TVAG_486660"
                     default="TVAG_386080"/>
            <suggest includeProjects="ApiDB"
-					sample="PF11_0344, cgd7_230, 65.m01111"
-                    default="cgd7_230"/>
+		    sample="PF11_0344, cgd7_230, 65.m01111"
+                    default="GL50803_17134"/>
         </stringParam>
 
 
@@ -32,13 +32,13 @@
             <help>
                Enter a SAGE Tag Sequence.
             </help>
-           <suggest includeProjects="ApiDB,ToxoDB"
+           <suggest includeProjects="ToxoDB"
                     sample="CATGTTTGCTTGTC, CATGTTTGCTTGGC"
                     default="CATGTTTGCTTGTC"/>
            <suggest includeProjects="PlasmoDB"
                     sample="GTAATAAATG, TAGAAAATTC"
                     default="GTAATAAATG"/>
-           <suggest includeProjects="GiardiaDB"
+           <suggest includeProjects="ApiDB,GiardiaDB"
                     sample="GGGCTCTAGTG, CCTGTATTCTG"
                     default="GGGCTCTAGTG"/>
         </stringParam>
@@ -50,7 +50,7 @@
             <help>
                Enter an external identifier or a SAGE Tag ID. Wildcards (*) are allowed.
             </help>
-           <suggest includeProjects="GiardiaDB"
+           <suggest includeProjects="ApiDB,GiardiaDB"
                     sample="670,880"
                     default="670"/>
         </stringParam>
@@ -63,6 +63,7 @@
           <help>
              SAGE Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to SAGE tags falling within a gene.
           </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
           <enumList>   
             <enumValue>
               <term>Yes</term>
@@ -82,6 +83,7 @@
           <help>
              SAGE Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to SAGE tags falling within a gene.
           </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
           <enumList>   
             <enumValue>
               <term>Yes</term>
@@ -109,6 +111,7 @@
           <help>
              Choose normalized or raw data.
           </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
           <enumList>   
             <enumValue>
               <term>Normalized</term>
