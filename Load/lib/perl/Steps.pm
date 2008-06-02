@@ -104,7 +104,7 @@ sub initToxoAnalysis {
 
   my $allSpecies = 'Tgondii';
 
-  my $taxId = ["Tgondii:5811","TgondiiApicoplast:5811","TgondiiGT1:5811","TgondiiVeg:398031","TgondiiRH:383379"];
+  my $taxId = ["Tgondii:5811","TgondiiApicoplast:5811","TgondiiGT1:507601","TgondiiVEG:432359","TgondiiRH:383379","TgondiiME49:508771];
 
   my ($mgr, $projectDir, $release)
     = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
