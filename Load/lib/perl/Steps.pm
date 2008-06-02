@@ -1571,7 +1571,7 @@ sub makeDerivedCdsDownloadFile {
                 sres.sequenceontology so,
                 dots.nalocation nl,
                 dots.translatedaafeature taaf
-      WHERE gf.na_feature_id = t.parent_idx
+      WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_sequence_id = enas.na_sequence_id
