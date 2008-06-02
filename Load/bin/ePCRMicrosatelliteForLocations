@@ -1,0 +1,133 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+
+
+my ($verbose, $help, $ePcrDir, $stsFile, $seqFile, $outFile, $margin, $mismatch, $gap, $msInfo, $logFile);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'epcr_dir=s' => \$ePcrDir,
+            'sts_file=s' => \$stsFile,
+            'seq_file=s' => \$seqFile,
+            'output_file=s' => \$outFile,
+            'margin=i' => \$margin,
+            'mismatch=i' => \$mismatch,
+            'gap=i' => \$gap,
+            'microsatellite_info=s' => \$msInfo,
+            'log_file=s' => \$logFile,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $stsFile && $seqFile && $outFile && $ePcrDir && $logFile);
+
+
+unless (defined $margin){
+  $margin = 50;
+}
+
+unless (defined $msInfo){
+ $msInfo = "microsatellite_annotation";
+}
+
+unless (defined $gap) {
+  $gap = 0;
+}
+
+unless (defined $mismatch) {
+  $mismatch = 0;
+}
+
+
+my $base = basename($outFile);
+my $dir = dirname($outFile);
+
+my $ePcrOut = $dir."/".$base."_epcr";
+
+
+
+system("$ePcrDir/e-PCR $stsFile $seqFile M=$margin N=$mismatch G=$gap T=3 O=$ePcrOut");
+
+my $stsHashRef = &makeGFFFile($ePcrOut,$outFile,$msInfo);
+
+open(STS,"$stsFile") or die("Cannot open STS file for reading\n");
+open(LOG,">$logFile") or die("Cannot open errlog.txt for writing\n");
+
+foreach my $line(<STS>){
+  chomp $line;
+  my ($accession,) = split(/\t/,$line);
+  if (!($stsHashRef->{$accession})){
+    print LOG "$line\n";
+  }
+}
+
+close STS;
+close LOG;
+
+#-------------------------------------------------------------------------------
+
+
+sub makeGFFFile{
+
+  my ($ePcrOut, $outFile, $msInfo) = @_;
+
+  my %stsHash;
+  open(IN,"$ePcrOut") or die("Could not open $ePcrOut for reading\n");
+  open(OUT,">$outFile") or die("Could not open $outFile for writing\n");
+
+  foreach my $line (<IN>){
+    chomp $line;
+    my @fields = split(/\t/,$line);
+    my $chr = shift(@fields);
+    my $accession = shift(@fields);
+    my $strand = shift(@fields);
+    my $start = shift(@fields);
+    my $end  = shift(@fields);
+
+    $strand =~ tr/)(//d;
+
+    if($stsHash{$accession}){
+      print STDERR "$accession\n";
+    }
+    $stsHash{$accession} = $accession;
+    print OUT "$chr\t$msInfo\tmicrosatellite\t$start\t$end\t.\t$strand\t.\tID $accession\n";
+  }
+
+  close(IN);
+  close(OUT);
+  return \%stsHash;
+
+}
+
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl ePCRMicrosatelliteForLocation \\
+--sts_file <sts file as input (required)> \\
+--output_file <gff file output (required)> \\
+--seq_file <sequence file for e-PCR (required)> \\
+--log_file <log file (required)> \\
+--epcr_dir <directory where e-PCR binary is located (required)> \\
+--margin <=integer, default 50 (optional)> \\
+--mismatch <=integer, default 0 (optional)> \\
+--gap <=integer, default 0 (optional)> \\
+--microsatellite_info <default \"microsatellite_annotation\" (optional)> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
+
+1;
