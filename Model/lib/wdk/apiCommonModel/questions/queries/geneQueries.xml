@@ -671,7 +671,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <column name="source_id"/>
         <sql>
             <![CDATA[
-             SELECT ga.source_id, '@PROJECT_ID@' as project_id
+             SELECT distinct ga.source_id, '@PROJECT_ID@' as project_id
              FROM apidb.geneattributes ga, dots.nasequence ns
              WHERE ns.taxon_id IN ($$organism$$)
              AND ga.sequence_id = ns.source_id
