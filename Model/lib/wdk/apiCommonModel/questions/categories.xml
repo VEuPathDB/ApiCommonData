@@ -1,0 +1,19 @@
+<wdkModel>
+
+    <categories recordClassRef="GeneRecordClasses.GeneRecordClass">
+
+        <category name="genomic-position" displayName="Genomic Position">
+            <questionRef>GeneQuestions.GenesByLocation</questionRef>
+            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByCentromereProximity</questionRef>
+            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByTelomereProximity</questionRef>
+            <questionRef includeProjects="PlasmoDB,ToxoDB">GeneQuestions.GenesByNonnuclearLocation</questionRef>
+        </category>
+
+        <category name="gene_attributes" displayName="Gene Attributes">
+            <questionRef>GeneQuestions.GenesByGeneType</questionRef>
+            <questionRef>GeneQuestions.GenesByExonCount</questionRef>
+        </category>
+        
+     </categories>
+     
+</wdkModel>
