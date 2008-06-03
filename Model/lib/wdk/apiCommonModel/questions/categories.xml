@@ -1,19 +1,83 @@
 <wdkModel>
 
     <categories recordClassRef="GeneRecordClasses.GeneRecordClass">
+    
+    	<category name="other_attributes" displayName="Keyword, IDs, Species, etc.">
+            <questionRef>GeneQuestions.GenesByTextSearch</questionRef>
+            <questionRef>GeneQuestions.GeneBySingleLocusTag</questionRef>
+            <questionRef>GeneQuestions.GeneByLocusTag</questionRef>
+            <questionRef>GeneQuestions.GenesByTaxon</questionRef>
+            <questionRef>GeneQuestions.GenesByMr4Reagents</questionRef>
+        </category>
 
-        <category name="genomic-position" displayName="Genomic Position">
+        <category name="genomic_position" displayName="Genomic Position">
             <questionRef>GeneQuestions.GenesByLocation</questionRef>
-            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByCentromereProximity</questionRef>
-            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByTelomereProximity</questionRef>
-            <questionRef includeProjects="PlasmoDB,ToxoDB">GeneQuestions.GenesByNonnuclearLocation</questionRef>
+            <questionRef>GeneQuestions.GenesByCentromereProximity</questionRef>
+            <questionRef>GeneQuestions.GenesByTelomereProximity</questionRef>
+            <questionRef>GeneQuestions.GenesByNonnuclearLocation</questionRef>
         </category>
 
         <category name="gene_attributes" displayName="Gene Attributes">
             <questionRef>GeneQuestions.GenesByGeneType</questionRef>
             <questionRef>GeneQuestions.GenesByExonCount</questionRef>
         </category>
+
+        <category name="protein_attributes" displayName="Protein Attributes">
+            <questionRef>GeneQuestions.GenesByMolecularWeight</questionRef>
+            <questionRef>GeneQuestions.GenesByIsoelectricPoint</questionRef>
+            <questionRef>GeneQuestions.GenesBySecondaryStructure</questionRef>
+            <questionRef>GeneQuestions.GenesByPdbSimilarity</questionRef>
+        </category>
         
+        <category name="protein_features" displayName="Protein Features">
+            <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
+            <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
+            <questionRef>GeneQuestions.GenesWithEpitopes</questionRef>
+        </category>
+        
+        <category name="similarity_pattern" displayName="Similarity/Pattern">
+            <questionRef>GeneQuestions.GenesByMotifSearch</questionRef>
+            <questionRef>GeneQuestions.GenesByInterproDomain</questionRef>
+            <questionRef>GeneQuestions.GenesBySimilarity</questionRef>
+        </category>
+        
+        <category name="transcript_expression" displayName="Transcript Expression">
+            <questionRef>GeneQuestions.GenesByESTOverlap</questionRef>
+            <questionRef>GeneQuestions.GenesBySageTag</questionRef>
+            <questionRef>GeneQuestions.GenesByExpression</questionRef>
+        </category>
+        
+        <category name="protein_expression" displayName="Protein Expression">
+            <questionRef>GeneQuestions.GenesByProteomicsProfile</questionRef>
+        </category>
+
+        <category name="cellular_location" displayName="Cellular Location">
+            <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
+            <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
+            <questionRef>GeneQuestions.GenesBySubcellularLocalization</questionRef>
+            <questionRef>GeneQuestions.GenesByExportPrediction</questionRef>
+        </category>
+        
+        <category name="putative_function" displayName="Putative Function">
+            <questionRef>GeneQuestions.GenesByGoTerm</questionRef>
+            <questionRef>GeneQuestions.GenesByEcNumber</questionRef>
+            <questionRef>GeneQuestions.GenesByMetabolicPathway</questionRef>
+            <questionRef>GeneQuestions.GenesByProteinProteinInteraction</questionRef>
+            <questionRef>GeneQuestions.GenesByFunctionalInteraction</questionRef>
+        </category>
+        
+        <category name="evolution" displayName="Evolution">
+            <questionRef>GeneQuestions.GenesOrthologousToAGivenGene</questionRef>
+            <questionRef>GeneQuestions.GenesByOrthologPattern</questionRef>
+            <questionRef>GeneQuestions.GenesByPhyleticProfile</questionRef>
+            <questionRef>GeneQuestions.GenesByPhylogeneticTree</questionRef>
+        </category>
+        
+        <category name="population_biology" displayName="Population Biology">
+            <questionRef>GeneQuestions.GenesBySnps</questionRef>
+            <questionRef>GeneQuestions.GenesByOrthologPattern</questionRef>
+        </category>
+
      </categories>
      
 </wdkModel>
