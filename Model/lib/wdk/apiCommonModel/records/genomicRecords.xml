@@ -224,10 +224,10 @@
         </textAttribute>
 
         <textAttribute name="gbrowseLink" includeProjects="ToxoDB" 
-            inReportMaker="false" internal="true">
+            displayName="Genome Browser" align="center" inReportMaker="false">
            <text>
                 <![CDATA[
-                @CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes
+                <a href="@CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
                 ]]>
            </text>
         </textAttribute>
@@ -245,7 +245,7 @@
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB"
-            displayName="Links to Other Web Pages" inReportMaker="false">
+            displayName="Retrieve Sequence" inReportMaker="false">
            <text>
                 <![CDATA[
                     <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
