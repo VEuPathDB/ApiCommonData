@@ -200,6 +200,21 @@
         </sqlQuery>
 
 
+       <sqlQuery name="Aliases" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="alias"/>
+            <sql>
+            <![CDATA[
+            SELECT  id as alias, sequence as source_id, $$projectId$$ as project_id
+            FROM    apidb.SequenceId si 
+            WHERE   sequence =$$primaryKey$$ 
+            AND NOT lower(sequence) = id
+             ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Attribution -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
