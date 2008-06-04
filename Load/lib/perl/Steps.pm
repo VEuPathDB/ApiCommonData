@@ -3777,7 +3777,7 @@ sub xdformat {
 }
 
 sub extractKeywordSearchFiles {
-  my ($mgr,$filePrefix,$commentSchema,$dbLink,$projectId) = @_;
+  my ($mgr,$filePrefix,$projectId,$gusConfigFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -3795,14 +3795,50 @@ sub extractKeywordSearchFiles {
 
   die "Failed to create $textSearchDir.\n"  unless (-e $textSearchDir);
 
-  my $cmd = "extractTextSearchFiles  --outputDir $textSearchDir --outputPrefix $filePrefix  --projectId $projectId";
+  my $cmd = "extractTextSearchFiles --outputDir $textSearchDir --projectId $projectId ";
+  $cmd .= "--gusConfigFile $gusConfigFile" if ($gusConfigFile);
+  $cmd .= "--outputPrefix $filePrefix " if ($filePrefix);
 
-  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
+
+#  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
   $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 }
+
+sub extractCommentsFiles {
+  my ($mgr,$filePrefix,$commentSchema,$projectId,$gusConfigFile) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "extractCommentsFiles";
+
+  return if $mgr->startStep("Extracting flat comments files for text keyword search", $signal);
+
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $textSearchDir = "$siteFileDir/webServices/$projectDB/release-$release/textSearch";
+
+  $mgr->runCmd("mkdir -p $textSearchDir");
+
+  die "Failed to create $textSearchDir.\n"  unless (-e $textSearchDir);
+
+  my $cmd = "extractCommentsFile --outputDir $textSearchDir --projectId $projectId --commentSchema $commentSchema";
+  $cmd .= "--gusConfigFile $gusConfigFile" if ($gusConfigFile);
+  $cmd .= "--outputPrefix $filePrefix " if ($filePrefix);
+
+
+#  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
 
 
 sub loadDbRefAndDbRefNaSequence {
@@ -4421,6 +4457,92 @@ sub loadMummerSnpResults {
   $mgr->runPlugin("load$gffFile",
 		  "ApiCommonData::Load::Plugin::InsertSnps",
 		  $args, "Loading mummer results from $gffFile");
+}
+
+sub createSTSFileFromGenBank {
+  my ($mgr, $genbankFile, $filePrefix) = @_;
+  
+  my $propertySet = $mgr->{propertySet};
+
+  my $fileDir = "$mgr->{dataDir}/microsatellite";
+  
+  my $signal = "create${filePrefix}_microsatelliteSTSFile";
+  
+  my $logFile = "${filePrefix}_microsatelliteSTSErr.log";
+
+  
+  
+  my $cmd = "createSTSFileFromGB --genbank_file $fileDir/$genbankFile --output_file $fileDir/${filePrefix}_microsatellite.sts 2> $mgr->{myPipelineDir}/logs/$logFile";
+  
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+
+}
+
+sub ePCRMsStsForLocations {
+  my ($mgr, $stsFile, $outputFile, $seqFile, $margin, $mismatch, $gap, $msInfo) = @_;
+
+  my $sts = $stsFile;
+
+  $sts =~ s/\.\S+\b//;
+
+  my $seq = $seqFile;
+
+  $seq =~ s/\.\S+\b//;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "ePcr${sts}_${seq}";
+  
+  my $outputDir = "$mgr->{dataDir}/microsatellite";
+   
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+  
+  my $ePcrDir = $propertySet->getProp('ePcrDir');
+
+
+  my $args = "--sts_file $outputDir/$stsFile --output_file $outputDir/$outputFile --seq_file $mgr->{dataDir}/seqfiles/$seqFile --epcr_dir $ePcrDir --log_file $logFile ";
+  $args .= "--margin $margin " if($margin =~ /^\d+$/);
+  $args .= "--gap $gap " if ($gap =~ /^\d+$/);
+  $args .= "--mismatch $mismatch " if ($mismatch =~ /^\d+$/);
+  $args .= "--microsatellite_info $msInfo" if ($msInfo);
+
+  my $cmd = "ePCRMicrosatelliteForLocations $args";
+  
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
+sub loadMicrosatelliteFile {
+    my ($mgr, $msFile, $extDbName, $extDbRlsVer, $mapFile, $soCvsVersion, $subclass, $defaultOrg) = @_;
+
+    my $signal = "load_$msFile";
+
+    my $args = <<"EOF";
+--extDbName '$extDbName'  \\
+--extDbRlsVer '$extDbRlsVer' \\
+--mapFile $mapFile \\
+--inputFileOrDir $mgr->{dataDir}/seqfiles/$msFile \\
+--fileFormat gff2   \\
+--seqSoTerm microsatellite  \\
+--soCvsVersion $soCvsVersion \\
+--naSequenceSubclass $subclass \\
+EOF
+
+    if ($defaultOrg){
+      $args .= "--defaultOrganism '$defaultOrg'";
+    }
+
+    $mgr->runPlugin(
+        $signal,
+        "GUS::Supported::Plugin::InsertSequenceFeatures",
+        $args, 
+        "Loading $msFile output");
+
 }
 
 
