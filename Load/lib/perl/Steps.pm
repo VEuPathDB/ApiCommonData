@@ -4495,15 +4495,17 @@ sub ePCRMsStsForLocations {
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "ePcr${sts}_${seq}";
+
+  my $inputDir = "$mgr->{dataDir}/microsatellite";
   
-  my $outputDir = "$mgr->{dataDir}/microsatellite";
+  my $outputDir = "$mgr->{dataDir}/seqfiles";
    
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
   
   my $ePcrDir = $propertySet->getProp('ePcrDir');
 
 
-  my $args = "--sts_file $outputDir/$stsFile --output_file $outputDir/$outputFile --seq_file $mgr->{dataDir}/seqfiles/$seqFile --epcr_dir $ePcrDir --log_file $logFile ";
+  my $args = "--sts_file $inputDir/$stsFile --output_file $outputDir/$outputFile --seq_file $outputDir/$seqFile --epcr_dir $ePcrDir --log_file $logFile ";
   $args .= "--margin $margin " if($margin =~ /^\d+$/);
   $args .= "--gap $gap " if ($gap =~ /^\d+$/);
   $args .= "--mismatch $mismatch " if ($mismatch =~ /^\d+$/);
