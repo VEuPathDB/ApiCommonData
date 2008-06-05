@@ -1,5 +1,9 @@
 <wdkModel>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Gene Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
     <categories recordClassRef="GeneRecordClasses.GeneRecordClass">
     
     	<category name="other_attributes" displayName="Keyword, IDs, Species, etc.">
@@ -78,6 +82,88 @@
             <questionRef>GeneQuestions.GenesByOrthologPattern</questionRef>
         </category>
 
+     </categories>
+     
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Isolate Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+     <categories recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+     
+     	<category name="isolates" displayName="Isolates">
+            <questionRef>IsolateQuestions.IsolateByIsolateId</questionRef>
+            <questionRef>IsolateQuestions.IsolateByProduct</questionRef>
+            <questionRef>IsolateQuestions.IsolateWithGeneOverlap</questionRef>
+            <questionRef>IsolateQuestions.IsolateByTaxon</questionRef>
+            <questionRef>IsolateQuestions.IsolateByHost</questionRef>
+            <questionRef>IsolateQuestions.IsolateByIsolationSource</questionRef>
+            <questionRef>IsolateQuestions.IsolateByAuthor</questionRef>
+            <questionRef>IsolateQuestions.IsolateByStudy</questionRef>
+            <questionRef>IsolateQuestions.IsolateByCountry</questionRef>
+        </category>
+        
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Genomic Sequence Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+     <categories recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+     
+     	<category name="genomic" displayName="Genomic">
+     		<questionRef>GenomicSequenceQuestions.SequenceBySourceId</questionRef>
+            <questionRef>GenomicSequenceQuestions.SequencesByTaxon</questionRef>
+            <questionRef>GenomicSequenceQuestions.SequencesBySimilarity</questionRef>
+        </category>
+     
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- SNP Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
+     <categories recordClassRef="SnpRecordClasses.SnpRecordClass">
+     
+     	<category name="snp" displayName="SNP">
+            <questionRef>SnpQuestions.SnpBySourceId</questionRef>
+            <questionRef>SnpQuestions.SnpsByGeneId</questionRef>
+            <questionRef>SnpQuestions.SnpsByAlleleFrequency</questionRef>
+            <questionRef>SnpQuestions.SnpsByLocation</questionRef>
+        </category>
+        
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- EST Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
+     <categories recordClassRef="EstRecordClasses.EstRecordClass">
+     
+     	<category name="est" displayName="EST">
+            <questionRef>EstQuestions.EstBySourceId</questionRef>
+            <questionRef>EstQuestions.EstsBySimilarity</questionRef>
+            <questionRef>EstQuestions.EstsByLocation</questionRef>
+            <questionRef>EstQuestions.EstsWithGeneOverlap</questionRef>
+            <questionRef>EstQuestions.EstsByLibrary</questionRef>
+        </category>
+        
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- ORF Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+     <categories recordClassRef="OrfRecordClasses.OrfRecordClass">
+     
+     	<category name="orf" displayName="ORF">
+            <questionRef>OrfQuestions.OrfByOrfId</questionRef>
+            <questionRef>OrfQuestions.OrfsByMassSpec</questionRef>
+            <questionRef>OrfQuestions.OrfsByMotifSearch</questionRef>
+            <questionRef>OrfQuestions.OrfsBySimilarity</questionRef>
+            <questionRef>OrfQuestions.OrfsByLocation</questionRef>
+        </category>
+        
      </categories>
      
 </wdkModel>
