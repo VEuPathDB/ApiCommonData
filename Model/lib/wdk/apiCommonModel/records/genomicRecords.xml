@@ -243,7 +243,7 @@
         <!-- GBrowse -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <textAttribute name="GBrowse"  includeProjects="PlasmoDB"
-            inReportMaker="false">
+            displayName="Genome Browser" align="center" inReportMaker="false">
            <text>
                 <![CDATA[
                 <a href="@CGI_URL@/gbrowse/plasmodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
@@ -252,7 +252,7 @@
         </textAttribute>
 
         <textAttribute name="GBrowse"  includeProjects="GiardiaDB"
-            inReportMaker="false">
+            displayName="Genome Browser" align="center" inReportMaker="false">
            <text>
                 <![CDATA[
                 <a href="/cgi-bin/gbrowse/giardiadb/?name=$$primaryKey$$%3A1-$$length$$;width=550;label=Gene;label=DeprecatedGene">view</a>
@@ -261,7 +261,7 @@
         </textAttribute>
 
         <textAttribute name="GBrowse" includeProjects="ToxoDB" 
-            inReportMaker="false" internal="true">
+            displayName="Genome Browser" align="center" inReportMaker="false">
            <text>
                 <![CDATA[
                 <a href="@CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
@@ -270,7 +270,7 @@
         </textAttribute>
 
         <textAttribute name="GBrowse" includeProjects="CryptoDB" 
-             inReportMaker="false">
+            displayName="Genome Browser" align="center" inReportMaker="false">
             <text>
                  <![CDATA[
                 <a href="/@CGI_OR_MOD@/gbrowse/cryptodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
@@ -278,11 +278,11 @@
             </text>
          </textAttribute>
 
-         <textAttribute name="gbrowseLink"  includeProjects="TrichDB"
-             inReportMaker="false">
+         <textAttribute name="GBrowse"  includeProjects="TrichDB"
+            displayName="Genome Browser" align="center" inReportMaker="false">
             <text>
                  <![CDATA[
-                 @CGI_URL@/gbrowse/trichdb/?name=$$primaryKey$$:1-$$length$$;enable=Gene
+                 <a href="@CGI_URL@/gbrowse/trichdb/?name=$$primaryKey$$:1-$$length$$;enable=Gene">view</a>
                  ]]>
             </text>
          </textAttribute>
@@ -291,7 +291,7 @@
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB"
-            displayName="Links to Other Web Pages" inReportMaker="false">
+            displayName="Retrieve Sequence" inReportMaker="false">
            <text>
                 <![CDATA[
                     <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
