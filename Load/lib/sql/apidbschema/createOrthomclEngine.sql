@@ -64,6 +64,8 @@ GRANT SELECT ON apidb.ortholog TO gus_r;
 CREATE TABLE apidb.CoOrtholog (
  SEQUENCE_ID_A           NUMBER(10),
  SEQUENCE_ID_B           NUMBER(10),
+ TAXON_ID_A              NUMBER(10),
+ TAXON_ID_B              NUMBER(10),
  UNNORMALIZED_SCORE      NUMBER,
  NORMALIZED_SCORE        NUMBER    
 );
