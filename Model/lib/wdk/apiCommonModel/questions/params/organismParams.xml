@@ -656,7 +656,7 @@
       <column name="term"/>
       <sql>
         <![CDATA[
-          SELECT organisms.name AS term,
+          SELECT case when organisms.name = 'Giardia intestinalis' then 'Giardia lamblia' else organisms.name end AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
                                              AS apidb.varchartab), ', ')
                          AS internal
@@ -823,7 +823,7 @@
       <sqlParamValue name="organism" includeProjects="CryptoDB,TrichDB">none at all</sqlParamValue>
       <sql>
         <![CDATA[
-          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardia  lamblia' else organisms.name end AS term,
+          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardia lamblia' else organisms.name end AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
                                              AS apidb.varchartab), ', ')
                          AS internal
