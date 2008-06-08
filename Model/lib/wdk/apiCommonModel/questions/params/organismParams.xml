@@ -820,7 +820,7 @@
       <sqlParamValue name="organism" includeProjects="CryptoDB,TrichDB">none at all</sqlParamValue>
       <sql>
         <![CDATA[
-          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardia lamblia' else organisms.name end AS term,
+          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardialamblia' else organisms.name end AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
                                              AS apidb.varchartab), ', ')
                          AS internal
@@ -843,6 +843,42 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
 
+  <!--===================================================================-->
+    <!-- gl -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="gl" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sqlParamValue name="organism" includeProjects="GiardiaDB">Giardia intestinalis</sqlParamValue>
+      <sqlParamValue name="organism" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TrichDB">none at all</sqlParamValue>
+     
+ <sql>
+        <![CDATA[
+          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardia lamblia' else organisms.name end AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name = '&&organism&&') organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+
+
+    </sqlQuery>
+
+    <wsQuery name="gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
 
     <!--===================================================================-->
     <!-- tg pf -->  
