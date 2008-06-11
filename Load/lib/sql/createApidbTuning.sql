@@ -1578,6 +1578,29 @@ CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a,
 CREATE OR REPLACE SYNONYM apidb.Polymorphism FOR apidb.Polymorphism&1;
 
 
+-------------------------------------------------------------------------------
+
+CREATE TABLE apidb.DistinctLowerProduct&1 AS
+select rownum as dlp_id, dlp
+from (select distinct lower(product) as dlp
+      from dots.GeneFeature);
+
+GRANT SELECT ON apidb.DistinctLowerProduct&1 TO gus_r;
+
+CREATE OR REPLACE SYNONYM apidb.DistinctLowerProduct FOR apidb.DistinctLowerProduct&1;
+----
+CREATE TABLE apidb.GeneProduct&1 AS
+select dlp_id, na_feature_id
+from apidb.DistinctLowerProduct, dots.GeneFeature
+where lower(product) = dlp;
+
+GRANT SELECT ON apidb.GeneProduct&1 TO gus_r;
+
+CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id);
+
+CREATE OR REPLACE SYNONYM apidb.GeneProduct FOR apidb.GeneProduct&1;
+
+
 ---------------------------
 -- cleanup
 ---------------------------
