@@ -1570,7 +1570,6 @@ CREATE TABLE apidb.polymorphism&1 AS
     AND sa.parent_id = snp.na_feature_id
     AND sa.na_feature_id = nl.na_feature_id
     AND snp.parent_id = gf.na_feature_id (+);
-CREATE TABLE apidb.polymorphism&1 AS
 
 GRANT SELECT ON apidb.Polymorphism&1 TO gus_r;
 
