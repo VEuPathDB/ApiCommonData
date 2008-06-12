@@ -5,6 +5,7 @@ use CBIL::Util::PropertySet;
 use GUS::Pipeline::NfsCluster;
 use GUS::Pipeline::SshCluster;
 use GUS::Pipeline::Manager;
+use ApiCommonData::Load::MakeTaskDirs;
 
 use File::Basename;
 
