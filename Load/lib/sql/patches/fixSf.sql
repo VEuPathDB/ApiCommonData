@@ -177,3 +177,14 @@ set source_id = (select t.source_id
                   and t.source_id = tas.source_id);
 
 commit;
+
+prompt make splicednasequence source_ids same as transcript source_ids
+update dots.splicednasequence sna 
+set source_id = (
+select t.source_id 
+from dots.transcript t 
+where t.na_sequence_Id = sna.na_sequence_id
+and sna.source_id is null
+);
+
+commit;
