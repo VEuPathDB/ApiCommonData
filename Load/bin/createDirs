@@ -17,10 +17,11 @@ die "$projectDir doesn't exist\n"  unless (-w $projectDir);
 mkdir("$projectDir/$release", 0777) || print $!;
 
 my @subDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
-		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray', 'logs');
+		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray', 'logs', 'signalp'es
+);
 
 foreach my $dir (@subDirs) {
 	mkdir("$projectDir/$release/$dir", 0777) || print $!;
-}	
+}
 
 1;
