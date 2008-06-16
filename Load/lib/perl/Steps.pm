@@ -221,7 +221,7 @@ sub createDataDir {
   &_createDir($mgr, $dataDir);
 
   my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
-		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray');
+		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray','mercator');
 
   foreach my $subDir (@dataSubDirs) {
     &_createDir($mgr, "$dataDir/$subDir");
@@ -278,7 +278,7 @@ sub sqlLoader {
 sub _createDir {
   my ($mgr, $dir) = @_;
   return if (-e $dir);
-  $mgr->runCmd("mkdir $dir");
+  $mgr->runCmd("mkdir -p $dir");
   $mgr->runCmd("chmod -R g+w $dir");
 }
 
@@ -717,7 +717,7 @@ sub documentPsipred {
 
 
 sub createRepeatMaskDir {
-  my ($mgr, $species, $file, $addOpt, $taskSizeOpt) = @_;
+  my ($mgr, $species, $file, $addOpt, $taskSizeOpt, $repeatMaskSubdir) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "make$species" . ucfirst($file) . "SubDir";
@@ -726,6 +726,13 @@ sub createRepeatMaskDir {
 
   my $dataDir = $mgr->{'dataDir'};
   my $clusterDataDir = $mgr->{'clusterDataDir'};
+  if($repeatMaskSubdir){
+
+    $dataDir .= "/$repeatMaskSubdir";
+    $clusterDataDir .= "/$repeatMaskSubdir";
+    &_createDir($mgr,$dataDir);
+ 
+  }
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $rmPath = $propertySet->getProp('repeatmask.path');
@@ -3338,13 +3345,17 @@ sub startGenomeAlignOnComputeCluster {
 }
 
 sub startRepeatMaskOnComputeCluster {
-  my ($mgr, $queryFile, $queue) = @_;
+  my ($mgr, $queryFile, $queue, $repeatMaskSubdir) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "startRepeatMask$queryFile";
   return if $mgr->startStep("Starting $queryFile repeat mask on cluster", $signal);
-
-  my $clusterCmdMsg = "runRepeatMask --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --queue $queue";
+ 
+  my $buildDir = $mgr->{clusterDataDir};
+  if($repeatMaskSubdir){
+      $buildDir .= "/$repeatMaskSubdir";
+  }
+  my $clusterCmdMsg = "runRepeatMask --buildDir $buildDir --numnodes NUMBER_OF_NODES --query $queryFile --queue $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->endStep($signal);
