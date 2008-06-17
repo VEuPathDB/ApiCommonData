@@ -1,0 +1,217 @@
+<tuningConfig>
+
+  <tuningIndex table="dots.NaSequence" name="naSeq_srcSubclass_ix">
+     source_id, subclass_id
+  </tuningIndex>
+
+  <tuningTable name="apidb.EstAlignmentGeneSummary">
+    <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.GenomicSequence"/>
+    <externalDependency name="dots.AssemblySequence"/>
+    <externalDependency name="dots.BlatAlignment"/>
+    <externalDependency name="dots.Est"/>
+    <externalDependency name="dots.NaSequence"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <intermediateTables name="apidb.EstAlignmentGene"/>
+    <intermediateTables name="apidb.EstAlignmentNoGene"/>
+    <sql>
+      <![CDATA[ 
+      CREATE TABLE apidb.EstAlignmentGene AS
+      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+               e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+               ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+               ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+               sequence.source_id AS target_sequence_source_id,
+               least(ba.target_end, ga.end_max)
+               - greatest(ba.target_start, ga.start_min) + 1
+                 AS est_gene_overlap_length,
+               ba.query_bases_aligned / (query_sequence.length)
+               * 100 AS percent_est_bases_aligned,
+               ga.source_id AS gene
+        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
+             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+             dots.NaSequence query_sequence, sres.SequenceOntology so
+        WHERE e.na_sequence_id = ba.query_na_sequence_id
+          AND aseq.na_sequence_id = ba.query_na_sequence_id
+          AND sequence.na_sequence_id = ba.target_na_sequence_id
+          AND ga.sequence_id = sequence.source_id
+          AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
+          AND query_sequence.na_sequence_id = ba.query_na_sequence_id
+          AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+          AND so.term_name = 'EST'
+          AND ba.target_na_sequence_id = sequence.na_sequence_id
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[ 
+      CREATE TABLE apidb.EstAlignmentNoGene AS
+      SELECT * from EstAlignmentGene WHERE 1=0 UNION -- define datatype for null column
+      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+             e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+             ba.target_taxon_id, ba.percent_identity, ba.is_consistent,
+             ba.is_best_alignment, ba.is_reversed, ba.target_start, ba.target_end,
+             sequence.source_id AS target_sequence_source_id,
+             NULL AS est_gene_overlap_length,
+             ba.query_bases_aligned / (query_sequence.length)
+             * 100 AS percent_est_bases_aligned,
+             NULL AS gene
+      FROM dots.BlatAlignment ba, dots.Est e, dots.AssemblySequence aseq,
+           dots.NaSequence sequence, dots.NaSequence query_sequence
+      WHERE e.na_sequence_id = ba.query_na_sequence_id
+        AND e.na_sequence_id = query_sequence.na_sequence_id
+        AND aseq.na_sequence_id = ba.query_na_sequence_id
+        AND ba.target_na_sequence_id = sequence.na_sequence_id
+        AND ba.blat_alignment_id IN
+         ( -- set of blat_alignment_ids not in in first leg of UNION
+          -- (because they overlap no genes)
+          SELECT ba.blat_alignment_id
+          FROM dots.BlatAlignment ba, dots.NaSequence query_sequence,
+               sres.SequenceOntology so
+          WHERE query_sequence.na_sequence_id = ba.query_na_sequence_id
+            AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = 'EST'
+        MINUS
+          SELECT blat_alignment_id FROM apidb.EstAlignmentGene)
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[ 
+      CREATE TABLE EstAlignmentGeneSummary&1 AS
+      SELECT * FROM apidb.EstAlignmentNoGene
+      UNION
+      SELECT * FROM apidb.EstAlignmentGene
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[ 
+      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (library_id, percent_identity, is_consistent,
+                       est_gene_overlap_length, percent_est_bases_aligned)
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[ 
+      CREATE INDEX apidb.EstSumm_estSite_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (target_sequence_source_id, target_start, target_end,
+                       library_id)
+      ]]> 
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.BlatAlignmentLocation">
+    <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <externalDependency name="dots.NaSequence"/>
+    <sql>
+      <![CDATA[ 
+      CREATE TABLE apidb.BlatAlignmentLocation&1 AS
+      SELECT blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+             query_table_id, query_taxon_id, query_external_db_release_id,
+             target_table_id, target_taxon_id, target_external_db_release_id,
+             is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+             unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+             is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+             number_of_spans, query_start, query_end, target_start, target_end,
+             is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+             is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+             tstarts, 'direct' as location_mapping
+      FROM dots.BlatAlignment
+      ]]> 
+    </sql>
+    <perl>
+      <![CDATA[ 
+      use strict;
+      use lib "$ENV{GUS_HOME}/lib/perl";
+      use Getopt::Long;
+      use GUS::ObjRelP::DbiDatabase;
+
+
+      my $sql = <<SQL;
+        select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
+               sp.strand_orientation, virtualseq.length, vti.table_id as virtual_target_table_id
+        from dots.BlatAlignment ba, dots.SequencePiece sp, dots.NaSequence virtualseq,
+             core.TableInfo vti
+        where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
+          and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
+          and virtualseq.subclass_view = vti.name
+SQL
+
+      my $queryHandle = $dbh->prepareAndExecute($sql);
+
+      $sql = <<SQL;
+        insert into apidb.BlatAlignmentLocation(blat_alignment_id,
+               query_na_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, location_mapping)
+         values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+SQL
+
+      my $insertHandle = $dbh->prepare($sql);
+      my ($virtual_target_start, $virtual_target_end, $virtual_tstarts);
+
+      while (my ($blat_alignment_id, $query_na_sequence_id, $target_na_sequence_id,
+               $query_table_id, $query_taxon_id, $query_external_db_release_id,
+               $target_table_id, $target_taxon_id, $target_external_db_release_id,
+               $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+               $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+               $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+               $number_of_spans, $query_start, $query_end, $target_start, $target_end,
+               $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+               $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+               $tstarts, $virtual_na_sequence_id, $distance_from_left,
+               $strand_orientation, $length, $virtual_target_table_id)
+             = $queryHandle->fetchrow_array()) {
+
+        if ($virtual_na_sequence_id) {
+          if ($strand_orientation eq '-') {
+            $virtual_target_start = $distance_from_left + $length - $target_end;
+            $virtual_target_end = $distance_from_left + $length - $target_start;
+            $virtual_tstarts = '???';
+          } else {
+            $virtual_target_start = $target_start + $distance_from_left;
+            $virtual_target_end = $target_end + $distance_from_left;
+            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left } split( /,/, $tstarts));
+          }
+
+          # insert virtual locations
+          $insertHandle->execute($blat_alignment_id,
+                 $query_na_sequence_id, $virtual_na_sequence_id,
+                 $query_table_id, $query_taxon_id, $query_external_db_release_id,
+                 $virtual_target_table_id, $target_taxon_id, $target_external_db_release_id,
+                 $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+                 $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+                 $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+                 $number_of_spans, $query_start, $query_end, $virtual_target_start,
+                 $virtual_target_end,
+                 $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+                 $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+                 $virtual_tstarts, 'virtual');
+        }
+      }
+
+      $insertHandle->finish();
+      $queryHandle->finish();
+      ]]> 
+    </perl>
+  </tuningTable>
+
+</tuningConfig>
