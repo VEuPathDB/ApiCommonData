@@ -1219,7 +1219,7 @@ WHERE gf.na_feature_id = nl.na_feature_id
                       'Annotation for T. gondii ME49 - typeII:2005-08-01'))
   -- skip new plasmo annotation
   AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
-                      'Pfalciparum workshop annotations reviewed and changed'
+                      'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01');
 
 alter table apidb.geneattributes&1
@@ -1636,8 +1636,6 @@ where 1 = 0;
 
 grant select on apidb.BlatAlignmentLocation to gus_r;
 grant insert, update, delete on apidb.BlatAlignmentLocation to gus_w;
-
-grant select on apidb.BlatAlignmentLocation to gus_r;
 
 ---------------------------
 -- EstAlignmentGeneSummary
@@ -2452,6 +2450,32 @@ GRANT SELECT ON apidb.Scaffold_Map&1 TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON apidb.Scaffold_Map&1 TO gus_w;
 
 CREATE OR REPLACE SYNONYM apidb.Scaffold_Map FOR apidb.Scaffold_Map&1;
+
+-------------------------------------------------------------------------------
+
+prompt DistinctLowerProduct
+
+CREATE TABLE apidb.DistinctLowerProduct&1 AS
+select rownum as dlp_id, dlp
+from (select distinct lower(product) as dlp
+      from dots.GeneFeature);
+
+GRANT SELECT ON apidb.DistinctLowerProduct&1 TO gus_r;
+
+CREATE OR REPLACE SYNONYM apidb.DistinctLowerProduct FOR apidb.DistinctLowerProduct&1;
+
+prompt GeneProduct
+CREATE TABLE apidb.GeneProduct&1 AS
+select dlp_id, na_feature_id
+from apidb.DistinctLowerProduct, dots.GeneFeature
+where lower(product) = dlp;
+
+GRANT SELECT ON apidb.GeneProduct&1 TO gus_r;
+
+CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id);
+
+CREATE OR REPLACE SYNONYM apidb.GeneProduct FOR apidb.GeneProduct&1;
+
 
 ---------------------------
 -- cleanup
