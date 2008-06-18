@@ -28,6 +28,37 @@
   -->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- temporary question for modified annotation -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesWithModifiedAnnotation" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.plasmo_annot_status"/>
+        <paramRef ref="geneParams.plasmo_new_product"/>
+        <paramRef ref="geneParams.plasmo_new_model"/>
+        <paramRef ref="geneParams.plasmo_new_go"/>
+        <paramRef ref="geneParams.plasmo_new_ec"/>
+        <paramRef ref="geneParams.plasmo_snapshot_changed"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="annot_status"/>
+        <column name="new_product_desc"/>
+       <sql>
+             <![CDATA[
+            SELECT DISTINCT na.source_id, '@PROJECT_ID@' as project_id, 
+              na.status as annot_status, na.product as new_product_desc
+            FROM apidb.trackNewAnnotation na
+            where na.new_product in ($$plasmo_new_product$$)
+            and na.new_go in ($$plasmo_new_go$$)
+            and na.new_ec in ($$plasmo_new_ec$$)
+            and na.new_protein in ($$plasmo_new_model$$)
+            and na.status in ($$plasmo_annot_status$$)
+            and na.snapshot_changed in ($$plasmo_snapshot_changed$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

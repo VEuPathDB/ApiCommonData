@@ -147,6 +147,164 @@
         </enumList>
       </enumParam>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- temporary question for modified annotation -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <enumParam name="plasmo_new_product"
+                 prompt="Product Name Changed"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes with new product names.
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_new_ec"
+                 prompt="EC Numbers Changed"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes with EC numbers assigned at workshop
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_new_go"
+                 prompt="GO Functions Changed"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes with GO terms assigned at the workshop.
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_new_model"
+                 prompt="Gene Model Changed"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes with altered gene models.
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_snapshot_changed"
+                 prompt="Updated since February 1, 2008 re-annotation snapshot"
+                 multiPick="false"
+                 quote="false">
+        <help>
+           Choose whether to return genes that have been updated since the last re-annotation snapshot was provided in PlasmoDB. The actual annotation may not have changed if a gene has now been reviewd that had not been reviewed previously.
+        </help>
+        <enumList>
+          <enumValue>
+            <term>Yes</term>
+            <internal>1</internal>
+          </enumValue>
+          <enumValue>
+            <term>No</term>
+            <internal>0</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Don't care</term>
+            <internal>0,1</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+      <enumParam name="plasmo_annot_status"
+                 prompt="Re-annotation status"
+                 multiPick="true"
+                 quote="true">
+        <help>
+           Choose which genes to return based on their re-annotation status.
+        </help>
+        <enumList>
+          <enumValue default="true">
+            <term>Changed</term>
+            <internal>changed</internal>
+          </enumValue>
+          <enumValue>
+            <term>New</term>
+            <internal>new</internal>
+          </enumValue>
+         <enumValue>
+            <term>New - Organellar</term>
+            <internal>new_organellar</internal>
+          </enumValue>
+          <enumValue>
+            <term>Deleted</term>
+            <internal>deleted</internal>
+          </enumValue>
+        <enumValue>
+            <term>Deprecated - Organellar</term>
+            <internal>deleted_organellar</internal>
+          </enumValue>
+          <enumValue>
+            <term>Reviewed - not changed</term>
+            <internal>reviewed</internal>
+          </enumValue>
+          <enumValue>
+            <term>Not reviewed</term>
+            <internal>not reviewed</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
         <stringParam name="sage_tag_min_r" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
                      prompt="R statistic Greater Than:"
                      substitute="yes"
@@ -1449,7 +1607,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     </enumParam>
 
     <enumParam name="inductionFold"
-                     prompt="Expression induction ratio"
+                     prompt="Expression Induction Ratio"
                      multiPick="false"
                      quote="false">
       <help>
@@ -3642,6 +3800,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <enumValue>
           <term>Gene product</term>
           <internal>product.txt</internal>
+        </enumValue>
+        <enumValue includeProjects="PlasmoDB">
+          <display><![CDATA[Gene product (updated <i>P. falciparum</i> annotation)]]></display>
+          <term>Gene product (updated P. falciparum annotation)</term>
+          <internal>newprod.txt</internal>
         </enumValue>
         <enumValue excludeProjects="TrichDB">
           <term>Gene notes</term>

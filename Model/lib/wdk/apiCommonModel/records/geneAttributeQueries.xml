@@ -29,6 +29,30 @@
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- TrackNewAnnotation -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+        <sqlQuery name="TrackNewAnnotation" isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="project_id"/>
+            <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_product" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_go" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_ec" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_protein" sortingTable="apidb.trackNewAnnotation"/>
+            <column name="new_product_string" sortingTable="apidb.trackNewAnnotation" sortingColumn="product"/>
+            <sql>
+               select $$projectId$$ as project_id,tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
+               from Apidb.TRACKNEWANNOTATION tna
+               where tna.source_id = $$primaryKey$$
+            </sql>
+        </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!--  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
@@ -338,6 +362,31 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="workshop_protein_sequence"/>
+            <sql>
+            <![CDATA[
+            SELECT gf.source_id,
+                   tas.sequence AS workshop_protein_sequence,'@PROJECT_ID@' as project_id
+            FROM dots.GeneFeature gf, dots.Transcript t,
+                 dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
+                 apidb.TRACKNEWANNOTATION tna
+            WHERE tna.source_id=$$primaryKey$$
+              AND tna.new_source_id = gf.source_id
+              AND t.parent_id = gf.na_feature_id
+              AND t.na_feature_id = taf.na_feature_id
+              AND taf.aa_sequence_id = tas.aa_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
+
+
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -401,6 +450,24 @@
        <!-- transcript sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+
+        <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
+                       displayName="RNA Sequence">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="workshop_transcript_sequence"/>
+            <sql>
+            <![CDATA[
+              select gf.source_id, s.sequence as workshop_transcript_sequence,'@PROJECT_ID@' as project_id
+              from dots.genefeature gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
+              where tna.source_id = $$primaryKey$$
+              and tna.new_source_id = gf.source_id
+              and t.parent_id = gf.na_feature_id
+              and s.na_sequence_id = t.na_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
         <sqlQuery name="TranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <paramRef ref="recordParams.primaryKey"/>
@@ -444,6 +511,35 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- cds sequence -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+        <sqlQuery name="NewAnnotationCDS" isCacheable="false" excludeProjects="ApiDB" 
+                       displayName="New Annotation RNA Sequence">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="workshop_cds"/>
+            <sql>
+            <![CDATA[
+              SELECT gf.source_id,
+                     SUBSTR(s.sequence,
+                            tf.translation_start,
+                            tf.translation_stop - tf.translation_start + 1)
+                       AS workshop_cds,'@PROJECT_ID@' as project_id
+              FROM dots.genefeature gf, dots.transcript t,
+                   dots.splicednasequence s, dots.TranslatedAaFeature tf,
+                   apidb.TRACKNEWANNOTATION tna
+              WHERE tna.source_id = $$primaryKey$$
+                AND tna.new_source_id = gf.source_id
+                AND t.parent_id = gf.na_feature_id
+                AND s.na_sequence_id = t.na_sequence_id
+                AND t.na_feature_id = tf.na_feature_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
 
         <sqlQuery name="CDS" isCacheable="false" excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
@@ -521,7 +617,7 @@
                       NVL(MAX(graph_gametocyte), 0) AS graph_gametocyte,
                       NVL(MAX(graph_cowman), 0) AS graph_cowman,
                       NVL(MAX(graph_mexp128), 0) AS graph_mexp128
-               FROM apidb.PlasmoExpressionGraphs egs
+               FROM apidb.ExpressionGraphSummary egs
                WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
@@ -543,7 +639,7 @@
                SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
                       NVL(MAX(graph_starvation), 0) AS graph_starvation,
                       NVL(MAX(graph_archetypal), 0) AS graph_archetypal
-               FROM apidb.ToxoExpressionGraphs egs
+               FROM apidb.ExpressionGraphSummary egs
                WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>

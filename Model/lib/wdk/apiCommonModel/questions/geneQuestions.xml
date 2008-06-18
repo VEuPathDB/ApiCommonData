@@ -8,6 +8,49 @@
                displayName="Search Genes">
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- temporary question for modified annotation -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesWithModifiedAnnotation" 
+         includeProjects="PlasmoDB"
+         category="New Annotation"
+         displayName="Updated Annotation"
+              queryRef="GeneId.GenesWithModifiedAnnotation"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList
+              summary="location_text,product,new_product_desc,annot_status"
+              sorting="location_text asc"
+        />
+        <summary>
+           Find genes that have modified annotation based on the recent Plasmodium annotation workshop
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes that have modified annotation based on the recent Plasmodium annotation workshop.  Modified annotation includes gene models, GO and EC assignments and product names. <p>
+<b><i>Plasmodium falciparum</i> reannotation workshop:</b>  
+The effort to systematically update the annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the ApiDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and ApiDB teams. During the workshop 2700 genes were edited using Artemis and ACT software, mainly with the addition of new or alternative functional descriptions (e.g. product names, GO terms, EC numbers and miscellaneous textual comments). 
+<p>
+After the workshop, intensive manual reannotation of the genome has continued at WTSI with the help of several members of the community. First, the structures of more than 700 gene models have been changed and new gene models have been added. In addition, curation staff at GeneDB have reviewed all User Comments submitted to PlasmoDB. Over the coming months, the emphasis will switch to a careful genome-wide review of functional annotation.
+<p>
+The annotation presented here in PlasmoDB is the second snapshot of a work in progress and intended to inform you about the new annotation and elicit any feedback that you may have. Please add a User Comment to any gene about which you have additional information. This information is forwarded to the GeneDB curators on a weekly basis and will be included in the next snapshot.  In order to expedite the annotation, the following are of particular value to the manual curators:  
+<ol>
+<li>New product names with the PubMed ID of the paper in which they were first cited,  
+<li>Additional PubMed IDs of any papers from which the function of the gene/protein can be ascribed
+<li>EC number
+<li>Alternative/updated gene names and aliases.
+<li>Evidence that a gene tructure has been incorrectly called.  Please include a description of the evidence that you have used (e.g. full length cDNA) and the new sequence.
+</ol>
+<p>
+Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for a list of participants</a>.<p>
+          ]]>
+        </description>
+        <dynamicAttributes>
+          <columnAttribute name="annot_status" displayName="Status"/>
+          <columnAttribute name="new_product_desc" displayName="New Product Description"/>
+        </dynamicAttributes>
+    </question>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Location -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
