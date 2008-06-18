@@ -1,0 +1,158 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
+use XML::Simple;
+use DBI;
+use Getopt::Long qw(GetOptions);
+use ApiCommonData::Load::TuningConfig::InternalTable;
+
+my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
+
+GetOptions("configFile=s" => \$configFile,
+           "model=s" => \$model,
+           "instance=s" => \$instance,
+           "password=s" => \$password,
+           "doUpdate!" => \$doUpdate,
+           "notifyEmail=s" => \$notifyEmail,
+           "debug!" => \$debug,
+	  );
+
+&usage unless ($configFile && $notifyEmail && ($model || $instance && $password));
+
+my ($config) = &parseConfigFile($configFile);
+
+my $dbh = getDbHandle($model, $instance, $password);
+
+&validateConfig($config, $dbh);
+
+###############################################################################
+
+sub usage {
+  die
+q{
+Create/update "tuning tables", denormalized copies of data used to improve web site performance.
+
+Usage: tuningManager --configFile <configXmlPath> {--model <modelName>}
+                     {--instance <dbInstance>} {--password <dbPassword>}
+                     {--doUpdate} --notifyEmail <emailAddressList> { --debug }
+
+options:
+  configFile  an xml file describing the tables to be created
+  instance    the database instance to login and craete objects in
+  password    database login password
+  doUpdate    update any tables found to be out of date
+  debug       print debugging info
+
+Sample config file XML:
+<tuningConfig>
+
+  <tuningIndex table="dots.NaSequence" name="naSeq_srcSubclass_ix">
+     source_id, subclass_id
+  </tuningIndex>
+
+  <tuningTable name="apidb.EstAlignmentGeneSummary">
+    <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <intermediateTables name="apidb.EstAlignmentGene"/>
+    <sql>
+      CREATE TABLE apidb.EstAlignmentGene AS
+      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+               e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+               ba.query_bases_aligned / (query_sequence.length)
+               * 100 AS percent_est_bases_aligned,
+               ga.source_id AS gene
+        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
+             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+             dots.NaSequence query_sequence, sres.SequenceOntology so
+        WHERE e.na_sequence_id = ba.query_na_sequence_id
+          AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+          AND so.term_name = 'EST'
+          AND ba.target_na_sequence_id = sequence.na_sequence_id
+    </sql>
+    <sql>
+      CREATE TABLE EstAlignmentGeneSummary&1 AS
+      SELECT * FROM apidb.EstAlignmentNoGene
+      UNION
+      SELECT * FROM apidb.EstAlignmentGene
+    </sql>
+    <sql>
+      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (library_id, percent_identity, is_consistent,
+                       est_gene_overlap_length, percent_est_bases_aligned)
+    </sql>
+    <sql>
+      CREATE INDEX apidb.EstSumm_estSite_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (target_sequence_source_id, target_start, target_end,
+                       library_id)
+    </sql>
+  </tuningTable>
+
+</tuningConfig>
+};
+}
+
+sub parseConfigFile {
+  my ($configFile) = @_;
+
+  open(FILE, $configFile) || die "can't open configuration file '$configFile' for reading\n";
+  my $simple = XML::Simple->new();
+
+  # use forcearray so elements with one child are still arrays
+  # and, use keyattr so that unions are given as an ordered list
+  # rather than a hash
+  my $config = $simple->XMLin($configFile,
+			    forcearray => 1,
+			    KeyAttr => {sqlValue=>'+name'});
+  if ($debug) {
+    print Dumper($config);
+    print "\n\n";
+  }
+
+  return ($config);
+}
+
+sub getDbHandle {
+  my ($model, $instance, $password) = @_;
+
+  my $dsn = "dbi:Oracle:" . $instance;
+  my $username = 'apidb';
+
+  if ($model) {
+    use ApiCommonWebsite::Model::ModelConfig;
+
+    my $cfg = new ApiCommonWebsite::Model::ModelConfig($model);
+    $username = $cfg->getLogin;
+    $password = $cfg->getPassword;
+    $dsn = $cfg->getDbiDsn;
+  }
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+  $dbh->{LongReadLen} = 1000;
+  $dbh->{LongTruncOk} = 1;
+  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
+  return $dbh;
+}
+
+sub validateConfig {
+  my ($config, $dbh) = @_;
+
+}
+
+sub runSql {
+
+  my ($dbh, $sql) = @_;
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  $stmt->finish();
+}
