@@ -167,7 +167,7 @@ sub run {
 
   my $exon = $self->getSoId("exon") || $self->error ("Can't retrieve so_id for exon");
 
-  my $procTransc = $self->getSoId("processed_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
+  my $procTransc = $self->getSoId("mature_transcript") || $self->error ("Can't retrieve so_id for processed_transcript");
 
   my %soIds = ('geneFeat' => $rnaId,
 	       'transcript' => $primTransc,
