@@ -13,7 +13,7 @@ sub new {
         $internalDependencyNames,
         $externalDependencyNames,
         $sqls, # reference to array of SQL statements
-        $perl)
+        $perls)
 	= @_;
 
     my $self = {};
@@ -23,21 +23,21 @@ sub new {
     $self->{internalDependencyNames} = $internalDependencyNames;
     $self->{externalDependencyNames} = $externalDependencyNames;
     $self->{sqls} = $sqls;
-    $self->{perl} = $perl;
+    $self->{perls} = $perls;
 
     return $self;
   }
 
-sub addInternalDependency {
-  my ($self, $dependency) = @_;
-}
-
-sub addExternalDependency {
-  my ($self, $dependency) = @_;
-}
-
 sub getSqls {
   my ($self) = @_;
+
+  return $self->{sqls};
+}
+
+sub getPerls {
+  my ($self) = @_;
+
+  return $self->{perls};
 }
 
 sub getInternalDependencyNames {
@@ -68,44 +68,90 @@ sub isOutdated {
 }
 
 sub update {
-    my ($self) = @_;
+  my ($self) = @_;
 }
 
 sub definitionHasChanged {
-    my ($self, $dbh) = @_;
+  my ($self, $dbh) = @_;
 
-    # return true if definition in apidb.TuningDefinition has changed,
-    # or this table has no record in apidb.TuningDefinition
+  # return true if definition in apidb.TuningDefinition has changed,
+  # or this table has no record in apidb.TuningDefinition
 
-    ensureDefTableExists($dbh);
+  ensureDefTableExists($dbh);
+
+  my $sql = <<SQL;
+       select definition from apidb.TuningDefinition
+       where name = '$self->{name}'
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  my ($dbDef) = $stmt->fetchrow_array();
+  $stmt->finish();
+
+  return {$dbDef eq $self->getDefString()};
+
 }
 
 sub storeDefinition {
-    my ($self, $definitionString) = @_;
-  }
+  my ($self, $dbh) = @_;
+
+  my $sql = <<SQL;
+       delete from apidb.TuningDefinition
+       where name = '$self->{name}'
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  $stmt->finish();
+
+  my $sql = <<SQL;
+       insert into apidb.TuningDefinition
+          (name, definition) values (?, ?)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute($self->{name}, $self->getDefString()) or die "failed executing SQL statement \"$sql\"\n";
+  $stmt->finish();
+
+}
+
+sub getDefString {
+  my ($self) = @_;
+
+  my $sqls = $self->getSqls();
+  my $defString = join(" ", @{$sqls}) if $sqls;
+
+  my $perls = $self->getPerls();
+  $defString .= join(" ", @{$perls}) if $perls;
+
+  return $defString;
+}
 
 sub ensureDefTableExists {
-    my ($dbh) = @_;
+  my ($dbh) = @_;
 
-    my $sql = <<SQL;
+  # does it exist?
+  my $sql = <<SQL;
        select count(*) from all_tables
        where owner = 'APIDB' and table_name = 'TUNINGDEFINITION'
 SQL
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
-    my ($count) = $stmt->fetchrow_array();
-    $stmt->finish();
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  my ($count) = $stmt->fetchrow_array();
+  $stmt->finish();
 
-    if (!$count) {
-      my $sql = <<SQL;
+  if (!$count) {
+    # then create it!
+    my $sql = <<SQL;
        create table apidb.TuningDefinition(
           name  varchar2(65) not null,
           definition clob not null)
 SQL
-      my $stmt = $dbh->prepare($sql);
-      $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
-      $stmt->finish();
-    }
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+    $stmt->finish();
   }
+}
 
 1;

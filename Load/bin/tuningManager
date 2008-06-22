@@ -7,9 +7,9 @@ use XML::Simple;
 use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::InternalTable;
+use ApiCommonData::Load::TuningConfig::ExternalTable;
 
 my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
-
 GetOptions("configFile=s" => \$configFile,
            "model=s" => \$model,
            "instance=s" => \$instance,
@@ -19,13 +19,68 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
 	  );
 
+print "missing parameter: configFile\n" unless $configFile;
+print "missing parameter: notifyEmail\n" unless $notifyEmail;
+print "parameter error: either model or both instance and password must be specified\n"
+  unless ($model || $instance && $password);
 &usage unless ($configFile && $notifyEmail && ($model || $instance && $password));
 
 my ($config) = &parseConfigFile($configFile);
 
 my $dbh = getDbHandle($model, $instance, $password);
 
-&validateConfig($config, $dbh);
+my %tuningTables;
+my %externalTables;
+foreach my $tuningTable (@{$config->{tuningTable}}) {
+
+  $tuningTables{$tuningTable->{name}}
+    = ApiCommonData::Load::TuningConfig::InternalTable->
+      new($tuningTable->{name},
+	  $tuningTable->{internalDependency},
+	  $tuningTable->{externalDependency},
+	  $tuningTable->{sql},
+	  $tuningTable->{perl});
+}
+
+my $undefinedInternal;
+my $nonexistentExternal;
+my $dependencyCycle;
+foreach my $tableName (keys(%tuningTables)) {
+
+  # check for internalDependencies that aren't in the list of tuningTables
+  foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
+    if (!$tuningTables{$dependency->{name}}) {
+      print "ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied\n";
+      $undefinedInternal = 1;
+    }
+  }
+
+  # check for externalDependencies that aren't in the database
+  foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
+
+    # new ExternalTable instance in the hash, if we haven't seen this
+    $externalTables{$dependency->{name}}
+      = ApiCommonData::Load::TuningConfig::ExternalTable->
+	new($dependency->{name}, $dbh)
+	  unless ($externalTables{$dependency->{name}});
+
+    if (!$externalTables{$dependency->{name}}->exists()) {
+      print "ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists\n";
+      $nonexistentExternal = 1;
+    }
+  }
+}
+
+# also, check for cycles in graph of dependencies (how?)
+#die if $undefinedInternal || $nonexistentExternal || $dependencyCycle;
+
+# print everybody's definition string
+foreach my $tableName (keys(%tuningTables)) {
+
+  my $defstring = $tuningTables{$tableName}->getDefString();
+
+  print "\n\ntable $tableName has defString $defstring\n\n";
+}
 
 ###############################################################################
 
@@ -141,11 +196,6 @@ sub getDbHandle {
   $dbh->{LongTruncOk} = 1;
   print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
   return $dbh;
-}
-
-sub validateConfig {
-  my ($config, $dbh) = @_;
-
 }
 
 sub runSql {
