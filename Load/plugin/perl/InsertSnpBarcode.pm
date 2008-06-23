@@ -15,16 +15,16 @@ my $purposeBrief = <<PURPOSEBRIEF;
 Insert Molecular Barcode data from a tab file (converted from Excel format).
 PURPOSEBRIEF
 
-my $purposeBrief = <<PURPOSE;
+my $purpose = <<PURPOSE;
 Insert Molecular Barcode data from a tab file (converted from Excel format).
 PURPOSE
 
 my $tablesAffected = [
-  ['DoTS.IsolateSource'], 'One row per barcode - strain, origin, source'],
-  ['DoTS.NALocation'], 'One or more rows inserted per barcode DoTS.IsolateSource row']
+  ['DoTS.IsolateSource', 'One row per barcode - strain, origin, source'],
+  ['DoTS.NALocation', 'One or more rows inserted per barcode DoTS.IsolateSource row'] 
 ];
 
-my $tableDependedOn = [];
+my $tablesDependedOn = [];
 
 my $howToRestart = "There is currently no restart method.";
 
@@ -44,7 +44,7 @@ Here are the tab file columns:
 PLUGIN_NOTES
 
 my $documentation = { purpose          => $purpose,
-                      purposeBrief     => $purposebrief,
+                      purposeBrief     => $purposeBrief,
                       tablesAffected   =>$tablesAffected,
                       tablesDependedOn =>$tablesDependedOn,
                       howToRestart     =>$howToRestart,
@@ -113,10 +113,10 @@ sub run {
     my ($strain, $origin, $source, $barcode, $call, $match, @snp) = split /\t/, $_;
     map { s/\s+$// } @snp;  # trim off extra spaces
 
-    my $objargs = {
+    my $objArgs = {
                    strain  => $strain,
                    isolate => $strain,
-                   country => $country,
+                   country => $origin,
                    collected_by => $source,
                   };
 
