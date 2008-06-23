@@ -45,39 +45,39 @@ PLUGIN_NOTES
 
 my $documentation = { purpose          => $purpose,
                       purposeBrief     => $purposeBrief,
-                      tablesAffected   =>$tablesAffected,
-                      tablesDependedOn =>$tablesDependedOn,
-                      howToRestart     =>$howToRestart,
-                      failureCases     =>$failureCases,
-                      notes            =>$notes
+                      tablesAffected   => $tablesAffected,
+                      tablesDependedOn => $tablesDependedOn,
+                      howToRestart     => $howToRestart,
+                      failureCases     => $failureCases,
+                      notes            => $notes
                     };
 
 my $argsDeclaration = 
   [
-    stringArg({name  => 'extDbName',
-               descr => 'the external database name to tag the data with.',
-               reqd  => 1,
+    stringArg({name           => 'extDbName',
+               descr          => 'the external database name to tag the data with.',
+               reqd           => 1,
                constraintFunc => undef,
-               isList => 0,
+               isList         => 0,
              }),
-    stringArg({name  => 'extDbRlsVer',
-               descr => 'the version of the external database to tag the data with.',
-               reqd  => 1,
+    stringArg({name           => 'extDbRlsVer',
+               descr          => 'the version of the external database to tag the data with.',
+               reqd           => 1,
                constraintFunc => undef,
-               isList => 0,
+               isList         => 0,
              }),
     booleanArg({name    => 'tolerateMissingIds',
                 descr   => "don't fail if an input sourceId is not found in database",
                 reqd    => 0,
                 default => 0
               }),
-    fileArg({name => 'inputFile',
-             descr => 'file containing the data',
-             constraintFunc=> undef,
-             reqd  => 1,
-             mustExist => 1,
-             isList => 0,
-             format=>'Tab-delimited.  See ApiDB.MassSpecSummary for columns'
+    fileArg({ name           => 'inputFile',
+              descr          => 'file containing the data',
+              constraintFunc => undef,
+              reqd           => 1,
+              mustExist      => 1,
+              isList         => 0,
+              format         =>'Tab-delimited.  See ApiDB.MassSpecSummary for columns'
            }), 
    ];
 
@@ -87,7 +87,7 @@ sub new {
   bless($self,$class); 
 
   $self->initialize({requiredDbVersion => 3.5,
-                     cvsRevision => '$Revision$', # cvs fills this in!
+                     cvsRevision => '$Revision:$', # cvs fills this in!
                      name => ref($self),
                      argsDeclaration => $argsDeclaration,
                      documentation => $documentation
@@ -98,11 +98,12 @@ sub new {
 sub run {
   my ($self) = @_;
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
-  $self->getArg('extDbRlsVer'));
+                                        $self->getArg('extDbRlsVer'));
 
   die "Couldn't find external_database_release_id" unless $extDbRlsId;
 
   my $inputFile = $self->getArg('inputFile');
+
   open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
 
   my $count = 0;
@@ -114,19 +115,37 @@ sub run {
     map { s/\s+$// } @snp;  # trim off extra spaces
 
     my $objArgs = {
-                   strain  => $strain,
-                   isolate => $strain,
-                   country => $origin,
-                   collected_by => $source,
+                    strain                       => $strain,
+                    name                         => 'dummy name',
+                    isolate                      => $strain,
+                    country                      => $origin,
+                    collected_by                 => $source,
+                    external_database_release_id => $extDbRlsId,
                   };
 
-    my $barcode = GUS::Model::DoTS::IsolateSource->new($objArgs);
-    $barcode->submit();
+    my $extNASeq = $self->buildSequence($barcode, $extDbRlsId);
+
+    my $isolateSource = GUS::Model::DoTS::IsolateSource->new($objArgs);
+
+    $extNASeq->addChild($isolateSource);
+
+    $extNASeq->submit();
     $count++;
     $self->log("processed $count") if ($count % 1000) == 0;
   }
 
   return "Inserted $count rows.";
+}
+
+sub buildSequence {
+  my ($self, $seq, $extDbRlsId) = @_;
+
+  my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
+
+  $extNASeq->setExternalDatabaseReleaseId($extDbRlsId);
+  $extNASeq->setSequence($seq);
+
+  return $extNASeq;
 }
 
 sub undoTables {
