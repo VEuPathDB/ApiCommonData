@@ -302,12 +302,12 @@ WHERE dr.primary_identifier IS NOT NULL
   AND dr.external_database_release_id
         = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
-                  'NRDB_pdb_dbXRefBySeqIdentity',
-                  'NRDB_ref_dbXRefBySeqIdentity',
-                  'NRDB_sp_dbXRefBySeqIdentity',
-                  'Predicted protein structures',
-                  'GenBank', 'gb', 'GI', 'Giardia gene aliases 1')
+--AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+--                'NRDB_pdb_dbXRefBySeqIdentity',
+--                'NRDB_ref_dbXRefBySeqIdentity',
+--                'NRDB_sp_dbXRefBySeqIdentity',
+--                'Predicted protein structures',
+--                'GenBank', 'gb', 'GI', 'Giardia gene aliases 1')
 UNION
 SELECT LOWER(dr.secondary_identifier) AS id, gf.source_id AS gene
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
