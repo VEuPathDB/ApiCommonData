@@ -1180,7 +1180,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl,
                AS comment_string
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
-     (SELECT source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated
+     (SELECT distinct source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated
 WHERE gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
