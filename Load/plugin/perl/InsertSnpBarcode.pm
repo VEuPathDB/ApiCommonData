@@ -21,8 +21,9 @@ Insert Molecular Barcode data from a tab file (converted from Excel format).
 PURPOSE
 
 my $tablesAffected = [
-  ['DoTS.IsolateSource', 'One row per barcode - strain, origin, source'],
-  ['DoTS.NALocation', 'One or more rows inserted per barcode DoTS.IsolateSource row'] 
+  ['DoTS.IsolateSource', 'One row per barcode - strain, origin, source, sequence'],
+  ['DoTS.IsolateFeature', 'One row or more per inserted IsolateSource, name, chr, major/minor allele'],
+  ['DoTS.ExternalNASequence', 'One row inserted per barcode .IsolateSource row'] 
 ];
 
 my $tablesDependedOn = [];
