@@ -18,8 +18,6 @@ sub new {
 
     bless($self, $class);
     $self->{name} = $name;
-    $self->{internalDependencies} = [];
-    $self->{externalDependencies} = [];
 
     my ($schema, $table) = split(/\./, $name);
     $self->{schema} = $schema;

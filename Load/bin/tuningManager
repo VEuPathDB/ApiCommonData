@@ -50,36 +50,44 @@ my $dependencyCycle;
 foreach my $tableName (keys(%tuningTables)) {
 
   # check for internalDependencies that aren't in the list of tuningTables
-  foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
-    if (!$tuningTables{$dependency->{name}}) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
-      $undefinedInternal = 1;
-    } else {
-      # add object to list of internal dependencies
-      $tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
+  if ($tuningTables{$tableName}->getInternalDependencyNames()) {
+    foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
+      if (!$tuningTables{$dependency->{name}}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
+	$undefinedInternal = 1;
+      } else {
+	# add object to list of internal dependencies
+	$tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
+      }
     }
   }
 
   # check for externalDependencies that aren't in the database
-  foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
+  if ($tuningTables{$tableName}->getExternalDependencyNames()) {
+    foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
 
-    # new ExternalTable instance in the hash, if we haven't seen this
-    $externalTables{$dependency->{name}}
-      = ApiCommonData::Load::TuningConfig::ExternalTable->
-	new($dependency->{name}, $dbh)
-	  unless ($externalTables{$dependency->{name}});
+      # new ExternalTable instance in the hash, if we haven't seen this
+      $externalTables{$dependency->{name}}
+	= ApiCommonData::Load::TuningConfig::ExternalTable->
+	  new($dependency->{name}, $dbh)
+	    unless ($externalTables{$dependency->{name}});
 
-    # add external-table object to list of external dependencies
-    $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
+      # add external-table object to list of external dependencies
+      $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
 
-    if (!$externalTables{$dependency->{name}}->exists()) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
-      $nonexistentExternal = 1;
+      if (!$externalTables{$dependency->{name}}->exists()) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
+	$nonexistentExternal = 1;
+      }
     }
   }
 }
 
 # also, check for cycles in graph of dependencies (how?)
+foreach my $table (keys(%tuningTables)) {
+  $dependencyCycle = 1
+    if $tuningTables{$table}->hasDependencyCycle([]);
+}
 
 if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   ApiCommonData::Load::TuningConfig::Log::addLog("\n\n****************\n\n"

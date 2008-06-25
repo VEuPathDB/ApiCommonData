@@ -39,8 +39,6 @@ SQL
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
     my ($timestamp, $dbDef) = $stmt->fetchrow_array();
-    ApiCommonData::Load::TuningConfig::Log::addLog("No TuningDefinition found for $name")
-	if !$dbDef;
     $stmt->finish();
     $self->{timestamp} = $timestamp;
     $self->{dbDef} = $dbDef;
@@ -72,6 +70,18 @@ sub getExternalDependencyNames {
   return $self->{externalDependencyNames};
 }
 
+sub getInternalDependencies {
+  my ($self) = @_;
+
+  return $self->{internalDependencies};
+}
+
+sub getExternalDependencies {
+  my ($self) = @_;
+
+  return $self->{externalDependencies};
+}
+
 sub getState {
   my ($self, $doUpdate) = @_;
 
@@ -82,7 +92,7 @@ sub getState {
 
   # check if the definition is different (or none is stored)
   if (!$self->{dbDef}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("No TuningDefinition exists for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("No TuningDefinition exists in database for $self->{name}");
     $needUpdate = 1;
   } elsif ($self->{dbDef} != $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("Stored TuningDefinition differs from current definition for $self->{name}");
@@ -167,6 +177,12 @@ sub getDefString {
   return $defString;
 }
 
+sub getName {
+  my ($self) = @_;
+
+  return $self->{name};
+}
+
 sub addExternalDependency {
     my ($self, $dependency) = @_;
 
@@ -177,6 +193,34 @@ sub addInternalDependency {
     my ($self, $dependency) = @_;
 
     push(@{$self->{internalDependencies}}, $dependency);
+}
+
+sub hasDependencyCycle {
+    my ($self, $ancestorsRef) = @_;
+
+    my $cycleFound;
+
+    # log error if $self is earliest ancestor
+    if ($ancestorsRef->[0] eq $self->{name}) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: cycle of dependencies: " .
+						     join(" -> ", @{$ancestorsRef}) .
+						    " -> " . $self->{name});
+      return 1;
+    }
+
+    # stop recursing if $self is ANY ancestor
+    foreach my $ancestor (@{$ancestorsRef}) {
+      return 1 if $ancestor eq $self->{name};
+    }
+
+    push(@{$ancestorsRef}, $self->{name});
+    foreach my $child (@{$self->getInternalDependencies()}) {
+      $cycleFound = 1
+	if $child->hasDependencyCycle($ancestorsRef);
+    }
+
+    pop(@{$ancestorsRef});
+    return $cycleFound;
 }
 
 1;
