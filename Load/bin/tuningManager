@@ -8,6 +8,7 @@ use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::InternalTable;
 use ApiCommonData::Load::TuningConfig::ExternalTable;
+use ApiCommonData::Load::TuningConfig::Log;
 
 my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
 GetOptions("configFile=s" => \$configFile,
@@ -19,9 +20,9 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
 	  );
 
-print "missing parameter: configFile\n" unless $configFile;
-print "missing parameter: notifyEmail\n" unless $notifyEmail;
-print "parameter error: either model or both instance and password must be specified\n"
+ApiCommonData::Load::TuningConfig::Log->addLog("missing parameter: configFile") unless $configFile;
+ApiCommonData::Load::TuningConfig::Log->addLog("missing parameter: notifyEmail") unless $notifyEmail;
+ApiCommonData::Load::TuningConfig::Log->addLog("parameter error: either model or both instance and password must be specified")
   unless ($model || $instance && $password);
 &usage unless ($configFile && $notifyEmail && ($model || $instance && $password));
 
@@ -39,9 +40,10 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{internalDependency},
 	  $tuningTable->{externalDependency},
 	  $tuningTable->{sql},
-	  $tuningTable->{perl});
+	  $tuningTable->{perl}, $dbh);
 }
 
+# validate config
 my $undefinedInternal;
 my $nonexistentExternal;
 my $dependencyCycle;
@@ -50,8 +52,11 @@ foreach my $tableName (keys(%tuningTables)) {
   # check for internalDependencies that aren't in the list of tuningTables
   foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
     if (!$tuningTables{$dependency->{name}}) {
-      print "ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied\n";
+      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
       $undefinedInternal = 1;
+    } else {
+      # add object to list of internal dependencies
+      $tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
     }
   }
 
@@ -64,28 +69,31 @@ foreach my $tableName (keys(%tuningTables)) {
 	new($dependency->{name}, $dbh)
 	  unless ($externalTables{$dependency->{name}});
 
+    # add external-table object to list of external dependencies
+    $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
+
     if (!$externalTables{$dependency->{name}}->exists()) {
-      print "ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists\n";
+      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
       $nonexistentExternal = 1;
     }
   }
 }
 
 # also, check for cycles in graph of dependencies (how?)
-#die if $undefinedInternal || $nonexistentExternal || $dependencyCycle;
 
-# print everybody's definition string
-foreach my $tableName (keys(%tuningTables)) {
-
-  my $defstring = $tuningTables{$tableName}->getDefString();
-
-  print "\n\ntable $tableName has defString $defstring\n\n";
+if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("\n\n****************\n\n"
+						 . "INVALID CONFIGURATION -- NOT UPDATING DATABASE"
+						 . "\n\n****************\n\n");
+  $doUpdate = 0;
 }
 
+
+print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
 ###############################################################################
 
 sub usage {
-  die
+  ApiCommonData::Load::TuningConfig::Log::addLog(
 q{
 Create/update "tuning tables", denormalized copies of data used to improve web site performance.
 
@@ -148,7 +156,7 @@ Sample config file XML:
   </tuningTable>
 
 </tuningConfig>
-};
+});
 }
 
 sub parseConfigFile {
@@ -196,13 +204,4 @@ sub getDbHandle {
   $dbh->{LongTruncOk} = 1;
   print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
   return $dbh;
-}
-
-sub runSql {
-
-  my ($dbh, $sql) = @_;
-
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
-  $stmt->finish();
 }
