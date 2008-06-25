@@ -1260,7 +1260,7 @@ EOF
 }
 
 sub makeTranscriptDownloadFile {
-    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$genomeExtDb, $genomeExtDbVer,$project) = @_;
 
     my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -3248,13 +3248,15 @@ sub concatFilesGeneral {
 }
 
 sub concatFiles {
-  my ($mgr,$files,$catFile,$fileDir) = @_;
+  my ($mgr,$files,$catFile) = @_;
 
   $files =~ s/(\S+)/$mgr->{dataDir}\/$1/g;
 
   my $propertySet = $mgr->{propertySet};
 
   my $projRel = $propertySet->getProp('release');
+  
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
 
   my $signal = "concat$catFile";
 
@@ -3262,12 +3264,13 @@ sub concatFiles {
 
   return if $mgr->startStep("Creating concatenated file, $catFile", $signal);
 
-  my $cmd = "cat $files > $mgr->{dataDir}/$fileDir/$catFile";
+  my $cmd = "cat $files > $siteFileDir/$catFile";
 
   $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 }
+
 
 sub extractNRDB {
   my ($mgr) = @_;
