@@ -1,6 +1,11 @@
 <tuningConfig>
 
   <tuningTable name="apidb.GeneAlias">
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaFeatureNaGene"/>
+    <externalDependency name="dots.NaGene"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneAlias&1 AS
@@ -44,6 +49,7 @@ CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias)
   </tuningTable>
 
   <tuningTable name="apidb.SequenceAlias">
+    <externalDependency name="dots.NaSequenceImp"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SequenceAlias&1 AS
@@ -59,6 +65,16 @@ CREATE INDEX apidb.SequenceAlias_idx&1 ON apidb.SequenceAlias&1(lowercase_source
   </tuningTable>
 
   <tuningTable name="apidb.GoTermSummary">
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.GoAssociation"/>
+    <externalDependency name="dots.GoAssociationInstance"/>
+    <externalDependency name="dots.GoAssociationInstanceLoe"/>
+    <externalDependency name="dots.GoAssocInstEvidCode"/>
+    <externalDependency name="sres.GoEvidenceCode"/>
+    <externalDependency name="sres.GoRelationship"/>
+    <externalDependency name="sres.GoTerm"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GoTermSummary&1 AS
@@ -104,6 +120,14 @@ CREATE INDEX apidb.GoTermSum_sourceId_idx&1 ON apidb.GoTermSummary&1 (source_id)
   </tuningTable>
 
   <tuningTable name="apidb.PdbSimilarity">
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.AaSequenceImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.Similarity"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.PdbSimilarity&1 AS
@@ -150,6 +174,12 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC)
   </tuningTable>
 
   <tuningTable name="apidb.FeatureLocation">
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaLocation"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.SequencePiece"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 create table apidb.FeatureLocation&1 as
@@ -255,6 +285,12 @@ create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
   <tuningTable name="apidb.GeneId">
     <internalDependency name="apidb.GeneAlias"/>
     <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="dots.DbRefNaFeature"/>
+    <externalDependency name="dots.DbRefNaSequence"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneId&1 AS
@@ -350,13 +386,19 @@ CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id)
   </tuningTable>
 
   <tuningTable name="apidb.SequenceId">
+    <externalDependency name="dots.DbRefNaSequence"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SequenceId&1 AS
 SELECT DISTINCT substr(id, 1, 50) as id, substr(sequence, 1, 50) AS sequence
 FROM (
   SELECT lower(source_id) as id, source_id as sequence
-  FROM dots.NaSequence ns, sres.sequenceontology so
+  FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name in ('contig', 'supercontig', 'chromosome')
 UNION
@@ -386,6 +428,15 @@ CREATE INDEX apidb.SequenceId_id_idx&1 ON apidb.SequenceId&1 (id)
   </tuningTable>
 
   <tuningTable name="apidb.EpitopeSummary">
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.AaLocation"/>
+    <externalDependency name="dots.AaSequenceDbRef"/>
+    <externalDependency name="dots.AaSequenceImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.EpitopeSummary&1 AS
@@ -428,6 +479,7 @@ CREATE INDEX apidb.Epi_srcId_ix&1 ON apidb.EpitopeSummary&1 (source_id)
 
   <tuningTable name="apidb.GeneCentromereDistance">
     <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneCentromereDistance&1 AS
@@ -454,6 +506,8 @@ CREATE INDEX apidb.GCent_loc_ix&1
 
   <tuningTable name="apidb.SageTagGene">
     <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="rad.AnalysisResultImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
 create table apidb.SageTagGene&1 as
@@ -561,6 +615,18 @@ from
   </tuningTable>
 
   <tuningTable name="apidb.SageTagAnalysisAttributes">
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="rad.Analysis"/>
+    <externalDependency name="rad.AnalysisInput"/>
+    <externalDependency name="rad.AnalysisResultImp"/>
+    <externalDependency name="rad.Assay"/>
+    <externalDependency name="rad.CompositeElementImp"/>
+    <externalDependency name="rad.CompositeElementResultImp"/>
+    <externalDependency name="rad.LogicalGroup"/>
+    <externalDependency name="rad.LogicalGroupLink"/>
+    <externalDependency name="rad.Protocol"/>
+    <externalDependency name="rad.Quantification"/>
     <sql>
       <![CDATA[
 create table apidb.SageTagAnalysisAttributes&1 as
@@ -625,6 +691,38 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <internalDependency name="apidb.GeneAlias"/>
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GenomicSequence"/>
+    <externalDependency name="apidb.AaSequenceAttribute"/>
+    <externalDependency name="apidb.DeprecatedGenes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.AaLocation"/>
+    <externalDependency name="dots.AaSequenceEnzymeClass"/>
+    <externalDependency name="dots.AaSequenceImp"/>
+    <externalDependency name="dots.GeneInstance"/>
+    <externalDependency name="dots.GoAssociation"/>
+    <externalDependency name="dots.GoAssociationInstance"/>
+    <externalDependency name="dots.GoAssociationInstanceLoe"/>
+    <externalDependency name="dots.GoAssocInstEvidCode"/>
+    <externalDependency name="dots.NaFeatureComment"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="rad.Analysis"/>
+    <externalDependency name="rad.AnalysisInput"/>
+    <externalDependency name="rad.AnalysisResultImp"/>
+    <externalDependency name="rad.CompositeElementImp"/>
+    <externalDependency name="rad.LogicalGroup"/>
+    <externalDependency name="rad.Protocol"/>
+    <externalDependency name="sres.EnzymeClass"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.GoEvidenceCode"/>
+    <externalDependency name="sres.GoRelationship"/>
+    <externalDependency name="sres.GoTerm"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
     <intermediateTable name="apidb.GoTermList"/>
     <intermediateTable name="apidb.GeneGoAttributes"/>
     <intermediateTable name="apidb.DerisiExpn"/>
@@ -1051,7 +1149,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
@@ -1189,6 +1287,8 @@ CREATE INDEX apidb.GeneAttr_feat_ix&1
   </tuningTable>
 
   <tuningTable name="apidb.GenomicSequence">
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GenomicSequence&1 AS
@@ -1236,6 +1336,14 @@ CREATE INDEX apidb.GS_naSeqId&1 ON apidb.GenomicSequence&1 (na_sequence_id)
 
   <tuningTable name="apidb.SequenceAttributes">
     <internalDependency name="apidb.GenomicSequence"/>
+    <externalDependency name="dots.DbRefNaSequence"/>
+    <externalDependency name="dots.SequencePiece"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SequenceAttributes&1 AS
@@ -1250,7 +1358,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
@@ -1305,6 +1413,13 @@ CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (sou
 
   <tuningTable name="apidb.SnpAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SnpAttributes&1 AS
@@ -1319,7 +1434,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        snp.source_id,
        snp.na_feature_id,
@@ -1406,6 +1521,13 @@ CREATE INDEX apidb.Snp_Seq_ix&1
   <tuningTable name="apidb.OrfAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GenomicSequence"/>
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.AaSequenceImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.OrfAttributes&1 AS
@@ -1420,7 +1542,7 @@ SELECT distinct CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        SUBSTR(m.source_id, 1, 60) AS source_id,
        LOWER(SUBSTR(m.source_id, 1, 60)) AS lowercase_source_id,
@@ -1462,6 +1584,16 @@ CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_i
   </tuningTable>
 
   <tuningTable name="apidb.EstAttributes">
+    <externalDependency name="dots.AssemblySequence"/>
+    <externalDependency name="dots.BlatAlignment"/>
+    <externalDependency name="dots.Est"/>
+    <externalDependency name="dots.Library"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.EstAttributes&1 AS
@@ -1476,7 +1608,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        ens.source_id,
        e.seq_primer AS primer,
@@ -1547,7 +1679,7 @@ SELECT a.source_id,
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        tn.name AS organism,
        a.number_of_contained_sequences AS est_count,
@@ -1571,6 +1703,11 @@ ON apidb.AssemblyAttributes&1 (source_id)
   </tuningTable>
 
   <tuningTable name="apidb.ArrayElementAttributes">
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.Taxon"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ArrayElementAttributes&1 AS
@@ -1585,13 +1722,13 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        ens.source_id, ed.name AS provider,
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
 FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
-     dots.ExternalNASequence ens, sres.TaxonName tn, sres.Taxon
+     dots.ExternalNaSequence ens, sres.TaxonName tn, sres.Taxon
 WHERE ens.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND tn.taxon_id = ens.taxon_id
@@ -1608,28 +1745,126 @@ ON apidb.ArrayElementAttributes&1 (source_id)
   </tuningTable>
 
   <tuningTable name="apidb.BlatAlignmentLocation">
+    <externalDependency name="dots.NaSequenceImp"/>
     <sql>
-      <![CDATA[
-create table apidb.BlatAlignmentLocation as
-select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
-       query_table_id, query_taxon_id, query_external_db_release_id,
-       target_table_id, target_taxon_id, target_external_db_release_id,
-       is_consistent, is_genomic_contaminant, unaligned_3p_bases,
-       unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
-       is_5p_complete, percent_identity, max_query_gap, max_target_gap,
-       number_of_spans, query_start, query_end, target_start, target_end,
-       is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
-       is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
-       tstarts, 'virtual' as location_mapping
-from dots.BlatAlignment
-where 1 = 0
-      ]]>
+      <![CDATA[ 
+      CREATE TABLE apidb.BlatAlignmentLocation&1 AS
+      SELECT blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+             query_table_id, query_taxon_id, query_external_db_release_id,
+             target_table_id, target_taxon_id, target_external_db_release_id,
+             is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+             unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+             is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+             number_of_spans, query_start, query_end, target_start, target_end,
+             is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+             is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+             tstarts, 'direct' as location_mapping
+      FROM dots.BlatAlignment
+      ]]> 
     </sql>
+    <perl>
+      <![CDATA[ 
+      use strict;
+      use lib "$ENV{GUS_HOME}/lib/perl";
+      use Getopt::Long;
+      use GUS::ObjRelP::DbiDatabase;
+
+
+      my $sql = <<SQL;
+        select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
+               sp.strand_orientation, virtualseq.length, vti.table_id as virtual_target_table_id
+        from dots.BlatAlignment ba, dots.SequencePiece sp, dots.NaSequence virtualseq,
+             core.TableInfo vti
+        where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
+          and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
+          and virtualseq.subclass_view = vti.name
+SQL
+
+      my $queryHandle = $dbh->prepareAndExecute($sql);
+
+      $sql = <<SQL;
+        insert into apidb.BlatAlignmentLocation(blat_alignment_id,
+               query_na_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, location_mapping)
+         values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+SQL
+
+      my $insertHandle = $dbh->prepare($sql);
+      my ($virtual_target_start, $virtual_target_end, $virtual_tstarts);
+
+      while (my ($blat_alignment_id, $query_na_sequence_id, $target_na_sequence_id,
+               $query_table_id, $query_taxon_id, $query_external_db_release_id,
+               $target_table_id, $target_taxon_id, $target_external_db_release_id,
+               $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+               $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+               $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+               $number_of_spans, $query_start, $query_end, $target_start, $target_end,
+               $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+               $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+               $tstarts, $virtual_na_sequence_id, $distance_from_left,
+               $strand_orientation, $length, $virtual_target_table_id)
+             = $queryHandle->fetchrow_array()) {
+
+        if ($virtual_na_sequence_id) {
+          if ($strand_orientation eq '-') {
+            $virtual_target_start = $distance_from_left + $length - $target_end;
+            $virtual_target_end = $distance_from_left + $length - $target_start;
+            $virtual_tstarts = '???';
+          } else {
+            $virtual_target_start = $target_start + $distance_from_left;
+            $virtual_target_end = $target_end + $distance_from_left;
+            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left } split( /,/, $tstarts));
+          }
+
+          # insert virtual locations
+          $insertHandle->execute($blat_alignment_id,
+                 $query_na_sequence_id, $virtual_na_sequence_id,
+                 $query_table_id, $query_taxon_id, $query_external_db_release_id,
+                 $virtual_target_table_id, $target_taxon_id, $target_external_db_release_id,
+                 $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+                 $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+                 $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+                 $number_of_spans, $query_start, $query_end, $virtual_target_start,
+                 $virtual_target_end,
+                 $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+                 $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+                 $virtual_tstarts, 'virtual');
+        }
+      }
+
+      $insertHandle->finish();
+      $queryHandle->finish();
+      ]]> 
+    </perl>
   </tuningTable>
 
   <tuningTable name="apidb.EstAlignmentGeneSummary">
     <internalDependency name="apidb.GenomicSequence"/>
     <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <externalDependency name="dots.AssemblySequence"/>
+    <externalDependency name="dots.BlatAlignment"/>
+    <externalDependency name="dots.Est"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <intermediateTable name="apidb.EstAlignmentGene"/>
     <intermediateTable name="apidb.EstAlignmentNoGene"/>
     <sql>
@@ -1719,16 +1954,18 @@ CREATE INDEX apidb.EstSumm_estSite_ix&1
   </tuningTable>
 
   <tuningTable name="apidb.FeatureSo">
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.FeatureSo&1 AS
   SELECT t.na_feature_id, so.sequence_ontology_id, so.term_name
-  FROM dots.nafeature gf, dots.nafeature t, sres.sequenceontology so
+  FROM dots.NaFeature gf, dots.NaFeature t, sres.SequenceOntology so
   WHERE  gf.na_feature_id =  t.parent_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
 UNION
   SELECT na_feature_id, so.sequence_ontology_id, so.term_name
-  FROM dots.miscellaneous misc, sres.sequenceontology so
+  FROM dots.Miscellaneous misc, sres.SequenceOntology so
   WHERE misc.sequence_ontology_id = so.sequence_ontology_id
       ]]>
     </sql>
@@ -1740,6 +1977,8 @@ CREATE INDEX featso_id_ix&1 ON apidb.FeatureSo&1(na_feature_id)
   </tuningTable>
 
   <tuningTable name="apidb.Polymorphism">
+    <externalDependency name="dots.NaLocation"/>
+    <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Polymorphism&1 AS
@@ -1770,6 +2009,12 @@ CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a,
   </tuningTable>
 
   <tuningTable name="apidb.IsolateAttributes">
+    <externalDependency name="dots.IsolateSource"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.Similarity"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.IsolateAttributes&1 AS
@@ -1795,7 +2040,7 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              aln.min_subject_start, aln.max_subject_end,
              substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
              src.is_reference
-      FROM dots.ExternalNASequence etn, dots.IsolateSource src,
+      FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb,
            (SELECT extq.source_id, extq.source_id query_name,
                    extt.source_id target_name,
@@ -1803,8 +2048,8 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
                    sim.max_subject_end max_subject_end,
                    extt.source_id || ':' || sim.min_subject_start || '..'
                    || sim.max_subject_end as map
-            FROM dots.SIMILARITY sim, dots.EXTERNALNASEQUENCE extt,
-                 dots.ExternalNasequence extq,
+            FROM dots.Similarity sim, dots.ExternalNaSequence extt,
+                 dots.ExternalNaSequence extq,
                  sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase edb
             WHERE edr.external_database_id = edb.external_database_id
@@ -1826,7 +2071,7 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(apidb.tab_to_string(cast(collect(distinct if.product_alias)
                                         as apidb.varchartab), ' | '), 1, 400)
                as product_alias
-      FROM dots.ExternalNASequence etn, dots.IsolateFeature if,
+      FROM dots.ExternalNaSequence etn, dots.IsolateFeature if,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb
       WHERE etn.na_sequence_id = if.na_sequence_id
         AND edr.external_database_id = edb.external_database_id
@@ -1848,6 +2093,10 @@ CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.SageTagGene"/>
     <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="rad.CompositeElementImp"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SageTagAttributes&1 AS
@@ -1862,7 +2111,7 @@ SELECT CASE
            THEN 'TrichDB'
          WHEN SUBSTR(tn.name, 1, 7) = 'Giardia'
            THEN 'GiardiaDB'
-         ELSE 'ERROR: setting project in createApidbTuning.sql'
+         ELSE 'ERROR: setting project in tuningManager'
        END as project_id,
        substr(s.source_id || '-' || l.start_min || '-' || l.end_max || '.'
               || l.is_reversed, 1, 40) as source_id,
@@ -1917,6 +2166,9 @@ CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
     <internalDependency name="apidb.GeneAttributes"/>
     <internalDependency name="apidb.GenomicSequence"/>
     <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <externalDependency name="dots.BlatAlignment"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.SequenceOntology"/>
     <intermediateTable name="apidb.AsmAlignmentGene"/>
     <intermediateTable name="apidb.AsmAlignmentNoGene"/>
     <sql>
@@ -1988,6 +2240,9 @@ SELECT * FROM apidb.AsmAlignmentGene
   </tuningTable>
 
   <tuningTable name="apidb.PlasmoExpressionGraphs">
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
+    <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.PlasmoExpressionGraphs&1 AS
@@ -2169,6 +2424,8 @@ CREATE INDEX apidb.PlasmoExp_sourceId_idx&1 ON apidb.PlasmoExpressionGraphs&1 (s
 
   <tuningTable name="apidb.ToxoExpressionGraphs">
     <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ToxoExpressionGraphs&1 AS
@@ -2197,6 +2454,8 @@ CREATE INDEX apidb.ToxoExp_sourceId_idx&1 ON apidb.ToxoExpressionGraphs&1 (sourc
 
   <tuningTable name="apidb.GiardiaExpressionGraphs">
     <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GiardiaExpressionGraphs&1 AS
@@ -2219,6 +2478,9 @@ CREATE INDEX apidb.ExpGraphSum_sourceId_idx&1 ON apidb.GiardiaExpressionGraphs&1
   </tuningTable>
 
   <tuningTable name="apidb.NaSynteny">
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.Similarity"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.NaSynteny&1 AS
@@ -2232,16 +2494,16 @@ SELECT
     sim.max_subject_end ,
     sim.min_query_start ,
     sim.max_query_end,
-    sim.IS_REVERSED,
+    sim.is_reversed,
     sim.score,
     sim.pvalue_mant,
     sim.pvalue_exp
 FROM
-    DoTS.Similarity sim,
-    DoTS.ExternalNASequence extt,
-    DoTS.ExternalNASequence extq,
-    Core.TableInfo qtab,
-    Core.TableInfo stab
+    dots.Similarity sim,
+    dots.ExternalNaSequence extt,
+    dots.ExternalNaSequence extq,
+    core.TableInfo qtab,
+    core.TableInfo stab
 WHERE
     sim.query_id = extq.na_sequence_id and
     sim.subject_id = extt.na_sequence_id and
@@ -2260,16 +2522,16 @@ SELECT
     sim.max_query_end max_subject_end,
     sim.min_subject_start min_query_start,
     sim.max_subject_end max_query_end,
-    sim.IS_REVERSED,
+    sim.is_reversed,
     sim.score,
     sim.pvalue_mant,
     sim.pvalue_exp
 FROM
-    DoTS.Similarity sim,
-    DoTS.ExternalNASequence extt,
-    DoTS.ExternalNASequence extq,
-    Core.TableInfo qtab,
-    Core.TableInfo stab
+    dots.Similarity sim,
+    dots.ExternalNaSequence extt,
+    dots.ExternalNaSequence extq,
+    core.TableInfo qtab,
+    core.TableInfo stab
 WHERE
     sim.query_id = extq.na_sequence_id and
     sim.subject_id = extt.na_sequence_id and
@@ -2293,6 +2555,9 @@ CREATE BITMAP INDEX apidb.syn_target_ix&1 ON apidb.NaSynteny&1(target_na_sequenc
 
   <tuningTable name="apidb.Subcellular">
     <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Subcellular&1 AS
@@ -2326,6 +2591,10 @@ CREATE INDEX apidb.subc_ix&1 ON apidb.Subcellular&1(source_id)
   </tuningTable>
 
   <tuningTable name="apidb.Expression">
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileElement"/>
+    <externalDependency name="apidb.ProfileElementName"/>
+    <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Expression&1 AS
@@ -2370,6 +2639,11 @@ CREATE INDEX apidb.Exp_element_ix&1 ON apidb.Expression&1 (element_order, source
   </tuningTable>
 
   <tuningTable name="apidb.SnpSummary">
+    <externalDependency name="dots.AaFeatureImp"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SnpSummary&1 AS
@@ -2438,6 +2712,8 @@ CREATE INDEX apidb.SnpSummary_srcId_idx&1
   </tuningTable>
 
   <tuningTable name="apidb.Scaffold_Map">
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Scaffold_Map&1 AS
@@ -2486,6 +2762,7 @@ ORDER by na_sequence_id, offset, sequence_order)
   </tuningTable>
 
   <tuningTable name="apidb.DistinctLowerProduct">
+    <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.DistinctLowerProduct&1 AS
@@ -2512,3 +2789,5 @@ CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
       ]]>
     </sql>
   </tuningTable>
+
+</tuningConfig>
