@@ -116,19 +116,19 @@ sub run {
 
   open(FILE, $metaDataFile) || $self->error("couldn't open file '$metaDataFile' for reading");
 
-  my %strainHash;
+  my %metaHash;
 
   # open snp meta data file - sample_pops-3k.txt
 
   my $inputFile = $self->getArg('inputFile');
-  open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
+  open(FILE, $metaDataFile) || $self->error("couldn't open file '$metaDataFile' for reading");
   while(<FILE>) {
     chomp;
     next if /^\s*$/;
     next if /^#/;
 
     my ($strain, $sequencing, $general, $specific, @others) = split /\t/, $_;
-    $strainHash{$strain} = "$sequencing|$general|$specific";
+    $metaHash{$strain} = "$sequencing|$general|$specific";
 	}
 
 	close(FILE);
@@ -158,10 +158,10 @@ sub run {
 	close(FILE);
 
 	# now we have template and chip array, transpose: row->column
-	$self->processChipData(\@header, \@chips);
+	my (%snp, %position) = $self->processChipData(\@header, \@chips);
 
-  foreach my $k(keys %strainHash) {
-	  my($sequencing, $general, $specific) = split /|/, $strainHash{$k};
+  foreach my $k(keys %metaHash) {
+	  my($sequencing, $general, $specific) = split /|/, $metaHash{$k};
 
     my $objArgs = { strain                       => $k,
                     name                         => $k,  
@@ -172,37 +172,36 @@ sub run {
                   };
 
     my $isolateSource = GUS::Model::DoTS::IsolateSource->new($objArgs);
-	   
-	}
 
-=c
-    # foreach barcode nucleotide, find SNP ID#, major and minor allele
+    # foreach affy chip, find SNP ID#, snp and allele
 
-    my $size = @affy;
-    for(my $i=0; $i<$size; $i++) {
-      my ($species, $chr, $location) = split /_/, $name;
+    my @nuc = split //, $snp{$k};
+    my $size = @nuc;
+    for(my $i = 0; $i < $size; $i++) {
+      my ($species, $chr, $location) = split /_/, $position{$i};
 
       my $featArgs = { allele                       => $nuc[$i],
-                       name                         => $name,
-                       map                          => $location,
-                       product                      => $major_allele,
-                       product_alias                => $minor_allele,
+                       name                         => $k,
+                       map                          => $i,
+                       product                      => $nuc[$i],
+                       product_alias                => $nuc[$i],
                        external_database_release_id => $extDbRlsId,
                      };
       my $isolateFeature = GUS::Model::DoTS::IsolateFeature->new($featArgs);
       $isolateSource->addChild($isolateFeature);
     }
 
-    my $extNASeq = $self->buildSequence($seq, $extDbRlsId);
+    my $extNASeq = $self->buildSequence($snp{$k}, $extDbRlsId);
 
     $extNASeq->addChild($isolateSource);
 
     $extNASeq->submit();
     $count++;
     $self->log("processed $count") if ($count % 1000) == 0;
+		$self->undefPointerCache();
+	   
+	}
 
-
-=cut
   return "Inserted $count rows.";
 }
 
@@ -219,40 +218,33 @@ sub buildSequence {
 
 sub processChipData {
   my ($self, $header, $chips) = @_;
+
+  my %snp;
+  my %position;
 	my $size = @$header;
+
 	for(my $i = 0; $i < $size; $i++) {
-	  print $header->[$i];
-		print "\n";
 
-		my $seq =  join '', @{$chips->[$i]};
-		#$seq = @{$chips->[$i]};
-		print "$seq \n";
+	  my $strain = $header->[$i];
+	  my $seq = '';
+		$strain =~ s/affy_//ig;
+
+		my $count = @$chips;  # number of snp id
+
+		for(my $j = 0; $j < $count; $j++) {
+		  $seq .= $chips->[$j]->[$i];
+		}
+
+		$snp{$strain} = $seq;
 	}
-}
 
-sub processAlleles {
-  my ($self, @lines) = @_;
+  my $count = 0;
+	foreach(@$chips) {
+	  $position{$count} = $_->[0];
+		$count++;
+	}
 
-  # SNP format: SNP ID#,Possible Allels, Major Allele, Minor Allele
-  # e.g. Pf_10_000082376  A/T A  T
-  my @snps;
-  my %hash;
-  foreach(@lines) {
-    push @snps, [split /\t/, $_];
-  }
-
-  for(my $i=1; $i<25; $i++) {
-    my $j = $i-1;
-    my $snp_id = $snps[0]->[$i]; 
-    my $possible_a = $snps[1]->[$i];
-    my $major_a = $snps[2]->[$i];
-    my $minor_a = $snps[3]->[$i];
-    chomp $major_a;
-    chomp $minor_a;
-    $hash{$j} = "$snp_id $possible_a $major_a $minor_a";
-  }
-
-  return %hash;
+	return (%snp, %position);
 }
 
 sub undoTables {
