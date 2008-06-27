@@ -17,7 +17,7 @@
        <!-- Gene Model -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="GeneModel" isCacheable="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="GeneModel" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="type"/>
@@ -78,7 +78,7 @@
        <!-- Aliases -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="alias"/>
@@ -95,7 +95,7 @@
        <!-- SNPs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
+        <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -111,7 +111,7 @@
             <column name="cds_snp_density"/>
             <column name="num_total"/>
 
-            <sql includeProjects="PlasmoDB">
+            <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
               SELECT
               source_id as gene_source_id,'@PROJECT_ID@' as project_id,
@@ -187,7 +187,7 @@
        <!-- Interpro -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="InterPro" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="InterPro" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="interpro_name"/>
@@ -240,7 +240,7 @@
        <!-- Transmembrane Domains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="TMHMM" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="TMHMM" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="tmf_name"/>
@@ -279,7 +279,7 @@
        <!-- Signal Peptides -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="SignalP" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="SignalP" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="spf_name"/>
@@ -328,7 +328,7 @@
        <!-- BlastP Hits -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="BlastP" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="BlastP" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="blastp_feature_id"/>
@@ -381,7 +381,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-       <sqlQuery name="LowComplexity" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB">
+       <sqlQuery name="LowComplexity" isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="lc_name"/>
@@ -415,12 +415,12 @@
        <!-- Notes -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Notes" excludeProjects="ApiDB"
+       <sqlQuery name="Notes"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_string"/>
-            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB">
             <![CDATA[
             SELECT nfc.comment_string, '@PROJECT_ID@' as project_id
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
@@ -455,7 +455,7 @@
        <!-- User Comments -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="UserComments" excludeProjects="ApiDB"
+       <sqlQuery name="UserComments"
                  isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -492,7 +492,7 @@
        <!-- EC number -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="EcNumber" excludeProjects="ApiDB" 
+       <sqlQuery name="EcNumber"
                isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -500,7 +500,7 @@
             <column name="source"/>
             <column name="ec_description"/>
             <column name="expasy_url" excludeProjects="CryptoDB"/>
-            <sql includeProjects="CryptoDB">
+            <sql includeProjects="CryptoDB,ApiDB">
             <![CDATA[
             SELECT distinct
                    CASE 
@@ -556,12 +556,36 @@
             </sql>
         </sqlQuery>
 
- 
+<!--
+  <sqlQuery name="EcNumber" includeProjects="ApiDB" 
+               isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="ec_number" />
+            <column name="source"/>
+            <column name="ec_description"/>
+            <column name="expasy_url" excludeProjects="CryptoDB"/> 
+
+            <sql>
+            <![CDATA[
+            SELECT 1  AS source, 
+                   2 as ec_number,
+                   3  as ec_description,
+                   'http://us.expasy.org/cgi-bin/enzyme-search-ec?field1='  as expasy_url, 
+                   '@PROJECT_ID@' as project_id
+            FROM apidb.genetable
+           
+            ]]>
+
+            </sql>
+        </sqlQuery>
+-->
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- GO terms -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="GoTerms" excludeProjects="ApiDB"
+       <sqlQuery name="GoTerms"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -589,7 +613,7 @@
        <!-- Pathways -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB"
+       <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB,ApiDB"
                    isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -597,7 +621,7 @@
             <column name="pathway_name"/>
             <column name="activity"/>
 
-            <sql includeProjects="PlasmoDB">
+            <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
             SELECT DISTINCT dr.primary_identifier AS pathway_id,
                             decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
@@ -643,7 +667,7 @@
        <!-- Orthologs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Orthologs" excludeProjects="ApiDB"
+       <sqlQuery name="Orthologs" excludeProjects="TrichDB" 
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -678,7 +702,7 @@
        <!-- Epitopes -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Epitopes" excludeProjects="ApiDB"
+       <sqlQuery name="Epitopes"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -705,7 +729,7 @@
        <!-- Isolate Overlap  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB"
+       <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -741,7 +765,7 @@
        <!-- Mass spec -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="MassSpec" includeProjects="PlasmoDB"
+       <sqlQuery name="MassSpec" includeProjects="PlasmoDB,ApiDB"
                   isCacheable="false">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
@@ -823,7 +847,7 @@
        <!--Gene Location -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="Genbank" isCacheable="false" includeProjects="GiardiaDB">
+     <sqlQuery name="Genbank" isCacheable="false" includeProjects="GiardiaDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="sequence_source_id"/>
@@ -859,7 +883,7 @@
        <!-- Sage Tags -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB">
+       <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="tag_source_id"/>
@@ -1258,7 +1282,7 @@
        <!-- Y2H interactions -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Y2hInteractions" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="Y2hInteractions" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
         <column name="source_id"/>
@@ -1301,7 +1325,7 @@
        <!-- Array elements -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ArrayElements" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="ArrayElements" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="array_source_id"/>
@@ -1333,7 +1357,7 @@
        <!-- Protein expression -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ProteinExpression" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="ProteinExpression" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="profile_element"/>
@@ -1362,7 +1386,7 @@
        <!-- MR4 reagents -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Mr4Reagents" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="Mr4Reagents" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="atcc_number"/>
@@ -1398,7 +1422,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="gene_dbrefs" 
-                  isCacheable="false" includeProjects="PlasmoDB">
+                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
@@ -1481,7 +1505,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ProteinDatabase" 
-                  isCacheable="false" includeProjects="PlasmoDB">
+                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="accession"/>
@@ -1574,7 +1598,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="3dPreds"
-                  isCacheable="false" includeProjects="PlasmoDB">
+                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="search_term"/>
@@ -1602,7 +1626,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="PdbSimilarities"
-                  isCacheable="false" includeProjects="PlasmoDB">
+                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="pdb_chain"/>
@@ -1630,7 +1654,7 @@
        <!-- two channel diff expr -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB">
+      <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB,ApiDB">
        <paramRef ref="recordParams.primaryKey"/>
        <paramRef ref="recordParams.projectId"/>
        <column name="studyName" />
@@ -1682,7 +1706,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="TaskComments" 
-                  isCacheable="false" includeProjects="ToxoDB">
+                  isCacheable="false" includeProjects="ToxoDB,ApiDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_string"/>

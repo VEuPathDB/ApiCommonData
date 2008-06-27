@@ -62,7 +62,7 @@
           </reporter>
                     
           <!-- the report maker used on the website -->
-          <reporter name="fullRecord" displayName="Detailed - text" excludeProjects="ApiDB"
+          <reporter name="fullRecord" displayName="Detailed - text" 
                     implementation="org.gusdb.wdk.model.report.FullRecordCachedReporter">
               <property name="table_cache">apidb.GeneTable</property>
               <property name="project_id_column">project_id</property>
@@ -70,7 +70,7 @@
           </reporter>
           
           <!-- the report maker used on commandline to generate detailed download files -->
-          <reporter name="fullRecordDump" displayName="Detailed - text" excludeProjects="ApiDB"
+          <reporter name="fullRecordDump" displayName="Detailed - text" 
                     inReportMaker="false"
                     implementation="org.gusdb.wdk.model.report.FullRecordReporter">
               <property name="table_cache">apidb.GeneTable</property>
@@ -408,7 +408,7 @@
           <!-- SNPs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SNPs" includeProjects="ToxoDB,PlasmoDB,CryptoDB"
+         <table name="SNPs" includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB"
                  displayName="SNPs Summary"
                  queryRef="GeneTables.SNPs">
             <columnAttribute internal="true" name="strain_a_query"/>
@@ -446,7 +446,7 @@
           <!-- Gene Model table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="GeneModel" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="GeneModel"
                  displayName="Gene Model"
                  queryRef="GeneTables.GeneModel">
             <columnAttribute displayName="Type" name="type"/>
@@ -460,7 +460,7 @@
           <!-- InterPro table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="InterPro" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="InterPro"
                  displayName="InterPro Domains"
                  queryRef="GeneTables.InterPro">
             <columnAttribute displayName="Name" name="interpro_name"/>
@@ -477,7 +477,7 @@
           <!-- Transmembrane Domains table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="TMHMM" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="TMHMM"
                  displayName="Transmembrane Domains"
                  queryRef="GeneTables.TMHMM">
             <columnAttribute displayName="Name" name="tmf_name"/>
@@ -491,7 +491,7 @@
           <!-- Low Complexity Regions table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="LowComplexity" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="LowComplexity"
                  displayName="Low Complexity Regions"
                  queryRef="GeneTables.LowComplexity">
             <columnAttribute displayName="Name" name="lc_name"/>
@@ -506,7 +506,7 @@
           <!-- Signal Peptide table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SignalP" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="SignalP"
                  displayName="Signal Peptide"
                  queryRef="GeneTables.SignalP">
             <columnAttribute displayName="Name" name="spf_name"/>
@@ -522,7 +522,7 @@
           <!-- BlastP Hits table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="BlastP" includeProjects="ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrichDB"
+         <table name="BlastP"
                  displayName="BlastP Hits"
                  queryRef="GeneTables.BlastP">
             <columnAttribute displayName="Feature ID" name="blastp_feature_id"/>
@@ -540,7 +540,7 @@
           <!-- Gene Location table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Genbank" includeProjects="GiardiaDB"
+          <table name="Genbank" includeProjects="GiardiaDB,ApiDB"
                  displayName="Gene Location"
                  queryRef="GeneTables.Genbank">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -554,7 +554,7 @@
             </textAttribute>
 
             <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
-                   <url includeProjects="GiardiaDB">
+                   <url includeProjects="GiardiaDB,ApiDB">
                     <![CDATA[
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
                         ]]>
@@ -574,7 +574,7 @@
           <!-- Sage Tags table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB"
+         <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB,ApiDB"
                  displayName="Sage Tags"
                  queryRef="GeneTables.SageTags">
             <columnAttribute displayName= "tag_source_id"
@@ -608,7 +608,7 @@
           <!-- Notes table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Notes" excludeProjects="ApiDB"
+          <table name="Notes"
                  displayName="Notes"
                  queryRef="GeneTables.Notes">
             <columnAttribute displayName="Note" name="comment_string"/>
@@ -618,7 +618,7 @@
           <!-- User Comments table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="UserComments" excludeProjects="ApiDB"
+          <table name="UserComments"
                  displayName="User Comments"
                  queryRef="GeneTables.UserComments">
         <columnAttribute name="comment_id" internal="true"/>
@@ -641,11 +641,11 @@
           <!-- EC number table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="EcNumber" excludeProjects="ApiDB"
+          <table name="EcNumber"
                  displayName="EC Number"
                  queryRef="GeneTables.EcNumber">
-            <columnAttribute name="ec_number" internal="true"/>
-            <columnAttribute name="expasy_url" internal="true"/>
+            <columnAttribute name="ec_number" internal="true" inReportMaker="false"/>
+            <columnAttribute name="expasy_url" internal="true" inReportMaker="false"/>
             <linkAttribute name="ec_number_link"
                            displayName="EC Number"
                            visible="$$ec_number$$">
@@ -666,7 +666,7 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <table name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
-                 queryRef="GeneTables.MassSpec" includeProjects="PlasmoDB">
+                 queryRef="GeneTables.MassSpec" includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="developmental_stage" displayName="Lifecycle Stage"/>
             <columnAttribute name="algorithm" displayName="Algorithm"/>
             <columnAttribute name="seq_coverage" displayName="Coverage"/>
@@ -688,7 +688,7 @@
           <!-- GO term table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GoTerms" excludeProjects="ApiDB"
+          <table name="GoTerms"
                  displayName="GO Terms"
                  queryRef="GeneTables.GoTerms">
             <columnAttribute displayName="Is Not" name="is_not"/>
@@ -718,7 +718,7 @@
 
           <table name="Aliases"
                  displayName="Aliases"
-                 queryRef="GeneTables.Aliases" includeProjects="PlasmoDB">
+                 queryRef="GeneTables.Aliases" includeProjects="PlasmoDB,ApiDB">
             <columnAttribute displayName="Alias" name="alias"/>
           </table>
 
@@ -728,7 +728,7 @@
 
           <table name="Y2hInteractions"
                  displayName="Y2H Interactions"
-                 queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB">
+                 queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,ApiDB">
               <columnAttribute name="source_id" internal="true"/>
               <linkAttribute name="geneLink" displayName="Gene"
                        visible="$$source_id$$">
@@ -761,7 +761,7 @@
           <!-- Orthologs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Orthologs" excludeProjects="ApiDB,TrichDB"
+          <table name="Orthologs" excludeProjects="TrichDB"
                  displayName="Paralogs and In-genera Orthologs"
                  queryRef="GeneTables.Orthologs">
             <columnAttribute name="source_id" internal="true"/>
@@ -779,14 +779,14 @@
           <!-- Pathways table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB"
+          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB,ApiDB"
                  displayName="Metabolic Pathways"
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
             <columnAttribute name="pathway_name" internal="true"/>
             <linkAttribute name="pathway" displayName="Pathway"
                         visible="$$pathway_name$$">
-                 <url includeProjects="PlasmoDB">
+                 <url includeProjects="PlasmoDB,ApiDB">
                     <![CDATA[http://sites.huji.ac.il/malaria/maps/$$pathway_id$$.html]]>
                  </url>
                  <url includeProjects="ToxoDB">
@@ -803,7 +803,7 @@
           <table name="TaskComments"
                  displayName="Toxoplasma Genome Sequencing Project Annotation"
                  queryRef="GeneTables.TaskComments"
-                 includeProjects="ToxoDB">
+                 includeProjects="ToxoDB,ApiDB">
             <columnAttribute name="comment_string" displayName="TASK Annotation"/>
           </table>
 
@@ -814,7 +814,7 @@
           <table name="ArrayElements"
                  displayName="Mapped Array Elements"
                  queryRef="GeneTables.ArrayElements"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="array_source_id" internal="true"/>
             <columnAttribute name="array_provider" displayName="Provider"
                              internal="false"/>
@@ -833,7 +833,7 @@
           <table name="TwoChannelDiffExpr"
                  displayName="P.Berghei Differential Expression - DOZI KO vs. WT"
                  queryRef="GeneTables.TwoChannelDifferentialExpression"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="studyName" displayName="Study"/>
             <columnAttribute name="fold_change" displayName="Fold change"/>
             <columnAttribute name="confidence" displayName="Confidence"/>
@@ -846,7 +846,7 @@
           <table name="ProteinExpression"
                  displayName="P.Berghei Protein Expression"
                  queryRef="GeneTables.ProteinExpression"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="profile_element" displayName="Life Cycle Stage"/>
             <columnAttribute name="element_value" displayName="Observed?"/>
           </table>
@@ -858,7 +858,7 @@
           <table name="Mr4Reagents"
                  displayName="MR4 Reagents"
                  queryRef="GeneTables.Mr4Reagents"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="atcc_number" internal="true"/>
             <linkAttribute name="atcc_link" displayName="ATCC Number"
                         visible="$$atcc_number$$">
@@ -877,7 +877,7 @@
           <table name="ProteinDatabase"
                  displayName="Protein Linkouts"
                  queryRef="GeneTables.ProteinDatabase"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="dataset" displayName="Database"/>
             <columnAttribute name="accession" internal="true"/>
             <columnAttribute name="gi" internal="true"/>
@@ -908,7 +908,7 @@
           <table name="GeneLinkouts"
                  displayName="External Links"
                  queryRef="GeneTables.gene_dbrefs"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="dataset" displayName="Database" internal="true"/>
             <columnAttribute name="source_id" internal="true"/>
             <columnAttribute name="link_url" internal="true"/>
@@ -925,7 +925,7 @@
           <table name="3dPreds"
                  displayName="3D Structure Predictions"
                  queryRef="GeneTables.3dPreds"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="search_term" internal="true"/>
             <columnAttribute name="pdb_template" internal="true"/>
             <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB"
@@ -947,7 +947,7 @@
           <table name="PdbSimilarities"
                  displayName="Similarities to Protein Data Bank (PDB) Chains"
                  queryRef="GeneTables.PdbSimilarities"
-                 includeProjects="PlasmoDB">
+                 includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="pdb_chain" internal="true"/>
             <columnAttribute name="pdb_id" internal="true"/>
             <columnAttribute name="pvalue_mant" internal="true"/>
@@ -989,7 +989,7 @@
           <!-- Epitpotes table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Epitopes" excludeProjects="ApiDB"
+          <table name="Epitopes"
                  displayName="Epitopes from IEDB"
                  queryRef="GeneTables.Epitopes">
             <columnAttribute name="iedb_id" internal="true"/>
@@ -1011,7 +1011,7 @@
           <!-- Isolate Overlap Table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="IsolateOverlap" includeProjects="CryptoDB"
+          <table name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
                  displayName="Isolates"
                  queryRef="GeneTables.IsolateOverlap">
             <columnAttribute name="gene_id" displayName="Gene Name"/>
