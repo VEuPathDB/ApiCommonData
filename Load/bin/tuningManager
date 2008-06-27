@@ -39,6 +39,7 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
       new($tuningTable->{name},
 	  $tuningTable->{internalDependency},
 	  $tuningTable->{externalDependency},
+	  $tuningTable->{intermediateTable},
 	  $tuningTable->{sql},
 	  $tuningTable->{perl}, $dbh);
 }
@@ -89,6 +90,9 @@ foreach my $table (keys(%tuningTables)) {
     if $tuningTables{$table}->hasDependencyCycle([]);
 }
 
+ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies must be tables, not views or synonyms.")
+  if $nonexistentExternal;
+
 if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   ApiCommonData::Load::TuningConfig::Log::addLog("\n\n****************\n\n"
 						 . "INVALID CONFIGURATION -- NOT UPDATING DATABASE"
@@ -96,6 +100,9 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   $doUpdate = 0;
 }
 
+foreach my $table (keys(%tuningTables)) {
+    $tuningTables{$table}->getState($doUpdate, $dbh);
+}
 
 print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
 ###############################################################################

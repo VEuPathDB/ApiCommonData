@@ -1,5 +1,6 @@
 package ApiCommonData::Load::TuningConfig::InternalTable;
 
+use ApiCommonData::Load::TuningConfig::FileSuffix;
 
 # @ISA = qw( ApiCommonData::Load::TuningConfig::Table );
 
@@ -12,6 +13,7 @@ sub new {
 	$name,                    # name of tuning table
         $internalDependencyNames,
         $externalDependencyNames,
+	$intermediateTables,
         $sqls, # reference to array of SQL statements
         $perls,
         $dbh)
@@ -23,6 +25,7 @@ sub new {
     $self->{name} = $name;
     $self->{internalDependencyNames} = $internalDependencyNames;
     $self->{externalDependencyNames} = $externalDependencyNames;
+    $self->{intermediateTables} = $intermediateTables;
     $self->{sqls} = $sqls;
     $self->{perls} = $perls;
     $self->{internalDependencies} = [];
@@ -83,7 +86,7 @@ sub getExternalDependencies {
 }
 
 sub getState {
-  my ($self, $doUpdate) = @_;
+  my ($self, $doUpdate, $dbh) = @_;
 
   return $self->{state} if defined $self->{state};
 
@@ -100,7 +103,7 @@ sub getState {
   } else {
     # check internal dependencies
     foreach my $dependency (@{$self->getInternalDependencies()}) {
-      my $childState = $dependency->getState($doUpdate);
+      my $childState = $dependency->getState($doUpdate, $dbh);
       if ($childState eq "neededUpdate") {
 	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} must be updated because it depends on $dependency->getName(), which needed update.");
 	$needUpdate = 1;
@@ -112,7 +115,7 @@ sub getState {
 
     # check external dependencies
     foreach my $dependency (@{$self->getExternalDependencies()}) {
-      if ($dependency->getTimestamp() > $self->getTimestamp()) {
+      if ($dependency->getTimestamp() > $self->{timestamp}) {
 	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} depends on $dependency->getName(), which is newer than $self->{name}.");
 	$needUpdate = 1;
       }
@@ -120,7 +123,7 @@ sub getState {
   }
 
   if ($doUpdate and $needUpdate) {
-    my $updateResult = $self->update();
+    my $updateResult = $self->update($dbh);
     $broken = 1 if $updateResult = "broken";
   }
 
@@ -136,8 +139,42 @@ sub getState {
 }
 
 sub update {
-  my ($self) = @_;
+  my ($self, $dbh) = @_;
 
+  my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
+
+  $self->dropIntermediateTables($dbh);
+
+  my $updateError;
+
+  foreach my $sql (@{$self->{sqls}}) {
+    $sql =~ s/&1/$suffix/g;  # use suffix to make db object names unique
+
+    my $stmt = $dbh->prepare($sql);
+    my $sqlReturn = $stmt->execute();
+    if (!defined $sqlReturn) {
+      $updateError = 1;
+      ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    }
+    $stmt->finish();
+  }
+
+  foreach my $perl (@{$self->{perls}}) {
+    $perl =~ s/&1/$suffix/g;  # use suffix to make db object names unique
+
+    eval { $perl };
+
+    if ($@) {
+      $updateError = 1;
+      ApiCommonData::Load::TuningConfig::Log::addLog("failed executing PERL statement \"$perl\"");
+    }
+  }
+
+  return "broken" if $updateError;
+
+  $self->dropIntermediateTables($dbh, 'warn on nonexistence');
+
+  $self->publish($suffix, $dbh);
 }
 
 sub storeDefinition {
@@ -162,6 +199,8 @@ SQL
   $stmt->execute($self->{name}, $self->getDefString())
     or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
   $stmt->finish();
+
+  $dbh->commit();
 
 }
 
@@ -221,6 +260,74 @@ sub hasDependencyCycle {
 
     pop(@{$ancestorsRef});
     return $cycleFound;
+}
+
+sub dropIntermediateTables {
+  my ($self, $dbh, $warningFlag) = @_;
+
+  foreach my $intermediate (@{$self->{intermediateTables}}) {
+    print "must drop " . $intermediate->{name} . "\n";
+
+    my $sql = <<SQL;
+       drop table $intermediate->{name}
+SQL
+
+    $dbh->{PrintError} = 0;
+    my $stmt = $dbh->prepare($sql);
+    my $sqlReturn = $stmt->execute();
+    $stmt->finish();
+    $dbh->{PrintError} = 1;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: intermediateTable"
+						   . $intermediate->{name}
+						   . " was not created during the update of "
+						   . $self->{name})
+	if ($warningFlag and !defined $sqlReturn);
+  }
+
+}
+
+sub publish {
+  my ($self, $suffix, $dbh) = @_;
+
+  # grant select privilege on new table
+    my $sql = <<SQL;
+      grant select on $self->{name}$suffix to gus_r
+SQL
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    $stmt->finish();
+
+  # store definition
+  $self->storeDefinition($dbh);
+
+  # mark old table obsolete
+  my ($schema, $table) = split(/\./, $self->{name});
+  my $sql = <<SQL;
+    insert into apidb.ObsoletedTuningTables (name, timestamp)
+    select table_owner || '.' || table_name, sysdate
+    from all_synonyms
+    where owner = upper(?)
+      and synonym_name = upper(?)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute("$schema", "$table")
+    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+  $stmt->finish();
+
+  # update synonym
+  my $sql = <<SQL;
+    create or replace synonym $self->{name} for $self->{name}$suffix
+SQL
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+  $stmt->finish();
+
+  $dbh->commit();
 }
 
 1;
