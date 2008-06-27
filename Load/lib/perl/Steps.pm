@@ -5030,6 +5030,8 @@ sub updateAssemblySourceId {
 
   my $propertySet = $mgr->{propertySet};
 
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;  
+
   my $signal = "${species}UpdateAssSourceId";
 
   return if $mgr->startStep("Updating dots.assembly.source_id", $signal);
@@ -5040,7 +5042,7 @@ sub updateAssemblySourceId {
 
   my $log = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  $mgr->runCmd("updateAssSourceIdFromPK --prefix $species --suffix '.tmp' --ncbiTaxId $ncbiTaxId 2>> $log");
+  $mgr->runCmd("updateAssSourceIdFromPK --prefix $species --suffix '.tmp' --TaxonId $taxonId 2>> $log");
 
   $mgr->endStep($signal);
 }
