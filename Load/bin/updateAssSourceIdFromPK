@@ -5,14 +5,14 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$prefix,$suffix,$ncbiTaxId,$verbose);
+my ($gusConfigFile,$prefix,$suffix,$TaxonId,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "prefix=s" => \$prefix,
 	    "suffix=s" => \$suffix,
 	    "verbose!" => \$verbose,
-	    "ncbiTaxId=s" => \$ncbiTaxId);
+	    "TaxonId=s" => \$TaxonId);
 
-die "updateAssSourceIdFromPK --prefix --suffix --ncbiTaxId {--verbose} {--gusConfigFile <file>}\n" if (!$ncbiTaxId);
+die "updateAssSourceIdFromPK --prefix --suffix --TaxonId {--verbose} {--gusConfigFile <file>}\n" if (!$TaxonId);
 
 print STDERR "Establishing dbi login\n";
 
@@ -26,7 +26,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
-my $sql = "update dots.assembly set source_id = = '$prefix' || na_sequence_id || '$suffix'";
+my $sql = "update dots.assembly set source_id = '$prefix' || na_sequence_id || '$suffix' where taxon_id= '$TaxonId'";
 
 print STDERR "Updating source_id of dots.assembly with SQL: $sql\n";
 
