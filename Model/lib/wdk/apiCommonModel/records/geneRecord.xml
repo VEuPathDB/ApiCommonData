@@ -39,7 +39,7 @@
           <reporter name="srt" displayName="Sequence - configurable FASTA"
                     implementation=""/>
                     
-          <reporter name="gff3" displayName="Summary - GFF3" excludeProjects="ApiDB"  
+          <reporter name="gff3" displayName="Summary - GFF3"
                     implementation="org.apidb.apicommon.model.report.Gff3CachedReporter">
               <property name="table_cache">apidb.GeneTable</property>
               <property name="project_id_column">project_id</property>
@@ -50,7 +50,7 @@
           </reporter>
 
           <!-- the report maker used on commandline to generate gff download files -->
-          <reporter name="gff3Dump" displayName="Summary - GFF3" excludeProjects="ApiDB"
+          <reporter name="gff3Dump" displayName="Summary - GFF3"
                     inReportMaker="false"
                     implementation="org.apidb.apicommon.model.report.Gff3Reporter">
               <property name="table_cache">apidb.GeneTable</property>
@@ -378,7 +378,7 @@
           <!-- data dump attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <attributeQueryRef ref="GeneAttributes.GeneGffAttrs" excludeProjects="ApiDB">
+          <attributeQueryRef ref="GeneAttributes.GeneGffAttrs">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Data Source" name="gff_source" internal="true" inReportMaker="false"/>
               <columnAttribute displayName="Feature Type" name="gff_type" internal="true" inReportMaker="false"/>
@@ -395,7 +395,7 @@
               <columnAttribute displayName="Locus Tag" name="gff_attr_locus_tag" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
 
-          <attributeQueryRef ref="GeneAttributes.GeneGffSequence" excludeProjects="ApiDB">
+          <attributeQueryRef ref="GeneAttributes.GeneGffSequence">
               <columnAttribute displayName="Transcript Sequence" name="gff_transcript_sequence" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
 
@@ -1032,7 +1032,7 @@
           <!-- GFF Gene Aliases table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffAliases" excludeProjects="ApiDB"
+          <table name="GeneGffAliases"
                  displayName="Aliases"
                  internal="true"
                  inReportMaker="false"
@@ -1045,7 +1045,7 @@
           <!-- GFF Gene GO Terms table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffGoTerms" excludeProjects="ApiDB"
+          <table name="GeneGffGoTerms" 
                  displayName="GO Terms"
                  internal="true"
                  inReportMaker="false"
@@ -1057,7 +1057,7 @@
           <!-- GFF Gene DB xrefs  table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffDbxrefs" excludeProjects="ApiDB"
+          <table name="GeneGffDbxrefs"
                  displayName="Gene Exons"
                  queryRef="GeneTables.GeneGffDbxrefs" inReportMaker="false">
 
@@ -1068,7 +1068,7 @@
           <!-- GFF Gene RNAs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffRnas" excludeProjects="ApiDB"
+          <table name="GeneGffRnas" 
                  displayName="Gene RNAs"
                  queryRef="GeneTables.GeneGffRnas" internal="true" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
@@ -1091,7 +1091,7 @@
           <!-- GFF Gene CDSs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffCdss" excludeProjects="ApiDB"
+          <table name="GeneGffCdss" 
                  displayName="Gene CDSs"
                  queryRef="GeneTables.GeneGffCdss" inReportMaker="false">
               <columnAttribute displayName="SeqId" name="gff_seqid" internal="true" inReportMaker="false"/>
@@ -1113,7 +1113,7 @@
           <!-- GFF Gene exons table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="GeneGffExons" excludeProjects="ApiDB"
+          <table name="GeneGffExons"
                  displayName="Gene Exons"
                  queryRef="GeneTables.GeneGffExons" inReportMaker="false">
 
