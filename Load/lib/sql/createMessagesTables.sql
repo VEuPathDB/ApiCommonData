@@ -38,21 +38,23 @@ CREATE TABLE ryanthib.message_projects
   CONSTRAINT project_id_fkey FOREIGN KEY (project_id) REFERENCES ryanthib.projects(project_id)
 );
 
+DROP SEQUENCE ryanthib.messages_id_pkseq;
+DROP SEQUENCE ryanthib.projects_id_pkseq;
+DROP SEQUENCE ryanthib.category_id_pkseq;
+
 CREATE SEQUENCE ryanthib.messages_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALUE;
-
 CREATE SEQUENCE ryanthib.projects_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALUE;
-
 CREATE SEQUENCE ryanthib.category_id_pkseq START WITH 1 INCREMENT BY 1 NOMAXVALUE;
 
-INSERT INTO projects (project_id, project_name) VALUES (1, 'CryptoDB');
-INSERT INTO projects (project_Id, project_name) VALUES (2, 'GiardiaDB');
-INSERT INTO projects (project_Id, project_name) VALUES (3, 'PlasmoDB');
-INSERT INTO projects (project_Id, project_name) VALUES (4, 'ToxoDB');
-INSERT INTO projects (project_Id, project_name) VALUES (5, 'TrichDB');
+INSERT INTO projects (project_id, project_name) VALUES (projects_id_pkseq.nextval, 'CryptoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (projects_id_pkseq.nextval, 'GiardiaDB');
+INSERT INTO projects (project_Id, project_name) VALUES (projects_id_pkseq.nextval, 'PlasmoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (projects_id_pkseq.nextval, 'ToxoDB');
+INSERT INTO projects (project_Id, project_name) VALUES (projects_id_pkseq.nextval, 'TrichDB');
 
-INSERT INTO category (category_id, category_name) VALUES (1, 'General Information');
-INSERT INTO category (category_id, category_name) VALUES (2, 'System Degraded');
-INSERT INTO category (category_id, category_name) VALUES (3, 'System Down');
+INSERT INTO category (category_id, category_name) VALUES (category_id_pkseq.nextval, 'Information');
+INSERT INTO category (category_id, category_name) VALUES (category_id_pkseq.nextval, 'Degraded');
+INSERT INTO category (category_id, category_name) VALUES (category_id_pkseq.nextval, 'Down');
 
 
 
