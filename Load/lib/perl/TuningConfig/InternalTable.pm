@@ -105,10 +105,10 @@ sub getState {
     foreach my $dependency (@{$self->getInternalDependencies()}) {
       my $childState = $dependency->getState($doUpdate, $dbh);
       if ($childState eq "neededUpdate") {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} must be updated because it depends on $dependency->getName(), which needed update.");
+	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} must be updated because it depends on " . $dependency->getName() . ", which needed update.");
 	$needUpdate = 1;
       } elsif ($childState eq "broken") {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} is broken because it depends on $dependency->getName(), which is broken.");
+	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
 	$broken = 1;
       }
     }

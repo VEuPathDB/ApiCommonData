@@ -8,6 +8,7 @@ use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::InternalTable;
 use ApiCommonData::Load::TuningConfig::ExternalTable;
+use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::Log;
 
 my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
@@ -103,6 +104,18 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
 foreach my $table (keys(%tuningTables)) {
     $tuningTables{$table}->getState($doUpdate, $dbh);
 }
+
+# indexes
+foreach my $tuningIndex (@{$config->{tuningIndex}}) {
+
+    my $indexOjbect =
+      ApiCommonData::Load::TuningConfig::TuningIndex->
+	  new($tuningIndex->{name},
+	      $tuningIndex->{table},
+	      $tuningIndex->{content},
+	      $dbh);
+}
+
 
 print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
 ###############################################################################

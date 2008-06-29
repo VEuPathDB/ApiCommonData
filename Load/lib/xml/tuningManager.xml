@@ -2789,4 +2789,48 @@ CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
     </sql>
   </tuningTable>
 
+  <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
+    external_database_release_id, subclass_view, aa_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.NaFeat_alleles_ix" table="dots.NaFeatureImp">
+    subclass_view, number4, number5, na_sequence_id, na_feature_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.AaSequenceImp_string2_ix" table="dots.AaSequenceImp">
+    string2, aa_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.AaSequenceImp_classtax_ix" table="dots.AaSequenceImp">
+    subclass_view, taxon_id, aa_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.NaFeat_SubclassIds_ix" table="dots.NaFeatureImp">
+    subclass_view, source_id, na_feature_id, na_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.NaFeat_SubclassParent_ix" table="dots.NaFeatureImp">
+    subclass_view, parent_id, na_feature_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.loc_feat_ix" table="dots.NaLocation">
+    na_feature_id, start_min, end_max, is_reversed
+  </tuningIndex>
+
+  <tuningIndex name="dots.sim_pval_ix" table="dots.Similarity">
+    query_id, pvalue_exp, pvalue_mant, subject_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.nasequenceimp_string1_idx" table="dots.NaSequenceImp">
+    string1, na_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.aafeat_subclassparent_ix" table="dots.AaFeatureImp">
+    subclass_view, parent_id, aa_feature_id
+  </tuningIndex>
+
+  <tuningIndex name="aafeature_subclasssource_ix" table="dots.AaFeatureImp">
+    subclass_view, source_id, aa_feature_id
+  </tuningIndex> 
+
 </tuningConfig>
