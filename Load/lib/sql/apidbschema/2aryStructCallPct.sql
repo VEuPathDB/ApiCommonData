@@ -1,5 +1,7 @@
 alter table dots.secondarystructurecall add (percentage number(3));
 
+drop table dots.tmp_ssc;
+
 create table dots.tmp_ssc as
 select secondary_structure_call_id, secondary_structure_id, structure_type,
        call_confidence, percentage, modification_date, user_read, user_write,
