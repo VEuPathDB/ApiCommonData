@@ -752,7 +752,7 @@ sub createRepeatMaskDir {
 }
 
 sub createRepeatMaskDir_new {
-  my ($mgr, $file, $numNodes) = @_;
+  my ($mgr, $file, $numNodes, $addOpt, $taskSizeOpt, $repeatMaskSubdir) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "make" . ucfirst($file) . "RMDir";
@@ -761,12 +761,23 @@ sub createRepeatMaskDir_new {
 
   my $dataDir = $mgr->{'dataDir'};
   my $clusterDataDir = $mgr->{'clusterDataDir'};
+
+  if($repeatMaskSubdir){
+
+    $dataDir .= "/$repeatMaskSubdir";
+    $clusterDataDir .= "/$repeatMaskSubdir";
+    &_createDir($mgr,$dataDir);
+ 
+  }
+
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
-  my $rmTaskSize = $propertySet->getProp('repeatmask.taskSize');
+  my $rmTaskSize = $taskSizeOpt ? $taskSizeOpt : $propertySet->getProp('repeatmask.taskSize');
   my $rmPath = $propertySet->getProp('repeatmask.path');
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
+
+  $rmOptions .= " $addOpt" if($addOpt);
 
   &makeRMDir($file, $dataDir, $clusterDataDir,
 	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes);
@@ -4875,8 +4886,10 @@ sub copyFilesToComputeCluster {
   my $propertySet = $mgr->{propertySet};
 
   my $clusterServer = $propertySet->getProp('clusterServer');
-
-  my $signal = "${file}ToCluster";
+  
+  my $signalDir = $dir;
+  $signalDir =~ s/\//_/g;
+  my $signal = "${signalDir}_${file}ToCluster";
   return if $mgr->startStep("Copying $file to $mgr->{clusterDataDir}/$file on $clusterServer", $signal);
 
   my $fileDir = "$mgr->{dataDir}/$dir";

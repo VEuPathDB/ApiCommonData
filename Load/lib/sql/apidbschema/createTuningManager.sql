@@ -9,3 +9,5 @@ create table apidb.ObsoletedTuningTables (
 
 create sequence apidb.TuningManager_sq
    start with 1111;
+
+exit

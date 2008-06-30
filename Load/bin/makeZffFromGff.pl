@@ -34,11 +34,13 @@ while (<FILE>) {
   if (defined $geneIdRegex){
     ($gene) = $f[8] =~ /$geneIdRegex/;
   }
-  push @{$H{$contig}{$gene}}, {
+  if($contig ne "" && $gene ne ""){
+    push @{$H{$contig}{$gene}}, {
                              start  => $f[3],
                              end    => $f[4],
                              strand => $f[6],
                             }
+  }
 }
 
 close FILE;

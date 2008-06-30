@@ -15,6 +15,8 @@ GRANT CREATE SYNONYM TO ApiDB;
 GRANT REFERENCES ON dots.GeneFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaFeatureNaGene TO ApiDB;
+GRANT REFERENCES ON dots.AaSequenceImp TO ApiDB;
+GRANT REFERENCES ON sres.Taxon TO ApiDB;
 
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
