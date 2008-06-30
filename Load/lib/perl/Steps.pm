@@ -2390,42 +2390,37 @@ sub extractESTs {
 }
 
 
-sub extractESTsFromAllSources {
-  my ($mgr,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database) = @_;
-
-  my $signal = "extract${genus}${species}AllESTs";
-
-  $signal =~ s/\s//g;
-
-  $signal =~ s/\//_/g;
-
-  return if $mgr->startStep("Extracting $genus $species ESTs from all sources", $signal);
+sub makeESTDownloadFileFromAllSources {
+  my ($mgr,$species,$ncbiTaxId,$taxonHierarchy,$project) = @_;
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
-  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+  my $sql = <<"EOF";
+    SELECT x.source_id
+           ||' | organism='||
+           replace(tn.name, ' ', '_')
+           ||' | length='||
+           x.length as defline,
+           x.sequence
+           FROM dots.externalnasequence x,
+                sres.taxonname tn,
+                sres.taxon t,
+                sres.sequenceontology so,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr
+           WHERE t.taxon_id in ($taxonIdList)
+            AND t.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND t.taxon_id = x.taxon_id
+            AND x.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = 'EST'
+EOF
 
-  my $name = "${genus}_$species";
+   my $fileName = $species . 'EST';
 
-  my $sql = "select '${name}|'||x.source_id||'|${date}|EST|'||l.dbest_name,x.sequence
-             from dots.externalnasequence x,dots.library l,sres.sequenceontology s,dots.est e
-             where x.taxon_id in ($taxonIdList) and x.sequence_ontology_id = s.sequence_ontology_id and s.term_name = 'EST' and x.na_sequence_id = e.na_sequence_id and e.library_id = l.library_id";
-
-  $genus =~ s/^(\w)\w+/$1/;
-
-  my $propertySet = $mgr->{propertySet};
-
-  my $release = $propertySet->getProp('release');
-
-  my $outFile = "$mgr->{dataDir}/downloadSite/${genus}${species}/${genus}${species}ESTs_${database}-${release}.fasta";
-
-  my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
-
-  $mgr->runCmd($cmd);
-
-  $mgr->endStep($signal);
+   makeDownloadFile($mgr, $species, $fileName, $sql,$project);
 }
 
 sub extractIndividualNaSeq {
