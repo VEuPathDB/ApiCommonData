@@ -20,7 +20,7 @@ SQL
 
       my $stmt = $dbh->prepare($sql);
       $stmt->execute()
-	or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+	or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
       ($suffix) = $stmt->fetchrow_array();
       $stmt->finish();
 

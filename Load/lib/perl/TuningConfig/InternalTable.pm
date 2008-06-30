@@ -40,7 +40,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
     my ($timestamp, $dbDef) = $stmt->fetchrow_array();
     $stmt->finish();
     $self->{timestamp} = $timestamp;
@@ -154,7 +154,7 @@ sub update {
     my $sqlReturn = $stmt->execute();
     if (!defined $sqlReturn) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+      ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
     }
     $stmt->finish();
   }
@@ -187,7 +187,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
   $stmt->finish();
 
   my $sql = <<SQL;
@@ -197,7 +197,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute($self->{name}, $self->getDefString())
-    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
   $stmt->finish();
 
   $dbh->commit();
@@ -297,7 +297,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
     $stmt->finish();
 
   # store definition
@@ -315,7 +315,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute("$schema", "$table")
-    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
   $stmt->finish();
 
   # update synonym
@@ -324,7 +324,7 @@ SQL
 SQL
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
   $stmt->finish();
 
   $dbh->commit();

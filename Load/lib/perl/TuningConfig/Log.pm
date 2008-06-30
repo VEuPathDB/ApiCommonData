@@ -20,4 +20,12 @@ BEGIN {
   }
 }
 
+sub mailLog {
+  my ($recipient) = @_;
+
+  open(MAIL, "|mail -s 'tuningManager log' $recipient");
+  print MAIL getLog();
+  close(MAIL);
+}
+
 1;

@@ -16,6 +16,8 @@ sub new {
 
     bless($self, $class);
     $self->{name} = $name;
+    $self->{table} = $table;
+    $self->{columnList} = $columnList;
 
     my ($schema, $simpleTable) = split(/\./, $table);
     $self->{schema} = $schema;
@@ -39,10 +41,9 @@ sub new {
 		. join("\n  and ", @whereTerms)
 		  . ") group by index_name";
 
-print "index check sql: $sql\n";
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
 
     my $indexExists;
     while (my ($index_name, $columnCount) = $stmt->fetchrow_array()) {
@@ -75,7 +76,7 @@ sub create {
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("failed executing SQL statement \"$sql\"");
+      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
     my ($timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
 }

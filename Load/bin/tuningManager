@@ -108,16 +108,22 @@ foreach my $table (keys(%tuningTables)) {
 # indexes
 foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 
-    my $indexOjbect =
-      ApiCommonData::Load::TuningConfig::TuningIndex->
-	  new($tuningIndex->{name},
-	      $tuningIndex->{table},
-	      $tuningIndex->{content},
-	      $dbh);
+  my $indexObject =
+    ApiCommonData::Load::TuningConfig::TuningIndex->
+	new($tuningIndex->{name},
+	    $tuningIndex->{table},
+	    $tuningIndex->{content},
+	    $dbh);
+
+  $indexObject->create($dbh)
+    if $indexObject->exists() and $doUpdate;
 }
 
 
 print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
+
+ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail);
+
 ###############################################################################
 
 sub usage {
