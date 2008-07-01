@@ -39,7 +39,7 @@ Here are the tab file columns:
   Source
   Barcode
   SNPS
-	snp_id A T C ...
+  snp_id A T C ...
 
   Example SNP id: Pf_01_000101502 indicates SNP on contig 1 position 101502.
 PLUGIN_NOTES
@@ -88,7 +88,7 @@ sub new {
   bless($self,$class); 
 
   $self->initialize({requiredDbVersion => 3.5,
-                     cvsRevision => '$Revision: 1 $', # cvs fills this in!
+                     cvsRevision => '$Revision: 2 $', # cvs fills this in!
                      name => ref($self),
                      argsDeclaration => $argsDeclaration,
                      documentation => $documentation
@@ -110,34 +110,34 @@ sub run {
   my $count = 0;
   my @snpFeats;
   my $flag = 0;
-	my %metaHash;
-	my @snps;
+  my %metaHash;
+  my @snps;
 
   while(<FILE>) {
     chomp;
     next if /^\s*$/;
 
-		$flag = 0 and next if /^#MetaData/i;
+    $flag = 0 and next if /^#MetaData/i;
 
     if($flag == 0) {
-			$flag = 1 and next if /^#SNPS/i;
-		  my($k, @others) = split /\t/, $_;
-			$metaHash{$k} = \@others;
-		} else {
-		  my @snp = split /\t/, $_;
+      $flag = 1 and next if /^#SNPS/i;
+      my($k, @others) = split /\t/, $_;
+      $metaHash{$k} = \@others;
+    } else {
+      my @snp = split /\t/, $_;
       map { s/\s+$// } @snp;  # trim off extra end spaces
-			push @snps, \@snp;
-		}
-	} # end file
+      push @snps, \@snp;
+    }
+  } # end file
 
   my $size = @{$metaHash{Strain}};
-	for(my $i = 0; $i < $size; $i++) {
+  for(my $i = 0; $i < $size; $i++) {
     my $strain = $metaHash{Strain}->[$i];
-		my $origin = $metaHash{Origin}->[$i];
-		my $source = $metaHash{Source}->[$i];
-		my $barcode = $metaHash{Barcode}->[$i];
+    my $origin = $metaHash{Origin}->[$i];
+    my $source = $metaHash{Source}->[$i];
+    my $barcode = $metaHash{Barcode}->[$i];
 
-		print "$strain |$origin | $source |$barcode\n";
+    print "$strain |$origin | $source |$barcode\n";
 
     my $objArgs = {
                     strain                       => $strain,
@@ -154,16 +154,16 @@ sub run {
 
     my $isolateFeature = $self->processIsolateFeature(\@snps, $i+1);
 
-		foreach(@$isolateFeature) {
-		  my ($snp_id, $allele) = @$_;
+    foreach(@$isolateFeature) {
+      my ($snp_id, $allele) = @$_;
 
       # sample snp_id: Pf_02_000842803
       my ($species, $chr, $location) = split /_/, $snp_id;
-			$chr =~ s/^0+//;
-			$chr = 'MAL' . $chr;
-			$location =~ s/^0+//;
+      $chr =~ s/^0+//;
+      $chr = 'MAL' . $chr;
+      $location =~ s/^0+//;
 
-			print "++ $species | $chr | $location\n";
+      print "++ $species | $chr | $location\n";
 
       my $featArgs = { allele                       => $allele,
                        name                         => $snp_id,
@@ -172,9 +172,17 @@ sub run {
                      };
 
       my $isolateFeature = GUS::Model::DoTS::IsolateFeature->new($featArgs);
+
+      my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'     => $location,
+                                                     'start_max'     => $location,
+                                                     'end_min'       => $location,
+                                                     'end_max'       => $location,
+                                                     'location_type' => 'EXACT'  
+                                                    });
+      $isolateFeature->addChild($naLoc);
       $isolateSource->addChild($isolateFeature);
 
-		}
+    }
 
     my $extNASeq = $self->buildSequence($barcode, $extDbRlsId);
 
@@ -184,7 +192,7 @@ sub run {
     $count++;
     $self->log("processed $count") if ($count % 1000) == 0;
 
-	}
+  }
 
   return "Inserted $count rows.";
 }
@@ -203,10 +211,10 @@ sub buildSequence {
 sub processIsolateFeature {
   my ($self, $snps, $index) = @_;
 
-	my @isolateFeature;
+  my @isolateFeature;
 
   foreach my $s (@$snps) {
-	  #print "?? $s | @$s | $index\n";
+    #print "?? $s | @$s | $index\n";
     push @isolateFeature, [$s->[0], $s->[$index]];
   }
 
