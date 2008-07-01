@@ -2463,9 +2463,7 @@ sub makeESTDownloadFileFromAllSources {
            FROM dots.externalnasequence x,
                 sres.taxonname tn,
                 sres.taxon t,
-                sres.sequenceontology so,
-                sres.externaldatabase ed,
-                sres.externaldatabaserelease edr
+                sres.sequenceontology so
            WHERE t.taxon_id in ($taxonIdList)
             AND t.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'
@@ -3301,7 +3299,7 @@ sub concatFilesGeneral {
 sub concatFiles {
   my ($mgr,$files,$catFile) = @_;
 
-  $files =~ s/(\S+)/$mgr->{dataDir}\/$1/g;
+  #$files =~ s/(\S+)/$1/g;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -3309,7 +3307,7 @@ sub concatFiles {
   
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $signal = "concat$catFile";
+  my $signal = "concat".basename($catFile);
 
   $signal =~ s/-$projRel//g;
 
