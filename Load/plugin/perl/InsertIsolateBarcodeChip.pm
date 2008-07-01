@@ -156,7 +156,14 @@ sub run {
 
 		foreach(@$isolateFeature) {
 		  my ($snp_id, $allele) = @$_;
+
+      # sample snp_id: Pf_02_000842803
       my ($species, $chr, $location) = split /_/, $snp_id;
+			$chr =~ s/^0+//;
+			$chr = 'MAL' . $chr;
+			$location =~ s/^0+//;
+
+			print "++ $species | $chr | $location\n";
 
       my $featArgs = { allele                       => $allele,
                        name                         => $snp_id,
