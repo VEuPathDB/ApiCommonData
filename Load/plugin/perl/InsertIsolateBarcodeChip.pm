@@ -9,6 +9,7 @@ use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::IsolateSource;
 use GUS::Model::DoTS::IsolateFeature;
+use GUS::Model::DoTS::SnpFeature;
 
 use Data::Dumper;
 
@@ -165,8 +166,12 @@ sub run {
 
       print "++ $species | $chr | $location\n";
 
-      my $featArgs = { allele                       => $allele,
+      my $chr_na_seq_id = $self->getNaSeqId($snp_id);  #get na_sequence_id of a chromosome
+
+      my $featArgs = { na_sequence_id               => $chr_na_seq_id, 
+                       allele                       => $allele,
                        name                         => $snp_id,
+                       source_id                    => $snp_id,
                        map                          => $location, # na_location.. later
                        external_database_release_id => $extDbRlsId,
                      };
@@ -204,8 +209,22 @@ sub buildSequence {
 
   $extNASeq->setExternalDatabaseReleaseId($extDbRlsId);
   $extNASeq->setSequence($seq);
+  $extNASeq->setSequenceVersion(1);
 
   return $extNASeq;
+}
+
+sub getNaSeqId {
+  my ($self, $source_id) = @_;
+
+  my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
+  my $naSeq = GUS::Model::DoTS::SnpFeature->new({'source_id' => $source_id});
+
+  $naSeq->retrieveFromDB() || self->error("$source_id does not exist in GUS::Model::...");
+
+  my $naSeqId = $naSeq->getNaSequenceId();
+
+  return $naSeqId;
 }
 
 sub processIsolateFeature {
@@ -223,7 +242,7 @@ sub processIsolateFeature {
 
 sub undoTables {
   my ($self) = @_;
-  return ('ApiDB.IsolateSource');
+  return ('DoTS.IsolateSource');
 }
 
 1;
