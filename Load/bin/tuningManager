@@ -11,6 +11,12 @@ use ApiCommonData::Load::TuningConfig::ExternalTable;
 use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::Log;
 
+my $startTime = time;
+
+my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
+ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at " . $timestamp);
+
 my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
 GetOptions("configFile=s" => \$configFile,
            "model=s" => \$model,
@@ -21,9 +27,9 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log->addLog("missing parameter: configFile") unless $configFile;
-ApiCommonData::Load::TuningConfig::Log->addLog("missing parameter: notifyEmail") unless $notifyEmail;
-ApiCommonData::Load::TuningConfig::Log->addLog("parameter error: either model or both instance and password must be specified")
+ApiCommonData::Load::TuningConfig::Log::addLog("missing parameter: configFile") unless $configFile;
+ApiCommonData::Load::TuningConfig::Log::addLog("missing parameter: notifyEmail") unless $notifyEmail;
+ApiCommonData::Load::TuningConfig::Log::addLog("parameter error: either model or both instance and password must be specified")
   unless ($model || $instance && $password);
 &usage unless ($configFile && $notifyEmail && ($model || $instance && $password));
 
@@ -101,13 +107,29 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   $doUpdate = 0;
 }
 
+my ($brokenCount, $neededUpdateCount, $upToDateCount, $tableCount);
+
 foreach my $table (keys(%tuningTables)) {
-    $tuningTables{$table}->getState($doUpdate, $dbh);
+  $tableCount++;
+  my $state = $tuningTables{$table}->getState($doUpdate, $dbh);
+
+  if ($state eq "broken") {
+    $brokenCount++;
+  } elsif ($state eq "neededUpdate") {
+    $neededUpdateCount++;
+  } elsif ($state eq "up-to-date") {
+    $upToDateCount++;
+  } else {
+    ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: invalid state $state");
+  }
 }
 
 # indexes
+my $indexesConfigured;
+my $missingIndexes;
 foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 
+  $indexesConfigured++;
   my $indexObject =
     ApiCommonData::Load::TuningConfig::TuningIndex->
 	new($tuningIndex->{name},
@@ -115,13 +137,43 @@ foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 	    $tuningIndex->{content},
 	    $dbh);
 
-  $indexObject->create($dbh)
-    if $indexObject->exists() and $doUpdate;
+  if (!$indexObject->exists()) {
+    $missingIndexes++;
+    ApiCommonData::Load::TuningConfig::Log::addLog("missing index: " . $tuningIndex->{name});
+
+    $indexObject->create($dbh)
+      if $doUpdate;
+  }
+}
+
+# summary
+if (!$tableCount) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
+} else {
+  my $summary = sprintf("%d tables defined: %d up-to-date, %d needing update, %d broken", $tableCount, $upToDateCount, $neededUpdateCount, $brokenCount);
+  ApiCommonData::Load::TuningConfig::Log::addLog($summary);
 }
 
 
-print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
+if (!$indexesConfigured) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
+} elsif ($missingIndexes) {
+  ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
+						 . $indexesConfigured
+						 . " indexes configured were found to be missing");
+} else {
+  ApiCommonData::Load::TuningConfig::Log::addLog("All "
+						 . $indexesConfigured
+						 . " indexes were found to exist.");
+}
 
+my $elapsed = time - $startTime;
+my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
+
+ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+					       " seconds to run tuningManager ($hms)");
+
+print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail);
 
 ###############################################################################

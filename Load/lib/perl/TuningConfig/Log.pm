@@ -21,11 +21,13 @@ BEGIN {
 }
 
 sub mailLog {
-  my ($recipient) = @_;
+  my ($recipientList) = @_;
 
-  open(MAIL, "|mail -s 'tuningManager log' $recipient");
-  print MAIL getLog();
-  close(MAIL);
+  foreach my $recipient (split(/,/, $recipientList)) {
+    open(MAIL, "|mail -s 'tuningManager log' $recipient");
+    print MAIL getLog();
+    close(MAIL);
+  }
 }
 
 1;

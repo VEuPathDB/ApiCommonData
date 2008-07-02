@@ -43,7 +43,7 @@ sub new {
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
 
     my $indexExists;
     while (my ($index_name, $columnCount) = $stmt->fetchrow_array()) {
@@ -71,14 +71,22 @@ sub exists {
 sub create {
     my ($self, $dbh) = @_;
 
+    my $startTime = time;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("creating index " . $self->{name});
     my $sql = <<SQL;
        create index $self->{name} on $self->{table} ($self->{columnList})
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     my ($timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
+
+    ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+						  " seconds to rebuild index " .
+						  $self->{name});
+
 }
 
 1;

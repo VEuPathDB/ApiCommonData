@@ -40,7 +40,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     my ($timestamp, $dbDef) = $stmt->fetchrow_array();
     $stmt->finish();
     $self->{timestamp} = $timestamp;
@@ -97,7 +97,7 @@ sub getState {
   if (!$self->{dbDef}) {
     ApiCommonData::Load::TuningConfig::Log::addLog("No TuningDefinition exists in database for $self->{name}");
     $needUpdate = 1;
-  } elsif ($self->{dbDef} != $self->getDefString()) {
+  } elsif ($self->{dbDef} ne $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("Stored TuningDefinition differs from current definition for $self->{name}");
     $needUpdate = 1;
   } else {
@@ -141,28 +141,34 @@ sub getState {
 sub update {
   my ($self, $dbh) = @_;
 
+  my $startTime = time;
+
   my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("rebuilding tuning table " . $self->{name});
 
   $self->dropIntermediateTables($dbh);
 
   my $updateError;
 
   foreach my $sql (@{$self->{sqls}}) {
-    $sql =~ s/&1/$suffix/g;  # use suffix to make db object names unique
+    my $sqlCopy = $sql;
+    $sqlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
-    my $stmt = $dbh->prepare($sql);
+    my $stmt = $dbh->prepare($sqlCopy);
     my $sqlReturn = $stmt->execute();
     if (!defined $sqlReturn) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     }
     $stmt->finish();
   }
 
   foreach my $perl (@{$self->{perls}}) {
-    $perl =~ s/&1/$suffix/g;  # use suffix to make db object names unique
+    my $perlCopy = $perl;
+    $perlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
-    eval { $perl };
+    eval { $perlCopy };
 
     if ($@) {
       $updateError = 1;
@@ -175,6 +181,12 @@ sub update {
   $self->dropIntermediateTables($dbh, 'warn on nonexistence');
 
   $self->publish($suffix, $dbh);
+
+  ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+						 " seconds to rebuild tuningTable " .
+						 $self->{name});
+
+  return "neededUpdate"
 }
 
 sub storeDefinition {
@@ -187,7 +199,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   my $sql = <<SQL;
@@ -197,7 +209,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute($self->{name}, $self->getDefString())
-    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   $dbh->commit();
@@ -297,7 +309,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
 
   # store definition
@@ -315,7 +327,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute("$schema", "$table")
-    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   # update synonym
@@ -324,7 +336,7 @@ SQL
 SQL
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   $dbh->commit();

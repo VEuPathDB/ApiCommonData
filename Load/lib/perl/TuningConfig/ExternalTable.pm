@@ -30,7 +30,7 @@ sub new {
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     my ($count) = $stmt->fetchrow_array();
     $stmt->finish();
     $self->{exists} = $count;
@@ -44,7 +44,7 @@ SQL
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
     my ($timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
     $self->{timestamp} = $timestamp;

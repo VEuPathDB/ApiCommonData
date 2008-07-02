@@ -1,5 +1,7 @@
 package ApiCommonData::Load::TuningConfig::FileSuffix;
 
+use ApiCommonData::Load::TuningConfig::Log;
+
 BEGIN {
 
   # The variable $suffix is declared inside a BEGIN block.  This makes it behave
@@ -23,6 +25,8 @@ SQL
 	or ApiCommonData::Load::TuningConfig::Log::addLog($dbh->errstr);
       ($suffix) = $stmt->fetchrow_array();
       $stmt->finish();
+
+      ApiCommonData::Load::TuningConfig::Log::addLog("Creating tuning tables with the suffix $suffix");
 
     }
 
