@@ -79,7 +79,7 @@ my $argsDeclaration =
               reqd           => 1,
               mustExist      => 1,
               isList         => 0,
-              format         =>'Tab-delimited.  See ApiDB.MassSpecSummary for columns'
+              format         =>'Tab-delimited.'
            }), 
    ];
 
@@ -109,7 +109,6 @@ sub run {
   open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
 
   my $count = 0;
-  my @snpFeats;
   my $flag = 0;
   my %metaHash;
   my @snps;
@@ -138,8 +137,6 @@ sub run {
     my $source = $metaHash{Source}->[$i];
     my $barcode = $metaHash{Barcode}->[$i];
 
-    print "$strain |$origin | $source |$barcode\n";
-
     my $objArgs = {
                     strain                       => $strain,
                     name                         => $strain,  
@@ -163,8 +160,6 @@ sub run {
       $chr =~ s/^0+//;
       $chr = 'MAL' . $chr;
       $location =~ s/^0+//;
-
-      print "++ $species | $chr | $location\n";
 
       my $chr_na_seq_id = $self->getNaSeqId($snp_id);  #get na_sequence_id of a chromosome
 
@@ -233,7 +228,6 @@ sub processIsolateFeature {
   my @isolateFeature;
 
   foreach my $s (@$snps) {
-    #print "?? $s | @$s | $index\n";
     push @isolateFeature, [$s->[0], $s->[$index]];
   }
 
