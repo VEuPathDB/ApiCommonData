@@ -1,6 +1,6 @@
 <wdkModel>
 
-    <querySet name="AssemblyAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB">
+    <querySet name="AssemblyAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB,PlasmoDB">
         <sqlQuery name="Bfmv" isCacheable="false">
         <paramRef ref="recordParams.primaryKey"/>
         <paramRef ref="recordParams.projectId"/>
@@ -23,14 +23,16 @@
       WHERE aa.source_id = $$primaryKey$$
      ]]>
     </sql>
-     <sql includeProjects="CryptoDB,GiardiaDB,TrichDB,ApiDB">
+     <sql includeProjects="CryptoDB,GiardiaDB,TrichDB,ApiDB,PlasmoDB">
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
       REPLACE(
         REPLACE(
-          REPLACE(aa.organism,'Cryptosporidium','C.' ),
-                          'Giardia',        'G.' ),
-                          'Trichomonas',    'T.' ) AS organism,
+          REPLACE(
+            REPLACE(aa.organism,'Cryptosporidium','C.' ),
+                                'Giardia',        'G.' ),
+                                'Plasmodium',        'P.' ),
+                                'Trichomonas',    'T.' ) AS organism,
  '<i>' || SUBSTR(aa.organism, 1, 1) || '.' ||
                   REGEXP_REPLACE(SUBSTR(aa.organism, INSTR(aa.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
