@@ -71,11 +71,6 @@ my $argsDeclaration =
                constraintFunc => undef,
                isList         => 0,
              }),
-    booleanArg({name    => 'tolerateMissingIds',
-                descr   => "don't fail if an input sourceId is not found in database",
-                reqd    => 0,
-                default => 0
-              }),
     fileArg({ name           => 'inputFile',
               descr          => 'file containing the data',
               constraintFunc => undef,
