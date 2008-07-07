@@ -140,10 +140,11 @@ sub run {
   # Should get the hash keys from a prop/mapping file
   my $size = @{$metaHash{Strain}};
   for(my $i = 0; $i < $size; $i++) {
+    my $barcode;
+
     my $strain = $metaHash{Strain}->[$i];
     my $origin = $metaHash{Origin}->[$i];
     my $source = $metaHash{Source}->[$i];
-    my $barcode = $metaHash{Barcode}->[$i];
     my $note = $metaHash{Note}->[$i];
 
     my $objArgs = {
@@ -164,6 +165,8 @@ sub run {
 
     foreach(@$isolateFeature) {
       my ($snp_id, $allele) = @$_;
+
+      $barcode .= $allele ? $allele : '-';
 
       my $snpFeature = $self->getSnpFeature($snp_id);
       my $chr_na_seq_id = $snpFeature->getNaSequenceId();
