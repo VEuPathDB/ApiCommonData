@@ -144,6 +144,7 @@ sub run {
     my $origin = $metaHash{Origin}->[$i];
     my $source = $metaHash{Source}->[$i];
     my $barcode = $metaHash{Barcode}->[$i];
+    my $note = $metaHash{Note}->[$i];
 
     my $objArgs = {
                     strain                       => $strain,
@@ -152,6 +153,7 @@ sub run {
                     country                      => $origin,
                     collected_by                 => $source,
                     external_database_release_id => $extDbRlsId,
+                    note                         => $note,
                   };
 
     my $isolateSource = GUS::Model::DoTS::IsolateSource->new($objArgs);
