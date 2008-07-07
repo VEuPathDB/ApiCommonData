@@ -29,7 +29,7 @@ my $tablesAffected = [
 ];
 
 my $tablesDependedOn = [
-  ['DoTS.SnpFeature', 'Get the na_sequence_id of a chromosome for each snp']
+  ['DoTS.SnpFeature', 'Get the na_sequence_id and the location for each isolatefeature']
 ];
 
 my $howToRestart = "There is currently no restart method.";
@@ -37,15 +37,25 @@ my $howToRestart = "There is currently no restart method.";
 my $failureCases = "There are no know failure cases.";
 
 my $notes = <<PLUGIN_NOTES;
-Here are the tab file columns:
-  Strain
-  Origin
-  Source
-  Barcode
-  SNPS
-  snp_id A T C ...
-
-  Example SNP id: Pf_01_000101502 indicates SNP on contig 1 position 101502.
+Example Input File
+#MetaData			
+Strain	3D7	HB3	Dd2
+Origin	Netherlands	Honduras	Indochina/Laos
+Source	MRA-151	MRA-155	MRA-156
+Barcode	CGCTCCGGACTGCACCCAAGATTG	TGCCCCAGATCACAACTAAGATTT	TATCCGAATTTATCAATACAACGT
+#SNPS			
+Pf_01_000130573	C 	T	T
+Pf_01_000539044	G	G	A
+Pf_02_000842803	C	C	T
+Pf_04_000282592	T	C	C
+Pf_05_000931601	C	C	C
+Pf_06_000145472	C	C	G
+Pf_06_000937750	G	A	A
+Pf_07_000277104	G	G	A
+Pf_07_000490877	A	A	T
+Pf_07_000545046	C	T	T
+Pf_07_000657939	T	C	T
+Pf_07_000671839	G	A	A
 PLUGIN_NOTES
 
 my $documentation = { purpose          => $purpose,
@@ -100,8 +110,6 @@ sub run {
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
                                         $self->getArg('extDbRlsVer'));
 
-  die "Couldn't find external_database_release_id" unless $extDbRlsId;
-
   my $inputFile = $self->getArg('inputFile');
 
   open(FILE, $inputFile) || $self->error("couldn't open file '$inputFile' for reading");
@@ -128,6 +136,8 @@ sub run {
     }
   } # end file
 
+
+  # Should get the hash keys from a prop/mapping file
   my $size = @{$metaHash{Strain}};
   for(my $i = 0; $i < $size; $i++) {
     my $strain = $metaHash{Strain}->[$i];
@@ -153,13 +163,10 @@ sub run {
     foreach(@$isolateFeature) {
       my ($snp_id, $allele) = @$_;
 
-      # sample snp_id: Pf_02_000842803
-      my ($species, $chr, $location) = split /_/, $snp_id;
-      $chr =~ s/^0+//;
-      $chr = 'MAL' . $chr;
-      $location =~ s/^0+//;
-
-      my $chr_na_seq_id = $self->getNaSeqId($snp_id);  #get na_sequence_id of a chromosome
+      my $snpFeature = $self->getSnpFeature($snp_id);
+      my $chr_na_seq_id = $snpFeature->getNaSequenceId();
+      my $snpNaLocation = $snpFeature->getChild('DoTS::NALocation', 1);
+      my $location = $snpNaLocation->getStartMin();
 
       my $featArgs = { na_sequence_id               => $chr_na_seq_id, 
                        allele                       => $allele,
@@ -206,17 +213,14 @@ sub buildSequence {
   return $extNASeq;
 }
 
-sub getNaSeqId {
+sub getSnpFeature {
   my ($self, $source_id) = @_;
 
-  my $extNASeq = GUS::Model::DoTS::ExternalNASequence->new();
-  my $naSeq = GUS::Model::DoTS::SnpFeature->new({'source_id' => $source_id});
+  my $snpFeature = GUS::Model::DoTS::SnpFeature->new({'source_id' => $source_id});
 
-  $naSeq->retrieveFromDB() || self->error("$source_id does not exist in GUS::Model::...");
+  $snpFeature->retrieveFromDB() || self->error("$source_id does not exist in " . ref($snpFeature));
 
-  my $naSeqId = $naSeq->getNaSequenceId();
-
-  return $naSeqId;
+  return $snpFeature;
 }
 
 sub processIsolateFeature {
@@ -242,24 +246,3 @@ sub undoTables {
 
 1;
 
-# a sample file, more strains/columns in real isolate data
-=cut *****************************************************
-#MetaData			
-Strain	3D7	HB3	Dd2
-Origin	Netherlands	Honduras	Indochina/Laos
-Source	MRA-151	MRA-155	MRA-156
-Barcode	CGCTCCGGACTGCACCCAAGATTG	TGCCCCAGATCACAACTAAGATTT	TATCCGAATTTATCAATACAACGT
-#SNPS			
-Pf_01_000130573	C 	T	T
-Pf_01_000539044	G	G	A
-Pf_02_000842803	C	C	T
-Pf_04_000282592	T	C	C
-Pf_05_000931601	C	C	C
-Pf_06_000145472	C	C	G
-Pf_06_000937750	G	A	A
-Pf_07_000277104	G	G	A
-Pf_07_000490877	A	A	T
-Pf_07_000545046	C	T	T
-Pf_07_000657939	T	C	T
-Pf_07_000671839	G	A	A
-||
