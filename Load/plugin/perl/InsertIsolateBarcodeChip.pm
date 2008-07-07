@@ -22,12 +22,15 @@ Insert Molecular Barcode data from a tab file (converted from Excel format).
 PURPOSE
 
 my $tablesAffected = [
-  ['DoTS.IsolateSource', 'One row per barcode - strain, origin, source, sequence'],
-  ['DoTS.IsolateFeature', 'One row or more per inserted IsolateSource, name, chr, major/minor allele'],
+  ['DoTS.IsolateSource', 'One row per barcode - strain, origin, source'],
+  ['DoTS.IsolateFeature', 'One row or more per inserted IsolateSource'],
+  ['DoTS.NaLocation', 'One row per inserted snp feature'],
   ['DoTS.ExternalNASequence', 'One row inserted per barcode .IsolateSource row'] 
 ];
 
-my $tablesDependedOn = [];
+my $tablesDependedOn = [
+  ['DoTS.SnpFeature', 'Get the na_sequence_id of a chromosome for each snp']
+];
 
 my $howToRestart = "There is currently no restart method.";
 
@@ -235,7 +238,11 @@ sub processIsolateFeature {
 
 sub undoTables {
   my ($self) = @_;
-  return ('DoTS.IsolateSource');
+  return ( 'DoTS.IsolateSource',
+           'DoTS.IsolateFeature',
+           'DoTS.ExternalNASequence',
+           'DoTS.NALocation'
+         );
 }
 
 1;
