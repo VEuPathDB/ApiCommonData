@@ -113,6 +113,7 @@ foreach my $table (keys(%tuningTables)) {
   $tableCount++;
   my $state = $tuningTables{$table}->getState($doUpdate, $dbh);
 
+print "state = $state\n";  # debugging -- delete me
   if ($state eq "broken") {
     $brokenCount++;
   } elsif ($state eq "neededUpdate") {
@@ -150,6 +151,7 @@ foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 if (!$tableCount) {
   ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
 } else {
+print "brokenCount = $brokenCount\n";
   my $summary = sprintf("%d tables defined: %d up-to-date, %d needing update, %d broken", $tableCount, $upToDateCount, $neededUpdateCount, $brokenCount);
   ApiCommonData::Load::TuningConfig::Log::addLog($summary);
 }
@@ -286,7 +288,7 @@ sub getDbHandle {
                 $password,
                 { PrintError => 1, RaiseError => 0}
                 ) or die "Can't connect to the database: $DBI::errstr\n";
-  $dbh->{LongReadLen} = 1000;
+  $dbh->{LongReadLen} = 1000000;
   $dbh->{LongTruncOk} = 1;
   print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
   return $dbh;

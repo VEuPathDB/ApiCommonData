@@ -115,8 +115,8 @@ sub getState {
 
     # check external dependencies
     foreach my $dependency (@{$self->getExternalDependencies()}) {
-      if ($dependency->getTimestamp() > $self->{timestamp}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} depends on $dependency->getName(), which is newer than $self->{name}.");
+      if ($dependency->getTimestamp() gt $self->{timestamp}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} depends on " . $dependency->getName() . ", which is newer than $self->{name}.");
 	$needUpdate = 1;
       }
     }
@@ -124,11 +124,15 @@ sub getState {
 
   if ($doUpdate and $needUpdate) {
     my $updateResult = $self->update($dbh);
-    $broken = 1 if $updateResult = "broken";
+    $broken = 1 if $updateResult eq "broken";
   }
+
+  ApiCommonData::Load::TuningConfig::Log::setUpdateNeededFlag()
+      if $needUpdate;
 
   if ($broken) {
     $self->{state} = "broken";
+    ApiCommonData::Load::TuningConfig::Log::setErrorsEncounteredFlag();
   } elsif ($needUpdate) {
     $self->{state} = "neededUpdate";
   } else {
@@ -142,6 +146,9 @@ sub update {
   my ($self, $dbh) = @_;
 
   my $startTime = time;
+
+  ApiCommonData::Load::TuningConfig::Log::setUpdatePerformedFlag();
+
 
   my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
 
@@ -278,7 +285,7 @@ sub dropIntermediateTables {
   my ($self, $dbh, $warningFlag) = @_;
 
   foreach my $intermediate (@{$self->{intermediateTables}}) {
-    print "must drop " . $intermediate->{name} . "\n";
+    ApiCommonData::Load::TuningConfig::Log::addLog("must drop intermediate table $intermediate->{name}");
 
     my $sql = <<SQL;
        drop table $intermediate->{name}

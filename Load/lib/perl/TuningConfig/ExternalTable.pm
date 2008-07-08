@@ -36,18 +36,60 @@ SQL
     $self->{exists} = $count;
 
     # get the last-modified date for this table
-    # check that this table exists in the database
-    my $sql = <<SQL;
-       select to_char(max(timestamp), 'yyyy-mm-dd hh24:mi:ss')
-       from all_tab_modifications
-       where table_owner = upper('$schema') and table_name = upper('$table')
+    $sql = <<SQL;
+       select to_char(max(modification_date), 'yyyy-mm-dd hh24:mi:ss'), count(*)
+       from $name
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
-    my ($timestamp) = $stmt->fetchrow_array();
+    my ($max_mod_date, $row_count) = $stmt->fetchrow_array();
     $stmt->finish();
-    $self->{timestamp} = $timestamp;
+
+    # get stored ExternalDependency info for this table
+    $sql = <<SQL;
+       select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count, timestamp
+       from apidb.ExternalDependency
+       where name = upper('$name')
+SQL
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+    my ($stored_max_mod_date, $stored_row_count, $timestamp) = $stmt->fetchrow_array();
+    $stmt->finish();
+
+    # compare stored and calculated table stats
+    if ($max_mod_date eq $stored_max_mod_date && $row_count == $stored_row_count) {
+      # stored stats still valid
+      $self->{timestamp} = $timestamp;
+    } else {
+      # table has changed; set timestamp high and update ExternalDependency
+      $self->{timestamp} = '9999-12-12 23:59:59';
+
+      if ($timestamp) {
+	# ExternalDependency record exists; update it
+	$sql = <<SQL;
+        update apidb.ExternalDependency
+        set (max_mod_date, timestamp, row_count) =
+          (select '$max_mod_date', sysdate, $row_count
+	  from dual)
+        where name = upper('$name');
+SQL
+      } else {
+	# no ExternalDependency record; insert one
+	$sql = <<SQL;
+        insert into apidb.ExternalDependency (name, max_mod_date, timestamp, row_count)
+        select upper('$name'), '$max_mod_date', sysdate, $row_count
+	from dual
+SQL
+      }
+
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute()
+	or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      $stmt->finish();
+      $dbh->commit();
+    }
 
     return $self;
 }
@@ -57,6 +99,12 @@ sub getTimestamp {
     my ($self) = @_;
 
     return $self->{timestamp};
+}
+
+sub getName {
+    my ($self) = @_;
+
+    return $self->{name};
 }
 
 sub exists {
