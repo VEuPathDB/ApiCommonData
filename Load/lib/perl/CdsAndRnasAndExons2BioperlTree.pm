@@ -7,14 +7,14 @@ use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 
 
-#input: CDS with join location (if multiple exons)
+#input: transcript, CDS, tRNA, rRNA, snRNA, repeated_gene, protein_coding features
 #output: standard api tree: gene->transcript->exons
-#                                           ->CDS
 
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
 
-  # (1) retype CDS into Gene
+  # (1) retype CDS,transcript or protein_coding into Gene
+  # (2) retype repeated into repeated_gene
   # (4) create transcript, give it a copy of the gene's location
   # (5) add to gene
   # (6) add exons to transcript

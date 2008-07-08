@@ -9,11 +9,11 @@ use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
 #input:
 #
-# gene  [folded into CDS]        
+# gene  [folded into CDS]
 # mRNA  (optional)  [discarded]
 # CDS
 #
-#output: standard api tree: gene->transcript->exons->CDS
+#output: standard api tree: gene->transcript->exons
 
 # (0) remove all seq features, add back the non-genes
 # (1) copy old gene qualifiers to cds/rna feature
@@ -30,16 +30,16 @@ sub preprocess {
   my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
   foreach my $bioperlFeatureTree (@seqFeatures) {
     my $type = $bioperlFeatureTree->primary_tag();
-    
+
     next if ($type eq 'mRNA');
-    
+
     if ($type eq 'gene') {
       $geneFeature = $bioperlFeatureTree;
       next;
     }
 
     $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-    
+
     # This will accept genes of type misc_feature (e.g. cgd4_1050 of GI:46229367)
     # because it will have a geneFeature but not standalone misc_feature 
     # as found in GI:32456060.
