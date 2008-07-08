@@ -198,6 +198,7 @@ sub run {
     $extNASeq->addChild($isolateSource);
 
     $extNASeq->submit();
+    $self->undefPointerCache();
     $count++;
     $self->log("processed $count") if ($count % 1000) == 0;
 
