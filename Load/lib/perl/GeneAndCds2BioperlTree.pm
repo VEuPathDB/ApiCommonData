@@ -25,16 +25,19 @@ use Data::Dumper;
 # (7) add to transcript
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
-  my $geneFeature;
+  my ($geneFeature, $mRNALocation, $CDSLocation);
 
   my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
   foreach my $bioperlFeatureTree (@seqFeatures) {
     my $type = $bioperlFeatureTree->primary_tag();
 
-    next if ($type eq 'mRNA');
-
     if ($type eq 'gene') {
       $geneFeature = $bioperlFeatureTree;
+      next;
+    }
+
+    if ($type eq 'mRNA') {
+      $mRNALocation = $bioperlFeatureTree->location();
       next;
     }
 
@@ -48,27 +51,44 @@ sub preprocess {
     if ($geneFeature 
         or grep {$type eq $_} (
              'CDS',
-             'misc_RNA', 
+             'misc_RNA',
              'rRNA',
-             'snRNA', 
+             'snRNA',
              'snoRNA',
-             'tRNA', 
+             'tRNA',
              )
         ) {
 
       copyQualifiers($geneFeature, $bioperlFeatureTree) if ($geneFeature);
       undef $geneFeature;
 
-      $type = "coding" if $type eq "CDS";
-      $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
+      if ($type eq "CDS") {
+	$type = "coding";
+	$CDSLocation = $geneLoc;
+	$gene->location($mRNALocation);
+      }
+      $bioperlFeatureTree->primary_tag("${type}_gene");
       my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
       $gene->add_SeqFeature($transcript);
-      my @exonLocations = $geneLoc->each_Location();
+      my @exonLocations = $gene->each_Location();
       foreach my $exonLoc (@exonLocations) {
         my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
         $transcript->add_SeqFeature($exon);
+
+	if ($type eq "coding") {
+	  my $codingStart = $exonLoc->start();
+	  my $codingEnd = $exonLoc->end();
+	  $codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
+	  $codingEnd = $CDSLocation->end() if ($codingEnd > $CDSLocation->end());
+	  if ($codingStart > $exonLoc->end() || $codingEnd < $exonLoc->start()) {
+	    $codingStart = undef; # non-coding exon
+	    $codingEnd = undef;
+	  }
+	  $exon->set_tag('coding_start', $codingStart);
+	  $exon->set_tag('coding_end', $codingEnd);
+	}
       }
     }
   }
