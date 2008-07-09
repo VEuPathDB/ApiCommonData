@@ -166,9 +166,11 @@ sub run {
     foreach(@$isolateFeature) {
       my ($snp_id, $allele) = @$_;
 
+      my $snpFeature = $self->getSnpFeature($snp_id);
+      next unless $snpFeature;
+
       $barcode .= $allele ? $allele : '-';
 
-      my $snpFeature = $self->getSnpFeature($snp_id);
       my $chr_na_seq_id = $snpFeature->getNaSequenceId();
       my $snpNaLocation = $snpFeature->getChild('DoTS::NALocation', 1);
       my $location = $snpNaLocation->getStartMin();
@@ -224,7 +226,10 @@ sub getSnpFeature {
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->new({'source_id' => $source_id});
 
-  $snpFeature->retrieveFromDB() || $self->error("$source_id does not exist in " . ref($snpFeature));
+  unless($snpFeature->retrieveFromDB()) {
+    $self->log("WARNING:  Unable to find snp $source_id... skipping");
+    return;
+  }
 
   return $snpFeature;
 }
