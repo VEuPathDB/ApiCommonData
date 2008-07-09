@@ -224,7 +224,7 @@ sub getSnpFeature {
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->new({'source_id' => $source_id});
 
-  $snpFeature->retrieveFromDB() || self->error("$source_id does not exist in " . ref($snpFeature));
+  $snpFeature->retrieveFromDB() || $self->error("$source_id does not exist in " . ref($snpFeature));
 
   return $snpFeature;
 }
