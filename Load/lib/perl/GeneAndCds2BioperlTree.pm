@@ -23,6 +23,8 @@ use Data::Dumper;
 # (5) add to gene
 # (6) create exons from sublocations
 # (7) add to transcript
+
+
 sub preprocess {
   my ($bioperlSeq, $plugin) = @_;
   my ($geneFeature, $mRNALocation, $CDSLocation);
@@ -67,15 +69,15 @@ sub preprocess {
       if ($type eq "CDS") {
 	$type = "coding";
 	$CDSLocation = $geneLoc;
-	$gene->location($mRNALocation);
+	$geneLoc = $gene->location($mRNALocation);
       }
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
       $gene->add_SeqFeature($transcript);
-      my @exonLocations = $gene->each_Location();
+      my @exonLocations = $geneLoc->each_Location();
       foreach my $exonLoc (@exonLocations) {
         my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
-        $transcript->add_SeqFeature($exon);
+
 
 	if ($type eq "coding") {
 	  my $codingStart = $exonLoc->start();
@@ -86,12 +88,16 @@ sub preprocess {
 	    $codingStart = undef; # non-coding exon
 	    $codingEnd = undef;
 	  }
-	  $exon->set_tag('coding_start', $codingStart);
-	  $exon->set_tag('coding_end', $codingEnd);
+	  $exon->add_tag_value('coding_start', $codingStart);
+	  $exon->add_tag_value('coding_end', $codingEnd);
 	}
+        $transcript->add_SeqFeature($exon);
+
       }
+#        print STDERR  Dumper $gene;
     }
   }
+
 }
 
 sub copyQualifiers {
