@@ -40,7 +40,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     my ($timestamp, $dbDef) = $stmt->fetchrow_array();
     $stmt->finish();
     $self->{timestamp} = $timestamp;
@@ -90,33 +90,36 @@ sub getState {
 
   return $self->{state} if defined $self->{state};
 
+  ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name}");
+
   my $needUpdate;
   my $broken;
 
   # check if the definition is different (or none is stored)
   if (!$self->{dbDef}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("No TuningDefinition exists in database for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningDefinition exists in database for $self->{name}");
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("Stored TuningDefinition differs from current definition for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningDefinition differs from current definition for $self->{name}");
     $needUpdate = 1;
   } else {
     # check internal dependencies
     foreach my $dependency (@{$self->getInternalDependencies()}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table $self->{name} upon " . $dependency->getName());
       my $childState = $dependency->getState($doUpdate, $dbh);
       if ($childState eq "neededUpdate") {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} must be updated because it depends on " . $dependency->getName() . ", which needed update.");
 	$needUpdate = 1;
       } elsif ($childState eq "broken") {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
+	ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
 	$broken = 1;
       }
     }
 
     # check external dependencies
     foreach my $dependency (@{$self->getExternalDependencies()}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
       if ($dependency->getTimestamp() gt $self->{timestamp}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name} depends on " . $dependency->getName() . ", which is newer than $self->{name}.");
+	ApiCommonData::Load::TuningConfig::Log::addLog("    timestamp of " . $dependency->getName() . "(" . $dependency->getTimestamp() . ") is later than timestamp of $self->{name} ($self->{timestamp}).");
 	$needUpdate = 1;
       }
     }
@@ -139,6 +142,8 @@ sub getState {
     $self->{state} = "up-to-date";
   }
 
+  ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} found to be \"$self->{state}\"");
+
   return $self->{state};
 }
 
@@ -152,7 +157,7 @@ sub update {
 
   my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("rebuilding tuning table " . $self->{name});
+  ApiCommonData::Load::TuningConfig::Log::addLog("Rebuilding tuning table " . $self->{name});
 
   $self->dropIntermediateTables($dbh);
 
@@ -166,7 +171,7 @@ sub update {
     my $sqlReturn = $stmt->execute();
     if (!defined $sqlReturn) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     }
     $stmt->finish();
   }
@@ -179,7 +184,7 @@ sub update {
 
     if ($@) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addLog("failed executing PERL statement \"$perl\"");
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("failed executing PERL statement \"$perl\"");
     }
   }
 
@@ -206,7 +211,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   my $sql = <<SQL;
@@ -216,11 +221,8 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute($self->{name}, $self->getDefString())
-    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
-
-  $dbh->commit();
-
 }
 
 sub getDefString {
@@ -260,7 +262,7 @@ sub hasDependencyCycle {
 
     # log error if $self is earliest ancestor
     if ($ancestorsRef->[0] eq $self->{name}) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: cycle of dependencies: " .
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: cycle of dependencies: " .
 						     join(" -> ", @{$ancestorsRef}) .
 						    " -> " . $self->{name});
       return 1;
@@ -316,7 +318,7 @@ SQL
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
 
   # store definition
@@ -334,7 +336,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute("$schema", "$table")
-    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
 
   # update synonym
@@ -343,10 +345,8 @@ SQL
 SQL
   my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   $stmt->finish();
-
-  $dbh->commit();
 }
 
 1;

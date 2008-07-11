@@ -48,6 +48,13 @@ BEGIN {
 
 }
 
+sub addErrorLog {
+    my ($message) = @_;
+
+    addLog($message);
+    setErrorsEncounteredFlag();
+  }
+
 sub mailLog {
   my ($recipientList) = @_;
 

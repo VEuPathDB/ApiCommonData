@@ -15,9 +15,10 @@ my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
-ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at " . $timestamp);
+ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
+					      . join(' ', @ARGV));
 
-my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail);
+my ($configFile, $model, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
            "model=s" => \$model,
            "instance=s" => \$instance,
@@ -25,6 +26,8 @@ GetOptions("configFile=s" => \$configFile,
            "doUpdate!" => \$doUpdate,
            "notifyEmail=s" => \$notifyEmail,
            "debug!" => \$debug,
+           "cleanupAge:i" => \$notifyEmail,
+           "cleanupWarnOnly!" => \$debug,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::addLog("missing parameter: configFile") unless $configFile;
@@ -37,6 +40,7 @@ my ($config) = &parseConfigFile($configFile);
 
 my $dbh = getDbHandle($model, $instance, $password);
 
+# create an object for each <tuningTable> entity
 my %tuningTables;
 my %externalTables;
 foreach my $tuningTable (@{$config->{tuningTable}}) {
@@ -51,7 +55,8 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{perl}, $dbh);
 }
 
-# validate config
+# validate config / check external files
+ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Validating configuration file and checking external files ===");
 my $undefinedInternal;
 my $nonexistentExternal;
 my $dependencyCycle;
@@ -61,7 +66,7 @@ foreach my $tableName (keys(%tuningTables)) {
   if ($tuningTables{$tableName}->getInternalDependencyNames()) {
     foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
       if (!$tuningTables{$dependency->{name}}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
 	$undefinedInternal = 1;
       } else {
 	# add object to list of internal dependencies
@@ -84,14 +89,14 @@ foreach my $tableName (keys(%tuningTables)) {
       $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
 
       if (!$externalTables{$dependency->{name}}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
 	$nonexistentExternal = 1;
       }
     }
   }
 }
 
-# also, check for cycles in graph of dependencies (how?)
+# check for cycles in graph of dependencies
 foreach my $table (keys(%tuningTables)) {
   $dependencyCycle = 1
     if $tuningTables{$table}->hasDependencyCycle([]);
@@ -101,19 +106,23 @@ ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies m
   if $nonexistentExternal;
 
 if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("\n\n****************\n\n"
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n\n****************\n\n"
 						 . "INVALID CONFIGURATION -- NOT UPDATING DATABASE"
 						 . "\n\n****************\n\n");
   $doUpdate = 0;
 }
 
-my ($brokenCount, $neededUpdateCount, $upToDateCount, $tableCount);
+my $tableCount = 0;
+my $brokenCount = 0;
+my $neededUpdateCount = 0;
+my $upToDateCount = 0;
 
+ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Checking tables ===");
+# check (and potentially update) every tuning table
 foreach my $table (keys(%tuningTables)) {
   $tableCount++;
   my $state = $tuningTables{$table}->getState($doUpdate, $dbh);
 
-print "state = $state\n";  # debugging -- delete me
   if ($state eq "broken") {
     $brokenCount++;
   } elsif ($state eq "neededUpdate") {
@@ -121,11 +130,12 @@ print "state = $state\n";  # debugging -- delete me
   } elsif ($state eq "up-to-date") {
     $upToDateCount++;
   } else {
-    ApiCommonData::Load::TuningConfig::Log::addLog("ERROR: invalid state $state");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: invalid state $state");
   }
 }
 
 # indexes
+ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Checking indexes ===");
 my $indexesConfigured;
 my $missingIndexes;
 foreach my $tuningIndex (@{$config->{tuningIndex}}) {
@@ -147,13 +157,26 @@ foreach my $tuningIndex (@{$config->{tuningIndex}}) {
   }
 }
 
+# cleanup
+ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Cleanup ===");
+cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
+
 # summary
+ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Summary ===");
 if (!$tableCount) {
   ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
 } else {
-print "brokenCount = $brokenCount\n";
-  my $summary = sprintf("%d tables defined: %d up-to-date, %d needing update, %d broken", $tableCount, $upToDateCount, $neededUpdateCount, $brokenCount);
-  ApiCommonData::Load::TuningConfig::Log::addLog($summary);
+  ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
+}
+
+# list broken tables
+if ($brokenCount) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
+  foreach my $table (keys(%tuningTables)) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getState())
+    if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
+}
+
 }
 
 
@@ -188,13 +211,19 @@ Create/update "tuning tables", denormalized copies of data used to improve web s
 Usage: tuningManager --configFile <configXmlPath> {--model <modelName>}
                      {--instance <dbInstance>} {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
+                     {--cleanupWarnOnly} {--cleanupAge <days>}
 
 options:
-  configFile  an xml file describing the tables to be created
-  instance    the database instance to login and craete objects in
-  password    database login password
-  doUpdate    update any tables found to be out of date
-  debug       print debugging info
+  configFile      an xml file describing the tables to be created
+  model           name of model to use for database access info
+  instance        the database instance to login and craete objects in
+  password        database login password
+  doUpdate        update any tables found to be out of date
+  notifyEmail     comma-separated list of email addresses to send log to
+  cleanupWarnOnly name but don't drop obsolete tuning tables
+  cleanupAge      specify how long (in days) tuning table must be obsolete before dropping
+  debug           print debugging info
+
 
 Sample config file XML:
 <tuningConfig>
@@ -292,4 +321,63 @@ sub getDbHandle {
   $dbh->{LongTruncOk} = 1;
   print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
   return $dbh;
+}
+
+sub cleanup {
+  my ($dbh, $cleanupAge, $cleanupWarnOnly) = @_;
+  my $cleanupCount = 0;
+
+  # drop any tables that are listed as obsolete more than the threshold
+  $cleanupAge = 1.5 if !$cleanupAge;
+  my $sql = <<SQL;
+select ott.name,
+       to_char(sysdate - ott.timestamp, '9.99') as days_old
+from apidb.ObsoletedTuningTables ott,
+     all_tables at
+where ott.timestamp < sysdate - $cleanupAge
+  and ott.name = at.owner || '.' || at.table_name
+SQL
+
+    my $select = $dbh->prepare($sql);
+    $select->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+    while (my ($dropee, $daysOld) = $select->fetchrow_array()) {
+      $cleanupCount++;
+      ApiCommonData::Load::TuningConfig::Log::addLog("$dropee obsolete for $daysOld days.");
+
+      if (!$cleanupWarnOnly) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    . . .dropping.");
+	my $sql = <<SQL;
+          drop table $dropee
+SQL
+	my $drop = $dbh->prepare($sql);
+	$drop->execute()
+	  or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+	$drop->finish();
+      }
+    }
+  $select->finish();
+
+  # check for obsoleted tables not in apidb.ObsoletedTuningTables
+  $sql = <<SQL;
+select owner || '.' || table_name
+from (select atab.owner, atab.table_name
+      from all_synonyms asyn, all_tables atab
+      where asyn.owner = atab.owner
+        and regexp_replace(atab.table_name, '[0-9]*$', '') = asyn.synonym_name
+    minus select table_owner, table_name from all_synonyms)
+minus select name from apidb.ObsoletedTuningTables
+SQL
+  my $stmt = $dbh->prepare($sql);
+    while (my ($table) = $stmt->fetchrow_array()) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoletedTuningTables");
+    }
+  $stmt->finish();
+
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("$cleanupCount obsolete tables found")
+      if $cleanupCount;
+
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
+      if $cleanupCount && $cleanupWarnOnly;
 }

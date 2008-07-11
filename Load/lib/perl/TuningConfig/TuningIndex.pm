@@ -17,6 +17,11 @@ sub new {
     bless($self, $class);
     $self->{name} = $name;
     $self->{table} = $table;
+
+    $columnList =~ s/\n//g;  # remove newlines from column list
+    $columnList =~ s/^ *//g;  # remove leading spaces
+    $columnList =~ s/ *$//g;  # remove trailing spaces
+
     $self->{columnList} = $columnList;
 
     my ($schema, $simpleTable) = split(/\./, $table);
@@ -24,6 +29,8 @@ sub new {
     $self->{simpleTable} = $simpleTable;
 
     # check that such an index exists on this table
+    ApiCommonData::Load::TuningConfig::Log::addLog("Checking for index on $self->{table} ($self->{columnList})");
+
     my $columnNumber;
     my @aicInstances;  # occurrences of ALL_INDEX_COLUMNS in query
     my @whereTerms;
@@ -43,7 +50,7 @@ sub new {
 
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
     my $indexExists;
     while (my ($index_name, $columnCount) = $stmt->fetchrow_array()) {
@@ -73,13 +80,15 @@ sub create {
 
     my $startTime = time;
 
+    ApiCommonData::Load::TuningConfig::Log::setUpdateNeededFlag();
+
     ApiCommonData::Load::TuningConfig::Log::addLog("creating index " . $self->{name});
     my $sql = <<SQL;
        create index $self->{name} on $self->{table} ($self->{columnList})
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addLog("\n" . $dbh->errstr . "\n");
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     my ($timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
 
