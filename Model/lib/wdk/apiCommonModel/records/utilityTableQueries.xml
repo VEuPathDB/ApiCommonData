@@ -54,20 +54,37 @@
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
             <column name="global_name" />
-            <column name="host_name" />
-            <column name="address" />
             <column name="version" />
+            <column name="server_name" />
+            <column name="server_ip" />
             <column name="system_date" />
             <column name="login" />
+            <column name="service_name" />
+            <column name="db_name" />
+            <column name="db_unique_name" />
+            <column name="instance_name" />
+            <column name="db_domain" />
+            <column name="client_host" />
+            <column name="os_user" />
            <sql> 
             <![CDATA[           
             select 
                 global_name, 
                 ver.banner version,
-                UTL_INADDR.get_host_name as host_name,
-                UTL_INADDR.get_host_address as address,
-                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') as system_date,
-                sys_context('USERENV', 'SESSION_USER') as login
+                UTL_INADDR.get_host_name as server_name,
+                UTL_INADDR.get_host_address as server_ip,
+                to_char(sysdate, 'Dy DD-Mon-YYYY HH24:MI:SS') system_date,
+                sys_context('USERENV', 'SESSION_USER'       ) login,
+                sys_context('userenv', 'SERVICE_NAME'       ) service_name, 
+                sys_context('userenv', 'DB_NAME'            ) db_name, 
+                sys_context('USERENV', 'DB_UNIQUE_NAME'     ) db_unique_name,
+                sys_context('USERENV', 'INSTANCE_NAME'      ) instance_name,
+                sys_context('USERENV', 'DB_DOMAIN'          ) db_domain,
+                sys_context('USERENV', 'HOST'               ) client_host,
+                sys_context('USERENV', 'OS_USER'            ) os_user,
+                sys_context('USERENV', 'CURRENT_USERID'     ) current_userid,
+                sys_context('USERENV', 'SESSION_USER'       ) session_user,
+                sys_context('USERENV', 'SESSION_USERID'     ) session_userid
             from global_name, v$version ver
             where lower(ver.banner) like '%oracle%'
              ]]>
