@@ -139,7 +139,7 @@ sub makeMatrixDir {
 sub makeSimilarityDir {
     my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $blastBinPath, $dbName, $dbPath, $queryFileName,
-	$regex, $blast, $blastParams, $nodeClass,$dbType) = @_;
+	$regex, $blast, $blastParams, $nodeClass,$dbType,$vendor) = @_;
 
     my $inputDir = "$localDataDir/similarity/$queryName-$subjectName/input";
     my $serverBase = "$clusterDataDir/similarity/$queryName-$subjectName";
@@ -152,7 +152,7 @@ sub makeSimilarityDir {
     my $dbFileName = "$dbPath/$dbName"; 
     my $seqFileName = "$clusterDataDir/seqfiles/$queryFileName";
     &makeBSTaskPropFile($inputDir, $blastBinPath, $seqFileName, $dbFileName,
-			$regex, $blast, "blastParams",$dbType);
+			$regex, $blast, "blastParams",$dbType,$vendor);
 
     open(F, ">$blastParamsFile");
     print F "$blastParams\n";
@@ -413,7 +413,7 @@ inputFilePath=$queryFilePath
 
 sub makeBSTaskPropFile {
     my ($inputDir, $blastBinDir, $seqFilePath,  $dbFileName, 
-	$regex, $blast, $blastParamsFile,$dbType) = @_;
+	$regex, $blast, $blastParamsFile,$dbType,$vendor) = @_;
 
     open(F, ">$inputDir/task.prop") 
 	|| die "Can't open $inputDir/task.prop for writing";
@@ -428,6 +428,15 @@ blastProgram=$blast
 blastParamsFile=$blastParamsFile
 ";
     close(F);
+
+   if ($vendor) {
+      open(F, ">>$inputDir/task.prop") 
+	|| die "Can't open $inputDir/task.prop for appending";
+      print F
+"blastVendor=$vendor";
+      close(F);
+    }
+
 }
 
 sub makeIprscanTaskPropFile {
