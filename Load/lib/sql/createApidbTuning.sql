@@ -273,6 +273,9 @@ create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
 create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
              (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id);
 
+create index apidb.featloc3_ix&1 on apidb.FeatureLocation&1
+             (na_feature_id,na_sequence_id,is_top_level);
+
 create or replace synonym apidb.FeatureLocation
                           for apidb.FeatureLocation&1;
 -------------------------------------------------------------------------------
