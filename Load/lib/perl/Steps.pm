@@ -350,7 +350,8 @@ sub documentBlast {
 }
 
 sub createSimilarityDir {
-  my ($mgr,$queryFile,$subjectFile,$regex,$bsParams,$blastType) = @_;
+  my ($mgr,$queryFile,$subjectFile,$regex,$bsParams,$blastType,$vendor) = @_;
+
   my $propertySet = $mgr->{propertySet};
   my $signal = "create" . ucfirst($queryFile) . "-" . ucfirst ($subjectFile) ."SimilarityDir";
 
@@ -366,12 +367,13 @@ sub createSimilarityDir {
   my $nodePath = $propertySet->getProp('nodePath');
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bsTaskSize = $propertySet->getProp('blastsimilarity.taskSize');
-  my $wuBlastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
+  my $blastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
+  my $blastBinPathCluster = $propertySet->getProp('ncbiBlastBinPathCluster') if ($vendor eq 'ncbi');
 
   &makeSimilarityDir($queryFile, $subjectFile, $dataDir, $clusterDataDir,
 		     $nodePath, $bsTaskSize,
-		     $wuBlastBinPathCluster,
-		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType);
+		     $blastBinPathCluster,
+		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType,$vendor);
 
   $mgr->endStep($signal);
 }
@@ -5800,6 +5802,7 @@ my @orthomclProps =
  ["blastzPath", "", "path to find BLASTZ locally"],
  ["projectName", "", " project name from projectinfo.name"],
  ["ncbiBlastPath", "", "path to find ncbi blast dir on server"],
+ ["ncbiBlastBinPathCluster", "", "path to find ncbi BLAST on cluster"],
 );
 
 my @orthomclProps = 
