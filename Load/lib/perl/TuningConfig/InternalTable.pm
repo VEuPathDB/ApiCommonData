@@ -105,7 +105,7 @@ sub getState {
   } else {
     # check internal dependencies
     foreach my $dependency (@{$self->getInternalDependencies()}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table $self->{name} upon " . $dependency->getName());
+	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
       my $childState = $dependency->getState($doUpdate, $dbh);
       if ($childState eq "neededUpdate") {
 	$needUpdate = 1;

@@ -210,7 +210,7 @@ where nf.na_feature_id = nl.na_feature_id
 union
 select -- virtual feature locations mapped through SequencePiece
        case
-         when subclass_view = 'GeneFeature'
+         when nf.subclass_view = 'GeneFeature'
               and  db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',

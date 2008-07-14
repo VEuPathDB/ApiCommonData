@@ -173,7 +173,7 @@ if (!$tableCount) {
 if ($brokenCount) {
   ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
   foreach my $table (keys(%tuningTables)) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getState())
+    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
     if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
 }
 
@@ -360,12 +360,14 @@ SQL
   $select->finish();
 
   # check for obsoleted tables not in apidb.ObsoletedTuningTables
+  # note that the backslash in the regex is to protect the dollar-sign from Perl
+  # it's really "zero or more digits, followed by end-of-line": [0-9]*$
   $sql = <<SQL;
 select owner || '.' || table_name
 from (select atab.owner, atab.table_name
       from all_synonyms asyn, all_tables atab
       where asyn.owner = atab.owner
-        and regexp_replace(atab.table_name, '[0-9]*$', '') = asyn.synonym_name
+        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name
     minus select table_owner, table_name from all_synonyms)
 minus select name from apidb.ObsoletedTuningTables
 SQL
