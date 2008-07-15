@@ -1,6 +1,27 @@
 <wdkModel>
     <querySet name="IsolateAttributes">
 
+        <sqlQuery name="Barcode" isCacheable='false'>
+            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="strain"/> 
+            <column name="country"/> 
+            <column name="collected_by"/> 
+            <column name="note"/> 
+            <column name="na_sequence_id"/> 
+            <sql>
+               SELECT src.strain,
+							        src.na_sequence_id,
+											src.country,
+											src.collected_by,
+											src.note,
+                      $$projectId$$ as project_id
+               FROM   DoTS.IsolateSource src
+               WHERE src.na_sequence_id = $$primaryKey$$
+           </sql>
+      </sqlQuery>
+
         <sqlQuery name="Sequence" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>

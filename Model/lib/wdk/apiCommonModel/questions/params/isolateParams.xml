@@ -78,6 +78,17 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
        </flatVocabParam>
 
+
+    </paramSet>
+
+    <paramSet name="isolateParams" includeProjects="PlasmoDB">
+        <flatVocabParam name="strain"
+            queryRef="strainVQ.withIsolates"
+            prompt="Strain Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="PlasmoDB"/>
+       </flatVocabParam>
     </paramSet>
 
     <querySet name="organismIQ">
@@ -239,6 +250,21 @@
       <wsColumn name="term" width="200" wsName="term"/>
     </wsQuery>
 
+  </querySet>
+
+  <querySet name="strainVQ">
+    <sqlQuery name="withIsolates" includeProjects="PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT src.strain AS term,
+             src.na_sequence_id AS internal
+      FROM   DoTS.IsolateSource src
+      ORDER BY src.strain
+      ]]>
+      </sql>
+    </sqlQuery>
   </querySet>
 
 </wdkModel>

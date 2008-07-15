@@ -1,5 +1,5 @@
 <wdkModel>
-    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,ApiDB">
+    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,ApiDB,PlasmoDB">
 
       <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,ApiDB">
 
@@ -144,6 +144,53 @@
      </textAttribute>
 
      </recordClass>
+
+      <recordClass idPrefix="" name="BarcodeRecordClass" type="Isolate" includeProjects="PlasmoDB">
+
+
+        <projectParamRef ref="recordParams.Project"/>
+
+      <!-- =============================================================== -->
+      <!--   Reporters -->
+      <!-- =============================================================== -->
+
+      <reporter name="tabular" displayName="Summary - TAB Delimited"
+                implementation="org.gusdb.wdk.model.report.TabularReporter" />
+
+      <attributeQueryRef ref="IsolateAttributes.Barcode" includeProjects="PlasmoDB">
+         <columnAttribute name="strain" displayName="Strain" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="country" displayName="Country" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="collected_by" displayName="Collected_By" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="note" displayName="Note" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="na_sequence_id" displayName="NA Sequence ID" internal="false" includeProjects="PlasmoDB"/>
+      </attributeQueryRef>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- overview -->
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <textAttribute name="overview" displayName="Overview"
+          internal="true" inReportMaker="false" includeProjects="PlasmoDB">
+          <text>
+          <![CDATA[
+           <table>
+             <tr>
+              <td width=18%>Isolate ID:</td>
+              <td>$$primaryKey$$ </td>
+             </tr>
+             <tr>
+              <td>Strain:</td>
+              <td>$$strain$$</td>
+             </tr>
+           </table>
+          ]]>
+          </text>
+     </textAttribute>
+
+     </recordClass>
+
+
+
+
 
   </recordClassSet>
 </wdkModel>

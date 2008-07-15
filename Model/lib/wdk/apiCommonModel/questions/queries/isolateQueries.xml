@@ -113,6 +113,21 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
+    <sqlQuery name="IsolateByStrain" includeProjects="PlasmoDB">
+        <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
+        <column name="na_sequence_id"/>
+        <column name="project_id"/>
+        <sql>
+          <![CDATA[
+            SELECT etn.na_sequence_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.IsolateSource src, 
+                   DoTS.ExternalNASequence etn
+            WHERE  src.strain in ($$strain$$)
+               AND etn.na_sequence_id = src.na_sequence_id
+            ORDER BY src.strain
+            ]]>
+         </sql>
+    </sqlQuery>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
