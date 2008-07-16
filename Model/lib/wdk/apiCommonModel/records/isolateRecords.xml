@@ -163,28 +163,21 @@
          <columnAttribute name="collected_by" displayName="Collected_By" internal="false" includeProjects="PlasmoDB"/>
          <columnAttribute name="note" displayName="Note" internal="false" includeProjects="PlasmoDB"/>
          <columnAttribute name="na_sequence_id" displayName="NA Sequence ID" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="sequence" displayName="Sequence" internal="false" includeProjects="PlasmoDB"/>
       </attributeQueryRef>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <!-- overview -->
+     <!-- Isolates Barcode SNP table -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <textAttribute name="overview" displayName="Overview"
-          internal="true" inReportMaker="false" includeProjects="PlasmoDB">
-          <text>
-          <![CDATA[
-           <table>
-             <tr>
-              <td width=18%>Isolate ID:</td>
-              <td>$$primaryKey$$ </td>
-             </tr>
-             <tr>
-              <td>Strain:</td>
-              <td>$$strain$$</td>
-             </tr>
-           </table>
-          ]]>
-          </text>
-     </textAttribute>
+
+     <table name="SNP" includeProjects="PlasmoDB"
+            displayName="Isolates SNP Features"
+            queryRef="IsolateTables.SNP">
+        <columnAttribute displayName="Allele" name="allele"/>
+        <columnAttribute displayName="Chromosome" name="chromosome"/>
+        <columnAttribute displayName="Position" name="start_min"/>
+        <columnAttribute displayName="SNP ID" name="snp_id"/>
+     </table>
 
      </recordClass>
 

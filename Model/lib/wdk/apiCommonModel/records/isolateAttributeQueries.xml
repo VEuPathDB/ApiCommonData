@@ -9,16 +9,20 @@
             <column name="country"/> 
             <column name="collected_by"/> 
             <column name="note"/> 
+            <column name="sequence"/> 
             <column name="na_sequence_id"/> 
             <sql>
                SELECT src.strain,
-							        src.na_sequence_id,
-											src.country,
-											src.collected_by,
-											src.note,
+                      src.na_sequence_id,
+                      src.country,
+                      src.collected_by,
+                      src.note,
+											etn.sequence,
                       $$projectId$$ as project_id
-               FROM   DoTS.IsolateSource src
-               WHERE src.na_sequence_id = $$primaryKey$$
+               FROM   DoTS.IsolateSource src,
+                      DoTS.ExternalNASequence etn
+               WHERE  src.na_sequence_id = $$primaryKey$$
+                  AND src.na_sequence_id = etn.na_sequence_id
            </sql>
       </sqlQuery>
 
@@ -172,7 +176,7 @@
                      DoTS.NaLocation nal,
                      (SELECT source_id, target_name, min_subject_start,
                              max_subject_end, product 
-								  	  FROM   ApiDB.IsolateAttributes) t
+                      FROM   ApiDB.IsolateAttributes) t
               WHERE etn.na_sequence_id = gf.na_sequence_id
                 AND nal.na_feature_id = gf.na_feature_id
                 AND t.target_name = etn.source_id
