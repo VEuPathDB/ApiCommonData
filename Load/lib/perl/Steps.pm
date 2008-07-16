@@ -2942,6 +2942,37 @@ sub loadBLASTZResults {
   }
 }
 
+sub parseBlastForSqlldr {
+  my ($mgr,$blastName) = @_;
+
+   my $signal = "parse$blastName";
+
+  return if $mgr->startStep("Parse $blastName blastSimilarity.out into file for sqldr", $signal);
+
+  my $blastFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimilarity.out.gz";
+
+  die "$blastFile doesn't exist\n" unless (-e $blastFile);
+
+  my $sqllderFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimForSqlldr.out";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $cmd = "parseBlastForSimilaritySequences --blastInput $blastFile --blastoutput $sqllderFile --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
+
+
+
+sub loadBlastWithSqlldr {
+  my ($mgr,$blastFile) = @_;
+}
+
+
 sub  loadAveragedProfiles {
   my ($mgr,$dbSpec,$setName,$loadProfileElement) = @_;
 
