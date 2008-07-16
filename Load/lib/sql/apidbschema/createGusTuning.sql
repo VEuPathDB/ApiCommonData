@@ -53,4 +53,8 @@ ALTER TABLE sres.GoEvidenceCode       MODIFY (description VARCHAR2(1500));
 ALTER TABLE sresVer.GoEvidenceCodeVer MODIFY (description VARCHAR2(1500));
 ALTER TABLE sres.GoEvidenceCode       MODIFY (name VARCHAR2(5));
 ALTER TABLE sresVer.GoEvidenceCodeVer MODIFY (name VARCHAR2(5)); 
+
+ALTER TABLE rad.Analysis ADD name VARCHAR2(200);
+ALTER TABLE radVer.AnalysisVer ADD name VARCHAR2(200);
+
 exit
