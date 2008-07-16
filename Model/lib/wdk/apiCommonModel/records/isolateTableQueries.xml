@@ -39,7 +39,40 @@
                AND nasr.reference_id = ref.reference_id
                AND etn.na_sequence_id = nasr.na_sequence_id
                AND etn.source_id = $$primaryKey$$
-						ORDER BY ref.reference_id
+            ORDER BY ref.reference_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Isolate Barcode SNPs -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="SNP" isCacheable="true" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="start_min"/>
+            <column name="chromosome"/>
+            <column name="allele"/>
+            <column name="snp_id"/>
+            <sql>
+            <![CDATA[
+            SELECT nal.start_min,
+                   chr.source_id chromosome,
+                   if.source_id snp_id, 
+                   if.allele,
+                   $$projectId$$ as project_id
+            FROM   DoTS.ExternalNASequence etn,
+                   DoTS.IsolateFeature if,
+                   DoTS.IsolateSource src,
+                   DoTS.ExternalNASequence chr,
+                   DoTS.NALocation nal
+            WHERE  etn.na_sequence_id = src.na_sequence_id
+               AND src.na_feature_id = if.parent_id
+               AND nal.na_feature_id = if.na_feature_id
+               AND chr.na_sequence_id = if.na_sequence_id
+               AND etn.na_sequence_id = $$primaryKey$$
+            ORDER BY if.source_id
             ]]>
             </sql>
         </sqlQuery>
