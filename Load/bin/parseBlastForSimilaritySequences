@@ -54,9 +54,9 @@ $| = 1;
 open (OUT, ">$blastOutput") || die "Can't open $blastOutput for writing\n";
 
 if ($blastInput =~ /gz$/) {
-  open(IN, "gunzip -c $blastInput |");
+  open(IN, "gunzip -c $blastInput |") || die "Can't gunzip and read $blastInput\n";
 } else {
-  open(IN,"$blastInput");
+  open(IN,"$blastInput") || die "Can't gunzip and read $blastInput\n";
 }
 
 my %taxons;
