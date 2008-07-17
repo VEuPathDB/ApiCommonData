@@ -176,15 +176,17 @@
         <columnAttribute displayName="Allele" name="allele"/>
         <columnAttribute displayName="Chromosome" name="chromosome"/>
         <columnAttribute displayName="Position" name="start_min"/>
-        <columnAttribute displayName="SNP ID" name="snp_id"/>
+        <columnAttribute name="snp_id" internal="true"/>
+        <linkAttribute displayName="SNP ID" 
+                       name="snp_id_link" visible="$$snp_id$$"
+                       inReportMaker="false" internal="false" >
+            <url> 
+             <![CDATA[showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$$snp_id$$&project_id=PlasmoDB]]> 
+             </url>
+        </linkAttribute>
      </table>
 
      </recordClass>
-
-
-
-
-
   </recordClassSet>
 </wdkModel>
 
