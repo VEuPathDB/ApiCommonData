@@ -37,7 +37,7 @@ sub init {
 
   # [name, default (or null if reqd), comment]
   my @properties = 
-    (
+d    (
      # universal analysis pipeline properties
 
      ["release",   "",  "release number (eg 5.2)"],
@@ -90,7 +90,7 @@ sub init {
   &makeUserProjectGroup($mgr);
 
   if ($mgr->{myPipelineName} eq "primary") {
-  	&copyPipelineDirToComputeCluster($mgr);
+ 	&copyPipelineDirToComputeCluster($mgr);
   }
 
   my $taxonHsh = &getTaxonIdFromTaxId($mgr,$taxId);
@@ -1444,7 +1444,7 @@ sub makeInterproDownloadFile {
 
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $dlDir = "$siteFileDir/downloadSite/$projectDB/$release/$species";
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
   $mgr->runCmd("mkdir -p $dlDir");
 
@@ -3983,17 +3983,22 @@ sub modifyDownloadFile {
 }
 
 sub writeGeneAliasFile {
-  my ($mgr,$extDb,$extDbVer,$database, $dir) = @_;
+
+  my ($mgr,$extDb,$extDbVer,$project, $dir) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $release = $propertySet->getProp('projectRelease');
+
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
 
   my $signal = "write${dir}GeneAliasFile";
 
   return if $mgr->startStep("Writing $dir gene alias file for download site", $signal);
 
-  my $propertySet = $mgr->{propertySet};
-
-  my $release = $propertySet->getProp('release');
-
-  my $outFile ="$mgr->{dataDir}/downloadSite/$dir/${dir}GeneAliases_${database}-${release}.txt";
+  my $outFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$dir";
 
   $mgr->runCmd("getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile");
 
@@ -4168,13 +4173,13 @@ sub makeCodonUsage {
 
 
 sub extractAnnotatedProteinsBySpecies {
-  my ($mgr, $species,$dbName,$dbRlsVer) = @_;
+  my ($mgr, $species,$dbName,$dbRlsVer, $ncbiTaxId) = @_;
 
   my $fname = "${species}AnnotatedProteins";
 
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;  
 
   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
@@ -4307,14 +4312,13 @@ sub extractTranscriptSeqs {
 }
 
 sub extractAssemblies {
-  my ($mgr, $species, $name) = @_;
+  my ($mgr, $species, $name, $ncbiTaxId) = @_;
   my $propertySet = $mgr->{propertySet};
   my $signal = "${species}${name}Extract";
 
   return if $mgr->startStep("Extracting ${species} $name assemblies from GUS", $signal);
 
-  my $taxonId = $mgr->{taxonHsh}->{$species};
-
+  my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
   my $seqFile = "$mgr->{dataDir}/seqfiles/${species}$name.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${species}${name}Extract.log";
 
@@ -4415,13 +4419,13 @@ sub loadContigAlignments {
 
 
 sub clusterByContigAlign {
-    my ($mgr, $species, $name, $extDbName, $extDbRlsVer) = @_;
+    my ($mgr, $species, $name, $extDbName, $extDbRlsVer,$ncbiTaxId) = @_;
     my $propertySet = $mgr->{propertySet};
 
     my $dataDir = $mgr->{'dataDir'};
     #my $taxonId = $mgr->{taxonId};
     
-    my $taxonId = $mgr->{taxonHsh}->{$species};
+    my $taxonId = &getTaxonId($mgr,$ncbiTaxId);
  
     $mgr->{contigDbRlsId} =  &getDbRlsId($mgr,$extDbName,$extDbRlsVer) unless $mgr->{contigDbRlsId};
     my $extDbRelId = $mgr->{contigDbRlsId};
@@ -5132,10 +5136,8 @@ sub updateAssemblySourceId {
 }
 
 sub deleteAssembliesWithNoTranscripts {
-  my ($mgr, $species, $name) = @_;
-
-  my $taxonId =  $mgr->{taxonHsh}->{$species};
-
+  my ($mgr, $species, $name, $ncbiTaxId) = @_;
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
   my $args = "--taxon_id $taxonId";
 
   $mgr->runPlugin("${species}${name}deleteAssembliesWithNoAssSeq", 
