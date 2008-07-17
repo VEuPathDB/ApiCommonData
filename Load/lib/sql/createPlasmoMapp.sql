@@ -7,3 +7,6 @@ CREATE TABLE ApiDB.PlasmoMapp (
 
 GRANT insert, select, update, delete ON ApiDB.PlasmoMapp TO gus_w;
 GRANT select ON ApiDB.PlasmoMapp  TO gus_r;
+
+CREATE INDEX apidb.plasmapp_loc_ix
+ON apidb.PlasmoMapp (na_sequence_id, location);
