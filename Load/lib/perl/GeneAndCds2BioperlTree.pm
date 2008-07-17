@@ -26,6 +26,7 @@ use Bio::SeqFeature::Tools::Unflattener;
 # (6) create exons from sublocations
 # (7) add to transcript
 
+#Need to check if codon_start qualifier (reading frame) in Genbank files for CDS is relative to the CDS positions. This code assumes that it is
 
 sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
@@ -106,7 +107,10 @@ sub traverseSeqFeatures {
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
+	    
 
+	 
+		
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $gene = &copyQualifiers($subFeature, $gene);
@@ -116,13 +120,38 @@ sub traverseSeqFeatures {
 		    my $exon = $subFeature;
 		    my $codingStart = $exon->location->start;
 		    my $codingEnd = $exon->location->end;
+
+
 		    if(defined $CDSLocation){
+			my $codonStart = 0;
+
+
+			for my $qualifier ($gene->get_all_tags()) {
+			    if($qualifier eq 'codon_start'){
+				foreach my $value ($gene->get_tag_values($qualifier)){
+				    $codonStart = $value - 1;
+				}
+			    }
+			}
 			$codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
 			$codingEnd = $CDSLocation->end() if ($codingEnd > $CDSLocation->end());
 			if ($codingStart > $subFeature->location->end() || $codingEnd < $subFeature->location->start()) {
 			    $codingStart = ''; # non-coding exon
 			    $codingEnd = '';
 			    $exon->add_tag_value('type','noncoding_exon');
+			}
+			if ($exon->location->strand == -1){
+			    my $tmp = $codingEnd;
+			    $codingEnd = $codingStart;
+			    if($tmp == $CDSLocation->end()){
+				$codingStart = $tmp - $codonStart;
+			    }else{
+				$codingStart = $tmp;
+			    }
+			}else{
+			    if($codingStart == $CDSLocation->start()){
+				$codingStart += $codonStart;
+			    }
 			}
 
 			$exon->add_tag_value('coding_start', $codingStart);
