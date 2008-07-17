@@ -1121,8 +1121,8 @@
             select 'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'CDS' as gff_type,
-                   least(ef.coding_start, ef.coding_end) as gff_fstart,
-                   greatest(ef.coding_start, ef.coding_end) as gff_fend,
+                   least(nl.coding_start, nl.coding_end) as gff_fstart,
+                   greatest(nl.coding_start, nl.coding_end) as gff_fend,
                    '.' as gff_score,
                    decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                    mod(3 - mod((select nvl(sum(greatest(ef2.coding_start, ef2.coding_end)
