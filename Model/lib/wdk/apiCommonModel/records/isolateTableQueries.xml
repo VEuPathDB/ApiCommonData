@@ -55,6 +55,7 @@
             <column name="chromosome"/>
             <column name="allele"/>
             <column name="snp_id"/>
+            <column name="colored_allele"/>
             <column name="major_allele"/>
             <column name="minor_allele"/>
             <sql>
@@ -63,6 +64,10 @@
                    chr.source_id chromosome,
                    if.source_id snp_id, 
                    if.allele,
+									 case when if.allele = snp.major_allele
+									      then '<font color=#342D7E><b>' || if.allele || '</b></font>'
+												else  if.allele
+										end colored_allele,
                    snp.major_allele,
                    snp.minor_allele,
                    $$projectId$$ as project_id
