@@ -75,7 +75,7 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     
-      <table name="Locations" includeProjects="GiardiaDB"
+      <table name="Locations" includeProjects="GiardiaDB,PlasmoDB"
                  displayName="Sage Tag Location"
                  queryRef="SageTagTables.Locations">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -94,7 +94,12 @@
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=Gene;label=DeprecatedGene;h_feat=$$feature_source_id$$
                         ]]>
                    </url>
-            </linkAttribute>
+                   <url includeProjects="PlasmoDB">
+                    <![CDATA[
+                    @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=AnnotatedGenes;label=DeprecatedGene;h_feat=$$feature_source_id$$
+                        ]]>
+                   </url> 
+           </linkAttribute>
             <columnAttribute displayName= "start" name="start_min" internal="true"/>
             <columnAttribute displayName= "end" name="end_max" internal="true"/>
             <columnAttribute displayName= "is_reversed" name="is_reversed" internal="true"/>
