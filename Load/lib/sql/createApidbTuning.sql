@@ -189,7 +189,7 @@ CREATE OR REPLACE SYNONYM apidb.PdbSimilarity
 
 prompt apidb.FeatureLocation;
 
-create table apidb.FeatureLocation&1 as
+create table apidb.FeatureLocation&1 NOLOGGING as
 select case
          when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
@@ -204,18 +204,21 @@ select case
        least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
        greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
-       cast (null as number) as is_top_level
+       cast (null as number) as is_top_level, ef.coding_start, ef.coding_end
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
+     dots.ExonFeature ef,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       where edr.external_database_id = ed.external_database_id) db
 where nf.na_feature_id = nl.na_feature_id
   and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = ns.na_sequence_id
+  and nl.na_feature_id = ef.na_feature_id(+)
 union
 select -- virtual feature locations mapped through SequencePiece
        case
-         when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+         when nf.subclass_view = 'GeneFeature'
+              and  db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',
                           'P. falciparum Evigan Gene Models',
@@ -244,9 +247,21 @@ select -- virtual feature locations mapped through SequencePiece
          else nl.is_reversed
        end as is_reversed,
        nf.parent_id, nf.sequence_ontology_id,
-       cast (null as number) as is_top_level
+       cast (null as number) as is_top_level,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - coding_start
+           else sp.distance_from_left + ef.coding_start
+       end as coding_start,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - coding_end
+         else sp.distance_from_left + coding_end
+       end as coding_end
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
-     dots.SequencePiece sp, dots.NaSequence scaffold,
+     dots.SequencePiece sp, dots.NaSequence scaffold, dots.ExonFeature ef,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       where edr.external_database_id = ed.external_database_id) db
@@ -254,7 +269,8 @@ where nf.na_feature_id = nl.na_feature_id
   and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = contig.na_sequence_id
   and nf.na_sequence_id = sp.piece_na_sequence_id
-  and sp.virtual_na_sequence_id = scaffold.na_sequence_id;
+  and sp.virtual_na_sequence_id = scaffold.na_sequence_id
+  and nl.na_feature_id = ef.na_feature_id(+);
 
 update apidb.FeatureLocation&1
 set is_top_level = 1;
