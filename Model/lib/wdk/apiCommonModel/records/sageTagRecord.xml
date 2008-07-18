@@ -76,7 +76,7 @@
 
     
       <table name="Locations" includeProjects="GiardiaDB,PlasmoDB"
-                 displayName="Sage Tag Location"
+                 displayName="Genomic Locations"
                  queryRef="SageTagTables.Locations">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
             <columnAttribute displayName= "Genomic Sequence" name="sequence_source_id" internal="false"/>
@@ -109,7 +109,7 @@
           </table>
 
       <table name="AllCounts" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
-            displayName="Raw Data"
+            displayName="Raw and Normalized Data"
             queryRef="SageTagTables.Experiments">
          <columnAttribute displayName="Library" name="experiment"/>
          <columnAttribute displayName="Raw Count" name="raw_count"/>
@@ -120,7 +120,7 @@
      </table>
 
      <table name="Genes" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
-            displayName="All Genes the Tag Aligns to"
+            displayName="All Genes in promixity of the Sage Tag"
             queryRef="SageTagTables.AlignedGenes">
          <columnAttribute  name="source_id" internal="true"/>
          <columnAttribute  name="gene_source_id" internal="true"/>
