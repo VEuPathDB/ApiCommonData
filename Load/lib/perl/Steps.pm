@@ -37,7 +37,7 @@ sub init {
 
   # [name, default (or null if reqd), comment]
   my @properties = 
-d    (
+    (
      # universal analysis pipeline properties
 
      ["release",   "",  "release number (eg 5.2)"],
@@ -3998,7 +3998,7 @@ sub writeGeneAliasFile {
 
   return if $mgr->startStep("Writing $dir gene alias file for download site", $signal);
 
-  my $outFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$dir";
+  my $outFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}GeneAlias_$projectDB-${release}.txt";
 
   $mgr->runCmd("getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile");
 
