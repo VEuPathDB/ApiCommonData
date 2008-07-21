@@ -1,4 +1,4 @@
-package ApiCommonData::Load::TuningConfig::FileSuffix;
+package ApiCommonData::Load::TuningConfig::TableSuffix;
 
 use ApiCommonData::Load::TuningConfig::Log;
 

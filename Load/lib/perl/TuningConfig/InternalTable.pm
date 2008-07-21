@@ -1,6 +1,6 @@
 package ApiCommonData::Load::TuningConfig::InternalTable;
 
-use ApiCommonData::Load::TuningConfig::FileSuffix;
+use ApiCommonData::Load::TuningConfig::TableSuffix;
 
 # @ISA = qw( ApiCommonData::Load::TuningConfig::Table );
 
@@ -155,7 +155,7 @@ sub update {
   ApiCommonData::Load::TuningConfig::Log::setUpdatePerformedFlag();
 
 
-  my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
+  my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
 
   ApiCommonData::Load::TuningConfig::Log::addLog("    Rebuilding tuning table " . $self->{name});
 
@@ -194,7 +194,7 @@ sub update {
 
   $self->publish($suffix, $dbh);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("    " . time - $startTime .
+  ApiCommonData::Load::TuningConfig::Log::addLog("    " . (time - $startTime) .
 						 " seconds to rebuild tuningTable " .
 						 $self->{name});
 
