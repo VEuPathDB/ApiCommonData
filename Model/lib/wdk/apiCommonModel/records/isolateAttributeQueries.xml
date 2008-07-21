@@ -10,6 +10,7 @@
             <column name="collected_by"/> 
             <column name="note"/> 
             <column name="sequence"/> 
+            <column name="length"/> 
             <column name="na_sequence_id"/> 
             <sql>
                SELECT src.strain,
@@ -18,6 +19,7 @@
                       src.collected_by,
                       src.note,
 											etn.sequence,
+											length(etn.sequence) length,
                       $$projectId$$ as project_id
                FROM   DoTS.IsolateSource src,
                       DoTS.ExternalNASequence etn
