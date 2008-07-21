@@ -26,7 +26,7 @@ SQL
       ($suffix) = $stmt->fetchrow_array();
       $stmt->finish();
 
-      ApiCommonData::Load::TuningConfig::Log::addLog("Creating tuning tables with the suffix $suffix");
+      ApiCommonData::Load::TuningConfig::Log::addLog("    Creating tuning tables with the suffix $suffix");
 
     }
 
