@@ -1791,12 +1791,15 @@ SELECT CASE
        SUBSTR(tn.name, 1, 40) AS organism,
        taxon.ncbi_tax_id
 FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr,
-     dots.ExternalNaSequence ens, sres.TaxonName tn, sres.Taxon
+     dots.ExternalNaSequence ens, sres.TaxonName tn, sres.Taxon,
+     sres.SequenceOntology so
 WHERE ens.external_database_release_id = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND tn.taxon_id = ens.taxon_id
   AND tn.name_class = 'scientific name'
   AND taxon.taxon_id = ens.taxon_id
+  AND ens.sequence_ontology_id = so.sequence_ontology_id
+  AND so.term_name = 'oligo'
       ]]>
     </sql>
     <sql>
