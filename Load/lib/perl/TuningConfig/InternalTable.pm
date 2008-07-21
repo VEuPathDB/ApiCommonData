@@ -157,7 +157,7 @@ sub update {
 
   my $suffix = ApiCommonData::Load::TuningConfig::FileSuffix::getSuffix($dbh);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("Rebuilding tuning table " . $self->{name});
+  ApiCommonData::Load::TuningConfig::Log::addLog("    Rebuilding tuning table " . $self->{name});
 
   $self->dropIntermediateTables($dbh);
 
@@ -194,7 +194,7 @@ sub update {
 
   $self->publish($suffix, $dbh);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+  ApiCommonData::Load::TuningConfig::Log::addLog("    " . time - $startTime .
 						 " seconds to rebuild tuningTable " .
 						 $self->{name});
 

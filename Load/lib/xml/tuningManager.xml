@@ -173,6 +173,47 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC)
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.SequencePieceClosure">
+    <externalDependency name="dots.SequencePiece"/>
+    <sql>
+      <![CDATA[
+        create table apidb.SequencePieceClosure&1 nologging as
+        select sp.*, 1 as edge_level from dots.SequencePiece sp
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        /* known issue: this should be run not just once, but iteratively
+           until it doesn't create new records.  Currently (7/2008),
+           SequencePieces aren't nested even once. */
+        insert into apidb.SequencePieceClosure&1
+                    (edge_level, virtual_na_sequence_id, piece_na_sequence_id,
+                     distance_from_left, strand_orientation, modification_date)
+        select 2, higher.virtual_na_sequence_id, lower.piece_na_sequence_id,
+               higher.distance_from_left
+               + case
+                   when nvl(higher.strand_orientation, '+') = '+'
+                   then lower.distance_from_left
+                   else higher_piece.length - lower_piece.length - lower.distance_from_left
+                 end as distance_from_left,
+               case
+                 when nvl(higher.strand_orientation, '+') = nvl(lower.strand_orientation, '+')
+                 then '+'
+                 else '-'
+               end as strand_orientation,
+               sysdate
+        from apidb.SequencePieceClosure&1 higher, apidb.SequencePieceClosure&1 lower,
+             dots.NaSequence higher_piece, dots.NaSequence lower_piece
+        where higher.piece_na_sequence_id = lower.virtual_na_sequence_id
+          and higher.piece_na_sequence_id = higher_piece.na_sequence_id
+          and lower.piece_na_sequence_id = lower_piece.na_sequence_id
+          and (higher.virtual_na_sequence_id, lower.piece_na_sequence_id)
+              not in (select virtual_na_sequence_id, piece_na_sequence_id
+                      from apidb.SequencePieceClosure&1)
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.FeatureLocation">
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaLocation"/>
