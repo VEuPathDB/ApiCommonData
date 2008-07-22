@@ -1089,7 +1089,7 @@
                     and taf.aa_sequence_id = tas.aa_sequence_id) protein
             where gf.source_id = $$primaryKey$$
                 and gf.na_feature_id = rna.parent_id
-                and rna.na_feature_id = nl.na_feature_id
+                and gf.na_feature_id = nl.na_feature_id
                 and nl.is_top_level = 1
                 and ns.na_sequence_id = nl.na_sequence_id
                 and rna.external_database_release_id = edr.external_database_release_id
