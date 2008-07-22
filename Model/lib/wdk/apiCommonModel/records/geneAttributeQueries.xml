@@ -617,7 +617,7 @@
                       NVL(MAX(graph_gametocyte), 0) AS graph_gametocyte,
                       NVL(MAX(graph_cowman), 0) AS graph_cowman,
                       NVL(MAX(graph_mexp128), 0) AS graph_mexp128
-               FROM apidb.ExpressionGraphSummary egs
+               FROM apidb.PlasmoExpressionGraphs egs
                WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
@@ -639,7 +639,7 @@
                SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
                       NVL(MAX(graph_starvation), 0) AS graph_starvation,
                       NVL(MAX(graph_archetypal), 0) AS graph_archetypal
-               FROM apidb.ExpressionGraphSummary egs
+               FROM apidb.ToxoExpressionGraphs egs
                WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
