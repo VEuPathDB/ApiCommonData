@@ -3874,7 +3874,7 @@ sub xdformat {
 }
 
 sub extractKeywordSearchFiles {
-  my ($mgr,$filePrefix,$projectId,$gusConfigFile) = @_;
+  my ($mgr,$filePrefix,$commentSchema,$dbLink,$projectId,$gusConfigFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -3897,7 +3897,7 @@ sub extractKeywordSearchFiles {
   $cmd .= "--outputPrefix $filePrefix " if ($filePrefix);
 
 
-#  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
+  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
   $mgr->runCmd($cmd);
 
@@ -3905,7 +3905,7 @@ sub extractKeywordSearchFiles {
 }
 
 sub extractCommentsFiles {
-  my ($mgr,$filePrefix,$commentSchema,$projectId,$gusConfigFile) = @_;
+  my ($mgr,$filePrefix,$commentSchema,$dbLink,$projectId,$gusConfigFile) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -3928,7 +3928,7 @@ sub extractCommentsFiles {
   $cmd .= "--outputPrefix $filePrefix " if ($filePrefix);
 
 
-#  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
+  $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
 
   $mgr->runCmd($cmd);
 
