@@ -3,7 +3,10 @@ create table apidb.Workflow (
   name          varchar(30),  -- name and version are an alternate key
   version       varchar(30),
   state         varchar(30),
+  process_id    number(10),
   metaconfig    clob,
+  start_time    date,
+  end_time      date
 );
 
 ALTER TABLE apidb.Workflow
@@ -32,6 +35,8 @@ create table WorkflowStep (
   wrapper_process_id  number(10),
   state               varchar(30),
   state_handled       number(1),
+  start_time          date,
+  end_time            date
 );
 
 ALTER TABLE apidb.WorkflowStep

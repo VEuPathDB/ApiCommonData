@@ -5,15 +5,15 @@ package ApiCommonData::Load::Steps::LoadFasta;
 sub run {
   my ($self) = @_;
 
-  my $dataDir = $config->get('dataDir');
-  my $file = $config->get('inputFile');
-  my $targetTable = $config->get('targetTable');
-  my $extDbName = $config->get('extDbName');
-  my $extDbRlsVer = $config->get('extDbRlsVer');
-  my $soTermName = $config->get('soTermName');
-  my $regexSourceId = $config->get('regexSourceId');
-  my $check = $config->get('check');
-  my $taxId = $config->get('taxId');
+  my $dataDir = $self->getConfig('dataDir');
+  my $file = $self->getConfig('inputFile');
+  my $targetTable = $self->getConfig('targetTable');
+  my $extDbName = $self->getConfig('extDbName');
+  my $extDbRlsVer = $self->getConfig('extDbRlsVer');
+  my $soTermName = $self->getConfig('soTermName');
+  my $regexSourceId = $self->getConfig('regexSourceId');
+  my $check = $self->getConfig('check');
+  my $taxId = $self->getConfig('taxId');
 
   my $inputFile = "$dataDir/seqfiles/$file";
 
@@ -34,13 +34,19 @@ sub undo {
 }
 
 sub getConfigDeclaration {
-  my $configDecl =
-    {
-      required => ['inputFile', 'targetTable', 'extDbName', 'extDbRlsVer'
-		  'soTermName','regexSourceId','check','taxId'],
-      optional => []
-      };
-  return $configDecl;
+  my @properties = 
+    (
+     # [name, default, description]
+     ['inputFile', "", ""],
+     ['targetTable', ],
+     ['extDbName', ],
+     ['extDbRlsVer', ],
+     ['soTermName', ],
+     ['regexSourceId', ],
+     ['check', ],
+     ['taxId' ],
+    );
+  return @properties;
 }
 
 sub getDocumentation {
