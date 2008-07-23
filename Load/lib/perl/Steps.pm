@@ -4126,6 +4126,44 @@ sub runMercatorMavid {
   $mgr->endStep($signal);
 }
 
+sub runPairwiseMercatorMavid {
+  my ($mgr, $mercatorDir, $signal) = @_;
+
+  return if $mgr->startStep("running mercator-MAVID [$signal]", $signal);
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/$signal";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $cndsrcBin = $propertySet->getProp('cndsrc_bin_dir');
+  my $mavid = $propertySet->getProp('mavid_exe');
+  my $draftString = $propertySet->getProp('mercator_draft_genomes');
+  my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
+  my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
+
+  my @drafts =  map { "$_" } split(',', $draftString);
+  my @nonDrafts = map { "$_" } split(',', $nonDraftString);
+
+  foreach my $draft (@drafts) {
+    my $dirName = "$mercatorDir/$draft-$referenceGenome";
+
+    my $command = "runMercator  -t '($draft,p_falciparum);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d $draft 2>$logFile";
+    $mgr->runCmd($command);
+  }
+
+  foreach my $nonDraft (@nonDrafts) {
+    my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
+
+    my $command = "runMercator  -t '($nonDraft,p_falciparum);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft 2>$logFile";
+    $mgr->runCmd($command);
+  }
+
+
+
+  $mgr->endStep($signal);
+}
+
+
 sub grepMercatorGff {
   my ($mgr, $inFile, $outFile, $fileDir) = @_;
 
