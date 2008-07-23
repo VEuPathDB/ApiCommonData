@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Steps::LoadFasta;
+package ApiCommonData::Load::Steps::WorkflowSteps::LoadFastaSequence;
 
 @ISA = (GUS::Pipeline::WorkflowStep);
 
