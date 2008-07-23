@@ -1,0 +1,126 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use FileHandle;
+use Data::Dumper;
+use HTTP::Date;
+
+my ($date, ) = split(" ", HTTP::Date::time2iso());
+
+$date = join("",split(/-/,$date)); 
+
+
+my ($verbose, $help, $genbankFile, $outFile, $taxonId, $evidenceCode, $annotBasis, $db);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'genbank_file=s' => \$genbankFile,
+            'output_file=s' => \$outFile,
+	    'db=s' => \$db,
+	    'taxon_id=i' => \$taxonId,
+            'evidence_code=s' => \$evidenceCode,
+	    'annotation_basis=s' => \$annotBasis
+           );
+
+
+&usage() if($help);
+&usage("Missing Argument") unless(defined $genbankFile && $outFile && $taxonId && $db);
+
+if(!($evidenceCode)){
+  $evidenceCode = "IEA";
+}
+
+my $goAssocFh = FileHandle->new();
+$goAssocFh->open(">$outFile");
+
+my $in  = Bio::SeqIO->new(-file => $genbankFile , '-format' => 'genbank');
+
+
+
+while ( my $seq = $in->next_seq() ) {
+  if(!($seq->molecule =~ /rna/i)){
+	foreach my $feature ($seq->get_SeqFeatures){
+	  if($feature->primary_tag eq "CDS"){
+	    my $sourceId = '';
+	    if ($feature->has_tag('locus_tag')){
+	      foreach my $value ($feature->get_tag_values('locus_tag')){
+		$sourceId = $value;
+	      }
+	    }
+	    foreach my $qualifier ($feature->get_all_tags){
+	      if ($qualifier eq 'GO_process'){
+		foreach my $value ($feature->get_tag_values($qualifier)){
+		  $value =~ /^(.+)\[\D+(\d+)\]/;
+		  my $product = $1;
+		  $product = &trim($product);
+		  my $goId = "GO:".$2;
+		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tP\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+		}
+	      }
+
+		  
+	      if ($qualifier eq 'GO_function'){
+		foreach my $value ($feature->get_tag_values($qualifier)){
+		  $value =~ /^(.+)\[\D+(\d+)\]/;
+		  my $product = $1;
+		  $product = &trim($product);
+		  my $goId = "GO:".$2;
+		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tF\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+		}
+	      }
+
+	      if ($qualifier eq 'GO_component'){
+		foreach my $value ($feature->get_tag_values($qualifier)){
+		  $value =~ /^(.+)\[\D+(\d+)\]/;
+		  my $product = $1;
+		  $product = &trim($product);
+		  my $goId = "GO:".$2;
+		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tC\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+		}
+	      }
+	    }
+	  }
+	}
+      }
+}
+
+$goAssocFh->close();
+
+#-------------------------------------------------------------------------------
+
+sub trim($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	return $string;
+}
+
+
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl makeGoAssocFile \\
+--genbank_file <s-genbank file to be parsed> \\
+--output_file <output go associations file> \\
+--db <Database name> \\
+--taxon_id <Taxon ID> \\
+[--evidence_code <evidence code for the GO associations, if same for all. default (IEA)] \\
+[--annotation_basis <basis for annotation>] \\
+[--verbose <boolean-a little extra STDERR out>] \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
+
+1;
