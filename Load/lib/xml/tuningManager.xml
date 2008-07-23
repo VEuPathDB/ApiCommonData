@@ -2317,7 +2317,7 @@ SELECT gf.source_id,
        COUNT(HB3) AS graph_hb3, COUNT(Dd2) AS graph_dd2,
        COUNT(waters) AS graph_waters, COUNT(gametocyte) as graph_gametocyte,
        COUNT(cowman) AS graph_cowman, COUNT(mexp128) AS graph_mexp128,
-       COUNT(mexp494) AS graph_mexp494
+       COUNT(mexp494) AS graph_mexp494, COUNT(kappe) as graph_kappe
 FROM dots.GeneFeature gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2466,7 +2466,19 @@ FROM dots.GeneFeature gf,
     (SELECT p.source_id, 1 AS mexp494
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum'
-        AND p.profile_set_id = ps.profile_set_id) mexp494
+        AND p.profile_set_id = ps.profile_set_id) mexp494,
+    (SELECT p1.source_id, 1 AS kappe
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3
+      WHERE ps1.name = 'raw_numerators_percents'
+       AND  ps2.name = 'raw_denominators_percents'
+       AND  ps3.name = 'kappe_normalized_replicate-ids-averaged'
+       AND p1.profile_set_id = ps1.profile_set_id
+       AND p2.profile_set_id = ps2.profile_set_id
+       AND p3.profile_set_id = ps3.profile_set_id     
+       AND p1.source_id = p2.source_id
+       AND p1.source_id = p3.source_id) kappe
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
@@ -2477,6 +2489,7 @@ FROM dots.GeneFeature gf,
   AND gf.source_id = cowman.source_id(+)
   AND gf.source_id = mexp128.source_id(+)
   AND gf.source_id = mexp494.source_id(+)
+  AND gf.source_id = kappe.source_id(+)
 GROUP BY gf.source_id
       ]]>
     </sql>
