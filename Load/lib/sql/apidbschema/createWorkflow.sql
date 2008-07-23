@@ -14,7 +14,7 @@ ADD CONSTRAINT workflow_pk PRIMARY KEY (workflow_id);
 
 ALTER TABLE apidb.Workflow
 ADD CONSTRAINT workflow_uniq
-UNIQUE (name, version)
+UNIQUE (name, version);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Workflow TO gus_w;
 GRANT SELECT ON apidb.Workflow TO gus_r;
@@ -48,7 +48,7 @@ REFERENCES apidb.Workflow (workflow_id);
 
 ALTER TABLE apidb.WorkflowStep
 ADD CONSTRAINT workflow_step_uniq
-UNIQUE (name, workflow_id)
+UNIQUE (name, workflow_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStep TO gus_w;
 GRANT SELECT ON apidb.WorkflowStep TO gus_r;
@@ -60,26 +60,26 @@ GRANT SELECT ON apidb.WorkflowStep_sq TO gus_w;
 
 -----------------------------------------------------------
 
-create table WorkflowStepDependency (
+create table apidb.WorkflowStepDependency (
   workflow_step_dependency_id number(10),
-  parent number(10),
-  child number(10)
-)
+  parent_id number(10),
+  child_id number(10)
+);
 
 ALTER TABLE apidb.WorkflowStepDependency
 ADD CONSTRAINT workflow_step_d_pk PRIMARY KEY (workflow_step_dependency_id);
 
 ALTER TABLE apidb.WorkflowStepDependency
-ADD CONSTRAINT workflow_step_fk1 FOREIGN KEY (parent_id)
-REFERENCES apidb.Workflow (workflow_step_id);
+ADD CONSTRAINT workflow_step_d_fk1 FOREIGN KEY (parent_id)
+REFERENCES apidb.WorkflowStep (workflow_step_id);
 
 ALTER TABLE apidb.WorkflowStepDependency
-ADD CONSTRAINT workflow_step_fk2 FOREIGN KEY (child_id)
-REFERENCES apidb.Workflow (workflow_step_id);
+ADD CONSTRAINT workflow_step_d_fk2 FOREIGN KEY (child_id)
+REFERENCES apidb.WorkflowStep (workflow_step_id);
 
 ALTER TABLE apidb.WorkflowStepDependency
 ADD CONSTRAINT workflow_step_d_uniq
-UNIQUE (parent_id, child_id)
+UNIQUE (parent_id, child_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStepDependency TO gus_w;
 GRANT SELECT ON apidb.WorkflowStepDependency TO gus_r;
