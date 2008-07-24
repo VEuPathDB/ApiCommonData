@@ -1,7 +1,7 @@
 <wdkModel>
-    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,ApiDB,PlasmoDB">
+    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB, ApiDB">
 
-      <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,ApiDB">
+      <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ApiDB">
 
         <projectParamRef ref="recordParams.Project"/>
 
@@ -81,6 +81,20 @@
          <columnAttribute name="journal_page" displayName="Page" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
 
+      <!-- =============================================================== -->
+      <!--   Reporters -->
+      <!-- =============================================================== -->
+
+      <attributeQueryRef ref="IsolateAttributes.Barcode" includeProjects="PlasmoDB">
+         <columnAttribute name="strain" displayName="Strain" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="country" displayName="Country" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="collected_by" displayName="Collected_By" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="note" displayName="Note" internal="true" includeProjects="PlasmoDB"/>
+         <columnAttribute name="length" displayName="Barcode/Chip Length" internal="false" includeProjects="PlasmoDB"/>
+         <columnAttribute name="na_sequence_id" displayName="NA Sequence ID" internal="true" includeProjects="PlasmoDB"/>
+         <columnAttribute name="sequence" displayName="Sequence" internal="false" includeProjects="PlasmoDB"/>
+      </attributeQueryRef>
+
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Isolates Publication table -->
@@ -92,6 +106,29 @@
         <columnAttribute displayName="Title" name="title"/>
         <columnAttribute displayName="Author" name="author"/>
         <columnAttribute displayName="Journal" name="journal_or_book_name"/>
+     </table>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- Isolates Barcode SNP table -->
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <table name="SNP" includeProjects="PlasmoDB"
+            displayName="Isolates SNP Features"
+            queryRef="IsolateTables.SNP">
+        <columnAttribute displayName="Allele" name="allele" internal="true"/>
+        <columnAttribute displayName="Allele" name="colored_allele"/>
+        <columnAttribute displayName="Major Allele" name="major_allele"/>
+        <columnAttribute displayName="Minor Allele" name="minor_allele"/>
+        <columnAttribute displayName="Chromosome" name="chromosome"/>
+        <columnAttribute displayName="Position" name="start_min"/>
+        <columnAttribute name="snp_id" internal="true"/>
+        <linkAttribute displayName="SNP ID" 
+                       name="snp_id_link" visible="$$snp_id$$"
+                       inReportMaker="false" internal="false" >
+            <url> 
+             <![CDATA[showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$$snp_id$$&project_id=PlasmoDB]]> 
+             </url>
+        </linkAttribute>
      </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -145,52 +182,6 @@
 
      </recordClass>
 
-      <recordClass idPrefix="PfI." name="BarcodeRecordClass" type="Isolate" includeProjects="PlasmoDB">
-
-
-        <projectParamRef ref="recordParams.Project"/>
-
-      <!-- =============================================================== -->
-      <!--   Reporters -->
-      <!-- =============================================================== -->
-
-      <reporter name="tabular" displayName="Summary - TAB Delimited"
-                implementation="org.gusdb.wdk.model.report.TabularReporter" />
-
-      <attributeQueryRef ref="IsolateAttributes.Barcode" includeProjects="PlasmoDB">
-         <columnAttribute name="strain" displayName="Strain" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="country" displayName="Country" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="collected_by" displayName="Collected_By" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="note" displayName="Note" internal="true" includeProjects="PlasmoDB"/>
-         <columnAttribute name="length" displayName="Barcode/Chip Length" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="na_sequence_id" displayName="NA Sequence ID" internal="true" includeProjects="PlasmoDB"/>
-         <columnAttribute name="sequence" displayName="Sequence" internal="false" includeProjects="PlasmoDB"/>
-      </attributeQueryRef>
-
-     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-     <!-- Isolates Barcode SNP table -->
-     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-     <table name="SNP" includeProjects="PlasmoDB"
-            displayName="Isolates SNP Features"
-            queryRef="IsolateTables.SNP">
-        <columnAttribute displayName="Allele" name="allele" internal="true"/>
-        <columnAttribute displayName="Allele" name="colored_allele"/>
-        <columnAttribute displayName="Major Allele" name="major_allele"/>
-        <columnAttribute displayName="Minor Allele" name="minor_allele"/>
-        <columnAttribute displayName="Chromosome" name="chromosome"/>
-        <columnAttribute displayName="Position" name="start_min"/>
-        <columnAttribute name="snp_id" internal="true"/>
-        <linkAttribute displayName="SNP ID" 
-                       name="snp_id_link" visible="$$snp_id$$"
-                       inReportMaker="false" internal="false" >
-            <url> 
-             <![CDATA[showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$$snp_id$$&project_id=PlasmoDB]]> 
-             </url>
-        </linkAttribute>
-     </table>
-
-     </recordClass>
   </recordClassSet>
 </wdkModel>
 
