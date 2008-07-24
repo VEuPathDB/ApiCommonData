@@ -4147,14 +4147,14 @@ sub runPairwiseMercatorMavid {
   foreach my $draft (@drafts) {
     my $dirName = "$mercatorDir/$draft-$referenceGenome";
 
-    my $command = "runMercator  -t '($draft,p_falciparum);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d $draft 2>$logFile";
+    my $command = "runMercator  -t '($draft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $referenceGenome  2>$logFile";
     $mgr->runCmd($command);
   }
 
   foreach my $nonDraft (@nonDrafts) {
     my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
 
-    my $command = "runMercator  -t '($nonDraft,p_falciparum);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft 2>$logFile";
+    my $command = "runMercator  -t '($nonDraft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft -n $referenceGenome 2>$logFile";
     $mgr->runCmd($command);
   }
 
