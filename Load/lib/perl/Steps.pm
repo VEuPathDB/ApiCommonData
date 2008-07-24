@@ -3924,8 +3924,8 @@ sub extractCommentsFiles {
   die "Failed to create $textSearchDir.\n"  unless (-e $textSearchDir);
 
   my $cmd = "extractCommentsFile --outputDir $textSearchDir --projectId $projectId --commentSchema $commentSchema";
-  $cmd .= "--gusConfigFile $gusConfigFile" if ($gusConfigFile);
-  $cmd .= "--outputPrefix $filePrefix " if ($filePrefix);
+  $cmd .= " --gusConfigFile $gusConfigFile" if ($gusConfigFile);
+  $cmd .= " --outputPrefix $filePrefix " if ($filePrefix);
 
 
   $cmd .= " --commentSchema $commentSchema --commentDblink $dbLink" if ($commentSchema && $dbLink);
