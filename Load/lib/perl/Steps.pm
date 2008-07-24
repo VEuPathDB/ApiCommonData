@@ -4078,7 +4078,7 @@ sub modifyFile {
 }
 
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $bAgpFile) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $bAgpFile, $organism) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntenySpans";
@@ -4087,7 +4087,7 @@ sub insertMercatorSyntenySpans {
 
   my $out = $file."-synteny";
 
-  my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec'";
+  my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec' --organism '$organism'";
 
   my $formatCmd = "formatPxSyntenyFile --inputFile $file --outputFile $out";
   $formatCmd = $formatCmd . " --agpFile $bAgpFile" if($bAgpFile);
