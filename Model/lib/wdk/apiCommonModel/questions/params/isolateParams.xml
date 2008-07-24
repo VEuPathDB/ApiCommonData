@@ -89,6 +89,13 @@
             quote="false">
             <useTermOnly value="true" includeProjects="PlasmoDB"/>
        </flatVocabParam>
+        <flatVocabParam name="country"
+            queryRef="countryVQ.withIsolates"
+            prompt="Country Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
     </paramSet>
 
     <querySet name="organismIQ">
@@ -230,6 +237,7 @@
   </querySet>
 
   <querySet name="countryVQ">
+
     <sqlQuery name="withIsolates" includeProjects="CryptoDB">
       <column name="internal"/>
       <column name="term"/>
@@ -240,6 +248,20 @@
       FROM   ApiDB.IsolateAttributes src
       WHERE  src.country is not null
       GROUP BY src.country
+      ORDER BY src.country
+      ]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery name="withIsolates" includeProjects="PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.country AS term,
+             src.country AS internal
+      FROM   DoTS.IsolateSource src
+      WHERE  src.country is not null
       ORDER BY src.country
       ]]>
       </sql>

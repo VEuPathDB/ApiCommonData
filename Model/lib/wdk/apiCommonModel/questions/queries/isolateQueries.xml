@@ -107,13 +107,7 @@
          </sql>
     </sqlQuery>
 
-    <wsQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
-      <wsColumn name="source_id" width="32" wsName="source_id"/>
-      <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>
-
-    <sqlQuery name="IsolateByStrain" includeProjects="PlasmoDB">
+    <sqlQuery name="IsolateByTaxon" includeProjects="PlasmoDB">
         <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
         <column name="na_sequence_id"/>
         <column name="project_id"/>
@@ -128,6 +122,12 @@
             ]]>
          </sql>
     </sqlQuery>
+
+    <wsQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -272,11 +272,27 @@
          </sql>
     </sqlQuery>
 
+    <sqlQuery name="IsolateByCountry" includeProjects="PlasmoDB">
+        <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+        <column name="na_sequence_id"/>
+        <column name="project_id"/>
+        <sql>
+          <![CDATA[
+            SELECT etn.na_sequence_id, '@PROJECT_ID@' as project_id
+            FROM   DoTS.IsolateSource src,
+                   DoTS.ExternalNASequence etn
+            WHERE  etn.na_sequence_id = src.na_sequence_id
+               AND src.country IN ($$country$$)
+            ]]>
+         </sql>
+    </sqlQuery>
+
     <wsQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolates with Gene Overlap  -->

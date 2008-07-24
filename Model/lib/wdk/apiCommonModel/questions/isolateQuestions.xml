@@ -59,8 +59,6 @@
 
     </question>
 
-
-
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -70,10 +68,11 @@
               displayName="Species"
               queryRef="IsolateIds.IsolateByTaxon"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB">
-              <attributesList 
-                summary="organism, strain, product, specific_host, map" 
-              /> 
+              includeProjects="CryptoDB,PlasmoDB,ApiDB">
+              <attributesList includeProjects="CryptoDB,ApiDB"
+                 summary="organism, strain, product, specific_host, map" /> 
+              <attributesList includeProjects="PlasmoDB"
+                 summary="strain, country, collected_by, length" /> 
         <summary>
           Find isolates from one or more species.
         </summary> 
@@ -88,26 +87,6 @@
    </propertyList> 
 
     </question>
-
-    <question name="IsolateByStrain"
-              category="Other Attributes"
-              displayName="Strain"
-              queryRef="IsolateIds.IsolateByStrain"
-              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="PlasmoDB">
-              <attributesList 
-                summary="strain, country, collected_by, length" 
-              /> 
-        <summary>
-          Find 3k and barcode isolates by strain name
-        </summary> 
-        <description> 
-        <![CDATA[ 
-          Find isolates from one or more species.  
-        ]]> 
-       </description> 
-    </question>
-
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -231,10 +210,12 @@
               displayName="Country Name"
               queryRef="IsolateIds.IsolateByCountry"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB">
-         <attributesList
-              summary="organism, strain, product, specific_host, country"
-      /> 
+              includeProjects="CryptoDB,PlasmoDB,ApiDB">
+         <attributesList includeProjects="CryptoDB"
+              summary="organism, strain, product, specific_host, country" /> 
+
+         <attributesList includeProjects="PlasmoDB"
+              summary="strain, country, collected_by, length" />
       <summary> 
       Find isolates by country name.
     </summary> 
