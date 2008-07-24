@@ -388,25 +388,28 @@
             <column name="lc_parent_id"/>
             <column name="lc_start_min"/>
             <column name="lc_end_max"/>
+            <column name="lc_sequence"/>
 
             <sql>
             <![CDATA[
              select gf.source_id, lc.aa_feature_id AS lc_name,
              lc.aa_sequence_id AS lc_parent_id,
-             aal.start_min AS lc_start_min, aal.end_max AS lc_end_max
+             aal.start_min AS lc_start_min, aal.end_max AS lc_end_max,
+             substr(aas.sequence, aal.start_min, (aal.end_max-aal.start_min+1)) AS lc_sequence
              from
              dots.aalocation aal,
              dots.genefeature gf,
              dots.transcript t,
              dots.translatedaafeature taf,
-             dots.transmembraneaafeature lc
+             dots.transmembraneaafeature lc, 
+             dots.aaSequence aas
              where gf.source_id = $$primaryKey$$
              and gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = lc.aa_sequence_id
              and lc.aa_feature_id = aal.aa_feature_id
+             and lc.aa_sequence_id = aas.aa_sequence_id
              ORDER BY lc_start_min            
-
              ]]>
             </sql>
         </sqlQuery>
