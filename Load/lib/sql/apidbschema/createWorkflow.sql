@@ -90,3 +90,4 @@ CREATE SEQUENCE apidb.WorkflowStepDependency_sq;
 GRANT SELECT ON apidb.WorkflowStepDependency_sq TO gus_r;
 GRANT SELECT ON apidb.WorkflowStepDependency_sq TO gus_w;
 
+exit;
