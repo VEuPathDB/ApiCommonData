@@ -33,7 +33,7 @@ create table WorkflowStep (
   workflow_id         number(10),
   name                varchar(50),
   host_machine        varchar(30),
-  wrapper_process_id  number(10),
+  process_id          number(10),
   state               varchar(30),
   state_handled       number(1),
   start_time          date,
