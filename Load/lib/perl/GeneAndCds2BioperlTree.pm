@@ -32,46 +32,48 @@ sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
     my ($geneFeature);
     my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
-    $unflattener->unflatten_seq(-seq=>$bioperlSeq,
+    if(!($bioperlSeq->molecule =~ /rna/i)){
+	$unflattener->unflatten_seq(-seq=>$bioperlSeq,
                                  -use_magic=>1);
-    my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
-    $bioperlSeq->remove_SeqFeatures;
+	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
+	$bioperlSeq->remove_SeqFeatures;
 
-    foreach my $bioperlFeatureTree (@topSeqFeatures) {
-	my $type = $bioperlFeatureTree->primary_tag();
-    
+	foreach my $bioperlFeatureTree (@topSeqFeatures) {
+	    my $type = $bioperlFeatureTree->primary_tag();
+	    
 
 
        
-	if ($type eq 'gene') {
+	    if ($type eq 'gene') {
 
-	    $geneFeature = $bioperlFeatureTree;       
-	    for my $tag ($geneFeature->get_all_tags) {    
-		if($tag eq 'pseudo'){
-		    if ($geneFeature->get_SeqFeatures){
-			next;
-		    }else{
-			$geneFeature->primary_tag('pseudo_gene');
-			$geneFeature->add_tag_value('is_pseudo',1);
-			$bioperlSeq->add_SeqFeature($geneFeature);
+		$geneFeature = $bioperlFeatureTree;       
+		for my $tag ($geneFeature->get_all_tags) {    
+		    if($tag eq 'pseudo'){
+			if ($geneFeature->get_SeqFeatures){
+			    next;
+			}else{
+			    $geneFeature->primary_tag('pseudo_gene');
+			    $geneFeature->add_tag_value('is_pseudo',1);
+			    $bioperlSeq->add_SeqFeature($geneFeature);
+			}
+			
 		    }
-		 
+		}       
+		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
+		if($gene){
+		    $bioperlSeq->add_SeqFeature($gene);
 		}
-	    }       
-	    my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
-	    if($gene){
-		$bioperlSeq->add_SeqFeature($gene);
-	    }
-
+		
 
 	    
-	}else{
-	    $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+	    }else{
+		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+		
 
-
+	    }
 	}
-    }
 
+    }
 }
 
 
@@ -132,6 +134,11 @@ sub traverseSeqFeatures {
 				    $codonStart = $value - 1;
 				}
 			    }
+			    if($qualifier eq 'selenocysteine'){
+	 		       $gene->remove_tag('selenocysteine');
+			       $gene->add_tag_value('selenocysteine','selenocysteine');
+			    }
+			    
 			}
 			$codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
 			$codingEnd = $CDSLocation->end() if ($codingEnd > $CDSLocation->end());
