@@ -1,12 +1,13 @@
 create table apidb.Workflow (
-  workflow_id   number(10), 
-  name          varchar(30),  -- name and version are an alternate key
-  version       varchar(30),
-  state         varchar(30),
-  process_id    number(10),
-  metaconfig    clob,
-  start_time    date,
-  end_time      date
+  workflow_id           number(10), 
+  name                  varchar(30),  -- name and version are an alternate key
+  version               varchar(30),
+  state                 varchar(30),
+  process_id            number(10),
+  metaconfig            clob,
+  start_time            date,
+  end_time              date,
+  allowed_running_steps number(3)
 );
 
 ALTER TABLE apidb.Workflow
