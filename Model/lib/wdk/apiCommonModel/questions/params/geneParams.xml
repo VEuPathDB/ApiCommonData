@@ -4078,15 +4078,15 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="internal"/>
             <column name="term"/>
             <sql>
-            select q.name as term, q.name as internal
-            from rad.QUANTIFICATION q, rad.LOGICALGROUPLINK ll,
+            select ass.name as term, ass.name as internal
+            from rad.Assay ass, rad.LOGICALGROUPLINK ll,
                  rad.ANALYSISINPUT ai, rad.ANALYSIS a, rad.PROTOCOL p
             where p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
              and p.protocol_id = a.protocol_id
              and a.analysis_id = ai.analysis_id
              and ai.logical_group_id = ll.logical_group_id
-             and ll.row_id = q.quantification_id
-             order by q.quantification_id
+             and ll.row_id = ass.assay_id
+             order by ass.assay_id
             </sql>
         </sqlQuery>
 
