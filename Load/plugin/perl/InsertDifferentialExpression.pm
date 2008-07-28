@@ -123,10 +123,9 @@ sub run {
 sub readConfig {
   my ($self) = @_;
 
-  my $inputDir = $self->getArg('inputDir');
   my $fn = $self->getArg('configFile');
 
-  open(CONFIG, "$inputDir/$fn") or $self->error("Cannot open file $inputDir/$fn for reading: $!");
+  open(CONFIG, "$fn") or $self->error("Cannot open file $fn for reading: $!");
 
   my @rv;
 
