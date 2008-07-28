@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertDifferentialExpression;
+package ApiCommonData::Load::Plugin::InsertAnalysisResult;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -6,7 +6,6 @@ use strict;
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::Study::OntologyEntry;
-use GUS::Model::RAD::DifferentialExpression;
 use GUS::Model::RAD::Analysis;
 use GUS::Model::RAD::Protocol;
 
@@ -38,6 +37,14 @@ sub getArgumentsDeclaration{
                isList         => 0,
              }),
 
+     enumArg({ descr => 'View of analysisResultImp',
+               name  => 'analysisResultView',
+               isList    => 0,
+               reqd  => 1,
+               constraintFunc => undef,
+               enum => "DataTransformationResult,DifferentialExpression",
+             }),
+
     ];
   return $argsDeclaration;
 }
@@ -47,11 +54,11 @@ sub getArgumentsDeclaration{
 # ----------------------------------------------------------------------
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts Rad.Analysis and Rad.DifferentiaExpression to store fold change and optionally confidence.  Creates the associated Rad.Protocol if it doesn't exist";
+  my $purposeBrief = "Inserts Rad.Analysis and Rad.AnalysisResultImp View.  Creates the associated Rad.Protocol if it doesn't exist";
 
-  my $purpose = "Inserts Rad.Analysis and Rad.DifferentiaExpression to store fold change and optionally confidence.  Creates the associated Rad.Protocol if it doesn't exist";
+  my $purpose = "Inserts Rad.Analysis and Rad.AnalysisResultImp View.  Creates the associated Rad.Protocol if it doesn't exist";
 
-  my $tablesAffected = [['RAD::Analysis', 'One Row to Identify this experiment'],['RAD::DifferentialExpression', 'one row per line in the data file'],['RAD::Protocol', 'Will Create generic row if the specified protocol does not already exist']];
+  my $tablesAffected = [['RAD::Analysis', 'One Row to Identify this experiment'],['RAD::AnalysisResultImp', 'one row per line in the data file'],['RAD::Protocol', 'Will Create generic row if the specified protocol does not already exist']];
 
   my $tablesDependedOn = [['Study::OntologyEntry',  'new protocols will be assigned unknown_protocol_type'],
                           ['DoTS::GeneFeature', 'The id in the data file must ge an existing Gene Feature']];
@@ -60,7 +67,7 @@ sub getDocumentation {
 
   my $failureCases = "";
 
-  my $notes = "Each Data file has the following columns (WITH HEADER): GeneFeature.source_id,FoldChange,Confidence(OPTIONAL).  The Config file has the following columns (no header):file analysis_name protocol_name protocol_type(OPTOINAL)";
+  my $notes = "The first column in the data file specifies the Dots.GeneFeature SourceId.  Subsequent columns are view specific. (ex:  fold_change for DifferentialExpression OR float_value for DataTransformationResult).  The Config file has the following columns (no header):file analysis_name protocol_name protocol_type(OPTOINAL)";
 
   my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief, tablesAffected=>$tablesAffected, tablesDependedOn=>$tablesDependedOn, howToRestart=>$howToRestart, failureCases=>$failureCases,notes=>$notes};
 
@@ -80,7 +87,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 22440 $',
+		     cvsRevision => '$Revision: 22442 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -98,6 +105,11 @@ sub run {
 
   my $totalLines;
 
+  my $analysisResultView = $self->getArg('analysisResultView');
+
+  my $class = "GUS::Model::RAD::$analysisResultView";
+  eval "require $class";
+
   foreach my $configRow (@$config) {
     my $dataFile = $configRow->[0];
     my $analysisName = $configRow->[1];
@@ -108,7 +120,7 @@ sub run {
 
     my $analysis = $self->createAnalysis($protocol, $analysisName);
 
-    my $count = $self->processDataFile($analysis, $dataFile);
+    my $count = $self->processDataFile($analysis, $dataFile, $class);
 
     $totalLines = $totalLines + $count;
   }
@@ -149,7 +161,7 @@ sub readConfig {
 #--------------------------------------------------------------------------------
 
 sub processDataFile {
-  my ($self, $analysis, $fn) = @_;
+  my ($self, $analysis, $fn, $class) = @_;
 
   my $inputDir = $self->getArg('inputDir');
 
@@ -157,33 +169,51 @@ sub processDataFile {
 
   my $tableId = $self->getTableId();
 
-  # remove the header;
-  <FILE>;
+  my $header = <FILE>;
+  chomp $header;
+
+  my @headers = split(/\t/, $header);
 
   my $count;
 
   while(<FILE>) {
     chomp;
 
-    my ($sourceId, $foldChange, $confidence) = split(/\t/, $_);
-
-    my $naFeatureId = $self->getNaFeatureId($sourceId);
-    next unless $naFeatureId;
-
-    my $differentialExpression = GUS::Model::RAD::DifferentialExpression->new({table_id => $tableId,
-                                                                               row_id => $naFeatureId,
-                                                                               confidence => $confidence,
-                                                                               fold_change => $foldChange
-                                                                              });
-    $differentialExpression->setParent($analysis);
-
-    $differentialExpression->submit();
     $count++;
-
     if($count % 500 == 0) {
       $self->undefPointerCache();
       $self->log("Processed $count rows from the input file");
     }
+
+    my @row = split(/\t/, $_);
+
+    $self->userError("The number of columns in the data file didn't match the number of columns in the header for row $count");
+
+    my $sourceId = $row[0];
+
+    my $naFeatureId = $self->getNaFeatureId($sourceId);
+    next unless $naFeatureId;
+
+    my $hashRef = {table_id => $tableId,
+                   row_id => $naFeatureId
+                  };
+
+    for(my $i = 1; $i < scalar @headers; $i++) {
+      my $key = $headers[$i];
+      my $value = $row[$i];
+
+      $hashRef->{$key} = $value;
+    }
+
+    my $analysisResult = eval {
+      $class->new($hashRef);
+    };
+
+    $self->error($@) if $@;
+
+    $analysisResult->setParent($analysis);
+
+    $analysisResult->submit();
   }
 
   close FILE;
