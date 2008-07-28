@@ -2087,7 +2087,7 @@ SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
        A.organism, A.strain, A.specific_host, A.isolation_source, A.country,
        A.note, A.description, A.pcr_primers, A.query_name, A.target_name,
        A.min_subject_start, A.max_subject_end, A.map, B.product, A.project_id,
-       A.is_reference, B.product_alias
+       A.is_reference, B.product_alias, A.sequence, A.data_type
 FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(etn.source_id, 1, 20) as source_id,
              substr(src.organism, 1, 60) as organism,
@@ -2104,7 +2104,9 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(aln.target_name, 1, 20) as target_name,
              aln.min_subject_start, aln.max_subject_end,
              substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
-             src.is_reference
+             src.is_reference,
+						 etn.sequence,
+						 'PopSet' data_type
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb,
            (SELECT extq.source_id, extq.source_id query_name,
