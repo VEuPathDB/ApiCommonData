@@ -3109,6 +3109,23 @@ sub InsertRadAnalysisFromConfig {
 
 }
 
+
+sub InsertSimpleRadAnalysisFromConfig {
+  my ($mgr, $inputDir, $configFile, $name) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  return if $mgr->startStep("Loading Rad Analysis for $name", $name);
+
+  my $args = "--inputDir $inputDir --configFile $configFile";
+
+  $mgr->runPlugin($name,
+                  "ApiCommonData::Load::Plugin::InsertAnalysisResult",
+                  $args, 
+                  "Inserting Rad Analysis and Result for $name");
+
+}
+
 sub InsertExtNaSeqFromShortOligos {
   my ($mgr,$extDbName,$extDbRlsVer,$arrayName) = @_;
 
