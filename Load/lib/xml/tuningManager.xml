@@ -215,10 +215,10 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC)
   </tuningTable>
 
   <tuningTable name="apidb.FeatureLocation">
+    <internalDependency name="apidb.SequencePieceClosure"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaLocation"/>
     <externalDependency name="dots.NaSequenceImp"/>
-    <externalDependency name="dots.SequencePiece"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
@@ -295,7 +295,7 @@ select -- virtual feature locations mapped through SequencePiece
          else sp.distance_from_left + coding_end
        end as coding_end
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
-     dots.SequencePiece sp, dots.NaSequence scaffold, dots.ExonFeature ef,
+     apidb.SequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       where edr.external_database_id = ed.external_database_id) db
@@ -1848,7 +1848,7 @@ ON apidb.ArrayElementAttributes&1 (source_id)
                is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
                tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
                sp.strand_orientation, virtualseq.length, vti.table_id as virtual_target_table_id
-        from dots.BlatAlignment ba, dots.SequencePiece sp, dots.NaSequence virtualseq,
+        from dots.BlatAlignment ba, apidb.SequencePieceClosure sp, dots.NaSequence virtualseq,
              core.TableInfo vti
         where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
@@ -2810,7 +2810,7 @@ FROM (
        sp.piece_na_sequence_id, sp.sequence_order,
        ens.length, vs.length as chr_length, sp.strand_orientation,
        0 as offset
- FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+ FROM dots.VirtualSequence vs, apidb.SequencePieceClosure sp,
      dots.ExternalNaSequence ens
  WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
   and ens.na_sequence_id = sp.piece_na_sequence_id
@@ -2822,10 +2822,10 @@ UNION
        sp.piece_na_sequence_id, sp.sequence_order,
        ens.length, vs.length as chr_length, sp.strand_orientation,
        sum(predecessors.length) as offset
- FROM dots.VirtualSequence vs, dots.SequencePiece sp,
+ FROM dots.VirtualSequence vs, apidb.SequencePieceClosure sp,
      dots.ExternalNaSequence ens,
      (select sp2.virtual_na_sequence_id, sp2.sequence_order, ens2.length
-      from dots.SequencePiece sp2,
+      from apidb.SequencePieceClosure sp2,
            dots.ExternalNaSequence ens2
       where sp2.piece_na_sequence_id = ens2.na_sequence_id) predecessors
  WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
