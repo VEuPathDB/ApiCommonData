@@ -801,7 +801,7 @@ FROM (  -- work around sometime Oracle bug ORA-00942
              apidb.tab_to_string(CAST(COLLECT(name) AS apidb.varchartab), ', ')
                AS go_terms
       FROM (SELECT DISTINCT gf.source_id, o.ontology, gt.name,
-                  	    DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
+                        DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
                               AS source
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.GoAssociation ga,
@@ -2094,7 +2094,7 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(src.strain || ' ' || src.isolate, 1, 60) as strain,
              substr(src.specific_host || src.lab_host, 1, 50) as specific_host,
              decode(src.isolation_source, null, 'Unknown',
-						        substr(upper(substr(src.isolation_source,0,1))
+                    substr(upper(substr(src.isolation_source,0,1))
                     || substr(src.isolation_source,2), 1, 160)) as isolation_source,
              decode(src.country, null, 'Unknown', substr(src.country, 1, 80)) as country,
              substr(src.note, 1, 400) as note,
@@ -2105,8 +2105,8 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              aln.min_subject_start, aln.max_subject_end,
              substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
              src.is_reference,
-						 etn.sequence,
-						 'PopSet' data_type
+             dbms_lob.substr(etn.sequence) as sequence,
+             'PopSet' data_type
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb,
            (SELECT extq.source_id, extq.source_id query_name,
@@ -2147,6 +2147,68 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
         AND edr.version = '2007-12-12'
       GROUP BY etn.source_id) B
 WHERE A.source_id = B.source_id(+)
+UNION
+SELECT etn.na_sequence_id,
+       etn.external_database_release_id,
+       etn.na_sequence_id as source_id,
+       src.organism,
+       src.specific_host,
+       src.isolation_source,
+       src.country,
+       src.note,
+       etn.description,
+       src.pcr_primers,
+       '' as query_name,
+       '' as target_name,
+       '' as min_subject_start,
+       '' as max_subject_end,
+       '' as map,
+       '' as product,
+       'PlasmoDB' as project_id,
+       src.is_reference,
+       '' as product_alias,
+       dbms_lob.substr(etn.sequence),
+       'Barcode' as data_type
+FROM   DoTS.ExternalNASequence etn,
+       DoTS.IsolateSource src,
+       SRES.ExternalDatabaseRelease edr,
+       SRES.ExternalDatabase edb
+WHERE  etn.na_sequence_id = src.na_sequence_id
+   AND edr.external_database_id = edb.external_database_id
+   AND edr.external_database_release_id = etn.external_database_release_id
+   AND edb.name = 'Isolate barcode data from Broad'
+   AND edr.version = '2008-06-13'
+UNION
+SELECT etn.na_sequence_id,
+       etn.external_database_release_id,
+       etn.na_sequence_id as source_id,
+       src.organism,
+       src.specific_host,
+       src.isolation_source,
+       src.country,
+       src.note,
+       etn.description,
+       src.pcr_primers,
+       '' as query_name,
+       '' as target_name,
+       '' as min_subject_start,
+       '' as max_subject_end,
+       '' as map,
+       '' as product,
+       'PlasmoDB' as project_id,
+       src.is_reference,
+       '' as product_alias,
+       dbms_lob.substr(etn.sequence),
+       '3kChip' as data_type
+FROM   DoTS.ExternalNASequence etn,
+       DoTS.IsolateSource src,
+       SRES.ExternalDatabaseRelease edr,
+       SRES.ExternalDatabase edb
+WHERE  etn.na_sequence_id = src.na_sequence_id
+   AND edr.external_database_id = edb.external_database_id
+   AND edr.external_database_release_id = etn.external_database_release_id
+   AND edb.name = 'Broad 3K genotyping chip'
+   AND edr.version = '2008-06-13'
       ]]>
     </sql>
     <sql>
