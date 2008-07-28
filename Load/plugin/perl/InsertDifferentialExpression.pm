@@ -80,7 +80,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 22439 $',
+		     cvsRevision => '$Revision: 22440 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -168,6 +168,7 @@ sub processDataFile {
     my ($sourceId, $foldChange, $confidence) = split(/\t/, $_);
 
     my $naFeatureId = $self->getNaFeatureId($sourceId);
+    next unless $naFeatureId;
 
     my $differentialExpression = GUS::Model::RAD::DifferentialExpression->new({table_id => $tableId,
                                                                                row_id => $naFeatureId,
@@ -198,7 +199,7 @@ sub getNaFeatureId {
   my @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.geneFeature where source_id = '$sourceId'" );
 
   if(scalar @naFeatures != 1) {
-    $self->error("Dots.GeneFeature na_feature_id not found for sourceId $sourceId");
+    $self->log("WARN:  Skipping $sourceId...Dots.GeneFeature na_feature_id not found.");
   }
   return $naFeatures[0];
 
