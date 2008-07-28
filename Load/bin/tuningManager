@@ -18,9 +18,9 @@ my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mda
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $svnUrl, $model, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $subversionUrl, $model, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
-           "svnUrl=s" => \$svnUrl,
+           "subversionUrl=s" => \$subversionUrl,
            "model=s" => \$model,
            "instance=s" => \$instance,
            "password=s" => \$password,
@@ -31,14 +31,14 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupWarnOnly!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: configFile or svnUrl parameter must be supplied")
-  unless $configFile or $svnUrl;
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: configFile or subversionUrl parameter must be supplied")
+  unless $configFile or $subversionUrl;
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("missing parameter: notifyEmail") unless $notifyEmail;
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either model or both instance and password must be specified")
   unless ($model || $instance && $password);
-&usage unless (($configFile || $svnUrl) && $notifyEmail && ($model || $instance && $password));
+&usage unless (($configFile || $subversionUrl) && $notifyEmail && ($model || ($instance && $password)));
 
-$configFile = getConfigFileName($configFile, $svnUrl);
+$configFile = getConfigFileName($configFile, $subversionUrl);
 ApiCommonData::Load::TuningConfig::Log::addLog("Using log file \"$configFile\"");
 my ($config) = &parseConfigFile($configFile);
 
@@ -219,6 +219,7 @@ Usage: tuningManager --configFile <configXmlPath> {--model <modelName>}
 
 options:
   configFile      an xml file describing the tables to be created
+  subversionUrl   URL to check out the config file directory
   model           name of model to use for database access info
   instance        the database instance to login and craete objects in
   password        database login password
@@ -281,11 +282,11 @@ Sample config file XML:
 }
 
 sub getConfigFileName {
-  my ($configFile, $svnUrl) = @_;
+  my ($configFile, $subversionUrl) = @_;
 
-  if ($svnUrl) {
-    my $configDir = "/tmp/tManSvn/";
-    my @cmdLine = ("svn", "checkout", $svnUrl, $configDir);
+  if ($subversionUrl) {
+    my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
+    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
     system(@cmdLine) == 0
       or die "system @cmdLine failed: $?";
 
