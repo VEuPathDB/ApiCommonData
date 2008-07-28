@@ -80,7 +80,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 15195 $',
+		     cvsRevision => '$Revision: 22439 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -153,7 +153,7 @@ sub processDataFile {
 
   my $inputDir = $self->getArg('inputDir');
 
-  open(FILE, "inputDir/$fn") or $self->error("Cannot open file $inputDir/$fn for reading: $!");
+  open(FILE, "$inputDir/$fn") or $self->error("Cannot open file $inputDir/$fn for reading: $!");
 
   my $tableId = $self->getTableId();
 
