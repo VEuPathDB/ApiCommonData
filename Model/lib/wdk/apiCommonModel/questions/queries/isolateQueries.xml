@@ -109,15 +109,16 @@
 
     <sqlQuery name="IsolateByTaxon" includeProjects="PlasmoDB">
         <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
-        <column name="na_sequence_id"/>
+        <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
         <column name="project_id"/>
+        <column name="data_type"/>
         <sql>
           <![CDATA[
-            SELECT etn.na_sequence_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.IsolateSource src, 
-                   DoTS.ExternalNASequence etn
-            WHERE  src.strain in ($$strain$$)
-               AND etn.na_sequence_id = src.na_sequence_id
+            SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type as data_type
+            FROM   ApiDB.IsolateAttributes src
+            WHERE  src.strain in ($$strain$$) 
+              AND  src.data_type in ($$type$$)
             ORDER BY src.strain
             ]]>
          </sql>
@@ -317,26 +318,26 @@
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- BLAST  -->
-		<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-		<wsQuery name="IsolatesBySimilarity"
-					   displayName="BLAST"
-					   processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
-			<paramRef ref="sharedParams.BlastDatabaseType"/>
-			<paramRef ref="sharedParams.BlastAlgorithm"/>
-			<paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
-			<paramRef ref="sharedParams.BlastQuerySequence"/>
-			<paramRef ref="sharedParams.-e"/>
-			<paramRef ref="sharedParams.-v"/>
-			<paramRef ref="sharedParams.-b"/>
-			<paramRef ref="sharedParams.-filter"/>
-			<wsColumn name="source_id" width="32" wsName="Identifier"/>
-			<wsColumn name="project_id" width="32" wsName="ProjectId"/>
-			<wsColumn name="TabularRow" width="3000"/>
-			<wsColumn name="Alignment" width="4000"/>
-			<wsColumn name="Header" width="3000"/>
-			<wsColumn name="Footer" width="3000"/>
-		</wsQuery>
+    <wsQuery name="IsolatesBySimilarity"
+             displayName="BLAST"
+             processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+      <paramRef ref="sharedParams.BlastDatabaseType"/>
+      <paramRef ref="sharedParams.BlastAlgorithm"/>
+      <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
+      <paramRef ref="sharedParams.BlastQuerySequence"/>
+      <paramRef ref="sharedParams.-e"/>
+      <paramRef ref="sharedParams.-v"/>
+      <paramRef ref="sharedParams.-b"/>
+      <paramRef ref="sharedParams.-filter"/>
+      <wsColumn name="source_id" width="32" wsName="Identifier"/>
+      <wsColumn name="project_id" width="32" wsName="ProjectId"/>
+      <wsColumn name="TabularRow" width="3000"/>
+      <wsColumn name="Alignment" width="4000"/>
+      <wsColumn name="Header" width="3000"/>
+      <wsColumn name="Footer" width="3000"/>
+    </wsQuery>
 
   </querySet>
 

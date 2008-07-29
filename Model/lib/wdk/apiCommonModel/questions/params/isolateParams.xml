@@ -76,7 +76,7 @@
             multiPick="true"
             quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
-       </flatVocabParam>
+        </flatVocabParam>
 
 
     </paramSet>
@@ -96,31 +96,17 @@
             quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
        </flatVocabParam>
-
-      <enumParam name="isolate_type"
-                 prompt="Isolate type"
-                 multiPick="false"
-                 quote="true">
-        <help>
-          Choose the isolate type to return for this query.
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-        <enumList>
-          <enumValue>
-            <term>Barcode</term>
-            <internal>barcode</internal>
-          </enumValue>
-          <enumValue>
-            <term>3K SNP chip</term>
-            <internal>3K</internal>
-          </enumValue>
-        </enumList>
-      </enumParam>
-
+       <flatVocabParam name="type"
+            queryRef="typeVQ.withIsolates"
+            prompt="Isolate type"
+            multiPick="true"
+            quote="false"> 
+            <useTermOnly value="true" includeProjects="ApiDB"/> 
+       </flatVocabParam>
     </paramSet>
 
     <querySet name="organismIQ">
-      <sqlQuery name="withIsolate" includeProjects="CryptoDB">
+      <sqlQuery name="withIsolates" includeProjects="CryptoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -293,6 +279,21 @@
       <wsColumn name="term" width="200" wsName="term"/>
     </wsQuery>
 
+  </querySet>
+
+  <querySet name="typeVQ">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT src.data_type AS term,
+             src.data_type AS internal
+      FROM   ApiDB.IsolateAttributes src
+      ORDER BY src.data_type
+      ]]>
+      </sql>
+    </sqlQuery>
   </querySet>
 
   <querySet name="strainVQ">
