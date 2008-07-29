@@ -219,26 +219,22 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
-				<sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="CryptoDB,ApiDB">
-					  <paramRef ref="recordParams.primaryKey"/>
-					  <paramRef ref="recordParams.projectId"/>
-					  <column name="term"/>
-					  <column name="internal"/>
-					  <sql>
-						SELECT 'All Cryptosporidium Isolates' as term, 'All Cryptosporidium Isolates' as internal from dual 
-					  </sql>
-				</sqlQuery>
-
-        <!-- AjaxTables.BlastBarcodeOrganismTermList -->
-				<sqlQuery name="BlastBarcodeOrganismTermList" isCacheable='true' includeProjects="PlasmoDB,ApiDB">
-					  <paramRef ref="recordParams.primaryKey"/>
-					  <paramRef ref="recordParams.projectId"/>
-					  <column name="term"/>
-					  <column name="internal"/>
-					  <sql>
-						SELECT 'All Plasmodium Barcodes' as term, 'All Plasmodium Barcodes' as internal from dual 
-					  </sql>
-				</sqlQuery>
+        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true'>
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="term"/>
+            <column name="internal"/>
+            <sql includeProjects="CryptoDB">
+              SELECT 'All Cryptosporidium Isolates' as term, 
+						         'All Cryptosporidium Isolates' as internal 
+						  FROM dual 
+            </sql>
+            <sql includeProjects="PlasmoDB">
+              SELECT 'All Plasmodium Barcodes' as term, 
+                     'All Plasmodium Barcodes' as internal 
+              FROM DUAL 
+            </sql>
+        </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->
         <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
@@ -414,21 +410,21 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
         </sqlQuery>
 
         <!-- AjaxTables.BlastAssembliesOrganismTermList -->
-	<sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,ApiDB">
-	    <paramRef ref="recordParams.primaryKey"/>
-	    <paramRef ref="recordParams.projectId"/>
-	    <column name="term"/>
-	    <column name="internal"/>
+  <sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,ApiDB">
+      <paramRef ref="recordParams.primaryKey"/>
+      <paramRef ref="recordParams.projectId"/>
+      <column name="term"/>
+      <column name="internal"/>
  <sql includeProjects="GiardiaDB">
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 8 as idx from dual
-	    </sql>
-	    <sql includeProjects="CryptoDB">
+      </sql>
+      <sql includeProjects="CryptoDB">
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual
-	    </sql>
-	    <sql includeProjects="ToxoDB">
+      </sql>
+      <sql includeProjects="ToxoDB">
                  SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
-	    </sql>
-	    <sql includeProjects="ApiDB">
+      </sql>
+      <sql includeProjects="ApiDB">
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual UNION
                  SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal, 9 as idx from dual UNION
                  SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal, 10 as idx from dual UNION
@@ -437,8 +433,8 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
                  SELECT 'Plasmodium_yoelii' as term, 'Plasmodium yoelii' as internal, 13 as idx from dual UNION
                  SELECT 'Sarcocystis neurona' as term, 'Sarcocystis neurona' as internal, 14 as idx from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
-	    </sql>
-	</sqlQuery>
+      </sql>
+  </sqlQuery>
 
 <!--=================================================================================-->
 <!-- AJAX TERM QUERIES-->
