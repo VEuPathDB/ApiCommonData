@@ -187,7 +187,7 @@ sub processDataFile {
 
     my @row = split(/\t/, $_);
 
-    $self->userError("The number of columns in the data file didn't match the number of columns in the header for row $count");
+    $self->userError("The number of columns in the data file didn't match the number of columns in the header for row $count") unless(scalar @row == scalar @headers);
 
     my $sourceId = $row[0];
 
