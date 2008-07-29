@@ -2535,15 +2535,19 @@ FROM dots.GeneFeature gf,
     (SELECT p1.source_id, 1 AS kappe
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3
+           apidb.profile p3, apidb.profileSet ps3,
+           apidb.profile p4, apidb.profileSet ps4
       WHERE ps1.name = 'raw_numerators_percents'
        AND  ps2.name = 'raw_denominators_percents'
        AND  ps3.name = 'kappe_fold_changes'
+       AND  ps4.name = 'kappe_percents_by_condition_over_all_channels'
        AND p1.profile_set_id = ps1.profile_set_id
        AND p2.profile_set_id = ps2.profile_set_id
        AND p3.profile_set_id = ps3.profile_set_id     
+       AND p4.profile_set_id = ps4.profile_set_id     
        AND p1.source_id = p2.source_id
-       AND p1.source_id = p3.source_id) kappe
+       AND p1.source_id = p3.source_id
+       AND p1.source_id = p4.source_id) kappe
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
