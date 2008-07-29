@@ -258,7 +258,7 @@
     <!-- Isolate by Country -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB">
+    <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -268,21 +268,6 @@
             FROM   ApiDB.IsolateAttributes src
             WHERE  replace(src.country, ',', ';') IN ($$country$$)
             ORDER BY src.source_id
-            ]]>
-         </sql>
-    </sqlQuery>
-
-    <sqlQuery name="IsolateByCountry" includeProjects="PlasmoDB">
-        <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-        <column name="na_sequence_id"/>
-        <column name="project_id"/>
-        <sql>
-          <![CDATA[
-            SELECT etn.na_sequence_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.IsolateSource src,
-                   DoTS.ExternalNASequence etn
-            WHERE  etn.na_sequence_id = src.na_sequence_id
-               AND src.country IN ($$country$$)
             ]]>
          </sql>
     </sqlQuery>

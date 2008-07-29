@@ -7,24 +7,22 @@
             <column name="project_id"/>
             <column name="strain"/> 
             <column name="country"/> 
-            <column name="collected_by"/> 
             <column name="note"/> 
             <column name="sequence"/> 
             <column name="length"/> 
             <column name="na_sequence_id"/> 
+            <column name="source_id"/> 
             <sql>
                SELECT src.strain,
                       src.na_sequence_id as na_sequence_id, 
+                      src.source_id,
                       src.country,
-                      src.collected_by,
                       src.note,
-											etn.sequence,
-											length(etn.sequence) length,
+											src.sequence,
+											length(src.sequence) length,
                       $$projectId$$ as project_id
-               FROM   DoTS.IsolateSource src,
-                      DoTS.ExternalNASequence etn
-               WHERE  src.na_sequence_id = $$primaryKey$$
-                  AND src.na_sequence_id = etn.na_sequence_id
+               FROM   ApiDB.IsolateAttributes src
+               WHERE  src.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
