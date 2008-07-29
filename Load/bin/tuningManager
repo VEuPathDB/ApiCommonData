@@ -56,7 +56,7 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{externalDependency},
 	  $tuningTable->{intermediateTable},
 	  $tuningTable->{sql},
-	  $tuningTable->{perl}, $dbh);
+	  $tuningTable->{perl}, $dbh, $debug);
 }
 
 # validate config / check external files
@@ -393,10 +393,11 @@ from (select atab.owner, atab.table_name
     minus select table_owner, table_name from all_synonyms)
 minus select name from apidb.ObsoletedTuningTables
 SQL
+
   my $stmt = $dbh->prepare($sql);
-    while (my ($table) = $stmt->fetchrow_array()) {
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoletedTuningTables");
-    }
+  while (my ($table) = $stmt->fetchrow_array()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoletedTuningTables");
+  }
   $stmt->finish();
 
   ApiCommonData::Load::TuningConfig::Log::addErrorLog("$cleanupCount obsolete tables found")

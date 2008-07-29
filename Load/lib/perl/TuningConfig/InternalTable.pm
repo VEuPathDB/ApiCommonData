@@ -15,8 +15,7 @@ sub new {
         $externalDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls,
-        $dbh)
+        $perls, $dbh, $debug)
 	= @_;
 
     my $self = {};
@@ -28,6 +27,7 @@ sub new {
     $self->{intermediateTables} = $intermediateTables;
     $self->{sqls} = $sqls;
     $self->{perls} = $perls;
+    $self->{debug} = $debug;
     $self->{internalDependencies} = [];
     $self->{externalDependencies} = [];
 
@@ -102,26 +102,30 @@ sub getState {
   } elsif ($self->{dbDef} ne $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningDefinition differs from current definition for $self->{name}");
     $needUpdate = 1;
-  } else {
-    # check internal dependencies
-    foreach my $dependency (@{$self->getInternalDependencies()}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
-      my $childState = $dependency->getState($doUpdate, $dbh);
-      if ($childState eq "neededUpdate") {
-	$needUpdate = 1;
-      } elsif ($childState eq "broken") {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
-	$broken = 1;
-      }
-    }
+  }
 
-    # check external dependencies
-    foreach my $dependency (@{$self->getExternalDependencies()}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
-      if ($dependency->getTimestamp() gt $self->{timestamp}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    timestamp of " . $dependency->getName() . "(" . $dependency->getTimestamp() . ") is later than timestamp of $self->{name} ($self->{timestamp}).");
-	$needUpdate = 1;
-      }
+  # check internal dependencies
+  foreach my $dependency (@{$self->getInternalDependencies()}) {
+    print "$self->{name} internal dependency on " . $dependency->getName() . "\n"
+      if $self->{debug};
+    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
+    my $childState = $dependency->getState($doUpdate, $dbh);
+    if ($childState eq "neededUpdate") {
+      $needUpdate = 1;
+    } elsif ($childState eq "broken") {
+      ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
+      $broken = 1;
+    }
+  }
+
+  # check external dependencies
+  foreach my $dependency (@{$self->getExternalDependencies()}) {
+    print "$self->{name} internal dependency on " . $dependency->getName() . "\n"
+      if $self->{debug};
+    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
+    if ($dependency->getTimestamp() gt $self->{timestamp}) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("    timestamp of " . $dependency->getName() . "(" . $dependency->getTimestamp() . ") is later than timestamp of $self->{name} ($self->{timestamp}).");
+      $needUpdate = 1;
     }
   }
 
