@@ -87,7 +87,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 22442 $',
+		     cvsRevision => '$Revision: 22467 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -121,6 +121,8 @@ sub run {
     my $analysis = $self->createAnalysis($protocol, $analysisName);
 
     my $count = $self->processDataFile($analysis, $dataFile, $class);
+
+    $self->log("File Finished.  $count lines processed");
 
     $totalLines = $totalLines + $count;
   }
@@ -182,7 +184,7 @@ sub processDataFile {
     $count++;
     if($count % 500 == 0) {
       $self->undefPointerCache();
-      $self->log("Processed $count rows from the input file");
+      $self->log("Processed $count rows from $fn");
     }
 
     my @row = split(/\t/, $_);
