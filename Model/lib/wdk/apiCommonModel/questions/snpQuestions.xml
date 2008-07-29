@@ -277,5 +277,90 @@
        </propertyList>
 
     </question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- isolate characteristics -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <question name="SnpsByIsolatePattern" includeProjects="ApiDB,PlasmoDB"
+              category="Other Attributes"
+              displayName="Isolate Pattern"
+              queryRef="SnpsBy.SnpsByIsolatePattern"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,set_a_allele,set_b_allele,linkedGeneId"
+              sorting="snp_location asc"
+        />
+        <summary>
+            <![CDATA[
+              Find SNPs that distinguish two sets of isolates
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+             <value>P. falciparum</value>
+        </propertyList>
+
+	<description>
+            <![CDATA[
+              Find SNPs that distinguish two sets of isolates.  Note that you can determe the specificity of the SNPs. For the most specific SNPs, you should make the number of isolates equal to the number of identifiers you are querying for in each set.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="set_a_allele" displayName="Set A allele"/>
+	     <columnAttribute name="set_b_allele" displayName="Set B allele"/>
+	</dynamicAttributes>
+
+        <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+        </propertyList>
+
+        <propertyList name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+
+    </question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- that are isolates -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <question name="SnpsByIsolateType" includeProjects="ApiDB,PlasmoDB"
+              category="Other Attributes"
+              displayName="Isolate Type"
+              queryRef="SnpsBy.SnpsByIsolateType"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,linkedGeneId,position_in_protein"
+              sorting="snp_location asc"
+        />
+        <summary>
+            <![CDATA[
+              Find SNPs that are being used for isolate typing.
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+             <value>P. falciparum</value>
+        </propertyList>
+
+	<description>
+            <![CDATA[
+              Find SNPs that are being used for isolate typing either in the barcoding assay or on the 3K SNP chip.
+            ]]>
+        </description>
+
+        <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+        </propertyList>
+
+        <propertyList name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+
+    </question>
+
   </questionSet>
 </wdkModel>

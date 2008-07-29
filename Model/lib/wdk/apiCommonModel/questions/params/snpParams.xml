@@ -56,5 +56,35 @@
             <suggest default="2"/>
         </stringParam>
 
+       <stringParam name="set_a_count"
+                     prompt="Minimum number of isolates in Set A with same allele >= "
+                     quote="false">
+            <help>Lower Bound on the number of isolates in set A that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set A.</help>
+            <suggest includeProjects="PlasmoDB" default="3"/>
+        </stringParam>
+
+       <stringParam name="set_b_count"
+                     prompt="Minimum number of isolates in Set B with same allele >= "
+                     quote="false">
+            <help>Lower Bound on the number of isolates in set B that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set B.</help>
+            <suggest includeProjects="PlasmoDB" default="3"/>
+        </stringParam>
+
+        <datasetParam name="isolate_set_a"
+                      prompt="Set A isolate identifiers">
+            <help>input a comma delimited set of isolate ids, or upload a file</help>
+           <suggest includeProjects="PlasmoDB"
+					sample=""
+                    default="458197,458250,458198"/>
+        </datasetParam>
+
+        <datasetParam name="isolate_set_b"
+                      prompt="Set B isolate identifiers">
+            <help>input a comma delimited set of isolate ids, or upload a file</help>
+           <suggest includeProjects="PlasmoDB"
+					sample=""
+                    default="458268,458196,458195"/>
+        </datasetParam>
+
   </paramSet>
 </wdkModel>

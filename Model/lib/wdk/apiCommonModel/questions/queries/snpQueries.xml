@@ -284,7 +284,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
       </wsQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- ID -->
+    <!-- Allele Frequency -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByAlleleFrequency" includeProjects="PlasmoDB" 
           isCacheable="true">
@@ -348,6 +348,82 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
         <wsColumn name="minor_products"/>
         <wsColumn name="minor_strains"/>
         <wsColumn name="major_strains"/>
+    </wsQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate Pattern -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="SnpsByIsolatePattern" includeProjects="PlasmoDB" 
+          isCacheable="true">
+        <paramRef ref="snpParams.isolate_set_a"/>
+        <paramRef ref="snpParams.set_a_count"/>
+        <paramRef ref="snpParams.isolate_set_b"/>
+        <paramRef ref="snpParams.set_b_count"/>
+        <column name="source_id"/> 
+        <column name="project_id"/>
+        <column name="set_a_allele"/>
+        <column name="set_b_allele"/>
+        <sql>
+            <![CDATA[
+              select seta.snp_source_id as source_id,'PlasmoDB' as project_id,
+              seta.allele as set_a_allele,setb.allele as set_b_allele
+              from (select isnp.snp_source_id,isnp.allele
+              from apidb.isolatesnps isnp, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+              where ds.dataset_id = $$isolate_set_a$$
+              and isnp.is_na_sequence_id = ds.dataset_value
+              and isnp.allele is not null
+              group by isnp.snp_source_id,isnp.allele
+              having count(*) >= $$set_a_count$$) seta,
+              (select isnp.snp_source_id,isnp.allele
+              from apidb.isolatesnps isnp, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+              where ds.dataset_id = $$isolate_set_b$$
+              and isnp.is_na_sequence_id = ds.dataset_value
+              and isnp.allele is not null
+              group by isnp.snp_source_id,isnp.allele
+              having count(*) >= $$set_b_count$$) setb
+              where seta.snp_source_id = setb.snp_source_id
+              and seta.allele != setb.allele
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="SnpsByIsolatePattern" includeProjects="ApiDB"
+             isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+        <paramRef ref="snpParams.set_a"/>
+        <paramRef ref="snpParams.set_a_count"/>
+        <paramRef ref="snpParams.set_b"/>
+        <paramRef ref="snpParams.set_b_count"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="set_a_allele"/>
+        <wsColumn name="set_b_allele"/>
+    </wsQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate Pattern -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="SnpsByIsolateType" includeProjects="PlasmoDB" 
+          isCacheable="true">
+        <paramRef ref="isolateParams.isolate_type"/>
+        <column name="source_id"/> 
+        <column name="project_id"/>
+        <sql>
+            <![CDATA[
+              select distinct snp_source_id as source_id, '@PROJECT_ID@' as project_id
+              from apidb.isolatesnps
+           ]]>
+       </sql>
+    </sqlQuery>
+
+    <wsQuery name="SnpsByIsolateType" includeProjects="ApiDB"
+             isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+        <paramRef ref="isolateParams.isolate_type"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
   </querySet>

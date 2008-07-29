@@ -96,10 +96,31 @@
             quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
        </flatVocabParam>
+
+      <enumParam name="isolate_type"
+                 prompt="Isolate type"
+                 multiPick="false"
+                 quote="true">
+        <help>
+          Choose the isolate type to return for this query.
+        </help>
+        <useTermOnly value="true" includeProjects="ApiDB"/>
+        <enumList>
+          <enumValue>
+            <term>Barcode</term>
+            <internal>barcode</internal>
+          </enumValue>
+          <enumValue>
+            <term>3K SNP chip</term>
+            <internal>3K</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
     </paramSet>
 
     <querySet name="organismIQ">
-      <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+      <sqlQuery name="withIsolate" includeProjects="CryptoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
