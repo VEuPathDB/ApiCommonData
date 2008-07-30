@@ -10,15 +10,15 @@
             <column name="note"/> 
             <column name="sequence"/> 
             <column name="length"/> 
-            <column name="na_sequence_id"/> 
+            <column name="data_type"/> 
             <column name="source_id"/> 
             <sql>
                SELECT src.strain,
-                      src.na_sequence_id as na_sequence_id, 
                       src.source_id,
                       src.country,
                       src.note,
 											src.sequence,
+											src.data_type,
 											length(src.sequence) length,
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes src
