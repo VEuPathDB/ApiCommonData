@@ -2089,7 +2089,7 @@ SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
        A.min_subject_start, A.max_subject_end, A.map, B.product, A.project_id,
        A.is_reference, B.product_alias, A.sequence, A.data_type
 FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
-             to_number(substr(etn.source_id, 1, 20)) as source_id,
+             substr(etn.source_id, 1, 20) as source_id,
              substr(src.organism, 1, 60) as organism,
              substr(src.strain || ' ' || src.isolate, 1, 60) as strain,
              substr(src.specific_host || src.lab_host, 1, 50) as specific_host,
