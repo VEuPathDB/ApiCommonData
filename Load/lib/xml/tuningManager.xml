@@ -2148,8 +2148,9 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
       GROUP BY etn.source_id) B
 WHERE A.source_id = B.source_id(+)
 UNION
-SELECT etn.na_sequence_id, etn.external_database_release_id,
-       etn.na_sequence_id as source_id,
+SELECT etn.na_sequence_id, 
+       etn.external_database_release_id,
+       'BC.' || etn.na_sequence_id as source_id,
        src.organism,
        src.strain,
        src.specific_host,
@@ -2181,7 +2182,7 @@ WHERE  etn.na_sequence_id = src.na_sequence_id
 UNION
 SELECT etn.na_sequence_id,
        etn.external_database_release_id,
-       etn.na_sequence_id as source_id,
+       'CP.' || etn.na_sequence_id as source_id,
        src.organism,
        src.strain,
        src.specific_host,
