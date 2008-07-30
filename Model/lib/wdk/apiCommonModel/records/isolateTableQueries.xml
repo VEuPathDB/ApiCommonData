@@ -71,7 +71,7 @@
                    snp.major_allele,
                    snp.minor_allele,
                    $$projectId$$ as project_id
-            FROM   DoTS.ExternalNASequence etn,
+            FROM   ApiDB.IsolateAttributes etn,
                    DoTS.IsolateFeature if,
                    DoTS.IsolateSource src,
                    DoTS.ExternalNASequence chr,
@@ -83,7 +83,7 @@
                AND nal.na_feature_id = if.na_feature_id
                AND chr.na_sequence_id = if.na_sequence_id
                AND snp.source_id = if.source_id
-               AND etn.na_sequence_id = $$primaryKey$$
+               AND etn.source_id = $$primaryKey$$
             ORDER BY if.source_id
             ]]>
             </sql>
