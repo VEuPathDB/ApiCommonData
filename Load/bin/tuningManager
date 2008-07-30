@@ -18,10 +18,9 @@ my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mda
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $subversionUrl, $model, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $subversionUrl, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
            "subversionUrl=s" => \$subversionUrl,
-           "model=s" => \$model,
            "instance=s" => \$instance,
            "password=s" => \$password,
            "doUpdate!" => \$doUpdate,
@@ -34,15 +33,15 @@ GetOptions("configFile=s" => \$configFile,
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: configFile or subversionUrl parameter must be supplied")
   unless $configFile or $subversionUrl;
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("missing parameter: notifyEmail") unless $notifyEmail;
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either model or both instance and password must be specified")
-  unless ($model || $instance && $password);
-&usage unless (($configFile || $subversionUrl) && $notifyEmail && ($model || ($instance && $password)));
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: both instance and password must be specified")
+  unless ($instance && $password);
+&usage unless (($configFile || $subversionUrl) && $notifyEmail && $instance && $password);
 
 $configFile = getConfigFileName($configFile, $subversionUrl);
 ApiCommonData::Load::TuningConfig::Log::addLog("Using log file \"$configFile\"");
 my ($config) = &parseConfigFile($configFile);
 
-my $dbh = getDbHandle($model, $instance, $password);
+my $dbh = getDbHandle($instance, $password);
 
 # create an object for each <tuningTable> entity
 my %tuningTables;
@@ -212,7 +211,7 @@ sub usage {
 q{
 Create/update "tuning tables", denormalized copies of data used to improve web site performance.
 
-Usage: tuningManager --configFile <configXmlPath> {--model <modelName>}
+Usage: tuningManager --configFile <configXmlPath>
                      {--instance <dbInstance>} {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
                      {--cleanupWarnOnly} {--cleanupAge <days>}
@@ -220,7 +219,6 @@ Usage: tuningManager --configFile <configXmlPath> {--model <modelName>}
 options:
   configFile      an xml file describing the tables to be created
   subversionUrl   URL to check out the config file directory
-  model           name of model to use for database access info
   instance        the database instance to login and craete objects in
   password        database login password
   doUpdate        update any tables found to be out of date
@@ -319,19 +317,10 @@ sub parseConfigFile {
 }
 
 sub getDbHandle {
-  my ($model, $instance, $password) = @_;
+  my ($instance, $password) = @_;
 
   my $dsn = "dbi:Oracle:" . $instance;
   my $username = 'apidb';
-
-  if ($model) {
-    use ApiCommonWebsite::Model::ModelConfig;
-
-    my $cfg = new ApiCommonWebsite::Model::ModelConfig($model);
-    $username = $cfg->getLogin;
-    $password = $cfg->getPassword;
-    $dsn = $cfg->getDbiDsn;
-  }
 
   my $dbh = DBI->connect(
                 $dsn,

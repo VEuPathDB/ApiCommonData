@@ -2387,76 +2387,24 @@ SELECT gf.source_id,
 FROM dots.GeneFeature gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
            apidb.profile p3, apidb.profileSet ps3,
-           apidb.profile p4, apidb.profileSet ps4,
            apidb.profile p5, apidb.profileSet ps5,
-           apidb.profile p6, apidb.profileSet ps6,
-           apidb.profile p7, apidb.profileSet ps7,
-           apidb.profile p8, apidb.profileSet ps8,
-           apidb.profile p9, apidb.profileSet ps9,
-           apidb.profile p10, apidb.profileSet ps10
+           apidb.profile p7, apidb.profileSet ps7
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
         AND p3.profile_set_id = ps3.profile_set_id
-        AND p4.profile_set_id = ps4.profile_set_id
         AND p5.profile_set_id = ps5.profile_set_id
-        AND p6.profile_set_id = ps6.profile_set_id
         AND p7.profile_set_id = ps7.profile_set_id
-        AND p8.profile_set_id = ps8.profile_set_id
-        AND p9.profile_set_id = ps9.profile_set_id
-        AND p10.profile_set_id = ps10.profile_set_id
-        AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
-        AND p1.source_id = p4.source_id
         AND p1.source_id = p5.source_id
-        AND p1.source_id = p6.source_id
         AND p1.source_id = p7.source_id
-        AND p1.source_id = p8.source_id
-        AND p1.source_id = p9.source_id
-        AND p1.source_id = p10.source_id
         AND ps1.name = 'DeRisi HB3 Smoothed Averaged'
-        AND ps2.name = 'DeRisi HB3 Percents Averaged'
         AND ps3.name = 'DeRisi 3D7 Smoothed Averaged'
-        AND ps4.name = 'DeRisi 3D7 Percents Averaged'
         AND ps5.name = 'DeRisi Dd2 Smoothed Averaged'
-        AND ps6.name = 'DeRisi Dd2 Percents Averaged'
-        AND ps7.name = 'winzeler_cc_sorbExp'
-        AND ps8.name = 'winzeler_cc_sorbPct'
-        AND ps9.name = 'winzeler_cc_tempExp'
-        AND ps10.name = 'winzeler_cc_tempPct') combo,
+        AND ps7.name = 'winzeler_cc_sorbExp') combo,
      (SELECT p1.source_id, 1 AS winzeler
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3,
-           apidb.profile p4, apidb.profileSet ps4,
-           apidb.profile p5, apidb.profileSet ps5,
-           apidb.profile p6, apidb.profileSet ps6,
-           apidb.profile p7, apidb.profileSet ps7,
-           apidb.profile p8, apidb.profileSet ps8
+      FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p4.profile_set_id = ps4.profile_set_id
-        AND p5.profile_set_id = ps5.profile_set_id
-        AND p6.profile_set_id = ps6.profile_set_id
-        AND p7.profile_set_id = ps7.profile_set_id
-        AND p8.profile_set_id = ps8.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND p1.source_id = p3.source_id
-        AND p1.source_id = p4.source_id
-        AND p1.source_id = p5.source_id
-        AND p1.source_id = p6.source_id
-        AND p1.source_id = p7.source_id
-        AND p1.source_id = p8.source_id
-        AND ps1.name = 'winzeler_cc_sorbExp'
-        AND ps2.name = 'winzeler_cc_sorbPct'
-        AND ps3.name = 'winzeler_cc_sorbLgp'
-        AND ps4.name = 'winzeler_cc_tempExp'
-        AND ps5.name = 'winzeler_cc_tempPct'
-        AND ps6.name = 'winzeler_cc_tempLgp'
-        AND ps7.name = 'winzeler_cc_sporExp'
-        AND ps8.name = 'winzeler_cc_sporPct') winzeler,
+        AND ps1.name = 'winzeler_cc_sorbExp') winzeler,
      (SELECT p1.source_id, 1 AS threeD7
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p2, apidb.profileSet ps2,
@@ -2494,25 +2442,9 @@ FROM dots.GeneFeature gf,
         AND ps2.name = 'DeRisi Dd2 Normalized repsCollapsed Averaged'
          AND ps3.name = 'DeRisi Dd2 Percents Averaged') Dd2,
      (SELECT p1.source_id, 1 AS waters
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3,
-           apidb.profile p4, apidb.profileSet ps4,
-           apidb.profile p5, apidb.profileSet ps5
+      FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p4.profile_set_id = ps4.profile_set_id
-        AND p5.profile_set_id = ps5.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND p1.source_id = p3.source_id
-        AND p1.source_id = p4.source_id
-        AND p1.source_id = p5.source_id
-        AND ps1.name = 'Waters HPE Percents Averaged'
-        AND ps2.name = 'Waters HP Timecourse Averaged'
-        AND ps3.name = 'Waters HP Percents Averaged'
-        AND ps4.name = 'Waters HPE Timecourse Averaged'
-        AND ps5.name = 'Waters HPE Percents Averaged') waters,
+        AND ps1.name = 'Waters HPE Percents Averaged') waters,
      (SELECT p1.source_id, 1 AS gametocyte
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p2, apidb.profileSet ps2

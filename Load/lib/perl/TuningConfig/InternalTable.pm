@@ -120,7 +120,7 @@ sub getState {
 
   # check external dependencies
   foreach my $dependency (@{$self->getExternalDependencies()}) {
-    print "$self->{name} internal dependency on " . $dependency->getName() . "\n"
+    print "$self->{name} external dependency on " . $dependency->getName() . "\n"
       if $self->{debug};
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
     if ($dependency->getTimestamp() gt $self->{timestamp}) {

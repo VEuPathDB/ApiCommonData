@@ -15,7 +15,7 @@ BEGIN {
   sub addLog {
     my ($message) = @_;
 
-    $log .= $message . "\n";
+    $log .= "$message\n";
   }
 
   sub getLog {
