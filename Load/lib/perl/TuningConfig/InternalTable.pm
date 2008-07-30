@@ -34,7 +34,7 @@ sub new {
     # get timestamp and definition from database
     my $sql = <<SQL;
        select to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss') as timestamp, definition
-       from apidb.TuningDefinition
+       from apidb.TuningTable
        where name = '$self->{name}'
 SQL
 
@@ -97,10 +97,10 @@ sub getState {
 
   # check if the definition is different (or none is stored)
   if (!$self->{dbDef}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningDefinition exists in database for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningTable record exists in database for $self->{name}");
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningDefinition differs from current definition for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name}");
     $needUpdate = 1;
   }
 
@@ -209,7 +209,7 @@ sub storeDefinition {
   my ($self, $dbh) = @_;
 
   my $sql = <<SQL;
-       delete from apidb.TuningDefinition
+       delete from apidb.TuningTable
        where name = '$self->{name}'
 SQL
 
@@ -219,7 +219,7 @@ SQL
   $stmt->finish();
 
   my $sql = <<SQL;
-       insert into apidb.TuningDefinition
+       insert into apidb.TuningTable
           (name, timestamp, definition) values (?, sysdate, ?)
 SQL
 
@@ -331,7 +331,7 @@ SQL
   # mark old table obsolete
   my ($schema, $table) = split(/\./, $self->{name});
   my $sql = <<SQL;
-    insert into apidb.ObsoletedTuningTables (name, timestamp)
+    insert into apidb.ObsoleteTuningTable (name, timestamp)
     select table_owner || '.' || table_name, sysdate
     from all_synonyms
     where owner = upper(?)

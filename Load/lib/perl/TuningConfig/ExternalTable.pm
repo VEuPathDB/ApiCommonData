@@ -52,7 +52,7 @@ SQL
     # get stored ExternalDependency info for this table
     $sql = <<SQL;
        select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count, timestamp
-       from apidb.ExternalDependency
+       from apidb.TuningMgrExternalDependency
        where name = upper('$name')
 SQL
     my $stmt = $dbh->prepare($sql);
@@ -67,14 +67,14 @@ SQL
       $self->{timestamp} = $timestamp;
       ApiCommonData::Load::TuningConfig::Log::addLog("Stored timestamp ($timestamp) still valid for $self->{name}");
     } else {
-      # table has changed; set timestamp high and update ExternalDependency
+      # table has changed; set timestamp high and update TuningMgrExternalDependency
       $self->{timestamp} = '9999-12-12 23:59:59';
 
       if ($timestamp) {
 	# ExternalDependency record exists; update it
 	ApiCommonData::Load::TuningConfig::Log::addLog("Stored timestamp ($timestamp) no longer valid for $self->{name}");
 	$sql = <<SQL;
-        update apidb.ExternalDependency
+        update apidb.TuningMgrExternalDependency
         set (max_mod_date, timestamp, row_count) =
           (select '$max_mod_date', sysdate, $row_count
 	  from dual)
@@ -84,7 +84,7 @@ SQL
 	# no ExternalDependency record; insert one
 	ApiCommonData::Load::TuningConfig::Log::addLog("No stored timestamp found for $self->{name}");
 	$sql = <<SQL;
-        insert into apidb.ExternalDependency (name, max_mod_date, timestamp, row_count)
+        insert into apidb.TuningMgrExternalDependency (name, max_mod_date, timestamp, row_count)
         select upper('$name'), '$max_mod_date', sysdate, $row_count
 	from dual
 SQL
