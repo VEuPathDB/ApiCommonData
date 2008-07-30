@@ -6,7 +6,7 @@
 
   -->
 
-  <paramSet name="isolateParams" includeProjects="ApiDB,CryptoDB">
+  <paramSet name="isolateParams">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
@@ -30,7 +30,7 @@
             <suggest includeProjects="CryptoDB,ApiDB" sample="Xiao*" default="Xiao*"/> 
         </stringParam>
 
-        <flatVocabParam name="isolate_organism"
+        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,ApiDB"
              queryRef="organismIQ.withIsolates"
             prompt="Organism"
             multiPick="true"
@@ -38,7 +38,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="specific_host"
+        <flatVocabParam name="specific_host" includeProjects="CryptoDB,ApiDB"
              queryRef="hostVQ.withIsolates"
              prompt="Host Name"
              multiPick="true"
@@ -46,7 +46,7 @@
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="isolation_source"
+        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,ApiDB"
              queryRef="isolationSourceVQ.withIsolates"
              prompt="Isolation Source"
              multiPick="true"
@@ -54,7 +54,7 @@
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="product"
+        <flatVocabParam name="product" includeProjects="CryptoDB,ApiDB"
             queryRef="productVQ.withIsolates"
             prompt="Product Name"
             multiPick="true"
@@ -62,7 +62,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="study"
+        <flatVocabParam name="study" includeProjects="CryptoDB,ApiDB"
             queryRef="studyVQ.withIsolates"
             prompt="Study Name"
             multiPick="true"
@@ -70,7 +70,7 @@
             <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="country"
+        <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="countryVQ.withIsolates"
             prompt="Country Name"
             multiPick="true"
@@ -78,31 +78,22 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-
-    </paramSet>
-
-    <paramSet name="isolateParams" includeProjects="PlasmoDB">
-        <flatVocabParam name="strain"
+        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
             prompt="Strain Name"
             multiPick="true"
             quote="false">
             <useTermOnly value="true" includeProjects="PlasmoDB"/>
        </flatVocabParam>
-        <flatVocabParam name="country"
-            queryRef="countryVQ.withIsolates"
-            prompt="Country Name"
-            multiPick="true"
-            quote="false">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
-       </flatVocabParam>
-       <flatVocabParam name="type"
+
+       <flatVocabParam name="type" includeProjects="PlasmoDB,ApiDB"
             queryRef="typeVQ.withIsolates"
             prompt="Isolate type"
             multiPick="true"
             quote="false"> 
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
+
     </paramSet>
 
     <querySet name="organismIQ">
