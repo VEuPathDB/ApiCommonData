@@ -81,5 +81,31 @@
            </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Isolates -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <sqlQuery name="isolates" includeProjects="PlasmoDB" 
+              isCacheable="false">
+            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.projectId"/>
+            <column name="isolate_id"/>
+            <column name="assay_type"/>
+            <column name="strain"/>
+            <column name="country"/>
+            <column name="allele"/>
+            <sql>
+            <![CDATA[
+              select atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
+              isnp.allele, atr.DATA_TYPE as assay_type
+              from apidb.isolateattributes atr, apidb.isolatesnps isnp
+              where isnp.snp_source_id = $$primaryKey$$
+              and isnp.is_source_id = atr.SOURCE_ID
+              order by atr.country,atr.strain
+            ]]>
+           </sql>
+        </sqlQuery>
+
+
     </querySet>
 </wdkModel>

@@ -278,13 +278,58 @@
 
     </question>
 
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- isolate characteristics -->
+    <!-- isolate characteristics by dataset -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <question name="SnpsByIsolatePattern" includeProjects="ApiDB,PlasmoDB"
               category="Other Attributes"
-              displayName="Isolate Pattern"
+              displayName="Isolate Differences"
               queryRef="SnpsBy.SnpsByIsolatePattern"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,set_a_allele,set_b_allele,linkedGeneId"
+              sorting="snp_location asc"
+        />
+        <summary>
+            <![CDATA[
+              Find SNPs that distinguish two sets of isolates.
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+             <value>P. falciparum</value>
+        </propertyList>
+
+	<description>
+            <![CDATA[
+              Find SNPs that distinguish two sets of isolates.  Note that you can determe the specificity of the SNPs. For the most specific SNPs, you should make the number of isolates equal to the number of identifiers you are querying for in each set.
+            ]]>
+        </description>
+        <dynamicAttributes>
+	     <columnAttribute name="set_a_allele" displayName="Set A allele"/>
+	     <columnAttribute name="set_b_allele" displayName="Set B allele"/>
+	</dynamicAttributes>
+
+        <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+        </propertyList>
+
+        <propertyList name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+
+    </question>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- isolate characteristics by history id -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <question name="SnpsByIsolatePatternHistory" includeProjects="ApiDB,PlasmoDB"
+              category="Other Attributes"
+              displayName="Isolate Differences History IDs"
+              queryRef="SnpsBy.SnpsByIsolatePatternHistory"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
         <attributesList
               summary="snp_location,set_a_allele,set_b_allele,linkedGeneId"
@@ -327,7 +372,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <question name="SnpsByIsolateType" includeProjects="ApiDB,PlasmoDB"
               category="Other Attributes"
-              displayName="Isolate Type"
+              displayName="presence in isolate assay"
               queryRef="SnpsBy.SnpsByIsolateType"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
         <attributesList

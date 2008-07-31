@@ -91,12 +91,12 @@
 
        <flatVocabParam name="type" includeProjects="PlasmoDB,ApiDB"
             queryRef="typeVQ.withIsolates"
-            prompt="Isolate type"
+            prompt="Isolate assay type"
             multiPick="true"
-            quote="false"> 
-						<help>
-						  There are two isolate types in PlasmoDB - Barcode and 3K Chip data
-						</help>
+            quote="true"> 
+	    <help>
+		 There are two isolate types in PlasmoDB - Barcode and 3K Chip 
+            </help>
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
 
@@ -284,7 +284,7 @@
       <column name="term"/>
       <sql>
       <![CDATA[
-      SELECT src.data_type AS term,
+      SELECT distinct src.data_type AS term,
              src.data_type AS internal
       FROM   ApiDB.IsolateAttributes src
       ORDER BY src.data_type
