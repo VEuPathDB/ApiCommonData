@@ -288,8 +288,8 @@
               queryRef="SnpsBy.SnpsByIsolatePattern"
               recordClassRef="SnpRecordClasses.SnpRecordClass">
         <attributesList
-              summary="snp_location,set_a_allele,set_b_allele,linkedGeneId"
-              sorting="snp_location asc"
+              summary="snp_location,set_a_allele,set_a_count,set_b_allele,set_b_count,linkedGeneId"
+              sorting="set_a_count desc, set_b_count desc, snp_location asc"
         />
         <summary>
             <![CDATA[
@@ -307,8 +307,10 @@
             ]]>
         </description>
         <dynamicAttributes>
-	     <columnAttribute name="set_a_allele" displayName="Set A allele"/>
-	     <columnAttribute name="set_b_allele" displayName="Set B allele"/>
+	     <columnAttribute name="set_a_allele" displayName="Set A allele" align="center"/>
+	     <columnAttribute name="set_b_allele" displayName="Set B allele" align="center"/>
+	     <columnAttribute name="set_a_count" displayName="Set A count" align="center"/>
+	     <columnAttribute name="set_b_count" displayName="Set B count" align="center"/>
 	</dynamicAttributes>
 
         <propertyList name="specificAttribution">
@@ -351,8 +353,8 @@
             ]]>
         </description>
         <dynamicAttributes>
-	     <columnAttribute name="set_a_allele" displayName="Set A allele"/>
-	     <columnAttribute name="set_b_allele" displayName="Set B allele"/>
+	     <columnAttribute name="set_a_allele" displayName="Set A allele" align="center"/>
+	     <columnAttribute name="set_b_allele" displayName="Set B allele" align="center"/>
 	</dynamicAttributes>
 
         <propertyList name="specificAttribution">

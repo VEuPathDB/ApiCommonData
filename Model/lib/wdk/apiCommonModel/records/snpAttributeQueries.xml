@@ -8,9 +8,10 @@
                     lowerCase="true"/>
             <column name="dataset_hidden" sortingTable="apidb.SnpAttributes"
                     sortingColumn="dataset" lowerCase="true"/>
-            <column name="seq_source_id" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
-            <column name="snp_location" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
+            <column name="seq_source_id" sortingTable="apidb.SnpAttributes" sortingColumn="chromosome_order_num"/>
             <column name="start_min" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
+            <column name="start_min_text" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
+            <column name="chromosome_order_num" sortingTable="apidb.SnpAttributes" sortingColumn="chromosome_order_num" />
             <column name="is_coding" sortingTable="apidb.SnpAttributes" />
             <column name="position_in_CDS" sortingTable="apidb.SnpAttributes" />
             <column name="position_in_protein" sortingTable="apidb.SnpAttributes" />
@@ -64,7 +65,7 @@
             </sqlParamValue>
             <sql>
             <![CDATA[
-           SELECT bfmv.source_id, bfmv.project_id, bfmv.dataset,
+           SELECT bfmv.source_id, bfmv.project_id, bfmv.dataset,bfmv.chromosome_order_num,
                   DECODE(bfmv.dataset, &&datasets&&, bfmv.dataset) AS dataset_hidden,
                   bfmv.seq_source_id, bfmv.start_min, 
                   CASE
@@ -83,7 +84,7 @@
                     AS formatted_organism,
                   bfmv.minor_allele_count, bfmv.major_allele_count,bfmv.minor_product,
                   bfmv.major_product,bfmv.major_allele,bfmv.minor_allele,bfmv.strains,bfmv.strains_revcomp,
-                  bfmv.seq_source_id || ': ' || trim(to_char(bfmv.start_min,'99,999,999')) as snp_location,
+                  trim(to_char(bfmv.start_min,'99,999,999')) as start_min_text,
                   CASE WHEN bfmv.gene_strand = 'reverse' THEN apidb.reverse_complement(bfmv.rflank) 
                        WHEN bfmv.gene_strand is null THEN ''
                        ELSE bfmv.lflank  END as lflank_gene_strand,

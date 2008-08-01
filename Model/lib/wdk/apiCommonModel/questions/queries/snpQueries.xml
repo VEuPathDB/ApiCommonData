@@ -364,22 +364,25 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
         <column name="project_id"/>
         <column name="set_a_allele"/>
         <column name="set_b_allele"/>
+        <column name="set_a_count"/>
+        <column name="set_b_count"/>
         <sql>
             <![CDATA[
               select seta.snp_source_id as source_id,'@PROJECT_ID@' as project_id,
-              seta.allele as set_a_allele,setb.allele as set_b_allele
-              from (select isnp.snp_source_id,isnp.allele
+              seta.allele as set_a_allele,setb.allele as set_b_allele,
+              seta.total as set_a_count, setb.total as set_b_count
+              from (select isnp.snp_source_id,isnp.allele,count(*) as total
               from apidb.isolatesnps isnp, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
               where ds.dataset_id = $$isolate_set_a$$
-              and isnp.is_na_sequence_id = ds.dataset_value
+              and isnp.is_source_id = ds.dataset_value
               and isnp.allele is not null
               and isnp.snp_db_name = 'PlasmoDB combined SNPs'
               group by isnp.snp_source_id,isnp.allele
               having count(*) >= $$set_a_count$$) seta,
-              (select isnp.snp_source_id,isnp.allele
+              (select isnp.snp_source_id,isnp.allele, count(*) as total
               from apidb.isolatesnps isnp, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
               where ds.dataset_id = $$isolate_set_b$$
-              and isnp.is_na_sequence_id = ds.dataset_value
+              and isnp.is_source_id = ds.dataset_value
               and isnp.allele is not null
               and isnp.snp_db_name = 'PlasmoDB combined SNPs'
               group by isnp.snp_source_id,isnp.allele
@@ -401,9 +404,11 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="set_a_allele"/>
         <wsColumn name="set_b_allele"/>
+        <wsColumn name="set_a_count"/>
+        <wsColumn name="set_b_count"/>
     </wsQuery>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- Isolate Pattern -->
+    <!-- Isolate Pattern by history id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SnpsByIsolatePatternHistory" includeProjects="PlasmoDB" 
