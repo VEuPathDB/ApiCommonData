@@ -18,6 +18,7 @@ sub new {
 
     bless($self, $class);
     $self->{name} = $name;
+    $self->{dbh} = $dbh;
 
     my ($schema, $table) = split(/\./, $name);
     $self->{schema} = $schema;
@@ -38,10 +39,21 @@ SQL
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("$self->{name} does not exist")
 	if !$count;
 
+    return $self;
+}
+
+
+sub getTimestamp {
+    my ($self) = @_;
+
+    return $self->{timestamp} if defined $self->{timestamp};
+
+    my $dbh = $self->{dbh};
+
     # get the last-modified date for this table
-    $sql = <<SQL;
+    my $sql = <<SQL;
        select to_char(max(modification_date), 'yyyy-mm-dd hh24:mi:ss'), count(*)
-       from $name
+       from $self->{name}
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
@@ -53,7 +65,7 @@ SQL
     $sql = <<SQL;
        select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count, timestamp
        from apidb.TuningMgrExternalDependency
-       where name = upper('$name')
+       where name = upper('$self->{name}')
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
@@ -65,27 +77,27 @@ SQL
     if ($max_mod_date eq $stored_max_mod_date && $row_count == $stored_row_count) {
       # stored stats still valid
       $self->{timestamp} = $timestamp;
-      ApiCommonData::Load::TuningConfig::Log::addLog("Stored timestamp ($timestamp) still valid for $self->{name}");
+      ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) still valid for $self->{name}");
     } else {
       # table has changed; set timestamp high and update TuningMgrExternalDependency
       $self->{timestamp} = '9999-12-12 23:59:59';
 
       if ($timestamp) {
 	# ExternalDependency record exists; update it
-	ApiCommonData::Load::TuningConfig::Log::addLog("Stored timestamp ($timestamp) no longer valid for $self->{name}");
+	ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) no longer valid for $self->{name}");
 	$sql = <<SQL;
         update apidb.TuningMgrExternalDependency
         set (max_mod_date, timestamp, row_count) =
           (select '$max_mod_date', sysdate, $row_count
 	  from dual)
-        where name = upper('$name')
+        where name = upper('$self->{name}')
 SQL
       } else {
 	# no ExternalDependency record; insert one
-	ApiCommonData::Load::TuningConfig::Log::addLog("No stored timestamp found for $self->{name}");
+	ApiCommonData::Load::TuningConfig::Log::addLog(    "No stored timestamp found for $self->{name}");
 	$sql = <<SQL;
         insert into apidb.TuningMgrExternalDependency (name, max_mod_date, timestamp, row_count)
-        select upper('$name'), '$max_mod_date', sysdate, $row_count
+        select upper('$self->{name}'), '$max_mod_date', sysdate, $row_count
 	from dual
 SQL
       }
@@ -95,13 +107,6 @@ SQL
 	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
       $stmt->finish();
     }
-
-    return $self;
-}
-
-
-sub getTimestamp {
-    my ($self) = @_;
 
     return $self->{timestamp};
 }

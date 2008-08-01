@@ -123,7 +123,7 @@ sub getState {
     print "$self->{name} external dependency on " . $dependency->getName() . "\n"
       if $self->{debug};
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
-    if ($dependency->getTimestamp() gt $self->{timestamp}) {
+    if (!$needUpdate && $dependency->getTimestamp() gt $self->{timestamp}) {
       ApiCommonData::Load::TuningConfig::Log::addLog("    timestamp of " . $dependency->getName() . "(" . $dependency->getTimestamp() . ") is later than timestamp of $self->{name} ($self->{timestamp}).");
       $needUpdate = 1;
     }

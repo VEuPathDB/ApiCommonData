@@ -1,11 +1,12 @@
 #!/usr/bin/perl
 
 use strict;
-# use lib "$ENV{GUS_HOME}/lib/perl";
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Data::Dumper;
 use XML::Simple;
 use DBI;
 use Getopt::Long qw(GetOptions);
+use ApiCommonData::Load::TuningConfig::TableSuffix;
 
 my ($configFile, $instance, $dbuser, $password, $verbose, $debug);
 
@@ -142,7 +143,15 @@ sub makeUnions {
 	if $notAllNulls;
     }
 
-    my $createTable = "create table " . $union->{name} . " as\n" . join("\nunion\n", @unionMembers);
+    my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
+
+    my $createTable = "create table $union->{name}$suffix as\n"
+      . join("\nunion\n", @unionMembers);
+
+    print "\n===== SQL statements to install updated unin table ===== \n";
+    print "(the first is needed only to replace a table with a synonym.)\n";
+    print "drop table $union->{name};\n"; 
+    print "create or replace synonym $union->{name} for $union->{name}$suffix;\n\n";
 
     print "$createTable\n" if $verbose;
     runSql($dbh, $createTable);
@@ -171,7 +180,6 @@ sub getColumnInfo {
 
       if ($source->{query}) {
 	my $queryString = $source->{query}[0];
-	print "query: >" . $queryString . "<\n";
 	$tempTable = 'apidb.UnionizerTemp';
 	$table = $tempTable;
 	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString);

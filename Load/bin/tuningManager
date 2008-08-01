@@ -201,7 +201,6 @@ my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $el
 ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
-print "\n\n*******\n" . ApiCommonData::Load::TuningConfig::Log->getLog() . "\n\n*******\n";
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail);
 
 ###############################################################################

@@ -15,6 +15,8 @@ BEGIN {
   sub addLog {
     my ($message) = @_;
 
+    $| = 1;
+    print "$message\n";
     $log .= "$message\n";
   }
 
@@ -58,14 +60,17 @@ sub addErrorLog {
 sub mailLog {
   my ($recipientList) = @_;
 
-  my $subject = "tuningManager log: ";
+  my $subject = "tuningManager: ";
 
-  $subject .= getUpdateNeededFlag() ? "Changes found" : "No changes found";
+  if (!getUpdateNeededFlag()) {
+    $subject .= 'up-to-date';
+  } elsif (getUpdateNeededFlag() && !getUpdatePerformedFlag()) {
+    $subject .= 'UPDATE NEEDED';
+  } elsif (getUpdatePerformedFlag()) {
+    $subject .= "update performed";
+  }
 
-  $subject .= "; tables updated"
-    if getUpdatePerformedFlag();
-
-  $subject .= "; errors encountered"
+  $subject .= "; ERRORS ENCOUNTERED"
     if getErrorsEncounteredFlag();
 
   foreach my $recipient (split(/,/, $recipientList)) {
