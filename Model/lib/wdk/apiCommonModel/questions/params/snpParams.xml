@@ -60,31 +60,32 @@
                      prompt="Minimum number of isolates in Set A with same allele >= "
                      quote="false">
             <help>Lower Bound on the number of isolates in set A that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set A.</help>
-            <suggest includeProjects="PlasmoDB" default="3"/>
+            <suggest includeProjects="PlasmoDB" default="10"/>
         </stringParam>
 
        <stringParam name="set_b_count"
                      prompt="Minimum number of isolates in Set B with same allele >= "
                      quote="false">
             <help>Lower Bound on the number of isolates in set B that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set B.</help>
-            <suggest includeProjects="PlasmoDB" default="3"/>
+            <suggest includeProjects="PlasmoDB" default="12"/>
         </stringParam>
 
         <datasetParam name="isolate_set_a"
                       prompt="Set A isolate identifiers">
-            <help>input a comma delimited set of isolate ids, or upload a file</help>
+            <help>input a comma delimited set of isolate ids, or upload a file.  The default ids are the result of a query for isolates from Honduras</help>
            <suggest includeProjects="PlasmoDB"
 					sample=""
-                    default="CP.458197,CP.458250,CP.458198"/>
+                    default="CP.458195, CP.458196, CP.458255, CP.458262, CP.458263, CP.458264, CP.458265, CP.458266, CP.458267, CP.458268"/>
         </datasetParam>
 
         <datasetParam name="isolate_set_b"
                       prompt="Set B isolate identifiers">
-            <help>input a comma delimited set of isolate ids, or upload a file</help>
+            <help>input a comma delimited set of isolate ids, or upload a file.  The default ids are the result of a query for isolates from Brazil</help>
            <suggest includeProjects="PlasmoDB"
 					sample=""
-                    default="CP.458268,CP.458196,CP.458195"/>
+                    default="CP.458202, CP.458282, CP.458284, CP.458285, CP.458287, CP.458288, CP.458289, CP.458290, CP.458291, CP.458292, CP.458294, CP.458295"/>
         </datasetParam>
 
   </paramSet>
 </wdkModel>
+
