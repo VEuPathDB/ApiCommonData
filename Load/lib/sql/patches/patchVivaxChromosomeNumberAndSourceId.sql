@@ -7,4 +7,14 @@ update dots.VIRTUALSEQUENCE set source_id = 'CM000' || to_char(441 + chromosome)
 
 commit;
 
+/* NOTE that also need to set the chromosome_order_num */
+
+update dots.externalnasequence
+set chromosome_order_num = chromosome, modification_date = sysdate
+where chromosome is not null;
+
+update dots.virtualsequence
+set chromosome_order_num = chromosome, modification_date = sysdate
+where chromosome is not null;
+
 quit;
