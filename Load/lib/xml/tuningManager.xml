@@ -1518,8 +1518,8 @@ CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (sou
     <externalDependency name="dots.NaFeatureImp"/>
     <sql>
       <![CDATA[
-CREATE TABLE apidb.SnpAttributes&1 NOLOGGING AS
-SELECT CASE
+       CREATE TABLE apidb.SnpAttributes&1 NOLOGGING AS
+       SELECT CASE
          WHEN SUBSTR(tn.name, 1, 6) = 'Crypto'
            THEN 'CryptoDB'
          WHEN SUBSTR(tn.name, 1, 6) = 'Plasmo'
@@ -1555,8 +1555,9 @@ SELECT CASE
          AS has_nonsynonymous_allele,
        SUBSTR(snp.major_allele, 1, 40) AS major_allele,
        SUBSTR(snp.major_product, 1, 40) AS major_product,
-       SUBSTR(snp.minor_allele, 1, 40) AS minor_allele,
-       SUBSTR(snp.minor_product, 1, 40) AS minor_product,
+       SUBSTR(strain_info.minor_allele, 1, 40) AS minor_allele,
+       SUBSTR(strain_info.minor_product, 1, 40) AS minor_product,
+       strain_info.major_strains,strain_info.minor_strains,
        snp.major_allele_count, 
        round(snp.major_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as major_allele_frequency,
        snp.minor_allele_count,
@@ -1592,7 +1593,15 @@ FROM dots.SnpFeature snp, apidb.FeatureLocation snp_loc,
       SELECT na_sequence_id, null as chromosome, null as chromosome_order_num
       FROM dots.NaSequence
       WHERE subclass_view not in ('ExternalNASequence', 'VirtualSequence')
-     ) chromosome_info
+     ) chromosome_info,
+     (select sf.na_feature_id, 
+             apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.allele END) AS apidb.varchartab), ', ') as minor_allele,                
+             apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.product END) AS apidb.varchartab), ', ') as minor_product,
+             apidb.tab_to_string(CAST(COLLECT(CASE WHEN sv.allele != sf.major_allele THEN sv.strain END) AS apidb.varchartab), ', ') as minor_strains,
+             apidb.tab_to_string(CAST(COLLECT(CASE WHEN sv.allele = sf.major_allele THEN sv.strain END) AS apidb.varchartab), ', ') as major_strains
+      from dots.SNPFEATURE sf, dots.SEQVARIATION sv
+      where sv.parent_id = sf.na_feature_id
+      group by sf.na_feature_id) strain_info
 WHERE edr.external_database_release_id = snp.external_database_release_id
   AND ed.external_database_id = edr.external_database_id
   AND sequence.taxon_id = taxon.taxon_id
@@ -1602,6 +1611,7 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
   AND snp_loc.is_top_level = 1
   AND sequence.na_sequence_id = snp_loc.na_sequence_id
   AND chromosome_info.na_sequence_id = snp_loc.na_sequence_id
+  and strain_info.na_feature_id = snp.na_feature_id
   AND gene_info.na_feature_id(+) = snp.parent_id
       ]]>
     </sql>
@@ -1619,7 +1629,7 @@ CREATE INDEX apidb.Snp_Seq_ix&1
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Snp_Freq_ix&1
-       ON apidb.SnpAttributes&1 (strain_count,major_allele_frequency,minor_allele_frequency)
+       ON apidb.SnpAttributes&1 (dataset,strain_count,major_allele_frequency,minor_allele_frequency)
       ]]>
     </sql>
   </tuningTable>
