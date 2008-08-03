@@ -1268,7 +1268,9 @@ SELECT CASE
        ToxoExpn.rh_no_glucose, ToxoExpn.glucose_fold_change,
        ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
        ToxoExpn.veg_rh_fold_change,
-       nvl(deprecated.is_deprecated, 0) as is_deprecated, gi.gene_id
+       nvl(deprecated.is_deprecated, 0) as is_deprecated, gi.gene_id,
+       nvl(totsnps.total_snps,0) as total_snps, nvl(nssnps.nonsyn_snps,0) as nonsynonymous_snps,
+       nvl(synsnps.syn_snps,0) as synonymous_snps
 FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t, sres.ExternalDatabase ed,
@@ -1287,8 +1289,36 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
                AS comment_string
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
-     (SELECT distinct source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated
-WHERE gf.na_feature_id = nl.na_feature_id
+     (SELECT distinct source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated,
+     (select sf.parent_id,count(*) as total_snps
+      from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
+      where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
+            'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+      and d.external_database_id = rel.external_database_id
+      and sf.external_database_release_id = rel.external_database_release_id
+      and sf.parent_id is not null
+      group by sf.parent_id) totsnps,
+      (select sf.parent_id,count(*) as nonsyn_snps
+       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
+       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
+             'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+       and d.external_database_id = rel.external_database_id
+       and sf.external_database_release_id = rel.external_database_release_id
+       and sf.parent_id is not null
+       and sf.has_nonsynonymous_allele = 1
+       group by sf.parent_id) nssnps,
+      (select sf.parent_id,count(*) as syn_snps
+       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
+       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
+             'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+       and d.external_database_id = rel.external_database_id
+       and sf.external_database_release_id = rel.external_database_release_id
+       and sf.parent_id is not null
+       and sf.has_nonsynonymous_allele is null
+       and sf.is_coding = 1
+       group by sf.parent_id) synsnps
+WHERE gf.source_id is not null
+  AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
   AND gf.sequence_ontology_id = so.sequence_ontology_id
@@ -1311,6 +1341,9 @@ WHERE gf.na_feature_id = nl.na_feature_id
   AND gf.na_feature_id = cmnt.na_feature_id(+)
   AND gf.source_id = deprecated.source_id(+)
   AND gf.na_feature_id = gi.na_feature_id(+)
+  AND gf.na_feature_id = totsnps.parent_id(+)
+  AND gf.na_feature_id = nssnps.parent_id(+)
+  AND gf.na_feature_id = synsnps.parent_id(+)
   -- skip toxo predictions (except tRNAs)
   AND (tn.name != 'Toxoplasma gondii'
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
@@ -1524,7 +1557,11 @@ SELECT CASE
        SUBSTR(snp.major_product, 1, 40) AS major_product,
        SUBSTR(snp.minor_allele, 1, 40) AS minor_allele,
        SUBSTR(snp.minor_product, 1, 40) AS minor_product,
-       snp.major_allele_count, snp.minor_allele_count,
+       snp.major_allele_count, 
+       round(snp.major_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as major_allele_frequency,
+       snp.minor_allele_count,
+       round(snp.minor_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as minor_allele_frequency,
+       snp.major_allele_count + snp.minor_allele_count as strain_count,
        SUBSTR(snp.strains, 1, 1000) AS strains,
        SUBSTR(snp.strains_revcomp, 1, 1000) AS strains_revcomp,
        gene_info.source_id AS gene_source_id,
@@ -1577,6 +1614,12 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_i
       <![CDATA[
 CREATE INDEX apidb.Snp_Seq_ix&1
        ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min, na_feature_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.Snp_Freq_ix&1
+       ON apidb.SnpAttributes&1 (strain_count,major_allele_frequency,minor_allele_frequency)
       ]]>
     </sql>
   </tuningTable>
