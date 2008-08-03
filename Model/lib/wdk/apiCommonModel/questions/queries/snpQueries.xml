@@ -288,49 +288,19 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByAlleleFrequency" includeProjects="PlasmoDB" 
           isCacheable="true">
-        <paramRef ref="snpParams.major_allele_min"/>
-        <paramRef ref="snpParams.major_allele_max"/>
         <paramRef ref="snpParams.minor_allele_min"/>
         <paramRef ref="snpParams.minor_allele_max"/>
+        <paramRef ref="snpParams.min_strain_count"/>
         <column name="source_id"/> 
         <column name="project_id"/>
-        <column name="minor_alleles"/>
-        <column name="minor_products"/>
-        <column name="minor_strains"/>
-        <column name="major_strains"/>
         <sql>
             <![CDATA[
-select * from (
-select snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count,
-  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.allele END) AS apidb.varchartab), ', ') as minor_alleles,                
-  apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele != snpq.major_allele THEN snpq.product END) AS apidb.varchartab), ', ') as minor_products,
-  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele != snpq.major_allele THEN snpq.strain END) AS apidb.varchartab), ', ') as minor_strains,
-  apidb.tab_to_string(CAST(COLLECT(CASE WHEN snpq.allele = snpq.major_allele THEN snpq.strain END) AS apidb.varchartab), ', ') as major_strains              
-FROM
-  (select sf.source_id,gf.source_id as gene, nas.source_id || ':' || l.start_min as snp_location,
-    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sf.major_allele) ELSE sf.major_allele END as major_allele,
-    CASE WHEN gene_loc.is_reversed = 1 THEN apidb.reverse_complement(sva.allele) ELSE sva.allele END as allele,   
-    sf.major_allele_count, sf.minor_allele_count,
-    sf.major_product, sf.position_in_protein as prot_pos, sva.product, sva.strain
-  from dots.genefeature gf, dots.snpfeature sf, dots.nalocation l, dots.nalocation gene_loc,
-    sres.externaldatabase ed,sres.EXTERNALDATABASERELEASE edr,dots.externalnasequence nas,
-    dots.SEQVARIATION sva
-  where sf.na_sequence_id = nas.na_sequence_id
-    and sf.parent_id = gf.na_feature_id(+)
-    and gf.na_feature_id = gene_loc.na_feature_id(+)
-    and edr.external_database_release_id = sf.external_database_release_id
-    and edr.external_database_id = ed.external_database_id
-    and ed.name = 'PlasmoDB combined SNPs'
-    and l.na_feature_id = sf.na_feature_id
-    and sf.minor_allele_count >= $$minor_allele_min$$
-    and sf.minor_allele_count <= $$minor_allele_max$$
-    and sf.major_allele_count >= $$major_allele_min$$
-    and sf.major_allele_count <= $$major_allele_max$$
-    and sf.major_allele is not null
-    and sf.minor_allele is not null
-    and sf.na_feature_id = sva.parent_id ) snpq 
-group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_allele,snpq.major_product,snpq.major_allele_count, snpq.minor_allele_count
-)
+              select source_id,project_id
+              from apidb.SNPATTRIBUTES 
+              where dataset = 'PlasmoDB combined SNPs'
+              and minor_allele_frequency >= $$minor_allele_min$$
+              and minor_allele_frequency <= $$minor_allele_max$$
+              and strain_count >= $$min_strain_count$$
            ]]>
        </sql>
     </sqlQuery>

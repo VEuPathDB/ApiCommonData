@@ -99,6 +99,9 @@
             <column name="exon_count" sortingTable="apidb.geneattributes"/>
             <column name="strand" sortingTable="apidb.geneattributes"/>
             <column name="ec_numbers_string" sortingTable="apidb.geneattributes" sortingColumn="ec_numbers"/>
+            <column name="total_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="total_snps"/>
+            <column name="nonsynonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsynonymous_snps"/>
+            <column name="synonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="synonymous_snps"/>
             <column name="ann_go_component" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_component" excludeProjects="GiardiaDB"/>
             <column name="ann_go_process" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_process" excludeProjects="GiardiaDB"/>
             <column name="ann_go_function" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_function" excludeProjects="GiardiaDB"/>
@@ -185,7 +188,10 @@
                    bfmv.winzeler_min_level as winz_min_level,
                    bfmv.winzeler_min_timing as winz_min_timing,
                    bfmv.winzeler_max_timing as winz_max_timing,
-                   TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct
+                   TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct,
+                   bfmv.total_snps as total_snps_all_strains,
+                   bfmv.nonsynonymous_snps as nonsynonymous_snps_all_strains,
+                   bfmv.synonymous_snps as synonymous_snps_all_strains
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id=$$primaryKey$$
                  AND bfmv.project_id=$$projectId$$

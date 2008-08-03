@@ -31,29 +31,36 @@
       <stringParam name="minor_allele_max"
                      prompt="Frequency of minor allele &lt;= "
                      quote="false">
-            <help>Upper Bound on the number of strains that have the minor allele</help>
-            <suggest default="3"/>
+            <help>Upper Bound on the frequency of strains that have the minor allele</help>
+            <suggest default=".5"/>
         </stringParam>
 
       <stringParam name="minor_allele_min"
                      prompt="Frequency of minor allele >= "
                      quote="false">
-            <help>Lower Bound on the number of strains that have the minor allele</help>
-            <suggest default="2"/>
+            <help>Lower Bound on the frequency of strains that have the minor allele</help>
+            <suggest default=".2"/>
         </stringParam>
 
       <stringParam name="major_allele_max"
                      prompt="Frequency of major allele &lt;= "
                      quote="false">
-            <help>Upper Bound on the number of strains that have the major allele</help>
-            <suggest default="3"/>
+            <help>Upper Bound on the frequency of strains that have the major allele</help>
+            <suggest default="1"/>
         </stringParam>
 
       <stringParam name="major_allele_min"
                      prompt="Frequency of major allele >= "
                      quote="false">
-            <help>Lower Bound on the number strains that have the major allele</help>
-            <suggest default="2"/>
+            <help>Lower Bound on the frequency strains that have the major allele</help>
+            <suggest default=".5"/>
+        </stringParam>
+
+      <stringParam name="min_strain_count"
+                     prompt="Number of strains >= "
+                     quote="false">
+            <help>Minimum number of strains for which there is a sequence call at this position</help>
+            <suggest default="10"/>
         </stringParam>
 
        <stringParam name="set_a_count"

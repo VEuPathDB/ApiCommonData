@@ -29,12 +29,15 @@
             <column name="organism" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
             <column name="formatted_organism" sortingTable="apidb.SnpAttributes" sortingColumn="organism" />
             <column name="ncbi_tax_id" sortingTable="apidb.SnpAttributes" />
-            <column name="minor_allele_count" sortingTable="apidb.SnpAttributes" />
-            <column name="major_allele_count" sortingTable="apidb.SnpAttributes" />
+            <column name="minor_allele_frequency" sortingTable="apidb.SnpAttributes" />
+            <column name="major_allele_frequency" sortingTable="apidb.SnpAttributes" />
+            <column name="strain_count" sortingTable="apidb.SnpAttributes" />
             <column name="minor_product" sortingTable="apidb.SnpAttributes" />
             <column name="major_product" sortingTable="apidb.SnpAttributes" />
             <column name="minor_allele" sortingTable="apidb.SnpAttributes" />
             <column name="major_allele" sortingTable="apidb.SnpAttributes" />
+            <column name="major_strains" sortingTable="apidb.SnpAttributes" />
+            <column name="minor_strains" sortingTable="apidb.SnpAttributes" />
             <column name="reference_na" sortingTable="apidb.SnpAttributes" />
             <column name="reference_aa" sortingTable="apidb.SnpAttributes" />
             <column name="reference_strain" sortingTable="apidb.SnpAttributes" />
@@ -82,7 +85,8 @@
                   REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
                     AS formatted_organism,
-                  bfmv.minor_allele_count, bfmv.major_allele_count,bfmv.minor_product,
+                  bfmv.minor_allele_frequency, bfmv.major_allele_frequency,
+                  bfmv.strain_count,bfmv.minor_product,bfmv.major_strains,bfmv.minor_strains,
                   bfmv.major_product,bfmv.major_allele,bfmv.minor_allele,bfmv.strains,bfmv.strains_revcomp,
                   trim(to_char(bfmv.start_min,'99,999,999')) as start_min_text,
                   CASE WHEN bfmv.gene_strand = 'reverse' THEN apidb.reverse_complement(bfmv.rflank) 
