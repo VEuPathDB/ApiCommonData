@@ -12,6 +12,7 @@
             <column name="length"/> 
             <column name="data_type"/> 
             <column name="source_id"/> 
+            <column name="collected_by"/> 
             <sql>
                SELECT src.strain,
                       src.source_id,
@@ -19,6 +20,7 @@
                       src.note,
 											src.sequence,
 											src.data_type,
+											src.collected_by,
 											length(src.sequence) length,
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes src
@@ -44,6 +46,7 @@
             <column name="max_subject_end"/> 
             <column name="note"/> 
             <column name="product"/> 
+            <column name="collected_by"/> 
             <column name="is_reference"/> 
             <column name="map" sortingTable="apidb.IsolateAttributes"/> 
             <sql>
@@ -60,6 +63,7 @@
                       iso.min_subject_start,
                       iso.max_subject_end,
                       iso.note,
+                      iso.collected_by,
                       iso.product,
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
                       iso.map, 

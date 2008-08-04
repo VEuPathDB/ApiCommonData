@@ -283,6 +283,34 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate by Submitter -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="IsolateBySubmitter" includeProjects="PlasmoDB">
+        <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="data_type"/>
+        <sql>
+          <![CDATA[
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+						       src.data_type
+            FROM   ApiDB.IsolateAttributes src
+            WHERE  src.collected_by IN ($$submitter$$)
+						  AND  src.data_type in ($$type$$)
+            ORDER BY src.source_id
+            ]]>
+         </sql>
+    </sqlQuery>
+
+    <wsQuery name="IsolateBySubmitter" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <paramRef ref="isolateParams.country" queryRef="submitterVQ.withIsolates" quote="true"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </wsQuery>
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolates with Gene Overlap  -->

@@ -100,6 +100,17 @@
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
 
+       <flatVocabParam name="submitter" includeProjects="PlasmoDB,ApiDB"
+            queryRef="submitterVQ.withIsolates"
+            prompt="Submitter"
+            multiPick="true"
+            quote="false"> 
+						<help>
+						  Search isolates by submitter name.
+						</help>
+            <useTermOnly value="true" includeProjects="ApiDB"/> 
+       </flatVocabParam>
+
     </paramSet>
 
     <querySet name="organismIQ">
@@ -303,6 +314,22 @@
              src.source_id AS internal
       FROM   DoTS.IsolateSource src
       ORDER BY src.strain
+      ]]>
+      </sql>
+    </sqlQuery>
+  </querySet>
+
+  <querySet name="submitterVQ">
+    <sqlQuery name="withIsolates" includeProjects="PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.collected_by AS term,
+             src.collected_by AS internal
+      FROM   DoTS.IsolateSource src
+			WHERE  src.collected_by is not null
+      ORDER BY src.collected_by
       ]]>
       </sql>
     </sqlQuery>
