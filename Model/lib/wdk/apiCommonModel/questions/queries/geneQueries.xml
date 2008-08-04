@@ -1148,7 +1148,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             FROM apidb.featurelocation fl
             WHERE (fl.na_sequence_id = (SELECT na_sequence_id FROM apidb.sequenceAttributes
-                                        WHERE organism = $$organismWithChr$$ AND chromosome=$$chromosomeOptional$$)
+                                        WHERE organism = $$organismWithChromosomes$$ AND chromosome=$$chromosomeOptional$$)
                    OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
               AND fl.feature_type = 'GeneFeature'
               AND fl.end_max >= $$start_point$$ 
