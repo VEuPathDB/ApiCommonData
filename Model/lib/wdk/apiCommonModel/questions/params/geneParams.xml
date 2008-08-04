@@ -357,6 +357,18 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+      <flatVocabParam name="kappeAnalysis" includeProjects="PlasmoDB,ApiDB"
+                     queryRef="GeneVQ.kappeAnalysis"
+                     prompt="Comparison"
+                     multiPick="false">
+        <help>
+             Select a Comparison.
+        </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
+
+
       <flatVocabParam name="cowmanSample" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.cowmanSample"
                      prompt="Study"
@@ -4274,6 +4286,26 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <wsColumn name="internal" width="32"/>
             <wsColumn name="term" width="32"/>
         </wsQuery>
+
+
+        <sqlQuery name="kappeAnalysis" includeProjects="PlasmoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            select a.name as term, a.analysis_id as internal
+             from rad.protocol p, rad.analysis a 
+             where p.name = 'Fold Change'
+              and p.protocol_id = a.protocol_id
+              order by a.name
+            </sql>
+        </sqlQuery>
+
+
+        <wsQuery name="kappeAnalysis" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="32"/>
+            <wsColumn name="term" width="32"/>
+        </wsQuery>
+
 
         <sqlQuery name="cowmanSample" includeProjects="PlasmoDB">
             <column name="internal"/>

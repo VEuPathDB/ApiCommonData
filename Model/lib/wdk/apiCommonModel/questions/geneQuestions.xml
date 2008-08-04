@@ -2257,6 +2257,52 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
        </propertyList>
     </question>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Kappe Py Microarray Fold Change -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesByKappeFoldChange" includeProjects="PlasmoDB, ApiDB"
+              category="Transcript Expression"
+              displayName="A comprehensive transcriptome analysis of the parasites liver stages (P.y.)"
+              queryRef="GeneId.GenesByKappeFoldChange" 
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+              summary="product,fold_change"
+              sorting="fold_change desc"
+        /> 
+        <summary>
+            <![CDATA[ 
+          A comprehensive transcriptome analysis of the parasites liver stages.
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+           <value>P. yoelii</value>
+        </propertyList>
+
+        <description>
+            <![CDATA[
+         P. yoelii liver stage expression data from Kappe lab.
+         Seattle Biomedical Research Institute, 307 Westlake Ave N, Suite 500, Seattle, WA, 98109. <br/><br/>
+<b>ooSpz:</b> Sporozoites from infected A. stephensi mosquitoes midguts (harvested 10 days after mosquito feeding) <br/>
+<b>sgSpz:</b> Sporozoites from infected A. stephensi mosquitoes salivary glands (harvested 15 days after mosquito feeding) <br/>
+<b>LS24:</b> Isolated liver stage infected hepatocytes 24 hrs after in vivo infection<br/>
+<b>LS40:</b> Isolated liver stage infected hepatocytes 40 hrs after in vivo infection<br/>
+<b>LS50:</b> Isolated liver stage infected hepatocytes 50 hrs after in vivo infection<br/>
+<b>Schz:</b> Purified erythrocytic schizonts<br/>
+<b>BS:</b> mixed erythrocytic stages when parasitemia was at 5-10%<br/>
+
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
+	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Kappe_expressionProfiles</value>
+       </propertyList>
+    </question>
+
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Waters Differential Expression -->

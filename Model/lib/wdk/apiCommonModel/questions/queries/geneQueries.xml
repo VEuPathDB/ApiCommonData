@@ -2395,6 +2395,47 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </wsQuery> 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- GenesByKappeFoldChange -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByKappeFoldChange" includeProjects="PlasmoDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.kappeAnalysis"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="fold_change" />
+       <sql>
+            <![CDATA[
+          SELECT g.source_id, '@PROJECT_ID@' as project_id,
+	      to_char(de.fold_change, '999.99') as fold_change
+            FROM Rad.DifferentialExpression de, Core.TableInfo t, Dots.GeneFeature g
+            WHERE t.table_id = de.table_id
+             AND g.na_feature_id = de.row_id
+             AND t.name = 'GeneFeature'
+             AND de.analysis_id = $$kappeAnalysis$$
+             AND ( $$regulated_dir$$ de.fold_change) >= $$fold_change$$
+        ]]>
+       </sql>
+    </sqlQuery>  
+
+    <wsQuery name="GenesByWatersDifferentialExpression" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="confidence" />
+       <wsColumn name="fold_change" />
+    </wsQuery>
+
+
+
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesByWatersDifferentialExpression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
