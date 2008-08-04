@@ -1152,9 +1152,10 @@ SELECT gene.source_id,
        protein.isoelectric_point, protein.min_molecular_weight,
        protein.max_molecular_weight, protein.hydropathicity_gravy_score,
        protein.aromaticity_score, protein.cds_length, protein.protein_length,
-       protein.ec_numbers
+       protein.ec_numbers,
+       protein.signalp_scores,protein.signalp_peptide
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
-     (SELECT gf.source_id, taf.na_feature_id, tas.molecular_weight,
+     (SELECT gf.source_id, taf.na_feature_id, tas.aa_sequence_id,tas.molecular_weight,
              tas.length AS protein_length,
              greatest(taf.translation_start, taf.translation_stop)
              - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
@@ -1163,7 +1164,9 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
              asa.hydropathicity_gravy_score,
              asa.aromaticity_score,
              NVL(transmembrane.tm_domains, 0) AS tm_count,
-             ec.ec_numbers
+             ec.ec_numbers,
+             sigp.scores as signalp_scores,
+             sigp.pep as signalp_peptide
       FROM  dots.GeneFeature gf, dots.Transcript t,
             dots.TranslatedAaFeature taf,
             dots.TranslatedAaSequence tas,
@@ -1183,11 +1186,21 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
                           ec.ec_number || ' (' || ec.description || ')' AS ec_number
                    FROM dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
                    WHERE ec.enzyme_class_id = asec.enzyme_class_id)
-             GROUP BY aa_sequence_id) ec
+             GROUP BY aa_sequence_id) ec,
+             (SELECT spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
+              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2) as scores,
+              dbms_lob.substr(s.sequence,aal.end_max,1) as pep
+              FROM dots.signalpeptidefeature spf, dots.aalocation aal,dots.AASEQUENCE s
+              WHERE spf.aa_sequence_id = s.aa_sequence_id 
+              and  aal.aa_feature_id = spf.aa_feature_id
+              and (spf.signal_probability >= .5
+              or ((spf.means_score + spf.maxy_score) / 2) >= .5
+              or ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3)) sigp
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_feature_id = taf.na_feature_id
         AND taf.aa_sequence_id = tas.aa_sequence_id
         AND taf.aa_sequence_id = asa.aa_sequence_id
+        and tas.aa_sequence_id = sigp.aa_sequence_id(+)
         AND tas.aa_sequence_id = transmembrane.aa_sequence_id(+)
         AND tas.aa_sequence_id = ec.aa_sequence_id(+)) protein
 WHERE gene.source_id = protein.source_id(+)
@@ -1269,8 +1282,12 @@ SELECT CASE
        ToxoExpn.pru_veg_fold_change, ToxoExpn.pru_rh_fold_change,
        ToxoExpn.veg_rh_fold_change,
        nvl(deprecated.is_deprecated, 0) as is_deprecated, gi.gene_id,
-       nvl(totsnps.total_snps,0) as total_snps, nvl(nssnps.nonsyn_snps,0) as nonsynonymous_snps,
-       nvl(synsnps.syn_snps,0) as synonymous_snps
+       nvl(totsnps.total_snps,0) as total_snps, 
+       nvl(nssnps.nonsyn_snps,0) as nonsynonymous_snps,
+       nvl(synsnps.syn_snps,0) as synonymous_snps,
+       CASE WHEN (nssnps.nonsyn_snps is null or synsnps.syn_snps is null) THEN 0 
+            ELSE round((nssnps.nonsyn_snps / synsnps.syn_snps),2) END as nonsyn_syn_ratio,
+       protein.signalp_scores,protein.signalp_peptide
 FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t, sres.ExternalDatabase ed,
