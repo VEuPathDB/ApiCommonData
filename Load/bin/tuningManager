@@ -18,9 +18,10 @@ my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mda
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $subversionUrl, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $subversionUrl, $propFile, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
            "subversionUrl=s" => \$subversionUrl,
+           "propFile=s" => \$propFile,
            "instance=s" => \$instance,
            "password=s" => \$password,
            "doUpdate!" => \$doUpdate,
@@ -30,18 +31,20 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupWarnOnly!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: configFile or subversionUrl parameter must be supplied")
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: \"configFile\" or \"subrsionUrl\" parameter must be supplied")
   unless $configFile or $subversionUrl;
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("missing parameter: notifyEmail") unless $notifyEmail;
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: both instance and password must be specified")
-  unless ($instance && $password);
-&usage unless (($configFile || $subversionUrl) && $notifyEmail && $instance && $password);
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("missing parameter: \"notifyEmail\"") unless $notifyEmail;
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
+  unless ($propFile || $password);
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")
+  unless $instance;
+&usage unless (($configFile || $subversionUrl) && $notifyEmail && $instance && ($propFile || $password));
 
 $configFile = getConfigFileName($configFile, $subversionUrl);
 ApiCommonData::Load::TuningConfig::Log::addLog("Using log file \"$configFile\"");
 my ($config) = &parseConfigFile($configFile);
 
-my $dbh = getDbHandle($instance, $password);
+my $dbh = getDbHandle($instance, $propFile, $password);
 
 # create an object for each <tuningTable> entity
 my %tuningTables;
@@ -211,13 +214,14 @@ q{
 Create/update "tuning tables", denormalized copies of data used to improve web site performance.
 
 Usage: tuningManager --configFile <configXmlPath>
-                     {--instance <dbInstance>} {--password <dbPassword>}
+                     {--instance <dbInstance>}  {--propFile <filename>} {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
                      {--cleanupWarnOnly} {--cleanupAge <days>}
 
 options:
   configFile      an xml file describing the tables to be created
   subversionUrl   URL to check out the config file directory
+  propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
   password        database login password
   doUpdate        update any tables found to be out of date
@@ -302,7 +306,7 @@ sub parseConfigFile {
   my $simple = XML::Simple->new();
 
   # use forcearray so elements with one child are still arrays
-  # and, use keyattr so that unions are given as an ordered list
+  # and use keyattr so that unions are given as an ordered list
   # rather than a hash
   my $config = $simple->XMLin($configFile,
 			    forcearray => 1,
@@ -316,10 +320,17 @@ sub parseConfigFile {
 }
 
 sub getDbHandle {
-  my ($instance, $password) = @_;
+  my ($instance, $propFile, $password) = @_;
+  my $username = 'apidb';
+
+  if ($propFile) {
+    my $simple = XML::Simple->new();
+    my $props = $simple->XMLin($propFile);
+    $password = $props->{password} if !$password;
+    $username = $props->{username} if $props->{username};
+  }
 
   my $dsn = "dbi:Oracle:" . $instance;
-  my $username = 'apidb';
 
   my $dbh = DBI->connect(
                 $dsn,
