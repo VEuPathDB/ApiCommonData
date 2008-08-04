@@ -332,8 +332,8 @@ sub makeLocation {
   my ($self, $recHash) = @_;
 
   my $gusObj = GUS::Model::DoTS::AALocation->new();
-    $gusObj->setStartMax($recHash->{'1'});
-    $gusObj->setStartMin($recHash->{'1'});
+    $gusObj->setStartMax(1);
+    $gusObj->setStartMin(1);
     $gusObj->setEndMax($recHash->{'cleav'});
     $gusObj->setEndMin($recHash->{'cleav'});
 
