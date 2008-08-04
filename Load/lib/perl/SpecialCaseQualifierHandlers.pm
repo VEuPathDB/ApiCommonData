@@ -59,6 +59,7 @@ sub undoAll{
   $self->_undoMiscSignalNote();
   $self->_undoSourceIdAndTranscriptSeq();
   $self->_undoDbXRef();
+  $self->_undoGenbankDbXRef();
   $self->_undoGapLength();
   $self->_undoNote();
   $self->_undoPseudo();
@@ -148,6 +149,7 @@ sub sourceIdAndTranscriptSeq {
 
     my $splicedNaSeq = $transcript->getParent('DoTS::SplicedNASequence');
     $splicedNaSeq->setSequence($transcriptSequence);
+    $splicedNaSeq->setSourceId($transcript->getSourceId());
 
     if($bioperlFeature->primary_tag() eq "coding_gene"){
       print STDERR $transcript->toString();
@@ -159,7 +161,11 @@ sub sourceIdAndTranscriptSeq {
 
       my $seq = $transcriptSeq->getSequence();
       my $transcriptLength = length($seq);
-
+      $transcriptLoc->setStartMin(1);
+      $transcriptLoc->setStartMax(1);
+      $transcriptLoc->setEndMin($transcriptLength);
+      $transcriptLoc->setEndMax($transcriptLength);
+      $transcriptLoc->setIsReversed(0);
       my $codingStart = $exonsSorted[0]->getCodingStart();
       my $codingStop = $exonsSorted[$final]->getCodingEnd();
 
@@ -346,6 +352,28 @@ sub dbXRef {
 }
 
 sub _undoDbXRef{
+  my ($self) = @_;
+  return $self->{standardSCQH}->_undoDbXRef();
+}
+
+################ genbankDbXRef ###############################
+
+sub genbankDbXRef {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  my @tagValues;
+  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)){
+      my @split = split(/\:/,$tagValue);
+      if (scalar(@split) < 2){
+	  $tagValue = "Genbank:".$tagValue;
+      }
+      push(@tagValues,$tagValue);
+  }
+  $bioperlFeature->remove_tag($tag);
+  $bioperlFeature->add_tag_value($tag,@tagValues);
+  return $self->{standardSCQH}->dbXRef($tag, $bioperlFeature, $feature);
+}
+
+sub _undoGenbankDbXRef{
   my ($self) = @_;
   return $self->{standardSCQH}->_undoDbXRef();
 }
