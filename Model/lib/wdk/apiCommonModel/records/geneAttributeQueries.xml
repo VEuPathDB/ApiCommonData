@@ -102,6 +102,9 @@
             <column name="total_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="total_snps"/>
             <column name="nonsynonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsynonymous_snps"/>
             <column name="synonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="synonymous_snps"/>
+            <column name="nonsyn_syn_ratio_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsyn_syn_ratio"/>
+            <column name="signalp_scores" sortingTable="apidb.geneattributes"/>
+            <column name="signalp_peptide" sortingTable="apidb.geneattributes"/>
             <column name="ann_go_component" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_component" excludeProjects="GiardiaDB"/>
             <column name="ann_go_process" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_process" excludeProjects="GiardiaDB"/>
             <column name="ann_go_function" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_function" excludeProjects="GiardiaDB"/>
@@ -191,7 +194,9 @@
                    TO_CHAR(bfmv.winzeler_max_pct * 100, '99.9') as winz_max_pct,
                    bfmv.total_snps as total_snps_all_strains,
                    bfmv.nonsynonymous_snps as nonsynonymous_snps_all_strains,
-                   bfmv.synonymous_snps as synonymous_snps_all_strains
+                   bfmv.nonsyn_syn_ratio as nonsyn_syn_ratio_all_strains,
+                   bfmv.synonymous_snps as synonymous_snps_all_strains,
+                   bfmv.signalp_scores,bfmv.signalp_peptide
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id=$$primaryKey$$
                  AND bfmv.project_id=$$projectId$$
