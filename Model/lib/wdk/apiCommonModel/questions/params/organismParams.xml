@@ -257,7 +257,7 @@
     <sqlQuery name="withGenes" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-<!--
+
       <sql includeProjects="ToxoDB">
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
@@ -268,8 +268,7 @@
            ORDER BY organism asc
         ]]>
       </sql>
--->
-      <sql>
+      <sql excludeProjects="ToxoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
