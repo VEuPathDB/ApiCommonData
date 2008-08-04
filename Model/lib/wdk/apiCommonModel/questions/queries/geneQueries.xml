@@ -1134,6 +1134,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
+        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -1141,7 +1142,20 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
-        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
+              fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+            FROM apidb.featurelocation fl
+            WHERE (fl.na_sequence_id = (SELECT na_sequence_id FROM apidb.sequenceAttributes
+                                        WHERE organism = $$organismWithChr$$ AND chromosome=$$chromosomeOptional$$)
+                   OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
+              AND fl.feature_type = 'GeneFeature'
+              AND fl.end_max >= $$start_point$$ 
+              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
+        <sql includeProjects="CryptoDB,ToxoDB">
             <![CDATA[
             SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
