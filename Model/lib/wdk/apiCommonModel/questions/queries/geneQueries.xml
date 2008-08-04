@@ -2420,14 +2420,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <wsQuery name="GenesByWatersDifferentialExpression" includeProjects="ApiDB"
+    <wsQuery name="GenesByKappeFoldChange" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
-       <wsColumn name="confidence" />
        <wsColumn name="fold_change" />
     </wsQuery>
 
