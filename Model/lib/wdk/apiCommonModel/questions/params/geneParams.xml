@@ -357,6 +357,18 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+      <flatVocabParam name="dailyAnalysis" includeProjects="PlasmoDB,ApiDB"
+                     queryRef="GeneVQ.dailyAnalysis"
+                     prompt="Factor"
+                     multiPick="false">
+        <help>
+             Select a Factor
+        </help>
+<useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
+
+
       <flatVocabParam name="kappeAnalysis" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.kappeAnalysis"
                      prompt="Comparison"
@@ -416,6 +428,14 @@
             <suggest default="2"/>
         </stringParam>
 
+        <stringParam name="correlation"
+                     prompt="Correlation >="
+                     substitute="yes"
+                     quote="false">
+            <help>Enter a non-negative number.  NOTE:  Correlation is reported in the summary as positive numbers for positively correlated genes and negative numbers for negatively correlated genes</help> 
+            <suggest default="0.75"/>
+        </stringParam>
+
     <enumParam name="regulated_dir"
                      prompt="Direction"
                      multiPick="false">
@@ -431,6 +451,25 @@
         <enumValue>
           <term>up-regulated</term>
           <internal>+</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+    <enumParam name="correlation_dir"
+                     prompt="Direction"
+                     multiPick="false">
+      <help>
+       There are two types or directions of correlation (two patterns that correlations can follow).
+      </help>
+ <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>positive</term>
+          <internal>+</internal>
+        </enumValue>
+        <enumValue>
+          <term>negative</term>
+          <internal>-</internal>
         </enumValue>
       </enumList>
     </enumParam>
@@ -4283,6 +4322,25 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </sqlQuery>
 
         <wsQuery name="DayAndStrain" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+            <wsColumn name="internal" width="32"/>
+            <wsColumn name="term" width="32"/>
+        </wsQuery>
+
+
+        <sqlQuery name="dailyAnalysis" includeProjects="PlasmoDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+            select a.name as term, a.analysis_id as internal
+             from rad.protocol p, rad.analysis a 
+             where p.name = 'Daily Correlations'
+              and p.protocol_id = a.protocol_id
+              order by a.name
+            </sql>
+        </sqlQuery>
+
+
+        <wsQuery name="dailyAnalysis" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="32"/>
             <wsColumn name="term" width="32"/>
         </wsQuery>

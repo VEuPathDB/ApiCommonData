@@ -2258,12 +2258,48 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Daily Pf Microarray Correlation -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesByDailyCorrelation" includeProjects="PlasmoDB, ApiDB"
+              category="Transcript Expression"
+              displayName="Correlation between expression and various factors from malaria infected patients (P.f.)"
+              queryRef="GeneId.GenesByDailyCorrelation" 
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+              summary="product,correlation"
+              sorting="correlation desc"
+        /> 
+        <summary>
+            <![CDATA[ 
+           Find genes whose gene expression is correlated to a measured factor taken from malaria infected patients 
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+           <value>P. falciparum</value>
+        </propertyList>
+
+        <description>
+            <![CDATA[
+           This study measures in vivo parasite steady state whole genome transcription. 
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="correlation" displayName="Correlation" align="center"/>
+	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>daily_expressionProfiles</value>
+       </propertyList>
+    </question>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Kappe Py Microarray Fold Change -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByKappeFoldChange" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
-              displayName="A comprehensive transcriptome analysis of the parasites liver stages (P.y.)"
+              displayName="A comprehensive transcriptome analysis for liver stages (P.y.)"
               queryRef="GeneId.GenesByKappeFoldChange" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2272,7 +2308,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
         /> 
         <summary>
             <![CDATA[ 
-          A comprehensive transcriptome analysis of the parasites liver stages.
+           Find genes by several 2 state comparisons of parasites liver stages.
             ]]>
         </summary>
 
@@ -2282,7 +2318,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
 
         <description>
             <![CDATA[
-         P. yoelii liver stage expression data from Kappe lab.
+         P. yoelii liver stage expression data from the Kappe lab.
          Seattle Biomedical Research Institute, 307 Westlake Ave N, Suite 500, Seattle, WA, 98109. <br/><br/>
 <b>ooSpz:</b> Sporozoites from infected A. stephensi mosquitoes midguts (harvested 10 days after mosquito feeding) <br/>
 <b>sgSpz:</b> Sporozoites from infected A. stephensi mosquitoes salivary glands (harvested 15 days after mosquito feeding) <br/>

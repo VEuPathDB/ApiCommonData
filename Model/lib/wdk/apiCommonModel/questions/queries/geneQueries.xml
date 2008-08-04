@@ -2394,6 +2394,42 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <wsColumn name="percentile" />
     </wsQuery> 
 
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- GenesByDailyCorrelation -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByDailyCorrelation" includeProjects="PlasmoDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.dailyAnalysis"/>
+       <paramRef ref="geneParams.correlation"/>
+       <paramRef ref="geneParams.correlation_dir" quote="false"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="correlation" />
+       <sql>
+            <![CDATA[
+          SELECT g.source_id, '@PROJECT_ID@' as project_id,
+	      to_char(d.float_value, '999.999') as correlation
+            FROM Rad.Datatransformationresult d, Core.TableInfo t, Dots.GeneFeature g
+            WHERE t.table_id = d.table_id
+             AND g.na_feature_id = d.row_id
+             AND t.name = 'GeneFeature'
+             AND d.analysis_id = $$dailyAnalysis$$
+             AND ( $$correlation_dir$$ d.float_value) >= $$correlation$$
+        ]]>
+       </sql>
+    </sqlQuery>  
+
+    <wsQuery name="GenesByDailyCorrelation" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="correlation" />
+    </wsQuery>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesByKappeFoldChange -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
