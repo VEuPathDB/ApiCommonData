@@ -14,8 +14,9 @@
         <sql>
           <![CDATA[
              SELECT distinct aa.source_id, aa.project_id
-             FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa
-             WHERE LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE($$est_id$$,' ',''), '*', '%'))
+             FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa, userlogins2.dataset_values@apidb.LOGIN_COMMENT ds
+             WHERE ds.dataset_id = $$est_id$$
+              AND LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE(ds.dataset_value,' ',''), '*', '%'))
                AND ea.assembly_source_id = aa.source_id
                AND aa.project_id = '@PROJECT_ID@'
           ]]>
