@@ -1,0 +1,133 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use Data::Dumper;
+
+my ($verbose,$idSQLEST,$idSQLBLAT,$idSQLBLOCK,$outputFile, $blockFile, $clusterDir, $gusConfigFile);
+&GetOptions("verbose!"=> \$verbose,
+            "gusConfigFile=s" => \$gusConfigFile,
+            "idSQLEST=s"=> \$idSQLEST,
+            "idSQLBLAT=s"=> \$idSQLBLAT,
+	    "idSQLEST=s"=> \$idSQLEST,
+            "idSQLBLOCK=s"=> \$idSQLBLOCK,
+            "outputFile=s" => \$outputFile,
+	    "blockFile=s" => \$blockFile,
+	    "clusterDir=s" => \$clusterDir);
+
+print STDERR "Establishing dbi login\n";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my ($countEST, $countBLAT); 
+
+my $dbh = $db->getQueryHandle(0);
+
+print STDERR "idSQLEST: $idSQLEST\n idSQLBLAT: $idSQLBLAT\n " if $verbose;
+
+my $stmt1 = $dbh->prepareAndExecute($idSQLEST);
+
+print STDERR "idSQLEST: $idSQLEST\n";
+
+my (%sourceidEST, %sourceidBlockFile);
+
+while(my ($sourceId) = $stmt1->fetchrow_array()) {
+
+  $sourceidEST{$sourceId}= 1;
+
+  $countEST++;
+}
+
+$stmt1->finish();
+
+my $stmt2 = $dbh->prepare($idSQLBLAT);
+
+print STDERR "idSQLBLAT: $idSQLBLAT\n";
+
+foreach my $sourceId (keys %sourceidEST){
+
+    $stmt2->execute($sourceId);
+
+    while(my ($NaSeqBLAT) = $stmt2->fetchrow_array()){
+
+        #print "$NaSeqBLAT is found in BLATAlignment\n";
+
+	delete $sourceidEST{$NaSeqBLAT};
+
+        $countBLAT++;
+  }
+}
+
+my $count = keys %sourceidEST;
+
+$stmt2->finish();
+
+#print Dumper(\%sourceidEST);
+
+print STDERR "Total # of ESTs: $countEST \n";
+
+print STDERR "Total # of BLATAlignments in ESTs: $countBLAT \n";
+
+print STDERR "Total # of Possible Ids for cluster before check block.err:  $count\n";
+
+my $stmt3 = $dbh->prepare($idSQLBLOCK);
+
+print STDERR "idSQLBLOCK: $idSQLBLOCK\n";
+
+open (FILE,$blockFile) or die "Cannot open file $blockFile  for reading \n";
+
+while (<FILE>){
+
+    chomp;
+
+    if ($_ =~ /\>(\d+)/){
+
+	$stmt3->execute($1);
+
+	while(my ($NaSeqBLOCK) = $stmt3->fetchrow_array()){
+
+	    delete $sourceidEST{$NaSeqBLOCK};
+
+	}
+    }
+}
+close(FILE);
+
+$stmt3->finish();
+
+$count = keys %sourceidEST;
+
+print STDERR "Total # of Final Ids for cluster:  $count\n";
+
+my $clusterNum=`wc -l $clusterDir/cluster.out`;
+
+$clusterNum++;
+
+open(OUT,">$outputFile"); 
+
+my @myArray = keys %sourceidEST;
+
+my $line = join(",",@myArray);
+
+my $clusterline ="Cluster_$clusterNum ($count sequences): (".$line.")";
+
+print OUT "$clusterline\n";
+
+close($outputFile);
+
+print STDERR "$count clusters have been written into $outputFile.\n";
+
+system "mv $clusterDir/cluster.out $clusterDir/cluster.out.AlignedEsts";
+
+system "cat $clusterDir/cluster.out.AlignedEsts $outputFile > $clusterDir/cluster.out";
+
+print STDERR "Cluster $clusterNum has been added to $clusterDir/cluster.out.\n";
