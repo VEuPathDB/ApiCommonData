@@ -87,36 +87,6 @@
        </propertyList>
     </question>
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- ORF locus tag -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-     <question name="OrfByLocusTag"
-         category="Other Attributes"
-         displayName="List of IDs"
-              queryRef="OrfIds.OrfByLocusTag"
-              recordClassRef="OrfRecordClasses.OrfRecordClass"
-              noSummaryOnSingleRecord="true"
-              ignoreSubType="true"
-              excludeProjects="ApiDB">
-        <attributesList 
-               summary="formatted_organism,orf_location_text,length"
-               sorting="formatted_organism asc, orf_location_text asc"
-        />
-        <summary>
-           Find a ORF by its ID.
-        </summary>
-        <description>
-           <![CDATA[
-           Find ORFs by a list of IDs. Either enter the ID list manually, 
-           or upload a file that contains the list. IDs can be delimited by a comma, 
-           a semi colon, or any white spaces. For example, a list can be in the
-           following form: "MAL1-1-10639-11520, PK4.chr05-3-913311-913766".
-          ]]>
-        </description>
-    </question>
-
-
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -136,7 +106,7 @@
              </summary>
              <description includeProjects="CryptoDB">
              <![CDATA[
-             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             Find open reading frames (ORFs) by a list of IDs. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
              <ul>
              <li>Specify the name of the DNA sequence producing the ORF, e.g. AAEL01000259</li>
@@ -144,11 +114,14 @@
              <li>The span, in nucleotides, encoding the ORF, e.g. 3339-3085</li>
              <li>Putting it all together: AAEL01000259-5-3339-3085</li>
              </ul>
+	     Either enter the ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
+             a semi colon, or any white spaces. For example, a list can be in the following form: 
+             "AAEL01000259-5-3339-3085, AAEE01000009*"
              ]]>
              </description>
              <description includeProjects="GiardiaDB">
              <![CDATA[
-             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             Find open reading frames (ORFs) by a list of IDs. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
              <ul>
              <li>Specify the name of the DNA sequence producing the ORF, e.g. AACB02000007</li>
@@ -156,11 +129,14 @@
              <li>The span, in nucleotides, encoding the ORF, e.g. 227160-226945</li>
              <li>Putting it all together: AACB02000007-6-227160-226945</li>
              </ul>
+	     Either enter the ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
+             a semi colon, or any white spaces. For example, a list can be in the following form: 
+             "AACB02000007-6-227160-226945, AACB02000014-2-51002-51532"
              ]]>
              </description>
              <description includeProjects="PlasmoDB">
              <![CDATA[
-             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             Find open reading frames (ORFs) by a list of IDs. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
              <ul>
              <li>Specify the name of the DNA sequence producing the ORF, e.g. MAL1</li>
@@ -168,11 +144,14 @@
              <li>The span, in nucleotides, encoding the ORF, e.g. 10639-11520</li>
              <li>Putting it all together: MAL1-1-10639-11520</li>
              </ul>
+	     Either enter the ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
+             a semi colon, or any white spaces. For example, a list can be in the following form: 
+             "MAL1-1-10639-11520, PK4.chr05-3-913311-913766"
              ]]>
              </description>
              <description includeProjects="ToxoDB">
              <![CDATA[
-             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             Find open reading frames (ORFs) by a list of IDs. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
              <ul>
              <li>Specify the name of the DNA sequence producing the ORF, e.g. Ia</li>
@@ -180,11 +159,14 @@
              <li>The span, in nucleotides, encoding the ORF, e.g. 1000180-1000404</li>
              <li>Putting it all together: Ia-1-1000180-1000404</li>
              </ul>
+	     Either enter the ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
+             a semi colon, or any white spaces. For example, a list can be in the following form: 
+             "Ia-1-1000180-1000404, Ia-6-99955-99632"
              ]]>
              </description>
              <description includeProjects="TrichDB">
              <![CDATA[
-             Find open reading frames (ORFs) by ID. The ORF ID and sequences may change from release to release if the genomic sequence changes.
+             Find open reading frames (ORFs) by a list of IDs. The ORF ID and sequences may change from release to release if the genomic sequence changes.
              The ORF naming system is designed to:
              <ul>
              <li>Specify the name of the DNA sequence producing the ORF, e.g. DS113375</li>
@@ -192,6 +174,9 @@
              <li>The span, in nucleotides, encoding the ORF, e.g. 114214-114468</li>
              <li>Putting it all together: DS113375-1-114214-114468</li>
              </ul>
+	     Either enter the ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
+             a semi colon, or any white spaces. For example, a list can be in the following form: 
+             "DS113375-1-114214-114468, DS113534-2-30548-30718"
              ]]>
              </description>
        <propertyList name="specificAttribution">

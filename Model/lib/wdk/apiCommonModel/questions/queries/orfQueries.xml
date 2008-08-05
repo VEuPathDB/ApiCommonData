@@ -10,28 +10,6 @@
     -->
     
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- Locus Tag  -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-    <sqlQuery name="OrfByLocusTag" excludeProjects="ApiDB"
-              isCacheable="true">
-        <paramRef ref="sharedParams.ds_orf_ids"/>
-        <column name="source_id"/>
-        <column name="project_id"/>
-       <sql>
-             <![CDATA[
-            SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
-            FROM apidb.OrfAttributes oa, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
-            WHERE ds.dataset_id = $$ds_orf_ids$$
-              AND oa.lowercase_source_id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
-                                                       '*', '%'),
-                                               '[[:space:]]', '')
-           ]]>
-       </sql>
-    </sqlQuery>
-
-
     <!-- ************************************************************ -->
     <!-- ORF ID -->  
     <!-- ************************************************************ -->
@@ -43,12 +21,12 @@
         <column name="source_id"/>
         <sql>
             <![CDATA[
-                SELECT DISTINCT oa.source_id, oa.project_id
-                FROM apidb.OrfAttributes oa
-                WHERE oa.lowercase_source_id
-                      LIKE LOWER(REPLACE(REPLACE($$orf_id$$,' ',''),
-                                                 '*', '%'))
-                AND oa.project_id = '@PROJECT_ID@'
+            SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.OrfAttributes oa, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$orf_id$$
+              AND oa.lowercase_source_id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
             ]]>
         </sql>
     </sqlQuery>
