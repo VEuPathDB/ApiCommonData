@@ -63,7 +63,8 @@ SQL
 
     # get stored ExternalDependency info for this table
     $sql = <<SQL;
-       select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count, timestamp
+       select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count,
+              to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss')
        from apidb.TuningMgrExternalDependency
        where name = upper('$self->{name}')
 SQL
@@ -88,7 +89,7 @@ SQL
 	$sql = <<SQL;
         update apidb.TuningMgrExternalDependency
         set (max_mod_date, timestamp, row_count) =
-          (select '$max_mod_date', sysdate, $row_count
+          (select to_date('$max_mod_date', 'yyyy-mm-dd hh24:mi:ss'), sysdate, $row_count
 	  from dual)
         where name = upper('$self->{name}')
 SQL
@@ -97,7 +98,7 @@ SQL
 	ApiCommonData::Load::TuningConfig::Log::addLog(    "No stored timestamp found for $self->{name}");
 	$sql = <<SQL;
         insert into apidb.TuningMgrExternalDependency (name, max_mod_date, timestamp, row_count)
-        select upper('$self->{name}'), '$max_mod_date', sysdate, $row_count
+        select upper('$self->{name}'), to_date('$max_mod_date', 'yyyy-mm-dd hh24:mi:ss'), sysdate, $row_count
 	from dual
 SQL
       }

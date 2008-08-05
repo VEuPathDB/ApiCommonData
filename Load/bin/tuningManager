@@ -41,7 +41,7 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
 &usage unless (($configFile || $subversionUrl) && $notifyEmail && $instance && ($propFile || $password));
 
 $configFile = getConfigFileName($configFile, $subversionUrl);
-ApiCommonData::Load::TuningConfig::Log::addLog("Using log file \"$configFile\"");
+ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
 my ($config) = &parseConfigFile($configFile);
 
 my $dbh = getDbHandle($instance, $propFile, $password);
