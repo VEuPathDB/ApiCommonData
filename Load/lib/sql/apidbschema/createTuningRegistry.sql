@@ -14,7 +14,7 @@ create table apidb.TuningInstance (
    family_name   varchar2(32) not null references apidb.TuningFamily,
    service_name  varchar2(85) not null);
 
-grant select on apidb.TuningFamily to gus_r;
-grant insert, update, delete on apidb.TuningFamily to gus_w;
+grant select on apidb.TuningInstance to gus_r;
+grant insert, update, delete on apidb.TuningInstance to gus_w;
 
 exit

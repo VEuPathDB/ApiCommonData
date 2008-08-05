@@ -1,0 +1,67 @@
+package ApiCommonData::Load::TuningConfig::TuningRegistry;
+
+
+use strict;
+use ApiCommonData::Load::TuningConfig::Log;
+
+sub new {
+    my ($class, $dbh) = @_;
+    my $self = {};
+    $self->{dbh} = $dbh;
+    bless($self, $class);
+
+    if (defined $dbh) {
+      print "dbh is defined (in new)\n";
+    } else {
+      print "dbh is NOT defined (in new)\n";
+    }
+    return $self;
+}
+
+sub getInfoFromRegistry {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    if (defined $dbh) {
+      print "dbh is defined (in gifr)\n";
+    } else {
+      print "dbh is NOT defined (in gifr)\n";
+    }
+
+    my $sql = <<SQL;
+      select svc_name.service_name, ti.instance_name, tf.subversion_url, tf.notify_emails
+      from apidb.TuningInstance\@apidb.login_comment ti, apidb.TuningFamily\@apidb.login_comment tf,
+           (select sys_context ('USERENV', 'SERVICE_NAME') as service_name from dual) svc_name
+      where ti.service_name(+) =  svc_name.service_name
+        and ti.family_name = tf.family_name(+)
+SQL
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+    ($self->{service_name}, $self->{instance_name}, $self->{subversion_url}, $self->{notify_emails})
+      = $stmt->fetchrow_array();
+
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: no tuning info found in registry for service_name \"$self->{service_name}\"")
+	if !defined $self->{subversion_url};
+    $stmt->finish();
+}
+
+sub getSubversionUrl {
+    my ($self) = @_;
+
+    $self->getInfoFromRegistry() if !defined $self->{subversion_url};
+
+    return($self->{subversion_url});
+}
+
+sub getNotifyEmails {
+    my ($self) = @_;
+
+    getInfoFromRegistry() if !defined $self->{notify_emails};
+
+    return($self->{notify_emails});
+}
+
+1;

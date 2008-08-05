@@ -9,6 +9,7 @@ use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::InternalTable;
 use ApiCommonData::Load::TuningConfig::ExternalTable;
 use ApiCommonData::Load::TuningConfig::TuningIndex;
+use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
 
 my $startTime = time;
@@ -18,9 +19,8 @@ my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mda
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $subversionUrl, $propFile, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $propFile, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
-           "subversionUrl=s" => \$subversionUrl,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
            "password=s" => \$password,
@@ -31,20 +31,20 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupWarnOnly!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: \"configFile\" or \"subrsionUrl\" parameter must be supplied")
-  unless $configFile or $subversionUrl;
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("missing parameter: \"notifyEmail\"") unless $notifyEmail;
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
   unless ($propFile || $password);
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")
   unless $instance;
-&usage unless (($configFile || $subversionUrl) && $notifyEmail && $instance && ($propFile || $password));
-
-$configFile = getConfigFileName($configFile, $subversionUrl);
-ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
-my ($config) = &parseConfigFile($configFile);
+&usage unless ($instance && ($propFile || $password));
 
 my $dbh = getDbHandle($instance, $propFile, $password);
+
+my $tuningRegistry =
+  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh);
+
+$configFile = getConfigFileName($configFile, $tuningRegistry);
+ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
+my ($config) = &parseConfigFile($configFile);
 
 # create an object for each <tuningTable> entity
 my %tuningTables;
@@ -220,7 +220,6 @@ Usage: tuningManager --configFile <configXmlPath>
 
 options:
   configFile      an xml file describing the tables to be created
-  subversionUrl   URL to check out the config file directory
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
   password        database login password
@@ -283,17 +282,15 @@ Sample config file XML:
 }
 
 sub getConfigFileName {
-  my ($configFile, $subversionUrl) = @_;
+  my ($configFile, $tuningRegistry) = @_;
 
-  if ($subversionUrl) {
+  if (!$configFile) {
     my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
-    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
+    my @cmdLine = ("svn", "checkout", $tuningRegistry->getSubversionUrl(), $configDir);
     system(@cmdLine) == 0
       or die "system @cmdLine failed: $?";
 
-    $configFile = "tuningManager.xml" unless $configFile;
-
-    $configFile = $configDir . "/" . $configFile;
+    $configFile = $configDir . "/tuningManager.xml";
   }
 
   return $configFile;
