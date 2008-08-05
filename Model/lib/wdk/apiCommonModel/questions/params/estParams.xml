@@ -10,19 +10,16 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- EST ID  -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <stringParam name="est_id"
-                     prompt="EST ID"
-                     substitute="yes">
-            <help>Enter an EST ID (Accession Number)</help>
+
+        <datasetParam name="est_id" excludeProjects="ApiDB"
+                     prompt="EST ID input set">
+            <help>Input a comma delimited set of EST ids, or upload a file</help>
             <suggest includeProjects="PlasmoDB"
                sample="AU087658, BQ739759, N98084"
                default="AU087658"/>
             <suggest  includeProjects="ToxoDB"
                sample="AA009308, AA011973, W99666"
                default="AA009308"/>
-            <suggest includeProjects="ApiDB"
-               sample="AU087658, N98084,AA009308, AA011973"
-               default="AU087658"/>
             <suggest includeProjects="GiardiaDB"
                sample="EV500870, EV515822"
                default="EV500870"/>
@@ -32,6 +29,15 @@
             <suggest includeProjects="CryptoDB"
                sample="AA420947, AA224667"
                default="AA420947"/>
+      </datasetParam>
+
+      <stringParam name="est_id" includeProjects="ApiDB"
+                     prompt="EST ID"
+                     substitute="yes">
+            <help>Enter an EST ID (Accession Number)</help>
+            <suggest
+               sample="AU087658, N98084,AA009308, AA011973"
+               default="AU087658"/>
       </stringParam>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
