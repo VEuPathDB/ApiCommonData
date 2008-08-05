@@ -9,6 +9,29 @@
 
     -->
     
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Locus Tag  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="OrfByLocusTag" includeProjects="PlasmoDB"
+              isCacheable="true">
+        <paramRef ref="sharedParams.ds_orf_ids"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+             <![CDATA[
+            SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.OrfAttributes oa, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$ds_orf_ids$$
+              AND oa.lowercase_source_id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'),
+                                               '[[:space:]]', '')
+           ]]>
+       </sql>
+    </sqlQuery>
+
+
     <!-- ************************************************************ -->
     <!-- ORF ID -->  
     <!-- ************************************************************ -->
