@@ -394,6 +394,8 @@ minus select name from apidb.ObsoleteTuningTable
 SQL
 
   my $stmt = $dbh->prepare($sql);
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
   }
