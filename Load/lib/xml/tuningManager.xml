@@ -2456,7 +2456,8 @@ SELECT gf.source_id,
        COUNT(HB3) AS graph_hb3, COUNT(Dd2) AS graph_dd2,
        COUNT(waters) AS graph_waters, COUNT(gametocyte) as graph_gametocyte,
        COUNT(cowman) AS graph_cowman, COUNT(mexp128) AS graph_mexp128,
-       COUNT(mexp494) AS graph_mexp494, COUNT(kappe) as graph_kappe
+       COUNT(mexp494) AS graph_mexp494, COUNT(kappe) as graph_kappe,
+       COUNT(daily) as graph_daily
 FROM dots.GeneFeature gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2541,7 +2542,11 @@ FROM dots.GeneFeature gf,
     (SELECT p1.source_id, 1 AS kappe
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE ps1.name = 'kappe_fold_changes'
-       AND p1.profile_set_id = ps1.profile_set_id) kappe
+       AND p1.profile_set_id = ps1.profile_set_id) kappe,
+    (SELECT p1.source_id, 1 AS daily
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'daily correlations'
+       AND p1.profile_set_id = ps1.profile_set_id) daily
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
@@ -2553,6 +2558,7 @@ FROM dots.GeneFeature gf,
   AND gf.source_id = mexp128.source_id(+)
   AND gf.source_id = mexp494.source_id(+)
   AND gf.source_id = kappe.source_id(+)
+  AND gf.source_id = daily.source_id(+)
 GROUP BY gf.source_id
       ]]>
     </sql>
