@@ -471,8 +471,8 @@ Find <i>P. falciparum </i> genes by their Enzyme Commission (EC) number.  Use '-
 
 
     <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB"
-         displayName="Mass Spec. Evidence"
-         category="Protein Expression"
+          displayName="Mass Spec. Evidence"
+          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList 
@@ -745,7 +745,7 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
 
 
     <question name="GenesByMassSpec2" includeProjects="PlasmoDB,ApiDB"
-         displayName="P.f. Mass Spec. Evidence"
+         displayName="P.f. Mass Spec. Evidence (life cycle)"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec2"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -793,6 +793,89 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
            <value>FlorensMassSpecData2002</value>
            <value>FlorensMassSpecData2004</value>
         </propertyList>
+    </question>
+    <question name="GenesByMassSpec3" includeProjects="PlasmoDB,ApiDB"
+         displayName="P.f. Mass Spec. Evidence"
+         category="Protein Expression"
+         queryRef="GeneId.GenesByMassSpec3"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList includeProjects="PlasmoDB,ApiDB" 
+              summary="location_text,product,sum_sequence_count,sum_spectrum_count"
+              sorting="sum_sequence_count desc,sum_spectrum_count desc"
+        /> 
+
+    <summary includeProjects="PlasmoDB">
+           <![CDATA[
+            Find <i>P. falciparum</i> genes that have evidence for protein expression
+            in merozoite, oocyst, oocyst-derived sporozoite and salivary gland sporozoite.
+          ]]>
+        </summary>
+
+       
+        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+           <value>P. falciparum</value>
+        </propertyList>
+
+        <description includeProjects="PlasmoDB,ApiDB">
+            <![CDATA[
+                Find <I>P. falciparum</I> genes that have evidence of
+                expression in  merozoite, oocyst, oocyst-derived sporozoite and salivary gland sporozoite.
+      
+                <BR>
+                Please refer to the original papers for more information
+                on the experiments and experimental conditions.
+           ]]>
+        </description>
+
+        <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>Pf_Merozoite_Peptides</value>
+           <value>Lasonder_Mosquito_Oocysts</value>
+           <value>Lasonder_Mosquito_oocyst_derived_sporozoites</value>
+           <value>Lasonder_Mosquito_salivary_gland_sporozoites</value>
+        </propertyList>
+	<dynamicAttributes includeProjects="PlasmoDB,ApiDB">
+	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
+	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+	</dynamicAttributes>
+    </question>
+
+    <question name="GenesByMassSpec4" includeProjects="PlasmoDB,ApiDB"
+         displayName="P.y. Mass Spec. Evidence"
+         category="Protein Expression"
+         queryRef="GeneId.GenesByMassSpec4"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList includeProjects="PlasmoDB,ApiDB" 
+              summary="location_text,product,sum_sequence_count,sum_spectrum_count"
+              sorting="sum_sequence_count desc,sum_spectrum_count desc"
+        /> 
+
+    <summary includeProjects="PlasmoDB">
+           <![CDATA[
+            Find <i>P. yoelii</i> genes that have evidence for protein expression
+            in LS-infected hepatocytes isolated 40 hrs and 50 hrs post-infection (LS40 and LS50) by searching spectra against P. yoelii pro            tein sequence database
+          ]]>
+        </summary>
+
+       
+        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+           <value>P. yoelii</value>
+        </propertyList>
+
+        <description includeProjects="PlasmoDB,ApiDB">
+            <![CDATA[
+            Find <i>P. yoelii</i> genes that have evidence for protein expression
+            in LS-infected hepatocytes isolated 40 hrs and 50 hrs post-infection (LS40 and LS50) by searching spectra against P. yoelii pro            tein sequence database
+           ]]>
+        </description>
+
+        <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>Pyoelii_LiverStage_LS40</value>
+           <value>Pyoelii_LiverStage_LS50</value>
+        </propertyList>
+	<dynamicAttributes includeProjects="PlasmoDB,ApiDB">
+	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
+	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+	</dynamicAttributes>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -2770,7 +2853,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
-         displayName="P.b. Mass Spec. Evidence (life cycle)"
+         displayName="Mass Spec. Evidence (life cycle)"
          category="Protein Expression"
          queryRef="GeneId.GenesByProteomicsProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
