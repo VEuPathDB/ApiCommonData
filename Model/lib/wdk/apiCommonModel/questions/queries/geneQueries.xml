@@ -1074,6 +1074,137 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <wsColumn name="project_id" />
     </wsQuery>
 
+    <sqlQuery name="GenesByMassSpec3" includeProjects="PlasmoDB" 
+            isCacheable='true'>
+        <paramRef ref="geneParams.ms_assay_3"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <column name="source_id" />
+        <column name="project_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
+
+        <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, 
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay_3$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay_3$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec,
+            dots.nasequence nas
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = t.na_feature_id
+            and t.parent_id = gf.na_feature_id
+            and gf.na_sequence_id = nas.na_sequence_id
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+           ]]>
+       </sql>
+ 
+    
+    </sqlQuery>   
+
+    <wsQuery name="GenesByMassSpec3" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+            isCacheable='true'>
+        <paramRef ref="geneParams.ms_assay_3"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <wsColumn name="source_id" />
+        <wsColumn name="project_id" />
+        <wsColumn name="sum_sequence_count" />
+        <wsColumn name="sum_spectrum_count" />
+    </wsQuery>
+
+    <sqlQuery name="GenesByMassSpec4" includeProjects="PlasmoDB" 
+            isCacheable='true'>
+        <paramRef ref="geneParams.ms_assay_4"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <column name="source_id" />
+        <column name="project_id" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" />
+
+        <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            from apidb.massspecsummary mss, 
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
+            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
+              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+                from apidb.massspecsummary mss,
+                     dots.massspecfeature msf,
+                     dots.aalocation aal,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.mass_spec_summary_id = msf.source_id
+                  and msf.aa_feature_id = aal.aa_feature_id
+                  and msf.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay_4$$)
+                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+                group by intseq.aa_sequence_id
+                having count(*) >= $$min_sequence_count$$
+            ) seq,
+            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+                from apidb.massspecsummary mss,
+                     sres.externaldatabase ed,
+                     sres.externaldatabaserelease edr
+                where mss.external_database_release_id = edr.external_database_release_id
+                  and edr.external_database_id = ed.external_database_id
+                  and ed.name in ($$ms_assay_4$$)
+                group by mss.aa_sequence_id
+                having sum(spectrum_count) >= $$min_spectrum_count$$
+            ) spec,
+            dots.nasequence nas
+            where mss.aa_sequence_id = taaf.aa_sequence_id
+            and taaf.na_feature_id = t.na_feature_id
+            and t.parent_id = gf.na_feature_id
+            and gf.na_sequence_id = nas.na_sequence_id
+            and mss.aa_sequence_id = seq.aa_sequence_id
+            and mss.aa_sequence_id = spec.aa_sequence_id
+           ]]>
+       </sql>
+ 
+    
+    </sqlQuery>   
+
+    <wsQuery name="GenesByMassSpec4" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+            isCacheable='true'>
+        <paramRef ref="geneParams.ms_assay_4"/>
+        <paramRef ref="sharedParams.min_sequence_count"/>
+        <paramRef ref="sharedParams.min_spectrum_count"/>
+        <wsColumn name="source_id" />
+        <wsColumn name="project_id" />
+        <wsColumn name="sum_sequence_count" />
+        <wsColumn name="sum_spectrum_count" />
+    </wsQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesOrthologousToAGivenGene   COULD HAVE SQL ERRORS FOR APIDB -->
