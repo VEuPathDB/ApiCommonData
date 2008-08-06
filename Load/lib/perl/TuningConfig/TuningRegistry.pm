@@ -10,11 +10,6 @@ sub new {
     $self->{dbh} = $dbh;
     bless($self, $class);
 
-    if (defined $dbh) {
-      print "dbh is defined (in new)\n";
-    } else {
-      print "dbh is NOT defined (in new)\n";
-    }
     return $self;
 }
 
@@ -22,11 +17,6 @@ sub getInfoFromRegistry {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
-    if (defined $dbh) {
-      print "dbh is defined (in gifr)\n";
-    } else {
-      print "dbh is NOT defined (in gifr)\n";
-    }
 
     my $sql = <<SQL;
       select svc_name.service_name, ti.instance_name, tf.subversion_url, tf.notify_emails
