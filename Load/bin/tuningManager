@@ -398,9 +398,9 @@ SQL
   }
   $stmt->finish();
 
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("$cleanupCount obsolete tables found")
+  ApiCommonData::Load::TuningConfig::Log::addLog("$cleanupCount obsolete tables found")
       if $cleanupCount;
 
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
+  ApiCommonData::Load::TuningConfig::Log::addLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
       if $cleanupCount && $cleanupWarnOnly;
 }
