@@ -12,8 +12,9 @@
 	  <sql>
 	    <![CDATA[
 	      SELECT sf.source_id AS source_id, '@PROJECT_ID@' as project_id
-	      FROM dots.SnpFeature sf
-	      WHERE LOWER(source_id) LIKE LOWER(REPLACE(REPLACE($$snp_id$$,' ',''), '*', '%'))
+	      FROM dots.SnpFeature sf, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+	      WHERE ds.dataset_id = $$snp_id$$
+              AND LOWER(source_id) LIKE LOWER(REPLACE(REPLACE(ds.dataset_value,' ',''), '*', '%'))
 	    ]]>
 	  </sql>
       </sqlQuery>

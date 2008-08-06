@@ -4,25 +4,26 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="snp_id"
+        <datasetParam name="snp_id" excludeProjects="ApiDB"
+                     prompt="SNP ID input set">
+            <help>Input a comma delimited set of SNP ids, or upload a file</help>
+            <suggest  includeProjects="PlasmoDB"
+               default="CombinedSNP.MAL11.3000"
+               sample="CombinedSNP.MAL11.3000, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
+            <suggest includeProjects="ToxoDB"
+                default="SNP_Ia_17864"
+                sample="SNP_Ia_17864, SNP_Ia_130295"/>
+            <suggest includeProjects="CryptoDB"
+                default="chr3-2_66329"/>
+	</datasetParam>
+
+        <stringParam name="snp_id"  includeProjects="ApiDB"
                      prompt="SNP ID"
                      substitute="yes">
                      <help>Enter a SNP ID</help>
-            <suggest  includeProjects="PlasmoDB"
+            <suggest 
                default="CombinedSNP.MAL11.3000"
-               sample="CombinedSNP.MAL11.3000, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"
-            />
-            <suggest includeProjects="ToxoDB"
-                default="SNP_Ia_17864"
-                sample="SNP_Ia_17864, SNP_Ia_130295"
-            />
-            <suggest includeProjects="CryptoDB"
-                default="chr3-2_66329"
-            />
-            <suggest  includeProjects="ApiDB"
-               default="CombinedSNP.MAL11.3000"
-               sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"
-            />
+               sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
         </stringParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
