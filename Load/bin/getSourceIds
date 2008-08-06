@@ -32,7 +32,7 @@ my ($countEST, $countBLAT);
 
 my $dbh = $db->getQueryHandle(0);
 
-#get na_sequence_id from EnxternalNASequence
+#get na_sequence_id from EnxternalNASequence for ESTs
 print STDERR "idSQLEST: $idSQLEST\n idSQLBLAT: $idSQLBLAT\n " if $verbose;
 
 my $stmt1 = $dbh->prepareAndExecute($idSQLEST);
@@ -79,7 +79,7 @@ print STDERR "Total #  NA_sequence_id of BLATAlignments in ESTs: $countBLAT \n";
 
 print STDERR "Total # of Possible  NA_sequence_ids for cluster before check block.err:  $count\n";
 
-#conver na_sequence_id to assembly_sequence_id
+#convert na_sequence_id to assembly_sequence_id
 my $stmt3 = $dbh->prepare($idSQLBLOCK);
 
 print STDERR "idSQLBLOCK: $idSQLBLOCK\n";
@@ -140,8 +140,8 @@ close($outputFile);
 
 print STDERR "$count clusters have been written into $outputFile.\n";
 
-#system "mv $clusterDir/cluster.out $clusterDir/cluster.out.AlignedEsts";
+system "mv $clusterDir/cluster.out $clusterDir/cluster.out.AlignedEsts";
 
-#system "cat $clusterDir/cluster.out.AlignedEsts $outputFile > $clusterDir/cluster.out";
+system "cat $clusterDir/cluster.out.AlignedEsts $outputFile > $clusterDir/cluster.out";
 
 print STDERR "Cluster $clusterNum has been added to $clusterDir/cluster.out.\n";
