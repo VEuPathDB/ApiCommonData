@@ -227,8 +227,8 @@ sub usage {
 q{
 Create/update "tuning tables", denormalized copies of data used to improve web site performance.
 
-Usage: tuningManager --configFile <configXmlPath>
-                     {--instance <dbInstance>}  {--propFile <filename>} {--password <dbPassword>}
+Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>} 
+                      --instance <dbInstance> {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
                      {--cleanupWarnOnly} {--cleanupAge <days>}
 
@@ -237,6 +237,7 @@ options:
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
   password        database login password
+  tables          check/update only listed tables (and their antecedants)
   doUpdate        update any tables found to be out of date
   notifyEmail     comma-separated list of email addresses to send log to
   cleanupWarnOnly name but don't drop obsolete tuning tables
@@ -292,6 +293,12 @@ Sample config file XML:
   </tuningTable>
 
 </tuningConfig>
+
+Sample prop file:
+<tuningProps>
+  <password>JoeSentMe</password>
+  <username>apidb</username>
+</tuningProps>
 });
 }
 
