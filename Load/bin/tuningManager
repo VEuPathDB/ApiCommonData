@@ -360,7 +360,7 @@ sub cleanup {
   my $cleanupCount = 0;
 
   # drop any tables that are listed as obsolete more than the threshold
-  $cleanupAge = 1.5 if !$cleanupAge;
+  $cleanupAge = 1.5 if !defined $cleanupAge;
   my $sql = <<SQL;
 select ott.name,
        to_char(sysdate - ott.timestamp, '9.99') as days_old
@@ -369,27 +369,40 @@ from apidb.ObsoleteTuningTable ott,
 where ott.timestamp < sysdate - $cleanupAge
   and ott.name = at.owner || '.' || at.table_name
 SQL
+  ApiCommonData::Load::TuningConfig::Log::addLog($sql) if $debug;
 
-    my $select = $dbh->prepare($sql);
-    $select->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  my $select = $dbh->prepare($sql);
+  $select->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
-    while (my ($dropee, $daysOld) = $select->fetchrow_array()) {
-      $cleanupCount++;
-      ApiCommonData::Load::TuningConfig::Log::addLog("$dropee obsolete for $daysOld days.");
+  # prepare sql to delete ObsoleteTuningTable record when OTT is dropped
+  my $sql = <<SQL;
+delete from apidb.ObsoleteTuningTable
+where name = ?
+SQL
+  my $delete  = $dbh->prepare($sql);
 
-      if (!$cleanupWarnOnly) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    . . .dropping.");
-	my $sql = <<SQL;
+  while (my ($dropee, $daysOld) = $select->fetchrow_array()) {
+    $cleanupCount++;
+    my $dropMsg = "$dropee obsolete for $daysOld days.";
+
+    if (!$cleanupWarnOnly) {
+      $dropMsg .= " . . .dropping.";
+      my $sql = <<SQL;
           drop table $dropee
 SQL
-	my $drop = $dbh->prepare($sql);
-	$drop->execute()
-	  or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-	$drop->finish();
-      }
+      my $drop = $dbh->prepare($sql);
+      $drop->execute()
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+      $drop->finish();
+
+      $delete->execute($dropee)
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     }
+    ApiCommonData::Load::TuningConfig::Log::addLog($dropMsg);
+  }
   $select->finish();
+  $delete->finish();
 
   # check for obsolete tables not in apidb.ObsoleteTuningTable
   # note that the backslash in the regex is to protect the dollar-sign from Perl

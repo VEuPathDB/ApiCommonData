@@ -106,8 +106,8 @@ sub getState {
 
   # check internal dependencies
   foreach my $dependency (@{$self->getInternalDependencies()}) {
-    print "$self->{name} internal dependency on " . $dependency->getName() . "\n"
-      if $self->{debug};
+    ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} internal dependency on " . $dependency->getName())
+	if $self->{debug};
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
     my $childState = $dependency->getState($doUpdate, $dbh);
     if ($childState eq "neededUpdate") {
@@ -184,11 +184,13 @@ sub update {
     my $perlCopy = $perl;
     $perlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
-    eval { $perlCopy };
+    ApiCommonData::Load::TuningConfig::Log::addLog("Perl:\n$perlCopy")
+	if $self->{debug};
+    eval $perlCopy;
 
     if ($@) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("failed executing PERL statement \"$perl\"");
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("Error \"$@\" encountered executing Perl statement:\n$perlCopy");
     }
   }
 
