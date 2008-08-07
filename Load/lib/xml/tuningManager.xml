@@ -1925,7 +1925,8 @@ ON apidb.ArrayElementAttributes&1 (source_id)
           and virtualseq.subclass_view = vti.name
 SQL
 
-      my $queryHandle = $dbh->prepareAndExecute($sql);
+      my $queryHandle = $dbh->prepare($sql);
+      $queryHandle->execute();
 
       $sql = <<SQL;
         insert into apidb.BlatAlignmentLocation&1(blat_alignment_id,
