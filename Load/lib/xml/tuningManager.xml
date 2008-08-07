@@ -1894,7 +1894,7 @@ ON apidb.ArrayElementAttributes&1 (source_id)
              number_of_spans, query_start, query_end, target_start, target_end,
              is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
              is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
-             tstarts, 'direct' as location_mapping
+             tstarts, cast('direct' as varchar2(7)) as location_mapping
       FROM dots.BlatAlignment
       ]]> 
     </sql>
@@ -1928,7 +1928,7 @@ SQL
       my $queryHandle = $dbh->prepareAndExecute($sql);
 
       $sql = <<SQL;
-        insert into apidb.BlatAlignmentLocation(blat_alignment_id,
+        insert into apidb.BlatAlignmentLocation&1(blat_alignment_id,
                query_na_sequence_id, target_na_sequence_id,
                query_table_id, query_taxon_id, query_external_db_release_id, 
                target_table_id, target_taxon_id, target_external_db_release_id,
