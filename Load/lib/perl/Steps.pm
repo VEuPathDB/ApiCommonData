@@ -2953,11 +2953,36 @@ sub parseBlastForSqlldr {
 
   die "$blastFile doesn't exist\n" unless (-e $blastFile);
 
-  my $sqllderFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimForSqlldr.out";
+  my $sqlldrFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimForSqlldr.out";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
-  my $cmd = "parseBlastForSimilaritySequences --blastInput $blastFile --blastoutput $sqllderFile --verbose 2>> $logFile";
+  my $cmd = "parseBlastForSimilaritySequences --blastInput $blastFile --blastoutput $sqlldrFile --verbose 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
+sub loadBlastWithSqlldr {
+  my ($mgr,$blastName) = @_;
+
+  my $signal = "sqlldrLoad$blastName";
+
+  return if $mgr->startStep("Load $blastName using sqldr", $signal);
+
+  my $sqlldrFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimForSqlldr.out";
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  die "$sqlldrFile file doesn't exist\n" unless (-e $sqlldrFile);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $oracleUserPswd = $propertySet->getProp('oracleUserPswd');
+
+  my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile";
 
   $mgr->runCmd($cmd);
 
@@ -2966,12 +2991,82 @@ sub parseBlastForSqlldr {
 }
 
 
+sub orthomclEdges {
+  my ($mgr, $cleanup,$startAfter) = @_;
 
+  my $signal = 'findOrthoMclEdges';
 
-sub loadBlastWithSqlldr {
-  my ($mgr,$blastFile) = @_;
+  return if $mgr->startStep("Find edges for orthoMCL", $signal);
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $config = $propertySet->getProp('orthoMclEdgesConfig');
+
+  my $cmd = "orthomclEdges $config cleanup=$cleanup 2>> $logfile";
+
+  $cmd .= " $startAfter" if $startAfter;
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
 }
 
+
+sub makeOrthoAbcFile {
+  my ($mgr) = @_;
+
+   my $signal = "orthoAbcFile";
+
+  return if $mgr->startStep("Dumping orthomcl abc file", $signal);
+
+  my $mclPath = "$mgr->{dataDir}/mcl/";
+
+  $mgr->runCmd("mkdir -p $mclPath");
+
+  die "$mclPath directory not created\n" if (! -d $mclPath);
+
+  my $abcFile = "$mgr->{dataDir}/mcl/orthoAbc.txt";
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $config = $propertySet->getProp('orthoMclEdgesConfig');
+
+  my $cmd = "dumpMclAbcFile $config  > $abcFile 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
+sub runMcl{
+  my ($mgr, $mainInflation) = @_;
+
+  my $signal = "runMcl";
+
+  return if $mgr->startStep("Running the MCL algorithm", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $outputFile = "$mgr->{dataDir}/mcl/mcl.out";
+
+  my $abcFile = "$mgr->{dataDir}/mcl/orthoAbc.txt";
+
+  die " $abcFile file does not exist\n" if (! -e $abcFile);
+
+  my $mclPath = $propertySet->getProp("mclPath");
+
+  my $mclCommand = "$mclPath $abcFile --abc -I $mainInflation -o $outputFile";
+
+  $mgr->runCmd($mclCommand);
+
+  $mgr->endStep($signal);
+}
 
 sub  loadAveragedProfiles {
   my ($mgr,$dbSpec,$setName,$loadProfileElement) = @_;
