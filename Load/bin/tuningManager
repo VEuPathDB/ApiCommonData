@@ -19,15 +19,16 @@ my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mda
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $password, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $propFile, $instance, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
            "password=s" => \$password,
+           "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
            "notifyEmail=s" => \$notifyEmail,
            "debug!" => \$debug,
-           "cleanupAge:i" => \$notifyEmail,
+           "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
 	  );
 
@@ -125,7 +126,19 @@ my $upToDateCount = 0;
 
 ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Checking tables ===");
 # check (and potentially update) every tuning table
-foreach my $table (keys(%tuningTables)) {
+my @tableList;
+if ($tables) {
+  @tableList = split(/,/, $tables);
+} else {
+  @tableList = keys(%tuningTables);
+}
+
+foreach my $table (@tableList) {
+  if (!$tuningTables{$table}) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: unknown tuning table $table");
+    next;
+  }
+
   $tableCount++;
   my $state = $tuningTables{$table}->getState($doUpdate, $dbh);
 
@@ -204,6 +217,7 @@ my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $el
 ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
+$notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail);
 
 ###############################################################################
@@ -395,6 +409,24 @@ SQL
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+  }
+  $stmt->finish();
+
+  # check for apidb.ObsoleteTuningTable records whose tables don't exist
+  $sql = <<SQL;
+select name from apidb.ObsoleteTuningTable
+minus select owner || '.' || table_name
+from (select atab.owner, atab.table_name
+      from all_synonyms asyn, all_tables atab
+      where asyn.owner = atab.owner
+        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  while (my ($table) = $stmt->fetchrow_array()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: tuning table $table is listed in apidb.ObsoleteTuningTable but does not exist");
   }
   $stmt->finish();
 
