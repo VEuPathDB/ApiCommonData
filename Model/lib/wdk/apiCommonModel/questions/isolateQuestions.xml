@@ -12,11 +12,12 @@
               displayName="Isolates by ID"
               queryRef="IsolateIds.IsolateByIsolateId" 
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,PlasmoDB,ApiDB">
 
-             <attributesList 
-               summary="organism, strain, product, specific_host, map"
-             />
+             <attributesList includeProjects="CryptoDB"
+               summary="organism, strain, product, specific_host, map"/>
+              <attributesList includeProjects="PlasmoDB"
+                 summary="strain, country, data_type, length" /> 
              <summary>
                Find Isolates by ID.
              </summary>

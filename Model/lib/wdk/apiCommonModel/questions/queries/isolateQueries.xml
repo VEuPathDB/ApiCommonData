@@ -12,7 +12,7 @@
     <!-- Isolate ID -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="IsolateByIsolateId" includeProjects="CryptoDB"
+    <sqlQuery name="IsolateByIsolateId" includeProjects="CryptoDB,PlasmoDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="isolateParams.isolate_id"/>
         <column name="source_id"/>
@@ -29,6 +29,13 @@
                    AND edb.name = 'Isolates Data'
                    AND edr.version = '2007-12-12'
                    AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
+            ]]>
+        </sql>
+        <sql includeProjects="PlasmoDB">
+            <![CDATA[
+            SELECT source_id, '@PROJECT_ID@' as project_id
+            FROM   ApiDB.IsolateAttributes
+            WHERE  source_id LIKE REPLACE($$isolate_id$$,'*','%')
             ]]>
         </sql>
     </sqlQuery>
