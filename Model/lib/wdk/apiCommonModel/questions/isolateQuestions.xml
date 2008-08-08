@@ -25,10 +25,10 @@
                Find Isolates by ID. The IDs are usually the Gebank accession number
              </description>
 
-    <propertyList name="specificAttribution" includeProjects="CryptoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="CryptoDB">
        <value>Isolates_Data</value>
    </propertyList> 
-    <propertyList name="specificAttribution" includeProjects="PlasmoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="PlasmoDB">
        <value>Broad_Isolate_Barcode</value>
        <value>Broad_3K_Genotyping</value>
     </propertyList> 
@@ -87,10 +87,10 @@
         ]]> 
        </description> 
 
-    <propertyList name="specificAttribution" includeProjects="CryptoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="CryptoDB">
        <value>Isolates_Data</value>
    </propertyList> 
-    <propertyList name="specificAttribution" includeProjects="PlasmoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="PlasmoDB">
        <value>Broad_Isolate_Barcode</value>
        <value>Broad_3K_Genotyping</value>
     </propertyList> 
@@ -234,10 +234,10 @@
     ]]> 
     </description> 
 
-    <propertyList name="specificAttribution" includeProjects="CryptoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="CryptoDB">
        <value>Isolates_Data</value>
    </propertyList> 
-    <propertyList name="specificAttribution" includeProjects="PlasmoDB,ApiDB">
+    <propertyList name="specificAttribution" includeProjects="PlasmoDB">
        <value>Broad_Isolate_Barcode</value>
        <value>Broad_3K_Genotyping</value>
     </propertyList> 
@@ -253,7 +253,7 @@
               displayName="Isolates by Author"
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ApiDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB">
        <attributesList summary="organism, strain, product, specific_host, map" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
@@ -275,8 +275,8 @@
               displayName="Submitter"
               queryRef="IsolateIds.IsolateBySubmitter"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="PlasmoDB,ApiDB">
-       <attributesList summary="strain, country, collected_by, data_type, length" /> 
+              noSummaryOnSingleRecord="true" includeProjects="PlasmoDB">
+       <attributesList summary="strain, country, collected_by, data_type, length"  includeProjects="PlasmoDB"/> 
        <summary>Find Isolates by submitter.</summary> 
        <description>
          Find Isolates by submitter name. 
