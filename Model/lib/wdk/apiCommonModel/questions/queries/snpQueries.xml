@@ -453,10 +453,12 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <wsQuery name="SnpsByIsolatePattern" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="snpParams.set_a"/>
+
+        <paramRef ref="snpParams.isolate_set_a"/>
         <paramRef ref="snpParams.set_a_count"/>
-        <paramRef ref="snpParams.set_b"/>
+        <paramRef ref="snpParams.isolate_set_b"/>
         <paramRef ref="snpParams.set_b_count"/>
+   
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="set_a_allele"/>
@@ -538,7 +540,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <wsQuery name="SnpsByIsolateType" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="isolateParams.isolate_type"/>
+        <paramRef ref="isolateParams.type"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>

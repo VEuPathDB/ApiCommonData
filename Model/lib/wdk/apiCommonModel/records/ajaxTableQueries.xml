@@ -219,7 +219,7 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
-        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="CryptoDB,PlasmoDB">
+        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="ApiDB,CryptoDB,PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="term"/>
@@ -234,6 +234,18 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                      'All Plasmodium Barcodes' as internal 
               FROM DUAL 
             </sql>
+ 
+            <sql includeProjects="ApiDB">
+             
+              SELECT 'All Cryptosporidium Isolates' as term, 
+                     'All Cryptosporidium Isolates' as internal 
+              FROM dual 
+              UNION
+              SELECT 'All Plasmodium Barcodes' as term, 
+                     'All Plasmodium Barcodes' as internal 
+              FROM DUAL  
+            </sql>
+
         </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->

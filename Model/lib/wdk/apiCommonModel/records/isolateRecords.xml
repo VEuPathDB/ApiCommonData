@@ -85,15 +85,15 @@
       <!--   Reporters -->
       <!-- =============================================================== -->
 
-      <attributeQueryRef ref="IsolateAttributes.Barcode" includeProjects="PlasmoDB">
-         <columnAttribute name="strain" displayName="Strain" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="country" displayName="Country" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="note" displayName="Note" internal="true" includeProjects="PlasmoDB"/>
-         <columnAttribute name="length" displayName="Number of Markers" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="data_type" displayName="Isolate Type" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="source_id" displayName="Source ID" internal="true" includeProjects="PlasmoDB"/>
-         <columnAttribute name="sequence" displayName="Sequence" internal="false" includeProjects="PlasmoDB"/>
-         <columnAttribute name="collected_by" displayName="Submitter" internal="false" includeProjects="PlasmoDB"/>
+      <attributeQueryRef ref="IsolateAttributes.Barcode" includeProjects="ApiDB,PlasmoDB">
+         <columnAttribute name="strain" displayName="Strain" internal="false"/>
+         <columnAttribute name="country" displayName="Country" internal="false"/>
+         <columnAttribute name="note" displayName="Note" internal="true"/>
+         <columnAttribute name="length" displayName="Number of Markers" internal="false"/>
+         <columnAttribute name="data_type" displayName="Isolate Type" internal="false"/>
+         <columnAttribute name="source_id" displayName="Source ID" internal="true"/>
+         <columnAttribute name="sequence" displayName="Sequence" internal="false" />
+         <columnAttribute name="collected_by" displayName="Submitter" internal="false"/>
       </attributeQueryRef>
 
 
@@ -113,7 +113,7 @@
      <!-- Isolates Barcode SNP table -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="SNP" includeProjects="PlasmoDB"
+     <table name="SNP" includeProjects="ApiDB,PlasmoDB"
             displayName="Isolates SNP Features"
             queryRef="IsolateTables.SNP">
         <columnAttribute displayName="Allele" name="allele" internal="true"/>
