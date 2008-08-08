@@ -248,12 +248,14 @@
             <column name="tmf_topology"/>
             <column name="tmf_start_min"/>
             <column name="tmf_end_max"/>
+            <column name="tmf_sequence"/>
 
             <sql>
            <![CDATA[
              select gf.source_id, tmf.aa_feature_id AS tmf_name,
              tmf.parent_id AS tmf_parent_id, tmf.topology AS tmf_topology,
-             aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max
+             aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max,
+             dbms_lob.substr(tas.sequence,al.end_max - aal.start_min + 1,aal.start_min)
              from
              dots.aalocation aal,
              dots.genefeature gf,
