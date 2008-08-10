@@ -5962,7 +5962,7 @@ sub getNotAlignedEstAndAddOneCluster {
 
   my $sqlBLAT = "select distinct query_na_sequence_id from dots.blatalignment where target_taxon_id=$targetTaxonId and is_best_alignment=1 and query_na_sequence_id=?";
 
-  my $sqlBLOCK = "select distinct na_sequence_id from DoTS.assemblysequence where assembly_sequence_id = ?";
+  my $sqlBLOCK = "select distinct assembly_sequence_id from DoTS.assemblysequence where na_sequence_id = ?";
   
   my $outputFile ="$clusterDir/AddCluster";
  
