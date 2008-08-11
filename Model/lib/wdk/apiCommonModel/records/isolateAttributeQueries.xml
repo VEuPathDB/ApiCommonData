@@ -1,33 +1,6 @@
 <wdkModel>
     <querySet name="IsolateAttributes">
 
-        <sqlQuery name="Barcode" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="project_id"/>
-            <column name="strain"/> 
-            <column name="country"/> 
-            <column name="note"/> 
-            <column name="sequence"/> 
-            <column name="length"/> 
-            <column name="data_type"/> 
-            <column name="source_id"/> 
-            <column name="collected_by"/> 
-            <sql>
-               SELECT src.strain,
-                      src.source_id,
-                      src.country,
-                      src.note,
-											src.sequence,
-											src.data_type,
-											src.collected_by,
-											length(src.sequence) length,
-                      $$projectId$$ as project_id
-               FROM   ApiDB.IsolateAttributes src
-               WHERE  src.source_id = $$primaryKey$$
-           </sql>
-      </sqlQuery>
-
         <sqlQuery name="Sequence" isCacheable='false'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
@@ -42,9 +15,12 @@
             <column name="country"/> 
             <column name="query_name"/> 
             <column name="target_name"/> 
+            <column name="data_type"/> 
             <column name="min_subject_start"/> 
             <column name="max_subject_end"/> 
+            <column name="length"/> 
             <column name="note"/> 
+            <column name="sequence"/> 
             <column name="product"/> 
             <column name="collected_by"/> 
             <column name="is_reference"/> 
@@ -67,6 +43,9 @@
                       iso.product,
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
                       iso.map, 
+                      iso.data_type,
+                      length(iso.sequence) length,
+                      iso.sequence,
                       $$projectId$$ as project_id
                FROM   ApiDB.IsolateAttributes iso
                WHERE  iso.source_id = $$primaryKey$$
