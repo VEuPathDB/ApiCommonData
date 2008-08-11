@@ -34,8 +34,11 @@
         <sql includeProjects="PlasmoDB">
             <![CDATA[
             SELECT source_id, '@PROJECT_ID@' as project_id
-            FROM   ApiDB.IsolateAttributes
-            WHERE  source_id LIKE REPLACE($$isolate_id$$,'*','%')
+            FROM   ApiDB.IsolateAttributes, 
+                   @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE  ds.dataset_id = $$isolate_id$$
+            AND    lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'), '[[:space:]]', '')
             ]]>
         </sql>
     </sqlQuery>

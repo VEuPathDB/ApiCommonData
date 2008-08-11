@@ -11,10 +11,19 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="isolate_id" prompt="Isolate ID">
-            <help>Enter an Isolate ID.  Wildcards (*) are allowed.</help>
-            <suggest includeProjects="CryptoDB,ApiDB"
+        <datasetParam name="isolate_id" prompt="Isolate ID" includeProjects="CryptoDB,PlasmoDB">
+            <help>Input a comma delimited set of  Isolate IDs, or upload a file. Wildcards (*) are allowed.</help>
+            <suggest includeProjects="CryptoDB"
                      sample="AF527841, DQ1145002, DQ115*"
+                     default="AF527841"/>
+            <suggest includeProjects="PlasmoDB"
+                     sample="CP.458297,CP.45828*,BC.458088"
+                     default="CP.458297"/>
+         </datasetParam>
+
+        <stringParam name="isolate_id" prompt="Isolate ID" includeProjects="ApiDB">
+            <help>Enter an Isolate ID.  Wildcards (*) are allowed.</help>
+            <suggest sample="AF527841, DQ1145002, DQ115*"
                      default="AF527841"/>
         </stringParam>
 
