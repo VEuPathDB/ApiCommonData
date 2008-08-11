@@ -149,7 +149,6 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
          materialized view could precompute this join. -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="SnpsByLocation" includeProjects="PlasmoDB,ToxoDB,CryptoDB" isCacheable="true">
-          <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
           <paramRef ref="sharedParams.chromosomeOptional" multiPick="false"/>
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
@@ -214,7 +213,6 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.chromosome = $$chromosomeOptional$$
-                   AND seq.organism = $$organismWithChromosomes$$
                    AND p.strain_a = $$snp_strain_a$$ -- ref
                    AND p.strain_b in ($$snp_strain_m$$) -- comp
                    AND $$snp_strain_a$$ < p.strain_b
@@ -249,7 +247,6 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.chromosome = $$chromosomeOptional$$
-                   AND seq.organism = $$organismWithChromosomes$$
                    AND p.strain_b = $$snp_strain_a$$ -- ref
                    AND p.strain_a in ($$snp_strain_m$$) -- comp
                    AND p.strain_a < $$snp_strain_a$$
