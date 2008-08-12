@@ -5,8 +5,6 @@ create table apidb.Workflow (
   state                 varchar(30),
   process_id            number(10),
   metaconfig            clob,
-  start_time            date,
-  end_time              date,
   allowed_running_steps number(3)
 );
 
@@ -61,6 +59,8 @@ GRANT SELECT ON apidb.WorkflowStep_sq TO gus_r;
 GRANT SELECT ON apidb.WorkflowStep_sq TO gus_w;
 
 -----------------------------------------------------------
+
+-- this table is not used yet.  might be needed by pilot GUI
 
 create table apidb.WorkflowStepDependency (
   workflow_step_dependency_id number(10),
