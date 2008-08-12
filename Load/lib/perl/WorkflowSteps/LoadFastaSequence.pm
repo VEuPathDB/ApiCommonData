@@ -38,13 +38,13 @@ sub getConfigDeclaration {
     (
      # [name, default, description]
      ['inputFile', "", ""],
-     ['targetTable', ],
-     ['extDbName', ],
-     ['extDbRlsVer', ],
-     ['soTermName', ],
-     ['regexSourceId', ],
-     ['check', ],
-     ['taxId' ],
+     ['targetTable', "", ""],
+     ['extDbName', "", ""],
+     ['extDbRlsVer', "", ""],
+     ['soTermName', "", ""],
+     ['regexSourceId', "", ""],
+     ['check', "", ""],
+     ['taxId' "", ""],
     );
   return @properties;
 }
