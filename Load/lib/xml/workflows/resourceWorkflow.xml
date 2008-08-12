@@ -1,0 +1,26 @@
+<workflow name="resource">
+  <params>
+    <param name="extDbRlsSpec"/>
+    <param name="plugin"/>
+    <param name="wgetArgs"/>
+    <param name="unpack"/>
+    <param name="pluginArgs"/>
+  </params>
+
+  <steps>
+    <step name="acquire" class="ApiCommonData::Steps::FastaExtractor">
+    </step>
+
+    <step name="unpack" class="ApiCommonData::Steps::FastaExtractor">
+    </step>
+
+    <step name="insertExtDb" class="ApiCommonData::Steps::FastaExtractor">
+    </step>
+
+    <step name="insertExtDbRls" class="ApiCommonData::Steps::RunSplign">
+    </step>
+
+    <step name="insert" class="ApiCommonData::Steps::InsertSplign">
+    </step>
+
+  </steps

@@ -1,0 +1,38 @@
+<workflow name="psipred">
+  <params>
+    <param name="genomeName"/>
+    <param name="nrdbFile"/>
+    <param name="proteinsFile"/>
+    <param name="queue"/>
+   </param>
+
+  <constants>
+    <constant name="psipredProteinsFile">seqfiles/psipred${genomeName}Proteins.fsa</constant>
+  </constants>
+
+  <steps>
+    <step name="createDataDir" class="ApiCommonData::Load::Steps::CreatePsipredDirWithFormattedDb">
+      <configValue name="nrdbFile"></configValue>
+    </step>
+
+    <step name="fixProteinIds" class="ApiCommonData::Load::Steps::fixProteinIdsForPsipred">
+      <configValue name="inputProteinsFile">$$$proteinsFile</configValue>
+      <configValue name="outputProteinsFile">$$$psipredProteinsFile</configValue>
+    </step>
+
+    <step name="createTaskDir" class="ApiCommonData::Load::Steps::">
+      <configValue name="proteinsFile">$$$psipredProteinsFile</configValue>
+      <configValue name="nrdbFile">$$$nrdbFile</configValue>
+    </step>
+
+    <step name="copyTaskDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <configValue name="">$$$psipredProteinsFile</configValue>
+    </step>
+
+     <step name="copyDataFilesToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <configValue name="">$$$psipredProteinsFile</configValue>
+    </step>
+
+ </steps>
+
+</workflow>

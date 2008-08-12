@@ -1,0 +1,27 @@
+<workflow name="nrdb">
+  <params>
+    <param name="nrdbVersion"/>
+    <param name="nrdbFile"/>
+  </param>
+
+  <constants>
+    <constant name="nrdbExtDbRlsSpec">nrdb:${nrdbVersion}</constant>
+  </constants>
+
+  <steps>
+    <step name="NRDB" subflow="resource" global="true"/>
+      <configValue name="extDbRlsSpec">$$$nrdbExtDbRlsSpec</configValue>
+    </step>
+
+    <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
+      <configValue name="fromFile">NRDB/nr.gz</configValue>
+      <configValue name="toDir">seqfiles</configValue>
+    </step>
+
+    <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
+      <configValue name="fromFile">seqfiles/nr</configValue>
+      <configValue name="toFile">$$$nrdbOutputFile</configValue>
+    </step>
+  </steps>
+
+</workflow>
