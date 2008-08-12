@@ -36,7 +36,7 @@ create table WorkflowStep (
   process_id          number(10),
   state               varchar(30),
   state_handled       number(1),
-  offline             number(1),
+  off_line            number(1),
   start_time          date,
   end_time            date
 );
