@@ -1,0 +1,94 @@
+# /init-data-dir/
+
+# /EnzymeDB-extdb/
+name=EnzymeDB
+
+# /EnzymeDB-extdb-rls/
+name=EnzymeDB
+release=2.0
+
+# /GeneOntology-extdb/
+name=GeneOntology
+
+# /GeneOntology-extdb-rls/
+name=GeneOntology
+release=2008-09-09
+
+# /NRDB-extdb/
+name=NRDB
+
+# /NRDB-extdb-rls/
+name=NRDB
+release=5.95
+
+# /GiardiaContigs-extdb/
+name=GiardiaContigs
+
+# /GiardiaContigs-extdb-rls/
+name=GiardiaContigs
+release=2.0
+
+# /GiardiaScaffolds-extdb/
+name=GiardiaScaffolds
+
+# /GiardiaScaffolds-extdb-rls/
+name=GiardiaScaffolds
+release=2008-02-14
+
+# /SequenceOntology-insert/
+inputFile=so.obo
+soVersion=1.147
+soCvsVersion=1.147
+commit=yes
+wait=80
+
+# /GeneOntologyEvidence-insert/
+oboFile=evidence_code.obo
+wait=90
+
+# /Taxonomy-insert/
+names=names.dmp
+node=nodes.dmp
+gencode=gencode.dmp
+wait=70
+
+# /GeneOntology-insert/
+oboFile=gene_ontology.obo
+extDbRlsName=GeneOntology
+extDbRlsVer=5.695
+wait=100
+
+# /EnzymeDB-insert/
+enzymeDbName=EnzymeDB
+enzymeDbRlsVer=2008_02_06
+inPath=enzymeDB
+
+# /Genome-insert/
+mapFile=genbankFeatures2gus.xml
+inputFileOrDir=GiardiaFromDB.gb
+fileFormat=genbank
+soCvsVersion=1.147
+organism=Giardia lamblia ATCC 50803
+handlerExternalDbs=enzyme:enzymeDB:2008-02-06
+seqSoTerm=contig
+wait=48
+
+# /AnnotatedProteins-extract/
+outputFile=giardiaAnnotatedProteins.fsa
+idSql=select whatever from wherever
+
+# /VirtualSeqs-insert/
+agpFile=GiardiaScaffolds.agp
+virSeqExtDbName=Giardia Scaffolds
+virSeqExtDbRlsVer=2008-02-14
+virtualSeqSOTerm=supercontig
+soVer=1.147
+seqPieceExtDbName=Giardia Contigs
+seqPieceExtDbRlsVer=2007-09-24
+wait=20
+
+# /SignalP-run/
+binPath=software/signalp/current/signalp
+options=-t euk -f short -m nn+hmm -q -trunc 70
+seqFile=giardiaAnnotatedProteins.fsa
+outFile=giardiaSignalP
