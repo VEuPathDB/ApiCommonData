@@ -63,10 +63,16 @@
                    blat.percent_identity,       
                    blat.score || '' score, 
                    (SELECT DISTINCT
-                     CASE WHEN taxn.name like 'Giardia lamblia%' or taxn.name like 'Giardia intestinalis%' THEN 'Giardia lamblia'
-                          WHEN taxn.name like 'Cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
-                          WHEN taxn.name like 'Cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
-                          WHEN taxn.name like 'Toxoplasma%' THEN 'Toxoplasma gondii'
+                     CASE WHEN lower(taxn.name) like 'giardia lamblia%' or lower(taxn.name) like 'giardia intestinalis%' THEN 'Giardia lamblia'
+                          WHEN lower(taxn.name) like 'cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
+                          WHEN lower(taxn.name) like 'cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
+                          WHEN lower(taxn.name) like 'toxoplasma%' THEN 'Toxoplasma gondii'
+                          WHEN lower(taxn.name) like 'plasmodium berghei%' THEN 'Plasmodium berghei'
+                          WHEN lower(taxn.name) like 'plasmodium chabaudi%' THEN 'Plasmodium chabaudi'
+                          WHEN lower(taxn.name) like 'plasmodium falciparum%' THEN 'Plasmodium falciparum'
+                          WHEN lower(taxn.name) like 'plasmodium knowlesi%' THEN 'Plasmodium knowlesi'
+                          WHEN lower(taxn.name) like 'plasmodium vivax%' THEN 'Plasmodium vivax'
+                          WHEN lower(taxn.name) like 'plasmodium yoelii%' THEN 'Plasmodium yoelii'
                      END as organism
                      FROM sres.taxonname taxn
                      WHERE etn.taxon_id = taxn.taxon_id) organism,  
