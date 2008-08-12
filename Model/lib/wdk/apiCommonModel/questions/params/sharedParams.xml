@@ -40,1341 +40,1341 @@
   <!-- Signature -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <stringParam name="signature" 
-				includeProjects="ApiDB"
-				prompt="User Signature"
-				visible="false">
-            <help>
-                 Used to pass the Users Signature to the component sites
-            </help>
-      </stringParam>
+       <stringParam name="signature" 
+                                 includeProjects="ApiDB"
+                                 prompt="User Signature"
+                                 visible="false">
+             <help>
+                  Used to pass the Users Signature to the component sites
+             </help>
+       </stringParam>
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- best alignment only  -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <enumParam name="best_alignment_only"
-                     prompt="Best alignments only"
-                     multiPick="false"
-                     quote="false">
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- best alignment only  -->
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <enumParam name="best_alignment_only"
+                      prompt="Best alignments only"
+                      multiPick="false"
+                      quote="false">
+       <help>
+              Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
+       </help>
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <enumList>   
+         <enumValue>
+           <term>Yes</term>
+           <internal>1</internal>
+         </enumValue>
+         <enumValue>
+           <term>No</term>
+           <internal>0,1</internal>
+         </enumValue>
+       </enumList>   
+     </enumParam>
+
+         <stringParam name="max_number_best_alignments"
+                      prompt="Maximum number of best alignments"
+                      quote="false">
+             <help>
+               EST sequences can have two (or more) best alignments that have the same percent identity, length and score.  This parameter allows you to specify the maximum number of these best alignments that will be considered for any EST to be included in the query.  For example, if you specify 1 then all the ESTs that do not have a unique best alignment will be ignored in the query.
+             </help>           
+             <suggest default="1"
+                allowEmpty="true" emptyValue="1000" />
+         </stringParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- high confidence est only  -->
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <enumParam name="high_confidence_only"
+                      prompt="Consistent alignments only"
+                      multiPick="false"
+                      quote="false">
+       <help>
+              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
+       </help>
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <enumList>   
+         <enumValue>
+           <term>No</term>
+           <internal>0,1</internal>
+         </enumValue>
+         <enumValue>
+           <term>Yes</term>
+           <internal>1</internal>
+         </enumValue>
+       </enumList>   
+     </enumParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!--  -->  
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <stringParam name="min_percent_identity"
+                      prompt="Percent identity >="
+                      quote="false">
+             <help>You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity</help>           
+             <suggest default="90"/>
+         </stringParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!--  -->  
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <stringParam name="min_percent_est_aligned"
+                      prompt="Percent of EST bases aligned >="
+                      quote="false">
+             <help>Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.</help>
+             <suggest default="20"
+                           />
+         </stringParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!--  -->  
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <stringParam name="bp_overlap_gte"
+                      prompt="Base Overlap &gt;="
+                      quote="false">
+             <help>Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general, the specificity of this evidence is proportional to the overlap length.</help>
+             <suggest sample="(Example: 100)"
+                      default="100"/>
+         </stringParam>
+
+         <stringParam name="stoxopforganism"
+               prompt="Organism"
+               visible="false"
+               default="Plasmo falciparum">
+             <help>You can select one or more organisms by checking the box next to the one(s) that you wish to use.</help>
+             <suggest sample="(Example: 100)"
+                      default="100"/>
+         </stringParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- Universal, genomic and ORF BLAST -->  
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <enumParam name="BlastAlgorithm"
+             prompt="BLAST Program"
+             multiPick="false">
+
       <help>
-             Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
+            The Blast Program that will be executed: &#60;b&#62; blastp &#60;/b&#62;  compares an aminoacid query sequence against a protein sequence database;  &#60;b&#62; blastn  &#60;/b&#62; compares a nucleotide query sequence against a nucleotide sequence database; &#60;b&#62; blastx  &#60;/b&#62; compares the six-frame conceptual translation products of a nucleotide query sequence (both strands) against a protein sequence database;  &#60;b&#62;tblastn  &#60;/b&#62; compares a protein query sequence against a nucleotide sequence database dynamically translated in all six reading frames (both strands);  &#60;b&#62;tblastx  &#60;/b&#62;  compares the six-frame translations of a nucleotide query sequence against the six-frame translations of a nucleotide sequence database.
       </help>
-      <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList>   
-        <enumValue>
-          <term>Yes</term>
-          <internal>1</internal>
-        </enumValue>
-        <enumValue>
-          <term>No</term>
-          <internal>0,1</internal>
-        </enumValue>
-      </enumList>   
-    </enumParam>
-
-        <stringParam name="max_number_best_alignments"
-                     prompt="Maximum number of best alignments"
-                     quote="false">
-            <help>
-              EST sequences can have two (or more) best alignments that have the same percent identity, length and score.  This parameter allows you to specify the maximum number of these best alignments that will be considered for any EST to be included in the query.  For example, if you specify 1 then all the ESTs that do not have a unique best alignment will be ignored in the query.
-            </help>           
-            <suggest default="1"
-               allowEmpty="true" emptyValue="1000" />
-        </stringParam>
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- high confidence est only  -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <enumParam name="high_confidence_only"
-                     prompt="Consistent alignments only"
-                     multiPick="false"
-                     quote="false">
-      <help>
-             Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
-      </help>
-      <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList>   
-        <enumValue>
-          <term>No</term>
-          <internal>0,1</internal>
-        </enumValue>
-        <enumValue>
-          <term>Yes</term>
-          <internal>1</internal>
-        </enumValue>
-      </enumList>   
-    </enumParam>
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->  
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-        <stringParam name="min_percent_identity"
-                     prompt="Percent identity >="
-                     quote="false">
-            <help>You can specify a minimum percent identity of the alignment between the EST and genomic DNA.  We only store alignments with >= 90% identity</help>           
-            <suggest default="90"/>
-        </stringParam>
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->  
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="min_percent_est_aligned"
-                     prompt="Percent of EST bases aligned >="
-                     quote="false">
-            <help>Enter the minimum percentage of bases in the EST sequence that are aligned to genomic DNA in this alignment.</help>
-            <suggest default="20"
-                          />
-        </stringParam>
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->  
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-        <stringParam name="bp_overlap_gte"
-                     prompt="Base Overlap &gt;="
-                     quote="false">
-            <help>Overlap of expressed sequence tag (EST) alignments with annotated genes is a useful approach to verify gene predictions. In general, the specificity of this evidence is proportional to the overlap length.</help>
-            <suggest sample="(Example: 100)"
-                     default="100"/>
-        </stringParam>
-
-        <stringParam name="stoxopforganism"
-              prompt="Organism"
-              visible="false"
-              default="Plasmo falciparum">
-            <help>You can select one or more organisms by checking the box next to the one(s) that you wish to use.</help>
-            <suggest sample="(Example: 100)"
-                     default="100"/>
-        </stringParam>
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- Universal, genomic and ORF BLAST -->  
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
- <enumParam name="BlastAlgorithm"
-            prompt="BLAST Program"
-            multiPick="false">
-            
-     <help>
-           The Blast Program that will be executed: &#60;b&#62; blastp &#60;/b&#62;  compares an aminoacid query sequence against a protein sequence database;  &#60;b&#62; blastn  &#60;/b&#62; compares a nucleotide query sequence against a nucleotide sequence database; &#60;b&#62; blastx  &#60;/b&#62; compares the six-frame conceptual translation products of a nucleotide query sequence (both strands) against a protein sequence database;  &#60;b&#62;tblastn  &#60;/b&#62; compares a protein query sequence against a nucleotide sequence database dynamically translated in all six reading frames (both strands);  &#60;b&#62;tblastx  &#60;/b&#62;  compares the six-frame translations of a nucleotide query sequence against the six-frame translations of a nucleotide sequence database.
-     </help>
-     <enumList>  
-        <enumValue>
-          <term>blastn</term>
-          <internal>blastn</internal>
-        </enumValue>   
-        <enumValue>
-          <term>blastp</term>
-          <internal>blastp</internal>
-        </enumValue>   
-        <enumValue>
-          <term>blastx</term>
-          <internal>blastx</internal>
-        </enumValue>   
-        <enumValue>
-          <term>tblastn</term>
-          <internal>tblastn</internal>
-        </enumValue>   
-        <enumValue>
-          <term>tblastx</term>
-          <internal>tblastx</internal>
-        </enumValue>
-     </enumList>
-  </enumParam>
+      <enumList>  
+         <enumValue>
+           <term>blastn</term>
+           <internal>blastn</internal>
+         </enumValue>   
+         <enumValue>
+           <term>blastp</term>
+           <internal>blastp</internal>
+         </enumValue>   
+         <enumValue>
+           <term>blastx</term>
+           <internal>blastx</internal>
+         </enumValue>   
+         <enumValue>
+           <term>tblastn</term>
+           <internal>tblastn</internal>
+         </enumValue>   
+         <enumValue>
+           <term>tblastx</term>
+           <internal>tblastx</internal>
+         </enumValue>
+      </enumList>
+   </enumParam>
 
 
 
-  <enumParam name="BlastDatabaseType"
-                     prompt="Target Data Type"
-                     multiPick="false">
-      <help>
-             The type of the subject database.
-      </help>
-      <enumList>   
-   <!--     <enumValue>
-          <term> Choose one</term>
-          <internal>Choose one</internal>
-        </enumValue>-->
-        <enumValue>
-          <term>Transcripts</term>
-          <internal>Transcripts</internal>
-        </enumValue>
-   <!--     <enumValue>
-          <term>Translated Transcripts</term>
-          <internal>Transcripts Translated</internal>
-        </enumValue> -->
-        <enumValue>
-          <term>Proteins</term>
-          <internal>Proteins</internal>
-        </enumValue>
-        <enumValue>
-          <term>Genome</term>
-          <internal>Genomics</internal>
-        </enumValue>
-<!--        <enumValue>
-          <term>Translated Genome</term>
-          <internal>genomic Translated</internal>
-        </enumValue> -->
-        <enumValue>
-          <term>ORF</term>
-          <internal>ORF</internal>
-        </enumValue>
-        <enumValue>
-          <term>EST</term>
-          <internal>EST</internal> 
-        </enumValue>
-        <enumValue includeProjects="CryptoDB,ToxoDB,ApiDB,GiardiaDB">
-          <term>Assemblies</term>
-          <internal>Assemblies</internal>
-        </enumValue> 
-        <enumValue includeProjects="CryptoDB,PlasmoDB,ApiDB">
-          <term>Isolates</term>
-          <internal>Isolates</internal>
-        </enumValue> 
-<!--        <enumValue>
-          <term>Translated EST</term>
-          <internal>EST Translated</internal>
-        </enumValue>-->
+   <enumParam name="BlastDatabaseType"
+                      prompt="Target Data Type"
+                      multiPick="false">
+       <help>
+              The type of the subject database.
+       </help>
+       <enumList>   
+    <!--     <enumValue>
+           <term> Choose one</term>
+           <internal>Choose one</internal>
+         </enumValue>-->
+         <enumValue>
+           <term>Transcripts</term>
+           <internal>Transcripts</internal>
+         </enumValue>
+    <!--     <enumValue>
+           <term>Translated Transcripts</term>
+           <internal>Transcripts Translated</internal>
+         </enumValue> -->
+         <enumValue>
+           <term>Proteins</term>
+           <internal>Proteins</internal>
+         </enumValue>
+         <enumValue>
+           <term>Genome</term>
+           <internal>Genomics</internal>
+         </enumValue>
+ <!--        <enumValue>
+           <term>Translated Genome</term>
+           <internal>genomic Translated</internal>
+         </enumValue> -->
+         <enumValue>
+           <term>ORF</term>
+           <internal>ORF</internal>
+         </enumValue>
+         <enumValue>
+           <term>EST</term>
+           <internal>EST</internal> 
+         </enumValue>
+         <enumValue includeProjects="CryptoDB,ToxoDB,ApiDB,GiardiaDB">
+           <term>Assemblies</term>
+           <internal>Assemblies</internal>
+         </enumValue> 
+         <enumValue includeProjects="CryptoDB,PlasmoDB,ApiDB">
+           <term>Isolates</term>
+           <internal>Isolates</internal>
+         </enumValue> 
+ <!--        <enumValue>
+           <term>Translated EST</term>
+           <internal>EST Translated</internal>
+         </enumValue>-->
 
-      </enumList>   
-    </enumParam>
-
-
-<!--  currently using the ones in similarityParams.xml  Jan 25 2008 , if no one complains in a month or so, this could be removed -->
-<!--
-    <enumParam name="BlastDatabaseOrganism"
-                     prompt="Target Organism"
-                     multiPick="false">
-      <help>
-             Organism(s) from which the sequences in the BLAST database originated
-      </help>
-      <enumList>   
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. berghei</term>
-          <internal>Pberghei</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. chabaudi</term>
-          <internal>Pchabaudi</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. falciparum</term>
-          <internal>Pfalciparum</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. falciparum mitocondrial</term>
-          <internal>PfalciparumMito</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. falciparum plastid</term>
-          <internal>PfalciparumPlastid</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. gallinaceum</term>
-          <internal>Pgallinaceum</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. knowlesi</term>
-          <internal>Pknowlesi</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. reichenowi</term>
-          <internal>Preichenowi</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. vivax</term>
-          <internal>Pvivax</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,PlasmoDB">
-          <term>P. yoelii</term>
-          <internal>Pyoelii</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,ToxoDB">
-          <term>T. gondii ME49</term>
-          <internal>Tgondii</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,ToxoDB">
-          <term>T. gondi apicoplast</term>
-          <internal>TgondiiApicoplast</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,ToxoDB">
-          <term>T. gondii GT1</term>
-          <internal>TgondiiGT1</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,ToxoDB">
-          <term>T. gondii RH (chr Ia, Ib)</term>
-          <internal>TgondiiRH</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,ToxoDB">
-          <term>T. gondii VEG</term>
-          <internal>TgondiiVeg</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,CryptoDB">
-          <term>C. hominis</term>
-          <internal>Chominis</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,CryptoDB">
-          <term>C. parvum</term>
-          <internal>Cparvum</internal>
-        </enumValue>
-        <enumValue includeProjects="ApiDB,CryptoDB">
-          <term>C. parvum Chr6</term>
-          <internal>CparvumChr6</internal>
-        </enumValue>
-        <enumValue includeProjects="CryptoDB">
-          <term>All Cryptosporidium Isolates</term>
-          <internal>CryptoIsolate</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB">
-          <term>All Plasmodium Barcodes</term>
-          <internal>PlasmoBarcode</internal>
-        </enumValue>
-      </enumList>   
-    </enumParam>
-
--->
+       </enumList>   
+     </enumParam>
 
 
-<!--
-    <enumParam name="BlastQueryType"
-                     prompt="Query sequence type"
-                     multiPick="false">
-      <help>
-             The type of your query sequence
-      </help>
-      <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList>   
-        <enumValue>
-          <term>DNA</term>
-          <internal>dna</internal>
-        </enumValue>
-        <enumValue>
-          <term>Protein</term>
-          <internal>protein</internal>
-        </enumValue>
-      </enumList>   
-    </enumParam>
--->
-        <stringParam name="BlastQuerySequence"
-                     prompt="Input Sequence"
-                     length="31000">
-            <help>BLAST Input Sequence</help>
-            <suggest sample=""/>
-        </stringParam>
+ <!--  currently using the ones in similarityParams.xml  Jan 25 2008 , if no one complains in a month or so, this could be removed -->
+ <!--
+     <enumParam name="BlastDatabaseOrganism"
+                      prompt="Target Organism"
+                      multiPick="false">
+       <help>
+              Organism(s) from which the sequences in the BLAST database originated
+       </help>
+       <enumList>   
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. berghei</term>
+           <internal>Pberghei</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. chabaudi</term>
+           <internal>Pchabaudi</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. falciparum</term>
+           <internal>Pfalciparum</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. falciparum mitocondrial</term>
+           <internal>PfalciparumMito</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. falciparum plastid</term>
+           <internal>PfalciparumPlastid</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. gallinaceum</term>
+           <internal>Pgallinaceum</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. knowlesi</term>
+           <internal>Pknowlesi</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. reichenowi</term>
+           <internal>Preichenowi</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. vivax</term>
+           <internal>Pvivax</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+           <term>P. yoelii</term>
+           <internal>Pyoelii</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,ToxoDB">
+           <term>T. gondii ME49</term>
+           <internal>Tgondii</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,ToxoDB">
+           <term>T. gondi apicoplast</term>
+           <internal>TgondiiApicoplast</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,ToxoDB">
+           <term>T. gondii GT1</term>
+           <internal>TgondiiGT1</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,ToxoDB">
+           <term>T. gondii RH (chr Ia, Ib)</term>
+           <internal>TgondiiRH</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,ToxoDB">
+           <term>T. gondii VEG</term>
+           <internal>TgondiiVeg</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,CryptoDB">
+           <term>C. hominis</term>
+           <internal>Chominis</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,CryptoDB">
+           <term>C. parvum</term>
+           <internal>Cparvum</internal>
+         </enumValue>
+         <enumValue includeProjects="ApiDB,CryptoDB">
+           <term>C. parvum Chr6</term>
+           <internal>CparvumChr6</internal>
+         </enumValue>
+         <enumValue includeProjects="CryptoDB">
+           <term>All Cryptosporidium Isolates</term>
+           <internal>CryptoIsolate</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB">
+           <term>All Plasmodium Barcodes</term>
+           <internal>PlasmoBarcode</internal>
+         </enumValue>
+       </enumList>   
+     </enumParam>
 
-    <enumParam name="-filter"
-                    id="-filter"
-                    prompt="Low complexity filter">
-      <help>
-             Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
-      </help>
-      <enumList>   
-        <enumValue default="true">
-          <term>yes</term>
-          <internal>yes</internal>
-        </enumValue>
-        <enumValue>
-          <term>no</term>
-          <internal>no</internal>
-        </enumValue>
-      </enumList>   
-    </enumParam>
-
-        <stringParam name="-e"
-                     prompt="Expectation value">
-            <help>Expected number of hits with at least this score. The lower the e- value the more significant the hit.</help>
-            <suggest default="0.05"
-                     sample="1e-10"/>
-        </stringParam>
-
-        <stringParam name="-v"
-                     prompt="Maximum descriptions (V)">
-            <help>Number of one-line descriptions to show</help>
-            <suggest default="50"/>
-        </stringParam>
-       
-        <stringParam name="-b"
-                     prompt="Maximum alignments (B)">
-            <help>Number of alignments to show</help>
-            <suggest default="50"/>
-        </stringParam>
-    
-
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!--  -->  
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-    <enumParam name="chromosome"
-                     prompt="Chromosome"
-                     multiPick="true" >
-      <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList>   
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 1</term>
-          <internal>MAL1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 2</term>
-          <internal>MAL2</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 3</term>
-          <internal>MAL3</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 4</term>
-          <internal>MAL4</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 5</term>
-          <internal>MAL5</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 6</term>
-          <internal>MAL6</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 7</term>
-          <internal>MAL7</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 8</term>
-          <internal>MAL8</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 9</term>
-          <internal>MAL9</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 10</term>
-          <internal>MAL10</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 11</term>
-          <internal>MAL11</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 12</term>
-          <internal>MAL12</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 13</term>
-          <internal>MAL13</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P.f. chromosome 14</term>
-          <internal>MAL14</internal>
-        </enumValue>
-
-    
-      </enumList>   
-    </enumParam>
-
-    <stringParam name="chromosomeOptional" includeProjects="ApiDB"
-                     prompt="Chromosome">
-            <suggest default="choose one"/>
-    </stringParam>
-
-    <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB"
-                     prompt="Chromosome"
-                     multiPick="false"
-                     default="choose one">
-
-      <enumList includeProjects="PlasmoDB">   
-        <enumValue>
-          <term>choose one</term>
-          <internal>choose one</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 1</term>
-          <internal>1</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 2</term>
-          <internal>2</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 3</term>
-          <internal>3</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 4</term>
-          <internal>4</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 5</term>
-          <internal>5</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 6</term>
-          <internal>6</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 7</term>
-          <internal>7</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 8</term>
-          <internal>8</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 9</term>
-          <internal>9</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 10</term>
-          <internal>10</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 11</term>
-          <internal>11</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 12</term>
-          <internal>12</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 13</term>
-          <internal>13</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 14</term>
-          <internal>14</internal>
-        </enumValue>
-      </enumList>   
-
-
-      <enumList includeProjects="ToxoDB">   
-        <enumValue>
-          <term>Select:</term>
-          <internal>Select:</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. Ia</term>
-          <internal>Ia</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. Ib</term>
-          <internal>Ib</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. II</term>
-          <internal>II</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. III</term>
-          <internal>III</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. IV</term>
-          <internal>IV</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. V</term>
-          <internal>V</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VI</term>
-          <internal>VI</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIIa</term>
-          <internal>VIIa</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIIb</term>
-          <internal>VIIb</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIII</term>
-          <internal>VIII</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. IX</term>
-          <internal>IX</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. X</term>
-          <internal>X</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. XI</term>
-          <internal>XI</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. XII</term>
-          <internal>XII</internal>
-        </enumValue>
-      </enumList>   
-
-      <enumList includeProjects="CryptoDB">   
-        <enumValue>
-          <term>choose one</term>
-          <internal>choose one</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000006 (Chromosome 1)</term>
-          <internal>AAEE01000006</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000005 (Chromosome 2)</term>
-          <internal>AAEE01000005</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000013 (Chromosome 2)</term>
-          <internal>AAEE01000013</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000004 (Chromosome 3)</term>
-          <internal>AAEE01000004</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000015 (Chromosome 3)</term>
-          <internal>AAEE01000015</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000008 (Chromosome 4)</term>
-          <internal>AAEE01000008</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000009 (Chromosome 4)</term>
-          <internal>AAEE01000009</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000012 (Chromosome 4)</term>
-          <internal>AAEE01000012</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000007 (Chromosome 5)</term>
-          <internal>AAEE01000007</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000018 (Chromosome 5)</term>
-          <internal>AAEE01000018</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000017 (Chromosome 5)</term>
-          <internal>AAEE01000017</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000010 (Chromosome 5)</term>
-          <internal>AAEE01000010</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000002 (Chromosome 6)</term>
-          <internal>AAEE01000002</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000014 (Chromosome 6)</term>
-          <internal>AAEE01000014</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. BX526834 (Chromosome 6)</term>
-          <internal>BX526834</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000016 (Chromosome 6)</term>
-          <internal>AAEE01000016</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000001 (Chromosome 7)</term>
-          <internal>AAEE01000001</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000003 (Chromosome 8)</term>
-          <internal>AAEE01000003</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000011 (Chromosome 8)</term>
-          <internal>AAEE01000011</internal>
-        </enumValue>
-      </enumList> 
-    </enumParam>
-
-    <stringParam name="chromosomeOptionalForEsts" includeProjects="ApiDB"
-                     prompt="Chromosome">
-            <suggest default="choose one"/>
-    </stringParam>
-
-    <enumParam name="chromosomeOptionalForEsts" excludeProjects="ApiDB,GiardiaDB,TrichDB"
-                     prompt="Chromosome"
-                     multiPick="false"
-                     default="choose one">
-
-      <enumList includeProjects="PlasmoDB">   
-        <enumValue>
-          <term>choose one</term>
-          <internal>choose one</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 1</term>
-          <internal>1</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 2</term>
-          <internal>2</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 3</term>
-          <internal>3</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 4</term>
-          <internal>4</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 5</term>
-          <internal>5</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 6</term>
-          <internal>6</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 7</term>
-          <internal>7</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 8</term>
-          <internal>8</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 9</term>
-          <internal>9</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 10</term>
-          <internal>10</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 11</term>
-          <internal>11</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 12</term>
-          <internal>12</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 13</term>
-          <internal>13</internal>
-        </enumValue>
-        <enumValue>
-          <term>chromosome 14</term>
-          <internal>14</internal>
-        </enumValue>
-      </enumList>   
-
-
-      <enumList includeProjects="ToxoDB">   
-        <enumValue>
-          <term>Select:</term>
-          <internal>Select:</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. Ia</term>
-          <internal>Ia</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. Ib</term>
-          <internal>Ib</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. II</term>
-          <internal>II</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. III</term>
-          <internal>III</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. IV</term>
-          <internal>IV</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. V</term>
-          <internal>V</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VI</term>
-          <internal>VI</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIIa</term>
-          <internal>VIIa</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIIb</term>
-          <internal>VIIb</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. VIII</term>
-          <internal>VIII</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. IX</term>
-          <internal>IX</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. X</term>
-          <internal>X</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. XI</term>
-          <internal>XI</internal>
-        </enumValue>
-        <enumValue>
-          <term>T.g. XII</term>
-          <internal>XII</internal>
-        </enumValue>
-      </enumList>   
-
-      <enumList includeProjects="CryptoDB">   
-        <enumValue>
-          <term>choose one</term>
-          <internal>choose one</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000006 (Chromosome 1)</term>
-          <internal>AAEE01000006</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000005 (Chromosome 2)</term>
-          <internal>AAEE01000005</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000013 (Chromosome 2)</term>
-          <internal>AAEE01000013</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000004 (Chromosome 3)</term>
-          <internal>AAEE01000004</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000015 (Chromosome 3)</term>
-          <internal>AAEE01000015</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000008 (Chromosome 4)</term>
-          <internal>AAEE01000008</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000009 (Chromosome 4)</term>
-          <internal>AAEE01000009</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000012 (Chromosome 4)</term>
-          <internal>AAEE01000012</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000007 (Chromosome 5)</term>
-          <internal>AAEE01000007</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000018 (Chromosome 5)</term>
-          <internal>AAEE01000018</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000017 (Chromosome 5)</term>
-          <internal>AAEE01000017</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000010 (Chromosome 5)</term>
-          <internal>AAEE01000010</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000002 (Chromosome 6)</term>
-          <internal>AAEE01000002</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000014 (Chromosome 6)</term>
-          <internal>AAEE01000014</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000016 (Chromosome 6)</term>
-          <internal>AAEE01000016</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000001 (Chromosome 7)</term>
-          <internal>AAEE01000001</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000003 (Chromosome 8)</term>
-          <internal>AAEE01000003</internal>
-        </enumValue>
-        <enumValue>
-          <term>C.p. AAEE01000011 (Chromosome 8)</term>
-          <internal>AAEE01000011</internal>
-        </enumValue>
-      </enumList> 
-    </enumParam>
-
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- Sequence Id -->  
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-    <stringParam name="sequenceId"
-            prompt="Genomic sequence ID">
-
-        <help includeProjects="ApiDB">
-          Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
-        </help>
-        <help includeProjects="TrichDB">
-          Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use DS11* to ask for all contigs that have identifiers that begin with DS11. Genes By Chromosomal Location does not allow wildcards.
-        </help>
-        <help includeProjects="GiardiaDB">
-          Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AACB0200* to ask for all contigs/scaffolds that have identifiers that begin with AACB0200. Genes By Chromosomal Location does not allow wildcards.
-        </help>
-        <help includeProjects="CryptoDB">
-            Enter an identifier for a genomic contig. The IDs
-            correspond to the accession numbers in the GenBank records
-            supplied by the sequencing centers. Contig ID's from
-            &lt;i&gt; C. parvum &lt;/i&gt; whole genome sequencing
-            project begin with 'AAEE' and contig ID's for &lt;i&gt;
-            C. hominis &lt;/i&gt; begin with 'AAEL'. The &lt;i&gt;
-            C. parvum &lt;/i&gt; Chromosome 6 independently sequenced
-            at MRC-LMB  before the whole genome project was completed
-            is 'BX526834 '. Wild cards are permitted  in most queries,
-            i.e. use AAEE* to ask for all &lt;i&gt; C. parvum
-            &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
-        </help>
-        <help includeProjects="PlasmoDB">
-            Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  &#60;i&#62;P. berghei &#60;/i&#62; sequences start with PB,  &#60;i&#62; P. chabaudi &#60;/i&#62; sequences start with PC, and  &#60;i&#62;P.knowlesi &#60;/i&#62; sequences start with PKH. Wild cards are permitted  in most queries, i.e. use MALPY* to ask for all &#60;i&#62; P. yoelii &#60;/i&#62; sequences. Genes By Chromosomal Location does not allow wildcards.
-        </help>
-
-        <suggest includeProjects="CryptoDB"
-            sample="AAEL01000057, AAEE01000009, BX526834"
-            default="(Example: AAEE01000006)"
-            allowEmpty="true"
-            emptyValue="No Match"/>
-        <suggest includeProjects="ApiDB"
-            sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_994746"
-            default="(Example: AAEL01000057)"/>
-        <suggest includeProjects="ToxoDB"
-            sample="Ia, VIIb, XI, VIIa, TGG_994746"
-            default="(Examples: Ia, TGG_994746)"
-            allowEmpty="true"
-            emptyValue="No Match"/>
-        <suggest includeProjects="PlasmoDB"
-            sample="MAL4, ctg_4094, MALPY00019"
-            default="(Examples: MAL4, ctg_6638)"
-            allowEmpty="true"
-            emptyValue="No Match"/>     
-        <suggest includeProjects="GiardiaDB"
-            sample="AACB02000002, CH991779"
-            default="CH991779"/>     
-        <suggest includeProjects="TrichDB"
-            sample="DS113177"
-            default="DS113177"/>     
-</stringParam>    
-
-        <stringParam name="start_point"
-                     prompt="Start at"
-                     quote="false">
-            <help>Select the distance (in nucleotides) to the start</help>
-            <suggest default="1"/>
-        </stringParam>
-
-        <stringParam name="end_point"
-                     prompt="End Location (0 = end)"
-                     quote="false">
-            <help>Select the distance (in nucleotides) for the end location.  Note that 0 equals the end so you can get genes right up to the end of the sequence</help>
-            <suggest default="0"/>
-        </stringParam>
-
-      <flatVocabParam name="libraryId"
-                     queryRef="SharedVQ.EstLibraries"
-                     prompt="EST Library"
-                     multiPick="true"
-                     quote="false">
-        <help>
-             Select a clone library.
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
-
-<flatVocabParam name="libraryIdAssemblies"
-                     queryRef="SharedVQ.EstLibrariesAssemblies"
-                     prompt="EST Library"
-                     multiPick="true"
-                     quote="false">
-        <help>
-             Select a clone library.
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
-
-
-      <flatVocabParam name="libraryIdGenes"
-                     queryRef="SharedVQ.EstLibrariesGenes"
-                     prompt="EST Library"
-                     multiPick="true"
-                     quote="false">
-        <help>
-             Select a clone library.
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
-
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- SNPs -->  
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
-      <enumParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
-		     prompt="Reference"
-                     multiPick="false">
-      <help>
-             Choose a reference from the list of strains.  Strains are sorted by number of SNPs in descending order.
-      </help>
-
-      <useTermOnly value="true" includeProjects="ApiDB"/>
-
-<!-- cannot set enumLists per component site, wdk complains that apidb has more than one enumList, 
-     so we need to specify the includeProject per value 
  -->
-      <enumList>
-
-     <enumValue  includeProjects="CryptoDB,ApiDB">
-            <term>Cp-IOWA II</term>
-            <internal>iowa_II</internal>
-          </enumValue>
-          <enumValue includeProjects="CryptoDB,ApiDB">
-            <term>Cp-TU114</term>
-            <internal>tu114</internal>
-          </enumValue>
-          <enumValue includeProjects="CryptoDB,ApiDB">
-            <term>Cp-MD</term>
-            <internal>md</internal>
-          </enumValue>
 
 
-        <enumValue  includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-3D7</term>
-          <internal>3D7</internal>
-        </enumValue>
-        <enumValue  includeProjects="PlasmoDB,ApiDB">
-          <term>P. reichenowi (vs. 3D7 only)</term>
-          <internal>Preich</internal>
-        </enumValue>
-        <enumValue  includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-HB3</term>
-          <internal>HB3</internal>
-        </enumValue>
-        <enumValue  includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-GHANA1</term>
-          <internal>GHANA1</internal>
-        </enumValue>
-        <enumValue  includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-V1_S</term>
-          <internal>V1_S</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-DD2</term>
-          <internal>Dd2</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-7G8</term>
-          <internal>7G8</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-RO33</term>
-          <internal>RO-33</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-D10</term>
-          <internal>D10</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-K1</term>
-          <internal>K1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-D6</term>
-          <internal>D6</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCC-2</term>
-          <internal>FCC-2</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 34.04</term>
-          <internal>SENEGAL3404</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-IT</term>
-          <internal>IT</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Santa Lucia</term>
-          <internal>SANTALUCIA</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCB</term>
-          <internal>FCB</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCR3</term>
-          <internal>FCR3</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-106/1</term>
-          <internal>106_1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 35.04</term>
-          <internal>SENEGAL3504</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 31.01</term>
-          <internal>SENEGAL3101</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 51.02</term>
-          <internal>SENEGAL5102</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Malayan Camp</term>
-          <internal>MALAYAN</internal>
-        </enumValue>
+ <!--
+     <enumParam name="BlastQueryType"
+                      prompt="Query sequence type"
+                      multiPick="false">
+       <help>
+              The type of your query sequence
+       </help>
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <enumList>   
+         <enumValue>
+           <term>DNA</term>
+           <internal>dna</internal>
+         </enumValue>
+         <enumValue>
+           <term>Protein</term>
+           <internal>protein</internal>
+         </enumValue>
+       </enumList>   
+     </enumParam>
+ -->
+         <stringParam name="BlastQuerySequence"
+                      prompt="Input Sequence"
+                      length="31000">
+             <help>BLAST Input Sequence</help>
+             <suggest sample=""/>
+         </stringParam>
 
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-ME49 (type II)</term>
-            <internal>ME49</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-VEG (type III)</term>
-            <internal>VEG</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-GT1 (type I)</term>
-            <internal>GT1</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-RH (type I)</term>
-            <internal>RH</internal>
-          </enumValue>
+     <enumParam name="-filter"
+                     id="-filter"
+                     prompt="Low complexity filter">
+       <help>
+              Set the low complexity filter. WUBLAST's default behavior is not to use this filter. NCBIBLAST's is to use it. When filter is set to 'yes' WUBLAST uses seg; NCBIBLAST uses dust for blastn, seg otherwise.
+       </help>
+       <enumList>   
+         <enumValue default="true">
+           <term>yes</term>
+           <internal>yes</internal>
+         </enumValue>
+         <enumValue>
+           <term>no</term>
+           <internal>no</internal>
+         </enumValue>
+       </enumList>   
+     </enumParam>
 
-     
+         <stringParam name="-e"
+                      prompt="Expectation value">
+             <help>Expected number of hits with at least this score. The lower the e- value the more significant the hit.</help>
+             <suggest default="0.05"
+                      sample="1e-10"/>
+         </stringParam>
 
-        </enumList>   
-      </enumParam>
+         <stringParam name="-v"
+                      prompt="Maximum descriptions (V)">
+             <help>Number of one-line descriptions to show</help>
+             <suggest default="50"/>
+         </stringParam>
 
-     
-
-      <flatVocabParam name="snp_strain_b" includeProjects="ApiDB,PlasmoDB"
-                     queryRef="SharedVQ.SnpStrainB"
-		     prompt="Comparator"
-                     multiPick="false">
-        <help>
-             Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
-        </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
-
-      <enumParam name="snp_strain_b" includeProjects="ToxoDB"
-		     prompt="Reference"
-                     multiPick="false">
-        <help>
-             Choose a comparator from the list to compare to your reference.
-        </help>
-        <enumList>   
-          <enumValue>
-            <term>RH (type I; chr IA and IB only)</term>
-            <internal>RH</internal>
-          </enumValue>
-          <enumValue>
-            <term>ME49 (type II)</term>
-            <internal>ME49</internal>
-          </enumValue>
-          <enumValue>
-            <term>VEG (type III)</term>
-            <internal>VEG</internal>
-          </enumValue>
-        </enumList>   
-      </enumParam>
+         <stringParam name="-b"
+                      prompt="Maximum alignments (B)">
+             <help>Number of alignments to show</help>
+             <suggest default="50"/>
+         </stringParam>
 
 
- <enumParam name="snp_strain_m" includeProjects="CryptoDB,ApiDB,PlasmoDB,ToxoDB"
-		     prompt="Comparator(s)"
-                     multiPick="true">
-        <help>
-             Choose a comparator(s) from the list  to compare to your reference.  Strains are ordered by number of SNPs in descending order.
-        </help>
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!--  -->  
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+     <enumParam name="chromosome"
+                      prompt="Chromosome"
+                      multiPick="true" >
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <enumList>   
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 1</term>
+           <internal>MAL1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 2</term>
+           <internal>MAL2</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 3</term>
+           <internal>MAL3</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 4</term>
+           <internal>MAL4</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 5</term>
+           <internal>MAL5</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 6</term>
+           <internal>MAL6</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 7</term>
+           <internal>MAL7</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 8</term>
+           <internal>MAL8</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 9</term>
+           <internal>MAL9</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 10</term>
+           <internal>MAL10</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 11</term>
+           <internal>MAL11</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 12</term>
+           <internal>MAL12</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 13</term>
+           <internal>MAL13</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P.f. chromosome 14</term>
+           <internal>MAL14</internal>
+         </enumValue>
 
-      <enumList>
 
-          <enumValue includeProjects="CryptoDB,ApiDB">
-            <term>Cp-IOWA II</term>
-            <internal>iowa_II</internal>
-          </enumValue>
-          <enumValue includeProjects="CryptoDB,ApiDB">
-            <term>Cp-TU114</term>
-            <internal>tu114</internal>
-          </enumValue>
-          <enumValue includeProjects="CryptoDB,ApiDB">
-            <term>Cp-MD</term>
-            <internal>md</internal>
-          </enumValue>
+       </enumList>   
+     </enumParam>
 
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-3D7</term>
-          <internal>3D7</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>P. reichenowi (vs. 3D7 only)</term>
-          <internal>Preich</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-HB3</term>
-          <internal>HB3</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-GHANA1</term>
-          <internal>GHANA1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-V1_S</term>
-          <internal>V1_S</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-DD2</term>
-          <internal>Dd2</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-7G8</term>
-          <internal>7G8</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-RO33</term>
-          <internal>RO-33</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-D10</term>
-          <internal>D10</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-K1</term>
-          <internal>K1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-D6</term>
-          <internal>D6</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCC-2</term>
-          <internal>FCC-2</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 34.04</term>
-          <internal>SENEGAL3404</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-IT</term>
-          <internal>IT</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Santa Lucia</term>
-          <internal>SANTALUCIA</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCB</term>
-          <internal>FCB</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-FCR3</term>
-          <internal>FCR3</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-106/1</term>
-          <internal>106_1</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 35.04</term>
-          <internal>SENEGAL3504</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 31.01</term>
-          <internal>SENEGAL3101</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Senegal 51.02</term>
-          <internal>SENEGAL5102</internal>
-        </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
-          <term>Pf-Malayan Camp</term>
-          <internal>MALAYAN</internal>
-        </enumValue>
+     <stringParam name="chromosomeOptional" includeProjects="ApiDB"
+                      prompt="Chromosome">
+             <suggest default="choose one"/>
+     </stringParam>
+     <help>Select one or more chromosome</help>
+     <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB"
+                      prompt="Chromosome"
+                      multiPick="false"
+                      default="choose one">
 
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-ME49 (type II)</term>
-            <internal>ME49</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-VEG (type III)</term>
-            <internal>VEG</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-GT1 (type I)</term>
-            <internal>GT1</internal>
-          </enumValue>
-          <enumValue includeProjects="ToxoDB,ApiDB">
-            <term>Tg-RH (type I)</term>
-            <internal>RH</internal>
-          </enumValue>
+       <enumList includeProjects="PlasmoDB">   
+         <enumValue>
+           <term>choose one</term>
+           <internal>choose one</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 1</term>
+           <internal>1</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 2</term>
+           <internal>2</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 3</term>
+           <internal>3</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 4</term>
+           <internal>4</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 5</term>
+           <internal>5</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 6</term>
+           <internal>6</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 7</term>
+           <internal>7</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 8</term>
+           <internal>8</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 9</term>
+           <internal>9</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 10</term>
+           <internal>10</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 11</term>
+           <internal>11</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 12</term>
+           <internal>12</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 13</term>
+           <internal>13</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 14</term>
+           <internal>14</internal>
+         </enumValue>
+       </enumList>   
 
-        </enumList>   
-      </enumParam>
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- Motif search -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <enumList includeProjects="ToxoDB">   
+         <enumValue>
+           <term>Select:</term>
+           <internal>Select:</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. Ia</term>
+           <internal>Ia</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. Ib</term>
+           <internal>Ib</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. II</term>
+           <internal>II</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. III</term>
+           <internal>III</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. IV</term>
+           <internal>IV</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. V</term>
+           <internal>V</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VI</term>
+           <internal>VI</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIIa</term>
+           <internal>VIIa</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIIb</term>
+           <internal>VIIb</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIII</term>
+           <internal>VIII</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. IX</term>
+           <internal>IX</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. X</term>
+           <internal>X</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. XI</term>
+           <internal>XI</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. XII</term>
+           <internal>XII</internal>
+         </enumValue>
+       </enumList>   
 
-        <stringParam name="motif_expression"
-                     prompt="Pattern">
-            <help>Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine.</help>
-            <suggest sample="(Example: CC6+RK)"
-                     default="CC6+RK"/>
-        </stringParam>
+       <enumList includeProjects="CryptoDB">   
+         <enumValue>
+           <term>choose one</term>
+           <internal>choose one</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000006 (Chromosome 1)</term>
+           <internal>AAEE01000006</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000005 (Chromosome 2)</term>
+           <internal>AAEE01000005</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000013 (Chromosome 2)</term>
+           <internal>AAEE01000013</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000004 (Chromosome 3)</term>
+           <internal>AAEE01000004</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000015 (Chromosome 3)</term>
+           <internal>AAEE01000015</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000008 (Chromosome 4)</term>
+           <internal>AAEE01000008</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000009 (Chromosome 4)</term>
+           <internal>AAEE01000009</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000012 (Chromosome 4)</term>
+           <internal>AAEE01000012</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000007 (Chromosome 5)</term>
+           <internal>AAEE01000007</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000018 (Chromosome 5)</term>
+           <internal>AAEE01000018</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000017 (Chromosome 5)</term>
+           <internal>AAEE01000017</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000010 (Chromosome 5)</term>
+           <internal>AAEE01000010</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000002 (Chromosome 6)</term>
+           <internal>AAEE01000002</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000014 (Chromosome 6)</term>
+           <internal>AAEE01000014</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. BX526834 (Chromosome 6)</term>
+           <internal>BX526834</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000016 (Chromosome 6)</term>
+           <internal>AAEE01000016</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000001 (Chromosome 7)</term>
+           <internal>AAEE01000001</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000003 (Chromosome 8)</term>
+           <internal>AAEE01000003</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000011 (Chromosome 8)</term>
+           <internal>AAEE01000011</internal>
+         </enumValue>
+       </enumList> 
+     </enumParam>
 
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- Assembly search -->
-  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="min_ests_in_assembly"
-                     prompt="Number of ESTs >="
-                     quote="false"
-                     includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB">
-            <help>
-              Enter a minimum number of ESTs that is required per EST assembly.
-            </help>           
-            <suggest default="1"
-               allowEmpty="true" emptyValue="1" />
-        </stringParam>
-        <stringParam name="min_lib_ests_in_assembly"
-                     prompt="Number of library ESTs >="
-                     quote="false"
-                     includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB">
-            <help>
-              Enter a minimum number of ESTs from the selected libraries that is required per EST assembly.
-            </help>           
-            <suggest default="1"
-               allowEmpty="true" emptyValue="1" />
-        </stringParam>
+     <stringParam name="chromosomeOptionalForEsts" includeProjects="ApiDB"
+                      prompt="Chromosome">
+             <suggest default="choose one"/>
+     </stringParam>
 
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!-- mass spec -->  
-    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <stringParam name="min_seq_coverage"
-                     prompt="Minimum Percent Sequence Coverage"
-                     quote="false">
-            <help>Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%.</help>
-            <suggest default="0"/>
-        </stringParam>
+     <enumParam name="chromosomeOptionalForEsts" excludeProjects="ApiDB,GiardiaDB,TrichDB"
+                      prompt="Chromosome"
+                      multiPick="false"
+                      default="choose one">
 
-        <stringParam name="min_span_count"
-                     prompt="Minimum Number of Spans"
-                     quote="false">
-            <help>Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned</help>
+       <enumList includeProjects="PlasmoDB">   
+         <enumValue>
+           <term>choose one</term>
+           <internal>choose one</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 1</term>
+           <internal>1</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 2</term>
+           <internal>2</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 3</term>
+           <internal>3</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 4</term>
+           <internal>4</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 5</term>
+           <internal>5</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 6</term>
+           <internal>6</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 7</term>
+           <internal>7</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 8</term>
+           <internal>8</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 9</term>
+           <internal>9</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 10</term>
+           <internal>10</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 11</term>
+           <internal>11</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 12</term>
+           <internal>12</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 13</term>
+           <internal>13</internal>
+         </enumValue>
+         <enumValue>
+           <term>chromosome 14</term>
+           <internal>14</internal>
+         </enumValue>
+       </enumList>   
+
+
+       <enumList includeProjects="ToxoDB">   
+         <enumValue>
+           <term>Select:</term>
+           <internal>Select:</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. Ia</term>
+           <internal>Ia</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. Ib</term>
+           <internal>Ib</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. II</term>
+           <internal>II</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. III</term>
+           <internal>III</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. IV</term>
+           <internal>IV</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. V</term>
+           <internal>V</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VI</term>
+           <internal>VI</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIIa</term>
+           <internal>VIIa</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIIb</term>
+           <internal>VIIb</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. VIII</term>
+           <internal>VIII</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. IX</term>
+           <internal>IX</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. X</term>
+           <internal>X</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. XI</term>
+           <internal>XI</internal>
+         </enumValue>
+         <enumValue>
+           <term>T.g. XII</term>
+           <internal>XII</internal>
+         </enumValue>
+       </enumList>   
+
+       <enumList includeProjects="CryptoDB">   
+         <enumValue>
+           <term>choose one</term>
+           <internal>choose one</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000006 (Chromosome 1)</term>
+           <internal>AAEE01000006</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000005 (Chromosome 2)</term>
+           <internal>AAEE01000005</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000013 (Chromosome 2)</term>
+           <internal>AAEE01000013</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000004 (Chromosome 3)</term>
+           <internal>AAEE01000004</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000015 (Chromosome 3)</term>
+           <internal>AAEE01000015</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000008 (Chromosome 4)</term>
+           <internal>AAEE01000008</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000009 (Chromosome 4)</term>
+           <internal>AAEE01000009</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000012 (Chromosome 4)</term>
+           <internal>AAEE01000012</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000007 (Chromosome 5)</term>
+           <internal>AAEE01000007</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000018 (Chromosome 5)</term>
+           <internal>AAEE01000018</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000017 (Chromosome 5)</term>
+           <internal>AAEE01000017</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000010 (Chromosome 5)</term>
+           <internal>AAEE01000010</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000002 (Chromosome 6)</term>
+           <internal>AAEE01000002</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000014 (Chromosome 6)</term>
+           <internal>AAEE01000014</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000016 (Chromosome 6)</term>
+           <internal>AAEE01000016</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000001 (Chromosome 7)</term>
+           <internal>AAEE01000001</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000003 (Chromosome 8)</term>
+           <internal>AAEE01000003</internal>
+         </enumValue>
+         <enumValue>
+           <term>C.p. AAEE01000011 (Chromosome 8)</term>
+           <internal>AAEE01000011</internal>
+         </enumValue>
+       </enumList> 
+     </enumParam>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- Sequence Id -->  
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <stringParam name="sequenceId"
+             prompt="Genomic sequence ID">
+
+         <help includeProjects="ApiDB">
+           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
+         </help>
+         <help includeProjects="TrichDB">
+           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use DS11* to ask for all contigs that have identifiers that begin with DS11. Genes By Chromosomal Location does not allow wildcards.
+         </help>
+         <help includeProjects="GiardiaDB">
+           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AACB0200* to ask for all contigs/scaffolds that have identifiers that begin with AACB0200. Genes By Chromosomal Location does not allow wildcards.
+         </help>
+         <help includeProjects="CryptoDB">
+             Enter an identifier for a genomic contig. The IDs
+             correspond to the accession numbers in the GenBank records
+             supplied by the sequencing centers. Contig ID's from
+             &lt;i&gt; C. parvum &lt;/i&gt; whole genome sequencing
+             project begin with 'AAEE' and contig ID's for &lt;i&gt;
+             C. hominis &lt;/i&gt; begin with 'AAEL'. The &lt;i&gt;
+             C. parvum &lt;/i&gt; Chromosome 6 independently sequenced
+             at MRC-LMB  before the whole genome project was completed
+             is 'BX526834 '. Wild cards are permitted  in most queries,
+             i.e. use AAEE* to ask for all &lt;i&gt; C. parvum
+             &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
+         </help>
+         <help includeProjects="PlasmoDB">
+             Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  &#60;i&#62;P. berghei &#60;/i&#62; sequences start with PB,  &#60;i&#62; P. chabaudi &#60;/i&#62; sequences start with PC, and  &#60;i&#62;P.knowlesi &#60;/i&#62; sequences start with PKH. Wild cards are permitted  in most queries, i.e. use MALPY* to ask for all &#60;i&#62; P. yoelii &#60;/i&#62; sequences. Genes By Chromosomal Location does not allow wildcards.
+         </help>
+
+         <suggest includeProjects="CryptoDB"
+             sample="AAEL01000057, AAEE01000009, BX526834"
+             default="(Example: AAEE01000006)"
+             allowEmpty="true"
+             emptyValue="No Match"/>
+         <suggest includeProjects="ApiDB"
+             sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_994746"
+             default="(Example: AAEL01000057)"/>
+         <suggest includeProjects="ToxoDB"
+             sample="Ia, VIIb, XI, VIIa, TGG_994746"
+             default="(Examples: Ia, TGG_994746)"
+             allowEmpty="true"
+             emptyValue="No Match"/>
+         <suggest includeProjects="PlasmoDB"
+             sample="MAL4, ctg_4094, MALPY00019"
+             default="(Examples: MAL4, ctg_6638)"
+             allowEmpty="true"
+             emptyValue="No Match"/>     
+         <suggest includeProjects="GiardiaDB"
+             sample="AACB02000002, CH991779"
+             default="CH991779"/>     
+         <suggest includeProjects="TrichDB"
+             sample="DS113177"
+             default="DS113177"/>     
+ </stringParam>    
+
+         <stringParam name="start_point"
+                      prompt="Start at"
+                      quote="false">
+             <help>Select the distance (in nucleotides) to the start</help>
+             <suggest default="1"/>
+         </stringParam>
+
+         <stringParam name="end_point"
+                      prompt="End Location (0 = end)"
+                      quote="false">
+             <help>Select the nucleotide you would like to end in. Note that 0 equals the end so you can get genes right up to the end of the sequence.  The default settings start = 1 and end = 0 will give you results from the entire sequence.</help>
+             <suggest default="0"/>
+         </stringParam>
+
+       <flatVocabParam name="libraryId"
+                      queryRef="SharedVQ.EstLibraries"
+                      prompt="EST Library"
+                      multiPick="true"
+                      quote="false">
+         <help>
+              Select a clone library.
+         </help>
+         <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
+
+ <flatVocabParam name="libraryIdAssemblies"
+                      queryRef="SharedVQ.EstLibrariesAssemblies"
+                      prompt="EST Library"
+                      multiPick="true"
+                      quote="false">
+         <help>
+              Select a clone library.
+         </help>
+         <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
+
+
+       <flatVocabParam name="libraryIdGenes"
+                      queryRef="SharedVQ.EstLibrariesGenes"
+                      prompt="EST Library"
+                      multiPick="true"
+                      quote="false">
+         <help>
+              Select a clone library.
+         </help>
+         <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- SNPs -->  
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <enumParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+                      prompt="Reference"
+                      multiPick="false">
+       <help>
+              Choose a reference from the list of strains.  Strains are sorted by number of SNPs in descending order.
+       </help>
+
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+
+ <!-- cannot set enumLists per component site, wdk complains that apidb has more than one enumList, 
+      so we need to specify the includeProject per value 
+  -->
+       <enumList>
+
+      <enumValue  includeProjects="CryptoDB,ApiDB">
+             <term>Cp-IOWA II</term>
+             <internal>iowa_II</internal>
+           </enumValue>
+           <enumValue includeProjects="CryptoDB,ApiDB">
+             <term>Cp-TU114</term>
+             <internal>tu114</internal>
+           </enumValue>
+           <enumValue includeProjects="CryptoDB,ApiDB">
+             <term>Cp-MD</term>
+             <internal>md</internal>
+           </enumValue>
+
+
+         <enumValue  includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-3D7</term>
+           <internal>3D7</internal>
+         </enumValue>
+         <enumValue  includeProjects="PlasmoDB,ApiDB">
+           <term>P. reichenowi (vs. 3D7 only)</term>
+           <internal>Preich</internal>
+         </enumValue>
+         <enumValue  includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-HB3</term>
+           <internal>HB3</internal>
+         </enumValue>
+         <enumValue  includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-GHANA1</term>
+           <internal>GHANA1</internal>
+         </enumValue>
+         <enumValue  includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-V1_S</term>
+           <internal>V1_S</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-DD2</term>
+           <internal>Dd2</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-7G8</term>
+           <internal>7G8</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-RO33</term>
+           <internal>RO-33</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-D10</term>
+           <internal>D10</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-K1</term>
+           <internal>K1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-D6</term>
+           <internal>D6</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCC-2</term>
+           <internal>FCC-2</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 34.04</term>
+           <internal>SENEGAL3404</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-IT</term>
+           <internal>IT</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Santa Lucia</term>
+           <internal>SANTALUCIA</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCB</term>
+           <internal>FCB</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCR3</term>
+           <internal>FCR3</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-106/1</term>
+           <internal>106_1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 35.04</term>
+           <internal>SENEGAL3504</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 31.01</term>
+           <internal>SENEGAL3101</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 51.02</term>
+           <internal>SENEGAL5102</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Malayan Camp</term>
+           <internal>MALAYAN</internal>
+         </enumValue>
+
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-ME49 (type II)</term>
+             <internal>ME49</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-VEG (type III)</term>
+             <internal>VEG</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-GT1 (type I)</term>
+             <internal>GT1</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-RH (type I)</term>
+             <internal>RH</internal>
+           </enumValue>
+
+
+
+         </enumList>   
+       </enumParam>
+
+
+
+       <flatVocabParam name="snp_strain_b" includeProjects="ApiDB,PlasmoDB"
+                      queryRef="SharedVQ.SnpStrainB"
+                      prompt="Comparator"
+                      multiPick="false">
+         <help>
+              Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
+         </help>
+         <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
+
+       <enumParam name="snp_strain_b" includeProjects="ToxoDB"
+                      prompt="Reference"
+                      multiPick="false">
+         <help>
+              Choose a comparator from the list to compare to your reference.
+         </help>
+         <enumList>   
+           <enumValue>
+             <term>RH (type I; chr IA and IB only)</term>
+             <internal>RH</internal>
+           </enumValue>
+           <enumValue>
+             <term>ME49 (type II)</term>
+             <internal>ME49</internal>
+           </enumValue>
+           <enumValue>
+             <term>VEG (type III)</term>
+             <internal>VEG</internal>
+           </enumValue>
+         </enumList>   
+       </enumParam>
+
+
+  <enumParam name="snp_strain_m" includeProjects="CryptoDB,ApiDB,PlasmoDB,ToxoDB"
+                      prompt="Comparator(s)"
+                      multiPick="true">
+         <help>
+              Choose a comparator(s) from the list  to compare to your reference.  Strains are ordered by number of SNPs in descending order.
+         </help>
+
+       <useTermOnly value="true" includeProjects="ApiDB"/>
+
+       <enumList>
+
+           <enumValue includeProjects="CryptoDB,ApiDB">
+             <term>Cp-IOWA II</term>
+             <internal>iowa_II</internal>
+           </enumValue>
+           <enumValue includeProjects="CryptoDB,ApiDB">
+             <term>Cp-TU114</term>
+             <internal>tu114</internal>
+           </enumValue>
+           <enumValue includeProjects="CryptoDB,ApiDB">
+             <term>Cp-MD</term>
+             <internal>md</internal>
+           </enumValue>
+
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-3D7</term>
+           <internal>3D7</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>P. reichenowi (vs. 3D7 only)</term>
+           <internal>Preich</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-HB3</term>
+           <internal>HB3</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-GHANA1</term>
+           <internal>GHANA1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-V1_S</term>
+           <internal>V1_S</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-DD2</term>
+           <internal>Dd2</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-7G8</term>
+           <internal>7G8</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-RO33</term>
+           <internal>RO-33</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-D10</term>
+           <internal>D10</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-K1</term>
+           <internal>K1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-D6</term>
+           <internal>D6</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCC-2</term>
+           <internal>FCC-2</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 34.04</term>
+           <internal>SENEGAL3404</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-IT</term>
+           <internal>IT</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Santa Lucia</term>
+           <internal>SANTALUCIA</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCB</term>
+           <internal>FCB</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-FCR3</term>
+           <internal>FCR3</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-106/1</term>
+           <internal>106_1</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 35.04</term>
+           <internal>SENEGAL3504</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 31.01</term>
+           <internal>SENEGAL3101</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Senegal 51.02</term>
+           <internal>SENEGAL5102</internal>
+         </enumValue>
+         <enumValue includeProjects="PlasmoDB,ApiDB">
+           <term>Pf-Malayan Camp</term>
+           <internal>MALAYAN</internal>
+         </enumValue>
+
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-ME49 (type II)</term>
+             <internal>ME49</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-VEG (type III)</term>
+             <internal>VEG</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-GT1 (type I)</term>
+             <internal>GT1</internal>
+           </enumValue>
+           <enumValue includeProjects="ToxoDB,ApiDB">
+             <term>Tg-RH (type I)</term>
+             <internal>RH</internal>
+           </enumValue>
+
+         </enumList>   
+       </enumParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- Motif search -->
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <stringParam name="motif_expression"
+                      prompt="Pattern">
+             <help>Enter a Perl regular expression describing the desired motif.  Example: 'CC6+RK' searches for two consecutive cysteine residues followed by a stretch of hydrophobic amino acids followed by the aminoacids arginine and lysine.</help>
+             <suggest sample="(Example: CC6+RK)"
+                      default="CC6+RK"/>
+         </stringParam>
+
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+   <!-- Assembly search -->
+   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <stringParam name="min_ests_in_assembly"
+                      prompt="Number of ESTs >="
+                      quote="false"
+                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB">
+             <help>
+               Enter a minimum number of ESTs that is required per EST assembly.
+             </help>           
+             <suggest default="1"
+                allowEmpty="true" emptyValue="1" />
+         </stringParam>
+         <stringParam name="min_lib_ests_in_assembly"
+                      prompt="Number of library ESTs >="
+                      quote="false"
+                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB">
+             <help>
+               Enter a minimum number of ESTs from the selected libraries that is required per EST assembly.
+             </help>           
+             <suggest default="1"
+                allowEmpty="true" emptyValue="1" />
+         </stringParam>
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- mass spec -->  
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+         <stringParam name="min_seq_coverage"
+                      prompt="Minimum Percent Sequence Coverage"
+                      quote="false">
+             <help>Use this parameter to set a minimum amount of (amino acid) sequence coverage for the mass spec-predicted peptides. For example, setting this parameter to 10 will return only those genes whose proteins are at least 10% covered by mass spec.-predicted peptides. In the current dataset the average percent coverage is about 9%, and the maximum is about 90%. Note that even if this parameter is set to 0%, only genes with at least some mass spec. predictions for the specified stage will be returned. In other words, it never returns proteins with 0% coverage, only those with strictly > 0%.</help>
+             <suggest default="0"/>
+         </stringParam>
+
+         <stringParam name="min_span_count"
+                      prompt="Minimum Number of Spans"
+                      quote="false">
+             <help>Use this parameter to set a minimum for the number of nonoverlapping regions (spans) that must be found in the mass spec. data for a gene (and the specified lifecycle stage). Only genes with at least this many spans are returned</help>
             <suggest default="2"/>
         </stringParam>
 
