@@ -1797,6 +1797,7 @@ CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source
   </tuningTable>
 
   <tuningTable name="apidb.AssemblyAttributes">
+    <externalDependency name="apidb.blatalignmentlocation"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.AssemblyAttributes&1 NOLOGGING AS
@@ -1821,9 +1822,16 @@ SELECT a.source_id,
        a.c_count,
        a.g_count,
        a.t_count,
-       a.other_count
-FROM  dots.Assembly a, sres.TaxonName tn
+       a.other_count,
+       blat.target_start as start_min,
+       blat.target_end as end_max,
+       s.source_id as sequence_id
+FROM  dots.Assembly a, sres.TaxonName tn, 
+      apidb.BlatAlignmentLocation blat, dots.nasequence s
 WHERE a.taxon_id = tn.taxon_id
+  and blat.query_na_sequence_id = a.na_sequence_id 
+  and blat.target_na_sequence_id = s.na_sequence_id
+  and blat.is_best_alignment = 1
   AND tn.name_class = 'scientific name'
       ]]>
     </sql>
