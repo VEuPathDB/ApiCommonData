@@ -2762,14 +2762,12 @@ WHERE pct_ps.profile_set_id = pct_p.profile_set_id
   AND exp_pe.element_order = pct_pe.element_order
   AND exp_p.source_id = pct_p.source_id
   AND exp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Exp')
-  AND exp_pe.value > 10
   AND lgp_ps.profile_set_id = lgp_p.profile_set_id
   AND lgp_p.profile_id = lgp_pe.profile_id
   AND lgp_pe.element_order = exp_pe.element_order
   AND lgp_p.source_id = pct_p.source_id
   AND lgp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Lgp')
   AND lgp_ps.name LIKE '%Lgp'
-  AND lgp_pe.value < -0.5
   AND pct_ps.profile_set_id = pen.profile_set_id
   AND exp_pe.element_order = pen.element_order
       ]]>
