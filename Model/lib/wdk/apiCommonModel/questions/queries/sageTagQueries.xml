@@ -60,14 +60,15 @@
 
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef includeProjects="Giardia" ref="sharedParams.sequenceId"/>
+        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="dynamic_location"/>
-       <sql>
+       <sql includeProjects="GiardaiDB">
          <![CDATA[
             select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -81,12 +82,27 @@
               AND (sg.gene_source_id is $$is_within_gene_not$$ null OR sg.gene_source_id is not null)
          ]]>
        </sql>
+       <sql includeProjects="PlasmoDB">
+         <![CDATA[
+            select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
+              a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+            from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
+                  on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
+            where lower(a.sequence_source_id) = lower($$chromosome$$)
+              AND  a.feature_type = 'SAGETagFeature'
+              AND  a.end_max >=  $$start_point$$
+              AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
+              AND  sta.na_feature_id = a.na_feature_id
+              AND (sg.gene_source_id is $$is_within_gene_not$$ null OR sg.gene_source_id is not null)
+         ]]>
+       </sql>
     </sqlQuery>
 
 <wsQuery name="ByLocation" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
-        <paramRef ref="sharedParams.sequenceId" default="CH991779"/>
+        <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId" default="CH991779"/>
+        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome" default="P.f. chromosome 1"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
