@@ -3,34 +3,72 @@
     <param name="genomeName"/>
     <param name="nrdbFile"/>
     <param name="proteinsFile"/>
-    <param name="queue"/>
    </param>
 
   <constants>
     <constant name="psipredProteinsFile">seqfiles/psipred${genomeName}Proteins.fsa</constant>
+    <constant name="algName">Psipred</constant>
+    <constant name="algDesc">Psipred method for protein secondary structure prediction</constant>
+    <constant name="algImpVer">2.5</constant>
+    <constant name="algResult">Secondary Structure prediction for all $genomeName annotated proteins</constant>
   </constants>
 
   <steps>
+
     <step name="createDataDir" class="ApiCommonData::Load::Steps::CreatePsipredDirWithFormattedDb">
       <configValue name="nrdbFile"></configValue>
     </step>
 
-    <step name="fixProteinIds" class="ApiCommonData::Load::Steps::fixProteinIdsForPsipred">
+
+    <step name="fixProteinIds" class="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
       <configValue name="inputProteinsFile">$$$proteinsFile</configValue>
       <configValue name="outputProteinsFile">$$$psipredProteinsFile</configValue>
     </step>
 
-    <step name="createTaskDir" class="ApiCommonData::Load::Steps::">
+
+    <step name="createTaskDir" class="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
       <configValue name="proteinsFile">$$$psipredProteinsFile</configValue>
       <configValue name="nrdbFile">$$$nrdbFile</configValue>
     </step>
 
-    <step name="copyTaskDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <configValue name="">$$$psipredProteinsFile</configValue>
+    <step name="copyDataDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <configValue name="file">psipred</configValue>
     </step>
 
-     <step name="copyDataFilesToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <configValue name="">$$$psipredProteinsFile</configValue>
+    <step name="copyProteinFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <configValue name="file">$$$psipredProteinsFile</configValue>
+      <configValue name="dir">seqfiles</configValue>
+    </step>
+
+    <step name="runPsipred" class="ApiCommonData::Load::Steps::StartPsipredOnComputeCluster">
+      <configValue name=""></configValue>
+      <configValue name="query">$$$psipredProteinsFile</configValue>
+      <configValue name="subject">$$$nrdbFile</configValue>
+    </step>
+
+    <step name="waitForCluster" class="ApiCommonData::Load::Steps::">
+      <configValue name="descrip">psipred $psipredProteinsFile $nrdbFile</configValue>
+    </step>
+
+    <step name="copyFilesFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <configValue name="file">${psipredProteinsFile}-${nrdbFile}</configValue>
+      <configValue name="dir">psipred</configValue>
+    </step>
+
+    <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
+      <configValue name="dir">${psipredProteinsFile}-${nrdbFile}</configValue>
+     </step>
+
+    <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
+      <configValue name="algName">$algName</configValue>
+      <configValue name="algDesc">$algDesc</configValue>
+      <configValue name="algResult">$algResult</configValue>
+    </step>
+
+    <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
+      <configValue name="algName">$algName</configValue>
+      <configValue name="dir"></configValue>
+      <configValue name="algResult">$algResult</configValue>
     </step>
 
  </steps>
