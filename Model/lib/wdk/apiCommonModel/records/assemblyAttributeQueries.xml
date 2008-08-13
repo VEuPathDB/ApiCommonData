@@ -10,6 +10,11 @@
         <column name="formatted_organism" sortingTable="apidb.AssemblyAttributes" sortingColumn="organism" lowerCase="true"/>
         <column name="est_count"  sortingTable="apidb.AssemblyAttributes"/>
         <column name="length" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="a_count" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="t_count" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="c_count" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="g_count" sortingTable="apidb.AssemblyAttributes"/>
+        <column name="other_count" sortingTable="apidb.AssemblyAttributes"/>
      <sql includeProjects="ToxoDB">
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
@@ -18,7 +23,7 @@
                   REGEXP_REPLACE(SUBSTR(aa.organism, INSTR(aa.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
                     AS formatted_organism,
-      aa.est_count, aa.length
+      aa.est_count, aa.length, aa.a_count, aa.t_count, aa.g_count,aa.c_count,aa.other_count
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
      ]]>
@@ -37,7 +42,7 @@
                   REGEXP_REPLACE(SUBSTR(aa.organism, INSTR(aa.organism, ' ')), '[[:space:]]+',
                                  chr(38) || 'nbsp;') || '</i>'
                     AS formatted_organism,
-      aa.est_count, aa.length
+      aa.est_count, aa.length, aa.a_count, aa.t_count, aa.g_count,aa.c_count,aa.other_count
       FROM  apidb.AssemblyAttributes aa
       WHERE aa.source_id = $$primaryKey$$
      ]]>

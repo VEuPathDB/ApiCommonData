@@ -24,10 +24,15 @@
        <attributeQueryRef ref="AssemblyAttributes.Bfmv" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
         <columnAttribute name="project_id" internal="true" inReportMaker="false"/>
         <columnAttribute name="source_id" internal="true" inReportMaker="false"/>
-        <columnAttribute name="organism" internal="true"  displayName="Organism"/>
+        <columnAttribute name="organism" internal="true" inReportMaker="true"/>
         <columnAttribute name="formatted_organism"    displayName="Organism"  inReportMaker="false"/>
-        <columnAttribute name="est_count"  displayName="EST count"/>
-        <columnAttribute name="length" internal="true" inReportMaker="false"/>
+        <columnAttribute name="est_count"  displayName="EST count" inReportMaker="true"/>
+        <columnAttribute name="a_count" displayName="A Count" inReportMaker="true"/>
+        <columnAttribute name="t_count" displayName="T Count" inReportMaker="true"/>
+        <columnAttribute name="c_count" displayName="C Count" inReportMaker="true"/>
+        <columnAttribute name="g_count" displayName="G Count" inReportMaker="true"/>
+        <columnAttribute name="other_count" displayName="Other Count" inReportMaker="true"/>
+        <columnAttribute name="length" displayName="Length" inReportMaker="true"/>
        </attributeQueryRef>
 
        <attributeQueryRef ref="AssemblyAttributes.Sequence" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
@@ -43,7 +48,11 @@
 
              <text>
                   <![CDATA[
-                     $$organism$$ assembly on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
+		    Organism:  $$formatted_organism$$<br>
+                    Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$,
+                    <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
+                    Length: $$length$$<br>
+                    Number of ESTs: $$est_count$$
                   ]]>
              </text>
 
