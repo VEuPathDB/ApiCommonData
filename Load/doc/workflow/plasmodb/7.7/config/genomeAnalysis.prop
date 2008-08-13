@@ -1,0 +1,38 @@
+# default configuration for a genomeAnalysis flow
+
+
+blastsimilarity.taskSize = 1
+
+$wuBlastBinPathCluster = /genomics/share/pkg/bio/wu-blast/current
+
+$wuBlastPath = /files/cbil/software/wu-blast2/current
+
+$NCBI_BLAST_PATH = /files/software/pkg/ncbi-blast-2.2.13/bin 
+
+######### Splign ##############################
+
+# / ApiCommonData::Load::Workflow::Steps::RunSplign /
+splignPath = /files/cbil/software/splign
+
+
+######### Psipred ######################################
+
+# / ApiCommonData::Load::Workflow::Steps::CreatePsipredDirWithFormattedDb /
+psipredPath = /files/software/psipred/bin
+ncbiBlastPath = $NCBI_BLAST_PATH
+
+# / ApiCommonData::Load::Workflow::Steps::CreatePsipredTaskDir /
+taskSize = 1
+clusterpath = /genomics/share/src/bio/psipred/current
+ncbibin = /genomics/share/src/bio/ncbi/bin
+
+# / ApiCommonData::Load::Workflow::Steps::MakeAlgInv /
+psipredVersion = 2.5
+
+
+####### TMHMM ######################################
+
+# / ApiCommonData::Load::Workflow::Steps::RunTmhmm /
+path = /files/cbil/software/TMHMM/current/bin/tmhmm
+version = 2.0a 
+
