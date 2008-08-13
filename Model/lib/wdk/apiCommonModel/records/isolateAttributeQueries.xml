@@ -52,32 +52,6 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="DNASequence" isCacheable='true' includeProjects="CryptoDB,ApiDB">
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
-            <column name="sequence"/>
-            <sql includeProjects="CryptoDB,GiardiaDB">
-               SELECT etn.source_id, 
-                      etn.sequence,
-                      $$projectId$$ as project_id
-               FROM   DoTS.ExternalNASequence etn,
-                      SRes.ExternalDatabaseRelease edr,
-                      SRes.ExternalDatabase edb
-               WHERE  edr.external_database_id = edb.external_database_id
-                  AND edr.external_database_release_id = etn.external_database_release_id
-                  AND edb.name = 'Isolates Data'
-                  AND edr.version = '2007-12-12'
-                  AND etn.source_id = $$primaryKey$$
-           </sql>
-           <sql includeProjects="ApiDB">
-               SELECT etn.source_id, 
-                      etn.sequence,
-                      $$projectId$$ as project_id
-               FROM   DoTS.ExternalNASequence etn
-               WHERE  etn.source_id = $$primaryKey$$
-           </sql>
-      </sqlQuery>
-
       <sqlQuery name="ProteinSequence" isCacheable='true'>
             <paramRef ref="recordParams.projectId"/>
             <paramRef ref="recordParams.primaryKey"/>
