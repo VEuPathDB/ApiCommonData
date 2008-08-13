@@ -55,6 +55,9 @@ CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias)
 CREATE TABLE apidb.SequenceAlias&1 NOLOGGING AS
 SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
 FROM dots.ExternalNaSequence ens
+UNION
+SELECT ens.source_id, LOWER(ens.source_id) AS lowercase_source_id
+FROM dots.VirtualSequence ens
       ]]>
     </sql>
     <sql>
