@@ -54,6 +54,16 @@
         select a.source_id, '@PROJECT_ID@' as project_id, a.sequence from dots.assembly a where a.source_id = $$primaryKey$$ and '@PROJECT_ID@' = $$projectId$$
      ]]>
     </sql>
+ <sql includeProjects="ApiDB">
+                <![CDATA[
+                SELECT ens.source_id, ens.sequence,
+                       $$projectId$$ as project_id
+                FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
+                WHERE ens.source_id = $$primaryKey$$
+                  AND so.term_name = 'assembly'
+                  AND so.sequence_ontology_id = ens.sequence_ontology_id
+                ]]>
+           </sql>
     </sqlQuery>
 
 
