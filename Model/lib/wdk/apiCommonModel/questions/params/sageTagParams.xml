@@ -44,18 +44,23 @@
         </stringParam>
 
 
-       <stringParam name="rad_source_id"
-                     prompt="ID"
-                     substitute="yes">
-            <help>
-               Enter an external identifier or a SAGE Tag ID. Wildcards (*) are allowed.
-            </help>
+        <datasetParam name="rad_source_id" excludeProjects="ApiDB"
+                     prompt="SAGE Tag ID input set">
+            <help>Input a comma delimited set of SAGE Tag IDs, or upload a file. Wildcards (*) are allowed.</help>
            <suggest includeProjects="GiardiaDB"
                     sample="670,880"
                     default="670"/>
            <suggest includeProjects="PlasmoDB"
                     sample="MAL11-1259434-1259448.1,MAL2-128298-128312.0"
                     default="MAL11-1259434-1259448.1"/>
+	</datasetParam>
+
+       <stringParam name="rad_source_id" includeProjects="ApiDB"
+                     prompt="ID"
+                     substitute="yes">
+            <help>
+               Enter an external identifier or a SAGE Tag ID. Wildcards (*) are allowed.
+            </help>
            <suggest includeProjects="ApiDB"
                     sample="670,880,MAL2-128298-128312.0"
                     default="670"/>
