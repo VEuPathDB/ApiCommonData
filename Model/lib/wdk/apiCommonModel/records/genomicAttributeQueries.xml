@@ -68,7 +68,7 @@
                     sortingTable="apidb.SequenceAttributes"
                     lowerCase="true"/>
 
-            <column name="externalDbName" includeProjects="CryptoDB,ToxoDB,GiardiaDB"
+            <column name="externalDbName" includeProjects="PlasmoDB,ApiDB,CryptoDB,ToxoDB,GiardiaDB"
                     sortingColumn="database_name"
                     sortingTable="apidb.SequenceAttributes"/>
 
@@ -89,7 +89,7 @@
                       AS formatted_organism,
                     bfmv.ncbi_tax_id, bfmv.sequence_description,
                     bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version
+                    bfmv.database_version,database_name as externalDbName
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = $$primaryKey$$
                 AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
@@ -163,7 +163,7 @@
                       AS formatted_organism,
                     bfmv.ncbi_tax_id, bfmv.sequence_description,
                     bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version, bfmv.chromosome
+                    bfmv.database_version, bfmv.chromosome,database_name as externalDbName
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = $$primaryKey$$
                 AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
