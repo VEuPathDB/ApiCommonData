@@ -119,16 +119,16 @@
 
     <sqlQuery name="IsolateByTaxon" includeProjects="PlasmoDB">
         <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
         <sql>
           <![CDATA[
-            SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type
+            SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type,src.strain
             FROM   ApiDB.IsolateAttributes src
-            WHERE  src.strain in ($$strain$$) 
-              AND  src.data_type in ($$type$$)
+            WHERE  lower(regexp_replace(src.strain, '[-_/]', '-')) in ($$strain$$)
+            AND  src.data_type in ($$type$$)
             ORDER BY src.strain
             ]]>
          </sql>
@@ -271,7 +271,7 @@
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
@@ -299,7 +299,7 @@
 
     <sqlQuery name="IsolateBySubmitter" includeProjects="PlasmoDB">
         <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
@@ -317,7 +317,7 @@
 
     <wsQuery name="IsolateBySubmitter" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
-      <paramRef ref="isolateParams.type" queryRef="typeVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.type"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>

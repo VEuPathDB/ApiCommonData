@@ -95,9 +95,30 @@
 						<help>
 						  Strain name for isolate barcodes and 3k Chip data
 						</help>
-            <useTermOnly value="true" includeProjects="PlasmoDB"/>
+            <useTermOnly value="true" includeProjects="ApiDB,PlasmoDB"/>
        </flatVocabParam>
 
+
+     <enumParam name="type"
+                 prompt="Isolate assay type"
+                 multiPick="true"
+                 quote="true">
+        <help>
+		 There are two isolate types in PlasmoDB - Barcode and 3K Chip 
+        </help>
+        <enumList>
+          <enumValue default="true">
+            <term>3kChip</term>
+            <internal>3kChip</internal>
+          </enumValue>
+          <enumValue default="true">
+            <term>Barcode</term>
+            <internal>Barcode</internal>
+          </enumValue>
+        </enumList>
+      </enumParam>
+
+<!--
        <flatVocabParam name="type" includeProjects="PlasmoDB,ApiDB"
             queryRef="typeVQ.withIsolates"
             prompt="Isolate assay type"
@@ -109,6 +130,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
 
+-->
        <flatVocabParam name="submitter" includeProjects="PlasmoDB,ApiDB"
             queryRef="submitterVQ.withIsolates"
             prompt="Submitter"
@@ -325,10 +347,12 @@
       <column name="term"/>
       <sql>
       <![CDATA[
-      SELECT src.strain AS term,
-             src.source_id AS internal
-      FROM   DoTS.IsolateSource src
-      ORDER BY src.strain
+    select new as term, new as internal
+    from (
+      SELECT lower(regexp_replace(src.strain, '[-_/]', '-')) as new
+      FROM DoTS.IsolateSource src
+      )
+    group by new order by new
       ]]>
       </sql>
     </sqlQuery>
