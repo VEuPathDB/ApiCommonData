@@ -17,17 +17,18 @@
  
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="sharedParams.sequenceId" default="TGG_994746" includeProjects="ToxoDB"/> 
-        <paramRef ref="sharedParams.sequenceId" default="MAL4" includeProjects="PlasmoDB"/> 
-        <paramRef ref="sharedParams.sequenceId" excludeProjects="ToxoDB,PlasmoDB"/> 
+        <paramRef ref="genomicParams.sequenceId" default="TGG_994746" includeProjects="ToxoDB"/> 
+        <paramRef ref="genomicParams.sequenceId" default="MAL4" includeProjects="PlasmoDB"/> 
+        <paramRef ref="genomicParams.sequenceId" excludeProjects="ToxoDB,PlasmoDB"/> 
         <column name="source_id"/>
         <column name="project_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
             SELECT enas.source_id, '@PROJECT_ID@' as project_id
             FROM dots.externalnasequence enas,
-                 sres.sequenceontology so
-            WHERE LOWER(enas.source_id) LIKE TRIM(LOWER(REPLACE($$sequenceId$$, '*', '%')))
+                 sres.sequenceontology so, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE  ds.dataset_id = $$sequenceId$$
+            AND LOWER(enas.source_id) LIKE TRIM(REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),'*', '%'),'[[:space:]]', ''))
             AND enas.sequence_ontology_id = so.sequence_ontology_id
             AND so.term_name in ('contig', 'supercontig')
            ]]>
@@ -35,15 +36,16 @@
         <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
             SELECT distinct sequence as source_id, '@PROJECT_ID@' as project_id
-            FROM apidb.SequenceId si
-            WHERE id LIKE LOWER(REPLACE(REPLACE($$sequenceId$$,' ',''), '*', '%'))
+            FROM apidb.SequenceId si, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE  ds.dataset_id = $$sequenceId$$
+              AND LOWER(id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),'*', '%'),'[[:space:]]', '')
            ]]>
         </sql>
     </sqlQuery>
     
     <wsQuery name="SequenceBySourceId" includeProjects="ApiDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
-        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef ref="genomicParams.sequenceId"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
