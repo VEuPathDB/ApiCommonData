@@ -1060,43 +1060,20 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   AND t.na_feature_id = taf.na_feature_id
                   AND gf.na_feature_id = t.parent_id
                UNION
-                 select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count as sequence_count, spec.sum_spectrum_count as spectrum_count
-            from apidb.massspecsummary mss, 
-                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
-		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
-            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
-              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
-                from apidb.massspecsummary mss,
-                     dots.massspecfeature msf,
-                     dots.aalocation aal,
+                SELECT gf.source_id, '@PROJECT_ID@' as project_id,mss.number_of_spans as sequence_count,mss.spectrum_count as spectrum_count
+                FROM apidb.MassSpecSummary mss, dots.transcript t,
+                     dots.genefeature gf, dots.translatedAAFeature taf,
                      sres.externaldatabase ed,
                      sres.externaldatabaserelease edr
-                where mss.mass_spec_summary_id = msf.source_id
-                  and msf.aa_feature_id = aal.aa_feature_id
-                  and msf.external_database_release_id = edr.external_database_release_id
+                WHERE mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
                   and ed.name in ($$mass_spec_stage_sample_pf$$)
-                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
-                group by intseq.aa_sequence_id
-                having count(*) >= $$min_sequence_count$$
-            ) seq,
-            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
-                from apidb.massspecsummary mss,
-                     sres.externaldatabase ed,
-                     sres.externaldatabaserelease edr
-                where mss.external_database_release_id = edr.external_database_release_id
-                  and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$mass_spec_stage_sample_pf$$)
-                group by mss.aa_sequence_id
-                having sum(spectrum_count) >= $$min_spectrum_count$$
-            ) spec,
-            dots.nasequence nas
-            where mss.aa_sequence_id = taaf.aa_sequence_id
-            and taaf.na_feature_id = t.na_feature_id
-            and t.parent_id = gf.na_feature_id
-            and gf.na_sequence_id = nas.na_sequence_id
-            and mss.aa_sequence_id = seq.aa_sequence_id
-            and mss.aa_sequence_id = spec.aa_sequence_id )
+                  AND mss.number_of_spans >= $$min_sequence_count$$
+                  AND mss.spectrum_count >= $$min_spectrum_count$$
+                  AND taf.aa_sequence_id = mss.aa_sequence_id
+                  AND t.na_feature_id = taf.na_feature_id
+                  AND gf.na_feature_id = t.parent_id
+             )
             group by source_id,project_id
            ]]>
        </sql>

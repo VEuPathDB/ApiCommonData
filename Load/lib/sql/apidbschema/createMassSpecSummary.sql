@@ -39,6 +39,10 @@ REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.MassSpecSummary TO gus_w;
 GRANT SELECT ON apidb.MassSpecSummary TO gus_r;
 
+CREATE INDEX apiDB.massspecsumm_rel_sum_idx ON apiDB.Massspecsummary(external_database_release_id,number_of_spans,spectrum_count);
+CREATE INDEX apiDB.massspecsumm_devstage_idx ON apiDB.Massspecsummary(developmental_stage,number_of_spans,spectrum_count);
+CREATE INDEX apiDB.massspecsumm_aaseqid_idx ON apiDB.Massspecsummary(aa_sequence_id);
+
 ------------------------------------------------------------------------------
 
 CREATE SEQUENCE apidb.MassSpecSummary_sq;
