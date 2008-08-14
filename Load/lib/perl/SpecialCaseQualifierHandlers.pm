@@ -150,32 +150,35 @@ sub sourceIdAndTranscriptSeq {
     my $splicedNaSeq = $transcript->getParent('DoTS::SplicedNASequence');
     $splicedNaSeq->setSequence($transcriptSequence);
     $splicedNaSeq->setSourceId($transcript->getSourceId());
-
+    my $transcriptLoc = $transcript->getChild('DoTS::NALocation');
+    my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
+    
+    my $seq = $transcriptSeq->getSequence();
+    my $transcriptLength = length($seq);
     if($bioperlFeature->primary_tag() eq "coding_gene"){
       print STDERR $transcript->toString();
 
 
       my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
-      my $transcriptLoc = $transcript->getChild('DoTS::NALocation');
-      my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
 
-      my $seq = $transcriptSeq->getSequence();
-      my $transcriptLength = length($seq);
-      $transcriptLoc->setStartMin(1);
-      $transcriptLoc->setStartMax(1);
-      $transcriptLoc->setEndMin($transcriptLength);
-      $transcriptLoc->setEndMax($transcriptLength);
-      $transcriptLoc->setIsReversed(0);
+
       my $codingStart = $exonsSorted[0]->getCodingStart();
       my $codingStop = $exonsSorted[$final]->getCodingEnd();
 
       my $translationStart = $self->_getTranslationStart($isReversed, $codingStart, $transcriptLoc);
 
       my $translationStop = $self->_getTranslationStop($isReversed, $codingStop, $transcriptLoc, $transcriptLength);
+      if($translatedAaFeature){
+	  $translatedAaFeature->setTranslationStart($translationStart);
+	  $translatedAaFeature->setTranslationStop($translationStop);
+      }
 
-      $translatedAaFeature->setTranslationStart($translationStart);
-      $translatedAaFeature->setTranslationStop($translationStop);
     }
+    $transcriptLoc->setStartMin(1);
+    $transcriptLoc->setStartMax(1);
+    $transcriptLoc->setEndMin($transcriptLength);
+    $transcriptLoc->setEndMax($transcriptLength);
+    $transcriptLoc->setIsReversed(0);
 
   }
   return [];
@@ -450,11 +453,15 @@ sub _undoNote{
 
 sub setPseudo {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
+  
+  if($bioperlFeature->primary_tag() =~ /gene/){
+      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
 
-  my $transcript = &getGeneTranscript($self->{plugin}, $feature);
-
-  $feature->setIsPseudo(1);
-  $transcript->setIsPseudo(1);
+      $feature->setIsPseudo(1);
+      $transcript->setIsPseudo(1);
+  }else{
+      $feature->setIsPseudo(1);
+  }
 
 
   return [];
