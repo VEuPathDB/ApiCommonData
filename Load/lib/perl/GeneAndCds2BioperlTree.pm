@@ -48,12 +48,23 @@ sub preprocess {
 
 		$geneFeature = $bioperlFeatureTree;       
 		for my $tag ($geneFeature->get_all_tags) {    
+
 		    if($tag eq 'pseudo'){
+			$geneFeature->primary_tag('pseudo_gene');
 			if ($geneFeature->get_SeqFeatures){
 			    next;
 			}else{
-			    $geneFeature->primary_tag('pseudo_gene');
-			    $geneFeature->add_tag_value('is_pseudo',1);
+
+			    my $geneLoc = $geneFeature->location();
+			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    my @exonLocs = $geneLoc->each_Location();
+			    foreach my $exonLoc (@exonLocs){
+				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+				$exon->add_tag_value('coding_start','');
+				$exon->add_tag_value('coding_end','');
+				$transcript->add_SeqFeature($exon);
+			    }
+			    $geneFeature->add_SeqFeature($transcript);
 			    $bioperlSeq->add_SeqFeature($geneFeature);
 			}
 			
