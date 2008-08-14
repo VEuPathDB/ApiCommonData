@@ -10,6 +10,7 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- EST ID  -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+<!--
       <stringParam name="est_id"
                      prompt="EST ID"
                      substitute="yes">
@@ -33,6 +34,31 @@
                sample="AA420947, AA224667"
                default="AA420947"/>
       </stringParam>
+-->
+<datasetParam name="est_id" excludeProjects="ApiDB"
+                     prompt="EST ID input set">
+            <help>Input a comma delimited set of EST ids, or upload a file</help>
+            <suggest includeProjects="PlasmoDB"
+               sample="AU087658, BQ739759, N98084"
+               default="AU087658"/>
+            <suggest  includeProjects="ToxoDB"
+               sample="AA009308, AA011973, W99666"
+               default="AA009308"/>
+            <suggest includeProjects="GiardiaDB"
+               sample="EV500870, EV515822"
+               default="EV500870"/>
+ <suggest includeProjects="ApiDB"
+               sample="EV500870,CV2036394,AA011973,AU087658"
+               default="EV500870"/>
+            <suggest includeProjects="TrichDB"
+               sample="CV202103, CV2036394, BQ621391"
+               default="CV202103"/>
+            <suggest includeProjects="CryptoDB"
+               sample="AA420947, AA224667"
+               default="AA420947"/>
+      </datasetParam>
+
+
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Blast database type  -->
