@@ -744,6 +744,7 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
     </question>
 
 
+<!--
     <question name="GenesByMassSpec2" includeProjects="PlasmoDB,ApiDB"
          displayName="P.f. Mass Spec. Evidence (life cycle)"
          category="Protein Expression"
@@ -794,10 +795,13 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
            <value>FlorensMassSpecData2004</value>
         </propertyList>
     </question>
-    <question name="GenesByMassSpec3" includeProjects="PlasmoDB,ApiDB"
+
+-->
+
+    <question name="GenesByMassSpecPf" includeProjects="PlasmoDB,ApiDB"
          displayName="P.f. Mass Spec. Evidence"
          category="Protein Expression"
-         queryRef="GeneId.GenesByMassSpec3"
+         queryRef="GeneId.GenesByMassSpecPf"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="PlasmoDB,ApiDB" 
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
@@ -806,8 +810,7 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
 
     <summary includeProjects="PlasmoDB">
            <![CDATA[
-            Find <i>P. falciparum</i> genes that have evidence for protein expression
-            in merozoite.
+            Find <i>P. falciparum</i> genes that have evidence for protein expression based on mass spec data.
           ]]>
         </summary>
 
@@ -818,20 +821,44 @@ Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-S
 
         <description includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
-                Mass spec data for  <I>Plasmodium falciparum</I> genes identified
-                in merozoite (Shahid Khan et al).
+ Find <I>P. falciparum</I> genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction. 
+                Select the stage or subcellular fraction and the 
+                threshold conditions for tandem mass spectrometry, 
+                MS/MS, evidence and only genes with mass-spec evidence will be
+                returned. A lower value for the minimum percent coverage or number of spans
+                will result in increased sensitivity and lower stringency.
+                If the minimum percent coverage is set to 0%, which is the default,
+                only genes with at least some mass-spec evidence will be returned.
+                Specifying a higher number of spectra will result in the
+                selection of proteins that are more abundant.
+                These values are not strictly quantitative
+                as the detection of proteins in MS/MS analyses is dependent on
+                solubility of the proteins and other factors.
+                <br><br>
+                Selecting "any" will result in returning genes that appear in
+                any of the available datasets.
+                <BR>
+                Please refer to the original papers for more information
+                on the experiments and experimental conditions.
+                <p><sup>1</sup> Description for exp1 here.
+                <p><sup>2</sup> Mass spec data for  <I>Plasmodium falciparum</I> genes identified
+                in merozoites (Shahid Khan et al).
+                <p><sup>3</sup> Description for exp3 here.
+                <p><sup>4</sup> Description for exp4 here.
       
  
  
            ]]>
         </description>
         <propertyList includeProjects="PlasmoDB" name="specificAttribution">
+           <value>FlorensMassSpecData2002</value>
+           <value>FlorensMassSpecData2004</value>
            <value>Pf_Merozoite_Peptides</value>
-<!--
            <value>Lasonder_Mosquito_Oocysts</value>
            <value>Lasonder_Mosquito_oocyst_derived_sporozoites</value>
            <value>Lasonder_Mosquito_salivary_gland_sporozoites</value>
--->
         </propertyList>
 
 

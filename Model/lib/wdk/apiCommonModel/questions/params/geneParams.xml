@@ -3164,41 +3164,77 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 </enumParam>
 
 
-    <enumParam name="mass_spec_stage"
+    <enumParam name="mass_spec_stage_sample_pf"
                      prompt="Lifecycle Stage"
-                     multiPick="false">
+                     multiPick="true"
+                     displayType="checkBox">
       <help>
-             Select a lifecycle stage from the list provided.
+             Select a lifecycle stage or sample from the list provided.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
         <enumValue>
-          <term>any</term>
-          <internal>any</internal>
+          <display><![CDATA[Merozoite <sup>1</sup>]]></display>
+          <term>Merozoite</term>
+          <internal>merozoite</internal>
+        </enumValue>
+
+        <enumValue>
+          <display><![CDATA[Trophozoite <sup>1</sup>]]></display>
+          <term>Trophozoite</term>
+          <internal>trophozoite</internal>
         </enumValue>
         <enumValue>
+          <display><![CDATA[Schizont <sup>1</sup>]]></display>
           <term>Troph/Schizont</term>
           <internal>FWTrophSchizont</internal>
         </enumValue>
         <enumValue>
-          <term>iRBC Membrane</term>
-          <internal>iRBCmembrane</internal>
-        </enumValue>
-        <enumValue>
+          <display><![CDATA[Gametocyte <sup>1</sup>]]></display>
           <term>Gametocyte</term>
           <internal>gametocyte</internal>
         </enumValue>
         <enumValue>
-          <term>Merozoite</term>
-          <internal>merozoite</internal>
-        </enumValue>
-        <enumValue>
+          <display><![CDATA[Sporozoite <sup>1</sup>]]></display>
           <term>Sporozoite</term>
           <internal>sporozoite</internal>
         </enumValue>
         <enumValue>
-          <term>Trophozoite</term>
-          <internal>trophozoite</internal>
+          <term>-------------</term>
+          <internal>nothing will be returned</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Merozoite Peptides <sup>2</sup>]]></display>
+            <term>Shahid Khan Merozoite Peptides</term>
+            <internal>Kahn Pfalciparum merozoite peptides</internal>
+        </enumValue>
+        <enumValue>
+          <term>--------------</term>
+          <internal>nothing will be returned</internal>
+        </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Oocyst Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Oocyst Peptides</term>
+            <internal>Lasonder Mosquito oocyst peptides</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Oocyst-derived Sporozoite Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Oocyst-derived Sporozoite Peptides</term>
+            <internal>Lasonder Mosquito oocyst-derived sporozoite peptides</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Salivary Gland Sporozoite Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Salivary Gland Sporozoite Peptides</term>
+            <internal>Lasonder Mosquito salivary gland sporozoite peptides</internal>
+          </enumValue>
+        <enumValue>
+          <term>---------------</term>
+          <internal>nothing will be returned</internal>
+        </enumValue>
+        <enumValue>
+          <display><![CDATA[iRBC Membrane <sup>4</sup>]]></display>
+          <term>iRBC Membrane</term>
+          <internal>iRBCmembrane</internal>
         </enumValue>
       </enumList>
     </enumParam>
