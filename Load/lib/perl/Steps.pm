@@ -152,7 +152,7 @@ sub UpdateGusTableWithXml {
 
 
 sub dumpNaSequence {
-  my ($mgr, $mercatorDir, $shortName, $extDbName, $extDbVersion) = @_;
+  my ($mgr, $mercatorDir, $shortName, $extDbName, $extDbVersion,$virtualExtDbName, $virtualExtDbVersion) = @_;
 
   my $signal = "dumpSequence-$shortName";
 
@@ -162,10 +162,18 @@ sub dumpNaSequence {
 
   my $outputFile = "$mercatorDir/$shortName.fsa";
 
-  my $sql = "select source_id, sequence from Dots.NASEQUENCE s, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and s.external_database_release_id = r.external_database_release_id and r.version = '$extDbVersion' and e.name = '$extDbName'";
+  unless(defined $virtualExtDbName) {
+      $virtualExtDbName = '';
+      $virtualExtDbVersion = '';
+  }
+ 
+      
+
+  my $sql = "select source_id, sequence from Dots.VIRTUALSEQUENCE vs,  SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and vs.external_database_release_id = r.external_database_release_id and r.version = '$virtualExtDbVersion' and e.name = '$virtualExtDbName'";
 
   $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
-
+  $sql = "select source_id, sequence from Dots.EXTERNALNASEQUENCE es, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and es.external_database_release_id = r.external_database_release_id and r.version = '$extDbVersion' and e.name = '$extDbName' and es.na_sequence_id NOT IN (select sp.piece_na_sequence_id from dots.SEQUENCEPIECE sp, dots.VIRTUALSEQUENCE vs, Sres.EXTERNALDATABASE e, Sres.EXTERNALDATABASERELEASE r  where vs.na_sequence_id = sp.virtual_na_sequence_id AND vs.external_database_release_id = r.external_database_release_id AND r.external_database_id = e.external_database_id AND r.version = '$virtualExtDbVersion' AND e.name = '$virtualExtDbName')";
+  $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
   $mgr->endStep($signal);
 }
 
