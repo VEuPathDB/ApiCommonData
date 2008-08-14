@@ -13,6 +13,7 @@ my $soTerms = { 'coding_gene'=>'protein_coding',
 		'repeated_gene'=>'repeat_region',
 		'tRNA_gene'=> 'tRNA_encoding',
 		'rRNA_gene'=> 'rRNA_encoding',
+                'pseudo_gene'=>'pseudogene',                 
 		'snRNA_gene'=> 'snRNA_encoding',
 		'snoRNA_gene'=> 'snoRNA_encoding',
 		'misc_RNA_gene'=> 'non_protein_coding',
@@ -109,7 +110,7 @@ sub makeGusGene {
   my $type = $bioperlGene->primary_tag();
 
   $plugin->error("Trying to make gus skeleton from a tree rooted with an unexpected type: '$type'") 
-     unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene", "repeated_gene"));
+     unless (grep {$type eq $_} ("coding_gene", "tRNA_gene", "rRNA_gene", "snRNA_gene", "snoRNA_gene", "misc_RNA_gene", "misc_feature_gene", "repeated_gene","pseudo_gene"));
 
   my $gusGene = $plugin->makeSkeletalGusFeature($bioperlGene, $genomicSeqId,
 						$dbRlsId, 
@@ -138,7 +139,7 @@ sub makeGusOrf {
 sub makeTranscriptNaSeq {
   my ($plugin, $bioperlTranscript, $taxonId, $dbRlsId) = @_;
 
-  my $soId = $plugin->getSOPrimaryKey('processed_transcript');
+  my $soId = $plugin->getSOPrimaryKey('mature_transcript');
 
   # not using ExternalNASequence here because we're not setting source_id(???)
   my $transcriptNaSeq = 
