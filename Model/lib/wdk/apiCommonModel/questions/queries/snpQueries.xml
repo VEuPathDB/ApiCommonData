@@ -528,7 +528,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
               select distinct snp_source_id as source_id, '@PROJECT_ID@' as project_id
               from apidb.isolatesnps isnp, apidb.isolateattributes atr
               where atr.source_id = isnp.is_source_id
-              and atr.data_type = $$type$$
+              and atr.data_type in ($$type$$)
               and isnp.snp_db_name = 'PlasmoDB combined SNPs'
            ]]>
        </sql>
