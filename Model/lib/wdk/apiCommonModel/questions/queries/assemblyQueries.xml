@@ -12,6 +12,17 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <sql>
+<![CDATA[
+            SELECT DISTINCT aa.source_id, aa.project_id
+            FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            WHERE ds.dataset_id = $$est_id$$ 
+              AND ea.assembly_source_id = aa.source_id 
+              AND LOWER(ea.source_id) LIKE LOWER(REGEXP_REPLACE(REPLACE(ds.dataset_value,
+                                                       '*', '%'),
+                                               '[[:space:]]', ''))
+              AND aa.project_id = '@PROJECT_ID@'
+          ]]>
+<!--
           <![CDATA[
              SELECT distinct aa.source_id, aa.project_id
              FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa
@@ -19,12 +30,14 @@
                AND ea.assembly_source_id = aa.source_id
                AND aa.project_id = '@PROJECT_ID@'
           ]]>
+-->
        </sql>
     </sqlQuery>
 
  <wsQuery name="AssembliesByEstAccession" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="estParams.est_id"  default="EV500870"/>
+        <paramRef ref="estParams.est_id"/>
+        <paramRef ref="sharedParams.signature"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
      </wsQuery>
