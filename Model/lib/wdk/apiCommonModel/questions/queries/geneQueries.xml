@@ -1054,8 +1054,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 FROM apidb.MassSpecSummary mss, dots.transcript t,
                      dots.genefeature gf, dots.translatedAAFeature taf
                 WHERE mss.developmental_stage in ($$mass_spec_stage_sample_pf$$)
-                  AND mss.number_of_spans >= $$min_sequence_count$$
-                  AND mss.spectrum_count >= $$min_spectrum_count$$
                   AND taf.aa_sequence_id = mss.aa_sequence_id
                   AND t.na_feature_id = taf.na_feature_id
                   AND gf.na_feature_id = t.parent_id
@@ -1068,13 +1066,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 WHERE mss.external_database_release_id = edr.external_database_release_id
                   and edr.external_database_id = ed.external_database_id
                   and ed.name in ($$mass_spec_stage_sample_pf$$)
-                  AND mss.number_of_spans >= $$min_sequence_count$$
-                  AND mss.spectrum_count >= $$min_spectrum_count$$
                   AND taf.aa_sequence_id = mss.aa_sequence_id
                   AND t.na_feature_id = taf.na_feature_id
                   AND gf.na_feature_id = t.parent_id
              )
             group by source_id,project_id
+            having sum(sequence_count) >= $$min_sequence_count$$
+                  AND sum(spectrum_count) >= $$min_spectrum_count$$
            ]]>
        </sql>
     </sqlQuery> 
