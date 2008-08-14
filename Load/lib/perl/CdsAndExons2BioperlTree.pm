@@ -25,6 +25,9 @@ sub preprocess {
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
+      my $score = $gene->score();
+      $gene->add_tag_value('score',$score);
+
       my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
       my @exons = $gene->get_SeqFeatures();
       foreach my $exon (@exons) {
@@ -33,6 +36,7 @@ sub preprocess {
 	$transcript->add_SeqFeature($exon);
 
         # the frame loade to gus will be 1,2 or 3
+
         my $frame = $exon->frame();
         if($frame =~ /[012]/) {
           $frame++;
