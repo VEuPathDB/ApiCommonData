@@ -4214,7 +4214,7 @@ sub fixMercatorOffsetsInGFF {
 	$args .= "--gr '${gffRegex}'";
     }
     
-    $mgr->runCmd("fixMercatorOffsetsinGFF.pl $args");
+    $mgr->runCmd("fixMercatorOffsetsInGFF.pl $args");
     $mgr->endStep($signal);
 
 
