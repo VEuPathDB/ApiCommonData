@@ -845,7 +845,7 @@ sub getAllTranscriptLocations {
 
 sub getTranscript {
   my ($self, $naSeqId, $snpStart, $snpEnd, $transcriptToLocMap) = @_;
-
+  return(undef) unless(ref ($transcriptToLocMap->{$naSeqId}) eq 'ARRAY');
   my @transcripts = @{$transcriptToLocMap->{$naSeqId}};
   my $startCursor = 0;
   my $endCursor = scalar(@transcripts) - 1;
