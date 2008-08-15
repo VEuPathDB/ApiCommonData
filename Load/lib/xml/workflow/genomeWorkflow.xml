@@ -20,6 +20,7 @@
     <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
     <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
     <constant name="nrdbFile">seqfiles/nr.fsa</constant>
+    <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
     <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
     <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
     <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
@@ -27,9 +28,10 @@
 
   <steps>
     <step name="NRDB" subflow="resource" global="true">
-      <paramValue name="nrdbVersion">$nrdbVersion</paramValue>
+      <paramValue name="nrdbExtDbRlsSpec">$nrdbExtDbRlsSpec</paramValue>
       <paramValue name="nrdbOutputFile">$nrdbFile</paramValue>
       <paramValue name="nrdbShortDeflineOutputFile">$nrdbShortDeflineFile</paramValue>
+      <paramValue name="extDbRlsSpec">$taxonmyExtDbRlsSpec</paramValue>
     </step>
 
     <step name="taxonomy" subflow="resource" global="true"/>
@@ -61,7 +63,7 @@
     </step>
 
     <step name="splign" subflow="splign">
-      <include match="$genomeName" list="@@@Pf,@@@Pb,@@@Py,@@@Pv"/>
+      <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="queryExtDbRlsSpec">$tigrExtDbRlsSpec</paramValue>
       <depends step="genome"/>
@@ -70,7 +72,7 @@
 
     <step name="calcTranslatedProteins"
           class="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence">
-      <include match="$genomeName" list="@@@Pf,@@@Pb,@@@Py,@@@Pv"/>
+      <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <paramValue name="soExtDbRlsSpec">$soExtDbRlsSpec</paramValue>
       <depends step="genome"/>
@@ -85,12 +87,23 @@
       <depends step="calcTranslatedProteins"/>
     </step>
 
-    <step name="blastx" subflow="blast">
+    <step name="blastxGenomicSeqsNrdb" subflow="blast">
       <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="subjectFile">$nrdbFile</paramValue>
+      <paramValue name="queryAbbrev">genomicSeqs</paramValue>
       <paramValue name="queryFile">$genomicSeqsFile</paramValue>
-      <depends step="extractProteins"/>
-      <depends step="extractGenomicSeqs"/>
+      <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="subjectAbbrev">nrdb</paramValue>
+      <paramValue name="subjectFile">$nrdbShortDeflineFile</paramValue>
+      <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="subjectExtDbRlsSpec"></paramValue>
+      <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1</paramValue>
+      <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
+      <paramValue name="blastType">blastx</paramValue>
+      <paramValue name="vendor">ncbi</paramValue>
+      <paramValue name="loadSubjectSubset">true</paramValue>
+      <depends step="extractProteins"/></paramValue>
+      <depends step="extractGenomicSeqs"/></paramValue>
     </step>
 
     <step name="psipred" subflow="psipred">
@@ -101,10 +114,21 @@
       <depends step="nrdb"/>
     </step>
 
-    <step name="blastp" subflow="blast">
+    <step name="blastpProteinsNrdb" subflow="blast">
       <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="subjectFile">$nrdbShortDeflineFile</paramValue>
+      <paramValue name="queryAbbrev">proteins</paramValue>
       <paramValue name="queryFile">$proteinsFile</paramValue>
+      <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="subjectAbbrev">nrdb</paramValue>
+      <paramValue name="subjectFile">$nrdbFile</paramValue>
+      <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="subjectExtDbRlsSpec"></paramValue>
+      <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1</paramValue>
+      <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
+      <paramValue name="blastType">blastp</paramValue>
+      <paramValue name="vendor">ncbi</paramValue>
+      <paramValue name="loadSubjectSubset">true</paramValue>
       <depends step="extractProteins"/>
       <depends step="nrdb"/>
     </step>
