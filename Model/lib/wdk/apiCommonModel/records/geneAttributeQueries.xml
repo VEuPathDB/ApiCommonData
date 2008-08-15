@@ -99,12 +99,12 @@
             <column name="exon_count" sortingTable="apidb.geneattributes"/>
             <column name="strand" sortingTable="apidb.geneattributes"/>
             <column name="ec_numbers_string" sortingTable="apidb.geneattributes" sortingColumn="ec_numbers"/>
-            <column name="total_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="total_snps" excludeProjects="ApiDB"/>
-            <column name="nonsynonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsynonymous_snps" excludeProjects="ApiDB"/>
-            <column name="synonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="synonymous_snps" excludeProjects="ApiDB"/>
-            <column name="nonsyn_syn_ratio_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsyn_syn_ratio" excludeProjects="ApiDB"/>
-            <column name="signalp_scores" sortingTable="apidb.geneattributes"  excludeProjects="ApiDB" />
-            <column name="signalp_peptide" sortingTable="apidb.geneattributes"  excludeProjects="ApiDB" />
+            <column name="total_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="total_snps"/>
+            <column name="nonsynonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsynonymous_snps"/>
+            <column name="synonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="synonymous_snps"/>
+            <column name="nonsyn_syn_ratio_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsyn_syn_ratio"/>
+            <column name="signalp_scores" sortingTable="apidb.geneattributes"/>
+            <column name="signalp_peptide" sortingTable="apidb.geneattributes"/>
             <column name="ann_go_component" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_component" excludeProjects="GiardiaDB"/>
             <column name="ann_go_process" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_process" excludeProjects="GiardiaDB"/>
             <column name="ann_go_function" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_function" excludeProjects="GiardiaDB"/>
@@ -142,8 +142,44 @@
                 <![CDATA[
                 ]]>
             </sqlParamValue>
+            <sqlParamValue name="cyc_db" includeProjects="PlasmoDB,ApiDB">
+                <![CDATA[
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'PLASMO', null)
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="cyc_db" includeProjects="ToxoDB">
+                <![CDATA[
+                   'TOXO'
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="cyc_db" includeProjects="CryptoDB,GiardiaDB,TrichDB">
+                <![CDATA[
+                   DECODE(
+                   substr(
+                     bfmv.organism, 
+                     instr(ltrim(bfmv.organism), ' ', 1, 1)+1, 
+                     instr(ltrim(bfmv.organism)||' ', ' ', 1, 2) - instr(bfmv.organism, ' ', 1, 1) -1
+                   ),
+                  'parvum', 'cparvum', 'hominis')
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="genedb_organism" includeProjects="PlasmoDB">
+                <![CDATA[
+                   DECODE(bfmv.organism,
+                          'Plasmodium falciparum 3D7', 'malaria',
+                          'Plasmodium berghei strain ANKA', 'pberghei',
+                          'Plasmodium chabaudi chabaudi', 'pchabaudi',
+                          'Plasmodium knowlesi strain H', 'pknowlesi',
+                          null) as genedb_organism
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="genedb_organism" excludeProjects="PlasmoDB">
+                <![CDATA[
+                ]]>
+            </sqlParamValue>
 
-            <sql includeProjects="PlasmoDB">
+            <sql>
             <![CDATA[
             SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
                    start_min, end_max,
@@ -161,18 +197,13 @@
                    bfmv.external_db_name, bfmv.external_db_version,
                    bfmv.exon_count, bfmv.ncbi_tax_id,
                    SUBSTR(bfmv.organism, 1, INSTR(bfmv.organism || '  ', ' ', 1, 2) - 1) AS genus_species,
-                   REPLACE(bfmv.organism,'Plasmodium','P.') as organism,
+                   '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.&nbsp;' || 
+                      SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ', 1, 1) +1) || '</i>' as organism,
                    SUBSTR(bfmv.organism,
                           INSTR(bfmv.organism, ' ') + 1,
                           INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
-                   DECODE(bfmv.organism,
-                          'Plasmodium falciparum 3D7', 'PLASMO', null) AS cyc_db,
-                   DECODE(bfmv.organism,
-                          'Plasmodium falciparum 3D7', 'malaria',
-                          'Plasmodium berghei strain ANKA', 'pberghei',
-                          'Plasmodium chabaudi chabaudi', 'pchabaudi',
-                          'Plasmodium knowlesi strain H', 'pknowlesi',
-                          null) AS genedb_organism,
+                   &&cyc_db&& AS cyc_db,
+                   &&genedb_organism&&,
                    UPPER(bfmv.source_id) AS cyc_gene_id,
                    bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
                    bfmv.annotated_go_component as ann_go_component,
@@ -202,6 +233,8 @@
                  AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
+
+<!-- note that moved following up into sqlParamValues .. delete when all works
 
             <sql includeProjects="ToxoDB">
             <![CDATA[
@@ -342,6 +375,7 @@
                  AND LOWER(bfmv.project_id)=LOWER($$projectId$$)
             ]]>
             </sql>
+-->
 
         </sqlQuery>
 
