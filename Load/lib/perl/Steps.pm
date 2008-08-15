@@ -3014,7 +3014,7 @@ sub orthomclEdges {
 
   my $cmd = "orthomclEdges $config cleanup=$cleanup 2>> $logfile";
 
-  $cmd .= " $startAfter" if $startAfter;
+  $cmd .= " startAfter=$startAfter" if $startAfter;
 
   $mgr->runCmd($cmd);
 
@@ -3061,6 +3061,8 @@ sub runMcl{
 
   my $propertySet = $mgr->{propertySet};
 
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
   my $outputFile = "$mgr->{dataDir}/mcl/mcl.out";
 
   my $abcFile = "$mgr->{dataDir}/mcl/orthoAbc.txt";
@@ -3069,7 +3071,7 @@ sub runMcl{
 
   my $mclPath = $propertySet->getProp("mclPath");
 
-  my $mclCommand = "$mclPath $abcFile --abc -I $mainInflation -o $outputFile";
+  my $mclCommand = "$mclPath $abcFile --abc -I $mainInflation -o $outputFile 2>> $logfile";
 
   $mgr->runCmd($mclCommand);
 
