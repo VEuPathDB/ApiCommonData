@@ -2390,20 +2390,17 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
          least(ba.target_end, ga.end_max)
          - greatest(ba.target_start, ga.start_min) + 1
            AS assembly_gene_overlap_length,
-         ba.query_bases_aligned / (query_sequence.length)
+         ba.query_bases_aligned / (a.length)
          * 100 AS percent_assembly_bases_aligned,
          ga.source_id AS gene
-  FROM apidb.BlatAlignmentLocation ba, dots.assembly a,
-  apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
-       dots.NaSequence query_sequence, sres.SequenceOntology so
-  WHERE a.na_sequence_id = ba.query_na_sequence_id
-    AND sequence.na_sequence_id = ba.target_na_sequence_id
-    AND ga.sequence_id = sequence.source_id
-    AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
-    AND query_sequence.na_sequence_id = ba.query_na_sequence_id
-    AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name = 'assembly'
-    AND ba.target_na_sequence_id = sequence.na_sequence_id
+  FROM dots.assembly a, 
+       apidb.BlatAlignmentLocation ba,
+       apidb.GeneAttributes ga, 
+       apidb.GenomicSequence sequence
+  WHERE ba.query_na_sequence_id = a.na_sequence_id 
+   AND ba.target_na_sequence_id = sequence.na_sequence_id
+   AND ga.sequence_id = sequence.source_id
+   AND least(ba.target_end, ga.end_max) - greatest(ba.target_start, ga.start_min) >= 0
       ]]>
     </sql>
     <sql>
@@ -2440,7 +2437,7 @@ SELECT ba.blat_alignment_id, ba.query_na_sequence_id, a.source_id, a.number_of_c
     <sql>
       <![CDATA[
 CREATE TABLE AsmAlignmentGeneSummary&1 NOLOGGING AS
-SELECT * FROM apidb.AsmAlignmentNoGene
+SnnELECT * FROM apidb.AsmAlignmentNoGene
 UNION
 SELECT * FROM apidb.AsmAlignmentGene
       ]]>
