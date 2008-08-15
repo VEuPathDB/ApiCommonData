@@ -4200,13 +4200,13 @@ sub modifyFile {
 }
 
 sub fixMercatorOffsetsInGFF {
-    my ($mgr, $inFastaFile, $inGFFFile, $outFile, $fileDir,$fastaRegex,$gffRegex) = @_;
+    my($mgr, $inFastaFile, $inGFFFile, $outFile, $fileDir,$fastaRegex,$gffRegex) = @_;
     
     my ($species) = split(/\./,$inFastaFile);
     my $signal = "fixedMercatorOffsetsIn${species}GFF";
     return if $mgr->startStep("inserting $signal", $signal);
     my $args = "--f ${fileDir}/fasta/${inFastaFile} --g ${fileDir}/gff/${inGFFFile} --o ${fileDir}/gff/${outFile} ";
-    if($fastaRegex}{
+    if($fastaRegex){
 	$args .= "--fr '${fastaRegex}' ";
     }
     
