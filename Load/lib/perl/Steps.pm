@@ -4199,6 +4199,26 @@ sub modifyFile {
   $mgr->endStep($signal);
 }
 
+sub fixMercatorOffsetsInGFF {
+    my ($mgr, $inFastaFile, $inGFFFile, $outFile, $fileDir,$fastaRegex,$gffRegex) = @_;
+    
+    my ($species) = split(/\./,$inFastaFile);
+    my $signal = "fixedMercatorOffsetsIn${species}GFF";
+    return if $mgr->startStep("inserting $signal", $signal);
+    my $args = "--f ${fileDir}/fasta/${inFastaFile} --g ${fileDir}/gff/${inGFFFile} --o ${fileDir}/gff/${outFile} ";
+    if($fastaRegex}{
+	$args .= "--fr '${fastaRegex}' ";
+    }
+    
+    if($gffRegex){
+	$args .= "--gr '${gffRegex}'";
+    }
+    
+    $mgr->runCmd("fixMercatorOffsetsinGFF.pl $args");
+    $mgr->endStep($signal);
+
+
+}
 sub insertMercatorSyntenySpans {
   my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $bAgpFile, $organism) = @_;
 
