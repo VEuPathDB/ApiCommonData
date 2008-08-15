@@ -16,59 +16,69 @@
   <steps>
 
     <step name="createDataDir" class="ApiCommonData::Load::Steps::CreatePsipredDirWithFormattedDb">
-      <configValue name="nrdbFile"></configValue>
+      <paramValue name="nrdbFile"></paramValue>
     </step>
 
 
     <step name="fixProteinIds" class="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
-      <configValue name="inputProteinsFile">$$$proteinsFile</configValue>
-      <configValue name="outputProteinsFile">$$$psipredProteinsFile</configValue>
+      <paramValue name="inputProteinsFile">$$$proteinsFile</paramValue>
+      <paramValue name="outputProteinsFile">$$$psipredProteinsFile</paramValue>
+      <depends step="createDataDir"/>
     </step>
 
 
     <step name="createTaskDir" class="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
-      <configValue name="proteinsFile">$$$psipredProteinsFile</configValue>
-      <configValue name="nrdbFile">$$$nrdbFile</configValue>
+      <paramValue name="proteinsFile">$$$psipredProteinsFile</paramValue>
+      <paramValue name="nrdbFile">$$$nrdbFile</paramValue>
+      <depends step="fixProteinIds"/>
     </step>
 
     <step name="copyDataDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <configValue name="file">psipred</configValue>
+      <paramValue name="file">psipred</paramValue>
+      <depends step="createTaskDir"/>
     </step>
 
     <step name="copyProteinFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <configValue name="file">$$$psipredProteinsFile</configValue>
-      <configValue name="dir">seqfiles</configValue>
+      <paramValue name="file">$$$psipredProteinsFile</paramValue>
+      <paramValue name="dir">seqfiles</paramValue>
+      <depends step="copyDataDirToCluster"/>
     </step>
 
-    <step name="runPsipred" class="ApiCommonData::Load::Steps::StartPsipredOnComputeCluster">
-      <configValue name=""></configValue>
-      <configValue name="query">$$$psipredProteinsFile</configValue>
-      <configValue name="subject">$$$nrdbFile</configValue>
+    <step name="startPsipredOnCluster" class="ApiCommonData::Load::Steps::StartPsipredOnComputeCluster">
+      <paramValue name=""></paramValue>
+      <paramValue name="query">$$$psipredProteinsFile</paramValue>
+      <paramValue name="subject">$$$nrdbFile</paramValue>
+      <depends step="copyProteinFileToCluster"/>
     </step>
 
-    <step name="waitForCluster" class="ApiCommonData::Load::Steps::">
-      <configValue name="descrip">psipred $psipredProteinsFile $nrdbFile</configValue>
+    <step name="waitForCluster" waitForPilot="yes">
+      <paramValue name="descrip">psipred $psipredProteinsFile $nrdbFile</paramValue>
+      <depends step="startPsipredOnCluster"/>
     </step>
 
     <step name="copyFilesFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <configValue name="file">${psipredProteinsFile}-${nrdbFile}</configValue>
-      <configValue name="dir">psipred</configValue>
+      <paramValue name="file">${psipredProteinsFile}-${nrdbFile}</paramValue>
+      <paramValue name="dir">psipred</paramValue>
+      <depends step="waitForCluster"/>
     </step>
 
     <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
-      <configValue name="dir">${psipredProteinsFile}-${nrdbFile}</configValue>
+      <paramValue name="dir">${psipredProteinsFile}-${nrdbFile}</paramValue>
+      <depends step="copyFilesFromCluster"/>
      </step>
 
     <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
-      <configValue name="algName">$algName</configValue>
-      <configValue name="algDesc">$algDesc</configValue>
-      <configValue name="algResult">$algResult</configValue>
+      <paramValue name="algName">$algName</paramValue>
+      <paramValue name="algDesc">$algDesc</paramValue>
+      <paramValue name="algResult">$algResult</paramValue>
+      <depends step="fixFileNames"/>
     </step>
 
     <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
-      <configValue name="algName">$algName</configValue>
-      <configValue name="dir"></configValue>
-      <configValue name="algResult">$algResult</configValue>
+      <paramValue name="algName">$algName</paramValue>
+      <paramValue name="dir"></paramValue>
+      <paramValue name="algResult">$algResult</paramValue>
+      <depends step="makeAlgInv"/>
     </step>
 
  </steps>

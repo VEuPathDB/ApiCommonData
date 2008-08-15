@@ -1,0 +1,71 @@
+<workflow name="blast">
+  <params>
+    <param name="genomeName"/>
+    <param name="queryAbbrev"/>
+    <param name="subjectAbbrev"/>
+    <param name="queryFile"/>
+    <param name="subjectFile"/>
+    <param name="blastArgs"/>
+    <param name="idRegex"/>
+    <param name="blastType"/>
+    <param name="vendor"/>
+    <param name=""/>
+    <param name=""/>
+   </param>
+
+  <constants>
+  </constants>
+
+  <steps>
+
+    <step name="createSimilarityDir" class="ApiCommonData::Load::Steps::CreateSimilarityDir">
+      <configValue name="queryAbbrev">$queryAbbrev</configValue>
+      <configValue name="subjectAbbrev">$subjectAbbrev</configValue>
+      <configValue name="blastArgs">$blastArgs</configValue>
+      <configValue name="idRegex">$idRegex</configValue>
+      <configValue name="blastType">$blastType</configValue>
+      <configValue name="vendor">$vendor</configValue>
+    </step>
+
+
+    <step name="copySimilarityDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <configValue name="file">${$queryAbbrev}-${$subjectAbbrev}</configValue>
+      <configValue name="dir">similarity</configValue>
+      <depends step="createSimilarityDir"/>
+    </step>
+
+    <step name="startBlastOnCluster" class="ApiCommonData::Load::Steps::StartProteinBlastOnComputeCluster">
+      <configValue name=""></configValue>
+      <configValue name="query">$queryFile</configValue>
+      <configValue name="subject">$subjectFile</configValue>
+      <depends step="copySimilarityDirToCluster"/>
+    </step>
+
+    <step name="waitForCluster" waitForPilot="yes">
+      <configValue name="descrip">$blastType $queryFile $subjectFile</configValue>
+    </step>
+
+    <step name="copyFilesFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <configValue name="file">${psipredProteinsFile}-${nrdbFile}</configValue>
+      <configValue name="dir">psipred</configValue>
+    </step>
+
+    <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
+      <configValue name="dir">${psipredProteinsFile}-${nrdbFile}</configValue>
+     </step>
+
+    <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
+      <configValue name="algName">$algName</configValue>
+      <configValue name="algDesc">$algDesc</configValue>
+      <configValue name="algResult">$algResult</configValue>
+    </step>
+
+    <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
+      <configValue name="algName">$algName</configValue>
+      <configValue name="dir"></configValue>
+      <configValue name="algResult">$algResult</configValue>
+    </step>
+
+ </steps>
+
+</workflow>

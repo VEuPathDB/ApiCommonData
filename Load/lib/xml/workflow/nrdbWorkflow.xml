@@ -20,8 +20,15 @@
 
     <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
       <configValue name="fromFile">seqfiles/nr</configValue>
-      <configValue name="toFile">$$$nrdbOutputFile</configValue>
+      <configValue name="toFile">$nrdbOutputFile</configValue>
     </step>
+
+    <step name="copyNrdbFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">$nrdbOutputFile</paramValue>
+      <paramValue name="dir">seqfiles</paramValue>
+      <depends step="shortenNrdbDefline"/>
+    </step>
+
   </steps>
 
 </workflow>

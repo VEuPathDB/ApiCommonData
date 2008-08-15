@@ -1,0 +1,44 @@
+<workflow name="standardGenomeAnalysis">
+  <params>
+    <param name="genomeName"/>
+    <param name="genomeExtDb"/>
+    <param name="genomeExtDbRls"/>
+    <param name="tigrVersion"/>
+    <param name="soVersion"/>
+    <param name="nrdbVersion"/>
+    <param name="taxonomyVersion"/>
+    <param name="ncbiTaxonId"/>
+  </param>
+
+  <constants>
+    <constant name="Pf">Pfalciparum</constant>
+    <constant name="Pb">Pberghei</constant>
+    <constant name="Pv">Pvivax</constant>
+    <constant name="Py">Pyoelii</constant>
+    <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
+    <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
+    <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
+    <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+    <constant name="nrdbFile">seqfiles/nr.fsa</constant>
+    <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
+    <constant name="genomicSeqsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
+  </constants>
+
+  <steps>
+    <step name="makeTmhmmDir"
+          class="">
+      <depends step="extractProteins"/>
+    </step>
+
+    <step name="runTmhmm"
+          class="">
+      <depends step="extractProteins"/>
+    </step>
+
+    <step name="insertTmhmm"
+          class="">
+      <depends step="runTmhmm"/>
+    </step>
+
+  </steps>
+</workflow>
