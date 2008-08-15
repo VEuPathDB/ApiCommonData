@@ -675,17 +675,25 @@ sub insertMassSpecSummary {
   $record->{seqLength}    = $aaSeq->getLength();
   $record->{devStage}     = $self->getArg('developmentalStage') || 'unknown';
 
+  ## want to load the number of distinct peptides as the number_of_spans
+  my %peps;
+  foreach my $pep (@{$record->{peptides}}) {
+    next if $pep->{failed};
+    $peps{"$pep->{start}"."$pep->{end}"} = 1;
+  }
+
   my $mss = GUS::Model::ApiDB::MassSpecSummary->new({
                                                      'aa_sequence_id'                => $record->{aaSequenceId},
                                                      'is_expressed'                  => 1,
                                                      'developmental_stage'           => $record->{devStage},
                                                      'sequence_count'                => $record->{sequenceCount},
+                                                     'number_of_spans'                => scalar(keys%peps),
                                                      'prediction_algorithm_id'       => $self->getPredictionAlgId,
                                                      'spectrum_count'                => $record->{spectrumCount},
                                                      'aa_seq_length'                 => $record->{seqLength},
                                                      'aa_seq_molecular_weight'       => $record->{seqMolWt},
                                                      'aa_seq_pi'                     => $record->{seqPI},
-                                                     'aa_seq_percent_covered'        => $record->{percentCoverage},
+                                                     'aa_seq_percent_covered'        => $self->computeSequenceCoverage($record),
                                                      'external_database_release_id'  => $self->{extDbRlsId},
                                                     });
 
@@ -693,6 +701,19 @@ sub insertMassSpecSummary {
   $self->{summariesAdded}++;
     
   return $mss;
+}
+
+sub computeSequenceCoverage {
+  my($self,$record) = @_;
+  my $cov = 0;
+  my $prev;
+  foreach my $pep (sort{$a->{start} <=> $b->{start}} @{$record->{peptides}}) {
+    next if $pep->{failed};
+    next if $prev && $pep->{end} <= $prev->{end};  #contained within ... nothing new
+    $cov += !$prev || $pep->{start} > $prev->{end} ? $pep->{end} - $pep->{start} + 1 : $pep->{end} - $prev->{end};
+    $prev = $pep;
+  }
+  return int($cov / $record->{seqLength} * 1000) / 10;
 }
 
 sub insertMassSpecFeatures {
