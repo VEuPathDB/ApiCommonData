@@ -2,68 +2,88 @@
   <params>
     <param name="genomeName"/>
     <param name="queryAbbrev"/>
-    <param name="subjectAbbrev"/>
     <param name="queryFile"/>
+    <param name="queryTable"/>
+    <param name="queryExtDbRlsSpec"/>
+    <param name="subjectAbbrev"/>
     <param name="subjectFile"/>
+    <param name="subjectTable"/>
+    <param name="subjectExtDbRlsSpec"/>
     <param name="blastArgs"/>
     <param name="idRegex"/>
     <param name="blastType"/>
     <param name="vendor"/>
-    <param name=""/>
-    <param name=""/>
+    <param name="loadSubjectSubset"/>
    </param>
 
   <constants>
+    <constant name="similarityDir">${$queryAbbrev}-${$subjectAbbrev}</constant>
   </constants>
 
   <steps>
 
     <step name="createSimilarityDir" class="ApiCommonData::Load::Steps::CreateSimilarityDir">
-      <configValue name="queryAbbrev">$queryAbbrev</configValue>
-      <configValue name="subjectAbbrev">$subjectAbbrev</configValue>
-      <configValue name="blastArgs">$blastArgs</configValue>
-      <configValue name="idRegex">$idRegex</configValue>
-      <configValue name="blastType">$blastType</configValue>
-      <configValue name="vendor">$vendor</configValue>
+      <paramValue name="queryAbbrev">$queryAbbrev</paramValue>
+      <paramValue name="subjectAbbrev">$subjectAbbrev</paramValue>
+      <paramValue name="queryFile">$queryFile</paramValue>
+      <paramValue name="subjectFile">$queryFile</paramValue>
+      <paramValue name="blastArgs">$subjectFile</paramValue>
+      <paramValue name="idRegex">$idRegex</paramValue>
+      <paramValue name="blastType">$blastType</paramValue>
+      <paramValue name="vendor">$vendor</paramValue>
     </step>
 
 
-    <step name="copySimilarityDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <configValue name="file">${$queryAbbrev}-${$subjectAbbrev}</configValue>
-      <configValue name="dir">similarity</configValue>
+    <step name="copyDataDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">$similarityDir</paramValue>
+      <paramValue name="dir">similarity</paramValue>
       <depends step="createSimilarityDir"/>
     </step>
 
     <step name="startBlastOnCluster" class="ApiCommonData::Load::Steps::StartProteinBlastOnComputeCluster">
-      <configValue name=""></configValue>
-      <configValue name="query">$queryFile</configValue>
-      <configValue name="subject">$subjectFile</configValue>
-      <depends step="copySimilarityDirToCluster"/>
+      <paramValue name=""></paramValue>
+      <paramValue name="queryAbbrev">$queryAbbrev</paramValue>
+      <paramValue name="subjectAbbrev">$subjectAbbrev</paramValue>
+      <paramValue name="queryFile">$queryFile</paramValue>
+      <depends step="copyDataDirToCluster"/>
     </step>
 
     <step name="waitForCluster" waitForPilot="yes">
-      <configValue name="descrip">$blastType $queryFile $subjectFile</configValue>
+      <paramValue name="descrip">$blastType $queryAbbrev $subjectAbbrev</paramValue>
+      <depends step="startBlastOnCluster"/>
     </step>
 
-    <step name="copyFilesFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <configValue name="file">${psipredProteinsFile}-${nrdbFile}</configValue>
-      <configValue name="dir">psipred</configValue>
+    <step name="copyDataDirFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="file">$similarityDir</paramValue>
+      <paramValue name="dir">similarity</paramValue>
+      <depends step="waitForCluster"/>
     </step>
 
-    <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
-      <configValue name="dir">${psipredProteinsFile}-${nrdbFile}</configValue>
+    <step name="extractIdsFromBlastResult" class="ApiCommonData::Load::Steps::ExtractIdsFromBlastResult">
+      <paramValue name="similarityDir">$similarityDir</paramValue>
+      <paramValue name="idType">subject</paramValue>
+      <paramValue name="outputFile">$similarityDir/blastSimIds.out</paramValue>
+      <depends step="copyDataDirFromCluster"/>
      </step>
 
-    <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
-      <configValue name="algName">$algName</configValue>
-      <configValue name="algDesc">$algDesc</configValue>
-      <configValue name="algResult">$algResult</configValue>
+    <step name="loadSubjectSubset" class="ApiCommonData::Load::Steps::LoadFastaSubset">
+      <skipIfNot>$loadSubjectSubset</skipIfNot>
+      <paramValue name="extDbRlsSpec">$subjectExtDbRlsSpec</paramValue>
+      <paramValue name="fastaFile">$subjectFile</paramValue>
+      <paramValue name="idsFile">$similarityDir/blastSimIds.out</paramValue>
+      <paramValue name="table">$subjectTable</paramValue>
+      <depends step="extractIdsFromBlastResult"/>
     </step>
 
-    <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
-      <configValue name="algName">$algName</configValue>
-      <configValue name="dir"></configValue>
-      <configValue name="algResult">$algResult</configValue>
+    <step name="loadSimilarities" class="ApiCommonData::Load::Steps::LoadBlastSimilarities">
+      <paramValue name="file">$similarityDir/master/mainresult/blastSimilarity.out</paramValue>
+      <paramValue name="queryTable">$queryTable</paramValue>
+      <paramValue name="queryTableIdCol">source_id</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$queryExtDbRlsSpec</paramValue>
+      <paramValue name="subjectTable">$subjectTable</paramValue>
+      <paramValue name="subjectTableIdCol">source_id</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$subjectExtDbRlsSpec</paramValue>
+      <depends step="loadSubjectSubset"/>
     </step>
 
  </steps>

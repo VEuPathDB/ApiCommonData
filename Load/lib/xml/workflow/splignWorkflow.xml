@@ -14,37 +14,37 @@
 
   <steps>
     <step name="extractQuery" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
-      <configValue name="extDbRlsSpec">$$$queryExtDbRlsSpec</configValue>
-      <configValue name="genomeName">$$$genomeName</configValue>
-      <configValue name="seqType">@@@querySeqType</configValue>
-      <configValue name="table">@@@table</configValue>
-      <configValue name="defline">'lcl|'||source_id'</configValue>
+      <paramValue name="extDbRlsSpec">$$$queryExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$$$genomeName</paramValue>
+      <paramValue name="seqType">@@@querySeqType</paramValue>
+      <paramValue name="table">@@@table</paramValue>
+      <paramValue name="defline">'lcl|'||source_id'</paramValue>
     </step>
 
     <step name="extractSubject" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
-      <configValue name="extDbRlsSpec">$$$subjectExtDbRlsSpec</configValue>
-      <configValue name="genomeName">$$$genomeName</configValue>
-      <configValue name="seqType">@@@subjectSeqType</configValue>
-      <configValue name="table">@@@table</configValue>
-      <configValue name="defline">'lcl|'||source_id'</configValue>
+      <paramValue name="extDbRlsSpec">$$$subjectExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$$$genomeName</paramValue>
+      <paramValue name="seqType">@@@subjectSeqType</paramValue>
+      <paramValue name="table">@@@table</paramValue>
+      <paramValue name="defline">'lcl|'||source_id'</paramValue>
     </step>
 
     <step name="runSplign" class="ApiCommonData::Steps::RunSplign">
-      <configValue name="genomeName">$$$genomeName</configValue>
-      <configValue name="querySeqType">@@@querySeqType</configValue>
-      <configValue name="subjectSeqType">@@@subjectSeqType</configValue>
+      <paramValue name="genomeName">$$$genomeName</paramValue>
+      <paramValue name="querySeqType">@@@querySeqType</paramValue>
+      <paramValue name="subjectSeqType">@@@subjectSeqType</paramValue>
       <depends step="extractQuery"/>
       <depends step="extractSubject"/>
     </step>
 
     <step name="insertSplign" class="ApiCommonData::Steps::InsertSplign">
-      <configValue name="genomeName">$$$genomeName</configValue>
-      <configValue name="querySeqType">@@@querySeqType</configValue>
-      <configValue name="subjectSeqType">@@@subjectSeqType</configValue>
-      <configValue name="queryExtDbRlsSpec">$$$queryExtDbRlsSpec</configValue>
-      <configValue name="subjectExtDbRlsSpec">$$$subjectExtDbRlsSpec</configValue>
-      <configValue name="queryTable">@@@table</configValue>
-      <configValue name="subjectTable">@@@table</configValue>
+      <paramValue name="genomeName">$$$genomeName</paramValue>
+      <paramValue name="querySeqType">@@@querySeqType</paramValue>
+      <paramValue name="subjectSeqType">@@@subjectSeqType</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$$queryExtDbRlsSpec</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$$subjectExtDbRlsSpec</paramValue>
+      <paramValue name="queryTable">@@@table</paramValue>
+      <paramValue name="subjectTable">@@@table</paramValue>
       <depends step="runSplign"/>
     </step>
 

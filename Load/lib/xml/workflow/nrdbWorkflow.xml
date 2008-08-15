@@ -1,7 +1,8 @@
 <workflow name="nrdb">
   <params>
     <param name="nrdbVersion"/>
-    <param name="nrdbFile"/>
+    <param name="nrdbOuputFile"/>
+    <param name="nrdbShortDeflineOutputFile"/>
   </param>
 
   <constants>
@@ -10,21 +11,29 @@
 
   <steps>
     <step name="NRDB" subflow="resource" global="true"/>
-      <configValue name="extDbRlsSpec">$$$nrdbExtDbRlsSpec</configValue>
+      <paramValue name="extDbRlsSpec">$nrdbExtDbRlsSpec</paramValue>
     </step>
 
     <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
-      <configValue name="fromFile">NRDB/nr.gz</configValue>
-      <configValue name="toDir">seqfiles</configValue>
+      <paramValue name="fromFile">NRDB/nr.gz</paramValue>
+      <paramValue name="toFile">$nrdbOutputFile</paramValue>
+      <depends step="NRDB"/>
     </step>
 
     <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
-      <configValue name="fromFile">seqfiles/nr</configValue>
-      <configValue name="toFile">$nrdbOutputFile</configValue>
+      <paramValue name="fromFile">seqfiles/nr</paramValue>
+      <paramValue name="toFile">$nrdbShortDeflineOutputFile</paramValue>
+      <depends step="copyNrdbFile"/>
     </step>
 
     <step name="copyNrdbFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
       <paramValue name="file">$nrdbOutputFile</paramValue>
+      <paramValue name="dir">seqfiles</paramValue>
+      <depends step="copyNrdbFile"/>
+    </step>
+
+    <step name="copyNrdbShortDeflineFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">$nrdbShortDeflineOutputFile</paramValue>
       <paramValue name="dir">seqfiles</paramValue>
       <depends step="shortenNrdbDefline"/>
     </step>
