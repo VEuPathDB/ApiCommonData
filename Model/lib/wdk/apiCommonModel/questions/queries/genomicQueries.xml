@@ -64,15 +64,12 @@
         <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB">
             <![CDATA[
             SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.NaSequence ens, sres.SequenceOntology so
+            FROM dots.NaSequence ens,apidb.sequenceattributes atr
             WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
                CONNECT BY parent_id = prior taxon_id
                START WITH taxon_id in ($$organism$$))
-               AND ens.sequence_ontology_id = so.sequence_ontology_id
-              AND (so.term_name = 'chromosome' 
-                   OR so.term_name = 'supercontig'
-                   OR so.term_name = 'contig')
-            ORDER BY ens.source_id           
+               AND atr.na_sequence_id = ens.na_sequence_id
+               AND atr.is_top_level = 1
            ]]>
         </sql>
        <sql includeProjects="GiardiaDB">

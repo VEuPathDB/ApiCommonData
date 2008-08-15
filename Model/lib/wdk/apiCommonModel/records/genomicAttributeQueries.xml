@@ -22,7 +22,7 @@
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"
                     includeProjects="CryptoDB"/>
 
-            <column name="chromosome" includeProjects="PlasmoDB"
+            <column name="chromosome" includeProjects="PlasmoDB,ApiDB"
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
 
             <column name="source_id" 
@@ -45,6 +45,9 @@
 
             <column name="length" 
                     sortingTable="apidb.SequenceAttributes"/>
+
+            <column name="formatted_length" 
+                    sortingTable="apidb.SequenceAttributes" sortingColumn="length"/>
 
             <column name="secondary_identifier" includeProjects="CryptoDB" />
 
@@ -78,6 +81,25 @@
 
             <column name="cyc_db" includeProjects="CryptoDB" />
 
+            <sql includeProjects="PlasmoDB,ApiDB">
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
+                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
+                    bfmv.length, bfmv.at_percent, bfmv.organism,
+                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
+                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                   chr(38) || 'nbsp;') || '</i>'
+                      AS formatted_organism,
+                    bfmv.ncbi_tax_id, bfmv.sequence_description,
+                    bfmv.genbank_accession, bfmv.database_name,
+                    bfmv.database_version, bfmv.chromosome,database_name as externalDbName
+              FROM apidb.SequenceAttributes bfmv
+              WHERE bfmv.source_id = $$primaryKey$$
+                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
+             ]]>
+           </sql>
+<!--
             <sql includeProjects="ApiDB">
               <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id,bfmv.a_count, bfmv.c_count, 
@@ -87,6 +109,7 @@
                     REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                    chr(38) || 'nbsp;') || '</i>'
                       AS formatted_organism,
+                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
                     bfmv.ncbi_tax_id, bfmv.sequence_description,
                     bfmv.genbank_accession, bfmv.database_name,
                     bfmv.database_version,database_name as externalDbName
@@ -95,7 +118,7 @@
                 AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
-
+-->
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
@@ -118,6 +141,7 @@
                 instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
               ),
               'parvum', 'cparvum', 'hominis') as cyc_db,
+                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
             ed.name as externalDbname,
             edr.version AS externalDbVersion
             FROM dots.nasequence enas, 
@@ -139,6 +163,7 @@
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
                     bfmv.length, bfmv.at_percent, bfmv.organism,
+                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
                     '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
                     REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
                                    chr(38) || 'nbsp;') || '</i>'
@@ -152,23 +177,6 @@
              ]]>
            </sql>
 
-            <sql includeProjects="PlasmoDB">
-            <![CDATA[
-                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
-                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
-                    bfmv.length, bfmv.at_percent, bfmv.organism,
-                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
-                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
-                                   chr(38) || 'nbsp;') || '</i>'
-                      AS formatted_organism,
-                    bfmv.ncbi_tax_id, bfmv.sequence_description,
-                    bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version, bfmv.chromosome,database_name as externalDbName
-              FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = $$primaryKey$$
-                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
-             ]]>
-           </sql>
 
            <sql includeProjects="ToxoDB,GiardiaDB">
             <![CDATA[
