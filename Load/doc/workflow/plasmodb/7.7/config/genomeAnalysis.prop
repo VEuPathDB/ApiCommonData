@@ -1,14 +1,6 @@
 # default configuration for a genomeAnalysis flow
 
 
-blastsimilarity.taskSize = 1
-
-$wuBlastBinPathCluster = /genomics/share/pkg/bio/wu-blast/current
-
-$wuBlastPath = /files/cbil/software/wu-blast2/current
-
-$NCBI_BLAST_PATH = /files/software/pkg/ncbi-blast-2.2.13/bin 
-
 ######### Splign ##############################
 
 # / ApiCommonData::Load::Workflow::Steps::RunSplign /
@@ -35,4 +27,11 @@ psipredVersion = 2.5
 # / ApiCommonData::Load::Workflow::Steps::RunTmhmm /
 path = /files/cbil/software/TMHMM/current/bin/tmhmm
 version = 2.0a 
+
+####### BLAST ######################################
+
+# / ApiCommonData::Load::Workflow::Steps::CreateSimilarityDir /
+taskSize=1
+wuBlastBinPathCluster = /genomics/share/pkg/bio/wu-blast/current
+
 
