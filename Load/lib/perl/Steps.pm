@@ -2720,7 +2720,7 @@ sub loadNRDBSubset {
   my $signal = "${idDir}NrIdsLoaded";
 
   my $nrdbFile = "$mgr->{dataDir}/seqfiles/nr.fsa";
-
+  
   my $sourceIdsFile = "$mgr->{dataDir}/similarity/$idDir/$idFile";
 
   my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $nrdbFile --sourceIdsFile  $sourceIdsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
@@ -3910,6 +3910,32 @@ sub formatBlastDownloadFile {
   my $fastalink1 = "$outputDir/$link";
 
   $mgr->runCmd("ln -s $inputFile1 $fastalink1");
+  $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
+  $mgr->runCmd("rm -rf $fastalink1");
+
+  $mgr->endStep($signal);
+}
+
+sub formatncbiBlastFile {
+  my ($mgr,$file,$fileDir,$link,$arg) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $projRel = $propertySet->getProp('release');
+
+  my $signal = "format$file";
+
+  $signal =~ s/-$projRel//g;
+
+  return if $mgr->startStep("Formatting $file for blast", $signal);
+
+  my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
+
+  my $outputFile1  = "/files/cbil/data/cbil/apiSiteFiles/downloadSite/PlasmoDB/release-5.5//$fileDir/$file";
+
+  my $fastalink1 = "$mgr->{dataDir}/blastSite/$link";
+
+  $mgr->runCmd("ln -s $outputFile1 $fastalink1");
   $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
   $mgr->runCmd("rm -rf $fastalink1");
 
