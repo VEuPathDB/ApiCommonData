@@ -1739,6 +1739,65 @@ EOF
 
 }
 
+sub makeAnnotatedProteinDownloadFileForncbiBlast {
+    my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource) = @_;
+
+    my $sql = <<"EOF";
+    SELECT replace(tn.name, ' ', '_')
+        ||'|'||
+    enas.source_id
+        ||'|'||
+    gf.source_id
+        ||'|'||
+    'Annotation'
+        ||'|'||
+    '$dataSource'
+        ||'|'||
+    '(protein coding) ' || taas.description as defline,
+    taas.sequence
+       FROM dots.$seqTable enas,
+            dots.genefeature gf,
+            dots.transcript t,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.externaldatabase ed,
+            sres.externaldatabaserelease edr
+      WHERE t.na_feature_id = taaf.na_feature_id
+        AND gf.na_feature_id = t.parent_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND enas.na_sequence_id = gf.na_sequence_id 
+        AND taas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+EOF
+  
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+  my $projectDir = $propertySet->getProp('projectDir');
+  my $seqFile = "$mgr->{dataDir}/blastSite/${name}_$projectDB-${release}.fasta";
+
+  (-e $seqFile) and die "'$seqFile' already exists. Remove it before running this step.\n";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}DownloadFile.log";
+
+  my $cmd = <<"EOF";
+      gusExtractSequences --outputFile $seqFile \\
+      --idSQL \"$sql\" \\
+      --verbose 2>> $logFile
+EOF
+
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
 sub makeAnnotatedProteinDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project) = @_;
 
@@ -3976,14 +4035,12 @@ sub formatncbiBlastFile {
   return if $mgr->startStep("Formatting $file for blast", $signal);
 
   my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
-
-  my $outputFile1  = "/files/cbil/data/cbil/apiSiteFiles/downloadSite/PlasmoDB/release-5.5//$fileDir/$file";
-
+  
   my $fastalink1 = "$mgr->{dataDir}/blastSite/$link";
 
-  $mgr->runCmd("ln -s $outputFile1 $fastalink1");
+  $mgr->runCmd("mv $mgr->{dataDir}/blastSite/$file $fastalink1");
+  
   $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
-  $mgr->runCmd("rm -rf $fastalink1");
 
   $mgr->endStep($signal);
 }
