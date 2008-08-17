@@ -1335,13 +1335,13 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$project,$deprecated) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated) = @_;
 
-  my @dbNames = map{'$_'} split (/,/,$extDbNames);
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
-  my @dbVers = map{'$_'} split (/,/,$extDbVers);
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
 
   my $dbVer = join(",", @dbVers);
 
@@ -1351,7 +1351,7 @@ sub makeTranscriptDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            replace(tn.name, ' ', '_')
+            gf.organism
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -1369,19 +1369,13 @@ sub makeTranscriptDownloadFileTransformed {
            FROM apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                sres.taxonname tn,
-                sres.externaldatabase ed,
-                sres.externaldatabaserelease edr,
                 apidb.featurelocation fl
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
-        AND snas.taxon_id = tn.taxon_id
-        AND tn.name_class = 'scientific name'
-        AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND gf.external_db_name in ($dbName)
+        AND gf.external_db_version in ($dbVer)
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
@@ -1631,11 +1625,11 @@ EOF
 sub makeDerivedCdsDownloadFileTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated) = @_;
 
-   my @dbNames = map{'$_'} split (/,/,$extDbNames);
+   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
-  my @dbVers = map{'$_'} split (/,/,$extDbVers);
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
 
   my $dbVer = join(",", @dbVers);
 
@@ -1645,7 +1639,7 @@ sub makeDerivedCdsDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            replace(tn.name, ' ', '_')
+            gf.organism
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -1666,17 +1660,14 @@ sub makeDerivedCdsDownloadFileTransformed {
                 apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                sres.taxonname tn,
                 dots.translatedaafeature taaf
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
-        AND snas.taxon_id = tn.taxon_id
-        AND tn.name_class = 'scientific name'
-        AND gf.esternal_db_name in ($dbName) AND gf.external_db_version in ($dbVer)
+        AND gf.external_db_name in ($dbName) 
+        AND gf.external_db_version in ($dbVer)
         AND t.na_feature_id = taaf.na_feature_id
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
@@ -1854,7 +1845,15 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$project,$deprecated) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated) = @_;
+
+   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
+
+  my $dbVer = join(",", @dbVers);
 
   my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -1862,7 +1861,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            replace(tn.name, ' ', '_')
+            gf.organism
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -1881,21 +1880,14 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                sres.taxonname tn,
-                sres.externaldatabase ed,
-                sres.externaldatabaserelease edr,
                 dots.translatedaafeature taaf,
                 dots.translatedaasequence taas
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
-        AND snas.external_database_release_id = edr.external_database_release_id
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
-        AND snas.taxon_id = tn.taxon_id
-        AND tn.name_class = 'scientific name'
-        AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND gf.external_db_name in ($dbName) AND gf.external_db_version in ($dbVer)
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND fl.is_top_level = 1
@@ -2050,7 +2042,15 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project) = @_;
+
+  @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
+
+  my $dbVer = join(",", @dbVers);
 
   my $sql = <<"EOF";
     SELECT
@@ -2089,7 +2089,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
@@ -2275,13 +2275,13 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVer, $dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project) = @_;
 
-  my @dbNames = map{'$_'} split (/,/,$extDbNames);
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
-  my @dbVers = map{'$_'} split (/,/,$extDbVers);
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
 
   my $dbVer = join(",", @dbVers);
 
@@ -2298,7 +2298,7 @@ sub makeMixedGenomicDownloadFile {
                as defline,
                ns.sequence
            FROM dots.nasequence ns,
-                apidb.sequenceattributes sa,
+                apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.is_top_level = 1
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
