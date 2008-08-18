@@ -144,7 +144,7 @@ sub checkFileFormat {
 
   while (<FILE>) {
     if ($_ !~ /^cluster.*?\(.*\)/) {
-      $self->userError("Check file format - format incorrect for at least one line in ".$self->getArg('file')."\n");
+      $self->userError("Check file format - format incorrect for at least one line in ".$self->getArg('file')."\n$_");
     }
   }
 }
@@ -189,7 +189,7 @@ sub makeGeneAndInstances {
    foreach my $gfid (@$gf){
      my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'source_id' => $gfid});
      if($geneFeat->retrieveFromDB()){
-       my $geneInstance = GUS::Model::DoTS::GeneIntance->new({'is_reference' => 0});
+       my $geneInstance = GUS::Model::DoTS::GeneInstance->new({'is_reference' => 0});
        $geneInstance->setParent($gene);
        $geneInstance->setParent($geneFeat);
      }else{
