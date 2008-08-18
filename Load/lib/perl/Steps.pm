@@ -2044,7 +2044,7 @@ EOF
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project) = @_;
 
-  @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
