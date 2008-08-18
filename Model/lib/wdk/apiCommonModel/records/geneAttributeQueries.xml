@@ -171,7 +171,7 @@
                           'Plasmodium berghei strain ANKA', 'pberghei',
                           'Plasmodium chabaudi chabaudi', 'pchabaudi',
                           'Plasmodium knowlesi strain H', 'pknowlesi',
-                          null) as genedb_organism
+                          null) as genedb_organism,
                 ]]>
             </sqlParamValue>
             <sqlParamValue name="genedb_organism" excludeProjects="PlasmoDB">
@@ -203,7 +203,7 @@
                           INSTR(bfmv.organism, ' ') + 1,
                           INSTR(bfmv.organism || '  ', ' ', 1, 2) - INSTR(bfmv.organism, ' ') - 1) AS species,
                    &&cyc_db&& AS cyc_db,
-                   &&genedb_organism&&,
+                   &&genedb_organism&&
                    UPPER(bfmv.source_id) AS cyc_gene_id,
                    bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
                    bfmv.annotated_go_component as ann_go_component,

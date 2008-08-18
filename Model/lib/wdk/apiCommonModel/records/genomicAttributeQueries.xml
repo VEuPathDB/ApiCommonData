@@ -22,7 +22,7 @@
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"
                     includeProjects="CryptoDB"/>
 
-            <column name="chromosome" includeProjects="PlasmoDB,ApiDB"
+            <column name="chromosome" 
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
 
             <column name="source_id" 
@@ -59,7 +59,7 @@
             <column name="organism" 
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
 
-            <column name="formatted_organism" includeProjects="ApiDB,PlasmoDB"
+            <column name="formatted_organism"
                     sortingTable="apidb.SequenceAttributes"
                     sortingColumn="organism" lowerCase="true"/>
 
@@ -81,7 +81,7 @@
 
             <column name="cyc_db" includeProjects="CryptoDB" />
 
-            <sql includeProjects="PlasmoDB,ApiDB">
+            <sql excludeProjects="CryptoDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
@@ -99,26 +99,7 @@
                 AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
-<!--
-            <sql includeProjects="ApiDB">
-              <![CDATA[
-                SELECT bfmv.source_id, bfmv.project_id,bfmv.a_count, bfmv.c_count, 
-                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
-                    bfmv.length, bfmv.at_percent, bfmv.organism,
-                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
-                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
-                                   chr(38) || 'nbsp;') || '</i>'
-                      AS formatted_organism,
-                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
-                    bfmv.ncbi_tax_id, bfmv.sequence_description,
-                    bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version,database_name as externalDbName
-              FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = $$primaryKey$$
-                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
-             ]]>
-           </sql>
--->
+
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
@@ -158,38 +139,6 @@
              ]]>
            </sql>
 
-            <sql includeProjects="TrichDB">
-            <![CDATA[
-                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
-                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
-                    bfmv.length, bfmv.at_percent, bfmv.organism,
-                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
-                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
-                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
-                                   chr(38) || 'nbsp;') || '</i>'
-                      AS formatted_organism,
-                    bfmv.ncbi_tax_id, bfmv.sequence_description,
-                    bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version
-              FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = $$primaryKey$$
-                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
-             ]]>
-           </sql>
-
-
-           <sql includeProjects="ToxoDB,GiardiaDB">
-            <![CDATA[
-                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count,
-                       bfmv.c_count, bfmv.g_count, bfmv.t_count,
-                       bfmv.other_count, bfmv.length, bfmv.at_percent,
-                       bfmv.organism, bfmv.database_name AS externalDbName,
-                       bfmv.database_version AS externalDbVersion
-                FROM apidb.SequenceAttributes bfmv
-                WHERE bfmv.source_id = $$primaryKey$$
-                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
-             ]]>
-           </sql>
         </sqlQuery>
 
         <sqlQuery name="GeneCount" isCacheable="false">
