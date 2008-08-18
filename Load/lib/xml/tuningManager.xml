@@ -2936,11 +2936,12 @@ CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
     </sql>
   </tuningTable>
 
+<!--
+
   <tuningTable name="apidb.IsolateSNPs">
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="dots.NaLocation"/>
-    <externalDependency name="apidb.IsolateAttributes"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
@@ -2982,6 +2983,7 @@ and d.name in ('PlasmoDB combined SNPs','Broad SNPs','Sanger falciparum SNPs','S
       ]]>
     </sql>
   </tuningTable>
+-->
 
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
