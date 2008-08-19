@@ -1,26 +1,27 @@
 <workflow name="resource">
   <params>
     <param name="extDbRlsSpec"/>
-    <param name="plugin"/>
-    <param name="wgetArgs"/>
-    <param name="unpack"/>
-    <param name="pluginArgs"/>
   </params>
 
   <steps>
-    <step name="acquire" class="ApiCommonData::Steps::FastaExtractor">
+    <step name="acquire" class="ApiCommonData::Steps::AcquireExternalResource">
+      <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="unpack" class="ApiCommonData::Steps::FastaExtractor">
+    <step name="unpack" class="ApiCommonData::Steps::UnpackExternalResource">
+      <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insertExtDb" class="ApiCommonData::Steps::FastaExtractor">
+    <step name="insertExtDb" class="ApiCommonData::Steps::InsertExtDb">
+      <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insertExtDbRls" class="ApiCommonData::Steps::RunSplign">
+    <step name="insertExtDbRls" class="ApiCommonData::Steps::InsertExtDbRls">
+      <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insert" class="ApiCommonData::Steps::InsertSplign">
+    <step name="insert" class="ApiCommonData::Steps::InsertExternalResource">
+      <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
   </steps

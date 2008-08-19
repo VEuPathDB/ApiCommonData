@@ -3,10 +3,6 @@
     <param name="genomeName"/>
     <param name="genomeExtDb"/>
     <param name="genomeExtDbRls"/>
-    <param name="tigrVersion"/>
-    <param name="soVersion"/>
-    <param name="nrdbVersion"/>
-    <param name="taxonomyVersion"/>
     <param name="ncbiTaxonId"/>
   </param>
 
@@ -58,11 +54,11 @@
       <depends step="genome"/>
     </step>
 
-    <step name="TIGR" subflow="resource">
+    <step name="TIGR" subflow="resourceWorkflow">
       <paramValue name="extDbRlsSpec">$tigrExtDbRlsSpec</paramValue>
     </step>
 
-    <step name="splign" subflow="splign">
+    <step name="splign" subflow="splignWorkflow">
       <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="queryExtDbRlsSpec">$tigrExtDbRlsSpec</paramValue>

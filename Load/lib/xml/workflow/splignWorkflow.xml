@@ -1,8 +1,10 @@
-<workflow name="spline">
+<workflow name="splign">
   <params>
     <param name="queryExtDbRlsSpec"/>
     <param name="subjectExtDbRlsSpec"/>
     <param name="genomeName"/>
+    <param name="queryFastaFile"/>
+
   </params>
 
   <constants>
@@ -14,11 +16,12 @@
 
   <steps>
     <step name="extractQuery" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
-      <paramValue name="extDbRlsSpec">$$$queryExtDbRlsSpec</paramValue>
-      <paramValue name="genomeName">$$$genomeName</paramValue>
-      <paramValue name="seqType">@@@querySeqType</paramValue>
-      <paramValue name="table">@@@table</paramValue>
+      <paramValue name="extDbRlsSpec">$queryExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqType">$querySeqType</paramValue>
+      <paramValue name="table">$table</paramValue>
       <paramValue name="defline">'lcl|'||source_id'</paramValue>
+      <paramValue name="outputFile">$queryFastaFile</paramValue>
     </step>
 
     <step name="extractSubject" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
@@ -33,6 +36,8 @@
       <paramValue name="genomeName">$$$genomeName</paramValue>
       <paramValue name="querySeqType">@@@querySeqType</paramValue>
       <paramValue name="subjectSeqType">@@@subjectSeqType</paramValue>
+      <paramValue name="queryFile">$queryFastaFile</paramValue>
+      <paramValue name="subjectFile">???</paramValue>
       <depends step="extractQuery"/>
       <depends step="extractSubject"/>
     </step>
