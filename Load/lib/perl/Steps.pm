@@ -2285,7 +2285,7 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels) = @_;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2310,9 +2310,11 @@ sub makeMixedGenomicDownloadFile {
            FROM dots.nasequence ns,
                 apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
-            AND sa.is_top_level = 1
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
+            AND sa.is_top_level = 1
 EOF
+
+  $sql .= " OR sa.is_top_level = 0" if $allLevels; 
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
