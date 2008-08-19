@@ -1335,7 +1335,7 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism) = @_;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1379,6 +1379,8 @@ sub makeTranscriptDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+
+$sql .= " AND organism = '$organism'" if $organism;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 }
