@@ -6087,6 +6087,22 @@ EOF
 }
 
 
+sub updateEviganSecondaryScore {
+  my ($mgr, $extDbRlsSpec) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $gusConfigFile = $propertySet->getProp('gusConfigFile');
+
+  my $signal = "updateEvigansecondaryScore";
+
+  return if $mgr->startStep("updating secondary score for evigan gene models", $signal);
+
+  $mgr->runCmd("updateEviganSecondaryScore.pl --evigan_ext_db_rls_spec $extDbRlsSpec --gus_config_file $gusConfigFile");
+
+  $mgr->endStep($signal);
+}
+
+
 sub blastSimOutput2ApidbSimSequences {
   my ($mgr, $simFile) = @_;
 
