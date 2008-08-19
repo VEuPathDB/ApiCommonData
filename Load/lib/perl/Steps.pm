@@ -2098,7 +2098,15 @@ EOF
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project) = @_;
+
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
+
+  my $dbVer = join(",", @dbVers);
 
   my $sql = <<"EOF";
     SELECT
@@ -2137,7 +2145,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
