@@ -10,18 +10,18 @@ use GUS::Model::DoTS::TranslatedAASequence;
 sub getSplicedNASequenceId {
   my ($plugin, $sourceId) = @_;
 
-  if (!$plugin->{sourceIdFeatureIdMap}) {
-    $plugin->{sourceIdFeatureIdMap} = {};
+  if (!$plugin->{_sourceIdSplicedNASeqIdMap}) {
+    $plugin->{_sourceIdSplicedNASeqIdMap} = {};
     my $sql = "
 SELECT DISTINCT source_id, na_sequence_id
 FROM Dots.SplicedNASequence
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_sequence_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_sequence_id;
+      $plugin->{_sourceIdSplicedNASeqIdMap}->{$source_id} = $na_sequence_id;
     }
   }
-  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+  return $plugin->{_sourceIdSplicedNASeqIdMap}->{$sourceId};
 }
 
 
@@ -30,9 +30,9 @@ FROM Dots.SplicedNASequence
 sub getGeneFeatureId {
   my ($plugin, $sourceId) = @_;
 
-  if (!$plugin->{sourceIdFeatureIdMap}) {
+  if (!$plugin->{_sourceIdGeneFeatureIdMap}) {
 
-    $plugin->{sourceIdFeatureIdMap} = {};
+    $plugin->{_sourceIdGeneFeatureIdMap} = {};
 
     my $sql = "
 SELECT source_id, na_feature_id
@@ -45,11 +45,11 @@ AND nfng.na_gene_id = g.na_gene_id
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_feature_id;
+      $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
     }
   }
 
-  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+  return $plugin->{_sourceIdGeneFeatureIdMap}->{$sourceId};
 }
 
 # return null if not found:  be sure to check handle that condition!!
@@ -58,9 +58,9 @@ AND nfng.na_gene_id = g.na_gene_id
 sub getAAFeatureId {
   my ($plugin, $sourceId) = @_;
 
-  if (!$plugin->{sourceIdFeatureIdMap}) {
+  if (!$plugin->{_sourceIdAaFeatureIdMap}) {
 
-    $plugin->{sourceIdFeatureIdMap} = {};
+    $plugin->{_sourceIdAaFeatureIdMap} = {};
 
     my $sql = "
 SELECT source_id, aa_feature_id
@@ -68,11 +68,11 @@ FROM Dots.AAFeature
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_feature_id;
+      $plugin->{_sourceIdAaFeatureIdMap}->{$source_id} = $na_feature_id;
     }
   }
 
-  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+  return $plugin->{_sourceIdAaFeatureIdMap}->{$sourceId};
 }
 
 # return null if not found:  be sure to check handle that condition!!
@@ -81,9 +81,9 @@ FROM Dots.AAFeature
 sub getNASequenceId {
   my ($plugin, $sourceId) = @_;
 
-  if (!$plugin->{sourceIdFeatureIdMap}) {
+  if (!$plugin->{_sourceIdNASequenceIdMap}) {
 
-    $plugin->{sourceIdFeatureIdMap} = {};
+    $plugin->{_sourceIdNASequenceIdMap} = {};
 
     my $sql = "
 SELECT source_id, na_sequence_id
@@ -93,20 +93,20 @@ SELECT source_id, na_sequence_id
 FROM Dots.VirtualSequence";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_sequence_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $na_sequence_id;
+      $plugin->{_sourceIdNASequenceIdMap}->{$source_id} = $na_sequence_id;
     }
   }
 
-  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+  return $plugin->{_sourceIdNASequenceIdMap}->{$sourceId};
 }
 
 # return null if not found:  be sure to check handle that condition!!
 sub getAASequenceId {
   my ($plugin, $sourceId) = @_;
 
-  if (!$plugin->{sourceIdFeatureIdMap}) {
+  if (!$plugin->{_sourceIdAaSequenceIdMap}) {
 
-    $plugin->{sourceIdFeatureIdMap} = {};
+    $plugin->{_sourceIdAaSequenceIdMap} = {};
 
     my $sql = "
 SELECT source_id, aa_sequence_id
@@ -114,11 +114,11 @@ FROM Dots.AASequence
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $aa_sequence_id) = $stmt->fetchrow_array()) {
-      $plugin->{sourceIdFeatureIdMap}->{$source_id} = $aa_sequence_id;
+      $plugin->{_sourceIdAaSequenceIdMap}->{$source_id} = $aa_sequence_id;
     }
   }
 
-  return $plugin->{sourceIdFeatureIdMap}->{$sourceId};
+  return $plugin->{_sourceIdAaSequenceIdMap}->{$sourceId};
 }
 
 sub getAASeqIdFromFeatId {
@@ -136,6 +136,8 @@ sub getAASeqIdFromFeatId {
 
 
 # get an aa seq id from a source_id or source_id alias.
+# warning: this method issues a query each time it is called, ie, it is
+#          slow when used repeatedly.  should be rewritten to do a batch
 sub getAASeqIdFromGeneId {
   my ($plugin, $geneId) = @_;
 
@@ -156,6 +158,8 @@ AND taf.na_feature_id = t.na_feature_id
   return $aaSeqId;
 }
 
+# warning: this method issues a query each time it is called, ie, it is
+#          slow when used repeatedly.  should be rewritten to do a batch
 sub getTranslatedAAFeatureIdFromGeneSourceId {
     my ($plugin, $sourceId) = @_;
 
@@ -174,6 +178,8 @@ AND taf.na_feature_id = t.na_feature_id
 }
 
 # returns null if not found
+# warning: this method issues a query each time it is called, ie, it is
+#          slow when used repeatedly.  should be rewritten to do a batch
 sub getTranscriptSequenceIdFromGeneSourceId {
     my ($plugin, $sourceId) = @_;
 
