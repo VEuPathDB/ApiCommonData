@@ -19,13 +19,13 @@
 	  </sql>
       </sqlQuery>
 
-     <wsQuery name="SnpBySourceId" includeProjects="ApiDB" 
+     <processQuery name="SnpBySourceId" includeProjects="ApiDB" 
               isCacheable="true" 
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
           <paramRef ref="snpParams.snp_id"/>
 	  <wsColumn name="source_id" width="50" wsName="source_id"/>
           <wsColumn name="project_id" width="32" wsName="project_id"/>
-      </wsQuery>
+      </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
@@ -109,7 +109,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     </sqlQuery>
 
-    <wsQuery name="SnpsByGeneId" includeProjects="ApiDB" 
+    <processQuery name="SnpsByGeneId" includeProjects="ApiDB" 
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids"  default="cgd3_510"/>
         <paramRef ref="sharedParams.snp_strain_a" default="Cp-IOWA II"/>
@@ -126,7 +126,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="prot_pos" width="32"/>
         <wsColumn name="ref_product" width="32"/>
         <wsColumn name="comp_products" width="32"/> 
-    </wsQuery>
+    </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location -->
@@ -344,7 +344,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <wsQuery name="SnpsByLocation" includeProjects="ApiDB"
+    <processQuery name="SnpsByLocation" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
           <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>-->
           <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
@@ -365,7 +365,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
           <wsColumn name="prot_pos" width="32"/>
           <wsColumn name="ref_product" width="32"/>
           <wsColumn name="comp_products" width="32"/>
-      </wsQuery>
+      </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Allele Frequency -->
@@ -389,7 +389,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <wsQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
+    <processQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="snpParams.major_allele_min"/>
@@ -402,7 +402,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="minor_products"/>
         <wsColumn name="minor_strains"/>
         <wsColumn name="major_strains"/>
-    </wsQuery>
+    </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate Pattern -->
@@ -447,7 +447,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <wsQuery name="SnpsByIsolatePattern" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolatePattern" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
 
@@ -462,7 +462,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="set_b_allele"/>
         <wsColumn name="set_a_count"/>
         <wsColumn name="set_b_count"/>
-    </wsQuery>
+    </processQuery>
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate Pattern by history id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -501,7 +501,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <wsQuery name="SnpsByIsolatePatternHistory" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolatePatternHistory" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="sharedParams.isolateHistoryIdA"/>
@@ -512,7 +512,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="set_a_allele"/>
         <wsColumn name="set_b_allele"/>
-    </wsQuery>
+    </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate assay type -->
@@ -534,13 +534,13 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <wsQuery name="SnpsByIsolateType" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolateType" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="isolateParams.type"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>
+    </processQuery>
 
   </querySet>
 

@@ -78,13 +78,13 @@
 
         </sqlQuery>
 
-        <wsQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
             <wsColumn name="accession" width="100" wsName="accession"/>
             <wsColumn name="name" width="100" wsName="name"/>
             <wsColumn name="description" width="100" wsName="description"/>
-        </wsQuery>
+        </processQuery>
 <!--====================================================================================-->
 <!-- BLAST TYPE QUERIES -->
 <!--=====================================================================-->
@@ -468,11 +468,11 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
 <!-- AJAX TERM QUERIES-->
 <!--=====================================================================-->
 
-    <wsQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey"/> 
             <paramRef ref="recordParams.projectId"/>
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
-        </wsQuery>
+        </processQuery>
      </querySet>
 </wdkModel>

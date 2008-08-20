@@ -3,9 +3,19 @@
     <recordClassSet name="EstRecordClasses">
 
         <!-- EstRecordClasses.EstRecordClass -->
-        <recordClass idPrefix="" name="EstRecordClass" type="EST">
+        <recordClass name="EstRecordClass" type="EST">
 
-           <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
 
           <!-- =============================================================== -->
           <!--   Reporters -->  
@@ -35,7 +45,10 @@
                 <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
 
                 <columnAttribute name="assembly_source_id" displayName="Assembly Source Id" internal="true" />
-                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" visible="$$assembly_source_id$$" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+                    <displayText>
+                        <![CDATA[ $$assembly_source_id$$ ]]>
+                    </displayText>
                      <url>
                         <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=@PROJECT_ID@&primary_key=$$assembly_source_id$$]]>
                      </url>
@@ -107,8 +120,11 @@
                    displayName="Alignments to genomic sequence"
                    queryRef="EstTables.AlignmentInfo">
                 <columnAttribute inReportMaker="true"  name="accession" displayName="Accession"   internal="false" />
-                <linkAttribute displayName="Genomic sequence" name="alignedcontig" visible="$$sequence_id$$"
+                <linkAttribute displayName="Genomic sequence" name="alignedcontig"
                    inReportMaker="false" internal="false" >
+                    <displayText>
+                        <![CDATA[ $$sequence_id$$ ]]>
+                    </displayText>
                      <url>
                         <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&primary_key=$$sequence_id$$]]>
                      </url>
@@ -129,8 +145,11 @@
                 <columnAttribute inReportMaker="true"  name="target_start" displayName="Start" internal="true" />
                 <columnAttribute inReportMaker="true"  name="target_end"  displayName="End" internal="true" />
                 <columnAttribute inReportMaker="true"  name="is_reversed" displayName="Strand" internal="true" />
-                <linkAttribute displayName="Alignment" name="alignmentlink" visible="view"
+                <linkAttribute displayName="Alignment" name="alignmentlink"
                    inReportMaker="false" internal="false" >
+                    <displayText>
+                        <![CDATA[ view ]]>
+                    </displayText>
                      <url includeProjects="PlasmoDB">
                         <![CDATA[
                         /cgi-bin/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
@@ -164,7 +183,10 @@
                    displayName="Other ESTs that Cluster with this EST:" 
                    queryRef="EstTables.ClusterMates">
                 <columnAttribute displayName="ID" name="mate_id" internal="true" />
-                <linkAttribute displayName="ID" name="mate_link" visible="$$mate_id$$">
+                <linkAttribute displayName="ID" name="mate_link">
+                    <displayText>
+                        <![CDATA[ $$mate_id$$ ]]>
+                    </displayText>
                      <url>
                         <![CDATA[showRecord.do?name=EstRecordClasses.EstRecordClass&project_id=&primary_key=$$mate_id$$]]>
                      </url>
@@ -179,10 +201,13 @@
                    displayName="Assembly for this EST" 
                    queryRef="EstTables.AssemblyInfo">
                 <columnAttribute displayName="Assembly" name="assembly_source_id" internal="true" />
-                <linkAttribute displayName="Assembly" name="assembly_link" visible="$$assembly_source_id$$">
-                     <url >
+                <linkAttribute displayName="Assembly" name="assembly_link">
+                    <displayText>
+                        <![CDATA[ $$assembly_source_id$$ ]]>
+                    </displayText>
+                    <url >
                         <![CDATA[showRecord.do?name=AssemblyRecordClasses.AssemblyRecordClass&project_id=@PROJECT_ID@&primary_key=$$assembly_source_id$$]]>
-                     </url>
+                    </url>
                 </linkAttribute>
                 
                 <columnAttribute inReportMaker="false" name="assembly_length" displayName="Length" />

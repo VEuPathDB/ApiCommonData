@@ -9,9 +9,20 @@
  <recordClassSet name="UtilityRecordClasses">
     
         <!-- UtilityRecordClasses.SiteInfo -->
-        <recordClass idPrefix="" 
-          name="SiteInfo" type="Gene">
-          <projectParamRef ref="recordParams.Project"/>
+        <recordClass name="SiteInfo" type="Gene">
+
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 <!--
             <attributeQueryRef ref="UtilityQueries.PingCrypto">
                 <columnAttribute name="cryptolink" internal="true" />

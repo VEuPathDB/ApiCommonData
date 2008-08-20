@@ -22,12 +22,47 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <recordClass idPrefix=""
-           name="GeneRecordClass" 
+        <recordClass name="GeneRecordClass" 
            type="Gene"
            aliasQueryRef="GeneAttributes.GeneAlias">
 
-          <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
+      <!-- =============================================================== -->
+      <!--   Summary Tables -->  
+      <!-- =============================================================== -->
+            
+            <summaryTable name="strains"
+                          displayName="Strain View"
+                          rowParamRef="recordParams.strains"
+                          columnParamRef="recordParams.instance_gene">
+                <description>
+                    <![CDATA[
+                    Strains View
+                    ]]>
+                </description>
+                
+                <view rowTerm="All"
+                      columnTerm="Instances"
+                      summaryQueryRef="GeneSummaries.AllInstances"
+                      isDefault="true" isBooleanDefault="true">
+                    <description>
+                        <![CDATA[
+                            Display all instances from all strains
+                        ]]>
+                    </description>      
+                </view>
+            </summaryTable>
 
       <!-- =============================================================== -->
       <!--   Reporters -->  
@@ -78,18 +113,6 @@
               <property name="record_id_column">source_id</property>
           </reporter>
 
-
-       <!-- =================================================================== -->
-       <!--  subTypes  ++++++++-->
-       <!-- =================================================================== -->
-       <subType includeProjects="GiardiaDB"
-                filterQueryRef="GeneSubTypes.GenesByFilters"
-                termToSkip="skip"/>
-                
-       <subType includeProjects="ToxoDB"
-                filterQueryRef="GeneSubTypes.GenesByFilters"
-                transformQueryRef="GeneSubTypes.GenesByTransformers"
-                termToSkip="skip"/>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Track New Annotation -->  
@@ -427,8 +450,12 @@
             <columnAttribute internal="true" name="strain_b_disp"/>
             <columnAttribute internal="true" name="gene_source_id"/>
             <linkAttribute name="LinkForStrainComparison"
-                           displayName="Strains"
-                           visible="$$strain_a_disp$$ vs $$strain_b_disp$$">
+                           displayName="Strains">
+                 <displayText>
+                    <![CDATA[
+                    $$strain_a_disp$$ vs $$strain_b_disp$$
+                    ]]>
+                 </displayText>
                  <url excludeProjects="ToxoDB">
                     <![CDATA[
                       processQuestion.do?questionFullName=SnpQuestions.SnpsByGeneId&ds_gene_ids_type=DATA&ds_gene_ids_data=$$gene_source_id$$&myMultiProp%28snp_strain_a%29=$$strain_a_query$$&myMultiProp%28snp_strain_m%29=$$strain_b_query$$&questionSubmit=Get+Answer
@@ -565,7 +592,12 @@
                   </text>
             </textAttribute>
 
-            <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
+            <linkAttribute displayName="Genome Browser" name="view_link" inReportMaker="false" internal="false" >
+                 <displayText>
+                    <![CDATA[
+                    View
+                    ]]>
+                 </displayText>
                    <url includeProjects="GiardiaDB,ApiDB">
                     <![CDATA[
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
@@ -593,12 +625,15 @@
                              name="tag_source_id" internal="true"/>
             <columnAttribute displayName= "source id"
                              name="source_id" internal="true"/>
-            <linkAttribute includeProjects="GiardiaDB" displayName="External ID" name="tag_link" visible="$$tag_source_id$$"
+            <linkAttribute includeProjects="GiardiaDB" displayName="External ID" name="tag_link"
                    inReportMaker="false" internal="false" >
-                     <url>
-                        <![CDATA[showSummary.do?questionFullName=SageTagQuestions.SageTagByRadSourceId&myProp%28rad_source_id%29=$$source_id$$]]>
-                     </url>
-                </linkAttribute>
+                 <displayText>
+                    <![CDATA[ $$tag_source_id$$ ]]>
+                 </displayText>
+                 <url>
+                    <![CDATA[showSummary.do?questionFullName=SageTagQuestions.SageTagByRadSourceId&myProp%28rad_source_id%29=$$source_id$$]]>
+                 </url>
+            </linkAttribute>
             <columnAttribute displayName= "Sequence"
                              name="sequence"/>
             <columnAttribute displayName= "Library"
@@ -637,8 +672,12 @@
         <columnAttribute name="stable_id" internal="true"/>
             <columnAttribute name="headline" internal="true"/>
       <linkAttribute name="headline_link"
-              displayName="Headline"
-              visible="$$headline$$">
+              displayName="Headline">
+                 <displayText>
+                    <![CDATA[
+                    $$headline$$
+                    ]]>
+                 </displayText>
         <url>
         <![CDATA[showComment.do?projectId=@PROJECT_ID@&stableId=$$stable_id$$#$$comment_id$$]]>
         </url>
@@ -659,8 +698,12 @@
             <columnAttribute name="ec_number" internal="true" inReportMaker="false"/>
             <columnAttribute name="expasy_url" internal="true" inReportMaker="false"/>
             <linkAttribute name="ec_number_link"
-                           displayName="EC Number"
-                           visible="$$ec_number$$">
+                           displayName="EC Number">
+                 <displayText>
+                    <![CDATA[
+                    $$ec_number$$
+                    ]]>
+                 </displayText>
                  <url excludeProjects="CryptoDB">
                     <![CDATA[$$expasy_url$$]]>
                  </url>
@@ -706,7 +749,12 @@
             <columnAttribute displayName="Is Not" name="is_not"/>
             <columnAttribute name="go_id" internal="true"/>
             <columnAttribute displayName="Ontology" name="ontology"/>
-            <linkAttribute name="go_id_link" displayName="GO ID" visible="$$go_id$$">
+            <linkAttribute name="go_id_link" displayName="GO ID">
+                 <displayText>
+                    <![CDATA[
+                    $$go_id$$
+                    ]]>
+                 </displayText>
                  <url>
                     <![CDATA[http://amigo.geneontology.org/cgi-bin/amigo/go.cgi?action=query&view=query&query=+$$go_id$$&search_constraint=terms]]>
                  </url>
@@ -716,8 +764,12 @@
             <columnAttribute name="evidence_code" internal="true"/>
             <columnAttribute name="lowercase_evidence_code" internal="true"/>
             <linkAttribute name="evidence_code_link"
-                           displayName="Evidence Code"
-                           visible="$$evidence_code$$">
+                           displayName="Evidence Code">
+                 <displayText>
+                    <![CDATA[
+                    $$evidence_code$$
+                    ]]>
+                 </displayText>
                  <url>
                     <![CDATA[http://www.geneontology.org/GO.evidence.shtml#$$lowercase_evidence_code$$]]>
                  </url>
@@ -742,8 +794,12 @@
                  displayName="Y2H Interactions"
                  queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,ApiDB">
               <columnAttribute name="source_id" internal="true"/>
-              <linkAttribute name="geneLink" displayName="Gene"
-                       visible="$$source_id$$">
+              <linkAttribute name="geneLink" displayName="Gene">
+                 <displayText>
+                    <![CDATA[
+                    $$source_id$$
+                    ]]>
+                 </displayText>
                    <url>
                       <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
                    </url>
@@ -777,7 +833,12 @@
                  displayName="Paralogs and In-genera Orthologs"
                  queryRef="GeneTables.Orthologs">
             <columnAttribute name="source_id" internal="true"/>
-            <linkAttribute name="gene" displayName="Gene" visible="$$source_id$$">
+            <linkAttribute name="gene" displayName="Gene">
+                 <displayText>
+                    <![CDATA[
+                    $$source_id$$
+                    ]]>
+                 </displayText>
                  <url>
                     <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
                  </url>
@@ -796,8 +857,12 @@
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
             <columnAttribute name="pathway_name" internal="true"/>
-            <linkAttribute name="pathway" displayName="Pathway"
-                        visible="$$pathway_name$$">
+            <linkAttribute name="pathway" displayName="Pathway">
+                 <displayText>
+                    <![CDATA[
+                    $$pathway_name$$
+                    ]]>
+                 </displayText>
                  <url includeProjects="PlasmoDB,ApiDB">
                     <![CDATA[http://sites.huji.ac.il/malaria/maps/$$pathway_id$$.html]]>
                  </url>
@@ -830,8 +895,12 @@
             <columnAttribute name="array_source_id" internal="true"/>
             <columnAttribute name="array_provider" displayName="Provider"
                              internal="false"/>
-            <linkAttribute name="element_link" displayName="Array Element"
-                        visible="$$array_source_id$$">
+            <linkAttribute name="element_link" displayName="Array Element">
+                 <displayText>
+                    <![CDATA[
+                    $$array_source_id$$
+                    ]]>
+                 </displayText>
                  <url>
                     <![CDATA[showRecord.do?name=ArrayElementRecordClasses.ArrayElementRecordClass&primary_key=$$array_source_id$$]]>
                  </url>
@@ -872,8 +941,12 @@
                  queryRef="GeneTables.Mr4Reagents"
                  includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="atcc_number" internal="true"/>
-            <linkAttribute name="atcc_link" displayName="ATCC Number"
-                        visible="$$atcc_number$$">
+            <linkAttribute name="atcc_link" displayName="ATCC Number">
+                 <displayText>
+                    <![CDATA[
+                    $$atcc_number$$
+                    ]]>
+                 </displayText>
                  <url>
                     <![CDATA[http://google.com/search?q=$$atcc_number$$+site%3Amr4.org&btnI=I]]>
                  </url>
@@ -895,12 +968,20 @@
             <columnAttribute name="gi" internal="true"/>
             <columnAttribute name="accession_url" internal="true"/>
             <columnAttribute name="gi_url" internal="true"/>
-            <linkAttribute name="accession_link" displayName="Accession"
-                        visible="$$accession$$">
+            <linkAttribute name="accession_link" displayName="Accession">
+                 <displayText>
+                    <![CDATA[
+                    $$accession$$
+                    ]]>
+                 </displayText>
                  <url>$$accession_url$$</url>
             </linkAttribute>
-            <linkAttribute name="gi_link" displayName="GI"
-                        visible="$$gi$$">
+            <linkAttribute name="gi_link" displayName="GI">
+                 <displayText>
+                    <![CDATA[
+                    $$gi$$
+                    ]]>
+                 </displayText>
                  <url>$$gi_url$$</url>
             </linkAttribute>
           </table>
@@ -924,7 +1005,12 @@
             <columnAttribute name="dataset" displayName="Database" internal="true"/>
             <columnAttribute name="source_id" internal="true"/>
             <columnAttribute name="link_url" internal="true"/>
-            <linkAttribute name="db_link" displayName="Database Link" visible="$$dataset$$">
+            <linkAttribute name="db_link" displayName="Database Link">
+                 <displayText>
+                    <![CDATA[
+                    $$dataset$$
+                    ]]>
+                 </displayText>
                  <url>$$link_url$$</url>
             </linkAttribute>
           </table>
@@ -940,14 +1026,22 @@
                  includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="search_term" internal="true"/>
             <columnAttribute name="pdb_template" internal="true"/>
-            <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB"
-                        visible="$$search_term$$-$$pdb_template$$">
+            <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB">
+                 <displayText>
+                    <![CDATA[
+                    $$search_term$$-$$pdb_template$$
+                    ]]>
+                 </displayText>
                  <url>
                      http://bioinfo.icgeb.res.in/codes/model_simple.php?search_term=$$search_term$$
                  </url>
             </linkAttribute>
-            <linkAttribute name="pdb_link" displayName="PDB Template"
-                        visible="$$pdb_template$$">
+            <linkAttribute name="pdb_link" displayName="PDB Template">
+                 <displayText>
+                    <![CDATA[
+                    $$pdb_template$$
+                    ]]>
+                 </displayText>
                  <url>http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId=$$pdb_template$$</url>
             </linkAttribute>
           </table>
@@ -964,8 +1058,12 @@
             <columnAttribute name="pdb_id" internal="true"/>
             <columnAttribute name="pvalue_mant" internal="true"/>
             <columnAttribute name="pvalue_exp" internal="true"/>
-            <linkAttribute name="pdb_link" displayName="PDB Structure"
-                        visible="$$pdb_chain$$">
+            <linkAttribute name="pdb_link" displayName="PDB Structure">
+                 <displayText>
+                    <![CDATA[
+                    $$pdb_chain$$
+                    ]]>
+                 </displayText>
                 <url>
                     http://www.rcsb.org/pdb/cgi/explore.cgi?pdbId=$$pdb_id$$
                 </url>
@@ -1005,8 +1103,12 @@
                  displayName="Epitopes from IEDB"
                  queryRef="GeneTables.Epitopes">
             <columnAttribute name="iedb_id" internal="true"/>
-            <linkAttribute name="iedb_link" displayName="Epitope"
-                        visible="$$iedb_id$$">
+            <linkAttribute name="iedb_link" displayName="Epitope">
+                 <displayText>
+                    <![CDATA[
+                    $$iedb_id$$
+                    ]]>
+                 </displayText>
                 <url>
                     <![CDATA[
                     http://www.immuneepitope.org/httpQuery.do?dispatch=runquery&eid=$$iedb_id$$
@@ -1029,8 +1131,12 @@
             <columnAttribute name="gene_id" displayName="Gene Name"/>
             <columnAttribute name="total" internal="true"/>
             <linkAttribute name="isolate_total_link" 
-                        displayName="Number of Isolates Overlap"
-                        visible="$$total$$">
+                        displayName="Number of Isolates Overlap">
+                 <displayText>
+                    <![CDATA[
+                    $$total$$
+                    ]]>
+                 </displayText>
                 <url>
                     <![CDATA[
                     showSummary.do?questionFullName=IsolateQuestions.IsolateWithGeneOverlap&myProp%28gene_id%29=$$gene_id$$
@@ -1149,9 +1255,12 @@
           <!-- Link attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <linkAttribute name="Publications" visible="View"
+         <linkAttribute name="Publications"
                         internal="true" inReportMaker="false"
                         includeProjects="PlasmoDB">
+            <displayText>
+               <![CDATA[View]]>
+            </displayText>
             <url>
                <![CDATA[
                      @PUBLICATIONS_URL@$$primaryKey$$
@@ -1159,9 +1268,12 @@
             </url>
          </linkAttribute>
 
-         <linkAttribute name="PlasmoCyc" visible="View"
+         <linkAttribute name="PlasmoCyc"
                         internal="true" inReportMaker="false"
                         includeProjects="PlasmoDB">
+            <displayText>
+               <![CDATA[View]]>
+            </displayText>
             <url>
                <![CDATA[
                      http://apicyc.apidb.org/$$cyc_db$$/NEW-IMAGE?type=NIL&object=$$cyc_gene_id$$
@@ -1169,9 +1281,12 @@
             </url>
          </linkAttribute>
 
-         <linkAttribute name="ToxoCyc" visible="View"
+         <linkAttribute name="ToxoCyc"
                         internal="true" inReportMaker="false"
                         includeProjects="ToxoDB">
+            <displayText>
+               <![CDATA[View]]>
+            </displayText>
             <url>
                <![CDATA[
                      http://apicyc.apidb.org/$$cyc_db$$/NEW-IMAGE?type=GENE&object=$$cyc_gene_id$$

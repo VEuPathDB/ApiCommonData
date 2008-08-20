@@ -1,10 +1,21 @@
 <wdkModel>
 
     <recordClassSet name="ArrayElementRecordClasses" includeProjects="PlasmoDB">
-        <recordClass idPrefix="" name="ArrayElementRecordClass"
+        <recordClass name="ArrayElementRecordClass"
                      type="Array Element">
 
-           <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 
           <!-- =============================================================== -->
           <!--   Reporters -->  
@@ -41,7 +52,10 @@
                displayName="Mapped Genes"
                queryRef="ArrayElementTables.Genes">
             <columnAttribute name="source_id" internal="true"/>
-            <linkAttribute name="gene" displayName="Gene" visible="$$source_id$$">
+            <linkAttribute name="gene" displayName="Gene">
+                 <displayText>
+                    <![CDATA[ $$source_id$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$source_id$$]]>
                  </url>
@@ -55,7 +69,10 @@
                displayName="Genomic Locations"
                queryRef="ArrayElementTables.GenomicLocations">
             <columnAttribute name="source_id" internal="true"/>
-            <linkAttribute name="genomicSequence" displayName="Genomic Sequence" visible="$$source_id$$">
+            <linkAttribute name="genomicSequence" displayName="Genomic Sequence">
+                 <displayText>
+                    <![CDATA[ $$source_id$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$source_id$$]]>
                  </url>
@@ -65,8 +82,10 @@
             <columnAttribute name="gbrowse_start" internal="true"/>
             <columnAttribute name="gbrowse_end" internal="true"/>
             <columnAttribute name="is_reversed" displayName="Reversed"/>
-            <linkAttribute name="gbrowseLink" displayName="Genome Browser"
-                           visible="view">
+            <linkAttribute name="gbrowseLink" displayName="Genome Browser">
+                 <displayText>
+                    <![CDATA[ view ]]>
+                 </displayText>
                <url>
                 <![CDATA[
                 @CGI_URL@/gbrowse/plasmodb/?name=$$source_id$$:$$gbrowse_start$$-$$gbrowse_end$$;enable=AnnotatedGenes

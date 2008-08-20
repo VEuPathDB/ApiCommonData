@@ -1,0 +1,33 @@
+<wdkModel>
+    <querySet name="GeneSummaries">
+
+     <!-- notes
+
+       - all projects need a gene alias query (or, we have to break that out of the 
+         <recordClass> element
+
+     -->
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Gene alias -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <sqlQuery name="AllInstances" isCacheable="false">
+            <paramRef ref="recordParams.strains"/>
+            <paramRef ref="recordParams.instance_gene"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <!-- use CDATA because query includes angle brackets -->
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$gene_answer$$
+                    WHERE $$gene_answer.condition$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+    </querySet>
+
+</wdkModel>

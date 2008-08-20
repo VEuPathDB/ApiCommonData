@@ -1,9 +1,20 @@
 <wdkModel>
     <recordClassSet name="SageTagRecordClasses">
 
-      <recordClass idPrefix="" name="SageTagRecordClass" type="SAGE Tag Alignment">
+      <recordClass name="SageTagRecordClass" type="SAGE Tag Alignment">
 
-        <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 
       <!-- =============================================================== -->
       <!--   Reporters -->
@@ -88,7 +99,10 @@
                   </text>
             </textAttribute>
  
-            <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
+            <linkAttribute displayName="Genome Browser" name="view_link" inReportMaker="false" internal="false" >
+                 <displayText>
+                    <![CDATA[ View ]]>
+                 </displayText>
                    <url includeProjects="GiardiaDB">
                     <![CDATA[
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=Gene;label=DeprecatedGene;h_feat=$$feature_source_id$$
@@ -125,16 +139,20 @@
          <columnAttribute  name="source_id" internal="true"/>
          <columnAttribute  name="gene_source_id" internal="true"/>
            <linkAttribute inReportMaker="false" displayName="Sage Tag Alignment"
-                          name="linkedSourceId"
-                          visible="$$source_id$$">
+                          name="linkedSourceId">
+                 <displayText>
+                    <![CDATA[ $$source_id$$ ]]>
+                 </displayText>
              <url><![CDATA[
                      showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$
                     ]]>
              </url>
            </linkAttribute>
            <linkAttribute inReportMaker="false" displayName="Gene Source Id"
-                          name="linkedGeneSourceId"
-                          visible="$$gene_source_id$$">
+                          name="linkedGeneSourceId">
+                 <displayText>
+                    <![CDATA[ $$gene_source_id$$ ]]>
+                 </displayText>
              <url><![CDATA[
                      showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$gene_source_id$$
                     ]]>

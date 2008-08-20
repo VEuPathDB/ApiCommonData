@@ -8,9 +8,20 @@
 
     <recordClassSet name="SnpRecordClasses" includeProjects="ToxoDB,PlasmoDB,ApiDB,CryptoDB">
 
-        <recordClass idPrefix="" name="SnpRecordClass" type="SNP">
+        <recordClass name="SnpRecordClass" type="SNP">
 
-           <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 
           <!-- =============================================================== -->
           <!--   Reporters -->  
@@ -36,7 +47,10 @@
                                name="dataset_hidden" internal="true"
                                inReportMaker="false"/>
                <linkAttribute inReportMaker="false" displayName="SNP provider"
-                              name="provider_link" visible="$$dataset$$">
+                              name="provider_link">
+                 <displayText>
+                    <![CDATA[ $$dataset$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[
                        showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=$$dataset_hidden$$&title=SNPs%20Summary
@@ -65,7 +79,10 @@
               <columnAttribute inReportMaker="true" displayName="Gene ID"
                                name="gene_source_id" internal="true"/>
                <linkAttribute inReportMaker="false" displayName="Gene ID"
-                              name="linkedGeneId" visible="$$gene_source_id$$">
+                              name="linkedGeneId">
+                 <displayText>
+                    <![CDATA[ $$gene_source_id$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[
                        showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$gene_source_id$$
@@ -167,8 +184,10 @@
                  queryRef="SnpTables.isolates">
               <columnAttribute name="isolate_id" internal="true"/>
               <linkAttribute inReportMaker="false" displayName="Isolate ID"
-                             name="linkedIsolteSourceId"
-                             visible="$$isolate_id$$">
+                             name="linkedIsolteSourceId">
+                 <displayText>
+                    <![CDATA[ $$isolate_id$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[
                        showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&project_id=@PROJECT_ID@&primary_key=$$isolate_id$$
@@ -190,8 +209,10 @@
                  queryRef="SnpTables.Providers">
               <columnAttribute name="source_id_link" internal="true"/>
               <linkAttribute inReportMaker="false" displayName="SNP ID"
-                             name="linkedSourceId"
-                             visible="$$source_id_link$$">
+                             name="linkedSourceId">
+                 <displayText>
+                    <![CDATA[ $$source_id_link$$ ]]>
+                 </displayText>
                  <url>
                     <![CDATA[
                        showRecord.do?name=SnpRecordClasses.SnpRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id_link$$

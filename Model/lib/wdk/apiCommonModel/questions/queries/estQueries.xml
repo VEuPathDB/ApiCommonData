@@ -27,13 +27,13 @@
        </sql>
     </sqlQuery>
 
-    <wsQuery name="EstBySourceId" includeProjects="ApiDB"
+    <processQuery name="EstBySourceId" includeProjects="ApiDB"
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="estParams.est_id"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>   
+    </processQuery>   
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -116,7 +116,7 @@
         </sql>
     </sqlQuery>
 
-    <wsQuery name="EstsByLocation" includeProjects="ApiDB" 
+    <processQuery name="EstsByLocation" includeProjects="ApiDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -131,7 +131,7 @@
         <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>
+    </processQuery>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -151,13 +151,13 @@
        </sql>
     </sqlQuery>
 
-    <wsQuery name="EstsByLibrary" includeProjects="ApiDB" 
+    <processQuery name="EstsByLibrary" includeProjects="ApiDB" 
              displayName="Library Name" isCacheable='true' 
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
         <paramRef ref="sharedParams.libraryId"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>
+    </processQuery>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -220,21 +220,21 @@
     </sqlQuery>
 
 
-    <wsQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
+    <processQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="estParams.overlapOrNot"/>
        <wsColumn name="source_id" width="60" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>
+    </processQuery>
 
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- BLAST  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <wsQuery name="EstsBySimilarity" 
+    <processQuery name="EstsBySimilarity" 
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
@@ -251,10 +251,10 @@
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
-    </wsQuery>
+    </processQuery>
 
 <!--
-    <wsQuery name="EstsBySimilarity" includeProjects="ApiDB"
+    <processQuery name="EstsBySimilarity" includeProjects="ApiDB"
          displayName="BLAST ESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>
@@ -270,7 +270,7 @@
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
-    </wsQuery>
+    </processQuery>
 -->
 
   </querySet>

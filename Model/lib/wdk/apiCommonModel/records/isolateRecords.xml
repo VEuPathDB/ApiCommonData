@@ -1,9 +1,20 @@
 <wdkModel>
     <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB, ApiDB">
 
-      <recordClass idPrefix="" name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+      <recordClass name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ApiDB">
 
-        <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 
       <!-- =============================================================== -->
       <!--   Reporters -->
@@ -121,9 +132,11 @@
         <columnAttribute displayName="Chromosome" name="chromosome"/>
         <columnAttribute displayName="Position" name="start_min"/>
         <columnAttribute name="snp_id" internal="true"/>
-        <linkAttribute displayName="SNP ID" 
-                       name="snp_id_link" visible="$$snp_id$$"
+        <linkAttribute displayName="SNP ID" name="snp_id_link"
                        inReportMaker="false" internal="false" >
+                 <displayText>
+                    <![CDATA[ $$snp_id$$ ]]>
+                 </displayText>
             <url> 
              <![CDATA[showRecord.do?name=SnpRecordClasses.SnpRecordClass&primary_key=$$snp_id$$&project_id=PlasmoDB]]> 
              </url>

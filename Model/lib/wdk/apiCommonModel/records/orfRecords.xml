@@ -1,9 +1,20 @@
 <wdkModel>
     <recordClassSet name="OrfRecordClasses">
 
-        <recordClass idPrefix="" name="OrfRecordClass" type="ORF">
+        <recordClass name="OrfRecordClass" type="ORF">
 
-           <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
 
           <!-- =============================================================== -->
           <!--   Reporters -->  
@@ -92,7 +103,10 @@
                   </text>
             </textAttribute>
  
-            <linkAttribute displayName="Genome Browser" name="view_link" visible="View" inReportMaker="false" internal="false" >
+            <linkAttribute displayName="Genome Browser" name="view_link" inReportMaker="false" internal="false" >
+                 <displayText>
+                    <![CDATA[ View ]]>
+                 </displayText>
                    <url includeProjects="GiardiaDB">
                     <![CDATA[
                       /@CGI_OR_MOD@/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=ORF;label=Gene;label=DeprecatedGene;h_feat=$$feature_source_id$$

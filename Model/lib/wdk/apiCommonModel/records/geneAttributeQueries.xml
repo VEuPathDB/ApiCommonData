@@ -13,17 +13,19 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="GeneAlias" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="new_source_id"/>
+            <column name="new_project_id"/>
             <sql includeProjects="PlasmoDB">
-                SELECT gene as source_id
+                SELECT gene as new_source_id, '@project_id@' AS new_project_id,
+                       alias as source_id, '@project_id@' AS project_id
                 FROM apidb.GeneAlias
-                WHERE lower(alias) = lower($$primaryKey$$)
             </sql>
             <sql excludeProjects="PlasmoDB">
-                SELECT $$primaryKey$$ as source_id
-                FROM dual
+                SELECT source_id as new_source_id, '@project_id@' AS new_project_id,
+                       source_id as source_id, '@project_id@' AS project_id
+                FROM apidb.GeneAttributes
             </sql>
         </sqlQuery>
 
@@ -34,8 +36,6 @@
 
 
         <sqlQuery name="TrackNewAnnotation" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
             <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
@@ -45,9 +45,8 @@
             <column name="new_protein" sortingTable="apidb.trackNewAnnotation"/>
             <column name="new_product_string" sortingTable="apidb.trackNewAnnotation" sortingColumn="product"/>
             <sql>
-               select $$projectId$$ as project_id,tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
+               select '@project_id@' as project_id, tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
                from Apidb.TRACKNEWANNOTATION tna
-               where tna.source_id = $$primaryKey$$
             </sql>
         </sqlQuery>
 
@@ -57,8 +56,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="Bfmv" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
@@ -241,8 +238,6 @@
                    bfmv.synonymous_snps as synonymous_snps_all_strains,
                    bfmv.signalp_scores,bfmv.signalp_peptide
             FROM apidb.GeneAttributes bfmv
-               WHERE bfmv.source_id=$$primaryKey$$
-                 AND bfmv.project_id=$$projectId$$
             ]]>
             </sql>
 
@@ -397,19 +392,18 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="Chromosome" displayName="Chromosome" isCacheable="false" includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="chromosome"/>
             <sql>
             <![CDATA[SELECT g.source_id,
                             src.chromosome as chromosome,
-                            $$projectId$$ as project_id
+                            '@project_id@' as project_id
                      FROM dots.genefeature g,
                           dots.externalnasequence enas,
                           dots.source src
                      WHERE g.na_sequence_id= enas.na_sequence_id
                      AND  enas.na_sequence_id = src.na_sequence_id
-                     AND g.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -420,20 +414,17 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_protein_sequence"/>
             <sql>
             <![CDATA[
             SELECT gf.source_id,
-                   tas.sequence AS workshop_protein_sequence,'@PROJECT_ID@' as project_id
+                   tas.sequence AS workshop_protein_sequence,'@project_id@' as project_id
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  apidb.TRACKNEWANNOTATION tna
-            WHERE tna.source_id=$$primaryKey$$
-              AND tna.new_source_id = gf.source_id
+            WHERE tna.new_source_id = gf.source_id
               AND t.parent_id = gf.na_feature_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = tas.aa_sequence_id
@@ -445,18 +436,16 @@
 
 
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT gf.source_id,
-                   tas.sequence AS protein_sequence,'@PROJECT_ID@' as project_id
+            SELECT gf.source_id, '@project_id@' as project_id,
+                   tas.sequence AS protein_sequence
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
-            WHERE gf.source_id=$$primaryKey$$
-              AND t.parent_id = gf.na_feature_id
+            WHERE t.parent_id = gf.na_feature_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = tas.aa_sequence_id
             ]]>
@@ -464,24 +453,20 @@
         </sqlQuery>
 
         <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" includeProjects="ApiDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-                  SELECT g.source_id, ext.name as project_id, g.sequence as protein_sequence 
+                  SELECT g.source_id, '@project_id@' as project_id, g.sequence as protein_sequence 
                   FROM dots.TranslatedAASequence g, 
                        sres.SequenceOntology s, 
                        sres.ExternalDatabaseRelease extr, 
                        sres.ExternalDatabase ext
-                  WHERE g.source_id = $$primaryKey$$
-                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
                     AND g.external_database_release_id=extr.external_database_release_id
                     AND s.term_name = 'protein'
                     AND extr.external_database_id=ext.external_database_id
-                    AND LOWER(ext.name)=LOWER($$projectId$$)
             ]]>
             </sql>
         </sqlQuery>
@@ -491,14 +476,13 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="PhylogeneticTree" isCacheable="false"
                        displayName="Phylogenetic Tree" includeProjects="GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="phyTreeId"/>
             <sql>
             <![CDATA[
-              select tree.source_id as phyTreeId,tree.source_id,'@PROJECT_ID@' as project_id
+              select tree.source_id as phyTreeId,tree.source_id, '@project_id@' as project_id
               from apidb.phylogenetictree tree
-              where tree.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -510,40 +494,36 @@
 
         <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"
                        displayName="RNA Sequence">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="workshop_transcript_sequence"/>
             <sql>
             <![CDATA[
-              select gf.source_id, s.sequence as workshop_transcript_sequence,'@PROJECT_ID@' as project_id
+              select gf.source_id, s.sequence as workshop_transcript_sequence,'@project_id@' as project_id
               from dots.genefeature gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
-              where tna.source_id = $$primaryKey$$
-              and tna.new_source_id = gf.source_id
-              and t.parent_id = gf.na_feature_id
-              and s.na_sequence_id = t.na_sequence_id
+              where tna.new_source_id = gf.source_id
+                and t.parent_id = gf.na_feature_id
+                and s.na_sequence_id = t.na_sequence_id
             ]]>
             </sql>
         </sqlQuery>
 
         <sqlQuery name="TranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="transcript_sequence"/>
             <sql>
             <![CDATA[
-              select gf.source_id, s.sequence as transcript_sequence,'@PROJECT_ID@' as project_id
+              select gf.source_id, s.sequence as transcript_sequence,'@project_id@' as project_id
               from dots.genefeature gf, dots.transcript t, dots.splicednasequence s
-              where gf.source_id = $$primaryKey$$
-              and t.parent_id = gf.na_feature_id
-              and s.na_sequence_id = t.na_sequence_id
+              where t.parent_id = gf.na_feature_id
+                and s.na_sequence_id = t.na_sequence_id
             ]]>
             </sql>
         </sqlQuery>
 
-<sqlQuery name="TranscriptSequence" isCacheable="false"  includeProjects="ApiDB">
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+        <sqlQuery name="TranscriptSequence" isCacheable="false"  includeProjects="ApiDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="transcript_sequence"/>
@@ -553,12 +533,10 @@
                        sres.SequenceOntology s, 
                        sres.ExternalDatabaseRelease extr, 
                        sres.ExternalDatabase ext
-                  WHERE g.source_id = '$$primaryKey$$'
-                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
                     AND s.term_name = 'processed_transcript'
                     AND g.external_database_release_id=extr.external_database_release_id 
                     AND extr.external_database_id=ext.external_database_id
-                    AND ext.name='$$projectId$$'
                  )
  
            </sql>
@@ -572,8 +550,6 @@
 
         <sqlQuery name="NewAnnotationCDS" isCacheable="false"
                        displayName="New Annotation RNA Sequence">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_cds"/>
@@ -583,12 +559,11 @@
                      SUBSTR(s.sequence,
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
-                       AS workshop_cds,'@PROJECT_ID@' as project_id
+                       AS workshop_cds,'@project_id@' as project_id
               FROM dots.genefeature gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf,
                    apidb.TRACKNEWANNOTATION tna
-              WHERE tna.source_id = $$primaryKey$$
-                AND tna.new_source_id = gf.source_id
+              WHERE tna.new_source_id = gf.source_id
                 AND t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
                 AND t.na_feature_id = tf.na_feature_id
@@ -600,9 +575,8 @@
 
         <sqlQuery name="CDS" isCacheable="false" excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="cds"/>
             <sql>
             <![CDATA[
@@ -613,8 +587,7 @@
                        AS cds,'@PROJECT_ID@' as project_id
               FROM dots.genefeature gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
-              WHERE gf.source_id = $$primaryKey$$
-                AND t.parent_id = gf.na_feature_id
+              WHERE t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
                 AND t.na_feature_id = tf.na_feature_id
             ]]>
@@ -623,8 +596,6 @@
 
 
         <sqlQuery name="CDS" isCacheable="false"  includeProjects="ApiDB">
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="cds"/>
@@ -634,12 +605,10 @@
                        sres.SequenceOntology s, 
                        sres.ExternalDatabaseRelease extr, 
                        sres.ExternalDatabase ext
-                  WHERE g.source_id = '$$primaryKey$$'
-                    AND  g.sequence_ontology_id = s.sequence_ontology_id
+                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
                     AND s.term_name = 'CDS'
                     AND g.external_database_release_id=extr.external_database_release_id 
                     AND extr.external_database_id=ext.external_database_id
-                    AND ext.name='$$projectId$$'
                  )
  
            </sql>
@@ -650,9 +619,8 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="graph_derisi_winzeler" />
             <column name="graph_winzeler" />
             <column name="graph_3d7" />
@@ -666,7 +634,7 @@
             <column name="graph_daily"/>
             <sql>
             <![CDATA[
-               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
+               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
@@ -679,7 +647,6 @@
                       NVL(MAX(graph_kappe), 0) AS graph_kappe,
                       NVL(MAX(graph_daily), 0) AS graph_daily
                FROM apidb.PlasmoExpressionGraphs egs
-               WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -690,18 +657,16 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="ToxoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="graph_starvation" />
             <column name="graph_archetypal"/>
             <sql>
             <![CDATA[
-               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
+               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
                       NVL(MAX(graph_starvation), 0) AS graph_starvation,
                       NVL(MAX(graph_archetypal), 0) AS graph_archetypal
                FROM apidb.ToxoExpressionGraphs egs
-               WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -711,16 +676,14 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
+            <column name="project_id"/>
             <column name="graph_stress" />
             <sql>
             <![CDATA[
-               SELECT $$primaryKey$$ AS source_id, $$projectId$$ as project_id,
+               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
                       NVL(MAX(graph_stress), 0) AS graph_stress
                FROM apidb.GiardiaExpressionGraphs egs
-               WHERE egs.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
@@ -730,18 +693,17 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneGffSequence">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
         <column name="gff_transcript_sequence"/>
         <sql>
           <![CDATA[
-            select gf.source_id, $$projectId$$ as project_id,
+            select gf.source_id, '@project_id@' as project_id,
                    s.sequence as gff_transcript_sequence
             from DoTS.GeneFeature gf, 
                  DoTS.Transcript rna,
                  dots.splicednasequence s
-            where gf.source_id = $$primaryKey$$
-                  and gf.na_feature_id = rna.parent_id
+            where gf.na_feature_id = rna.parent_id
                   and s.na_sequence_id = rna.na_sequence_id
           ]]>
         </sql>
@@ -752,8 +714,8 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneGffAttrs">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
         <column name="gff_seqid"/>
         <column name="gff_source"/>
         <column name="gff_type"/>
@@ -770,7 +732,7 @@
         <column name="gff_attr_size"/>
         <sql>
           <![CDATA[
-            select ga.source_id, $$projectId$$ as project_id,
+            select ga.source_id, '@project_id@' as project_id,
                    'apidb|' || ga.sequence_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'gene' as gff_type,
@@ -790,7 +752,6 @@
                    (greatest(ga.start_min, ga.end_max)
                    - least(ga.start_min, ga.end_max) + 1) as gff_attr_size
             from apidb.GeneAttributes ga
-            where ga.source_id = $$primaryKey$$
           ]]>
         </sql>
       </sqlQuery>
@@ -801,15 +762,14 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="Protein_Linkout" isCacheable='true' includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
-            <column name="source_id" />
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="protein_id" />
             <column name="linkout" />
             <sql>
             <![CDATA[           
             SELECT 
-                  g.source_id,$$projectId$$ as project_id,
+                  g.source_id,'@project_id@' as project_id,
                   DECODE (
                        protein_id, null, 
                            '', 
@@ -823,25 +783,24 @@
                   as linkout, 
                   t.protein_id
             FROM  dots.transcript t, dots.genefeature g
-            WHERE g.source_id = $$primaryKey$$
-            AND   g.na_feature_id = t.parent_id(+)
+            WHERE g.na_feature_id = t.parent_id(+)
             ]]>
             </sql>
         </sqlQuery>
 
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="pdb_id"/>
             <sql>
               <![CDATA[
-            SELECT dr.primary_identifier AS pdb_id
+            SELECT gf.source_id, '@project_id@' as project_id,
+                   dr.primary_identifier AS pdb_id
             FROM dots.GeneFeature gf,
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = $$primaryKey$$
-            AND gf.na_feature_id = drnf.na_feature_id
+            WHERE gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             AND dr.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
@@ -852,9 +811,8 @@
         </sqlQuery>
 
         <sqlQuery name="Translation" isCacheable='true' includeProjects="CryptoDB">
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/> 
             <column name="source_id" />
+            <column name="project_id"/>
             <column name="translation" />
             <column name="molecular_weight" />
             <column name="molecular_weight_note" />
@@ -865,8 +823,8 @@
             <!-- The sql weirdness is to force a single row result set of null
                  values when there is no translation (as is the case for 
                  non-protein coding genes) - the WDK doesn't allow an empty result.    -->
-            <![CDATA[  SELECT g.source_id, tas.sequence as translation,
-                          tas.molecular_weight,$$projectId$$ as project_id,
+            <![CDATA[  SELECT g.source_id, '@project_id@' as project_id,
+                          tas.sequence as translation, tas.molecular_weight,
                           DECODE (
                             tas.molecular_weight, null,
                             '',
@@ -878,8 +836,7 @@
                     dots.translatedaasequence tas, 
                     dots.translatedaafeature taf, 
                     dots.transcript t
-            WHERE g.source_id = $$primaryKey$$
-            AND taf.aa_sequence_id = tas.aa_sequence_id 
+            WHERE taf.aa_sequence_id = tas.aa_sequence_id 
             AND taf.na_feature_id = t.na_feature_id
             AND g.na_feature_id = t.parent_id         
            

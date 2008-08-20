@@ -2319,8 +2319,12 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
             <columnAttribute internal="true" name="prey_number_of_baits"/>
             <columnAttribute internal="true" name="gene_source_id"/>
             <linkAttribute name="preyNumberBaits"
-                       displayName="Baits Interacting with Found Gene" align="center"
-                       visible="$$prey_number_of_baits$$">
+                       displayName="Baits Interacting with Found Gene" align="center">
+                 <displayText>
+                    <![CDATA[
+                    $$prey_number_of_baits$$
+                    ]]>
+                 </displayText>
                 <url>
                     <![CDATA[
                       showQuestion.do?questionFullName=GeneQuestions.GenesByProteinProteinInteraction&single_gene_id=$$gene_source_id$$&min_searches=1&min_observed=1&bait_or_prey=prey
@@ -2329,8 +2333,12 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
             </linkAttribute>
             <columnAttribute name="bait_number_of_preys" internal="true"/>
             <linkAttribute name="baitNumberPreys"
-                       displayName="Preys Interacting with Found Gene" align="center"
-                       visible="$$bait_number_of_preys$$">
+                       displayName="Preys Interacting with Found Gene" align="center">
+                 <displayText>
+                    <![CDATA[
+                    $$bait_number_of_preys$$
+                    ]]>
+                 </displayText>
                 <url>
                     <![CDATA[
                       showQuestion.do?questionFullName=GeneQuestions.GenesByProteinProteinInteraction&single_gene_id=$$gene_source_id$$&min_searches=1&min_observed=1&bait_or_prey=bait

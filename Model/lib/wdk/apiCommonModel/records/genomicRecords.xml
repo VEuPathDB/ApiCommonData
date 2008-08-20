@@ -21,11 +21,20 @@
           name="SequenceRecordClass" type="Genomic Sequence"
           attributeOrdering="overview,otherInfo,dnaContext">
 -->
-        <recordClass idPrefix=""
-          name="SequenceRecordClass" type="Genomic Sequence"
+        <recordClass name="SequenceRecordClass" type="Genomic Sequence"
           attributeOrdering="overview">
 
-          <projectParamRef ref="recordParams.Project"/>
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
 
       <!-- =============================================================== -->
       <!--   Reporters -->  
@@ -176,8 +185,10 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
          <linkAttribute name="GenbankRecord" includeProjects="PlasmoDB"
-                        visible="$$genbank_accession$$"
                         inReportMaker="false">
+				<displayText>
+				    <![CDATA[$$genbank_accession$$]]>
+				</displayText>
             <url>
                <![CDATA[http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=$$genbank_accession$$]]>
             </url>
@@ -331,8 +342,10 @@
                queryRef="SequenceTables.SequencePieces">
             <columnAttribute name="source_id" internal="true" displayName="Sequence ID"/>
            <linkAttribute inReportMaker="false" displayName="Sequence ID"
-                          name="linkedSequenceId"
-                          visible="$$source_id$$">
+                          name="linkedSequenceId">
+				<displayText>
+				    <![CDATA[$$source_id$$]]>
+				</displayText>
              <url><![CDATA[
                      showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$source_id$$&project_id=@PROJECT_ID@
                     ]]>
@@ -343,8 +356,10 @@
             <columnAttribute name="end_max" displayName="End"/>
             <columnAttribute name="piece_source_id" internal="true" displayName="Piece ID"/>
            <linkAttribute inReportMaker="false" displayName="Piece ID"
-                          name="linkedSequencePieceId"
-                          visible="$$piece_source_id$$">
+                          name="linkedSequencePieceId">
+				<displayText>
+				    <![CDATA[$$piece_source_id$$]]>
+				</displayText>
              <url><![CDATA[
                      showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$piece_source_id$$&project_id=@PROJECT_ID@
                     ]]>
@@ -378,8 +393,10 @@
             <columnAttribute name="stable_id" internal="true"/>
             <columnAttribute name="headline" internal="true"/>
 			<linkAttribute name="headline_link"
-							displayName="Headline"
-							visible="$$headline$$">
+							displayName="Headline">
+				<displayText>
+				    <![CDATA[$$headline$$]]>
+				</displayText>
 				<url>
 				<![CDATA[showRecord.do?name=UserCommentsRecordClasses.SequenceCommentsClass&project_id=@PROJECT_ID@&primary_key=$$stable_id$$#$$comment_id$$]]>
 				</url>

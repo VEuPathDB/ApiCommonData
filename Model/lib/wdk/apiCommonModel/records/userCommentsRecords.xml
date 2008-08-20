@@ -2,9 +2,20 @@
 
   <recordClassSet name="UserCommentsRecordClasses">
 
-    <recordClass idPrefix=""
-          name="GeneCommentsClass" type="GeneComments">
-      <projectParamRef ref="recordParams.Project"/>
+    <recordClass name="GeneCommentsClass" type="GeneComments">
+
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
       <table name="UserComments"
                  displayName="User Comments" 
                  queryRef="UserCommentTables.GeneComments">
@@ -20,9 +31,20 @@
        </table>
     </recordClass>
 
-    <recordClass idPrefix=""
-          name="SequenceCommentsClass" type="SequenceComments">
-      <projectParamRef ref="recordParams.Project"/>
+    <recordClass name="SequenceCommentsClass" type="SequenceComments">
+
+            <!-- primary key definition -->
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+
       <table name="UserComments"
                  displayName="User Comments"
                  queryRef="UserCommentTables.SequenceComments">

@@ -1396,23 +1396,23 @@
     <!-- History -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <historyParam name="geneHistoryId"
+        <answerParam name="geneHistoryId"
                       prompt="Gene History ID"
                       recordClassRef="GeneRecordClasses.GeneRecordClass">
               <help>The number in the left column of My Query History</help>
-        </historyParam>
+        </answerParam>
 
-        <historyParam name="isolateHistoryIdA" includeProjects="PlasmoDB,ApiDB"
+        <answerParam name="isolateHistoryIdA" includeProjects="PlasmoDB,ApiDB"
                       prompt="Isolate History ID for Set A"
                       recordClassRef="IsolateRecordClasses.IsolateRecordClass">
               <help>The number in the left column of My Query History</help>
-        </historyParam>
+        </answerParam>
 
-        <historyParam name="isolateHistoryIdB" includeProjects="PlasmoDB,ApiDB"
+        <answerParam name="isolateHistoryIdB" includeProjects="PlasmoDB,ApiDB"
                       prompt="Isolate History ID for Set B"
                       recordClassRef="IsolateRecordClasses.IsolateRecordClass">
               <help>The number in the left column of My Query History</help>
-        </historyParam>
+        </answerParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- History -->  
@@ -1765,10 +1765,10 @@ by the sequence generator.</help>
           </sql>
         </sqlQuery>
 
-        <wsQuery name="SnpStrainA" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="SnpStrainA" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
-        </wsQuery>
+        </processQuery>
 
         <sqlQuery name="SnpStrainB" includeProjects="PlasmoDB,ToxoDB">
           <column name="internal"/>
@@ -1797,10 +1797,10 @@ by the sequence generator.</help>
           </sql>
         </sqlQuery>
 
-        <wsQuery name="SnpStrainB" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="SnpStrainB" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
-        </wsQuery>
+        </processQuery>
 
         <sqlQuery name="EstLibraries" excludeProjects="ApiDB">
             <column name="internal"/>
@@ -1815,10 +1815,10 @@ by the sequence generator.</help>
             </sql>
         </sqlQuery>
 
-  <wsQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+  <processQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
-        </wsQuery>
+        </processQuery>
 
 
 
@@ -1835,10 +1835,10 @@ by the sequence generator.</help>
             </sql>
         </sqlQuery>
 
-  <wsQuery name="EstLibrariesAssemblies" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+  <processQuery name="EstLibrariesAssemblies" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
-        </wsQuery>
+        </processQuery>
 
 
 
@@ -1866,10 +1866,10 @@ by the sequence generator.</help>
             </sql>
         </sqlQuery>
 
-        <wsQuery name="EstLibrariesGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="EstLibrariesGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
-        </wsQuery>
+        </processQuery>
 
 
 

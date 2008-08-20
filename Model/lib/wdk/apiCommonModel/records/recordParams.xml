@@ -8,10 +8,14 @@
   -->
 
     <paramSet name="recordParams">
-
+    
       <stringParam name="primaryKey" prompt="Primary Key"/>
 
       <stringParam name="projectId" prompt="Project ID"/>
+
+      <stringParam name="source_id" prompt="Primary Key"/>
+
+      <stringParam name="project_id" prompt="Project ID"/>
 
       <stringParam name="Query" prompt="Project ID"/>
 
@@ -31,6 +35,47 @@
             <internal>ToxoDB</internal>
           </enumValue>
       </enumList>
+    </enumParam>
+
+    <answerParam name="gene_answer"
+                 recordClassRef="GeneRecordClasses.GeneRecordClass"
+                 prompt="Gene Answer" />
+
+        
+    <enumParam name="strains"
+               prompt="Strains">
+        <enumList>
+            <enumValue>
+                <term>All</term>
+                <internal>all</internal>
+            </enumValue>
+            <enumValue>
+                <term>ME49</term>
+                <internal>ME49</internal>
+            </enumValue>
+            <enumValue>
+                <term>VEG</term>
+                <internal>VEG</internal>
+            </enumValue>
+            <enumValue>
+                <term>GT1</term>
+                <internal>GT1</internal>
+            </enumValue>
+        </enumList>
+    </enumParam>
+    
+    <enumParam name="instance_gene"
+               prompt="View Type">
+        <enumList>
+            <enumValue>
+                <term>Genes</term>
+                <internal>gene</internal>
+            </enumValue>
+            <enumValue>
+                <term>Instances</term>
+                <internal>instance</internal>
+            </enumValue>
+        </enumList>
     </enumParam>
       
   </paramSet>

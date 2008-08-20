@@ -31,13 +31,13 @@
         </sql>
     </sqlQuery>
 
-    <wsQuery name="OrfByOrfId" includeProjects="ApiDB"
+    <processQuery name="OrfByOrfId" includeProjects="ApiDB"
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="orfParams.orf_id"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-    </wsQuery>   
+    </processQuery>   
 
     
     <!-- ************************************************************ -->
@@ -136,7 +136,7 @@
     <!-- use withGenes so we access all sites -->  
     <!--===================================================================-->
 
-     <wsQuery name="OrfsByLocation" includeProjects="ApiDB"
+     <processQuery name="OrfsByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
@@ -147,14 +147,14 @@
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="dynamic_location" width="32" wsName="dynamic_location"/>
-    </wsQuery>
+    </processQuery>
 
 
     <!-- ************************************************************ -->
     <!-- Motif search -->  
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsByMotifSearch"   excludeProjects="ApiDB"
+    <processQuery name="OrfsByMotifSearch"   excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression"/>
        <paramRef ref="orfSimilarityParams.motif_organism"/>
@@ -163,10 +163,10 @@
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="3999"/>
-    </wsQuery>
+    </processQuery>
 
 
-    <wsQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
+    <processQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
                 processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="orfSimilarityParams.motif_organism"/>
        <paramRef ref="sharedParams.motif_expression"/>
@@ -177,14 +177,14 @@
        <wsColumn name="Locations" width="3999"/>
        <wsColumn name="MatchCount" width="10"/>
        <wsColumn name="Sequence" width="3999"/>
-    </wsQuery>
+    </processQuery>
 
 
     <!-- ************************************************************ -->
   <!-- BLAST   when apidb using apifed (instead of wublast), remember to set useTermOnly in the organism param, in similarityParams.xml   -->
     <!-- ************************************************************ -->
  
-    <wsQuery name="OrfsBySimilarity" 
+    <processQuery name="OrfsBySimilarity" 
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
@@ -200,10 +200,10 @@
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
-    </wsQuery>
+    </processQuery>
 
 <!--
-    <wsQuery name="OrfsBySimilarity" includeProjects="ApiDB"
+    <processQuery name="OrfsBySimilarity" includeProjects="ApiDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
@@ -219,7 +219,7 @@
        <wsColumn name="Alignment" width="4000"/>
        <wsColumn name="Header" width="3000"/>
        <wsColumn name="Footer" width="3000"/>
-    </wsQuery>
+    </processQuery>
 -->
 
     <!-- ************************************************************ -->
@@ -334,7 +334,7 @@
        </sql>
     </sqlQuery>   
 
-    <wsQuery name="OrfsByMassSpec" includeProjects="ApiDB"
+    <processQuery name="OrfsByMassSpec" includeProjects="ApiDB"
              isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
         <paramRef ref="orfParams.orf_ms_assay"/>
@@ -344,7 +344,7 @@
         <wsColumn name="project_id" width="32" wsName="project_id"/> 
         <wsColumn name="sum_sequence_count" width="32" wsName="sum_sequence_count" />
         <wsColumn name="sum_spectrum_count" width="32" wsName="sum_spectrum_count" />
-    </wsQuery>
+    </processQuery>
 
   </querySet>
 </wdkModel>

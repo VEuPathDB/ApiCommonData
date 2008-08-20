@@ -15,8 +15,6 @@
        <!-- BFMV -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="Bfmv" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
 
             <column name="sequence"
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"
@@ -26,6 +24,9 @@
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
 
             <column name="source_id" 
+                    sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
+
+            <column name="project_id" 
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"/>
 
             <column name="a_count" 
@@ -95,15 +96,13 @@
                     bfmv.genbank_accession, bfmv.database_name,
                     bfmv.database_version, bfmv.chromosome,database_name as externalDbName
               FROM apidb.SequenceAttributes bfmv
-              WHERE bfmv.source_id = $$primaryKey$$
-                AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
              ]]>
            </sql>
 
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
-            enas.source_id, $$projectId$$ as project_id, 
+            enas.source_id, '@project_id@' as project_id, 
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
@@ -135,22 +134,20 @@
             AND tn.name_class = 'scientific name'
             AND enas.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
-            AND enas.source_id = $$primaryKey$$
              ]]>
            </sql>
 
         </sqlQuery>
 
         <sqlQuery name="GeneCount" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="gene_count"/>
             <sql>
             <![CDATA[
            select sa.source_id, sa.project_id, count(*) as gene_count
             from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
             where ga.sequence_id = sa.source_id
-             and sa.source_id = $$primaryKey$$
             group by sa.source_id, sa.project_id
              ]]>
            </sql>
@@ -158,15 +155,14 @@
 
 
        <sqlQuery name="Aliases" isCacheable="false" includeProjects="GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="alias"/>
             <sql>
             <![CDATA[
-            SELECT  id as alias, sequence as source_id, $$projectId$$ as project_id
+            SELECT  id as alias, sequence as source_id, '@project_id@' as project_id
             FROM    apidb.SequenceId si 
-            WHERE   sequence =$$primaryKey$$ 
-            AND NOT lower(sequence) = id
+            WHERE   NOT lower(sequence) = id
              ]]>
             </sql>
         </sqlQuery>
@@ -177,12 +173,12 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="Attribution" isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="short_name"/>
             <sql>
             <![CDATA[
-                SELECT ens.source_id, $$projectId$$ as project_id,
+                SELECT ens.source_id, '@project_id@' as project_id,
                        decode(ed.name,
                               'Jane Carlton P. vivax chromosomes', 'TIGR',
                               'Sanger P. reichenowi contigs', 'Sanger',
@@ -198,8 +194,7 @@
                 FROM dots.NaSequence ens,
                      sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE ens.source_id = $$primaryKey$$
-                  AND ens.external_database_release_id
+                WHERE ens.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
              ]]>
@@ -213,16 +208,15 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SequenceGffSequence" isCacheable="false" excludeProjects="ApiDB">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
         <column name="gff_sequence"/>
         <sql>
-            select ns.source_id, $$projectId$$ AS project_id,
+            select ns.source_id, '@project_id@' AS project_id,
                    ns.sequence as gff_sequence
             from apidb.SequenceAttributes gs,
                  dots.NaSequence ns
-            where gs.source_id = $$primaryKey$$
-              and gs.is_top_level = 1
+            where gs.is_top_level = 1
               and ns.na_sequence_id = gs.na_sequence_id
         </sql>
     </sqlQuery>
@@ -232,8 +226,8 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SequenceGffAttrs" isCacheable="false" excludeProjects="ApiDB">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
         <column name="gff_seqid"/>
         <column name="gff_source"/>
         <column name="gff_type"/>
@@ -253,7 +247,7 @@
         <column name="gff_attr_topology"/>
         <column name="gff_attr_localization"/>
         <sql>
-            select ns.source_id, $$projectId$$ AS project_id,
+            select ns.source_id, '@project_id@' AS project_id,
                    'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,
@@ -277,8 +271,7 @@
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.TaxonName tn
-            where gs.source_id = $$primaryKey$$
-              and gs.is_top_level = 1
+            where gs.is_top_level = 1
               and ns.na_sequence_id = gs.na_sequence_id
               and ns.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
