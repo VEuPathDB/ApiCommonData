@@ -189,7 +189,7 @@ AND taf.na_feature_id = t.na_feature_id
     }
   }
 
-  return $plugin->{_sourceIdOneAaSeqIdMap}->{$sourceId};
+  return $plugin->{_sourceIdOneAaSeqIdMap}->{$geneSourceId};
 }
 
 # warning: this method issues a query each time it is called, ie, it is
