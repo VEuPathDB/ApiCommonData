@@ -139,9 +139,9 @@ sub getAASeqIdFromFeatId {
 # warning: this method issues a query each time it is called, ie, it is
 #          slow when used repeatedly.  should be rewritten to do a batch
 sub getAASeqIdFromGeneId {
-  my ($plugin, $geneId) = @_;
+  my ($plugin, $geneSourceId) = @_;
 
-  my $geneFeatId = getGeneFeatureId($plugin, $geneId);
+  my $geneFeatId = getGeneFeatureId($plugin, $geneSourceId);
 
   return undef unless $geneFeatId;
 
@@ -154,8 +154,42 @@ AND taf.na_feature_id = t.na_feature_id
   my $stmt = $plugin->prepareAndExecute($sql);
   my ($aaSeqId) = $stmt->fetchrow_array();
   my ($tooMany) = $stmt->fetchrow_array();
-  $plugin->error("trying to map gene source id '$geneId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
+  $plugin->error("trying to map gene source id '$geneSourceId' to a single aa_sequence_id, but found more than one aa_sequence_id: ") if $tooMany;
   return $aaSeqId;
+}
+
+# get an aa seq id from a source_id or source_id alias.
+# only gets one protein per source_id (arbitrarily chosen)
+sub getOneAASeqIdFromGeneId {
+  my ($plugin, $geneSourceId) = @_;
+
+
+  if (!$plugin->{_sourceIdOneAaSeqIdMap}) {
+
+    $plugin->{_sourceIdOneAaSeqIdMap} = {};
+
+my $sql ="
+SELECT srcIdNaFeatId.source_id, taf.aa_sequence_id
+FROM Dots.Transcript t, Dots.TranslatedAAFeature taf,
+   (
+     SELECT source_id, na_feature_id
+     FROM Dots.GeneFeature
+     UNION
+     SELECT g.name, gf.na_feature_id
+     FROM Dots.GeneFeature gf, Dots.NAFeatureNAGene nfng, Dots.NAGene g
+     WHERE nfng.na_feature_id = gf.na_feature_id
+     AND nfng.na_gene_id = g.na_gene_id
+   ) srcIdNaFeatId
+WHERE t.parent_id = srcIdNaFeatId.na_feature_id
+AND taf.na_feature_id = t.na_feature_id
+";
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($source_id, $aa_sequence_id) = $stmt->fetchrow_array()) {
+      $plugin->{_sourceIdOneAaSeqIdMap}->{$source_id} = $aa_sequence_id;
+    }
+  }
+
+  return $plugin->{_sourceIdOneAaSeqIdMap}->{$sourceId};
 }
 
 # warning: this method issues a query each time it is called, ie, it is
