@@ -104,7 +104,7 @@ SQL
 SQL
       } else {
 	# no ExternalDependency record; insert one
-	ApiCommonData::Load::TuningConfig::Log::addLog(    "No stored timestamp found for $self->{name}");
+	ApiCommonData::Load::TuningConfig::Log::addLog("    No stored timestamp found for $self->{name}");
 	$sql = <<SQL;
         insert into apidb.TuningMgrExternalDependency (name, max_mod_date, timestamp, row_count)
         select upper('$self->{name}'), to_date('$max_mod_date', 'yyyy-mm-dd hh24:mi:ss'), sysdate, $row_count

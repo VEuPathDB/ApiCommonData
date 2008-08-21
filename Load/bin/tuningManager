@@ -16,7 +16,9 @@ my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
-ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager at $timestamp with arguments:\n"
+my $nodename = `uname -n`;
+chomp($nodename);
+ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager on $nodename at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
@@ -63,7 +65,7 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 }
 
 # validate config / check external files
-ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Validating configuration file and checking external files ===");
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
 my $undefinedInternal;
 my $nonexistentExternal;
 my $dependencyCycle;
@@ -73,7 +75,7 @@ foreach my $tableName (keys(%tuningTables)) {
   if ($tuningTables{$tableName}->getInternalDependencyNames()) {
     foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
       if (!$tuningTables{$dependency->{name}}) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: $tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
 	$undefinedInternal = 1;
       } else {
 	# add object to list of internal dependencies
@@ -96,7 +98,7 @@ foreach my $tableName (keys(%tuningTables)) {
       $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
 
       if (!$externalTables{$dependency->{name}}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: $tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
 	$nonexistentExternal = 1;
       }
     }
@@ -113,10 +115,10 @@ ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies m
   if $nonexistentExternal;
 
 if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n\n****************\n\n"
-						 . "INVALID CONFIGURATION -- NOT UPDATING DATABASE"
-						 . "\n\n****************\n\n");
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
   $doUpdate = 0;
+} else {
+  ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
 }
 
 my $tableCount = 0;
@@ -124,7 +126,7 @@ my $brokenCount = 0;
 my $neededUpdateCount = 0;
 my $upToDateCount = 0;
 
-ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Checking tables ===");
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking whether tuning tables are up to date");
 # check (and potentially update) every tuning table
 my @tableList;
 if ($tables) {
@@ -135,7 +137,7 @@ if ($tables) {
 
 foreach my $table (@tableList) {
   if (!$tuningTables{$table}) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: unknown tuning table $table");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
     next;
   }
 
@@ -149,12 +151,12 @@ foreach my $table (@tableList) {
   } elsif ($state eq "up-to-date") {
     $upToDateCount++;
   } else {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: invalid state $state");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
   }
 }
 
 # indexes
-ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Checking indexes ===");
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
 my $indexesConfigured;
 my $missingIndexes;
 foreach my $tuningIndex (@{$config->{tuningIndex}}) {
@@ -177,11 +179,11 @@ foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 }
 
 # cleanup
-ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Cleanup ===");
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
 cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
 
 # summary
-ApiCommonData::Load::TuningConfig::Log::addLog("\n=== Summary ===");
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
 if (!$tableCount) {
   ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
 } else {
@@ -307,7 +309,10 @@ sub getConfigFileName {
 
   if (!$configFile) {
     my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
-    my @cmdLine = ("svn", "checkout", $tuningRegistry->getSubversionUrl(), $configDir);
+    my $subversionUrl = $tuningRegistry->getSubversionUrl();
+    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
+    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
+    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
     system(@cmdLine) == 0
       or die "system @cmdLine failed: $?";
 
@@ -428,7 +433,7 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
   }
   $stmt->finish();
 
@@ -446,7 +451,7 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: tuning table $table is listed in apidb.ObsoleteTuningTable but does not exist");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("tuning table $table is listed in apidb.ObsoleteTuningTable but does not exist");
   }
   $stmt->finish();
 

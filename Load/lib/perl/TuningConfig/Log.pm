@@ -2,7 +2,7 @@ package ApiCommonData::Load::TuningConfig::Log;
 
 BEGIN {
 
-  # The variable $log is declared inside a BEGIN block.  This makes it behave
+  # These variables are declared inside a BEGIN block.  This makes them behave
   # like a Java "static" variable, whose state persists from one invocation to
   # another.  $log accumulates all the messages posted with addLog().  getlog()
   # returns the value accreted so far.
@@ -11,9 +11,13 @@ BEGIN {
   my $updateNeededFlag;
   my $updatePerformedFlag;
   my $errorsEncounteredFlag;
+  my $indentString;
 
   sub addLog {
     my ($message) = @_;
+
+    $message =~ s/\n/\n$indentString/;
+    $message = $indentString . $message;
 
     $| = 1;
     print "$message\n";
@@ -22,6 +26,14 @@ BEGIN {
 
   sub getLog {
     return $log;
+  }
+
+  sub increaseIndent {
+    $indentString .= "   ";
+  }
+
+  sub decreaseIndent {
+    $indentString = substr($indentString, 0, -3);
   }
 
   sub setUpdateNeededFlag {

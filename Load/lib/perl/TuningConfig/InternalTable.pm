@@ -109,7 +109,12 @@ sub getState {
   # check internal dependencies
   foreach my $dependency (@{$self->getInternalDependencies()}) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
+
+    # increase log-file indentation for recursive call
+    ApiCommonData::Load::TuningConfig::Log::increaseIndent();
     my $childState = $dependency->getState($doUpdate, $dbh);
+    ApiCommonData::Load::TuningConfig::Log::decreaseIndent();
+
     if ($childState eq "neededUpdate") {
       $needUpdate = 1;
     } elsif ($childState eq "broken") {
