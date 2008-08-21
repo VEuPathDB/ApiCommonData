@@ -14,28 +14,27 @@ use GUS::Model::ApiDB::PhylogeneticProfile;
 my $argsDeclaration =
 [
 
-   fileArg({name           => 'OrthologFile',
-            descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
+    fileArg({name           => 'groupsFile',
+            descr          => 'ortholog groups file as found on OrthoMCL-DB download site',
             reqd           => 1,
             mustExist      => 1,
-	    format         => 'ORTHOMCL9(446 genes,1 taxa): osa1088(osa) osa1089(osa) osa11015(osa)...',
+	    format         => 'OG2_1009: osa|ENS1222992 pfa|PF11_0844...',
             constraintFunc => undef,
-            isList         => 0, 
-           }),
+            isList         => 0, }),
 
-   fileArg({name           => 'MappingFile',
-            descr          => 'File mapping orthoFile ids to source ids',
-            reqd           => 1,
-            mustExist      => 1,
-	    format         => 'Space separators... first column is the orthoId and the second column is the sourceId',
-            constraintFunc => undef,
-            isList         => 0, 
-           }),
-
+   stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
+	     name  => 'taxaToLoad',
+	     isList    => 1,
+	     reqd  => 1,
+	     constraintFunc => undef,
+	   }),
 ];
 
 my $purpose = <<PURPOSE;
-The purpose of this plugin is to insert rows intot ApiDB::PhylogeneticProfile representing orthologous groups.  Each row in this table mappes a source_id (gene) to a long string representing its profile.  Only source_ids contained in the mapping file are entered.  The long string includes every species contained anywhere in the OrthologFile.
+Insert rows into ApiDB::PhylogeneticProfile representing the phylogenetic pattern for each of our genes.  Each row maps a source_id (gene) to a long string representing its profile.  We scan all ortholog groups provided on input.  Gather from them the total set of taxa seen in the file, and, for any group that contains any of our genes, associate with each of those genes the list of taxa found in that group.  That is the profile for that gene.
+
+Here is a sample profile string written into the database:
+aae:N-aed:Y-aga:Y-ago:Y-ame:Y-aor:Y-ath:Y-atu:N-ban:N-bma:Y-bsu:N-bur:N-cbr:Y-cbu:N-cel:Y-cgl:Y-cho:Y-cin:Y-cje:N-cme:Y-cne:Y-cpa:Y-cpe:N-cpn:N-cre:Y-cte:N-ddi:Y-det:N-dha:Y-dme:Y-dra:N-dre:Y-eco:N-ecu:Y-ehi:Y-fru:Y-ftu:N-gga:Y-gla:Y-gsu:N-gth:N-hal:N-hsa:Y-kla:Y-lma:Y-lmo:N-mja:N-mmu:Y-mtu:N-ncr:Y-neq:N-osa:Y-ota:Y-pbe:Y-pch:Y-pfa:Y-pha:Y-pkn:Y-pvi:Y-pyo:Y-rba:N-rno:Y-rso:N-rty:N-sau:N-sce:Y-sfl:N-sma:N-spn:N-spo:Y-sso:N-sty:N-syn:N-tan:Y-tbr:Y-tcr:Y-tgo:Y-the:Y-tma:N-tni:Y-tpa:N-tps:Y-tth:Y-vch:N-wsu:N-yli:Y-ype:N
 PURPOSE
 
 my $purposeBrief = <<PURPOSE_BRIEF;
@@ -89,234 +88,60 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $mapping = $self->_getMapping();
+  # put our taxa into a hash
+  my $taxaToLoad = $self->getArg('taxaToLoad');
+  my $ourTaxa = {};
+  map ($ourTaxa->{$_} = 1) @$taxaToLoad;
 
-  open(FILE, $self->getArg('OrthologFile')) || die "Could Not open Ortholog File for reading: $!\n";
-
-  my ($counter, %geneProfiles, @fullProfile);
-
+  # first pass: go through file, collecting:
+  #  - all taxa in file
+  #  - all taxa associated with each one of our genes
+  open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
+  my ($counter, $genesProfiles, $allTaxa);
   while(my $line = <FILE>) {
     chomp($line);
 
     if($counter++ % 1000 == 0) {
-      $self->log("Processed $counter lines From OrthoFile");
+      $self->log("Processed $counter lines from groupsFile");
     }
 
-    my ($orthoName, $restOfLine) = split(':', $line);
-    my @elements = split(" ", $restOfLine);
-
-    my $orthoProfileList = $self->_getOrthoProfile(\@elements);
-
-    foreach my $species (@$orthoProfileList) {
-      next if($self->_isContained(\@fullProfile, $species));
-      push(@fullProfile, $species);
-    }
-
-    my $foundIds = $self->_findElementIDs($mapping, \@elements);
-    next if(scalar(@$foundIds) == 0);
-
-    foreach(@$foundIds) {
-      $geneProfiles{$_} = $orthoProfileList;
+    my ($groupId, $membersString) = split(':', $line);
+    my @members = split(" ", $membersString);
+    my $taxaInThisGroup = {};
+    foreach my $member (@members) {
+	# pfa|PF11_0987
+	my ($taxonCode, $sourceId) = split("|", $member);
+	$taxaInThisGroup->{$taxonCode} = 1;
+	$allTaxa->{$taxonCode} = 1;
+	$geneProfiles->{$sourceId} = $taxaInThiGroup if $ourTaxa->{$taxonCode};
     }
   }
-  close(FILE);
-
-  @fullProfile = sort(@fullProfile);
-
-  my $numberLoaded = $self->_makePhylogeneticProfiles(\%geneProfiles, \@fullProfile);
-
-  return("Loaded $numberLoaded ApiDB::PhylogeneticProfile entries");
-}
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_getOrthoProfile>
-
-Given the list of genes in an ORTHOLOG Group... makes a nonRedundant list
-of species (3 letter abbrev).  This is done for every line of the OrthoGroup file.
-
-B<Parameters:>
-
-- $elements(arrayRef): list of genes in the format [geneName(species) ...]
-
-B<Return type:> C<arrayRef>
-
-Non Redundant list of species contained in elements.
-
-=cut
-
-sub _getOrthoProfile {
-  my ($self, $elements) = @_;
-
-  my @elements = @$elements;
-
-  my @rv;
-
-  foreach my $name(@elements) {
-    $name =~ /(\(.+\))/; #match inside ()
-    $name = $1;
-
-    $name =~ s/[\(\)]//g; #remove ( and )
-
-    next if($self->_isContained(\@rv, $name));
-    push(@rv, $name);
-  }
-  return(\@rv);
-}
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_isContained>
-
-Asks whether the value is contained in the array.
-
-B<Parameters:>
-
-- $ar(arrayRef):
-- $val(scalar):  
-
-B<Return type:> C<boolean>
-
-=cut
-
-sub _isContained {
-  my ($self, $ar, $val) = @_;
-
-  return(0) if(!$ar);
-
-  foreach(@$ar) {
-    return(1) if($_ eq $val);
-  }
-  return(0);
-}
-
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_getMapping>
-
-Read from mapping file, generate a hash which mapps the Ids contained
-in the OrthologFile to Database Source Ids
-
-B<Return type:> C<hashRef>
-
-=cut
-
-sub _getMapping {
-  my ($self) = @_;
-
-  my %rv;
-
-  open(MAP, $self->getArg('MappingFile')) || die "Could Not open Mapping File for reading: $!\n";
-
-  while(<MAP>) {
-    chomp;
-
-    my ($orthoId, $sourceId) = split(" ", $_);
-    $rv{$orthoId} = $sourceId;
-  }
-  close(MAP);
-  
-  return(\%rv);
-}
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_findElements>
-
-Loops through an arrayRef of 'elements' and makes a new array if the element
-is mapped to a value.
-
-B<Parameters:>
-
-- $mapping(hashRef):  
-- $elements(arrayRef):  List of elements from OrthologFile
-
-B<Return type:> C<arrayRef>
-
-List of Database Source Ids
-
-=cut
-
-sub _findElementIDs {
-  my ($self, $mapping, $elements) = @_;
-
-  my @rv;
-
-  foreach my $name(@$elements) {
-    $name =~ s/\(.+\)//g; #get rid of anything inside ()'s
-
-    if(my $id = $mapping->{$name}) {
-      push(@rv, $id);
-    }
-  }
-  return(\@rv);
-}
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_makePhylogeneticProfiles>
-
-Generates the profile string and submitts the phylogeneticProfiles
-
-B<Parameters:>
-
-- $geneProfiles(hashRef): map of source_id to a list of species 
-- $fullProfile(arrayRef): list of the entire set of species (3 letter Abbrev)
-
-B<Return type:> C<scalar>
-
-Number of entries which were inserted
-
-=cut
-
-sub _makePhylogeneticProfiles {
-  my ($self, $geneProfiles, $fullProfile) = @_;
-
+	
+  # second pass: format string needed for database, and insert
+  my @allTaxaSorted = sort(keys(%$allTaxa));
   my $count;
-
-  foreach my $gene (keys %$geneProfiles) {
-    my $profileString;
-    my @geneYesList = @{$geneProfiles->{$gene}};
-
-    foreach my $species (@$fullProfile) {
-      if($self->_isContained(\@geneYesList, $species)) {
-        $profileString = $profileString.$species.':Y-';
+  foreach my $sourceId (keys(%$geneProfiles)) {
+      my @fullProfile;
+      foreach my $taxaCode (@allTaxaSorted) {
+	  my $yesNo = $geneProfiles->{$sourceId}->{$taxaCode}? 'Y' : 'N';
+	  push(@fullProfile, "$taxaCode:$yesNo");
       }
-      else {
-        $profileString = $profileString.$species.':N-';
+      my $profileString = join(':', @fullProfile);
+      my $profile = GUS::Model::ApiDB::PhylogeneticProfile->
+	  new({source_id => $sourceId,
+	       profile_string => $profileString
+	      });
+      $profile->submit();
+      
+      $count++;
+      if($count % 100 == 0) {
+	  $self->log("Inserted $count Entries into PhylogeneticProfile");
+	  $self->undefPointerCache();
       }
-    }
-    chop($profileString); #remove the last -
-
-    my $profile = GUS::Model::ApiDB::PhylogeneticProfile->
-      new({source_id => $gene,
-           profile_string => $profileString
-          });
-    $profile->submit();
-
-    if($count % 100 == 0) {
-      $self->log("Inserted $count Entries into PhylogeneticProfile");
-    }
-
-    $count++;
-
-    $self->undefPointerCache();
   }
-  return($count);
-}
 
-# ----------------------------------------------------------------------
+  return("Loaded $count ApiDB::PhylogeneticProfile entries");
+}
 
 sub undoTables {
   my ($self) = @_;
