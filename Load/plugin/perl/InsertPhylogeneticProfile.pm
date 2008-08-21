@@ -90,14 +90,13 @@ sub run {
 
   # put our taxa into a hash
   my $taxaToLoad = $self->getArg('taxaToLoad');
-  my $ourTaxa = {};
-  map ($ourTaxa->{$_} = 1) @$taxaToLoad;
+  my %ourTaxa = map {$_ => 1} @$taxaToLoad;
 
   # first pass: go through file, collecting:
   #  - all taxa in file
   #  - all taxa associated with each one of our genes
   open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
-  my ($counter, $genesProfiles, $allTaxa);
+  my ($counter, $geneProfiles, $allTaxa);
   while(my $line = <FILE>) {
     chomp($line);
 
@@ -113,7 +112,7 @@ sub run {
 	my ($taxonCode, $sourceId) = split("|", $member);
 	$taxaInThisGroup->{$taxonCode} = 1;
 	$allTaxa->{$taxonCode} = 1;
-	$geneProfiles->{$sourceId} = $taxaInThiGroup if $ourTaxa->{$taxonCode};
+	$geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
     }
   }
 	
