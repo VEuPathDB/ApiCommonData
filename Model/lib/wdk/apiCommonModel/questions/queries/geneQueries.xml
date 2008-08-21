@@ -1284,7 +1284,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -1292,19 +1292,21 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
-        <sql includeProjects="PlasmoDB">
+        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
             <![CDATA[
-            SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
+            SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
-            FROM apidb.featurelocation fl
-            WHERE (fl.na_sequence_id = (SELECT na_sequence_id FROM apidb.sequenceAttributes
-                                        WHERE organism = $$organismWithChromosomes$$ AND chromosome=$$chromosomeOptional$$)
-                   OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
-              AND fl.feature_type = 'GeneFeature'
-              AND fl.end_max >= $$start_point$$ 
+            FROM apidb.featurelocation fl,apidb.SEQUENCEATTRIBUTES satr,apidb.GENEATTRIBUTES gatr
+            WHERE ((satr.ORGANISM =  $$organismWithChromosomes$$ AND satr.CHROMOSOME = $$chromosomeOptional$$ )
+                   OR lower(satr.source_id) = lower($$sequenceId$$))
+              AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
+              AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID
+              AND fl.end_max >= $$start_point$$
               AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
+
+<!--
         <sql includeProjects="CryptoDB,ToxoDB">
             <![CDATA[
             SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
@@ -1318,7 +1320,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 
-<!-- NOTE, don't think we need the toxo specific one but redo if getting wrong things ...
         <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
@@ -1698,7 +1699,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"
+          includeProjects="PlasmoDB,CryptoDB"/>
        <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
@@ -1710,6 +1712,15 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id"/>
        <column name="source_id" />
        <column name="number_of_ests" />
+       <sqlParamValue name="organism" includeProjects="PlasmoDB,CryptoDB">
+                <![CDATA[
+                  AND s.target_taxon_id in ($$organism$$)
+                ]]>
+            </sqlParamValue>
+            <sqlParamValue name="organism" excludeProjects="PlasmoDB,CryptoDB">
+                <![CDATA[
+                ]]>
+            </sqlParamValue>
        <sql excludeProjects="CryptoDB">
             <![CDATA[
             SELECT s.gene as source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
@@ -1720,7 +1731,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND s.percent_identity >= $$min_percent_identity$$
             AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
             AND s.library_id in ($$libraryIdGenes$$)
-            AND s.target_taxon_id in ($$organism$$)
+            &&organism&&
             AND e.source_id = s.accession
             AND e.best_alignment_count <= $$max_number_best_alignments$$
             GROUP by s.gene
