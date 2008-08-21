@@ -90,7 +90,9 @@ sub getState {
 
   return $self->{state} if defined $self->{state};
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("$self->{name}");
+# return "up-to-date" if $self->{name} eq "apidb.GeneAttributes";
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("checking $self->{name}");
 
   my $needUpdate;
   my $broken;
@@ -106,8 +108,6 @@ sub getState {
 
   # check internal dependencies
   foreach my $dependency (@{$self->getInternalDependencies()}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} internal dependency on " . $dependency->getName())
-	if $self->{debug};
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on tuning table " . $dependency->getName());
     my $childState = $dependency->getState($doUpdate, $dbh);
     if ($childState eq "neededUpdate") {
@@ -120,11 +120,8 @@ sub getState {
 
   # check external dependencies
   foreach my $dependency (@{$self->getExternalDependencies()}) {
-    print "$self->{name} external dependency on " . $dependency->getName() . "\n"
-      if $self->{debug};
-    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on " . $dependency->getName());
+    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external table" . $dependency->getName());
     if (!$needUpdate && $dependency->getTimestamp() gt $self->{timestamp}) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("    timestamp of " . $dependency->getName() . "(" . $dependency->getTimestamp() . ") is later than timestamp of $self->{name} ($self->{timestamp}).");
       $needUpdate = 1;
     }
   }
@@ -168,23 +165,36 @@ sub update {
   my $updateError;
 
   foreach my $sql (@{$self->{sqls}}) {
+#exit if $sql =~ /GeneAttributes/;
+#next unless $sql =~ /GeneAttributes/;
+
     my $sqlCopy = $sql;
     $sqlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
-    my $stmt = $dbh->prepare($sqlCopy);
-    my $sqlReturn = $stmt->execute();
+    ApiCommonData::Load::TuningConfig::Log::addLog("running sql of length " . length($sqlCopy) . " to build $self->{name}:\n$sqlCopy")
+	if $self->{debug};
+
+#   my $stmt = $dbh->prepare($sqlCopy);
+#   my $sqlReturn = $stmt->execute();
+
+#   in some cases, execute() does its job but doesn't return.  Still not clear exactly why
+#   print STDERR "\nabout to call do on $self->{name}\n\n";
+    my $sqlReturn = $dbh->do($sqlCopy);
+#   print STDERR "\njust did do on $self->{name}\n\n";
+    ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"$dbh->errstr\"")
+	if $self->{debug};
     if (!defined $sqlReturn) {
       $updateError = 1;
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     }
-    $stmt->finish();
+#    $stmt->finish();
   }
 
   foreach my $perl (@{$self->{perls}}) {
     my $perlCopy = $perl;
     $perlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("Perl:\n$perlCopy")
+    ApiCommonData::Load::TuningConfig::Log::addLog("running perl of length " . length($perlCopy) . "to build $self->{name}::\n$perlCopy")
 	if $self->{debug};
     eval $perlCopy;
 

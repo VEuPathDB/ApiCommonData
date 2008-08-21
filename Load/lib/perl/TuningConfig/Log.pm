@@ -53,8 +53,20 @@ BEGIN {
 sub addErrorLog {
     my ($message) = @_;
 
-    addLog($message);
+    addLog("ERROR: " . $message);
     setErrorsEncounteredFlag();
+  }
+
+sub addLogBanner {
+    my ($message) = @_;
+
+    $message = "### " . $message . " ###";
+    my $frame = $message;
+    $frame =~ s/./#/g;
+
+    addLog("\n$frame");
+    addLog($message);
+    addLog($frame);
   }
 
 sub mailLog {

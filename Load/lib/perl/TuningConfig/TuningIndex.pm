@@ -89,7 +89,6 @@ SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-    my ($timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
 
     ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .

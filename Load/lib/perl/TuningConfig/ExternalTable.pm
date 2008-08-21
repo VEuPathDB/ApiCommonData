@@ -80,7 +80,16 @@ SQL
       $self->{timestamp} = $timestamp;
       ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) still valid for $self->{name}");
     } else {
-      # table has changed; set timestamp high and update TuningMgrExternalDependency
+      # table has changed; tell the world, set timestamp high, and update TuningMgrExternalDependency
+      if (!defined $stored_row_count) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    No TuningMgrExternalDependency record for $self->{name}");
+      } elsif ($row_count != $stored_row_count) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    Number of rows has changed for $self->{name}");
+      } elsif ($max_mod_date ne $stored_max_mod_date) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    max(modification_date) has changed for $self->{name}");
+      } else {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("checking state of external dependency $self->{name}");
+      }
       $self->{timestamp} = '9999-12-12 23:59:59';
 
       if ($timestamp) {

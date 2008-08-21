@@ -33,7 +33,7 @@ SQL
     ($self->{service_name}, $self->{instance_name}, $self->{subversion_url}, $self->{notify_emails})
       = $stmt->fetchrow_array();
 
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: no tuning info found in registry for service_name \"$self->{service_name}\"")
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for service_name \"$self->{service_name}\"")
 	if !defined $self->{subversion_url};
     $stmt->finish();
 }
