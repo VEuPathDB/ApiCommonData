@@ -5,6 +5,8 @@
      <sqlQuery name="Locations" isCacheable="false" includeProjects="GiardiaDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
             <column name="sequence_source_id"/>
             <column name="is_top_level"/>
             <column name="start_min"/>
@@ -15,7 +17,8 @@
             <column name="feature_source_id"/>
             <sql>
             <![CDATA[
-             SELECT fl.feature_source_id,
+             SELECT  oa.source_id, '@project_id@' AS project_id,
+                     fl.feature_source_id,
                      fl.sequence_source_id,
                      Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
                      fl.start_min,

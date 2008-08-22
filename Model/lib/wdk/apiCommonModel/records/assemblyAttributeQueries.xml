@@ -2,8 +2,6 @@
 
     <querySet name="AssemblyAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB,PlasmoDB">
         <sqlQuery name="Bfmv" isCacheable="false">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
         <column name="project_id" sortingTable="apidb.AssemblyAttributes"/>
         <column name="source_id" sortingTable="apidb.AssemblyAttributes"/>
         <column name="organism" sortingTable="apidb.AssemblyAttributes"  lowerCase="true"/>
@@ -44,28 +42,28 @@
                     AS formatted_organism,
       aa.est_count, aa.length, aa.a_count, aa.t_count, aa.g_count,aa.c_count,aa.other_count
       FROM  apidb.AssemblyAttributes aa
-      WHERE aa.source_id = $$primaryKey$$
      ]]>
     </sql>
     </sqlQuery>
 
 
        <sqlQuery name="Sequence" isCacheable="false">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
         <column name="sequence"/>
      <sql includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrichDB,PlasmoDB">
       <![CDATA[ 
-        select a.source_id, '@PROJECT_ID@' as project_id, a.sequence from dots.assembly a where a.source_id = $$primaryKey$$ and '@PROJECT_ID@' = $$projectId$$
+        select a.source_id, '@PROJECT_ID@' as project_id, 
+               a.sequence 
+        from dots.assembly a 
      ]]>
     </sql>
  <sql includeProjects="ApiDB">
                 <![CDATA[
                 SELECT ens.source_id, ens.sequence,
-                       $$projectId$$ as project_id
+                       '@project_id@' as project_id
                 FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
-                WHERE ens.source_id = $$primaryKey$$
-                  AND so.term_name = 'assembly'
+                WHERE so.term_name = 'assembly'
                   AND so.sequence_ontology_id = ens.sequence_ontology_id
                 ]]>
            </sql>

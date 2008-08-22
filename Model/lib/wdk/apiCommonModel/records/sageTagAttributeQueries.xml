@@ -2,8 +2,6 @@
     <querySet name="SageTagAttributes">
 
         <sqlQuery name="Attrs" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="tag_sequence" sortingTable="apidb.sagetagattributes" sortingColumn="sequence"/> 
@@ -35,42 +33,43 @@
                    gene_product,
                    feature_source_id
             from apidb.SageTagAttributes sta
-            where sta.source_id = $$primaryKey$$
             ]]>
            </sql>
       </sqlQuery>
 
 
       <sqlQuery name="AlignmentCount" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/>
             <column name="total_alignments"/>
             <sql>
             <![CDATA[
-             select count(*) as total_alignments
+             select a.source_id, '@project_id@' AS project_id, 
+                    count(*) as total_alignments
              from apidb.SAGETAGATTRIBUTES a
              where a.composite_element_id in 
                  (select composite_element_id 
                   from apidb.SAGETAGATTRIBUTES 
                   where source_id = $$primaryKey$$)
-            group by a.composite_element_id
+            group by a.source_id, a.composite_element_id
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="GeneAlignmentCount" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/>
             <column name="total_gene_alignments"/>
             <sql>
             <![CDATA[
-             select sum(gene_count) as total_gene_alignments
+             select a.source_id, '@project_id@' AS project_id, 
+                    sum(gene_count) as total_gene_alignments
              from apidb.SAGETAGATTRIBUTES a
              where a.composite_element_id in 
                  (select composite_element_id 
                   from apidb.SAGETAGATTRIBUTES 
                   where source_id = $$primaryKey$$)
-            group by a.composite_element_id
+            group by a.source_id, a.composite_element_id
             ]]>
            </sql>
       </sqlQuery>

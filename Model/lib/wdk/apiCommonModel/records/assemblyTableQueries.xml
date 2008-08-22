@@ -4,8 +4,10 @@
 
         <!-- AssemblyTables.AlignmentInfo -->
         <sqlQuery name="AlignmentInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="id" />
             <column name="sequence_id" />
             <column name="length" />
@@ -51,7 +53,8 @@
             </sqlParamValue>
             <sql>
             <![CDATA[
-            SELECT etn.source_id as sequence_id,
+            SELECT a.source_id, '@project_id@' AS project_id,
+                   etn.source_id as sequence_id,
                    a.source_id as id,
                    a.length,
                    blat.target_start,
@@ -85,7 +88,7 @@
               &&extdbrid&&
               AND  (blat.target_end - blat.target_start ) < 5000 
               AND  blat.is_best_alignment = 1 
-              AND  a.source_id = $$primaryKey$$
+              AND  a.source_id = $$source_id$$
               &&sequence_level&&
             ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
             ]]>
@@ -96,15 +99,18 @@
 
         <!-- AssemblyTables.LibraryInfo -->
         <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="library" />
             <column name="est_count" />
             <sql>
             <![CDATA[
-            SELECT l.dbest_name as library, count(e.est_id) as est_count
+            SELECT asmbly.source_id, '@project_id@' AS project_id,
+                   l.dbest_name as library, count(e.est_id) as est_count
             FROM   dots.est e, dots.library l, dots.assemblysequence aseq, dots.assembly asmbly
-            WHERE  asmbly.source_id = $$primaryKey$$
+            WHERE  asmbly.source_id = $$source_id$$
               AND  asmbly.na_sequence_id = aseq.assembly_na_sequence_id
               AND  aseq.na_sequence_id = e.na_sequence_id
               AND  e.library_id = l.library_id 
@@ -117,8 +123,10 @@
 
         <!-- AssemblyTables.EstInfo -->
             <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="est" />
             <column name="library" />
             <column name="start" />
@@ -129,10 +137,14 @@
             <sql>
             <![CDATA[
 
-              select att.source_id as est, length(aseq.gapped_sequence)  as gapped_length,aseq.assembly_offset + 1 as "start", aseq.assembly_offset + length(aseq.gapped_sequence) as "end",
-                     decode(assembly_strand,1,'+','-') as assembly_strand, library_dbest_name as library
+              select att.assembly_source_id, '@project_id@' AS project_id,
+                     att.source_id as est, length(aseq.gapped_sequence)  as gapped_length,
+                     aseq.assembly_offset + 1 as "start", 
+                     aseq.assembly_offset + length(aseq.gapped_sequence) as "end",
+                     decode(assembly_strand,1,'+','-') as assembly_strand, 
+                     library_dbest_name as library
               from apidb.ESTATTRIBUTES att, dots.ASSEMBLYSEQUENCE aseq,dots.EXTERNALNASEQUENCE enas
-              where att.assembly_source_id = $$primaryKey$$
+              where att.assembly_source_id = $$source_id$$
               and aseq.na_sequence_id  = enas.na_sequence_id
               and enas.source_id = att.source_id
               order by aseq.assembly_offset

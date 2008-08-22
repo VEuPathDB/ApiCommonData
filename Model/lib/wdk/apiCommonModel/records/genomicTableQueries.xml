@@ -3,9 +3,10 @@
 
         <sqlQuery name="SequencePieces" includeProjects="GiardiaDB"
                isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
+            <column name="project_id" />
             <column name="start_min" />
             <column name="end_max" />
             <column name="piece_source_id" />
@@ -14,7 +15,7 @@
             <column name="piece_strand" />
             <sql>
             <![CDATA[
-            select vs.source_id as source_id, 
+            select vs.source_id as source_id, '@project_id@' AS project_id,
                    sp.distance_from_left + 1 as start_min, 
                    es.length + sp.distance_from_left as end_max,
                    case when es.source_id is null then '(N)-' || es.length else es.source_id end as piece_source_id,
@@ -25,7 +26,7 @@
             where vs.na_sequence_id = sp.virtual_na_sequence_id
             and es.na_sequence_id = sp.piece_na_sequence_id
             and sp.strand_orientation is not null
-            and (vs.source_id = $$primaryKey$$ or es.source_id = $$primaryKey$$)
+            and (vs.source_id = $$source_id$$ or es.source_id = $$source_id$$)
             order by vs.source_id, sp.sequence_order
              ]]>
            </sql>
@@ -35,16 +36,19 @@
 
         <sqlQuery name="Centromere" includeProjects="PlasmoDB"
                isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="start_min" />
             <column name="end_max" />
             <sql>
             <![CDATA[
-            SELECT nl.start_min, nl.end_max
+            SELECT ens.source_id as source_id, '@project_id@' AS project_id,
+                   nl.start_min, nl.end_max
             FROM dots.NaSequence ens, dots.Miscellaneous m,
                  dots.NaLocation nl, sres.SequenceOntology so
-            WHERE ens.source_id = $$primaryKey$$
+            WHERE ens.source_id = $$source_id$$
               AND ens.na_sequence_id = m.na_sequence_id
               AND m.na_feature_id = nl.na_feature_id
               AND m.sequence_ontology_id = so.sequence_ontology_id
@@ -55,8 +59,10 @@
 
         <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
                isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="comment_id"/>
             <column name="stable_id"/>
             <column name="headline"/>
@@ -65,7 +71,8 @@
             <column name="comment_date"/>
             <sql>
             <![CDATA[
-              SELECT DISTINCT c.comment_id, c.stable_id,
+              SELECT DISTINCT ens.source_id as source_id, '@project_id@' AS project_id,
+                     c.comment_id, c.stable_id,
                      NVL(c.headline, '<i>none</i>') AS headline,
                      (u.first_name || ' ' || u.last_name) AS user_name,
 					 u.organization,
@@ -76,15 +83,17 @@
               WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'genome'
                     AND c.stable_id = ens.source_id
-                    AND ens.source_id = $$primaryKey$$
+                    AND ens.source_id = $$source_id$$
             ]]>
             </sql>
         </sqlQuery>
 
     <sqlQuery name="SequenceGffDbxrefs"  excludeProjects="ApiDB" 
             isCacheable="false">
-        <paramRef ref="recordParams.primaryKey"/>
-        <paramRef ref="recordParams.projectId"/>
+        <paramRef ref="recordParams.source_id"/>
+        <paramRef ref="recordParams.project_id"/>
+        <column name="source_id" />
+        <column name="project_id" />
         <column name="gff_dbxref"/>
         <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
@@ -92,15 +101,15 @@
         <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB">ApiDB</sqlParamValue>
         <sql>
           <![CDATA[
-            SELECT ens.source_id,
+            SELECT ens.source_id, '@project_id@' AS project_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.Taxon t
-            WHERE ens.source_id = $$primaryKey$$
+            WHERE ens.source_id = $$source_id$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
             SELECT ens.source_id, so.so_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.SequenceOntology so
-            WHERE ens.source_id = $$primaryKey$$
+            WHERE ens.source_id = $$source_id$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,
@@ -108,7 +117,7 @@
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE ens.source_id = $$primaryKey$$
+            WHERE ens.source_id = $$source_id$$
               AND ens.na_sequence_id = drns.na_sequence_id
               AND drns.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id
@@ -119,7 +128,7 @@
             SELECT ens.source_id,
                    '&&brcName&&:' || ens.source_id AS gff_dbxref
             FROM dots.NaSequence ens
-            WHERE ens.source_id = $$primaryKey$$
+            WHERE ens.source_id = $$source_id$$
           ]]>
         </sql>
     </sqlQuery>

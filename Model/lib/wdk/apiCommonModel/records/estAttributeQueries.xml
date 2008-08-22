@@ -3,9 +3,8 @@
     <querySet name="EstAttributes">
 
         <sqlQuery name="Bfmv" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/> 
-            <column name="source_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
+            <column name="source_id" lowerCase="true"/>
+            <column name="project_id"/>
             <column name="a_count" sortingTable="apidb.EstAttributes"/>
             <column name="c_count" sortingTable="apidb.EstAttributes"/>
             <column name="g_count" sortingTable="apidb.EstAttributes"/>
@@ -35,7 +34,6 @@
                     AS formatted_organism,
                   bfmv.external_db_name
             FROM  apidb.EstAttributes bfmv
-            WHERE bfmv.source_id = $$primaryKey$$
             ]]>
            </sql>
 
@@ -53,38 +51,32 @@
                     AS formatted_organism,
                   bfmv.external_db_name, bfmv.assembly_est_count
             FROM  apidb.EstAttributes bfmv
-            WHERE bfmv.source_id = $$primaryKey$$
             ]]>
            </sql>
         </sqlQuery>
 
         <sqlQuery name="Sequence" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/> 
             <column name="source_id" />
+            <column name="project_id" />
             <column name="sequence" />
             <sql>
                 <![CDATA[
                 SELECT ens.source_id, ens.sequence,
-                       $$projectId$$ as project_id
+                       '@project_id@' as project_id
                 FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
-                WHERE ens.source_id = $$primaryKey$$
-                  AND so.term_name = 'EST'
+                WHERE so.term_name = 'EST'
                   AND so.sequence_ontology_id = ens.sequence_ontology_id
                 ]]>
            </sql>
         </sqlQuery>
 
         <sqlQuery name="LinkOut" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/> 
             <column name="source_id" />
+            <column name="project_id" />
             <column name="linkout" />
             <sql>
             <![CDATA[
-            SELECT 
-                source_id,
-                $$projectId$$ as project_id,
+            SELECT source_id, '@project_id@' as project_id,
                 CASE 
                   WHEN bfmv.dbest_name = 'WatanabeCpHNJ-1' then
                      '<a href="http://fullmal.hgc.jp/cgi-bin/fulcrypto_start.cgi?UID=11&SEE=1&MXX=750&VSP=&ONF=&SMF=0&VPLN=sp005%7Cstcrm%7Csp005%7Cgn0110%7Csp003%7Ccl0110%7Csp003%7Ccl0610%7Cscale%7Ccl0600%7Csp003%7Ccl0100%7Csp003%7Cgn0100%7C&SRH=1%21'|| bfmv.source_id || '">Full-Cryptosporidium</a>'
@@ -100,27 +92,24 @@
                 END
                 as linkout
             FROM  apidb.EstAttributes bfmv
-            WHERE bfmv.source_id = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>
 
         <sqlQuery name="Reference" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/> 
             <column name="source_id" />
+            <column name="project_id" />
             <column name="author" />
             <column name="affiliation" />
             <column name="address" />
             <sql>
             <![CDATA[
-            SELECT e.accession as source_id, $$projectId$$ as project_id,
+            SELECT e.accession as source_id, '@project_id@' as project_id,
                    c.name as author,
                    c.address1 as affiliation,
                    c.address2 as address
             FROM dots.est e, sres.contact c
             WHERE e.contact_id = c.contact_id
-            AND e.accession = $$primaryKey$$
             ]]>
             </sql>
         </sqlQuery>

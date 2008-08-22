@@ -3,8 +3,10 @@
   <querySet name="SageTagTables">
 
        <sqlQuery name="Experiments" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/>
             <column name="experiment"/>
             <column name="norm_count"/>
             <column name="total_norm_count"/>
@@ -13,14 +15,15 @@
             <column name="total_raw_count"/>
             <sql>
             <![CDATA[
-            select aa.library_name as experiment, 
+            select a.source_id, '@project_id@' AS project_id,
+                   aa.library_name as experiment, 
                    to_char(aa.raw_count, '99999') as raw_count,
                    to_char(aa.total_raw_count, '99999') as total_raw_count, 
                    to_char(aa.tag_count, '99990.99') as norm_count,
                    to_char(aa.library_total_tag_count, '99999.99') as total_norm_count, 
                    to_char(aa.library_tag_percentage, '990D00000') || '%' as norm_percent
             from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a, Rad.Assay ra
-            where a.source_id = $$primaryKey$$
+            where a.source_id = $$source_id$$
             and a.composite_element_id = aa.composite_element_id
             and ra.name = aa.library_name
             order by ra.assay_id
@@ -32,9 +35,11 @@
 
 
        <sqlQuery name="AlignedGenes" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
             <column name="source_id"/>
+            <column name="aligned_source_id"/>
             <column name="gene_source_id"/>
             <column name="gene_product"/>
             <column name="gene_location"/>
@@ -42,7 +47,8 @@
             <column name="bp_from_gene"/>
             <sql>
             <![CDATA[
-         select distinct a.source_id, sg.gene_source_id, g.product as gene_product,
+         select distinct $$source_id$$ AS source_id, '@project_id@' AS project_id,
+                   a.source_id AS aligned_source_id, sg.gene_source_id, g.product as gene_product,
                    g.sequence_id || ':' || g.start_min || '-' || g.end_max || '(' || 
                        case when g.is_reversed = 1 then '-' 
                             when g.is_reversed = 0 then '+'
@@ -54,7 +60,7 @@
             and a.composite_element_id in
                     (select composite_element_id
                      from apidb.SageTagAttributes
-                     where source_id = $$primaryKey$$)
+                     where source_id = $$source_id$$)
             and sg.gene_source_id = g.source_id
             order by gene_strand desc, bp_from_gene asc, a.source_id
             ]]>
@@ -62,8 +68,10 @@
       </sqlQuery>
 
      <sqlQuery name="Locations" isCacheable="false" includeProjects="GiardiaDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/>
             <column name="sequence_source_id"/>
             <column name="is_top_level"/>
             <column name="start_min"/>
@@ -74,7 +82,8 @@
             <column name="feature_source_id"/>
             <sql>
             <![CDATA[
-              SELECT sta.feature_source_id,
+              SELECT sta.source_id, '@project_id@' AS project_id,
+                     sta.feature_source_id,
                      fl.sequence_source_id,
                      Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
                      fl.start_min,
@@ -83,7 +92,7 @@
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl, apidb.sagetagattributes sta
-              WHERE sta.source_id=$$primaryKey$$
+              WHERE sta.source_id=$$source_id$$
                 AND fl.na_feature_id = sta.na_feature_id
               ORDER BY fl.is_top_level desc
             ]]>

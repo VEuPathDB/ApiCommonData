@@ -11,14 +11,17 @@
   <querySet name="AjaxTables">
         <!-- AjaxTables.InterproTermList -->
         <sqlQuery name="InterproTermList" isCacheable='true' excludeProjects="ApiDB"> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="accession"/>
             <column name="name"/>
             <column name="description"/>
 
             <sql>
-                SELECT DISTINCT dr.primary_identifier AS accession,
+                SELECT DISTINCT ed.name AS source_id, '@project_id@' AS project_id,
+                                dr.primary_identifier AS accession,
                                 dr.primary_identifier AS name,
                                 dr.primary_identifier || ':' ||
                                 dr.secondary_identifier || ' ' || dr.remark
@@ -29,7 +32,7 @@
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = $$primaryKey$$
+                  AND ed.name = $$source_id$$
             </sql>
 
  <!--        <sql includeProjects="ApiDB">
@@ -46,7 +49,7 @@
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = $$primaryKey$$)
+                  AND ed.name = $$source_id$$)
                UNION
               (SELECT DISTINCT dr.primary_identifier AS accession,
                                 dr.primary_identifier AS name,
@@ -59,7 +62,7 @@
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = $$primaryKey$$)
+                  AND ed.name = $$source_id$$)
                 UNION
               (SELECT DISTINCT dr.primary_identifier AS accession,
                                 dr.primary_identifier AS name,
@@ -72,15 +75,15 @@
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name = $$primaryKey$$))
+                  AND ed.name = $$source_id$$))
             </sql>
 -->
 
         </sqlQuery>
 
         <processQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
             <wsColumn name="accession" width="100" wsName="accession"/>
             <wsColumn name="name" width="100" wsName="name"/>
             <wsColumn name="description" width="100" wsName="description"/>
@@ -91,39 +94,57 @@
 
         <!-- AjaxTables.BlastNTermList -->
         <sqlQuery name="BlastNTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql>
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Transcripts' as term, 'Transcripts' as internal from dual UNION
                 SELECT 'EST' as term, 'EST' as internal from dual UNION
                 SELECT 'Genome' as term, 'Genome' as internal from dual
+                 ) t
             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastPXTermList -->
         <sqlQuery name="BlastPXTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql>
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Proteins' as term, 'Proteins' as internal from dual UNION
                 SELECT 'ORF' as term, 'ORF' as internal from dual
+                 ) t
             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.TBlastTermList -->
         <sqlQuery name="TBlastTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql>
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Transcripts' as term, 'Translated Transcipts' as internal from dual UNION
                 SELECT 'EST' as term, 'EST' as internal from dual UNION
                 SELECT 'Genome' as term, 'Translated Genome' as internal from dual
+                 ) t
             </sql>
         </sqlQuery>
 
@@ -133,26 +154,38 @@
 
         <!-- AjaxTables.Blast_Transcripts_Genome_Est_TermList -->
         <sqlQuery name="Blast_Transcripts_Genome_Est_TermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/>  
-            <paramRef ref="recordParams.projectId"/> 
+            <paramRef ref="recordParams.source_id"/>  
+            <paramRef ref="recordParams.project_id"/> 
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/> 
             <sql>
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'blastn' as term, 'blastn' as internal from dual UNION
                 SELECT 'tblastn' as term, 'tblastn' as internal from dual UNION
                 SELECT 'tblastx' as term, 'tblastx' as internal from dual
+                 ) t
             </sql>
         </sqlQuery>
 
         <!-- AjaxTables.Blast_Protein_Orf_TermList -->
         <sqlQuery name="Blast_Protein_Orf_TermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/> 
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/> 
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql>
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'blastp' as term, 'blastp' as internal from dual UNION
                 SELECT 'blastx' as term, 'blastx' as internal from dual
+                 ) t
             </sql>
         </sqlQuery>
 
@@ -162,31 +195,54 @@
 
         <!-- AjaxTables.BlastGeneOrganismTermList -->
         <sqlQuery name="BlastGeneOrganismTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
+                 ) t
             </sql>
             <sql includeProjects="GiardiaDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
-SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual
+                 SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual
+                 ) t
              </sql>
 
                  
 
-<sql includeProjects="TrichDB">
+            <sql includeProjects="TrichDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION
                  SELECT 'Trichomonas vaginalis (Repeated Genes)' as term, 'Trichomonas vaginalis (Repeated Genes)' as internal from dual
+                 ) t
              </sql>
- <sql includeProjects="ToxoDB">
+
+             <sql includeProjects="ToxoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual
+                 ) t
              </sql>
- <sql includeProjects="PlasmoDB">
+
+             <sql includeProjects="PlasmoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -196,13 +252,18 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'foo' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
+                 ) t
              </sql>
+
              <sql  includeProjects="ApiDB">
 
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION 
- SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -214,31 +275,38 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'Toxoplasma gondii apicoplast' as internal from dual UNION
-   SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION
-   SELECT 'Trichomonas vaginalis (Repeated Genes)' as term, 'Trichomonas vaginalis (Repeated Genes)' as internal from dual
+                SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION
+                SELECT 'Trichomonas vaginalis (Repeated Genes)' as term, 'Trichomonas vaginalis (Repeated Genes)' as internal from dual
+                 ) t
 
              </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
         <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="ApiDB,CryptoDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql includeProjects="CryptoDB">
-              SELECT 'All Cryptosporidium Isolates' as term, 
-						         'All Cryptosporidium Isolates' as internal 
-						  FROM dual 
+              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                     'All Cryptosporidium Isolates' as term, 
+			         'All Cryptosporidium Isolates' as internal 
+			  FROM dual 
             </sql>
             <sql includeProjects="PlasmoDB">
-              SELECT 'All Plasmodium Barcodes' as term, 
+              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                     'All Plasmodium Barcodes' as term, 
                      'All Plasmodium Barcodes' as internal 
               FROM DUAL 
             </sql>
  
             <sql includeProjects="ApiDB">
-             
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
               SELECT 'All Cryptosporidium Isolates' as term, 
                      'All Cryptosporidium Isolates' as internal 
               FROM dual 
@@ -246,89 +314,118 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
               SELECT 'All Plasmodium Barcodes' as term, 
                      'All Plasmodium Barcodes' as internal 
               FROM DUAL  
+                 ) t
             </sql>
 
         </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->
         <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual
+                 ) t
             </sql>
 
-<sql includeProjects="GiardiaDB">
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+            <sql includeProjects="GiardiaDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
              </sql>
 
-<sql includeProjects="TrichDB">
-                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+            <sql includeProjects="TrichDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
             </sql>
 
- <sql includeProjects="ToxoDB">
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
+            <sql includeProjects="ToxoDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
              </sql>
 
-<sql includeProjects="PlasmoDB">
+            <sql includeProjects="PlasmoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
+                 ) t
              </sql>
 
             <sql  includeProjects="ApiDB">
-(
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 0 as idx from dual UNION
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal, 1 as idx from dual UNION 
- SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 2 as idx from dual UNION 
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 2 as idx from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal, 3 as idx from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal, 4 as idx  from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal , 5 as idx from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal, 6 as idx  from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal, 7 as idx  from dual UNION
-    SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal, 8 as idx  from dual UNION 
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal, 8 as idx  from dual UNION 
                  SELECT 'Other Apicomplexan ESTs' as term, 'Other Apicomplexan ESTs' as internal, 9 as idx from dual
-
-
- )  order by idx
+                ) t order by t.idx
              </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastSequenceOrganismTermList -->
         <sqlQuery name="BlastSequenceOrganismTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
 
             <sql  includeProjects="CryptoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
+                 ) t
             </sql>
 
-<sql includeProjects="GiardiaDB">
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+            <sql includeProjects="GiardiaDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
              </sql>
 
-<sql includeProjects="TrichDB">
-                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+            <sql includeProjects="TrichDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
              </sql>
 
- <sql includeProjects="ToxoDB">
+            <sql includeProjects="ToxoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
                  SELECT 'Toxoplasma gondii RH (chr Ia and chr Ib)' as term, 'T. gondii RH (chr Ia and chr Ib)' as internal from dual UNION
                  SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual
+                 ) t
              </sql>
 
-<sql includeProjects="PlasmoDB">
+            <sql includeProjects="PlasmoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -340,16 +437,20 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'P. vivax mitocondrial' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
+                 ) t
              </sql>
 
             <sql  includeProjects="ApiDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Theileria parva' as term, 'Theileria parva' as internal from dual UNION
                  SELECT 'Theileria annulata' as term, 'Theileria annulata' as internal from dual UNION
                  SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
- SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -366,35 +467,47 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                  SELECT 'Toxoplasma gondii RH (chr Ia and chr Ib)' as term, 'T. gondii RH (chr Ia and chr Ib)' as internal from dual UNION
                  SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual UNION 
-   SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+                 ) t
              </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastORFOrganismTermList -->
         <sqlQuery name="BlastORFOrganismTermList" isCacheable='true'> 
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="term"/>
             <column name="internal"/>
             <sql  includeProjects="CryptoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
- SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
- SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual 
-
+                 SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
+                 SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual 
+                 ) t
             </sql>
-<sql includeProjects="GiardiaDB">
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+            <sql includeProjects="GiardiaDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
              </sql>
-<sql includeProjects="TrichDB">
-                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+            <sql includeProjects="TrichDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
              </sql>
- <sql includeProjects="ToxoDB">
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
+             <sql includeProjects="ToxoDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
              </sql>
-<sql includeProjects="PlasmoDB">
+            <sql includeProjects="PlasmoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -406,15 +519,19 @@ SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'P. vivax mitochondrial' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
+                 ) t
              </sql>
             <sql  includeProjects="ApiDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
- SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual UNION 
-  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
+                 SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual UNION 
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -427,29 +544,38 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'P. vivax mitochondrial' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION 
-    SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
+                 ) t
              </sql>
         </sqlQuery>
 
         <!-- AjaxTables.BlastAssembliesOrganismTermList -->
   <sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,PlasmoDB,ApiDB">
-      <paramRef ref="recordParams.primaryKey"/>
-      <paramRef ref="recordParams.projectId"/>
+      <paramRef ref="recordParams.source_id"/>
+      <paramRef ref="recordParams.project_id"/>
+        <column name="source_id" />
+        <column name="project_id" />
       <column name="term"/>
       <column name="internal"/>
- <sql includeProjects="GiardiaDB">
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 8 as idx from dual
+      <sql includeProjects="GiardiaDB">
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Giardia lamblia' as term, 'Giardia lamblia' as internal, 8 as idx from dual
       </sql>
 
       <sql includeProjects="CryptoDB">
-                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual
       </sql>
 
       <sql includeProjects="ToxoDB">
-                 SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
+                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                        'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
       </sql>
 
       <sql includeProjects="ApiDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual UNION
                  SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal, 9 as idx from dual UNION
                  SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal, 10 as idx from dual UNION
@@ -460,13 +586,18 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
                  SELECT 'Plasmodium yoelii' as term, 'Plasmodium yoelii' as internal, 11 as idx from dual UNION 
                  SELECT 'Sarcocystis neurona' as term, 'Sarcocystis neurona' as internal, 14 as idx from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
+                 ) t
       </sql>
 
       <sql includeProjects="PlasmoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
                  SELECT 'Plasmodium berghei' as term, 'Plasmodium berghei' as internal, 8 as idx from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'Plasmodium falciparum' as internal, 9 as idx from dual UNION
                  SELECT 'Plasmodium vivax' as term, 'Plasmodium vivax' as internal, 10 as idx from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'Plasmodium yoelii' as internal, 11 as idx from dual 
+                 ) t
       </sql>
   </sqlQuery>
 
@@ -475,8 +606,8 @@ SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as inter
 <!--=====================================================================-->
 
     <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>

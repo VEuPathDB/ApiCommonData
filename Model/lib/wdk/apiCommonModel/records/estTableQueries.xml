@@ -3,8 +3,10 @@
 
         <!-- EstTables.AlignmentInfo -->
         <sqlQuery name="AlignmentInfo"  isCacheable='true' excludeProjects="ApiDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="accession" />
             <column name="sequence_id" />
             <column name="target_start" />
@@ -37,7 +39,8 @@
             </sqlParamValue>
             <sql>
             <![CDATA[
-            SELECT sequence_id, accession, target_start, target_end, context_start, context_end, 
+            SELECT accession AS source_id, '@project_id@' AS project_id,
+                   sequence_id, accession, target_start, target_end, context_start, context_end, 
                    is_best_alignment, is_consistent, is_reversed, percent_identity
             FROM (
                    SELECT distinct (enas.source_id) as sequence_id,
@@ -55,7 +58,7 @@
                           dots.nasequence enas
                    WHERE  blat.query_na_sequence_id = e.na_sequence_id
                      AND  blat.target_na_sequence_id = enas.na_sequence_id
-                     AND  e.accession = $$primaryKey$$ 
+                     AND  e.accession = $$source_id$$ 
                      &&sequence_level&& )
                    ORDER BY sequence_id, is_best_alignment desc, is_consistent desc, percent_identity desc
             ]]>
@@ -65,13 +68,16 @@
         <!-- EstTables.ClusterMates -->
         <sqlQuery name="ClusterMates"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
               displayName="Other ESTs that Cluster with this EST" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="mate_id" />
             <column name="mate_type" />
             <sql>
             <![CDATA[           
-            select enas.source_id as mate_id, 'EST' as mate_type
+            select $$source_id$$ AS source_id, '@project_id@' AS project_id, 
+                   enas.source_id as mate_id, 'EST' as mate_type
             from dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
             where aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
             and aseq.na_sequence_id = enas.na_sequence_id
@@ -80,8 +86,8 @@
             dots.assemblysequence aseq, dots.ExternalNASequence enas
             where aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
             and aseq.na_sequence_id = enas.na_sequence_id
-            and enas.source_id = $$primaryKey$$)
-            and enas.source_id != $$primaryKey$$
+            and enas.source_id = $$source_id$$)
+            and enas.source_id != $$source_id$$
             order by enas.source_id
             ]]>
             </sql>
@@ -91,21 +97,24 @@
         <!-- EstTables.AssemblyInfo -->
         <sqlQuery name="AssemblyInfo"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
               displayName="Assembly for this EST" isCacheable='true'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="assembly_source_id" />
             <column name="assembly_length" />
             <column name="number_of_contained_sequences" />
 
             <sql>
             <![CDATA[           
-            SELECT asmbly.source_id as assembly_source_id,
+            SELECT enas.source_id AS source_id, '@project_id@' AS project_id,
+                   asmbly.source_id as assembly_source_id,
                    asmbly.number_of_contained_sequences, 
                    asmbly.length as assembly_length
             FROM   dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
             WHERE  aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
             AND    aseq.na_sequence_id = enas.na_sequence_id
-            AND    enas.source_id = $$primaryKey$$
+            AND    enas.source_id = $$source_id$$
             ]]>
             </sql>
 

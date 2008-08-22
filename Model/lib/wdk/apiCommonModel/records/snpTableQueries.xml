@@ -7,8 +7,10 @@
 
         <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
               isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="strain"/>
             <column name="allele"/>
             <column name="allele_gene_strand"/>
@@ -16,7 +18,8 @@
             <column name="product"/>
             <sql>
             <![CDATA[
-       SELECT    CASE
+       SELECT snp.source_id, '@project_id@' AS project_id,
+              CASE
                   WHEN var.strain = 'iowa_II' THEN 'IOWA II'
                   WHEN var.strain = 'md' THEN 'MD'
                   WHEN var.strain = 'tu114' THEN 'TU114'
@@ -33,7 +36,7 @@
              (select gene.source_id, gene_loc.is_reversed, gene.na_feature_id
                FROM dots.GeneFeature gene, dots.NaLocation gene_loc
                WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
-       WHERE snp.source_id = $$primaryKey$$
+       WHERE snp.source_id = $$source_id$$
         AND  var.parent_id = snp.na_feature_id
         AND gene_info.na_feature_id(+) = snp.parent_id
         ORDER BY var.strain
@@ -47,8 +50,10 @@
 
         <sqlQuery name="Providers" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
                isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="source_id_link"/>
             <column name="name"/>
             <sqlParamValue name="name" includeProjects="PlasmoDB">
@@ -58,18 +63,19 @@
                       ed.name
             </sqlParamValue>
             <sqlParamValue name="filter" includeProjects="PlasmoDB">
-                and sb.source_id != $$primaryKey$$
+                and sb.source_id != $$source_id$$
             </sqlParamValue>
             <sqlParamValue name="filter" includeProjects="ToxoDB,CryptoDB">
             </sqlParamValue>
 
             <sql>
             <![CDATA[
-               SELECT sb.source_id as source_id_link,
+               SELECT sa.source_id, '@project_id@' AS project_id,
+               sb.source_id as source_id_link,
                &&name&& as name
                FROM  dots.SnpFeature sa, dots.snpfeature sb, dots.nalocation la, dots.nalocation lb,
                      sres.externaldatabase ed, sres.externaldatabaserelease edr
-               WHERE sa.source_id = $$primaryKey$$
+               WHERE sa.source_id = $$source_id$$
                 AND sa.na_feature_id = la.na_feature_id
                 and sb.na_feature_id = lb.na_feature_id
                 and sa.na_sequence_id = sb.na_sequence_id
@@ -87,8 +93,10 @@
 
         <sqlQuery name="isolates" includeProjects="PlasmoDB" 
               isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="isolate_id"/>
             <column name="assay_type"/>
             <column name="strain"/>
@@ -96,10 +104,11 @@
             <column name="allele"/>
             <sql>
             <![CDATA[
-              select atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
+              select isnp.snp_source_id, AS source_id, '@project_id@' AS project_id,
+              atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
               isnp.allele, atr.DATA_TYPE as assay_type
               from apidb.isolateattributes atr, apidb.isolatesnps isnp
-              where isnp.snp_source_id = $$primaryKey$$
+              where isnp.snp_source_id = $$source_id$$
               and isnp.is_source_id = atr.SOURCE_ID
               order by atr.country,atr.strain
             ]]>

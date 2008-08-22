@@ -1,8 +1,10 @@
 <wdkModel>
     <querySet name="UserCommentTables">
        <sqlQuery name="GeneComments">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="comment_id"/>
             <column name="headline"/>
             <column name="content"/>
@@ -14,7 +16,7 @@
             <column name="review_status_id"/>
             <sql>
               <![CDATA[
-              SELECT DISTINCT
+              SELECT DISTINCT gf.source_id, '@project_id@' AS project_id,
                         c.comment_id,
                         NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
                         c.content,
@@ -30,7 +32,7 @@
               WHERE lower(u.email) = lower(c.email)
                 AND c.comment_target_id='gene'
                 AND c.stable_id = gf.source_id
-                AND gf.source_id = $$primaryKey$$
+                AND gf.source_id = $$source_id$$
                 AND c.review_status_id != 'rejected'
               ORDER BY c.comment_date DESC
               ]]>
@@ -38,8 +40,10 @@
           </sqlQuery>
 
           <sqlQuery name="SequenceComments">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="comment_id"/>
             <column name="headline"/>
             <column name="content"/>
@@ -51,7 +55,7 @@
             <column name="review_status_id"/>
             <sql>
               <![CDATA[
-              SELECT DISTINCT
+              SELECT DISTINCT ens.source_id, '@project_id@' AS project_id,
               		c.comment_id,
               		NVL(c.headline, SUBSTR(c.content,0,20) || '...') AS headline,
               		c.content,
@@ -67,7 +71,7 @@
               WHERE lower(u.email) = lower(c.email)
 			  		AND c.comment_target_id='genome'
                     AND c.stable_id = ens.source_id
-                    AND ens.source_id = $$primaryKey$$
+                    AND ens.source_id = $$source_id$$
                     AND c.review_status_id != 'rejected'
 			  ORDER BY c.comment_date DESC
                ]]>

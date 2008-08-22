@@ -11,7 +11,7 @@
 
         <!-- UtilityQueries.PingCrypto (cryptolink hard coded in jsp) 
         <sqlQuery name="PingCrypto" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.source_id"/> 
             <column name="cryptolink" />
             <sql> 
             <![CDATA[           
@@ -24,7 +24,7 @@
         -->
         <!-- UtilityQueries.PingToxo (toxolink hard coded in jsp) 
         <sqlQuery name="PingToxo" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.source_id"/> 
             <column name="toxolink" />
             <sql> 
             <![CDATA[           
@@ -37,7 +37,7 @@
         -->
         <!-- UtilityQueries.PingPlasmo (plasmolink hard coded in jsp) 
         <sqlQuery name="PingPlasmo" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
+            <paramRef ref="recordParams.source_id"/> 
             <column name="plasmolink" />
             <sql> 
             <![CDATA[           
@@ -50,9 +50,10 @@
         -->
 
         <!-- UtilityQueries.CurrentInstance -->
+        <!-- this is an attribute query -->
         <sqlQuery name="CurrentInstance" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="global_name" />
             <column name="version" />
             <column name="server_name" />
@@ -68,7 +69,7 @@
             <column name="os_user" />
            <sql> 
             <![CDATA[           
-            select 
+            select $$source_id$$ AS source_id, '@project_id@' AS project_id,
                 global_name, 
                 ver.banner version,
                 UTL_INADDR.get_host_name as server_name,
@@ -93,14 +94,15 @@
 
         <!-- UtilityQueries.CacheState -->
         <sqlQuery name="CacheState" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="cache_count" />
             <column name="first_time" />
             <column name="last_time" />
            <sql> 
             <![CDATA[           
-            SELECT count(*) as cache_count,
+            SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
+            count(*) as cache_count,
             CASE WHEN 
                 min(start_time) is not null 
             THEN to_char(min(start_time), 'Dy DD-Mon-YYYY HH24:MI:SS') 
@@ -120,12 +122,12 @@
 
         <!-- UtilityQueries.CacheCreateTime -->
         <sqlQuery name="CacheCreateTime" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="creation_time" />
            <sql> 
             <![CDATA[           
-            SELECT 
+            SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
             to_char(o.created, 'Dy DD-Mon-YYYY HH24:MI:SS') creation_time
             FROM user_objects o 
             WHERE o.object_name = 'QUERYINSTANCE'
@@ -135,12 +137,13 @@
         
         <!-- UtilityQueries.ApiCommDbLink -->
         <sqlQuery name="ApiCommDbLink" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="apicomm_global_name" />
            <sql> 
             <![CDATA[           
-             select global_name as apicomm_global_name
+             select $$source_id$$ AS source_id, '@project_id@' AS project_id,
+                    global_name as apicomm_global_name
             from global_name@LOGIN_DBLINK@
              ]]>
            </sql>
@@ -148,8 +151,8 @@
 
         <!-- UtilityQueries.AllDbLinks -->
         <sqlQuery name="AllDbLinks" isCacheable='false'>
-            <paramRef ref="recordParams.primaryKey"/> 
-            <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="owner" />
             <column name="db_link" />
             <column name="username" />
@@ -157,7 +160,7 @@
             <column name="created" />
            <sql> 
             <![CDATA[           
-            select 
+            select $$source_id$$ AS source_id, '@project_id@' AS project_id,
             lower(owner) owner, lower(db_link) db_link, 
             lower(username) username, lower(host) host, created
             from  all_db_links
