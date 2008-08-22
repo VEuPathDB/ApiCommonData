@@ -3501,8 +3501,6 @@ sub mapTagsToNaSequences {
 
   my $cmd = "tagToSeq.pl $genomeFile $tagFile 2>> $output";
 
-  print $cmd;
-
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
 }
