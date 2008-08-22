@@ -253,10 +253,14 @@ sub processFile {
     my $submitted = $feature->submit();
 
     $processed++;
-    $self->logData("processed file row number $processed with $submitted insertions into db\n");
-
     $feature->undefPointerCache();
+
+    if($processed % 500 == 0) {
+      $self->logData("processed file row number $processed with $submitted insertions into db\n");
+    }
   }
+
+
 
   return $processed;
 }
@@ -280,7 +284,7 @@ sub makeFeature {
    my $featureType = $self->getArg('featureType');
    my $class = "GUS::Model::DoTS::$featureType";
 
-   eval require $class;
+   eval "require $class";
 
    if($@) {
      $self->error("Could not find GUS Model object for $featureType.\n$@");
