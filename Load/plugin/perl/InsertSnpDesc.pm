@@ -8,6 +8,8 @@ use GUS::Model::DoTS::SnpFeature;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 
+use Data::Dumper;
+
 
 # ---------------------------------------------------------------------------
 # Load Arguments
@@ -126,7 +128,7 @@ sub getSnpIds{
 
   my $sql = <<EOSQL;
      SELECT na_feature_id
-     FROM DoTS.SnpFeature
+     FROM DoTS.SnpFeature where na_feature_id = 2807089
 EOSQL
 
   if(scalar(@$extDbRlsList)){
@@ -160,6 +162,7 @@ EOSQL
 
     $stmt = $self->prepareAndExecute($sql);
     while (my ($strain, $allele, $product) = $stmt->fetchrow_array()) {
+      print "$strain | $allele | $product\n";
       $strain =~ s/\s//g;
       $allele =~ s/\s//g;
       uc($allele);
@@ -211,6 +214,8 @@ sub addMajorMinorInfo{
   my $minorProductCount;
   my @sortedAlleleKeys;
 
+  print Dumper $alleles;
+
   foreach my $allele (sort {$$alleles{$b} <=> $$alleles{$a}} keys %$alleles){
     push(@sortedAlleleKeys, $allele) unless($allele eq "");
   }
@@ -222,6 +227,12 @@ sub addMajorMinorInfo{
   $majorProduct = $$products{$majorAllele};
   $minorProduct = $$products{$minorAllele};
 
+  print "MajorAllele=$majorAllele\n";
+  print "MajorAlleleCount=$majorAlleleCount\n";
+
+  print "MinorAllele=$minorAllele\n";
+  print "MinorAlleleCount=$minorAlleleCount\n";
+  exit;
 
   my $snpFeat = GUS::Model::DoTS::SnpFeature->new({na_feature_id => $snpId});
   $snpFeat->retrieveFromDB();

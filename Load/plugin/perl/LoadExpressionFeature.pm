@@ -1,13 +1,11 @@
-package ApiCommonData::Load::Plugin::LoadSageTagFeature;
+package ApiCommonData::Load::Plugin::LoadExpressionFeature;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 
 use strict;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::RAD::SAGETag;
+
 use GUS::Model::DoTS::NALocation;
-use GUS::Model::DoTS::SAGETagFeature;
-use GUS::Model::DoTS::NASequence;
 use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
@@ -36,7 +34,22 @@ sub getArgumentsDeclaration{
 		 constraintFunc=> undef,
 		 reqd  => 0,
 		 isList => 0
-		})
+		}),
+
+     stringArg({name => 'extDbSpec',
+		descr => 'External Database Spec.  Will be created if not retrieved',
+		constraintFunc => undef,
+		reqd => 1,
+		isList => 0
+	       }),
+
+     enumArg({  name => 'featureType',
+                descr => 'Which view of Dots.NAFeature?',
+                constraintFunc => undef,
+                reqd => 1,
+                isList => 0,
+                enum => "SAGETagFeature,ArrayElementFeature",
+             }),
 
     ];
 
@@ -53,11 +66,11 @@ sub getArgumentsDeclaration{
 sub getDocumentation {
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Plug_in to populate DoTS.SAGETagFeature.
+Plug_in to populate DoTS.SAGETagFeature or DoTS.ArrayElementFeature
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-plug_in that inserts Suffix::Array::match mapping results into DoTS.SAGETagFeature and DoTS.NALocation.
+plug_in that inserts Suffix::Array::match mapping results into DoTS.SAGETagFeature or DoTS.ArrayElementFeature and DoTS.NALocation.
 PLUGIN_PURPOSE
 
 my $syntax = <<SYNTAX;
@@ -65,7 +78,7 @@ Standard plugin syntax.
 SYNTAX
 
 #check the documentation for this
-my $tablesAffected = [['GUS::Model::DoTS::SAGETagFeature', 'inserts a single row per row of result file'],['GUS::Model::DoTS::NALocation', 'inserts a row for each row of result file'],['GUS::Model::Core::Algorithm','inserts a single row for mapping method when not present']];
+my $tablesAffected = [['GUS::Model::DoTS::NAFeature', 'inserts a single row per row of result file.  ArrayElementFeature or SAGETagFeature'],['GUS::Model::DoTS::NALocation', 'inserts a row for each row of result file'],['GUS::Model::Core::Algorithm','inserts a single row for mapping method when not present']];
 
 my $tablesDependedOn = [['GUS::Model::SRes::ExternalDatabaseRelease', 'Gets an existing external_database-release_id'],['GUS::Model::RAD::SAGETag', 'Gets existing sage tag rows for each row in the input file'],['GUS::Model::DoTS::NASequence', 'Gets an existing na_sequence_id for subject sequence']];
 
@@ -138,9 +151,11 @@ sub run {
 
   $self->getPredAlgId();
 
+  my $type = $self->getArg('featureType');
+
   my $numFeatures = $self->processFile();
 
-  my $resultDescrip = "$numFeatures rows inserted into SageTagFeature";
+  my $resultDescrip = "$numFeatures rows inserted into $type";
 
   $self->setResultDescr($resultDescrip);
   $self->log($resultDescrip);
@@ -162,8 +177,11 @@ sub checkFileFormat {
 sub getExternalDbRelease {
   my ($self) = @_;
 
-  my $dbName = "RAD.SAGETag";
-  my $dbVersion = "continuous";
+  #my $dbName = "RAD.SAGETag";
+  #my $dbVersion = "continuous";
+
+  my $extDbSpec = $self->getArg('extDbSpec');
+  my ($dbName, $dbVersion) = split(/\|/, $extDbSpec);
 
   my $externalDatabase = GUS::Model::SRes::ExternalDatabase->new({"name" => $dbName});
   $externalDatabase->retrieveFromDB();
@@ -222,25 +240,34 @@ sub processFile {
 
     my %args = ('compElemId'=>$arr[0],'naSeqId'=>$arr[3],'start'=>$arr[5],'end'=>$arr[7],'tagOrient'=>$orient);
 
-    my $sageTagFeat = $self->makeSageTagFeat(\%args);
+    my $feature = $self->makeFeature(\%args);
 
-    $self->makeNaLoc($sageTagFeat,\%args);
+    $self->makeNaLoc($feature,\%args);
 
-    my $submitted = $sageTagFeat->submit();
+    my $submitted = $feature->submit();
 
     $processed++;
     $self->logData("processed file row number $processed with $submitted insertions into db\n");
 
-    $sageTagFeat->undefPointerCache();
+    $feature->undefPointerCache();
   }
 
   return $processed;
 }
 
-sub makeSageTagFeat {
+sub makeFeature {
    my ($self,$args) = @_;
 
-   my $name = getNaSeqDesc($self,$args);
+   my $featureType = $self->getArg('featureType');
+   my $class = "GUS::Model::DoTS::$featureType";
+
+   eval require $class;
+
+   if($@) {
+     $self->error("Could not find GUS Model object for $featureType.\n$@");
+   }
+
+   my $name = $self->getNaSeqDesc($args);
 
    my $sourceId = $args->{'compElemId'};
 
@@ -250,13 +277,19 @@ sub makeSageTagFeat {
 
    my $algId = $self->{'algId'};
 
-   my $sageTagFeat = GUS::Model::DoTS::SAGETagFeature->new({'name'=>$name,'source_id'=>$sourceId,'na_sequence_id'=>$naSeqId,'external_database_release_id'=>$extDbRls,'prediction_algorithm_id'=>$algId});
+   my $feature = eval {
+     $class->new({'name'=>$name,'source_id'=>$sourceId,'na_sequence_id'=>$naSeqId,'external_database_release_id'=>$extDbRls,'prediction_algorithm_id'=>$algId});
+   };
 
-   return $sageTagFeat;
+   if($@) {
+     $self->error("Could not create a new object for class $class\n$@");
+   }
+
+   return $feature;
 }
 
 sub makeNaLoc {
-  my ($self,$sageTagFeat,$args) = @_;
+  my ($self, $feature, $args) = @_;
 
   my $start = $args->{'start'};
 
@@ -266,7 +299,7 @@ sub makeNaLoc {
 
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'is_reversed'=>$isReversed});
 
-  $naLoc->setParent($sageTagFeat);
+  $naLoc->setParent($feature);
 }
 
 
@@ -299,3 +332,5 @@ sub getNaSeqDesc {
 
   return $name;
 }
+
+1;
