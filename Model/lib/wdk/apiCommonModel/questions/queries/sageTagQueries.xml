@@ -68,7 +68,7 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="dynamic_location"/>
-       <sql includeProjects="GiardaiDB">
+       <sql includeProjects="GiardiaDB">
          <![CDATA[
             select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
