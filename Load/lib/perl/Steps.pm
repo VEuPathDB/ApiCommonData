@@ -3497,10 +3497,11 @@ sub mapTagsToNaSequences {
   
   return if $mgr->startStep("Mapping tags to genome na sequences", $signal);
 
-  my $output = "$mgr->{dataDir}/microarray/$tagFile.mapping";
+  my $output = "$mgr->{dataDir}/microarray/$signal.mapping";
 
-  my $projectDir = $propertySet->getProp('projectDir');
   my $cmd = "tagToSeq.pl $genomeFile $tagFile 2>> $output";
+
+  print $cmd;
 
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
