@@ -3489,6 +3489,23 @@ sub mapSageTagsToNaSequences {
   $mgr->endStep($signal);
 }
 
+sub mapTagsToNaSequences {
+  my ($mgr, $genomeFile, $tagFile, $species) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+  my $signal = "map${species}TagsToNaSequences"; 
+  
+  return if $mgr->startStep("Mapping tags to genome na sequences", $signal);
+
+  my $output = "$mgr->{dataDir}/microarray/$tagFile.mapping";
+
+  my $projectDir = $propertySet->getProp('projectDir');
+  my $cmd = "tagToSeq.pl $mgr->{dataDir}/seqfiles/$genomeFile $projectDir/manualDelivery/ChIP_chip_einstein/$tagFile 2>> $output";
+
+  $mgr->runCmd($cmd);
+  $mgr->endStep($signal);
+}
+
 sub mapArrayElementsToNaSequences {
   my ($mgr, $species, $name, $seqType, $arrayDesignName, $minPercent, $minLength, $topOnly) = @_;
 
