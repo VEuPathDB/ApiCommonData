@@ -29,11 +29,11 @@ BEGIN {
   }
 
   sub increaseIndent {
-    $indentString .= "   ";
+    $indentString .= "    ";
   }
 
   sub decreaseIndent {
-    $indentString = substr($indentString, 0, -3);
+    $indentString = substr($indentString, 0, -4);
   }
 
   sub setUpdateNeededFlag {
