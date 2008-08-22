@@ -10,6 +10,8 @@ use GUS::Model::Core::Algorithm;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
+use GUS::Model::DoTS::NASequence;
+
 $| = 1;
 
 # ---------------------------------------------------------------------------
@@ -168,7 +170,7 @@ sub checkFileFormat {
 
   while (<FILE>) {
     chomp;
-    if ($_ !~ /^\d+\smatched\sagainst\s\d+\sfrom\s\d+\sto\s\d+\son\s[forward|reverse]/) {
+    if ($_ !~ /^\w+\smatched\sagainst\s\w+\sfrom\s\d+\sto\s\d+\son\s[forward|reverse]/) {
       $self->userError("Check file format - format incorrect for at least one line in $self->getArg('tagToSeqFile')\n");
     }
   }
@@ -238,7 +240,11 @@ sub processFile {
 
     my $orient = $arr[9] eq 'reverse' ? 1 : 0;
 
-    my %args = ('compElemId'=>$arr[0],'naSeqId'=>$arr[3],'start'=>$arr[5],'end'=>$arr[7],'tagOrient'=>$orient);
+    if($arr[3] =~ /\D/) {
+      $arr[3] = $self->getNaSequenceIdFromSourceId($arr[3]);
+    }
+
+    my %args = ('sourceId'=>$arr[0],'naSeqId'=>$arr[3],'start'=>$arr[5],'end'=>$arr[7],'tagOrient'=>$orient);
 
     my $feature = $self->makeFeature(\%args);
 
@@ -255,6 +261,19 @@ sub processFile {
   return $processed;
 }
 
+
+sub getNaSequenceIdFromSourceId {
+  my ($self, $sourceId) = @_;
+
+  my $naSequence = GUS::Model::DoTS::NASequence->new({source_id => $sourceId});
+
+  unless($naSequence->retrieveFromDB()) {
+    $self->userError("NA Sequence SourceId $sourceId could not be retrieved");
+  }
+
+  return $naSequence->getId();
+}
+
 sub makeFeature {
    my ($self,$args) = @_;
 
@@ -269,7 +288,7 @@ sub makeFeature {
 
    my $name = $self->getNaSeqDesc($args);
 
-   my $sourceId = $args->{'compElemId'};
+   my $sourceId = $args->{'sourceId'};
 
    my $naSeqId = $args->{'naSeqId'};
 
