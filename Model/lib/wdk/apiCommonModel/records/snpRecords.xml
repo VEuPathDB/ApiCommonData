@@ -95,13 +95,43 @@
               <columnAttribute displayName="NCBI Taxon ID" name="ncbi_tax_id" internal="true" inReportMaker="false"/>
             </attributeQueryRef>
 
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Isolate summary attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+      <attributeQueryRef ref="SnpAttributes.isolateSummary" includeProjects="PlasmoDB">
+         <columnAttribute name="iso_major_allele" displayName="Isolate Major Allele" internal="true"/>
+         <columnAttribute name="iso_major_percent" displayName="Isolate Major Allele Percent" internal="true"/>
+         <columnAttribute name="iso_minor_allele" displayName="Isolate Minor Allele" internal="true"/>
+         <columnAttribute name="iso_minor_percent" displayName="Isolate Minor Allele Percent" internal="true"/>
+         <columnAttribute name="iso_number_strains" displayName="Number of Genotyped Isolates" internal="true"/>
+      </attributeQueryRef>
+
           <!-- =================================================================== -->
           <!--  Text Attributes  ++++++++-->
           <!-- =================================================================== -->
 
             <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+            <!-- isolates Summary -->  
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <textAttribute name="isolate_summary" displayName="Genotyped Isolates Summary" inReportMaker="false" internal="true">
+               <text>
+                    <![CDATA[
+                    <table>
+                    <tr><td width="220"><b>Number of Isolates:</b></td><td>$$iso_number_strains$$</td></tr>
+                    <tr><td width="220"><b>Major Allele:</b></td><td>$$iso_major_allele$$ ($$iso_major_percent$$) </td></tr>
+                    <tr><td width="220"><b>Minor Allele:</b></td><td>$$iso_minor_allele$$ ($$iso_minor_percent$$) </td></tr>
+                    </table>
+                ]]>
+               </text>
+           </textAttribute>
+
+            <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
             <!-- overview -->  
             <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
          <textAttribute name="snp_overview" displayName="SNP Genomic Overview" inReportMaker="false" internal="true">
                <text>
                     <![CDATA[
@@ -140,6 +170,7 @@
                </text>
            </textAttribute>
 
+
        <!-- =================================================================== -->
        <!-- Tables ++++++++-->
        <!-- =================================================================== -->
@@ -149,7 +180,7 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <table name="Strains" excludeProjects="ApiDB" 
-                 displayName="Strains"
+                 displayName="Strains from Resequencing"
                  queryRef="SnpTables.Strains">
               <columnAttribute displayName="Strain" name="strain"/>
               <columnAttribute displayName="Type" name="phenotype"/>
@@ -159,11 +190,11 @@
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-          <!-- strains table -->  
+          <!-- isolates table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <table name="Isolates" includeProjects="PlasmoDB" 
-                 displayName="Isolates"
+                 displayName="Geneotyped Isolates Details"
                  queryRef="SnpTables.isolates">
               <columnAttribute name="isolate_id" internal="true"/>
               <linkAttribute inReportMaker="false" displayName="Isolate ID"
