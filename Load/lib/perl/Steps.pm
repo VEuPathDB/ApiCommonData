@@ -3570,7 +3570,7 @@ sub loadSageTagMap {
 }
 
 sub loadExpressionFeature {
-  my ($mgr, $tagToSeqOutputFile, $species) = @_;
+  my ($mgr, $tagToSeqOutputFile, $extDbSpec, $featureType, $species) = @_;
 
   my $signal = "load${species}ExpressionFeature";
 
@@ -3578,13 +3578,13 @@ sub loadExpressionFeature {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $inputFile = "$mgr->{dataDir}/sage/${tagName}To${genName}";
+  my $inputFile = "$mgr->{dataDir}/microarray/$tagToSeqOutputFile";
 
-  my $args = "--tagToSeqFile $inputFile";
+  my $args = "--tagToSeqFile $inputFile --extDbSpec \'$extDbSpec\' --featureType $featureType";
 
-  $mgr->runPlugin("load${tagName}To${genName}SageTagMap",
+  $mgr->runPlugin("load${species}ExpressionFeature",
 		      "ApiCommonData::Load::Plugin::LoadExpressionFeature", $args,
-		      "Loading ${tagName}To${genName} SAGE Tag map results");
+		      "Loading Microarray Tag map results");
   $mgr->endStep($signal);
 }
 
