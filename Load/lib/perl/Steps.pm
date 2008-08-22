@@ -3500,7 +3500,7 @@ sub mapTagsToNaSequences {
   my $output = "$mgr->{dataDir}/microarray/$tagFile.mapping";
 
   my $projectDir = $propertySet->getProp('projectDir');
-  my $cmd = "tagToSeq.pl $mgr->{dataDir}/seqfiles/$genomeFile $projectDir/manualDelivery/ChIP_chip_einstein/$tagFile 2>> $output";
+  my $cmd = "tagToSeq.pl $genomeFile $tagFile 2>> $output";
 
   $mgr->runCmd($cmd);
   $mgr->endStep($signal);
@@ -3566,6 +3566,25 @@ sub loadSageTagMap {
 		      "Loading ${tagName}To${genName} SAGE Tag map results");
     }
   }
+  $mgr->endStep($signal);
+}
+
+sub loadExpressionFeature {
+  my ($mgr, $tagToSeqOutputFile, $species) = @_;
+
+  my $signal = "load${species}ExpressionFeature";
+
+  return if $mgr->startStep("Loading tags to $species na sequences maps", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $inputFile = "$mgr->{dataDir}/sage/${tagName}To${genName}";
+
+  my $args = "--tagToSeqFile $inputFile";
+
+  $mgr->runPlugin("load${tagName}To${genName}SageTagMap",
+		      "ApiCommonData::Load::Plugin::LoadExpressionFeature", $args,
+		      "Loading ${tagName}To${genName} SAGE Tag map results");
   $mgr->endStep($signal);
 }
 
