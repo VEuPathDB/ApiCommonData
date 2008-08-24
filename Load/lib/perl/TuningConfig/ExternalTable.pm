@@ -26,8 +26,15 @@ sub new {
 
     # check that this table exists in the database
     my $sql = <<SQL;
-       select count(*) from all_tables
-        where owner = upper('$schema') and table_name = upper('$table')
+select count(*) from (
+ select owner, table_name from all_tables
+ where owner = upper('$schema') and table_name = upper('$table')
+union
+ select owner, view_name from all_views
+ where owner = upper('$schema') and view_name = upper('$table')
+union
+ select owner, table_name from all_synonyms
+ where owner = upper('$schema') and synonym_name = upper('$table'))
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
