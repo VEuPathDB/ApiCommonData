@@ -269,7 +269,7 @@ sub processFile {
 sub getNaSequenceIdFromSourceId {
   my ($self, $sourceId) = @_;
 
-  my $naSequence = GUS::Model::DoTS::NASequence->new({source_id => $sourceId});
+  my $naSequence = GUS::Model::DoTS::ExternalNASequence->new({source_id => $sourceId});
 
   unless($naSequence->retrieveFromDB()) {
     $self->userError("NA Sequence SourceId $sourceId could not be retrieved");
