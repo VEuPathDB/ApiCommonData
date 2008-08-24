@@ -11,6 +11,7 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
 use GUS::Model::DoTS::NASequence;
+use GUS::Model::DoTS::ExternalNASequence;
 
 $| = 1;
 
