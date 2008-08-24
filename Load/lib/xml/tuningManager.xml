@@ -633,7 +633,7 @@ from
                case when s.is_reversed = g.is_reversed then 0
                     else 1
                end
-      UNION
+      UNION ALL
       select '3' as direction, g.feature_source_id AS gene_source_id,
              s.feature_source_id as tag_source_id,
              min (case
