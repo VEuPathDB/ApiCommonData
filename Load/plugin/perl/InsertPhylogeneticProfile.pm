@@ -100,20 +100,21 @@ sub run {
   while (my $line = <FILE>) {
     chomp($line);
 
-    if ($counter++ % 1000 == 0) {
-      $self->log("Processed $counter lines from groupsFile");
-    }
-
-    my ($groupId, $membersString) = split(':', $line);
-    my @members = split(" ", $membersString);
+    my ($groupId, $membersString) = split(/\:/, $line);
+    my @members = split(/\s+/, $membersString);
     my $taxaInThisGroup = {};
     foreach my $member (@members) {
       # pfa|PF11_0987
-      my ($taxonCode, $sourceId) = split("|", $member);
+      my ($taxonCode, $sourceId) = split(/\|/, $member);
       $taxaInThisGroup->{$taxonCode} = 1;
       $allTaxa->{$taxonCode} = 1;
       $geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
     }
+    $counter++;
+    if ($counter % 10000 == 0) {
+      $self->log("Processed $counter lines from groupsFile");
+    }
+
   }
 
   # second pass: format string needed for database, and insert
@@ -133,7 +134,7 @@ sub run {
     $profile->submit();
 
     $count++;
-    if ($count % 100 == 0) {
+    if ($count % 1000 == 0) {
       $self->log("Inserted $count Entries into PhylogeneticProfile");
       $self->undefPointerCache();
     }
