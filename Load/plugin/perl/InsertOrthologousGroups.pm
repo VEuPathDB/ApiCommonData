@@ -17,63 +17,45 @@ use ApiCommonData::Load::Util;
 
 
 my $argsDeclaration =
-[
+  [
 
-   enumArg({name => 'organism',
-	    descr => 'Species to insert synteny data for',
-	    constraintFunc=> undef,
-              reqd  => 0,
-              isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium",
-	    default => "DoTS::GeneFeature"
-              default
-             }),
+   enumArg({ descr => 'Table that holds the members of the groups.  (The portal uses DoTS::SplicedNaSequence)',
+	   name  => 'ElementResultTable',
+	   isList    => 0,
+	   constraintFunc => undef,
+	   reqd           => 0,
+	   enum => "DoTS::GeneFeature, DoTS::SplicedNASequence",
+	   default => "DoTS::GeneFeature"
+	 }),
 
+  fileArg({name          => 'OrthologFile',
+	   descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
+	   reqd           => 1,
+	   mustExist      => 1,
+	   format         => 'ORTHOMCL9(446 genes,1 taxa): osa1088(osa) osa1089(osa) osa11015(osa)...',
+	   constraintFunc => undef,
+	   isList         => 0, }),
 
-    enumArg({ descr => 'Name of the gene source id table.  (The portal uses SplicedNaSequence'),
-	    name  => 'SourceIdTable',
-	    isList    => 0,
-	    constraintFunc => undef,
-	    reqd           => 0,
-	    enum => "GeneFeature, SplicedNASequence",
-	    default => "GeneFeature"
-	   }),
+  stringArg({ descr => 'name of the orthoMCL analysis',
+	      name  => 'AnalysisName',
+	      isList    => 0,
+	      reqd  => 1,
+	      constraintFunc => undef,
+	    }),
 
-    fileArg({name          => 'OrthologFile',
-            descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
-            reqd           => 1,
-            mustExist      => 1,
-	    format         => 'ORTHOMCL9(446 genes,1 taxa): osa1088(osa) osa1089(osa) osa11015(osa)...',
-            constraintFunc => undef,
-            isList         => 0, }),
+  stringArg({ descr => 'description of the orthoMCL analysis',
+	      name  => 'AnalysisDescription',
+	      isList    => 0,
+	      reqd  => 1,
+	      constraintFunc => undef,
+	    }),
 
- stringArg({ descr => 'name of the orthoMCL analysis',
-             name  => 'AnalysisName',
-             isList    => 0,
-             reqd  => 1,
-             constraintFunc => undef,
-	   }),
-
- stringArg({ descr => 'description of the orthoMCL analysis',
-             name  => 'AnalysisDescription',
-             isList    => 0,
-             reqd  => 1,
-             constraintFunc => undef,
-	   }),
-
- stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
-	     name  => 'taxaToLoad',
-	     isList    => 1,
-	     reqd  => 1,
-	     constraintFunc => undef,
-	   }),
-
- tableNameArg({ descr  => 'Table which references the na_feature_id',
-                name   => 'ElementResultTable',
-                isList => 0,
-                reqd   => 1,
-                constraintFunc => sub { undef },
-	      }),
+  stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
+	      name  => 'taxaToLoad',
+	      isList    => 1,
+	      reqd  => 1,
+	      constraintFunc => undef,
+	    }),
 
 ];
 
@@ -138,7 +120,7 @@ sub run {
   open(FILE, $self->getArg('OrthologFile')) || die "Could Not open Ortholog File for reading: $!\n";
 
   my $orthologExperimentId = $self->_makeOrthologExperiment();
-  my $elementResultTable = $self->_getElementResultTableId();
+  my $elementResultTableId = $self->_getElementResultTableId();
 
   my ($expLoaded, $seqGroupLoaded, $seqSeqGroupLoaded, $skipped) = (1);
 
@@ -146,23 +128,23 @@ sub run {
 
   my $taxaToLoad = $self->getArg('taxaToLoad');
 
-  while(my $line = <FILE>) {
+  while (my $line = <FILE>) {
     chomp($line);
     $counter++;
-    if($counter % 1000 == 0) {
+    if ($counter % 1000 == 0) {
       $self->log("Processed $counter lines");
     }
 
     my ($orthoName, $restOfLine) = split(':', $line);
-    my @elements = split(" ", $restOfLine);
+    my @elements = split(/\s+/, $restOfLine);
 
     my @foundIds;
     foreach my $element (@elements) {
-      my ($taxonCode, $sourceId) = split("|", $element);
-      next unless grep($taxonCode, @$taxaToLoad);
+      my ($taxonCode, $sourceId) = split(/\|/, $element);
+      next unless grep(/$taxonCode/, @$taxaToLoad);
+      push(@foundIds, $sourceId);
     }
 
-    my @foundIds = map {/\w+\|(\S+)/;$1} @elements;
     my $numElements = scalar(@foundIds);
     next if $numElements == 0;
 
@@ -173,24 +155,22 @@ sub run {
           });
     $seqGroupLoaded++;
 
-    my $sourceidtable = $self->getArg('SourceIdTable');
+    my $sourceIdTable = $self->getArg('ElementResultTable');
     my %sourceid_method =
-      ('GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
-       'SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId);
-
-    foreach my $element (@foundIds) {
-	if(my $geneFeatureId = $sourceid_method{$sourceidtable}->($self, $element)) {
-
-	    my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
-		new({sequence_id => $geneFeatureId,
-		     source_table_id => $elementResultTable ,
-		 })->setParent($seqGroup);
-	    $seqSeqGroupLoaded++;
-	}
-	else {
-	    print STDERR "Skipping $element\n";
-	    $skipped++;
-	}
+      ('DoTS::GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
+       'DoTS::SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId);
+    foreach my $sourceId (@foundIds) {
+      my $geneFeatureId = $sourceid_method{$sourceIdTable}->($self, $sourceId);
+      if ($geneFeatureId) {
+	my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
+	  new({sequence_id => $geneFeatureId,
+	       source_table_id => $elementResultTableId,
+	      })->setParent($seqGroup);
+	$seqSeqGroupLoaded++;
+      } else {
+	print STDERR "Skipping $sourceId\n";
+	$skipped++;
+      }
     }
 
     $seqGroup->submit();
@@ -226,7 +206,7 @@ sub _getElementResultTableId {
   my $tableInfo = GUS::Model::Core::TableInfo->
     new({name => $suffix});
 
-  if(!$tableInfo->retrieveFromDB()) {
+  if (!$tableInfo->retrieveFromDB()) {
     die "TableName not uniquely matched in the db";
   }
   return($tableInfo->getId());
@@ -236,7 +216,7 @@ sub _getElementResultTableId {
 
 =item C<_makeOrthologExperiment>
 
-build an OrthologExperiment Obj and retrieve its id.  
+build an OrthologExperiment Obj and retrieve its id.
 
 B<Return type:> C<scalar>
 
@@ -259,72 +239,6 @@ sub _makeOrthologExperiment {
   return($id);
 }
 
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_getMapping>
-
-Read from mapping file, generate a hash which mapps the Ids contained
-in the OrthologFile to Database Source Ids
-
-B<Return type:> C<hashRef>
-
-=cut
-
-sub _getMapping {
-  my ($self) = @_;
-
-  my %rv;
-
-  open(MAP, $self->getArg('MappingFile')) || die "Could Not open Mapping File for reading: $!\n";
-
-  while(<MAP>) {
-    chomp;
-
-    my @map = split(" ", $_);
-    my $orthoId = $map[0];
-    my $sourceId = $map[1];
-
-    $rv{$orthoId} = $sourceId;
-  }
-  return(\%rv);
-}
-
-# ----------------------------------------------------------------------
-
-=pod
-
-=item C<_findElements>
-
-Loops through an arrayRef of 'elements' and makes a new array if the element
-is mapped to a value.
-
-B<Parameters:>
-
-- $mapping(hashRef):  
-- $elements(arrayRef):  List of elements from OrthologFile
-
-B<Return type:> C<arrayRef>
-
-List of Database Source Ids
-
-=cut
-
-sub _findElementIDs {
-  my ($self, $mapping, $elements) = @_;
-
-  my @rv;
-
-  foreach my $name(@$elements) {
-     $name =~ s/\(.+\)//g; #get rid of anything inside ()'s
-
-    if(my $id = $mapping->{$name}) {
-      push(@rv, $id);
-    }
-  }
-  return(\@rv);
-}
 
 # ----------------------------------------------------------------------
 
