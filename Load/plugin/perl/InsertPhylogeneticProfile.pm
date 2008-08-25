@@ -12,9 +12,9 @@ use GUS::Model::ApiDB::PhylogeneticProfile;
 
 
 my $argsDeclaration =
-[
+  [
 
-    fileArg({name           => 'groupsFile',
+   fileArg({name           => 'groupsFile',
             descr          => 'ortholog groups file as found on OrthoMCL-DB download site',
             reqd           => 1,
             mustExist      => 1,
@@ -23,12 +23,12 @@ my $argsDeclaration =
             isList         => 0, }),
 
    stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
-	     name  => 'taxaToLoad',
-	     isList    => 1,
-	     reqd  => 1,
-	     constraintFunc => undef,
-	   }),
-];
+	       name  => 'taxaToLoad',
+	       isList    => 1,
+	       reqd  => 1,
+	       constraintFunc => undef,
+	     }),
+  ];
 
 my $purpose = <<PURPOSE;
 Insert rows into ApiDB::PhylogeneticProfile representing the phylogenetic pattern for each of our genes.  Each row maps a source_id (gene) to a long string representing its profile.  We scan all ortholog groups provided on input.  Gather from them the total set of taxa seen in the file, and, for any group that contains any of our genes, associate with each of those genes the list of taxa found in that group.  That is the profile for that gene.
@@ -97,10 +97,10 @@ sub run {
   #  - all taxa associated with each one of our genes
   open(FILE, $self->getArg('groupsFile')) || die "Could Not open Ortholog File for reading: $!\n";
   my ($counter, $geneProfiles, $allTaxa);
-  while(my $line = <FILE>) {
+  while (my $line = <FILE>) {
     chomp($line);
 
-    if($counter++ % 1000 == 0) {
+    if ($counter++ % 1000 == 0) {
       $self->log("Processed $counter lines from groupsFile");
     }
 
@@ -108,35 +108,35 @@ sub run {
     my @members = split(" ", $membersString);
     my $taxaInThisGroup = {};
     foreach my $member (@members) {
-	# pfa|PF11_0987
-	my ($taxonCode, $sourceId) = split("|", $member);
-	$taxaInThisGroup->{$taxonCode} = 1;
-	$allTaxa->{$taxonCode} = 1;
-	$geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
+      # pfa|PF11_0987
+      my ($taxonCode, $sourceId) = split("|", $member);
+      $taxaInThisGroup->{$taxonCode} = 1;
+      $allTaxa->{$taxonCode} = 1;
+      $geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
     }
   }
-	
+
   # second pass: format string needed for database, and insert
   my @allTaxaSorted = sort(keys(%$allTaxa));
   my $count;
   foreach my $sourceId (keys(%$geneProfiles)) {
-      my @fullProfile;
-      foreach my $taxaCode (@allTaxaSorted) {
-	  my $yesNo = $geneProfiles->{$sourceId}->{$taxaCode}? 'Y' : 'N';
-	  push(@fullProfile, "$taxaCode:$yesNo");
-      }
-      my $profileString = join(':', @fullProfile);
-      my $profile = GUS::Model::ApiDB::PhylogeneticProfile->
-	  new({source_id => $sourceId,
-	       profile_string => $profileString
-	      });
-      $profile->submit();
-      
-      $count++;
-      if($count % 100 == 0) {
-	  $self->log("Inserted $count Entries into PhylogeneticProfile");
-	  $self->undefPointerCache();
-      }
+    my @fullProfile;
+    foreach my $taxaCode (@allTaxaSorted) {
+      my $yesNo = $geneProfiles->{$sourceId}->{$taxaCode}? 'Y' : 'N';
+      push(@fullProfile, "$taxaCode:$yesNo");
+    }
+    my $profileString = join(':', @fullProfile);
+    my $profile = GUS::Model::ApiDB::PhylogeneticProfile->
+      new({source_id => $sourceId,
+	   profile_string => $profileString
+	  });
+    $profile->submit();
+
+    $count++;
+    if ($count % 100 == 0) {
+      $self->log("Inserted $count Entries into PhylogeneticProfile");
+      $self->undefPointerCache();
+    }
   }
 
   return("Loaded $count ApiDB::PhylogeneticProfile entries");
