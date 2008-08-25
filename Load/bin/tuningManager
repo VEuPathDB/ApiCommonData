@@ -18,7 +18,7 @@ my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
 my $nodename = `uname -n`;
 chomp($nodename);
-ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager on $nodename at $timestamp with arguments:\n"
+ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as process $$ on $nodename at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);

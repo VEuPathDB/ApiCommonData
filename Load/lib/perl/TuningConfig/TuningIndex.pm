@@ -87,6 +87,11 @@ sub create {
        create index $self->{name} on $self->{table} ($self->{columnList})
 SQL
     my $stmt = $dbh->prepare($sql);
+
+    my  $message = $sql;
+    $message =~ s/create/must create/;
+    ApiCommonData::Load::TuningConfig::Log::addLog($message);
+
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
