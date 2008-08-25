@@ -18,27 +18,32 @@ use ApiCommonData::Load::Util;
 
 my $argsDeclaration =
 [
- stringArg({ descr => 'Name of the gene source id table; GeneFeature is the default table',
-             name  => 'SourceIdTable',
-             isList    => 0,
-             constraintFunc => undef,
-	     reqd           => 0,
+
+   enumArg({name => 'organism',
+	    descr => 'Species to insert synteny data for',
+	    constraintFunc=> undef,
+              reqd  => 0,
+              isList => 0,
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium",
+	    default => "DoTS::GeneFeature"
+              default
+             }),
+
+
+    enumArg({ descr => 'Name of the gene source id table.  (The portal uses SplicedNaSequence'),
+	    name  => 'SourceIdTable',
+	    isList    => 0,
+	    constraintFunc => undef,
+	    reqd           => 0,
+	    enum => "GeneFeature, SplicedNASequence",
+	    default => "GeneFeature"
 	   }),
 
-
-    fileArg({name           => 'OrthologFile',
+    fileArg({name          => 'OrthologFile',
             descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
             reqd           => 1,
             mustExist      => 1,
 	    format         => 'ORTHOMCL9(446 genes,1 taxa): osa1088(osa) osa1089(osa) osa11015(osa)...',
-            constraintFunc => undef,
-            isList         => 0, }),
-
-   fileArg({name           => 'MappingFile',
-            descr          => 'File mapping orthoFile ids to source ids',
-            reqd           => 1,
-            mustExist      => 1,
-	    format         => 'Space separators... first column is the orthoId and the second column is the sourceId',
             constraintFunc => undef,
             isList         => 0, }),
 
@@ -54,6 +59,13 @@ my $argsDeclaration =
              isList    => 0,
              reqd  => 1,
              constraintFunc => undef,
+	   }),
+
+ stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
+	     name  => 'taxaToLoad',
+	     isList    => 1,
+	     reqd  => 1,
+	     constraintFunc => undef,
 	   }),
 
  tableNameArg({ descr  => 'Table which references the na_feature_id',
@@ -123,8 +135,6 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $mapping = $self->_getMapping();
-
   open(FILE, $self->getArg('OrthologFile')) || die "Could Not open Ortholog File for reading: $!\n";
 
   my $orthologExperimentId = $self->_makeOrthologExperiment();
@@ -133,6 +143,8 @@ sub run {
   my ($expLoaded, $seqGroupLoaded, $seqSeqGroupLoaded, $skipped) = (1);
 
   my $counter = 0;
+
+  my $taxaToLoad = $self->getArg('taxaToLoad');
 
   while(my $line = <FILE>) {
     chomp($line);
@@ -144,12 +156,15 @@ sub run {
     my ($orthoName, $restOfLine) = split(':', $line);
     my @elements = split(" ", $restOfLine);
 
-    $orthoName =~ s/\(.+\)//g; #get rid of anything inside ()'s
+    my @foundIds;
+    foreach my $element (@elements) {
+      my ($taxonCode, $sourceId) = split("|", $element);
+      next unless grep($taxonCode, @$taxaToLoad);
+    }
 
-    my $numElements = scalar(@elements);
-
-    my $foundIds = $self->_findElementIDs($mapping, \@elements);
-    next if(scalar(@$foundIds) == 0);
+    my @foundIds = map {/\w+\|(\S+)/;$1} @elements;
+    my $numElements = scalar(@foundIds);
+    next if $numElements == 0;
 
     my $seqGroup = GUS::Model::DoTS::SequenceGroup->
       new({name => $orthoName,
@@ -158,16 +173,14 @@ sub run {
           });
     $seqGroupLoaded++;
 
-    my $sourceidtable = ($self->getArg('SourceIdTable')) ? $self->getArg('SourceIdTable') : "GeneFeature";
-    #my $method = "ApiCommonData::Load::Util::Get${sourceidtable}Id";
-	my %sourceid_method = ( 
-				'GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
-                                'SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId
-				);
-	
-    foreach my $element (@$foundIds) {
+    my $sourceidtable = $self->getArg('SourceIdTable');
+    my %sourceid_method =
+      ('GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
+       'SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId);
+
+    foreach my $element (@foundIds) {
 	if(my $geneFeatureId = $sourceid_method{$sourceidtable}->($self, $element)) {
-	    
+
 	    my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
 		new({sequence_id => $geneFeatureId,
 		     source_table_id => $elementResultTable ,
