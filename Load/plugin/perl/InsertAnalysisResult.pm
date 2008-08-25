@@ -50,7 +50,7 @@ sub getArgumentsDeclaration{
                isList         => 0,
                reqd           => 1,
                constraintFunc => undef,
-               enum           => "ArrayElementFeature,DifferentialExpression", 
+               enum           => "ArrayElementFeature,GeneFeature", 
              }),
 
     ];
@@ -248,7 +248,7 @@ sub getNaFeatureId {
    }
 
   if(scalar @naFeatures != 1) {
-    $self->log("WARN:  Skipping $sourceId...Dots.GeneFeature na_feature_id not found.");
+    $self->log("WARN:  Several NAFeatures are found for source_id $source_id. Loading multiple rows.");
   }
   return \@naFeatures;
 
@@ -272,6 +272,8 @@ sub getTableId {
 
 sub createAnalysis {
   my ($self, $protocol, $analysisName) = @_;
+
+  print "analysisName: $analysisName\n";
 
   my $analysis = GUS::Model::RAD::Analysis->new({name => $analysisName});
 
