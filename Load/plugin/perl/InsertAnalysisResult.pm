@@ -37,12 +37,20 @@ sub getArgumentsDeclaration{
                isList         => 0,
              }),
 
-     enumArg({ descr => 'View of analysisResultImp',
-               name  => 'analysisResultView',
-               isList    => 0,
-               reqd  => 1,
+     enumArg({ descr          => 'View of analysisResultImp',
+               name           => 'analysisResultView',
+               isList         => 0,
+               reqd           => 1,
                constraintFunc => undef,
-               enum => "DataTransformationResult,DifferentialExpression",
+               enum           => "DataTransformationResult,DifferentialExpression",
+             }),
+
+     enumArg({ descr          => 'View of naFeatureImp',
+               name           => 'naFeatureView',
+               isList         => 0,
+               reqd           => 1,
+               constraintFunc => undef,
+               enum           => "ArrayElementFeature,DifferentialExpression", 
              }),
 
     ];
@@ -85,9 +93,8 @@ sub new {
   my $documentation = &getDocumentation();
   my $argumentDeclaration = &getArgumentsDeclaration();
 
-
   $self->initialize({requiredDbVersion => 3.5,
-		     cvsRevision => '$Revision: 22467 $',
+		             cvsRevision => '$Revision: 22467 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -106,6 +113,7 @@ sub run {
   my $totalLines;
 
   my $analysisResultView = $self->getArg('analysisResultView');
+  my $naFeatureView = $self->getArg('naFeatureView');
 
   my $class = "GUS::Model::RAD::$analysisResultView";
   eval "require $class";
@@ -120,7 +128,7 @@ sub run {
 
     my $analysis = $self->createAnalysis($protocol, $analysisName);
 
-    my $count = $self->processDataFile($analysis, $dataFile, $class);
+    my $count = $self->processDataFile($analysis, $dataFile, $class, $naFeatureView);
 
     $self->log("File Finished.  $count lines processed");
 
@@ -163,7 +171,7 @@ sub readConfig {
 #--------------------------------------------------------------------------------
 
 sub processDataFile {
-  my ($self, $analysis, $fn, $class) = @_;
+  my ($self, $analysis, $fn, $class, $naFeatureView) = @_;
 
   my $inputDir = $self->getArg('inputDir');
 
@@ -193,29 +201,32 @@ sub processDataFile {
 
     my $sourceId = $row[0];
 
-    my $naFeatureId = $self->getNaFeatureId($sourceId);
+    my $naFeatureId = $self->getNaFeatureId($sourceId, $naFeatureView);
     next unless $naFeatureId;
 
-    my $hashRef = {table_id => $tableId,
-                   row_id => $naFeatureId
-                  };
+    foreach(@$naFeatureId) {
 
-    for(my $i = 1; $i < scalar @headers; $i++) {
-      my $key = $headers[$i];
-      my $value = $row[$i];
+      my $hashRef = {table_id => $tableId,
+                     row_id => $naFeatureId
+                    };
 
-      $hashRef->{$key} = $value;
+      for(my $i = 1; $i < scalar @headers; $i++) {
+        my $key = $headers[$i];
+        my $value = $row[$i];
+
+        $hashRef->{$key} = $value;
+      }
+
+      my $analysisResult = eval {
+        $class->new($hashRef);
+      };
+
+      $self->error($@) if $@;
+
+      $analysisResult->setParent($analysis);
+
+      $analysisResult->submit();
     }
-
-    my $analysisResult = eval {
-      $class->new($hashRef);
-    };
-
-    $self->error($@) if $@;
-
-    $analysisResult->setParent($analysis);
-
-    $analysisResult->submit();
   }
 
   close FILE;
@@ -226,14 +237,20 @@ sub processDataFile {
 #--------------------------------------------------------------------------------
 
 sub getNaFeatureId {
-  my ($self, $sourceId) = @_;
+  my ($self, $sourceId, $naFeatureView) = @_;
 
-  my @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.geneFeature where source_id = '$sourceId'" );
+  my @naFeatures; 
+
+  if($naFeatureView eq 'ArrayElementFeature') {
+    @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.ArrayElementFeature where source_id = '$sourceId'" );
+   } else {
+    @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.geneFeature where source_id = '$sourceId'" );
+   }
 
   if(scalar @naFeatures != 1) {
     $self->log("WARN:  Skipping $sourceId...Dots.GeneFeature na_feature_id not found.");
   }
-  return $naFeatures[0];
+  return \@naFeatures;
 
 }
 
