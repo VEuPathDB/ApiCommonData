@@ -32,7 +32,7 @@ my $argsDeclaration =
 	   descr          => 'Ortholog Data (ortho.mcl). OrthologGroupName followed by a colon then the ids for the members of the group',
 	   reqd           => 1,
 	   mustExist      => 1,
-	   format         => 'ORTHOMCL9(446 genes,1 taxa): osa1088(osa) osa1089(osa) osa11015(osa)...',
+	   format         => 'OG2_1009: osa|ENS1222992 pfa|PF11_0844...',
 	   constraintFunc => undef,
 	   isList         => 0, }),
 
