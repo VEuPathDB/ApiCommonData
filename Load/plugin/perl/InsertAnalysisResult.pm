@@ -248,7 +248,7 @@ sub getNaFeatureId {
    }
 
   if(scalar @naFeatures != 1) {
-    $self->log("WARN:  Several NAFeatures are found for source_id $source_id. Loading multiple rows.");
+    $self->log("WARN:  Several NAFeatures are found for source_id $sourceId. Loading multiple rows.");
   }
   return \@naFeatures;
 
