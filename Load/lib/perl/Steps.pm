@@ -3333,13 +3333,13 @@ sub InsertRadAnalysisFromConfig {
 
 
 sub InsertSimpleRadAnalysisFromConfig {
-  my ($mgr, $inputDir, $configFile, $name) = @_;
+  my ($mgr, $inputDir, $configFile, $analysisResultView, $naFeatureView, $name) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
   return if $mgr->startStep("Loading Rad Analysis for $name", $name);
 
-  my $args = "--inputDir $inputDir --configFile $configFile";
+  my $args = "--inputDir $inputDir --configFile $configFile --analysisResultView $analysisResultView --naFeatureView $naFeatureView";
 
   $mgr->runPlugin($name,
                   "ApiCommonData::Load::Plugin::InsertAnalysisResult",
