@@ -171,7 +171,7 @@ foreach my $tuningIndex (@{$config->{tuningIndex}}) {
 
   if (!$indexObject->exists()) {
     $missingIndexes++;
-    ApiCommonData::Load::TuningConfig::Log::addLog("missing index: " . $tuningIndex->{name});
+    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
 
     $indexObject->create($dbh)
       if $doUpdate;

@@ -125,7 +125,7 @@ sub getState {
 
   # check external dependencies
   foreach my $dependency (@{$self->getExternalDependencies()}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external table" . $dependency->getName());
+    ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external table " . $dependency->getName());
     if ($dependency->getTimestamp() gt $self->{timestamp}) {
       $needUpdate = 1;
     }

@@ -83,9 +83,7 @@ sub create {
     ApiCommonData::Load::TuningConfig::Log::setUpdateNeededFlag();
 
     ApiCommonData::Load::TuningConfig::Log::addLog("creating index " . $self->{name});
-    my $sql = <<SQL;
-       create index $self->{name} on $self->{table} ($self->{columnList})
-SQL
+    my $sql = $self->getCreateStatement();
     my $stmt = $dbh->prepare($sql);
 
     my  $message = $sql;
@@ -100,6 +98,16 @@ SQL
 						  " seconds to rebuild index " .
 						  $self->{name});
 
+}
+
+sub getCreateStatement {
+    my ($self) = @_;
+
+    my $sql = <<SQL;
+create index $self->{name} on $self->{table} ($self->{columnList})
+SQL
+
+    return $sql;
 }
 
 1;
