@@ -310,8 +310,9 @@
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
            FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
-           WHERE gf.na_sequence_id = ns.na_sequence_id
+           WHERE ga.organism = 'Toxoplasma gondii'
            AND ga.source_id = gf.source_id
+           AND gf.na_sequence_id = ns.na_sequence_id
            AND ga.project_id = '@PROJECT_ID@'
            ORDER BY organism asc
         ]]>

@@ -93,7 +93,8 @@
                       AS formatted_organism,
                     bfmv.ncbi_tax_id, bfmv.sequence_description,
                     bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version, bfmv.chromosome,database_name as externalDbName
+                    bfmv.database_version, bfmv.chromosome,
+                    database_name as externalDbName, database_version as externalDbVersion
               FROM apidb.SequenceAttributes bfmv
               WHERE bfmv.source_id = $$primaryKey$$
                 AND UPPER(bfmv.project_id) = UPPER($$projectId$$)
@@ -107,10 +108,7 @@
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
-            enas.a_count, 
-            enas.c_count, 
-            enas.g_count, 
-            enas.t_count, 
+            enas.a_count, enas.c_count, enas.g_count, enas.t_count, 
             (length - (a_count + c_count + g_count + t_count)) as other_count, 
             enas.length, 
             '<i>' || SUBSTR(tn.name, 1, 1) || '.&nbsp;' || 

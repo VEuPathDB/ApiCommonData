@@ -3279,7 +3279,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   
   <querySet name="GeneSubTypes">
   
-    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB,ToxoDB"
+    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB"
               isCacheable="false">
         <paramRef ref="geneParams.geneResult"/>
         <paramRef ref="geneParams.subType"/>
@@ -3295,6 +3295,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND ga.is_deprecated = $$subType$$
             ]]>
         </sql>
+<!--
         <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT c.*
@@ -3310,9 +3311,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             WHERE c.source_id = f.source_id
             ]]>
         </sql>
+-->
     </sqlQuery>  
   
-    <sqlQuery name="GenesByTransformers" includeProjects="ToxoDB"
+
+    <sqlQuery name="GenesByTransformers" includeProjects=""
               isCacheable="true">
         <paramRef ref="geneParams.geneResult"/>
         <paramRef ref="organismParams.organism" 
