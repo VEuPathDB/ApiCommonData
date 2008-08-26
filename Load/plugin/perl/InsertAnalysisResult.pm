@@ -177,7 +177,7 @@ sub processDataFile {
 
   open(FILE, "$inputDir/$fn") or $self->error("Cannot open file $inputDir/$fn for reading: $!");
 
-  my $tableId = $self->getTableId();
+  my $tableId = $self->getTableId($naFeatureView);
 
   my $header = <FILE>;
   chomp $header;
@@ -201,10 +201,10 @@ sub processDataFile {
 
     my $sourceId = $row[0];
 
-    my $naFeatureId = $self->getNaFeatureId($sourceId, $naFeatureView);
-    next unless $naFeatureId;
+    my $naFeatureIdArrayRef = $self->getNaFeatureId($sourceId, $naFeatureView);
+    next unless $naFeatureIdArrayRef;
 
-    foreach(@$naFeatureId) {
+    foreach my $naFeatureId (@$naFeatureIdArrayRef) {
 
       my $hashRef = {table_id => $tableId,
                      row_id => $naFeatureId
@@ -239,13 +239,7 @@ sub processDataFile {
 sub getNaFeatureId {
   my ($self, $sourceId, $naFeatureView) = @_;
 
-  my @naFeatures; 
-
-  if($naFeatureView eq 'ArrayElementFeature') {
-    @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.ArrayElementFeature where source_id = '$sourceId'" );
-   } else {
-    @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.geneFeature where source_id = '$sourceId'" );
-   }
+  my @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.${naFeatureView} where source_id = '$sourceId'" );
 
   if(scalar @naFeatures != 1) {
     $self->log("WARN:  Several NAFeatures are found for source_id $sourceId. Loading multiple rows.");
@@ -257,13 +251,12 @@ sub getNaFeatureId {
 #--------------------------------------------------------------------------------
 
 sub getTableId {
-  my ($self) =  @_;
+  my ($self, $naFeatureView) =  @_;
 
-  my $table = 'GeneFeature';
-  my @tableIds = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = '$table'" );
+  my @tableIds = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = '$naFeatureView'" );
 
   if(scalar @tableIds != 1) {
-    $self->error("Core::TableInfo not found for $table");
+    $self->error("Core::TableInfo not found for $naFeatureView");
   }
   return $tableIds[0];
 }
@@ -272,8 +265,6 @@ sub getTableId {
 
 sub createAnalysis {
   my ($self, $protocol, $analysisName) = @_;
-
-  print "analysisName: $analysisName\n";
 
   my $analysis = GUS::Model::RAD::Analysis->new({name => $analysisName});
 
