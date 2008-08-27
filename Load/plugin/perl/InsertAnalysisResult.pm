@@ -272,7 +272,7 @@ sub processDataFile {
 
     my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile" if($self->getArg('commit')));
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
   }
 
 
