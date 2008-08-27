@@ -3,6 +3,7 @@ package ApiCommonData::Load::Plugin::InsertAnalysisResult;
 
 use strict;
 
+use GUS::Supported::GusConfig;
 use GUS::PluginMgr::Plugin;
 
 use GUS::Model::Study::OntologyEntry;
@@ -18,6 +19,12 @@ $| = 1;
 sub getArgumentsDeclaration{
   my $argsDeclaration =
     [
+
+     booleanArg ({name => 'useSqlLdr',
+                  descr => 'Set this to use sqlldr instead of objects.  Only implemented for DataTransformationResult',
+                  reqd => 0,
+                  default => 0
+                 }),
 
      fileArg({name           => 'inputDir',
               descr          => 'Directory in which to find input files',
@@ -114,6 +121,11 @@ sub run {
 
   my $analysisResultView = $self->getArg('analysisResultView');
   my $naFeatureView = $self->getArg('naFeatureView');
+  my $useSqlLdr = $self->getArg('useSqlLdr');
+
+  if($analysisResultView ne 'DataTransformationResult' && $useSqlLdr) {
+    $self->userError("DataTransformationResult is the only anlalysisResultVeiw currently supported with sqlldr");
+  }
 
   my $class = "GUS::Model::RAD::$analysisResultView";
   eval "require $class";
@@ -128,7 +140,7 @@ sub run {
 
     my $analysis = $self->createAnalysis($protocol, $analysisName);
 
-    my $count = $self->processDataFile($analysis, $dataFile, $class, $naFeatureView);
+    my $count = $self->processDataFile($analysis, $dataFile, $class, $naFeatureView, $useSqlLdr);
 
     $self->log("File Finished.  $count lines processed");
 
@@ -171,7 +183,7 @@ sub readConfig {
 #--------------------------------------------------------------------------------
 
 sub processDataFile {
-  my ($self, $analysis, $fn, $class, $naFeatureView) = @_;
+  my ($self, $analysis, $fn, $class, $naFeatureView, $useSqlLdr) = @_;
 
   my $inputDir = $self->getArg('inputDir');
 
@@ -185,6 +197,13 @@ sub processDataFile {
   my @headers = split(/\t/, $header);
 
   my $count;
+
+  # the sqlldr requires us to write a data file
+  if($useSqlLdr) {
+    my $sqlLdrFn = "$inputDir/$fn" . ".dat";
+    open(OUT, "> $sqlLdrFn") or die "Cannot open file $sqlLdrFn for writing:$!";
+    $analysis->submit();
+  }
 
   while(<FILE>) {
     chomp;
@@ -217,19 +236,45 @@ sub processDataFile {
         $hashRef->{$key} = $value;
       }
 
-      my $analysisResult = eval {
-        $class->new($hashRef);
-      };
+      if($useSqlLdr) {
+        $self->writeSqlLdrInput($hashRef, $analysis, \*OUT);
+      }
+      else {
 
-      $self->error($@) if $@;
+        my $analysisResult = eval {
+          $class->new($hashRef);
+        };
 
-      $analysisResult->setParent($analysis);
+        $self->error($@) if $@;
 
-      $analysisResult->submit();
+        $analysisResult->setParent($analysis);
+
+        $analysisResult->submit();
+      }
     }
   }
-
   close FILE;
+
+  if($useSqlLdr) {
+    close OUT;
+    my $sqlLdrFn = "$inputDir/$fn" . ".dat";
+
+    my $configFile = $sqlLdrFn;
+    my $logFile = $sqlLdrFn;
+
+    $configFile =~ s/.dat$/.ctrl/;
+    $logFile =~ s/.dat$/.log/;
+
+    my $configFile = $self->writeConfigFile($configFile, $sqlLdrFn);
+    my $login       = $self->getConfig->getDatabaseLogin();
+    my $password    = $self->getConfig->getDatabasePassword();
+    my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+    my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile");
+  }
+
 
   return $count;
 }
@@ -308,6 +353,88 @@ sub getProtocolTypeId {
   }
 
   return $oe->getId();
+}
+
+#--------------------------------------------------------------------------------
+
+sub writeSqlLdrInput { 
+  my ($self, $hashRef, $analysis, $fh) = @_;
+
+  my $subclassView = 'DataTransformationResult';
+
+  my $analysisId = $analysis->getId();
+  my $modDate = $analysis->getModificationDate();
+
+  my $database = $self->getDb();
+
+  my $projectId = $database->getDefaultProjectId();
+  my $userId = $database->getDefaultUserId();
+  my $groupId = $database->getDefaultGroupId();
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+  my $userRead = $database->getDefaultUserRead();
+  my $userWrite = $database->getDefaultUserWrite();
+  my $groupRead = $database->getDefaultGroupRead();
+  my $groupWrite = $database->getDefaultGroupWrite();
+  my $otherRead = $database->getDefaultOtherRead();
+  my $otherWrite = $database->getDefaultOtherWrite();
+
+  my $tableId = $hashRef->{table_id};
+  my $rowId = $hashRef->{row_id};
+  my $floatValue = $hashRef->{float_value};
+
+  unless($floatValue) {
+    $self->userError("Float value must be specified for DatatransformationResult when sqlldr is used");
+  }
+
+  my @a = ($subclassView, $analysisId, $tableId, $rowId, $floatValue, $modDate, $userRead, $userWrite, $groupRead, $groupWrite, $otherRead, $otherWrite, $userId, $groupId, $projectId, $algInvocationId);
+
+  print $fh join("\t", @a) . "\n";
+}
+
+
+sub getConfig {
+  my ($self) = @_;
+
+  if (!$self->{config}) {
+    my $gusConfigFile = $self->getArg('gusconfigfile');
+     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
+   }
+
+  $self->{config};
+}
+
+sub writeConfigFile {
+  my ($self, $configFile, $sqlLdrFn) = @_;
+
+  open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
+
+  print CONFIG "LOAD DATA
+INFILE '$sqlLdrFn'
+APPEND
+INTO TABLE Rad.AnalysisResultImp
+FIELDS TERMINATED BY '\t'
+TRAILING NULLCOLS
+(subclass_view char, 
+analysis_id integer external,
+table_id integer external, 
+row_id integer external, 
+float1 decimal external, 
+modification_date date, 
+user_read integer external, 
+user_write integer external, 
+group_read integer external, 
+group_write integer external, 
+other_read integer external, 
+other_write integer external, 
+row_user_id integer external, 
+row_group_id integer external, 
+row_project_id integer external, 
+row_alg_invocation_id integer external, 
+analysis_result_id \"rad.analysisresultimp_sq.nextval\"
+)
+";
+
+close CONFIG;
 }
 
 1;
