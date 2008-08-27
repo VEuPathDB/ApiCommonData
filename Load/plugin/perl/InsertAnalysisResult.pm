@@ -272,7 +272,7 @@ sub processDataFile {
 
     my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile");
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
   }
 
 
@@ -333,8 +333,8 @@ sub getProtocol {
   }
 
   return $protocol;
-
 }
+
 
 #--------------------------------------------------------------------------------
 
@@ -382,7 +382,9 @@ sub writeSqlLdrInput {
   my $rowId = $hashRef->{row_id};
   my $floatValue = $hashRef->{float_value};
 
-  unless($floatValue) {
+  print Dumper $hashRef;
+
+  unless(defined($floatValue)) {
     $self->userError("Float value must be specified for DatatransformationResult when sqlldr is used");
   }
 
