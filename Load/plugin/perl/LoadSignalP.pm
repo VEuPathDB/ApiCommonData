@@ -429,6 +429,13 @@ sub handleFailure {
   }
 
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.AALocation',
+	  'DoTS.AAFeature',
+	 );
+}
 
 
 
