@@ -265,14 +265,14 @@ sub processDataFile {
     $configFile =~ s/.dat$/.ctrl/;
     $logFile =~ s/.dat$/.log/;
 
-    my $configFile = $self->writeConfigFile($configFile, $sqlLdrFn);
+    $self->writeConfigFile($configFile, $sqlLdrFn);
     my $login       = $self->getConfig->getDatabaseLogin();
     my $password    = $self->getConfig->getDatabasePassword();
     my $dbiDsn      = $self->getConfig->getDbiDsn();
 
     my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-    system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
+    system("sqlldr $login/$password\@$db control=$configFile log=$logFile" if($self->getArg('commit'));
   }
 
 
@@ -286,7 +286,7 @@ sub getNaFeatureId {
 
   my @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.${naFeatureView} where source_id = '$sourceId'" );
 
-  if(scalar @naFeatures != 1) {
+  if(scalar @naFeatures > 1) {
     $self->log("WARN:  Several NAFeatures are found for source_id $sourceId. Loading multiple rows.");
   }
   return \@naFeatures;
@@ -382,8 +382,6 @@ sub writeSqlLdrInput {
   my $rowId = $hashRef->{row_id};
   my $floatValue = $hashRef->{float_value};
 
-  print Dumper $hashRef;
-
   unless(defined($floatValue)) {
     $self->userError("Float value must be specified for DatatransformationResult when sqlldr is used");
   }
@@ -414,7 +412,7 @@ sub writeConfigFile {
 INFILE '$sqlLdrFn'
 APPEND
 INTO TABLE Rad.AnalysisResultImp
-FIELDS TERMINATED BY '\t'
+FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
 (subclass_view char, 
 analysis_id integer external,
