@@ -9,12 +9,12 @@
      -->
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- Gene alias -->  
+       <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="AnyInstances" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
+            <paramRef ref="recordParams.strains_row"/>
+            <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -28,8 +28,8 @@
         </sqlQuery>
 
         <sqlQuery name="ToxoGenes" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
+            <paramRef ref="recordParams.strains_row"/>
+            <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -54,8 +54,8 @@
         </sqlQuery>
 
         <sqlQuery name="AllInstances" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
+            <paramRef ref="recordParams.strains_row"/>
+            <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -80,9 +80,9 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="GT1Instances" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
+        <sqlQuery name="StrainInstances" isCacheable="false">
+            <paramRef ref="recordParams.strains_row"/>
+            <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -92,41 +92,7 @@
                     FROM $$gene_answer$$ ans, apidb.geneattributes ga
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = ans.source_id
-                    AND ga.organism = 'Toxoplasma gondii GT1'
-                ]]>
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="ME49Instances" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
-            <paramRef ref="recordParams.gene_answer"/>
-            <column name="source_id"/>
-            <column name="project_id"/>
-            <sql>
-                <![CDATA[
-                    SELECT ans.source_id, ans.project_id
-                    FROM $$gene_answer$$ ans, apidb.geneattributes ga
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = ans.source_id
-                    AND ga.organism = 'Toxoplasma gondii ME49'
-                ]]>
-            </sql>
-        </sqlQuery>
-
-        <sqlQuery name="VEGInstances" isCacheable="false">
-            <paramRef ref="recordParams.strain_summary"/>
-            <paramRef ref="recordParams.instance_gene"/>
-            <paramRef ref="recordParams.gene_answer"/>
-            <column name="source_id"/>
-            <column name="project_id"/>
-            <sql>
-                <![CDATA[
-                    SELECT ans.source_id, ans.project_id
-                    FROM $$gene_answer$$ ans, apidb.geneattributes ga
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = ans.source_id
-                    AND ga.organism = 'Toxoplasma gondii VEG'
+                    AND ga.organism = $$strains_column$$
                 ]]>
             </sql>
         </sqlQuery>
