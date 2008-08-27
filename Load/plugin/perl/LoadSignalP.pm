@@ -125,6 +125,7 @@ begin with a spooled fasta output of AA sequences from GUS with GUSIDs,
 selecting only the first 70 residues of the 5' end of the aa sequence.  
 Run Signal PP for BOTH HMM and NN models.  Select ONLY brief output 
 with NO GRAPHICS.
+example signalp output:
 NOTES
 
 my $purpose = <<PURPOSE;
@@ -150,9 +151,12 @@ assumed in this application are correct for your installation.  Make
 sure you select BOTH HMMr and NN when you run it!.  And don't write a 
 pre-formatting script, just modfy the field lengths for your own 
 installation!
-
 example: /usr/local/signalp3.0/signalp -t euk /home/input/signalp.fasta
+SignalP-NN euk predictions                                                      SignalP-HMM euk predictions
+name                Cmax  pos ?  Ymax  pos ?  Smax  pos ?  Smean ?  D     ?     name      !  Cmax  pos ?  Sprob ?
+TGME49_112420-1       0.366  20 Y  0.306  20 N  0.664   6 N  0.348 N  0.327 N   TGME49_112420-1  Q  0.057  20 N  0.061 N
 NOTES
+
 
 my $tablesAffected =   [
    ['DoTS.AAFeatureImp',
@@ -222,24 +226,40 @@ sub run{
 
   my $dataFile = $self->getArg('data_file') || die ('No Data File');
 
-  my $algId =  $self->getSetAlgorithm();
-  
+  my $hmmAlgId =  $self->getSetAlgorithm('HMM');
+
+  my $nnAlgId =  $self->getSetAlgorithm('NN');
+
   my ($lnsInDb, $lnsInsrtd, $lnsCach, $lnsPrc) = 0;
   open(DATAFILE, "<$dataFile");
   while (my $line_in = <DATAFILE>) {
     next if $line_in =~ m/^#/;
     my $recordHash = $self->parseData($line_in); 
-    my $gusObj =$self-> buildRecord($recordHash,$algId);
-    my $aaLoc = $self->makeLocation($recordHash);
-    $gusObj->addChild($aaLoc);
-    if ($gusObj->retrieveFromDB()) { 
+    my $hmmObj =$self-> buildRecord($recordHash,$hmmAlgId);
+    my $hmmAaLoc = $self->makeLocation($recordHash,'HMM');
+    $hmmObj->addChild($hmmAaLoc);
+    if ($hmmObj->retrieveFromDB()) { 
       print 'Record already in GUS. Insert not attempted';
       $lnsInDb++;
     }
     else {
-      eval { $gusObj->submit(); };
+      eval { $hmmObj->submit(); };
       if ($@) {
-	$self->handleFailure($gusObj, $@); 
+	$self->handleFailure($hmmObj, $@); 
+      }
+      $lnsInsrtd++;
+    }
+    my $nnObj =$self-> buildRecord($recordHash,$nnAlgId);
+    my $nnAaLoc = $self->makeLocation($recordHash,'NN');
+    $nnObj->addChild($nnAaLoc);
+    if ($nnObj->retrieveFromDB()) { 
+      print 'Record already in GUS. Insert not attempted';
+      $lnsInDb++;
+    }
+    else {
+      eval { $nnObj->submit(); };
+      if ($@) {
+	$self->handleFailure($nnObj, $@); 
       }
       $lnsInsrtd++;
     }
@@ -260,6 +280,8 @@ sub parseData {
 
    my $cMaxScore = $vals[1];
 
+   my $nnCleavageSite = $vals[5];
+
    my $cMaxConc = &translateC($vals[3]);
 
    my $yMaxScore = $vals[4];
@@ -276,7 +298,7 @@ sub parseData {
 
    my $signProbability = $vals[19];
 
-   my $cleavageSite = $vals[17];
+   my $hmmCleavageSite = $vals[17];
  
         if ($self->getArg('useSourceId')) {
            $aaFeatId = $self->retSeqIdFromSrcId($aaFeatId);
@@ -292,7 +314,8 @@ sub parseData {
                             means=>$meansScore,
                             meansC=>$meansConc,
                             sProb=>$signProbability,
-                            cleav=>$cleavageSite,
+                            hmmCleav=>$hmmCleavageSite,
+                            nnCleav=>$nnCleavageSite
                            };
 
   return $recordHash;
@@ -329,13 +352,20 @@ sub buildRecord {
 
 # Build and return a GUS AALocation object
 sub makeLocation {
-  my ($self, $recHash) = @_;
+  my ($self, $recHash,$model) = @_;
 
   my $gusObj = GUS::Model::DoTS::AALocation->new();
     $gusObj->setStartMax(1);
     $gusObj->setStartMin(1);
-    $gusObj->setEndMax($recHash->{'cleav'});
-    $gusObj->setEndMin($recHash->{'cleav'});
+
+  if ($model eq 'HMM') {
+    $gusObj->setEndMax($recHash->{'hmmCleav'});
+    $gusObj->setEndMin($recHash->{'hmmCleav'});
+  }
+  else {
+    $gusObj->setEndMax($recHash->{'nnCleav'});
+    $gusObj->setEndMin($recHash->{'nnCleav'});
+  }
 
   return $gusObj;
 }
@@ -343,11 +373,15 @@ sub makeLocation {
 
 # Build an algorithm entry for this data set. 
 sub getSetAlgorithm {
-  my ($self) = @_;
+  my ($self,$model) = @_;
 
   my $algName = $self->getArg('algName');
 
+  $algName .= $model;
+
   my $algDesc = $self->getArg('algDesc');
+
+  $algDesc .= "$model based";
 
   my $algEntry = GUS::Model::Core::Algorithm->new({'name' => $algName, 'description' => $algDesc});
 
