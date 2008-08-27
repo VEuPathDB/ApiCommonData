@@ -43,18 +43,18 @@
       <!-- =============================================================== -->
             
             <summaryTable name="strains"
-                          displayName="Strain View"
-                          rowParamRef="recordParams.strains"
+                          displayName="Strain Summary"
+                          rowParamRef="recordParams.strain_summary"
                           columnParamRef="recordParams.instance_gene">
                 <description>
                     <![CDATA[
-                    Strains View
+                      Summary views of results from specific strains.
                     ]]>
                 </description>
                 
-                <view rowTerm="All"
-                      columnTerm="Instances"
-                      summaryQueryRef="GeneSummaries.AllInstances"
+                <view columnTerm="any_instance"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.AnyInstances"
                       isDefault="true" isBooleanDefault="true">
                     <description>
                         <![CDATA[
@@ -62,6 +62,62 @@
                         ]]>
                     </description>      
                 </view>
+
+                <view columnTerm="toxo_genes"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.ToxoGenes"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display one representative instance for each gene
+                        ]]>
+                    </description>      
+                </view>
+
+                <view columnTerm="all_instances"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.AllInstances"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display one representative instance for each gene that has one instance from each strain
+                        ]]>
+                    </description>      
+                </view>
+
+                <view columnTerm="gt1_instances"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.GT1Instances"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 instances 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view columnTerm="me49_instances"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.ME49Instances"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 instances 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view columnTerm="veg_instances"
+                      rowTerm="Instances"
+                      summaryQueryRef="GeneSummaries.VEGInstances"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG instances 
+                        ]]>
+                    </description>      
+                </view>
+
             </summaryTable>
 
       <!-- =============================================================== -->
