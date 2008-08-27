@@ -33,7 +33,8 @@ WHERE pairs.gene = gf.source_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
-                      'Pfalciparum workshop annotations reviewed and changed')
+                      'Pfalciparum workshop annotations reviewed and changed',
+                      'Old annotaion for ME49')
       ]]>
     </sql>
     <sql>
@@ -228,11 +229,13 @@ ON apidb.PdbSimilarity&1 (source_id, score DESC)
       <![CDATA[
 create table apidb.FeatureLocation&1 NOLOGGING as
 select case
-         when db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
-                          'TigrScan', 'TwinScan predictions',
-                          'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                          'P. falciparum Evigan Gene Models',
-                          'Pfalciparum workshop annotations reviewed and changed')
+         when nf.subclass_view = 'GeneFeature'
+              and db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+                              'TigrScan', 'TwinScan predictions',
+                              'TwinScanEt predictions', -- not 'tRNAscan-SE',
+                              'P. falciparum Evigan Gene Models',
+                              'Pfalciparum workshop annotations reviewed and changed',
+                              'Old annotaion for ME49')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -259,7 +262,8 @@ select -- virtual feature locations mapped through SequencePiece
                           'TigrScan', 'TwinScan predictions',
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',
                           'P. falciparum Evigan Gene Models',
-                          'Pfalciparum workshop annotations reviewed and changed')
+                          'Pfalciparum workshop annotations reviewed and changed',
+                          'Old annotaion for ME49')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -849,12 +853,12 @@ FROM (  -- work around sometime Oracle bug ORA-00942
       <![CDATA[
 CREATE TABLE apidb.GeneGoAttributes NOLOGGING AS
 SELECT DISTINCT gene.source_id,
-       annotated_go_component.go_terms AS annotated_go_component,
-       annotated_go_function.go_terms AS annotated_go_function,
-       annotated_go_process.go_terms AS annotated_go_process,
-       predicted_go_component.go_terms AS predicted_go_component,
-       predicted_go_function.go_terms AS predicted_go_function,
-       predicted_go_process.go_terms AS predicted_go_process
+       substr(annotated_go_component.go_terms, 1, 300) AS annotated_go_component,
+       substr(annotated_go_function.go_terms, 1, 300) AS annotated_go_function,
+       substr(annotated_go_process.go_terms, 1, 300) AS annotated_go_process,
+       substr(predicted_go_component.go_terms, 1, 300) AS predicted_go_component,
+       substr(predicted_go_function.go_terms, 1, 300) AS predicted_go_function,
+       substr(predicted_go_process.go_terms, 1, 300) AS predicted_go_process
 FROM (SELECT DISTINCT gene AS source_id FROM apidb.GeneId) gene,
      (SELECT * FROM apidb.GoTermList
       WHERE source = 'annotated' AND ontology = 'cellular_component')
@@ -1183,7 +1187,7 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
              NVL(transmembrane.tm_domains, 0) AS tm_count,
              ec.ec_numbers,
              sigp.scores as signalp_scores,
-             sigp.pep as signalp_peptide
+             substr(sigp.pep, 1, 200) as signalp_peptide
       FROM  dots.GeneFeature gf, dots.Transcript t,
             dots.TranslatedAaFeature taf,
             dots.TranslatedAaSequence tas,
@@ -1385,7 +1389,8 @@ WHERE gf.source_id is not null
        OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01'))
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Old annotaion for ME49'))
   -- skip new plasmo annotation
   AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
                       'Pfalciparum workshop annotations reviewed and changed',
