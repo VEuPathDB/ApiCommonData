@@ -40,13 +40,13 @@
                     (SELECT source_id, project_id
                       FROM $$gene_answer$$
                       WHERE $$gene_answer.condition$$) c,
-                    (SELECT  MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$ ans, apidb.geneattributes ga
+                      FROM $$gene_answer$$, apidb.geneattributes ga
                       WHERE $$gene_answer.condition$$
-                      AND ga.source_id = ans.source_id
+                      AND ga.source_id = $$gene_answer$$.source_id
                       GROUP BY ga.gene_id) f
                 WHERE c.source_id = f.source_id
                 ]]>
@@ -67,13 +67,13 @@
                     (SELECT source_id, project_id
                       FROM $$gene_answer$$
                       WHERE $$gene_answer.condition$$) c,
-                    (SELECT  MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$ ans, apidb.geneattributes ga
+                      FROM $$gene_answer$$, apidb.geneattributes ga
                       WHERE $$gene_answer.condition$$
-                      AND ga.source_id = ans.source_id
+                      AND ga.source_id = $$gene_answer$$.source_id
                       GROUP BY ga.gene_id having count(*) >= 3) f
                 WHERE c.source_id = f.source_id
                 ]]>
@@ -88,10 +88,10 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                    SELECT ans.source_id, ans.project_id
-                    FROM $$gene_answer$$ ans, apidb.geneattributes ga
+                    SELECT $$gene_answer$$.source_id, $$gene_answer$$.project_id
+                    FROM $$gene_answer$$, apidb.geneattributes ga
                     WHERE $$gene_answer.condition$$
-                    AND ga.source_id = ans.source_id
+                    AND ga.source_id = $$gene_answer$$.source_id
                     AND ga.organism = $$strains_column$$
                 ]]>
             </sql>

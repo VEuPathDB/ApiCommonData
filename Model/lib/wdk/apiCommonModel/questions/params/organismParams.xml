@@ -317,7 +317,7 @@
     <sqlQuery name="withGenes" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-
+<!--
       <sql includeProjects="ToxoDB">
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
@@ -328,7 +328,8 @@
            ORDER BY organism asc
         ]]>
       </sql>
-      <sql excludeProjects="ToxoDB">
+-->
+      <sql>
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -365,6 +366,10 @@
                 SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                 UNION
+                SELECT 'Toxoplasma gondii' AS name, 6 AS rank FROM dual
+                 UNION
+                SELECT 'Neospora caninum' AS name, 7 AS rank FROM dual
                 ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
