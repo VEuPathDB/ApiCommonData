@@ -271,6 +271,7 @@
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.continent"/>
         <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
