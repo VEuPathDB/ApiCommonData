@@ -3126,6 +3126,8 @@ sub orthomclEdges {
 
   my $propertySet = $mgr->{propertySet};
 
+  my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
   my @properties = ();
   my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
   my $login = $gusconfig->{props}->{databaseLogin};
@@ -3214,6 +3216,49 @@ sub runMcl{
   $mgr->runCmd($mclCommand);
 
   $mgr->endStep($signal);
+}
+
+sub mclOutToGroupsFile {
+  my ($mgr) = @_;
+
+  my $signal = 'mclOutToGroupsFile';
+
+  return if $mgr->startStep("Make groups file from mcl output", $signal);
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
+  my $login = $gusconfig->{props}->{databaseLogin};
+  my $password = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $configString =
+"dbConnectString=$dsn
+dbLogin=$login
+dbPassword=$password
+";
+
+  my $configFile = "orthomclEdges.config";
+  open(CONFIG, ">$configFile") || die "Can't open '$configFile' for writing";
+  print CONFIG $configString;
+  close(CONFIG);
+
+  my $mclFile = "$mgr->{dataDir}/mcl/mcl.out";
+  my $tmpFile = "$mgr->{dataDir}/mcl/tmp.out";
+  my $cmd = "internalIdsToExternalIds $configFile < $mclFile > $tmpFile 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  my $outFile = "$mgr->{dataDir}/mcl/orthomclGroups.txt";
+  my $cmd = "mclOutput2groupsFile OG21_ 10000 < $tmpFile > $outFile 2>> $logfile";
+
+  $mgr->endStep($signal);
+
 }
 
 sub  loadAveragedProfiles {
