@@ -3115,9 +3115,8 @@ sub loadBlastWithSqlldr {
 
 }
 
-
 sub orthomclEdges {
-  my ($mgr, $cleanup,$startAfter) = @_;
+  my ($mgr, $cleanup, $startAfter) = @_;
 
   my $signal = 'findOrthoMclEdges';
 
@@ -3127,9 +3126,32 @@ sub orthomclEdges {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $config = $propertySet->getProp('orthoMclEdgesConfig');
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
+  my $login = $gusconfig->{props}->{databaseLogin};
+  my $password = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
 
-  my $cmd = "orthomclEdges $config cleanup=$cleanup 2>> $logfile";
+my $configString =
+"dbConnectString=$dsn
+dbLogin=$login
+dbPassword=$password
+dbVendor=oracle
+similarSequencesTable=apidb.SimilarSequences
+orthologTable=apidb.Ortholog
+inParalogTable=apidb.InParalog
+coOrthologTable=apidb.CoOrtholog
+interTaxonMatchView=apidb.InterTaxonMatch
+percentMatchCutoff=50
+evalueExponentCutoff=-5
+";
+
+  my $configFile = "orthomclEdges.config";
+  open(CONFIG, ">$configFile") || die "Can't open '$configFile' for writing";
+  print CONFIG $configString;
+  close(CONFIG);
+
+  my $cmd = "orthomclEdges $configFile cleanup=$cleanup 2>> $logfile";
 
   $cmd .= " startAfter=$startAfter" if $startAfter;
 
@@ -3138,7 +3160,6 @@ sub orthomclEdges {
   $mgr->endStep($signal);
 
 }
-
 
 sub makeOrthoAbcFile {
   my ($mgr) = @_;
