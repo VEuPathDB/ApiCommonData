@@ -574,22 +574,12 @@ CREATE INDEX apidb.GCent_loc_ix&1
     <internalDependency name="apidb.FeatureLocation"/>
     <externalDependency name="rad.DataTransformationResult"/>
     <externalDependency name="dots.SageTagFeature"/>
+    <intermediateTable name="apidb.SageTagGeneFivePrime"/>
+    <intermediateTable name="apidb.SageTagGeneThreePrime"/>
     <sql>
       <![CDATA[
-create table apidb.SageTagGene&1 NOLOGGING as
-select t.direction, t.gene_source_id, t.tag_source_id, t.distance,
-       t.analysis_id, t.occurrence, t.gene_feature_id, t.tag_feature_id,
-       t.tag_count, t.antisense,
-       case
-         when t.antisense = 0 then t.tag_count
-         else 0
-       end as sense_count,
-       case
-         when t.antisense = 0 then 0
-         else t.tag_count
-       end as antisense_count
-from
-  (select '5' as direction, g.feature_source_id AS gene_source_id,
+create table apidb.SageTagGeneFivePrime NOLOGGING as
+   select '5' as direction, g.feature_source_id AS gene_source_id,
           s.feature_source_id as tag_source_id,
              min (case
                     when g.is_reversed = 1 and s.end_max - g.end_max < 0
@@ -632,7 +622,11 @@ from
                case when s.is_reversed = g.is_reversed then 0
                     else 1
                end
-      UNION ALL
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create table apidb.SageTagGeneThreePrime NOLOGGING as
       select '3' as direction, g.feature_source_id AS gene_source_id,
              s.feature_source_id as tag_source_id,
              min (case
@@ -675,7 +669,27 @@ from
                      g.na_feature_id, s.na_feature_id,
                      case when s.is_reversed = g.is_reversed then 0
                           else 1
-                     end) t
+                     end
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create table apidb.SageTagGene&1 NOLOGGING as
+select t.direction, t.gene_source_id, t.tag_source_id, t.distance,
+       t.analysis_id, t.occurrence, t.gene_feature_id, t.tag_feature_id,
+       t.tag_count, t.antisense,
+       case
+         when t.antisense = 0 then t.tag_count
+         else 0
+       end as sense_count,
+       case
+         when t.antisense = 0 then 0
+         else t.tag_count
+       end as antisense_count
+from
+  (select * from apidb.SageTagGeneFivePrime
+   union all
+   select * from apidb.SageTagGeneThreePrime) t
       ]]>
     </sql>
   </tuningTable>
