@@ -87,14 +87,22 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
+        <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+            queryRef="continentVQ.withIsolates"
+            prompt="Continent Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="ApiDB"/>
+        </flatVocabParam> 
+
         <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
             prompt="Strain Name"
             multiPick="true"
             quote="false">
-						<help>
-						  Strain name for isolate barcodes and 3k Chip data
-						</help>
+                  <help>
+                          Strain name for isolate barcodes and 3k Chip data
+                        </help>
             <useTermOnly value="true" includeProjects="ApiDB,PlasmoDB"/>
        </flatVocabParam>
 
@@ -104,7 +112,7 @@
                  multiPick="true"
                  quote="true">
         <help>
-		 There are two isolate types in PlasmoDB - Barcode and 3K Chip 
+         There are two isolate types in PlasmoDB - Barcode and 3K Chip 
         </help>
         <enumList>
           <enumValue default="true">
@@ -124,8 +132,8 @@
             prompt="Isolate assay type"
             multiPick="true"
             quote="true"> 
-	    <help>
-		 There are two isolate types in PlasmoDB - Barcode and 3K Chip 
+        <help>
+         There are two isolate types in PlasmoDB - Barcode and 3K Chip 
             </help>
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
@@ -136,9 +144,9 @@
             prompt="Submitter"
             multiPick="true"
             quote="false"> 
-						<help>
-						  Search isolates by submitter name.
-						</help>
+                        <help>
+                          Search isolates by submitter name.
+                        </help>
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
 
@@ -320,6 +328,29 @@
 
   </querySet>
 
+  <querySet name="continentVQ">
+
+     <sqlQuery name="withIsolates" includeProjects="CryptoDB, PlasmoDB">
+        <column name="internal"/>
+        <column name="term"/>
+        <sql>
+        <![CDATA[
+        SELECT distinct src.continent AS term,
+               src.continent AS internal
+        FROM   ApiDB.Continents src
+        WHERE  src.continent is not null
+        ORDER BY src.continent 
+        ]]> 
+     </sql> 
+  </sqlQuery>
+
+  <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"> 
+      <wsColumn name="internal" width="200" wsName="internal"/> 
+      <wsColumn name="term" width="200" wsName="term"/> 
+  </processQuery> 
+  </querySet>
+
+
   <querySet name="typeVQ">
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
@@ -373,7 +404,7 @@
       SELECT distinct src.collected_by AS term,
              src.collected_by AS internal
       FROM   DoTS.IsolateSource src
-			WHERE  src.collected_by is not null
+            WHERE  src.collected_by is not null
       ORDER BY src.collected_by
       ]]>
       </sql>

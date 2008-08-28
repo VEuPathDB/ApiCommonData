@@ -271,6 +271,7 @@
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -278,11 +279,18 @@
         <sql>
           <![CDATA[
             SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-						       src.data_type
+                               src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  replace(src.country, ',', ';') IN ($$country$$)
-						  AND  src.data_type in ($$type$$)
-            ORDER BY src.source_id
+                    AND  src.data_type in ($$type$$)
+            UNION
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+                   src.data_type
+            FROM   ApiDB.IsolateAttributes src,
+                   ApiDB.Continents cnt
+            WHERE  cnt.continent IN ($$continent$$) 
+              AND  src.data_type in ($$type$$) 
+              AND  src.country = cnt.country
             ]]>
          </sql>
     </sqlQuery>
@@ -306,10 +314,10 @@
         <sql>
           <![CDATA[
             SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-						       src.data_type
+                               src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  src.collected_by IN ($$submitter$$)
-						  AND  src.data_type in ($$type$$)
+			AND  src.data_type in ($$type$$)
             ORDER BY src.source_id
             ]]>
          </sql>
