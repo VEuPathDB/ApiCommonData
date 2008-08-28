@@ -384,7 +384,7 @@ sub getPieceObj {
 
   my $source_id = $virtual->{$pieceNumber}->{'pieceId'};
 
-  my $NASeq =  GUS::Model::DoTS::NASequence->new({'source_id' => $source_id,
+  my $NASeq =  GUS::Model::DoTS::ExternalNASequence->new({'source_id' => $source_id,
 							    'external_database_release_id' => $pieceDbRlsId});
 
   unless ($NASeq->retrieveFromDB()) {
