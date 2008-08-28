@@ -510,7 +510,7 @@ sub validateFileFormat {
     if ($arr[1] !~ /\d+/ || $arr[1] <= 0 || $arr[2] !~ /\d+/  || $arr[2] <= 0  || $arr[3] !~ /\d+/  || $arr[3] <= 0 ){ die "Check agp file format, columns 2,3 and 4 must be positive number";}
     if ($arr[4] =~ /N/ && ($arr[5] !~ /\d+/ || $arr[5] <= 0)) { die "Check agp file format, column 6 must be a positive number when a line represents a gap";}
     if ($arr[4] !~ /[NU]/ && ($arr[6] !~ /\d+/ || $arr[6] <= 0 || $arr[7] !~ /\d+/ || $arr[7] <= 0 )) { die "Check agp file format, columns 7 and 8 must be a positive numbers when a line represents a sequence piece";}
-    if ($arr[4] !~ /[NUWPOG]/) {die "Check file format, the fifth column must be N,U,W,P,O,G, controlled designations of component types";}
+    if ($arr[4] !~ /[NUWPOGD]/) {die "Check file format, the fifth column must be N,U,W,P,O,G, controlled designations of component types";}
     if ($arr[4] !~ /[NU]/ && ($arr[8] !~ /[+-0na]/)){die "Check agp file format lines with sequence pieces, not gaps, must have a 9th column that is +,-,0, or na for orientation/n";}
     if ($arr[4] !~ /[NU]/ && ($arr[1] > $arr[2] || $arr[6] > $arr[7] || ($arr[2] - $arr[1] != $arr[7] - $arr[6]))) { die "Check data,col 3 - col 2 should equal to col 8 - col 7";}
   }
