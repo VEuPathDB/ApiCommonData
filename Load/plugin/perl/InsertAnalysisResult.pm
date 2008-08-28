@@ -365,6 +365,10 @@ sub writeSqlLdrInput {
   my $analysisId = $analysis->getId();
   my $modDate = $analysis->getModificationDate();
 
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
+  $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+
   my $database = $self->getDb();
 
   my $projectId = $database->getDefaultProjectId();
