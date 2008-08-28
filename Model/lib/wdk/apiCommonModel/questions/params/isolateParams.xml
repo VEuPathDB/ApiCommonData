@@ -87,6 +87,14 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
+        <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+            queryRef="continentVQ.withIsolates"
+            prompt="Continent Name"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="ApiDB"/>
+        </flatVocabParam>
+
         <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
             prompt="Strain Name"
@@ -168,10 +176,10 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
   </querySet>
 
@@ -199,10 +207,10 @@
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="100" wsName="internal"/>
       <wsColumn name="term" width="100" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
     </querySet>
 
@@ -224,10 +232,10 @@
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
     </querySet>
 
@@ -246,10 +254,10 @@
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="100" wsName="internal"/>
       <wsColumn name="term" width="100" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
      </querySet>
 
@@ -275,10 +283,10 @@
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
   </querySet>
 
@@ -313,10 +321,33 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
+
+  </querySet>
+
+  <querySet name="continentVQ">
+
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB, PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.continent AS term,
+             src.continent AS internal
+      FROM   ApiDB.Continents src
+      WHERE  src.continent is not null
+      ORDER BY src.continent
+      ]]>
+      </sql>
+    </sqlQuery>
+
+    <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="200" wsName="internal"/>
+      <wsColumn name="term" width="200" wsName="term"/>
+    </wsQuery>
 
   </querySet>
 
@@ -334,15 +365,15 @@
       </sql>
     </sqlQuery>
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
   </querySet>
 
   <querySet name="strainVQ">
-    <sqlQuery name="withIsolates" includeProjects="PlasmoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -357,10 +388,10 @@
       </sql>
     </sqlQuery>
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
   </querySet>
 
@@ -379,10 +410,10 @@
       </sql>
     </sqlQuery>
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <wsQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
-    </processQuery>
+    </wsQuery>
 
   </querySet>
 
