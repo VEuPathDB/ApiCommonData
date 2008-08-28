@@ -235,7 +235,7 @@ sub run{
   while (my $line_in = <DATAFILE>) {
     next if $line_in =~ m/^#/;
     my $recordHash = $self->parseData($line_in); 
-    my $hmmObj =$self-> buildRecord($recordHash,$hmmAlgId);
+    my $hmmObj =$self-> buildRecord($recordHash,$hmmAlgId, 'hmm');
     my $hmmAaLoc = $self->makeLocation($recordHash,'HMM');
     $hmmObj->addChild($hmmAaLoc);
     if ($hmmObj->retrieveFromDB()) { 
@@ -249,7 +249,7 @@ sub run{
       }
       $lnsInsrtd++;
     }
-    my $nnObj =$self-> buildRecord($recordHash,$nnAlgId);
+    my $nnObj =$self-> buildRecord($recordHash,$nnAlgId, 'nn');
     my $nnAaLoc = $self->makeLocation($recordHash,'NN');
     $nnObj->addChild($nnAaLoc);
     if ($nnObj->retrieveFromDB()) { 
@@ -324,9 +324,10 @@ sub parseData {
 
 # Build and return a GUS SignalPeptideFeature
 sub buildRecord {
-  my ($self, $recHash,$algId) = @_;
+  my ($self, $recHash,$algId,$model) = @_;
 
   my $algName = $self->getArg('algName');
+  $algName .= $model;
 
   my $gusObj = GUS::Model::DoTS::SignalPeptideFeature->new({'aa_sequence_id' => $recHash->{'featId'}});
 
