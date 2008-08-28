@@ -120,6 +120,281 @@
 
             </summaryTable>
 
+            <summaryTable name="strain_details"
+                          displayName="Strain Details"
+                          rowParamRef="recordParams.strain_details_row"
+                          columnParamRef="recordParams.strain_details_column">
+                <description>
+                    <![CDATA[
+                      Detailed views comparing results from specific strains.
+                    ]]>
+                </description>
+
+                <view rowTerm="all"
+                      columnTerm="minus_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsAllMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ALL genes with GT1 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="all"
+                      columnTerm="intersect_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsAllIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes intersected with ALL genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="all"
+                      columnTerm="minus_me49"
+                      summaryQueryRef="GeneSummaries.DetailsAllMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ALL genes with ME49 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="all"
+                      columnTerm="intersect_me49"
+                      summaryQueryRef="GeneSummaries.DetailsAllIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes intersected with ALL genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="all"
+                      columnTerm="minus_veg"
+                      summaryQueryRef="GeneSummaries.DetailsAllMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ALL genes with VEG genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="all"
+                      columnTerm="intersect_veg"
+                      summaryQueryRef="GeneSummaries.DetailsAllIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes intersected with ALL genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="gt1"
+                      columnTerm="minus_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes with GT1 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="gt1"
+                      columnTerm="intersect_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes intersected with GT1 genes
+                        ]]>
+                    </description>      
+                </view>
+                <view rowTerm="gt1"
+                      columnTerm="minus_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes with ME49 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="gt1"
+                      columnTerm="intersect_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes intersected with GT1 genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="gt1"
+                      columnTerm="minus_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes with VEG genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="gt1"
+                      columnTerm="intersect_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes intersected with GT1 genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="minus_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes with GT1 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="intersect_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes intersected with ME49 genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="minus_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes with ME49 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="intersect_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes intersected with ME49 genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="minus_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes with VEG genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="me49"
+                      columnTerm="intersect_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes intersected with ME49 genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="minus_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes with GT1 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="intersect_gt1"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes intersected with VEG genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="minus_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes with ME49 genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="intersect_me49"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes intersected with VEG genes
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="minus_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainMinus"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes with VEG genes removed 
+                        ]]>
+                    </description>      
+                </view>
+
+                <view rowTerm="veg"
+                      columnTerm="intersect_veg"
+                      summaryQueryRef="GeneSummaries.DetailsStrainIntersect"
+                      isDefault="false" isBooleanDefault="false">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes intersected with VEG genes
+                        ]]>
+                    </description>      
+                </view>
+
+            </summaryTable>
+
       <!-- =============================================================== -->
       <!--   Reporters -->  
       <!-- =============================================================== -->

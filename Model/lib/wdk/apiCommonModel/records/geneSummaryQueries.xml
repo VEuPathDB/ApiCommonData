@@ -97,6 +97,143 @@
             </sql>
         </sqlQuery>
 
+        <sqlQuery name="DetailsStrainIntersect" isCacheable="false">
+            <paramRef ref="recordParams.strain_details_row"/>
+            <paramRef ref="recordParams.strain_details_column"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                  SELECT $$gene_answer$$.source_id, $$gene_answer$$.project_id
+                  FROM $$gene_answer$$, (
+                    SELECT gb.source_id, gb.project_id, ga.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_row$$
+                    AND gb.gene_id = ga.gene_id
+                      INTERSECT
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_column$$
+                    AND gb.gene_id = ga.gene_id ) c
+                  WHERE $$gene_answer.condition$$
+                  AND c.source_id = $$gene_answer$$.source_id
+                  AND c.organism = $$strain_details_row$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="DetailsStrainMinus" isCacheable="false">
+            <paramRef ref="recordParams.strain_details_row"/>
+            <paramRef ref="recordParams.strain_details_column"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                  SELECT c.source_id, c.project_id
+                  FROM $$gene_answer$$, (
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_row$$
+                    AND gb.gene_id = ga.gene_id
+                     MINUS
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_column$$
+                    AND gb.gene_id = ga.gene_id ) c
+                  WHERE $$gene_answer.condition$$
+                  AND c.source_id = $$gene_answer$$.source_id
+                  AND c.organism = $$strain_details_row$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="DetailsAllMinus" isCacheable="false">
+            <paramRef ref="recordParams.strain_details_row"/>
+            <paramRef ref="recordParams.strain_details_column"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                 SELECT d.*
+                 FROM   
+                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
+                                                'Toxoplasma gondii GT1', 2,
+                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                      FROM $$gene_answer$$, apidb.geneattributes ga
+                      WHERE $$gene_answer.condition$$
+                      AND ga.source_id = $$gene_answer$$.source_id
+                      GROUP BY ga.gene_id) f,
+                  (SELECT c.source_id, c.project_id
+                  FROM $$gene_answer$$, (
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND gb.gene_id = ga.gene_id
+                     MINUS
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_column$$
+                    AND gb.gene_id = ga.gene_id ) c
+                  WHERE $$gene_answer.condition$$
+                  AND c.source_id = $$gene_answer$$.source_id) d
+                WHERE d.source_id = f.source_id
+                ]]>
+            </sql>
+        </sqlQuery>
+        <sqlQuery name="DetailsAllIntersect" isCacheable="false">
+            <paramRef ref="recordParams.strain_details_row"/>
+            <paramRef ref="recordParams.strain_details_column"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                 SELECT d.*
+                 FROM   
+                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
+                                                'Toxoplasma gondii GT1', 2,
+                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                      FROM $$gene_answer$$, apidb.geneattributes ga
+                      WHERE $$gene_answer.condition$$
+                      AND ga.source_id = $$gene_answer$$.source_id
+                      GROUP BY ga.gene_id) f,
+                  (SELECT c.source_id, c.project_id
+                  FROM $$gene_answer$$, (
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND gb.gene_id = ga.gene_id
+                     INTERSECT
+                    SELECT gb.source_id, gb.project_id, gb.organism
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND ga.organism = $$strain_details_column$$
+                    AND gb.gene_id = ga.gene_id ) c
+                  WHERE $$gene_answer.condition$$
+                  AND c.source_id = $$gene_answer$$.source_id) d
+                WHERE d.source_id = f.source_id
+                ]]>
+            </sql>
+        </sqlQuery>
+
     </querySet>
 
 </wdkModel>
