@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- mviewCleanup.sql
+-- mviewcleanup.sql
 --
 -- partially redundant with createApidbTuning.sql
 -- see that script for an explaination of our system of materialized views
@@ -11,7 +11,8 @@ prompt Run these statements to test synonyms
 select 'select count(*) as ' || synonym_name || ' from ' || owner || '.' || synonym_name || ';'
        as "synonym tests"
 from all_synonyms
-where owner='APIDB';
+where owner='APIDB'
+order by synonym_name;
 
 prompt These mviews appear superfluous (their names end in four digits but no synonym points at them).
 prompt Consider dropping them if all synonyms are OK.
@@ -25,7 +26,8 @@ WHERE mview_name IN (SELECT mview_name
                      FROM all_synonyms)
   AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       LIKE '%fournumbers'
-  AND owner != 'SYS';
+  AND owner != 'SYS'
+ORDER BY mview_name;
 
 prompt These tables appear superfluous (their names end in four digits but no synonym points at them).
 prompt Consider dropping them if all synonyms are OK.
@@ -43,6 +45,7 @@ WHERE table_name IN (SELECT table_name
   AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       LIKE '%fournumbers'
   AND table_name NOT LIKE 'QUERY_RESULT_%'
-  AND owner != 'SYS';
+  AND owner != 'SYS'
+ORDER BY table_name;
 
 exit
