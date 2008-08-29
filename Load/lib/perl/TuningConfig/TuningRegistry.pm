@@ -54,4 +54,12 @@ sub getNotifyEmails {
     return($self->{notify_emails});
 }
 
+sub getInstanceName {
+    my ($self) = @_;
+
+    getInfoFromRegistry() if !defined $self->{instance_name};
+
+    return($self->{instance_name});
+}
+
 1;

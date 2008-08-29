@@ -82,9 +82,9 @@ sub addLogBanner {
   }
 
 sub mailLog {
-  my ($recipientList) = @_;
+  my ($recipientList, $instance_name) = @_;
 
-  my $subject = "tuningManager: ";
+  my $subject = "tuningManager on $instance_name: ";
 
   if (!getUpdateNeededFlag()) {
     $subject .= 'up-to-date';

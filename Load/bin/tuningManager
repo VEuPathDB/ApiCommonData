@@ -220,7 +220,8 @@ ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
 $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail);
+my $instance_name = $tuningRegistry->getInstanceName() || $instance;
+ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
 ###############################################################################
 

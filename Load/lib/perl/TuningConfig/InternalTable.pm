@@ -170,32 +170,29 @@ sub update {
   my $updateError;
 
   foreach my $sql (@{$self->{sqls}}) {
-#exit if $sql =~ /GeneAttributes/;
-#next unless $sql =~ /GeneAttributes/;
+
+    last if $updateError;
 
     my $sqlCopy = $sql;
     $sqlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
-
-    ApiCommonData::Load::TuningConfig::Log::addLog("running sql of length " . length($sqlCopy) . " to build $self->{name}:\n$sqlCopy")
+    ApiCommonData::Load::TuningConfig::Log::addLog("running sql of length "
+						   . length($sqlCopy)
+						   . " to build $self->{name}:\n$sqlCopy")
 	if $self->{debug};
 
-#   my $stmt = $dbh->prepare($sqlCopy);
-#   my $sqlReturn = $stmt->execute();
-
-#   in some cases, execute() does its job but doesn't return.  Still not clear exactly why
-#   print STDERR "\nabout to call do on $self->{name}\n\n";
     my $sqlReturn = $dbh->do($sqlCopy);
-#   print STDERR "\njust did do on $self->{name}\n\n";
+
     ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"$dbh->errstr\"")
 	if $self->{debug};
     if (!defined $sqlReturn) {
       $updateError = 1;
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     }
-#    $stmt->finish();
   }
 
   foreach my $perl (@{$self->{perls}}) {
+    last if $updateError;
+
     my $perlCopy = $perl;
     $perlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
 
@@ -213,7 +210,7 @@ sub update {
 
   $self->dropIntermediateTables($dbh, 'warn on nonexistence');
 
-  $self->publish($suffix, $dbh);
+  $self->publish($suffix, $dbh) or return "broken";
 
   ApiCommonData::Load::TuningConfig::Log::addLog("    " . (time - $startTime) .
 						 " seconds to rebuild tuningTable " .
@@ -364,10 +361,13 @@ SQL
   my $sql = <<SQL;
     create or replace synonym $self->{name} for $self->{name}$suffix
 SQL
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-  $stmt->finish();
+  my $rtn = $dbh->do($sql);
+
+  if (!defined $rtn) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  }
+
+  return $rtn
 }
 
 1;
