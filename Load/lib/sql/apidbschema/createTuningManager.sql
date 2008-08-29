@@ -12,7 +12,7 @@ create sequence apidb.TuningManager_sq
 
 create table apidb.TuningMgrExternalDependency (
    name         varchar2(65) primary key,
-   max_mod_date date not null,
+   max_mod_date date,
    timestamp    date not null,
    row_count    number not null);
 
