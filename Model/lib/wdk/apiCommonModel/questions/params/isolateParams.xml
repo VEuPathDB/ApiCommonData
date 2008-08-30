@@ -82,6 +82,7 @@
         <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="countryVQ.withIsolates"
             prompt="Country Name"
+            default="--None--"
             multiPick="true"
             quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
@@ -90,6 +91,7 @@
         <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="continentVQ.withIsolates"
             prompt="Continent Name"
+            default="--None--"
             multiPick="true"
             quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
@@ -316,7 +318,10 @@
              src.country AS internal
       FROM   DoTS.IsolateSource src
       WHERE  src.country is not null
-      ORDER BY src.country
+      UNION
+      SELECT '--None--' AS term,
+             '0' AS internal
+      FROM   dual
       ]]>
       </sql>
     </sqlQuery>
@@ -335,11 +340,14 @@
         <column name="term"/>
         <sql>
         <![CDATA[
-        SELECT distinct src.continent AS term,
+        SELECT distinct initcap(src.continent) AS term,
                src.continent AS internal
         FROM   ApiDB.Continents src
         WHERE  src.continent is not null
-        ORDER BY src.continent 
+        UNION
+        SELECT '--None--' AS term,
+               '0' AS internal
+        FROM   dual
         ]]> 
      </sql> 
   </sqlQuery>
