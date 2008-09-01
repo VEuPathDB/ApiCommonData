@@ -289,6 +289,40 @@
         </sqlQuery>
 
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Strains -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="Strains" isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="strain"/>
+            <column name="product"/>
+            <column name="exon_count"/>
+            <column name="protein_length"/>
+            <column name="signalp_scores"/>
+            <column name="tm_count"/>
+            <column name="proteomics"/>
+            <sql>
+            <![CDATA[
+               select gb.SOURCE_ID, replace(gb.organism,'Toxoplasma gondii ','') as strain, 
+                 gb.project_id, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,
+                 gb.SIGNALP_SCORES,gb.TM_COUNT,
+                 CASE WHEN min(ms.aa_sequence_id) is null THEN 'No' ELSE 'Yes' END as proteomics
+               from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,dots.TRANSCRIPT t, 
+                 dots.TRANSLATEDAAFEATURE taaf, apidb.MASSSPECSUMMARY ms
+               where ga.source_id = $$source_id$$ 
+               and gb.GENE_ID = ga.GENE_ID
+               and gb.na_feature_id = t.parent_id(+)
+               and t.na_feature_id = taaf.na_feature_id(+)
+               and taaf.aa_sequence_id = ms.aa_sequence_id(+)
+               group by gb.SOURCE_ID, gb.project_id, gb.organism, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,gb.SIGNALP_SCORES,gb.TM_COUNT
+               order by gb.organism
+             ]]>
+            </sql>
+        </sqlQuery>
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

@@ -449,7 +449,7 @@
           <!-- Track New Annotation -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <attributeQueryRef ref="GeneAttributes.TrackNewAnnotation">
+        <attributeQueryRef ref="GeneAttributes.TrackNewAnnotation" includeProjects="PlasmoDB">
             <columnAttribute displayName="Annotation Status" name="annotation_status" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="Has New GO" name="new_go" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="Has New EC" name="new_ec" internal="true" inReportMaker="false"/>
@@ -1202,6 +1202,33 @@
                  </url>
             </linkAttribute>
             <columnAttribute name="activity"/>
+          </table>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Strains table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="Strains" includeProjects="ToxoDB"
+                 displayName="Strains summary"
+                 queryRef="GeneTables.Strains">
+            <columnAttribute name="source_id" internal="true"/>
+            <linkAttribute name="gene" displayName="Gene">
+                 <displayText>
+                    <![CDATA[
+                    $$source_id$$
+                    ]]>
+                 </displayText>
+                 <url>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute displayName="Strain" name="strain"/>
+            <columnAttribute displayName="Product" name="product"/>
+            <columnAttribute displayName="Protein Length" name="protein_length" align="center"/>
+            <columnAttribute displayName="# Exons" name="exon_count" align="center"/>
+            <columnAttribute displayName="# TM" name="tm_count" align="center"/>
+            <columnAttribute displayName="Signal Peptide" name="signalp_scores"/>
+            <columnAttribute displayName="Proteomics?" name="proteomics"/>
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
