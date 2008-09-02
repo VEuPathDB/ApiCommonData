@@ -106,6 +106,7 @@
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
+            null as chromosome,
             enas.a_count, 
             enas.c_count, 
             enas.g_count, 
@@ -114,6 +115,8 @@
             enas.length, 
             '<i>' || SUBSTR(tn.name, 1, 1) || '.&nbsp;' || 
                  SUBSTR(tn.name, INSTR(tn.name, ' ', 1, 1) +1) || '</i>' as organism,
+            '<i>' || SUBSTR(tn.name, 1, 1) || '.&nbsp;' || 
+                 SUBSTR(tn.name, INSTR(tn.name, ' ', 1, 1) +1) || '</i>' as formatted_organism,
             DECODE(
               substr(
                 tn.name, 
@@ -121,7 +124,7 @@
                 instr(ltrim(tn.name)||' ', ' ', 1, 2) - instr(tn.name, ' ', 1, 1) -1
               ),
               'parvum', 'cparvum', 'hominis') as cyc_db,
-                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
+                    trim(to_char(length,'999,999,999')) as formatted_length,
             ed.name as externalDbname,
             edr.version AS externalDbVersion
             FROM dots.nasequence enas, 
