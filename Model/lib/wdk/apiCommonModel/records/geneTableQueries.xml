@@ -721,7 +721,7 @@
 
             <sql includeProjects="ToxoDB">
             <![CDATA[
-      SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
+      SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id,
                    dr.primary_identifier AS pathway_id,
                    decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
                    dr.remark as activity
@@ -758,7 +758,7 @@
             <column name="product"/>
             <sql>
             <![CDATA[
-            SELECT DISTINCT gf2.ortho_source_id, tn.name as species, gf2.product, 
+            SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
                    gf1.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
@@ -934,7 +934,7 @@
               WHERE 
                    seq.aa_sequence_id=sequencetable.aa_sequence_id 
                   AND spec.aa_sequence_id=sequencetable.aa_sequence_id
-              GROUP BY sequencetable.sequence, sequencetable.name, seq.sum_sequence_count, spec.sum_spectrum_count
+              GROUP BY sequencetable.sequence, sequencetable.name, seq.sum_sequence_count, spec.sum_spectrum_count, sequencetable.source_id
             ]]>
             </sql>
         </sqlQuery>
