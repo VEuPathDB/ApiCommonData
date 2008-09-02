@@ -23,12 +23,25 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <recordClass name="GeneRecordClass" 
-           type="Gene"
-           aliasQueryRef="GeneAttributes.GeneAlias">
+           type="Gene">
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
-                                 displayName="Gene">
+                                 displayName="Gene"
+                                 aliasQueryRef="GeneAttributes.GeneAlias"
+                                 includeProjects="PlasmoDB">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+            
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="Gene" 
+                                 excludeProjects="PlasmoDB">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
