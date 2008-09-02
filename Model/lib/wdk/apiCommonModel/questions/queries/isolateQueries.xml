@@ -23,12 +23,15 @@
                        '@PROJECT_ID@' as project_id
                 FROM   DoTS.ExternalNASequence etn,
                        SRes.ExternalDatabaseRelease edr,
-                       SRes.ExternalDatabase edb
-                WHERE  edr.external_database_id = edb.external_database_id
+                       SRes.ExternalDatabase edb, 
+                       @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+                 WHERE ds.dataset_id = $$isolate_id$$
+                   AND lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                                                       '*', '%'), '[[:space:]]', '')
+                   AND edr.external_database_id = edb.external_database_id
                    AND edr.external_database_release_id = etn.external_database_release_id
                    AND edb.name = 'Isolates Data'
                    AND edr.version = '2007-12-12'
-                   AND etn.source_id LIKE REPLACE($$isolate_id$$,'*','%')
             ]]>
         </sql>
         <sql includeProjects="PlasmoDB">
