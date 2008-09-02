@@ -425,7 +425,7 @@
             FROM dots.GeneFeature gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  apidb.TRACKNEWANNOTATION tna
-            WHERE tna.new_source_id = gf.source_id
+            WHERE tna.new_source_id(+) = gf.source_id
               AND t.parent_id = gf.na_feature_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = tas.aa_sequence_id
@@ -502,7 +502,7 @@
             <![CDATA[
               select gf.source_id, s.sequence as workshop_transcript_sequence,'@project_id@' as project_id
               from dots.genefeature gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
-              where tna.new_source_id = gf.source_id
+              where tna.new_source_id(+) = gf.source_id
                 and t.parent_id = gf.na_feature_id
                 and s.na_sequence_id = t.na_sequence_id
             ]]>
@@ -564,7 +564,7 @@
               FROM dots.genefeature gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf,
                    apidb.TRACKNEWANNOTATION tna
-              WHERE tna.new_source_id = gf.source_id
+              WHERE tna.new_source_id(+) = gf.source_id
                 AND t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
                 AND t.na_feature_id = tf.na_feature_id
@@ -664,9 +664,15 @@
             <column name="graph_archetypal"/>
             <sql>
             <![CDATA[
+/*
                SELECT egs.source_id AS source_id, '@project_id@' as project_id,
                       NVL(MAX(graph_starvation), 0) AS graph_starvation,
                       NVL(MAX(graph_archetypal), 0) AS graph_archetypal
+               FROM apidb.ToxoExpressionGraphs egs
+*/
+               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
+                      0 AS graph_starvation,
+                      0 AS graph_archetypal
                FROM apidb.ToxoExpressionGraphs egs
             ]]>
             </sql>
