@@ -38,88 +38,115 @@
                 </text>                
             </primaryKeyAttribute>
 
+
       <!-- =============================================================== -->
-      <!--   Summary Tables -->  
+      <!--   Filters -->  
       <!-- =============================================================== -->
-            
-            <summaryTable name="strains"
-                          displayName="Strain Summary"
-                          rowParamRef="recordParams.strains_row"
-                          columnParamRef="recordParams.strains_column">
+
+            <answerFilterLayout name="strains"
+                                displayName="Strain Summary">
                 <description>
                     <![CDATA[
                       Summary views of results from specific strains.
                     ]]>
                 </description>
                 
-                <view columnTerm="any_instance"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.AnyInstances"
-                      isDefault="true" isBooleanDefault="true">
+                <instanceRef ref="any_instance"   layout="1-1" />
+                <instanceRef ref="any_genes"      layout="1-2" />
+                <instanceRef ref="all_instances"  layout="1-3" />
+                <instanceRef ref="gt1_instances"  layout="1-1" />
+                <instanceRef ref="me49_instances" layout="1-1" />
+                <instanceRef ref="veg_instances"  layout="1-1" />
+
+            </answerFilterLayout>
+                                
+
+      <!-- =============================================================== -->
+      <!--   Filters -->  
+      <!-- =============================================================== -->
+            
+            <answerFilter queryRef="GeneSummaries.AnyInstances"
+                          includeProjects="ToxoDB">
+                
+                <instance name="any_instance" displayName="Any Instance"
+                          isDefault="true" isBooleanDefault="true">
                     <description>
                         <![CDATA[
                             Display all instances from all strains
                         ]]>
-                    </description>      
-                </view>
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">any_instance</paramValue>
+                </instance>
+                
+            </answerFilter>
 
-                <view columnTerm="toxo_genes"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.ToxoGenes"
-                      isDefault="false" isBooleanDefault="false">
+            <answerFilter queryRef="GeneSummaries.ToxoGenes"
+                          includeProjects="ToxoDB">
+                
+                <instance name="any_genes" displayName="Any Genes">
                     <description>
                         <![CDATA[
                             Display one representative instance for each gene
                         ]]>
-                    </description>      
-                </view>
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">toxo_genes</paramValue>
+                </instance>
+                
+            </answerFilter>
 
-                <view columnTerm="all_instances"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.AllInstances"
-                      isDefault="false" isBooleanDefault="false">
+            <answerFilter queryRef="GeneSummaries.AllInstances"
+                          includeProjects="ToxoDB">
+                
+                <instance name="all_instances" displayName="All Instances">
                     <description>
                         <![CDATA[
                             Display one representative instance for each gene that has one instance from each strain
                         ]]>
-                    </description>      
-                </view>
-
-                <view columnTerm="gt1_instances"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.StrainInstances"
-                      isDefault="false" isBooleanDefault="false">
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">all_instances</paramValue>
+                </instance>
+                
+            </answerFilter>
+          
+            <answerFilter queryRef="GeneSummaries.StrainInstances"
+                          includeProjects="ToxoDB">
+                
+                <instance name="gt1_instances" displayName="GT1 Instances">
                     <description>
                         <![CDATA[
                             Display GT1 instances 
                         ]]>
-                    </description>      
-                </view>
-
-                <view columnTerm="me49_instances"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.StrainInstances"
-                      isDefault="false" isBooleanDefault="false">
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">gt1_instances</paramValue>
+                </instance>
+                
+                <instance name="me49_instances" displayName="ME49 Instances">
                     <description>
                         <![CDATA[
                             Display ME49 instances 
                         ]]>
-                    </description>      
-                </view>
-
-                <view columnTerm="veg_instances"
-                      rowTerm="Instances"
-                      summaryQueryRef="GeneSummaries.StrainInstances"
-                      isDefault="false" isBooleanDefault="false">
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">me49_instances</paramValue>
+                </instance>
+                
+                <instance name="veg_instances" displayName="VEG Instances">
                     <description>
                         <![CDATA[
                             Display VEG instances 
                         ]]>
-                    </description>      
-                </view>
-
-            </summaryTable>
-
+                    </description>   
+                    <paramValue name="strains_row">Instances</paramValue>
+                    <paramValue name="strains_column">veg_instances</paramValue>
+                </instance>
+                
+            </answerFilter>
+  
+<!--
             <summaryTable name="strain_details"
                           displayName="Strain Details"
                           rowParamRef="recordParams.strain_details_row"
@@ -394,6 +421,8 @@
                 </view>
 
             </summaryTable>
+-->
+
 
       <!-- =============================================================== -->
       <!--   Reporters -->  
