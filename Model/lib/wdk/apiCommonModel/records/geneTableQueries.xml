@@ -536,8 +536,8 @@
             <column name="project_version"/>
             <sql>
             <![CDATA[
-              SELECT gf.source_id, '@project_id@' as project_id, 
-                     DISTINCT c.comment_id, c.stable_id,
+              SELECT DISTINCT gf.source_id, '@project_id@' as project_id, 
+                     c.comment_id, c.stable_id,
                      NVL(c.headline, '<i>none</i>') AS headline,
                      (u.first_name || ' ' || u.last_name) AS user_name,
                      u.organization,
@@ -616,7 +616,7 @@
                    || decode(ec_number_4, null, null,
                              chr(38) || 'field4='||ec_number_4)
                    as expasy_url, 
-                   gf.source_id, '@project_id@' as project_id, 
+                   gf.source_id, '@project_id@' as project_id
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
