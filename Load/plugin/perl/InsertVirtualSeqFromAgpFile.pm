@@ -38,6 +38,13 @@ stringArg({name => 'seqPieceExtDbName',
        isList => 0
       }),
 
+stringArg({name => 'sourceIdPrefix',
+       descr => 'Optional String to prepend to the source_id',
+       constraintFunc=> undef,
+       reqd  => 0,
+       isList => 0
+      }),
+
 stringArg({name => 'seqPieceExtDbRlsVer',
        descr => 'Version of external database for sequence piece',
        constraintFunc=> undef,
@@ -227,8 +234,8 @@ sub processFile {
     next if ($self->getArg('retart') && $done->{$arr[0]} == 1);
 
     if ($arr[0] ne $virAcc) {
-
-      $numVirInserted += $self->makeVirtualSequence(\%virtual,$virAcc);
+      $numVirInserted++;
+      $self->makeVirtualSequence(\%virtual, $virAcc, $numVirInserted);
 
       $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -251,7 +258,7 @@ sub processFile {
 
   }
 
- $numVirInserted += $self->makeVirtualSequence(\%virtual,$virAcc);
+ $numVirInserted += $self->makeVirtualSequence(\%virtual, $virAcc, $numVirInserted);
 
   $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -262,7 +269,10 @@ sub processFile {
 
 
 sub makeVirtualSequence {
-  my ($self,$virtual,$virAcc) = @_;
+  my ($self, $virtual, $virAcc, $chromosomeOrderNum) = @_;
+
+  my $sourceIdPrefix = $self->getArg('sourceIdPrefix');
+  my $sourceId = $sourceIdPrefix ? $sourceIdPrefix . $virAcc : $virAcc;
 
   my $dbh = $self->getDbHandle();
   $dbh->{'LongReadLen'} = 50_000_000;
@@ -271,12 +281,15 @@ sub makeVirtualSequence {
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
 
-  my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({ source_id => $virAcc,
-						       external_database_release_id => $virDbRlsId,
-						       sequence_version => 1,
-						       sequence_ontology_id => $SOTermId,
-						       taxon_id => $taxonId});
-
+  my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
+                                                           chromosome => $virAcc,
+                                                           chromosome_order_num => $chromosomeOrderNum,
+                                                           external_database_release_id => $virDbRlsId,
+                                                           sequence_version => 1,
+                                                           sequence_ontology_id => $SOTermId,
+                                                           taxon_id => $taxonId
+                                                          });
+  
   $virtualSeq->retrieveFromDB();
 
   my $sequence;
@@ -521,15 +534,18 @@ sub restart{
   my ($self, $restartIds) = @_;
   my %done;
 
+  my $sourceIdPrefix = $self->getArg('sourceIdPrefix');
+
   my $sql = "SELECT source_id FROM DoTS.VirtualSequence WHERE row_alg_invocation_id IN ($restartIds)";
 
   my $qh = $self->getQueryHandle();
   my $sth = $qh->prepareAndExecute($sql);
 
-    while(my ($id) = $sth->fetchrow_array()){
-	$done{$id}=1;
-    }
-    $sth->finish();
+  while(my ($id) = $sth->fetchrow_array()){
+    $id = $sourceIdPrefix . $id if($id);
+    $done{$id}=1;
+  }
+  $sth->finish();
 
   return \%done;
 }
