@@ -35,7 +35,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-        <sqlQuery name="TrackNewAnnotation" isCacheable="false">
+        <sqlQuery name="TrackNewAnnotation" isCacheable="false" includeProjects="PlasmoDB">
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
             <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
@@ -414,7 +414,7 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false">
+        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_protein_sequence"/>
@@ -494,7 +494,7 @@
 
 
         <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"
-                       displayName="RNA Sequence">
+                       displayName="RNA Sequence" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_transcript_sequence"/>
@@ -550,7 +550,7 @@
 
 
         <sqlQuery name="NewAnnotationCDS" isCacheable="false"
-                       displayName="New Annotation RNA Sequence">
+                       displayName="New Annotation RNA Sequence" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_cds"/>
