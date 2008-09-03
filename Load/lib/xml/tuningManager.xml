@@ -2330,6 +2330,47 @@ CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.ChIPFeature">
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.ChIPFeature&1 NOLOGGING AS
+SELECT f.na_feature_id   as na_feature_id,
+       f.na_sequence_id  as na_sequence_id,
+       f.source_id       as name,
+       r.float_value     as score,
+       l.start_min       as startm,
+       l.end_max         as end,
+       a.name            as analysis_name,
+       p.name            as protocol_name,
+       decode(p.name, 'ChIP_chip_Einstein', 'raw', 'called_peaks') as protocol_type,
+       CASE 
+          WHEN a.name like '%RH%' then 'RH'
+          WHEN a.name like '%TypeIII%' then 'TypeIII'
+          WHEN a.name like '%PLK%' then 'PLK'
+       ELSE 'unknown' 
+       END strain 
+FROM   RAD.DatatransformationResult r, 
+       RAD.Analysis a, 
+       RAD.Protocol p, 
+       Core.Tableinfo t, 
+       DoTS.ArrayelEmentFeature f, 
+       DoTS.NALocation l 
+WHERE  a.analysis_id = r.analysis_id 
+   AND p.protocol_id = a.protocol_id
+   AND t.table_id = r.table_id
+   AND r.row_id = f.na_feature_id
+   AND t.name = 'ArrayElementFeature
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (source_id);
+CREATE UNIQUE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id);
+CREATE UNIQUE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id);
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.SageTagAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.SageTagGene"/>
