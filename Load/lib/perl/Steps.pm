@@ -3107,7 +3107,7 @@ sub loadBlastWithSqlldr {
 
   my $oracleUserPswd = $propertySet->getProp('oracleUserPswd');
 
-  my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile";
+  my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile rows=10000";
 
   $mgr->runCmd($cmd);
 
