@@ -34,7 +34,7 @@ WHERE pairs.gene = gf.source_id
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
                       'Pfalciparum workshop annotations reviewed and changed',
-                      'Old annotaion for ME49')
+                      'Old annotation for ME49')
       ]]>
     </sql>
     <sql>
@@ -235,7 +235,7 @@ select case
                               'TwinScanEt predictions', -- not 'tRNAscan-SE',
                               'P. falciparum Evigan Gene Models',
                               'Pfalciparum workshop annotations reviewed and changed',
-                              'Old annotaion for ME49')
+                              'Old annotation for ME49')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -263,7 +263,7 @@ select -- virtual feature locations mapped through SequencePiece
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',
                           'P. falciparum Evigan Gene Models',
                           'Pfalciparum workshop annotations reviewed and changed',
-                          'Old annotaion for ME49')
+                          'Old annotation for ME49')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -1385,14 +1385,12 @@ WHERE gf.source_id is not null
   AND gf.na_feature_id = nssnps.parent_id(+)
   AND gf.na_feature_id = synsnps.parent_id(+)
   -- skip toxo predictions (except tRNAs)
-  AND (tn.name != 'Toxoplasma gondii'
-       OR ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+  -- skip new plasmo annotation
+  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Old annotaion for ME49'))
-  -- skip new plasmo annotation
-  AND ed.name NOT IN ('P. falciparum Evigan Gene Models',
+                      'Old annotation for ME49','P. falciparum Evigan Gene Models',
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01')
       ]]>
