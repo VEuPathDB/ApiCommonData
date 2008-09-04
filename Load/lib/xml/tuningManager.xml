@@ -2357,14 +2357,22 @@ WHERE  a.analysis_id = r.analysis_id
    AND p.protocol_id = a.protocol_id
    AND t.table_id = r.table_id
    AND r.row_id = f.na_feature_id
-   AND t.name = 'ArrayElementFeature
+   AND t.name = 'ArrayElementFeature'
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (source_id);
-CREATE UNIQUE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id);
-CREATE UNIQUE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id);
+CREATE UNIQUE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (source_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id)
       ]]>
     </sql>
   </tuningTable>
