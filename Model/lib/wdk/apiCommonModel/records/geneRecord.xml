@@ -34,7 +34,7 @@
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$source_id$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
@@ -113,11 +113,24 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
             
+            <answerFilter queryRef="GeneSummaries.BooleanExpansion"
+                          includeProjects="ToxoDB">
+                
+                <instance name="boolean_expansion" displayName="Expand"
+                       isBooleanExpansion="true"> 
+                    <description>
+                        <![CDATA[
+                            Display all instances from all genes
+                        ]]>
+                    </description>   
+                </instance>
+                
+            </answerFilter>
+
             <answerFilter queryRef="GeneSummaries.AnyInstances"
                           includeProjects="ToxoDB">
                 
-                <instance name="any_instance" displayName="Any Instance"
-                          isDefault="true" isBooleanDefault="true">
+                <instance name="any_instance" displayName="Any Instance">
                     <description>
                         <![CDATA[
                             Display all instances from all strains
@@ -132,7 +145,8 @@
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
                           includeProjects="ToxoDB">
                 
-                <instance name="any_genes" displayName="Any Genes">
+                <instance name="any_genes" displayName="Any Genes"
+                          isDefault="true">
                     <description>
                         <![CDATA[
                             Display one representative instance for each gene

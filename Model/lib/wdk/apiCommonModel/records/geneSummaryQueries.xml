@@ -27,6 +27,21 @@
             </sql>
         </sqlQuery>
 
+        <sqlQuery name="BooleanExpansion" isCacheable="false">
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT gb.source_id, gb.project_id
+                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE $$gene_answer.condition$$
+                    AND ga.source_id = $$gene_answer$$.source_id
+                    AND gb.gene_id = ga.gene_id
+                ]]>
+            </sql>
+        </sqlQuery>
+
         <sqlQuery name="ToxoGenes" isCacheable="false">
             <paramRef ref="recordParams.strains_row"/>
             <paramRef ref="recordParams.strains_column"/>
