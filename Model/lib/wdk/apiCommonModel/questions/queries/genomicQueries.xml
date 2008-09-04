@@ -24,7 +24,7 @@
         <column name="project_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
-            SELECT enas.source_id, '@PROJECT_ID@' as project_id
+            SELECT distinct enas.source_id, '@PROJECT_ID@' as project_id
             FROM dots.externalnasequence enas,
                  sres.sequenceontology so, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE  ds.dataset_id = $$sequenceId$$
