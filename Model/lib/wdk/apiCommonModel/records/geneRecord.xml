@@ -1377,6 +1377,31 @@
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Antobody table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="Antibody"
+                 displayName="Antibody Reagents"
+                 queryRef="GeneTables.Antibody"
+                 includeProjects="ToxoDB">
+            <columnAttribute name="remark" internal="true"/>
+            <columnAttribute name="bei_number" internal="true"/>
+            <linkAttribute name="bei_link" displayName="Reagent ID">
+                 <displayText>
+                    <![CDATA[
+                    $$bei_number$$
+                    ]]>
+                 </displayText>
+                 <url>
+                    <![CDATA[$$remark$$]]>
+                 </url>
+            </linkAttribute>
+            <columnAttribute name="reagent_type" displayName="Reagent Type"/>
+          </table>
+
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Protein linkouts table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
