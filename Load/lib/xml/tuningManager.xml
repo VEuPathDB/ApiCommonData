@@ -2336,8 +2336,8 @@ SELECT f.na_feature_id   as na_feature_id,
        f.na_sequence_id  as na_sequence_id,
        f.source_id       as name,
        r.float_value     as score,
-       l.start_min       as startm,
-       l.end_max         as end,
+       l.start_min       as start_min,
+       l.end_max         as end_max,
        a.name            as analysis_name,
        p.name            as protocol_name,
        decode(p.name, 'ChIP_chip_Einstein', 'raw', 'called_peaks') as protocol_type,
@@ -2352,7 +2352,7 @@ FROM   RAD.DatatransformationResult r,
        RAD.Protocol p, 
        Core.Tableinfo t, 
        DoTS.ArrayelEmentFeature f, 
-       DoTS.NALocation l 
+       ApiDB.FeatureLocation l 
 WHERE  a.analysis_id = r.analysis_id 
    AND p.protocol_id = a.protocol_id
    AND t.table_id = r.table_id
