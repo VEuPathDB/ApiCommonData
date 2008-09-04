@@ -2365,17 +2365,17 @@ WHERE  a.analysis_id = r.analysis_id
     </sql>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (source_id)
+CREATE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (name)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id)
+CREATE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id)
+CREATE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id)
       ]]>
     </sql>
   </tuningTable>
