@@ -1210,13 +1210,15 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
              GROUP BY aa_sequence_id) ec,
              (SELECT spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
               ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2) as scores,
-              dbms_lob.substr(s.sequence,aal.end_max,1) as pep
+               apidb.tab_to_string(CAST(COLLECT(decode(spf.algorithm_name,'SignalPhmm','HMM: ','NN: ') || dbms_lob.substr(s.sequence,aal.end_max,1)) AS apidb.varchartab), ', ') as pep
               FROM dots.signalpeptidefeature spf, dots.aalocation aal,dots.AASEQUENCE s
               WHERE spf.aa_sequence_id = s.aa_sequence_id 
               and  aal.aa_feature_id = spf.aa_feature_id
               and (spf.signal_probability >= .5
               or ((spf.means_score + spf.maxy_score) / 2) >= .5
-              or ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3)) sigp
+              or ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3)
+              group by spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
+              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2)) sigp
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_feature_id = taf.na_feature_id
         AND taf.aa_sequence_id = tas.aa_sequence_id
