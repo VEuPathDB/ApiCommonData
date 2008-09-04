@@ -1545,6 +1545,45 @@
             </sql>
         </sqlQuery>
 
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Antibody -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="Antibody" isCacheable="false" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="bei_number"/>
+            <column name="reagent_type"/>
+            <column name="remark"/>
+            <sql>
+            <![CDATA[
+                SELECT dbr.primary_identifier AS atcc_number,
+                       'Antibody' AS reagent_type,
+                       dbr.remark, 
+                       gf.source_id, '@PROJECT_ID@' as project_id
+                FROM dots.GeneFeature gf,
+                     dots.DbRefAAFeature df,
+                     dots.Transcript t,
+                     dots.TranslatedAAFeature taf,
+                     sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
+                     sres.ExternalDatabase ed
+                WHERE gf.source_id = $$source_id$$
+                  AND t.parent_id = gf.na_feature_id
+                  AND taf.na_feature_id = t.na_feature_id
+                  AND df.aa_feature_id = taf.aa_feature_id
+                  AND dbr.db_ref_id = df.db_ref_id
+                  AND ed.name = 'AntibodyDBxRefs'
+                  AND edr.external_database_id = ed.external_database_id
+                  AND dbr.external_database_release_id
+                      = edr.external_database_release_id
+                ORDER BY dbr.primary_identifier
+            ]]>
+            </sql>
+        </sqlQuery>
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- gene database links -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
