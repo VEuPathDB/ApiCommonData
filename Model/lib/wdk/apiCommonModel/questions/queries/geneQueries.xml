@@ -1292,7 +1292,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
-        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB">
             <![CDATA[
             SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -1306,7 +1306,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 
-<!--
         <sql includeProjects="CryptoDB,ToxoDB">
             <![CDATA[
             SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
@@ -1320,6 +1319,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 
+<!--
         <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
