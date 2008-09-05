@@ -2331,6 +2331,10 @@ CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&
   </tuningTable>
 
   <tuningTable name="apidb.ChIPFeature">
+    <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="RAD.DatatransformationResult"/>
+    <externalDependency name="RAD.Analysis"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ChIPFeature&1 NOLOGGING AS
@@ -2348,7 +2352,17 @@ SELECT f.na_feature_id   as na_feature_id,
           WHEN a.name like '%TypeIII%' then 'TypeIII'
           WHEN a.name like '%PLK%' then 'PLK'
        ELSE 'unknown' 
-       END strain 
+       END as strain,
+       CASE 
+          WHEN a.name like '%H3K9%' then 'H3K9'
+          WHEN a.name like '%H3K4%' then 'H3K4'
+       ELSE 'unknown' 
+       END as antibody,
+       CASE 
+          WHEN a.name like '%Rep1%' then '1'
+          WHEN a.name like '%Rep2%' then '2'
+       ELSE '0' 
+       END as rep 
 FROM   RAD.DatatransformationResult r, 
        RAD.Analysis a, 
        RAD.Protocol p, 
@@ -2376,6 +2390,51 @@ CREATE INDEX apidb.ChIPFeature_naFeatureId_idx&1 ON apidb.ChIPFeature&1 (na_feat
     <sql>
       <![CDATA[
 CREATE INDEX apidb.ChIPFeature_naSequenceId_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.chfe_str_anti_rep_idx&1 ON apidb.ChIPFeature&1 (strain,antibody,rep)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.ChIPchipGene">
+    <internalDependency name="apidb.FeatureLocation"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.ChipFeature"/>
+    <internalDependency name="apidb.SequenceAttributes"/>
+    <sql>
+      <![CDATA[
+         create table apidb.chipchipgene&1 NOLOGGING AS
+         SELECT distinct
+         ga.source_id as gene_source_id, 
+         cf.name as probe_id,cf.score,
+         cf.analysis_name,cf.strain,cf.antibody,cf.rep,
+         round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) as distance,
+         CASE WHEN fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min) > 0 THEN 
+              CASE WHEN ga.is_reversed = 0 THEN '-' ELSE '+' END ELSE 
+              CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
+         FROM apidb.chipfeature cf,
+            apidb.geneattributes ga,
+            apidb.featurelocation fl,
+            apidb.sequenceAttributes sa
+         WHERE cf.protocol_type = 'called_peaks'
+            AND cf.na_sequence_id = fl.na_sequence_id
+            AND fl.na_sequence_id = sa.na_sequence_id
+            AND sa.is_top_level = 1
+            and fl.na_feature_id = ga.na_feature_id
+            and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+       CREATE INDEX apidb.chpgene_str_anti_rep_idx&1 ON apidb.chipchipgene&1 (strain,antibody,rep)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+       CREATE INDEX apidb.chpgene_geneid_idx&1 ON apidb.chipchipgene&1 (gene_source_id)
       ]]>
     </sql>
   </tuningTable>
