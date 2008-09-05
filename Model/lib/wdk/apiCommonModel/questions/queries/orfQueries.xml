@@ -75,7 +75,8 @@
        </sql>
         <sql includeProjects="CryptoDB,ToxoDB"> 
             <![CDATA[
-	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,
+            vs.source_id || ': ' || trim(to_char(nal.start_min,'999,999,999')) || ' - ' || trim(to_char(nal.end_max,'999,999,999')) || decode(nal.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
