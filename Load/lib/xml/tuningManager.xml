@@ -2354,8 +2354,8 @@ SELECT f.na_feature_id   as na_feature_id,
        ELSE 'unknown' 
        END as strain,
        CASE 
-          WHEN a.name like '%H3K9%' then 'H3K9'
-          WHEN a.name like '%H3K4%' then 'H3K4'
+          WHEN a.name like '%H3K9%' then 'H3K9ac'
+          WHEN a.name like '%H3K4%' then 'H3K4me3'
        ELSE 'unknown' 
        END as antibody,
        CASE 
@@ -2417,12 +2417,10 @@ CREATE INDEX apidb.chfe_str_anti_rep_idx&1 ON apidb.ChIPFeature&1 (strain,antibo
               CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
          FROM apidb.chipfeature cf,
             apidb.geneattributes ga,
-            apidb.featurelocation fl,
-            apidb.sequenceAttributes sa
+            apidb.featurelocation fl
          WHERE cf.protocol_type = 'called_peaks'
             AND cf.na_sequence_id = fl.na_sequence_id
-            AND fl.na_sequence_id = sa.na_sequence_id
-            AND sa.is_top_level = 1
+            AND fl.is_top_level = 1
             and fl.na_feature_id = ga.na_feature_id
             and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000
       ]]>
