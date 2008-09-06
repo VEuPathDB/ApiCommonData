@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AnyInstances" isCacheable="false">
+        <sqlQuery name="AllResults" isCacheable="false">
             <paramRef ref="recordParams.strains_row"/>
             <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -43,8 +43,7 @@
         </sqlQuery>
 
         <sqlQuery name="ToxoGenes" isCacheable="false">
-            <paramRef ref="recordParams.strains_row"/>
-            <paramRef ref="recordParams.strains_column"/>
+            <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -62,15 +61,47 @@
                       FROM $$gene_answer$$, apidb.geneattributes ga
                       WHERE $$gene_answer.condition$$
                       AND ga.source_id = $$gene_answer$$.source_id
+                      AND ga.organism like $$organism$$
                       GROUP BY ga.gene_id) f
                 WHERE c.source_id = f.source_id
                 ]]>
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="AllInstances" isCacheable="false">
-            <paramRef ref="recordParams.strains_row"/>
-            <paramRef ref="recordParams.strains_column"/>
+        <sqlQuery name="NeosporaGenes" isCacheable="false">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT ga.source_id, ga.project_id
+                      FROM $$gene_answer$$, apidb.geneattributes ga
+                      WHERE $$gene_answer.condition$$
+                      AND ga.source_id = $$gene_answer$$.source_id
+                      AND ga.organism = $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="AllTgResults" isCacheable="false">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT ga.source_id, ga.project_id
+                      FROM $$gene_answer$$, apidb.geneattributes ga
+                      WHERE $$gene_answer.condition$$
+                      AND ga.source_id = $$gene_answer$$.source_id
+                      AND ga.organism like $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="OneToOneToOneTgGenes" isCacheable="false">
+            <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -89,15 +120,15 @@
                       FROM $$gene_answer$$, apidb.geneattributes ga
                       WHERE $$gene_answer.condition$$
                       AND ga.source_id = $$gene_answer$$.source_id
-                      GROUP BY ga.gene_id having count(*) >= 3) f
+                      AND ga.organism like 'Toxoplasma gondii%'
+                      GROUP BY ga.gene_id having count(*) = 3) f
                 WHERE c.source_id = f.source_id
                 ]]>
             </sql>
         </sqlQuery>
 
         <sqlQuery name="StrainInstances" isCacheable="false">
-            <paramRef ref="recordParams.strains_row"/>
-            <paramRef ref="recordParams.strains_column"/>
+            <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -107,14 +138,40 @@
                     FROM $$gene_answer$$, apidb.geneattributes ga
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strains_column$$
+                    AND ga.organism = $$strain_a$$
                 ]]>
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsStrainIntersect" isCacheable="false">
-            <paramRef ref="recordParams.strain_details_row"/>
-            <paramRef ref="recordParams.strain_details_column"/>
+        <sqlQuery name="TgStrainGenes" isCacheable="false">
+            <paramRef ref="recordParams.strain_a"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                 SELECT c.*
+                 FROM   
+                    (SELECT source_id, project_id
+                      FROM $$gene_answer$$
+                      WHERE $$gene_answer.condition$$) c,
+                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
+                                                'Toxoplasma gondii GT1', 2,
+                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                      FROM $$gene_answer$$, apidb.geneattributes ga
+                      WHERE $$gene_answer.condition$$
+                      AND ga.source_id = $$gene_answer$$.source_id
+                      AND ga.organism like $$strain_a$$
+                      GROUP BY ga.gene_id) f
+                WHERE c.source_id = f.source_id
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="DetailsTgStrainIntersect" isCacheable="false">
+            <paramRef ref="recordParams.strain_a"/>
+            <paramRef ref="recordParams.strain_b"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -126,25 +183,25 @@
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_row$$
+                    AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id
                       INTERSECT
                     SELECT gb.source_id, gb.project_id, gb.organism
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_column$$
+                    AND ga.organism = $$strain_b$$
                     AND gb.gene_id = ga.gene_id ) c
                   WHERE $$gene_answer.condition$$
                   AND c.source_id = $$gene_answer$$.source_id
-                  AND c.organism = $$strain_details_row$$
+                  AND c.organism = $$strain_a$$
                 ]]>
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsStrainMinus" isCacheable="false">
-            <paramRef ref="recordParams.strain_details_row"/>
-            <paramRef ref="recordParams.strain_details_column"/>
+        <sqlQuery name="DetailsTgStrainMinus" isCacheable="false">
+            <paramRef ref="recordParams.strain_a"/>
+            <paramRef ref="recordParams.strain_b"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -156,25 +213,24 @@
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_row$$
+                    AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id
                      MINUS
                     SELECT gb.source_id, gb.project_id, gb.organism
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_column$$
+                    AND ga.organism = $$strain_b$$
                     AND gb.gene_id = ga.gene_id ) c
                   WHERE $$gene_answer.condition$$
                   AND c.source_id = $$gene_answer$$.source_id
-                  AND c.organism = $$strain_details_row$$
+                  AND c.organism = $$strain_a$$
                 ]]>
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsAllMinus" isCacheable="false">
-            <paramRef ref="recordParams.strain_details_row"/>
-            <paramRef ref="recordParams.strain_details_column"/>
+        <sqlQuery name="DetailsTgAllMinus" isCacheable="false">
+            <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -202,7 +258,7 @@
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_column$$
+                    AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id ) c
                   WHERE $$gene_answer.condition$$
                   AND c.source_id = $$gene_answer$$.source_id) d
@@ -210,9 +266,8 @@
                 ]]>
             </sql>
         </sqlQuery>
-        <sqlQuery name="DetailsAllIntersect" isCacheable="false">
-            <paramRef ref="recordParams.strain_details_row"/>
-            <paramRef ref="recordParams.strain_details_column"/>
+        <sqlQuery name="DetailsTgAllIntersect" isCacheable="false">
+            <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -240,7 +295,7 @@
                     FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE $$gene_answer.condition$$
                     AND ga.source_id = $$gene_answer$$.source_id
-                    AND ga.organism = $$strain_details_column$$
+                    AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id ) c
                   WHERE $$gene_answer.condition$$
                   AND c.source_id = $$gene_answer$$.source_id) d

@@ -46,7 +46,7 @@
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$source_id$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
@@ -56,6 +56,7 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
 
+<!--
             <answerFilterLayout name="strains"
                                 displayName="Strain Summary">
                 <description>
@@ -107,6 +108,7 @@
                 <instanceRef ref="veg_min_veg"   layout="4-6" />
 
             </answerFilterLayout>
+-->
                                 
 
       <!-- =============================================================== -->
@@ -124,20 +126,17 @@
                         ]]>
                     </description>   
                 </instance>
-                
             </answerFilter>
 
-            <answerFilter queryRef="GeneSummaries.AnyInstances"
+            <answerFilter queryRef="GeneSummaries.AllResults"
                           includeProjects="ToxoDB">
                 
-                <instance name="any_instance" displayName="Any Instance" isDefault="true">
+                <instance name="all_results" displayName="All Results" isDefault="true">
                     <description>
                         <![CDATA[
                             Display all instances from all strains
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">any_instance</paramValue>
                 </instance>
                 
             </answerFilter>
@@ -145,29 +144,54 @@
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
                           includeProjects="ToxoDB">
                 
-                <instance name="any_genes" displayName="Any Genes">
+                <instance name="toxo_genes" displayName="Toxo Genes">
                     <description>
                         <![CDATA[
                             Display one representative instance for each gene
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">toxo_genes</paramValue>
+                    <paramValue name="organism">Tg</paramValue>
                 </instance>
                 
             </answerFilter>
 
-            <answerFilter queryRef="GeneSummaries.AllInstances"
+            <answerFilter queryRef="GeneSummaries.AllTgResults"
                           includeProjects="ToxoDB">
                 
-                <instance name="all_instances" displayName="All Instances">
+                <instance name="all_tg_results" displayName="Toxo Genes">
                     <description>
                         <![CDATA[
-                            Display one representative instance for each gene that has one instance from each strain
+                            Display one representative instance for each gene
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">all_instances</paramValue>
+                    <paramValue name="organism">Tg</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.NeosporaGenes"
+                          includeProjects="ToxoDB">
+                
+                <instance name="neospora_genes" displayName="Neospora Genes">
+                    <description>
+                        <![CDATA[
+                            Display one representative instance for each gene
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Nc</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.OneToOneToOneTgGenes"
+                          includeProjects="ToxoDB">
+                
+                <instance name="each_tg_instance" displayName="All Tg Instances">
+                    <description>
+                        <![CDATA[
+                            Display one representative instance for each Tg gene that has one instance from each strain
+                        ]]>
+                    </description>   
                 </instance>
                 
             </answerFilter>
@@ -181,8 +205,7 @@
                             Display GT1 instances 
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">gt1_instances</paramValue>
+                    <paramValue name="strain_a">gt1</paramValue>
                 </instance>
                 
                 <instance name="me49_instances" displayName="ME49 Instances">
@@ -191,8 +214,7 @@
                             Display ME49 instances 
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">me49_instances</paramValue>
+                    <paramValue name="strain_a">me49</paramValue>
                 </instance>
                 
                 <instance name="veg_instances" displayName="VEG Instances">
@@ -201,20 +223,48 @@
                             Display VEG instances 
                         ]]>
                     </description>   
-                    <paramValue name="strains_row">Instances</paramValue>
-                    <paramValue name="strains_column">veg_instances</paramValue>
+                    <paramValue name="strain_a">veg</paramValue>
                 </instance>
                 
             </answerFilter>
 
-            <!-- STRAIN COMPARISON -->
-  
-            <answerFilter queryRef="GeneSummaries.DetailsAllMinus"
+            <answerFilter queryRef="GeneSummaries.TgStrainGenes"
+                          includeProjects="ToxoDB">
+                
+                <instance name="gt1_genes" displayName="GT1 Genes">
+                    <description>
+                        <![CDATA[
+                            Display GT1 genes 
+                        ]]>
+                    </description>   
+                    <paramValue name="strain_a">gt1</paramValue>
+                </instance>
+                
+                <instance name="me49_genes" displayName="ME49 Genes">
+                    <description>
+                        <![CDATA[
+                            Display ME49 genes 
+                        ]]>
+                    </description>   
+                    <paramValue name="strain_a">me49</paramValue>
+                </instance>
+                
+                <instance name="veg_genes" displayName="VEG Genes">
+                    <description>
+                        <![CDATA[
+                            Display VEG genes 
+                        ]]>
+                    </description>   
+                    <paramValue name="strain_a">veg</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.DetailsTgAllMinus"
                           includeProjects="ToxoDB">
                 
                 <instance name="all_min_gt1" displayName="All Minus GT1">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">minus_gt1</paramValue>
+                      <paramValue name="strain_a">gt1</paramValue>
                     <description>
                         <![CDATA[
                             Display ALL genes with GT1 genes removed 
@@ -222,8 +272,7 @@
                     </description>      
                 </instance>
                 <instance name="all_min_me49" displayName="All Minus ME49">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">minus_me49</paramValue>
+                      <paramValue name="strain_a">me49</paramValue>
                     <description>
                         <![CDATA[
                             Display ALL genes with ME49 genes removed 
@@ -231,8 +280,7 @@
                     </description>      
                 </instance>
                 <instance name="all_min_veg" displayName="All Minus VEG">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">minus_veg</paramValue>
+                      <paramValue name="strain_a">veg</paramValue>
                     <description>
                         <![CDATA[
                             Display ALL genes with VEG genes removed 
@@ -240,61 +288,14 @@
                     </description>      
                 </instance>
 
-
             </answerFilter>
 
-            <answerFilter queryRef="GeneSummaries.DetailsAllIntersect"
+            <answerFilter queryRef="GeneSummaries.DetailsTgStrainMinus"
                           includeProjects="ToxoDB">
                 
-                <instance name="all_int_gt1" displayName="All Intersect GT1">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">intersect_gt1</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display GT1 genes intersected with ALL genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="all_int_me49" displayName="All Intersect ME49">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">intersect_me49</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display ME49 genes intersected with ALL genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="all_int_veg" displayName="All Intersect VEG">
-                      <paramValue name="strain_details_row">all</paramValue>
-                      <paramValue name="strain_details_column">intersect_veg</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display VEG genes intersected with ALL genes
-                        ]]>
-                    </description>      
-                </instance>
-
-            </answerFilter>
-
-            <answerFilter queryRef="GeneSummaries.DetailsStrainMinus"
-                          includeProjects="ToxoDB">
-                
-                <instance name="gt1_min_gt1" displayName="GT1 Minus GT1">
-                     <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">minus_gt1</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display GT1 genes with GT1 genes removed 
-                        ]]>
-                    </description>      
-                </instance>
                 <instance name="gt1_min_me49" displayName="GT1 Minus ME49">
-                      <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">minus_me49</paramValue>
+                      <paramValue name="strain_a">gt1</paramValue>
+                      <paramValue name="strain_b">me49</paramValue>
                     <description>
                         <![CDATA[
                             Display GT1 genes with ME49 genes removed 
@@ -302,8 +303,8 @@
                     </description>      
                 </instance>
                 <instance name="gt1_min_veg" displayName="GT1 Minus VEG">
-                      <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">minus_veg</paramValue>
+                      <paramValue name="strain_a">gt1</paramValue>
+                      <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
                             Display GT1 genes with VEG genes removed 
@@ -311,26 +312,17 @@
                     </description>      
                 </instance>
                 <instance name="me49_min_gt1" displayName="ME49 Minus GT1">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">minus_gt1</paramValue>
+                      <paramValue name="strain_a">me49</paramValue>
+                      <paramValue name="strain_b">gt1</paramValue>
                     <description>
                         <![CDATA[
                             Display ME49 genes with GT1 genes removed 
                         ]]>
                     </description>      
                 </instance>
-                <instance name="me49_min_me49" displayName="ME49 Minus ME49">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">minus_me49</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display ME49 genes with ME49 genes removed 
-                        ]]>
-                    </description>      
-                </instance>
                 <instance name="me49_min_veg" displayName="ME49 Minus VEG">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">minus_veg</paramValue>
+                      <paramValue name="strain_a">me49</paramValue>
+                      <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
                             Display ME49 genes with VEG genes removed 
@@ -338,8 +330,8 @@
                     </description>      
                 </instance>
                 <instance name="veg_min_gt1" displayName="VEG Minus GT1">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">minus_gt1</paramValue>
+                      <paramValue name="strain_a">veg</paramValue>
+                      <paramValue name="strain_b">gt1</paramValue>
                     <description>
                         <![CDATA[
                             Display VEG genes with GT1 genes removed 
@@ -347,43 +339,23 @@
                     </description>      
                 </instance>
                 <instance name="veg_min_me49" displayName="VEG Minus ME49">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">minus_me49</paramValue>
+                      <paramValue name="strain_a">veg</paramValue>
+                      <paramValue name="strain_b">me49</paramValue>
                     <description>
                         <![CDATA[
                             Display VEG genes with ME49 genes removed 
                         ]]>
                     </description>      
                 </instance>
-                <instance name="veg_min_veg" displayName="VEG Minus VEG">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">minus_veg</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display VEG genes with VEG genes removed 
-                        ]]>
-                    </description>      
-                </instance>
-
 
             </answerFilter>
 
-            <answerFilter queryRef="GeneSummaries.DetailsStrainIntersect"
+            <answerFilter queryRef="GeneSummaries.DetailsTgStrainIntersect"
                           includeProjects="ToxoDB">
                 
-                <instance name="gt1_int_gt1" displayName="GT1 Intersect GT1">
-                      <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">intersect_gt1</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display GT1 genes intersected with GT1 genes
-                        ]]>
-                    </description>      
-                </instance>
-
                 <instance name="gt1_int_me49" displayName="GT1 Intersect ME49">
-                      <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">intersect_me49</paramValue>
+                      <paramValue name="strain_a">gt1</paramValue>
+                      <paramValue name="strain_b">me49</paramValue>
                     <description>
                         <![CDATA[
                             Display ME49 genes intersected with GT1 genes
@@ -393,8 +365,8 @@
 
 
                 <instance name="gt1_int_veg" displayName="GT1 Intersect VEG">
-                      <paramValue name="strain_details_row">gt1</paramValue>
-                      <paramValue name="strain_details_column">intersect_veg</paramValue>
+                      <paramValue name="strain_a">gt1</paramValue>
+                      <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
                             Display VEG genes intersected with GT1 genes
@@ -403,67 +375,12 @@
                 </instance>
 
 
-                <instance name="me49_int_gt1" displayName="ME49 Intersect GT1">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">intersect_gt1</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display GT1 genes intersected with ME49 genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="me49_int_me49" displayName="ME49 Intersect ME49">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">intersect_me49</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display ME49 genes intersected with ME49 genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
                 <instance name="me49_int_veg" displayName="ME49 Intersect VEG">
-                      <paramValue name="strain_details_row">me49</paramValue>
-                      <paramValue name="strain_details_column">intersect_veg</paramValue>
+                      <paramValue name="strain_a">me49</paramValue>
+                      <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
                             Display VEG genes intersected with ME49 genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="veg_int_gt1" displayName="VEG Intersect GT1">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">intersect_gt1</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display GT1 genes intersected with VEG genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="veg_int_me49" displayName="VEG Intersect ME49">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">intersect_me49</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display ME49 genes intersected with VEG genes
-                        ]]>
-                    </description>      
-                </instance>
-
-
-                <instance name="veg_int_veg" displayName="VEG Intersect VEG">
-                      <paramValue name="strain_details_row">veg</paramValue>
-                      <paramValue name="strain_details_column">intersect_veg</paramValue>
-                    <description>
-                        <![CDATA[
-                            Display VEG genes intersected with VEG genes
                         ]]>
                     </description>      
                 </instance>
