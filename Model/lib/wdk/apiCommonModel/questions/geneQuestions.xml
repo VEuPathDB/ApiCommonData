@@ -1698,6 +1698,37 @@ Find genes that are predicted to encode a signal peptide.
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- ChIP chip -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesByChIPchip"
+         includeProjects="ToxoDB"
+         category="Transcript Expression"
+         displayName="ChIP chip"
+         queryRef="GeneId.GenesByChIPchip"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList
+         summary="organism,location_text,product,chip_distance,chip_total_reps,chip_antibodies"
+         sorting="chip_total_reps desc, chip_distance desc"
+        /> 
+        <summary>
+           <![CDATA[
+            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP chip peaks
+           ]]>
+        </summary>
+        <description>
+           <![CDATA[
+            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP chip peaks.  Two different antibodies were used identifying different chromatin marks which indicate active transcription.  This query allows you to identify genes that are within a selected distance (maximum of 3000 bp) from the 5' end of a gene.
+          ]]>
+        </description>
+        <dynamicAttributes>
+             <columnAttribute name="chip_total_reps" displayName="Total Replicates" align="center"/>
+             <columnAttribute name="chip_antibodies" displayName="Antibodies" />
+             <columnAttribute name="chip_distance" displayName="Distance From Gene End" align="center"/>
+         </dynamicAttributes>
+    </question>
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- SAGETags-->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

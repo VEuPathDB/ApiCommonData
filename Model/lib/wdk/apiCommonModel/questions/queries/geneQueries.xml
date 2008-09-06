@@ -57,6 +57,43 @@
            ]]>
        </sql>
     </sqlQuery>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- ChIP chip chromatin marks -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByChIPchip" includeProjects="ToxoDB"
+              isCacheable="true">
+        <paramRef ref="geneParams.chip_strain"/>
+        <paramRef ref="geneParams.chip_antibodies"/>
+        <paramRef ref="geneParams.chip_reps"/>
+        <paramRef ref="geneParams.chip_antibody_count"/>
+        <paramRef ref="geneParams.chip_distance"/>
+        <paramRef ref="geneParams.chip_direction"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="chip_distance"/>
+        <column name="chip_total_reps"/>
+        <column name="chip_antibodies"/>
+       <sql>
+             <![CDATA[
+            select inner.gene_source_id as source_id, '@PROJECT_ID@' as project_id,
+              min(inner.distance) as chip_distance,
+              sum(inner.num_reps) as chip_total_reps,
+              apidb.tab_to_string(CAST(COLLECT(distinct(inner.antibody)) AS apidb.varchartab),', ') as chip_antibodies
+            from (
+              select gene_source_id,antibody,count(*) as num_reps,min(distance) as distance
+              from apidb.CHIPCHIPGENE 
+              where antibody in ($$chip_antibodies$$) 
+              and distance <= $$chip_distance$$ 
+              and direction in ($$chip_direction$$) 
+              and strain = $$chip_strain$$
+              group by gene_source_id,antibody) inner
+            where inner.num_reps >= $$chip_reps$$
+            group by inner.gene_source_id
+            having count(*) >= $$chip_antibody_count$$
+           ]]>
+       </sql>
+    </sqlQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Locus Tag  -->
