@@ -903,7 +903,7 @@
           <!-- Gene Location table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Genbank" includeProjects="GiardiaDB,ApiDB"
+          <table name="Genbank" includeProjects="ToxoDB,GiardiaDB,ApiDB"
                  displayName="Gene Location"
                  queryRef="GeneTables.Genbank">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -922,7 +922,12 @@
                     View
                     ]]>
                  </displayText>
-                   <url includeProjects="GiardiaDB,ApiDB">
+                   <url includeProjects="ToxoDB">
+                    <![CDATA[
+                      /cgi-bin/gbrowse/toxodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
+                        ]]>
+                   </url>
+                   <url includeProjects="GiardiaDB">
                     <![CDATA[
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
                         ]]>
@@ -937,6 +942,53 @@
           </table>
 
 
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- toxo version4 genes table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="ToxoVer4Genes" includeProjects="ToxoDB"
+                 displayName="Release 4 Genes"
+                 queryRef="GeneTables.ToxoVer4Genes">
+            <columnAttribute displayName= "Gene ID" name="old_source_id" internal="false"/>
+            <columnAttribute displayName= "Sequence ID" name="sequence_id" internal="false" align="center"/>
+            <textAttribute inReportMaker="true" name="location" displayName="Location">
+                  <text>
+                    <![CDATA[
+                      $$start_min$$ - $$end_max$$ ($$strand$$)
+                    ]]>
+                  </text>
+            </textAttribute>
+            <linkAttribute displayName="ToxoDB 4.3" name="toxo44_link" inReportMaker="false" internal="false" >
+                 <displayText>
+                    <![CDATA[
+                     ToxoDB 4.3
+                    ]]>
+                 </displayText>
+                   <url>
+                    <![CDATA[
+                       http://toxodb.org/toxo/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$old_source_id$$&project_id=ToxoDB
+                        ]]>
+                   </url>
+            </linkAttribute>
+            <linkAttribute displayName="Ancillary Genome Browser" name="view_link" inReportMaker="false" internal="false" align="center" >
+                 <displayText>
+                    <![CDATA[
+                     Browser
+                    ]]>
+                 </displayText>
+                   <url>
+                    <![CDATA[
+                      http://ancillary.toxodb.org/cgi-bin/gbrowse/ancillary/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Contigs;label=Gene;label=BLASTX;h_feat=$$old_source_id$$
+                        ]]>
+                   </url>
+            </linkAttribute>
+
+            <columnAttribute displayName= "start" name="start_min" internal="true"/>
+            <columnAttribute displayName= "end" name="end_max" internal="true"/>
+            <columnAttribute displayName= "strand" name="strand" internal="true"/>
+            <columnAttribute displayName= "context_start" name="context_start" internal="true"/>
+            <columnAttribute displayName= "context_end" name="context_end" internal="true"/>
+          </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Sage Tags table -->  
@@ -1220,7 +1272,7 @@
             <columnAttribute displayName="Protein Length" name="protein_length" align="center"/>
             <columnAttribute displayName="# Exons" name="exon_count" align="center"/>
             <columnAttribute displayName="# TM" name="tm_count" align="center"/>
-            <columnAttribute displayName="Signal Peptide" name="signalp_scores"/>
+            <columnAttribute displayName="Signal Peptide" name="signalp_scores" align="center"/>
             <columnAttribute displayName="Proteomics?" name="proteomics"/>
           </table>
 

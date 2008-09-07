@@ -309,7 +309,8 @@
             <![CDATA[
                select gb.SOURCE_ID, replace(gb.organism,'Toxoplasma gondii ','') as strain, 
                  gb.project_id, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,
-                 gb.SIGNALP_SCORES,gb.TM_COUNT,
+                 CASE WHEN gb.SIGNALP_SCORES is null THEN 'No' ELSE 'Yes' END as signalp_scores,
+                 gb.TM_COUNT,
                  CASE WHEN min(ms.aa_sequence_id) is null THEN 'No' ELSE 'Yes' END as proteomics
                from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,dots.TRANSCRIPT t, 
                  dots.TRANSLATEDAAFEATURE taaf, apidb.MASSSPECSUMMARY ms
@@ -938,11 +939,40 @@
             ]]>
             </sql>
         </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- toxoversion4 genes -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <sqlQuery name="ToxoVer4Genes" isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="old_source_id"/>
+            <column name="start_min"/>
+            <column name="end_max"/>
+            <column name="strand"/>
+            <column name="context_start"/>
+            <column name="context_end"/>
+            <sql>
+            <![CDATA[
+              SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
+              tv.source_id as old_source_id,tv.sequence_id,tv.start_min,tv.end_max,
+              decode(tv.strand,'reverse','-','+') as strand,tv.context_start,tv.context_end
+              from apidb.geneid gid, apidb.TOXOVERSION4GENES tv
+              where gid.gene = $$source_id$$
+              and gid.id = tv.source_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!--Gene Location -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="Genbank" isCacheable="false" includeProjects="GiardiaDB,ApiDB">
+     <sqlQuery name="Genbank" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,ApiDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -955,26 +985,30 @@
             <column name="start_context"/>
             <column name="end_context"/>
             <column name="feature_source_id"/>
+            <sqlParamValue name="top_level" includeProjects="GiardiaDB">
+              Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold')
+            </sqlParamValue>
+            <sqlParamValue name="top_level" includeProjects="ToxoDB,ApiDB">
+              Decode(fl.is_top_level,0, 'Scaffold', 1, 'Chromosome')
+            </sqlParamValue>
             <sql>
             <![CDATA[
               SELECT fl.feature_source_id AS source_id, '@project_id@' AS project_id,
                      fl.feature_source_id,
                      fl.sequence_source_id,
-                     Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
+                     &&top_level&& as is_top_level,
                      fl.start_min,
                      fl.end_max,
                      Decode(fl.is_reversed, 0, '+', 1, '-') is_reversed,
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
-              FROM apidb.featurelocation fl
-              WHERE fl.feature_source_id = $$source_id$$
+              FROM apidb.featurelocation fl,apidb.geneattributes ga
+              WHERE ga.source_id = $$source_id$$
+              AND ga.na_feature_id = fl.na_feature_id
               ORDER BY fl.is_top_level desc
             ]]>
             </sql>
         </sqlQuery>
-
-
-
 
     
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
