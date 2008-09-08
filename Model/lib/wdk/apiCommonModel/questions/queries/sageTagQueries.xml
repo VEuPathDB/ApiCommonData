@@ -3,7 +3,7 @@
   <querySet name="SageTagIds">
 
 
-    <sqlQuery name="ByRStat" includeProjects="GiardiaDB,ToxoDB,PlasmoDB"
+    <sqlQuery name="ByRStat" includeProjects="GiardiaDB,PlasmoDB"
               isCacheable="true">
        <paramRef ref="geneParams.sage_tag_library_name"/>
        <paramRef ref="geneParams.sage_tag_min_r"/>
@@ -113,7 +113,7 @@
   </wsQuery> 
 
 
-    <sqlQuery name="BySequence" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="BySequence" includeProjects="PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.sequence"/>
         <paramRef ref="sageTagParams.is_within_gene"/>
@@ -139,7 +139,7 @@
   </wsQuery> 
 
  
-    <sqlQuery name="ByGeneSourceId" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
+    <sqlQuery name="ByGeneSourceId" includeProjects="PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.single_gene_id"/>
         <paramRef ref="geneParams.st_max_five_prime_distance"/>
@@ -197,7 +197,7 @@
    </wsQuery> 
 
 
- <sqlQuery name="ByExpressionLevel" includeProjects="ToxoDB,PlasmoDB,GiardiaDB"
+ <sqlQuery name="ByExpressionLevel" includeProjects="PlasmoDB,GiardiaDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.st_min_count"/>
         <paramRef ref="sageTagParams.raw_normalized"/>
