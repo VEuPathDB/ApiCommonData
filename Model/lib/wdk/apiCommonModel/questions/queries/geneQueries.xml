@@ -1284,6 +1284,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
+        <testParamValues includeProjects="PlasmoDB">
+          <paramValue name="sequenceId">MAL5</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
@@ -1372,6 +1376,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
               isCacheable="true">
+
+        <testParamValues>
+            <paramValue name="snp_strain_m">Pf-7G8</paramValue>
+        </testParamValues>
+
         <paramRef ref="sharedParams.snp_strain_a"/>
         <paramRef ref="sharedParams.snp_strain_m" multiPick="false"/>
         <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>

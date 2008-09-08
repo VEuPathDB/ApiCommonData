@@ -1,6 +1,11 @@
 <wdkModel>
 
-    <querySet name="ArrayElementAttributes">
+    <querySet name="ArrayElementAttributes" includeProjects="PlasmoDB" queryType="attribute">
+      <defaultTestParamValues>
+         <paramValue name="primaryKey"></paramValue>
+         <paramValue name="projectId">PlasmoDB</paramValue>
+      </defaultTestParamValues>
+
         <sqlQuery name="ProviderAndOrganism" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
