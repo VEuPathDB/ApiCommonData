@@ -1329,12 +1329,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
+
         <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
             <![CDATA[
             SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             FROM apidb.featurelocation fl,apidb.SEQUENCEATTRIBUTES satr,apidb.GENEATTRIBUTES gatr
-            WHERE ((satr.ORGANISM =  $$organismWithChromosomes$$ AND satr.CHROMOSOME = $$chromosomeOptional$$ )
+            WHERE ((satr.ORGANISM =  $$organismWithChromosomes$$ AND satr.CHROMOSOME like $$chromosomeOptional$$ )
                    OR lower(satr.source_id) = lower($$sequenceId$$))
               AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
               AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID
