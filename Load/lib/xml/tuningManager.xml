@@ -3078,6 +3078,70 @@ CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.SimilaritySpanLocation">
+    <externalDependency name="DoTS.Similarity"/>
+    <sql>
+      <![CDATA[
+create table apidb.SimilaritySpanLocation&1 NOLOGGING as
+select sim.similarity_id, sim.query_id, sim.subject_id, sim.query_table_id,
+       sim.subject_table_id, sim.score as similarity_score, sim.min_query_start,
+       sim.max_query_end, sim.is_reversed as similarity_is_reversed,
+       sim.pvalue_mant, sim.pvalue_exp,
+       sim.min_subject_start, sim.max_subject_end, simp.similarity_span_id,
+       simp.score as span_score, simp.query_start, simp.query_end,
+       simp.subject_start, simp.subject_end,
+       simp.is_reversed as span_is_reversed,
+       'direct' as location_mapping
+from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti
+where sim.similarity_id = simp.similarity_id
+  and sim.query_table_id = ti.table_id
+  and ti.name = 'ExternalNASequence'
+union
+select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
+       sim.query_table_id,
+       sim.subject_table_id, sim.score as similarity_score,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - greatest(sim.min_query_start, sim.max_query_end)
+           else least(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+       end as min_query_start,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - least(sim.min_query_start, sim.max_query_end)
+           else greatest(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+       end as max_query_end,
+       sim.is_reversed, sim.pvalue_mant, sim.pvalue_exp,
+       sim.min_subject_start, sim.max_subject_end, simp.similarity_span_id,
+       simp.score as span_score,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - greatest(simp.query_start, simp.query_end)
+           else least(simp.query_start, simp.query_end) + sp.distance_from_left
+       end as query_start,
+       case
+         when sp.strand_orientation in ('-', '-1')
+           then sp.distance_from_left + contig.length
+                - least(simp.query_start, simp.query_end)
+           else greatest(simp.query_start, simp.query_end) + sp.distance_from_left
+       end as query_end,
+       simp.subject_start, simp.subject_end,
+       simp.is_reversed as span_is_reversed,
+       'virtual' as location_mapping
+from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
+     dots.NaSequence contig, dots.SequencePiece sp, dots.NaSequence scaffold
+where sim.similarity_id = simp.similarity_id
+  and sim.query_table_id = ti.table_id
+  and ti.name = 'ExternalNASequence'
+  and sim.query_id = sp.piece_na_sequence_id
+  and sp.piece_na_sequence_id = contig.na_sequence_id
+  and sp.virtual_na_sequence_id = scaffold.na_sequence_id
+      ]]>
+    </sql>
+  </tuningTable>
+
 <!--
 
   <tuningTable name="apidb.IsolateSNPs">
