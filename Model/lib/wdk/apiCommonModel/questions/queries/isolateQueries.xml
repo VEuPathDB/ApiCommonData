@@ -276,11 +276,11 @@
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type"/>
+        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
-        <sql>
+        <sql includeProjects="PlasmoDB">
           <![CDATA[
             SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
 						       src.data_type
@@ -294,6 +294,21 @@
 						       ApiDB.Continents cnt
             WHERE  cnt.continent IN ($$continent$$)
 						  AND  src.data_type in ($$type$$)
+							AND  src.country = cnt.country
+            ]]>
+         </sql>
+        <sql includeProjects="CryptoDB">
+          <![CDATA[
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+						       src.data_type
+            FROM   ApiDB.IsolateAttributes src
+            WHERE  replace(src.country, ',', ';') IN ($$country$$)
+						UNION
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+						       src.data_type
+            FROM   ApiDB.IsolateAttributes src,
+						       ApiDB.Continents cnt
+            WHERE  cnt.continent IN ($$continent$$)
 							AND  src.country = cnt.country
             ]]>
          </sql>
