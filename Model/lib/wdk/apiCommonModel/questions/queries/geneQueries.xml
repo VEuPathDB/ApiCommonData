@@ -1627,9 +1627,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 -->
 	 </wsQuery>
 
-    <sqlQuery name="GenesBySageTagRStat" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+    <sqlQuery name="GenesBySageTagRStat" includeProjects="PlasmoDB,GiardiaDB">
       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"
-                 includeProjects="GiardiaDB,ToxoDB"/> 
+                 includeProjects="GiardiaDB"/> 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
        <paramRef ref="geneParams.sage_tag_library_name"/>
        <paramRef ref="geneParams.sage_tag_min_r"/>
