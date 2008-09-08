@@ -60,7 +60,7 @@
 
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB"
               isCacheable="true">
-        <paramRef includeProjects="Giardia" ref="sharedParams.sequenceId"/>
+        <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId"/>
         <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -88,7 +88,7 @@
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
-            where lower(a.sequence_source_id) = lower($$chromosome$$)
+            where a.sequence_source_id in ($$chromosome$$)
               AND  a.feature_type = 'SAGETagFeature'
               AND  a.end_max >=  $$start_point$$
               AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
