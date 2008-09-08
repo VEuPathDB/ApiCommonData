@@ -171,7 +171,7 @@ sub checkFileFormat {
 
   while (<FILE>) {
     chomp;
-    if ($_ !~ /^\w+\smatched\sagainst\s\w+\sfrom\s\d+\sto\s\d+\son\s[forward|reverse]/) {
+    if ($_ !~ /^\w+\.?[\-\w]*\w+\smatched\sagainst\s\w+\sfrom\s\d+\sto\s\d+\son\s[forward|reverse]/){
       $self->userError("Check file format - format incorrect for at least one line in $self->getArg('tagToSeqFile')\n");
     }
   }
