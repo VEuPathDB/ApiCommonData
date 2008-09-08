@@ -136,6 +136,8 @@
 
     <wsQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.type"  quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </wsQuery>
