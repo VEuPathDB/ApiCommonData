@@ -311,7 +311,6 @@
 
     <sqlQuery name="IsolateBySubmitter" includeProjects="PlasmoDB">
         <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
@@ -321,7 +320,6 @@
 						       src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  src.collected_by IN ($$submitter$$)
-						  AND  src.data_type in ($$type$$)
             ORDER BY src.source_id
             ]]>
          </sql>
