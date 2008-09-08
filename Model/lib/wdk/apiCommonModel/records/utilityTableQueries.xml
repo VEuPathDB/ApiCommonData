@@ -102,39 +102,12 @@
            <sql> 
             <![CDATA[           
             SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
-            count(*) as cache_count,
-            CASE WHEN 
-                min(start_time) is not null 
-            THEN to_char(min(start_time), 'Dy DD-Mon-YYYY HH24:MI:SS') 
-            ELSE 
-                '-'
-            END as first_time,
-            CASE WHEN 
-                max(start_time) is not null 
-            THEN to_char(max(start_time), 'Dy DD-Mon-YYYY HH24:MI:SS') 
-            ELSE 
-                '-'
-            END as last_time
+            count(*) as cache_count
             FROM queryinstance
              ]]>
            </sql>
         </sqlQuery>
 
-        <!-- UtilityQueries.CacheCreateTime -->
-        <sqlQuery name="CacheCreateTime" isCacheable='false'>
-            <column name="source_id" />
-            <column name="project_id" />
-            <column name="creation_time" />
-           <sql> 
-            <![CDATA[           
-            SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
-            to_char(o.created, 'Dy DD-Mon-YYYY HH24:MI:SS') creation_time
-            FROM user_objects o 
-            WHERE o.object_name = 'QUERYINSTANCE'
-             ]]>
-           </sql>
-        </sqlQuery>
-        
         <!-- UtilityQueries.ApiCommDbLink -->
         <sqlQuery name="ApiCommDbLink" isCacheable='false'>
             <column name="source_id" />

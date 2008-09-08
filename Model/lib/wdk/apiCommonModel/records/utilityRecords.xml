@@ -9,11 +9,11 @@
  <recordClassSet name="UtilityRecordClasses">
     
         <!-- UtilityRecordClasses.SiteInfo -->
-        <recordClass name="SiteInfo" type="Gene">
+        <recordClass name="SiteInfo" type="InternalState">
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
-                                 displayName="Gene">
+                                 displayName="InternalState">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
@@ -23,19 +23,6 @@
                 </text>                
             </primaryKeyAttribute>
 
-<!--
-            <attributeQueryRef ref="UtilityQueries.PingCrypto">
-                <columnAttribute name="cryptolink" internal="true" />
-            </attributeQueryRef>
-
-            <attributeQueryRef ref="UtilityQueries.PingToxo">
-                <columnAttribute name="toxolink" internal="true" />
-            </attributeQueryRef>
-
-            <attributeQueryRef ref="UtilityQueries.PingPlasmo">
-                <columnAttribute name="plasmolink" internal="true" />
-            </attributeQueryRef>
--->
             <attributeQueryRef ref="UtilityQueries.CurrentInstance">
                 <columnAttribute name="global_name" internal="true" />
                 <columnAttribute name="version" internal="true" />
@@ -54,12 +41,6 @@
 
             <attributeQueryRef ref="UtilityQueries.CacheState">
                 <columnAttribute name="cache_count" internal="true" />
-                <columnAttribute name="first_time" internal="true" />
-                <columnAttribute name="last_time" internal="true" />
-            </attributeQueryRef>
- 
-            <attributeQueryRef ref="UtilityQueries.CacheCreateTime">
-                <columnAttribute name="creation_time" internal="true" />
             </attributeQueryRef>
  
             <attributeQueryRef ref="UtilityQueries.ApiCommDbLink">
@@ -68,7 +49,7 @@
 
             <table name="AllDbLinks" displayName="All DBLinks"
                    queryRef="UtilityQueries.AllDbLinks">
-                <columnAttribute name="owner"      displayName="owner" />
+                <columnAttribute name="owner"     displayName="owner" />
                 <columnAttribute name="db_link"   displayName="db_link" />
                 <columnAttribute name="username"  displayName="username" />
                 <columnAttribute name="host"      displayName="host" />
