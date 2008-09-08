@@ -950,6 +950,7 @@
                  displayName="Release 4 Genes"
                  queryRef="GeneTables.ToxoVer4Genes">
             <columnAttribute displayName= "Gene ID" name="old_source_id" internal="false"/>
+            <columnAttribute displayName= "Product" name="product" internal="false"/>
             <columnAttribute displayName= "Sequence ID" name="sequence_id" internal="false" align="center"/>
             <textAttribute inReportMaker="true" name="location" displayName="Location">
                   <text>
@@ -1760,7 +1761,7 @@
             </text>
             <text includeProjects="ToxoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+Version4Genes+AlignmentSNPs;options=AlignmentSNPs+SNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
          </textAttribute>

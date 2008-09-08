@@ -955,11 +955,13 @@
             <column name="strand"/>
             <column name="context_start"/>
             <column name="context_end"/>
+            <column name="product"/>
             <sql>
             <![CDATA[
               SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
               tv.source_id as old_source_id,tv.sequence_id,tv.start_min,tv.end_max,
-              decode(tv.strand,'reverse','-','+') as strand,tv.context_start,tv.context_end
+              decode(tv.strand,'reverse','-','+') as strand,
+              tv.context_start,tv.context_end,tv.product
               from apidb.geneid gid, apidb.TOXOVERSION4GENES tv
               where gid.gene = $$source_id$$
               and gid.id = tv.source_id
