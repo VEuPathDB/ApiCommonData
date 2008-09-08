@@ -95,10 +95,13 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB">
-        <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true" includeProjects="CryptoDB"/>
+        <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true" includeProjects="PlasmoDB"/>
+        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql>
+        <column name="data_type" includeProjects="PlasmoDB"/>
+        <sql includeProjects="CryptoDB">
           <![CDATA[
             SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM   DoTS.IsolateSource src, 
@@ -119,15 +122,8 @@
             ORDER BY etn.source_id
             ]]>
          </sql>
-    </sqlQuery>
 
-    <sqlQuery name="IsolateByTaxon" includeProjects="PlasmoDB">
-        <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type"/>
-        <column name="source_id"/>
-        <column name="project_id"/>
-        <column name="data_type"/>
-        <sql>
+        <sql includeProjects="PlasmoDB">
           <![CDATA[
             SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type,src.strain
             FROM   ApiDB.IsolateAttributes src
@@ -140,6 +136,8 @@
 
     <processQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.type"  quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -276,11 +274,11 @@
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type"/>
+        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
-        <sql>
+        <sql includeProjects="PlasmoDB">
           <![CDATA[
             SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
                                src.data_type
@@ -297,10 +295,28 @@
               AND  src.country = cnt.country
             ]]>
          </sql>
+
+        <sql includeProjects="CryptoDB">
+          <![CDATA[
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+						       src.data_type
+            FROM   ApiDB.IsolateAttributes src
+            WHERE  replace(src.country, ',', ';') IN ($$country$$)
+						UNION
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
+						       src.data_type
+            FROM   ApiDB.IsolateAttributes src,
+						       ApiDB.Continents cnt
+            WHERE  cnt.continent IN ($$continent$$)
+							AND  src.country = cnt.country
+            ]]>
+         </sql>
     </sqlQuery>
 
     <processQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.type" quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
