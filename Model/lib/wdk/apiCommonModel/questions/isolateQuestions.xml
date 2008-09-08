@@ -18,6 +18,8 @@
                summary="organism, strain, product, specific_host, map"/>
               <attributesList includeProjects="PlasmoDB"
                  summary="strain, country, data_type, length" /> 
+ <attributesList includeProjects="ApiDB"
+               summary="organism, strain, country, data_type, product, length, specific_host, map"/>
              <summary>
                Find Isolates by ID.
              </summary>
@@ -89,7 +91,7 @@
               <attributesList includeProjects="PlasmoDB"
                  summary="strain, country, data_type, length" />
               <attributesList includeProjects="ApiDB"
-                 summary="strain" /> 
+                 summary="organism, strain, country, product, data_type, length, specific_host, map" /> 
         <summary>
           Find isolates from one or more species.
         </summary> 
@@ -228,13 +230,14 @@
 
     <question name="IsolateByCountry"
               category="Other Attributes"
-			  displayName="Geographic Location"
+              displayName="Geographic Location"
               queryRef="IsolateIds.IsolateByCountry"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               includeProjects="CryptoDB,PlasmoDB,ApiDB">
          <attributesList includeProjects="CryptoDB"
               summary="organism, strain, product, specific_host, country" /> 
-
+ <attributesList includeProjects="ApiDB"
+              summary="organism, strain, country, data_type, product, length, specific_host" /> 
          <attributesList includeProjects="PlasmoDB"
               summary="strain, country, data_type, length" />
       <summary> 
@@ -278,6 +281,24 @@
 
     </question>
 
+ <question name="IsolateByAuthor"
+              category="Other Attributes"
+              displayName="Isolates by Author"
+              queryRef="IsolateIds.IsolateByAuthor"
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+       <attributesList summary="organism, strain, product, specific_host, map" /> 
+       <summary>Find Isolates by author.</summary> 
+       <description>
+         Find Isolates by author name. Asterisks ("*") can be used as a wildcard, matching any sequence of characters.
+       </description> 
+
+        <propertyList name="specificAttribution">
+           <value>Isolates_Data</value>
+       </propertyList> 
+
+    </question>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Submitter -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -288,7 +309,26 @@
               queryRef="IsolateIds.IsolateBySubmitter"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               noSummaryOnSingleRecord="true" includeProjects="PlasmoDB">
-       <attributesList summary="strain, country, collected_by, data_type, length"  includeProjects="PlasmoDB"/> 
+       <attributesList summary="strain, country, collected_by, data_type, length"/> 
+       <summary>Find Isolates by submitter.</summary> 
+       <description>
+         Find Isolates by submitter name. 
+       </description> 
+
+    <propertyList name="specificAttribution">
+       <value>Broad_Isolate_Barcode</value>
+       <value>Broad_3K_Genotyping</value>
+    </propertyList> 
+
+    </question>
+
+  <question name="IsolateBySubmitter"
+              category="Other Attributes"
+              displayName="Submitter"
+              queryRef="IsolateIds.IsolateBySubmitter"
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+       <attributesList summary="strain, country, collected_by, data_type, length"/> 
        <summary>Find Isolates by submitter.</summary> 
        <description>
          Find Isolates by submitter name. 

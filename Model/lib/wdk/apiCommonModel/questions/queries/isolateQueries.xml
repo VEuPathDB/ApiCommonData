@@ -48,7 +48,8 @@
 
     <processQuery name="IsolateByIsolateId" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <paramRef ref="isolateParams.isolate_id"/>
-      <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <paramRef ref="sharedParams.signature"/>    
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
 
