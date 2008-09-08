@@ -3535,7 +3535,7 @@ sub mapSageTagsToNaSequences {
     $genName =~ s/\s/\_/g;
 
     my $genomeFile = "$mgr->{dataDir}/seqfiles/${genName}GenomeNaSequences.fsa";
-    print "genomeFile:$genomeFile\n ";
+
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
 
@@ -3543,7 +3543,7 @@ sub mapSageTagsToNaSequences {
       $tagName =~ s/\s/_/g;
 
       my $sageTagFile = "$mgr->{dataDir}/seqfiles/${tagName}SageTags.fsa";
- print "sageTagFile: $sageTagFile\n ";
+
       my $output = "$mgr->{dataDir}/sage/${tagName}To${genName}";
 
       my $cmd = "tagToSeq.pl $genomeFile $sageTagFile 2>> $output";
@@ -4347,7 +4347,7 @@ sub modifyDownloadFile {
 
 sub writeGeneAliasFile {
 
-  my ($mgr,$extDb,$extDbVer,$project, $dir) = @_;
+  my ($mgr,$extDb,$extDbVer,$project, $dir, $species) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -4357,11 +4357,11 @@ sub writeGeneAliasFile {
 
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $signal = "write${dir}GeneAliasFile";
+  my $signal =  $species ? "write${species}GeneAliasFile" : "write${dir}GeneAliasFile";
 
   return if $mgr->startStep("Writing $dir gene alias file for download site", $signal);
 
-  my $outFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}GeneAlias_$projectDB-${release}.txt";
+  my $outFile = $species ? "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${species}GeneAlias_$projectDB-${release}.txt" : "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}GeneAlias_$projectDB-${release}.txt";
 
   $mgr->runCmd("getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile");
 
