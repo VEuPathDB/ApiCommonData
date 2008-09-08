@@ -1447,7 +1447,7 @@ EOF
 sub makeInterproDownloadFile {
   my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB) = @_;
 
-  my $signal = "${species}InterproDownloadFile";
+  my $signal = "${species}${name}DownloadFile";
 
   return if $mgr->startStep("Extracting $species Interpro results from GUS", $signal);
 
@@ -2739,7 +2739,6 @@ sub loadSplignResults {
 
 sub extractGenomeNaSequences {
   my ($mgr, $species, $table, $sequenceOntology,$taxId) = @_;
-
   my $propertySet = $mgr->{propertySet};
 
   $table = "Dots." . $table;
@@ -3536,7 +3535,7 @@ sub mapSageTagsToNaSequences {
     $genName =~ s/\s/\_/g;
 
     my $genomeFile = "$mgr->{dataDir}/seqfiles/${genName}GenomeNaSequences.fsa";
-
+    print "genomeFile:$genomeFile\n ";
     foreach my $sageArray (@{$mgr->{sageTagArrays}->{$species}}) {
       my $dbName =  $sageArray->{name};
 
@@ -3544,7 +3543,7 @@ sub mapSageTagsToNaSequences {
       $tagName =~ s/\s/_/g;
 
       my $sageTagFile = "$mgr->{dataDir}/seqfiles/${tagName}SageTags.fsa";
-
+ print "sageTagFile: $sageTagFile\n ";
       my $output = "$mgr->{dataDir}/sage/${tagName}To${genName}";
 
       my $cmd = "tagToSeq.pl $genomeFile $sageTagFile 2>> $output";
