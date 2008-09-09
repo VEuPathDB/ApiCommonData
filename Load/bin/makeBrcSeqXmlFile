@@ -8,22 +8,22 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($changedSeqsFile, $extDbName, $extDbRlsVer, $gffFileName, $strain,
+my ($changedSeqsFile, $extDbNames, $extDbRlsVers, $gffFileName, $organism,
     $brcSubmitsToRefseq, $curatorsString, $dbName, $submittedToGenbank,
     $downloadedFrom);
-&GetOptions("extDbName=s" => \$extDbName,
-	    "extDbRlsVer=s" => \$extDbRlsVer,
+&GetOptions("extDbName=s" => \$extDbNames,
+	    "extDbRlsVer=s" => \$extDbRlsVers,
 	    "brcSubmits=s" => \$brcSubmitsToRefseq,
 	    "submittedToGenbank!" => \$submittedToGenbank,
 	    "gffFile=s" => \$gffFileName,
 	    "downloadedFrom=s" => \$downloadedFrom,
 	    "curators=s" => \$curatorsString,
-            "strain=s" => \$strain,
+            "organism=s" => \$organism,
             "changesFile=s" => \$changedSeqsFile,
             "dbName=s" => \$dbName
              );
 
-&usage() unless ($extDbName && $extDbRlsVer && $gffFileName &&
+&usage() unless ($extDbNames && $extDbRlsVers && $gffFileName &&
 		 $brcSubmitsToRefseq && $curatorsString && $downloadedFrom);
 
 my $gusconfig = GUS::Supported::GusConfig->new();
@@ -39,14 +39,14 @@ my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
 
 my $changedSeqs = &parseChangedSeqs($changedSeqsFile);
 
-my $seqXml = &makeSeqXml($extDbName, $extDbRlsVer, $changedSeqs, $db,
+my $seqXml = &makeSeqXml($extDbNames, $extDbRlsVers, $changedSeqs, $db,
 			 $submittedToGenbank);
 
 my $curationXml = &makeCurationXml($curatorsString);
 
-my ($taxonId, $organism) = &getTaxonInfo($extDbName, $extDbRlsVer, $db);
+my ($taxonId, $strain) = &getTaxonInfo($extDbNames, $extDbRlsVers, $db);
 
-print &makeXml($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
+print &makeXml($organism, $taxonId, $strain, $gffFileName, $extDbRlsVers,
       $brcSubmitsToRefseq, $seqXml, $curationXml, $downloadedFrom);
 
 #################################################################
@@ -69,23 +69,26 @@ sub parseChangedSeqs {
 }
 
 sub makeSeqXml {
-  my ($extDbName, $extDbRlsVer, $changedSeqsHash, $db, $submittedToGenbank) = @_;
+  my ($extDbNames, $extDbRlsVers, $changedSeqsHash, $db, $submittedToGenbank) = @_;
 
   my $dbh = $db->getQueryHandle(0);
 
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbRlsVers);
+
+  my $dbVer = join(",", @dbVers);
+
 # query to get seq ids
+
 my $sql = "
-SELECT distinct ens.source_id
-FROM sres.ExternalDatabase ed,
-     sres.ExternalDatabaseRelease edr, dots.NaSequence ens,
-     sres.SequenceOntology so
-WHERE ed.name = '$extDbName'
-AND edr.version = '$extDbRlsVer'
-AND ed.external_database_id = edr.external_database_id
-AND ens.external_database_release_id = edr.external_database_release_id
-AND ens.sequence_ontology_id = so.sequence_ontology_id
-AND (so.term_name = 'supercontig' OR so.term_name = 'contig' OR so.term_name = 'chromosome')
-ORDER BY ens.source_id
+  SELECT distinct sa.source_id
+    FROM apidb.sequenceattributes sa
+   WHERE sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
+     AND sa.is_top_level = 1
+ORDER By sa.source_id
 ";
 
   my $stmt = $dbh->prepareAndExecute($sql);
@@ -98,7 +101,7 @@ ORDER BY ens.source_id
       $changed = 'yes';
       $submit = 'yes' if $changedSeqsHash->{$sourceId};
     }
-    my $genbankXml;
+    my ($genbankXml, $refseqXml);
     if ($submittedToGenbank) {
       $genbankXml = qq{
       <genbank>
@@ -106,16 +109,37 @@ ORDER BY ens.source_id
         <parameter name="latest_version">1</parameter>
         <parameter name="owner">ApiDB</parameter>
       </genbank>};
+    }else{
+     $genbankXml = qq{
+      <genbank>
+        <parameter name="latest_accession"></parameter>
+        <parameter name="latest_version"></parameter>
+        <parameter name="owner"></parameter>
+      </genbank>};
+    }
+    if ($brcSubmitsToRefseq eq 'yes'){
+      $refseqXml=qq{
+      <refseq>
+        <parameter name="latest_accession">$sourceId</parameter>
+        <parameter name="latest_version">1</parameter>
+      </refseq>};
+    }else{
+      $refseqXml=qq{
+      <refseq>
+        <parameter name="latest_accession"></parameter>
+        <parameter name="latest_version"></parameter>
+      </refseq>};
+
     }
     my $seqXml = qq{
     <sequence>
       <internal>
         <parameter name="sequence_identifier">$sourceId</parameter>
-      </internal>
+      </internal>$genbankXml$refseqXml
       <modified>
         <parameter name="sequence_changed">$changed</parameter>
         <parameter name="submitted_to_genbank">$submit</parameter>
-      </modified>$genbankXml
+      </modified>
     </sequence>
     };
     push(@seqXmls, $seqXml);
@@ -131,12 +155,14 @@ sub makeCurationXml {
 
   my @curationXml;
   foreach my $curation (@curations) {
-    $curation =~ /(.+)\s*\|\s*(.+)/ || die "illegal format for curation property '$curation'";
+    $curation =~ /(.+)\s*\|\s*(.+)\|\s*(.+)/ || die "illegal format for curation property '$curation'";
     my $annot = $1;
     my $gene_ends = $2;
+    my $gene_families = $3;
     my $xml = qq{
     <parameter name="annotation">$annot</parameter>
     <parameter name="gene_ends">$gene_ends</parameter>
+    <parameter name="gene_families">$gene_families</parameter>
 };
   push(@curationXml, $xml);
   }
@@ -144,22 +170,32 @@ sub makeCurationXml {
 }
 
 sub getTaxonInfo {
-  my ($extDbName, $extDbRlsVer, $db) = @_;
+  my ($extDbNames, $extDbRlsVers, $db) = @_;
+
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbRlsVers);
+
+  my $dbVer = join(",", @dbVers);
 
   # query to get: taxon_id, taxon_name,
   my $sql = "
 SELECT distinct t.ncbi_tax_id, tn.name
 FROM sres.Taxon t, sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.ExternalNaSequence ens
-WHERE ed.name = '$extDbName'
-AND edr.version = '$extDbRlsVer'
+WHERE ed.name in ($dbName)
+AND edr.version in ($dbVer)
 AND ed.external_database_id = edr.external_database_id
 AND ens.external_database_release_id = edr.external_database_release_id
 AND t.taxon_id = ens.taxon_id
 AND tn.taxon_id = t.taxon_id
+AND tn.name_class='scientific name'
 ";
 
   my $dbh = $db->getQueryHandle(0);
+
   my $stmt = $dbh->prepareAndExecute($sql);
 
   my ($ncbi_tax_id, $name) = $stmt->fetchrow_array();
@@ -170,13 +206,6 @@ sub makeXml {
   my ($organism, $taxonId, $strain, $gffFileName, $extDbRlsVer,
       $brcSubmitsToRefseq, $seqInfo, $curationInfo, $downloadedFrom) = @_;
 
-  if ($strain) {
-    $strain = qw{
-    <parameter name="strain">$strain</parameter>"};
-  } else {
-    $strain = "";
-  }
-
   return qq{
 <source>
   <category name="brc">
@@ -185,7 +214,8 @@ sub makeXml {
   </category>
 
   <category name="organism">
-    <parameter name="name">$organism</parameter>$strain
+    <parameter name="name">$organism</parameter>
+    <parameter name="strain">$strain</parameter>
     <parameter name="taxon_id">$taxonId</parameter>
   </category>
 
@@ -207,12 +237,12 @@ sub makeXml {
   </category>
 
   <category name="ownership">
-    <parameter name="original_source"/>
-    <parameter name="original_sequence"/>
-    <parameter name="original_annotation"/>
+    <parameter name="original_source"></parameter>
+    <parameter name="original_sequence"></parameter>
+    <parameter name="original_annotation"></parameter>
     <parameter name="downloaded_from">$downloadedFrom</parameter>
-    <parameter name="date_of_download"/>
-    <parameter name="owner_url"/>
+    <parameter name="date_of_download"></parameter>
+    <parameter name="owner_url"></parameter>
   </category>
 
 </source>
@@ -225,7 +255,7 @@ sub usage {
 Create an XML file to send to BRC Central specifying the sequence meta info 
 for a GFF file.  Uses $GUS_HOME/config/gus.config for db connection info.
 
-usage: makeBrcSeqXmlFile --extDbName --extDbRlsVer --gffFile --brcSubmits --curators [--strain] [--changesFile file] [--dbName]
+usage: makeBrcSeqXmlFile --extDbNames --extDbRlsVers --gffFile --brcSubmits --curators [--strain] [--changesFile file] [--dbName]
 
 where:
   extDbName:   ExternalDatabase.name for the genome sequence
