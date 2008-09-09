@@ -267,6 +267,9 @@ sub getNaSequenceId {
 sub insertAnchors {
   my ($self, $synDbRlsId, $extDbRlsIdA, $extDbSpec) = @_;
 
+  my $algorithmInvocation = $self->getAlgInvocation();
+  my $algorithmInvocationId = $algorithmInvocation->getId();
+
   $self->log("Inserting anchors, with '$extDbSpec' as reference");
 
   my ($gene2orthologGroup, $orthologGroup2refGenes)
@@ -280,12 +283,14 @@ from apidb.Synteny syn, dots.ExternalNaSequence seq
 where syn.external_database_release_id = $synDbRlsId
 and seq.na_sequence_id = syn.a_na_sequence_id
 and seq.external_database_release_id = $extDbRlsIdA
+and syn.row_alg_invocation_id = $algorithmInvocationId
 ";
 
 
   my $syntenyStmt = $self->getDbHandle()->prepareAndExecute($retrieveSyntenySql);
 
   while(my $syntenyRow = $syntenyStmt->fetchrow_hashref) {
+
     my $refGenes = $self->findGenes($genesLocStmt,
 				    $syntenyRow->{A_NA_SEQUENCE_ID},
 				    $syntenyRow->{A_START},
