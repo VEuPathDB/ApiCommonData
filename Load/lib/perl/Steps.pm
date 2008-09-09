@@ -291,17 +291,19 @@ sub _createDir {
 }
 
 sub makeBrcSeqXmlFile {
-    my ($mgr, $extDbName, $extDbRlsVer, $gffFile, $brcSubmit, $curators, $outFile, $dbName, $downloadedFrom, $submitGenbank) = @_;
-    my $pipelineDir = $mgr->{myPipelineDir};
+    my ($mgr, $extDbName, $extDbRlsVer, $gffFile, $brcSubmit, $curators, $outFile, $dbName, $downloadedFrom, $submitGenbank, $organism) = @_;
+
+    my $dataDir = $mgr->{dataDir};
+
     my $brcDir = "brcXmlFiles";
 
-    my $signal = "makeBrcSeqXmlFile${extDbName}-${extDbRlsVer}";
+    my $signal = "makeBrcSeqXmlFile_${outFile}";
 
     return if $mgr->startStep("Making BRC XML File ${outFile}", $signal);
 
-    &_createDir($mgr, "$pipelineDir/$brcDir");
+    &_createDir($mgr, "$dataDir/$brcDir");
 
-    $mgr->runCmd("makeBrcSeqXmlFile --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --gffFile $gffFile --brcSubmits $brcSubmit --curators '$curators' --dbName '$dbName' --downloadedFrom '$downloadedFrom' $submitGenbank > $pipelineDir/$brcDir/$outFile");
+    $mgr->runCmd("makeBrcSeqXmlFile --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --gffFile $gffFile --brcSubmits $brcSubmit --curators '$curators' --dbName '$dbName' --downloadedFrom '$downloadedFrom' $submitGenbank --organism '$organism'> $dataDir/$brcDir/$outFile");
 
     $mgr->endStep($signal);
 }
@@ -4563,9 +4565,10 @@ sub grepMercatorGff {
 }
 
 sub makeCodonUsage {
-  my ($mgr, $species, $name) = @_;
+  my ($mgr, $species, $name, $strain) = @_;
 
-  my $signal = "${species}MakeCodonUsage";
+
+  my $signal = $strain ? "${strain}MakeCodonUsage" : "${species}MakeCodonUsage";
 
   return if $mgr->startStep("Running CodonUsage for $species", $signal);
 
@@ -4578,6 +4581,8 @@ sub makeCodonUsage {
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
   my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species"; 
+  
+  $species = $strain ? $strain : $species;
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${species}MakeCodonUsage.log";
 
