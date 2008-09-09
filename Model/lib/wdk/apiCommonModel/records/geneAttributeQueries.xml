@@ -1,36 +1,6 @@
 <wdkModel>
     <querySet name="GeneAttributes" queryType="attribute">
 
-      <defaultTestParamValues includeProjects="PlasmoDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">PlasmoDB</paramValue>
-      </defaultTestParamValues>
-
-      <defaultTestParamValues includeProjects="ToxoDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">ToxoDB</paramValue>
-      </defaultTestParamValues>
-
-      <defaultTestParamValues includeProjects="CryptoDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">CryptoDB</paramValue>
-      </defaultTestParamValues>
-
-      <defaultTestParamValues includeProjects="GiardiaDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">GiardiaDB</paramValue>
-      </defaultTestParamValues>
-
-      <defaultTestParamValues includeProjects="TrichDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">TrichDB</paramValue>
-      </defaultTestParamValues>
-
-      <defaultTestParamValues includeProjects="ApiDB">
-         <paramValue name="primaryKey"></paramValue>
-         <paramValue name="projectId">ApiDB</paramValue>
-      </defaultTestParamValues>
-
 
      <!-- notes
 
@@ -38,6 +8,31 @@
          <recordClass> element
 
      -->
+            <defaultTestParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">PB400024.00.0</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">44.m00048</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_1400</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">GL50803_112048</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">TVAG_386080</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </defaultTestParamValues>
+
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Gene alias -->  
@@ -64,7 +59,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-        <sqlQuery name="TrackNewAnnotation" isCacheable="false">
+        <sqlQuery name="TrackNewAnnotation" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="project_id"/>
@@ -451,7 +446,7 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false">
+        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
@@ -541,7 +536,7 @@
 
 
         <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"
-                       displayName="RNA Sequence">
+                       displayName="RNA Sequence" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="workshop_transcript_sequence"/>
@@ -603,7 +598,7 @@
 
 
         <sqlQuery name="NewAnnotationCDS" isCacheable="false"
-                       displayName="New Annotation RNA Sequence">
+                       displayName="New Annotation RNA Sequence" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="source_id"/>
@@ -862,6 +857,11 @@
         </sqlQuery>
 
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_300</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="pdb_id"/>

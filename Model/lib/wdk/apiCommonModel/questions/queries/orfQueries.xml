@@ -15,7 +15,7 @@
     <!-- ************************************************************ -->
  
     <sqlQuery name="OrfByOrfId" excludeProjects="ApiDB"
-              displayName="ID" isCacheable="true">
+              displayName="ID" isCacheable="true" doNotTest="true">
         <paramRef ref="orfParams.orf_id"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -46,6 +46,11 @@
  
     <sqlQuery name="OrfsByLocation" 
                isCacheable="true" excludeProjects="ApiDB">
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="sequenceId">AAEE01000001</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>

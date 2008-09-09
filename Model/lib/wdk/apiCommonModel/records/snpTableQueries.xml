@@ -5,8 +5,24 @@
        <!-- Strains -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+      <defaultTestParamValues includeProjects="PlasmoDB,ApiDB">
+         <paramValue name="primaryKey">CombinedSNP.MAL1.89</paramValue>
+         <paramValue name="projectId">PlasmoDB</paramValue>
+      </defaultTestParamValues>
+
+      <defaultTestParamValues includeProjects="ToxoDB,ApiDB">
+         <paramValue name="primaryKey">SNP_VIIa_810455</paramValue>
+         <paramValue name="projectId">ToxoDB</paramValue>
+      </defaultTestParamValues>
+
+      <defaultTestParamValues includeProjects="ApiDB,CryptoDB">
+         <paramValue name="primaryKey">chr3-2_66329</paramValue>
+         <paramValue name="projectId">CryptoDB</paramValue>
+      </defaultTestParamValues>
+
         <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
               isCacheable="false">
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="strain"/>

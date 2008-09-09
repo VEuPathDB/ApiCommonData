@@ -1,6 +1,31 @@
 <wdkModel>
     <querySet name="UserCommentTables" queryType="table">
        <sqlQuery name="GeneComments">
+            <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">PB400024.00.0</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">44.m00048</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd1_200</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">GL50803_112048</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">TVAG_386080</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_id"/>
@@ -38,6 +63,31 @@
           </sqlQuery>
 
           <sqlQuery name="SequenceComments">
+            <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">PB_PH0001</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">Ia</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="CryptoDB" minRows="0">
+               <paramValue name="primaryKey">dontcare</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">ctg02_243</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </testParamValues>
+
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">DS113177</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_id"/>

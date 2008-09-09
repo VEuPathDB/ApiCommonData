@@ -97,7 +97,7 @@
           <!-- Track New Annotation -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <attributeQueryRef ref="GeneAttributes.TrackNewAnnotation">
+        <attributeQueryRef ref="GeneAttributes.TrackNewAnnotation" includeProjects="PlasmoDB">
             <columnAttribute displayName="Annotation Status" name="annotation_status" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="Has New GO" name="new_go" internal="true" inReportMaker="false"/>
             <columnAttribute displayName="Has New EC" name="new_ec" internal="true" inReportMaker="false"/>
@@ -352,7 +352,7 @@
                              name="protein_sequence" internal="true"/>
           </attributeQueryRef>
 
-          <attributeQueryRef ref="GeneAttributes.NewAnnotationProteinSequence">
+          <attributeQueryRef ref="GeneAttributes.NewAnnotationProteinSequence" includeProjects="PlasmoDB">
             <columnAttribute displayName="Annotation Workshop Predicted Protein Sequence"
                              name="workshop_protein_sequence" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
@@ -361,7 +361,7 @@
           <!-- transcript sequence attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <attributeQueryRef ref="GeneAttributes.NewAnnotationTranscriptSequence">
+         <attributeQueryRef ref="GeneAttributes.NewAnnotationTranscriptSequence" includeProjects="PlasmoDB">
             <columnAttribute displayName="Annotation Workshop Predicted RNA/mRNA Sequence (introns spliced out)"
                              name="workshop_transcript_sequence" internal="true" inReportMaker="false"/>
           </attributeQueryRef>
@@ -380,7 +380,7 @@
                     name="cds"/>
           </attributeQueryRef>
 
-         <attributeQueryRef ref="GeneAttributes.NewAnnotationCDS">
+         <attributeQueryRef ref="GeneAttributes.NewAnnotationCDS" includeProjects="PlasmoDB">
             <columnAttribute displayName="Annotation Workshop Coding Sequence" internal="true"
                     name="workshop_cds" inReportMaker="false"/>
           </attributeQueryRef>

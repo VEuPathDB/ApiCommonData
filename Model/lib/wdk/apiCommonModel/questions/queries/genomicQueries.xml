@@ -16,7 +16,8 @@
     <!-- ************************************************************ -->
  
     <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
-        isCacheable="true">
+        isCacheable="true" doNotTest="true">
+
         <paramRef ref="genomicParams.sequenceId" default="TGG_994746" includeProjects="ToxoDB"/> 
         <paramRef ref="genomicParams.sequenceId" default="MAL4" includeProjects="PlasmoDB"/> 
         <paramRef ref="genomicParams.sequenceId" excludeProjects="ToxoDB,PlasmoDB"/> 

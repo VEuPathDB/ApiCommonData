@@ -63,7 +63,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
-              isCacheable="true">
+              isCacheable="true" doNotTest="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -442,7 +442,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
-              isCacheable="true">
+              isCacheable="true" doNotTest="true">
         <paramRef ref="sharedParams.geneHistoryId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
@@ -731,6 +731,24 @@ sns2.external_database_release_id=extr.external_database_release_id
 
     <sqlQuery name="GenesByOrthologPattern" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB"
               isCacheable="true">
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="profile_pattern">%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%</paramValue>
+          <paramValue name="included_species">Alveolates</paramValue>
+          <paramValue name="excluded_species">Bacteria</paramValue>
+          <paramValue name="phyletic_indent_map">Archaea</paramValue>
+          <paramValue name="phyletic_term_map">rno</paramValue>
+        </testParamValues>
+
+        <testParamValues includeProjects="PlasmoDB">
+          <paramValue name="profile_pattern"></paramValue>
+          <paramValue name="included_species"></paramValue>
+          <paramValue name="excluded_species"></paramValue>
+          <paramValue name="phyletic_indent_map"></paramValue>
+          <paramValue name="phyletic_term_map"></paramValue>
+          <paramValue name="organism"></paramValue>
+        </testParamValues>
+
         <paramRef ref="geneParams.profile_pattern"/>
         <paramRef ref="geneParams.included_species"/>
         <paramRef ref="geneParams.excluded_species"/>
@@ -1287,6 +1305,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="PlasmoDB">
           <paramValue name="sequenceId">MAL5</paramValue>
         </testParamValues>
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="sequenceId">AAEE01000001</paramValue>
+        </testParamValues>
 
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
@@ -1377,8 +1398,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesBySnps" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
               isCacheable="true">
 
-        <testParamValues>
+        <testParamValues includeProjects="PlasmoDB">
             <paramValue name="snp_strain_m">Pf-7G8</paramValue>
+        </testParamValues>
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="snp_strain_m">Cp-MD</paramValue>
         </testParamValues>
 
         <paramRef ref="sharedParams.snp_strain_a"/>
@@ -1514,6 +1539,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByInterproDomain" excludeProjects="ApiDB"  
 			isCacheable="true">
+
+        <testParamValues includeProjects="CryptoDB">
+           <paramValue name="domain_database">PRODOM</paramValue>
+           <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
+        </testParamValues>
+
         <paramRef ref="geneParams.domain_database"/>
         <paramRef ref="geneParams.domain_accession"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -1791,7 +1822,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Dont Care - fake query for internal use -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="DontCare" isCacheable="true">
+    <sqlQuery name="DontCare" isCacheable="true" doNotTest="true">
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -2034,7 +2065,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByPhyleticProfile" includeProjects="PlasmoDB"
-              isCacheable="true">
+              isCacheable="true" doNotTest="true">
         <paramRef ref="sharedParams.ds_gene_ids" default="PY03942"/>
         <paramRef ref="geneParams.min_mutual_information_score"/>
         <paramRef ref="geneParams.include_only_queries"/>
@@ -2115,7 +2146,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByFunctionalInteraction" includeProjects="PlasmoDB" 
-              isCacheable="true">
+              isCacheable="true" doNotTest="true">
         <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
         <paramRef ref="geneParams.min_interaction"/>
         <paramRef ref="geneParams.include_only_queries"/>

@@ -12,6 +12,30 @@
 
   <querySet name="GeneTables" queryType="table">
 
+            <defaultTestParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">PB400024.00.0</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">44.m00048</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_1400</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">GL50803_112048</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">TVAG_386080</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </defaultTestParamValues>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Gene Model -->  
@@ -97,6 +121,11 @@
 
         <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_510</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="strain_a_query"/>
@@ -188,6 +217,10 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="InterPro" isCacheable="false">
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_1400</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="interpro_name"/>
@@ -255,7 +288,7 @@
              select gf.source_id, tmf.aa_feature_id AS tmf_name,
              tmf.parent_id AS tmf_parent_id, tmf.topology AS tmf_topology,
              aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max,
-             dbms_lob.substr(tas.sequence,aal.end_max - aal.start_min + 1,aal.start_min)
+             dbms_lob.substr(tas.sequence,aal.end_max - aal.start_min + 1,aal.start_min) tmf_sequence
              from
              dots.aalocation aal,
              dots.genefeature gf,
@@ -282,6 +315,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SignalP" isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd7_110</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="spf_name"/>
@@ -422,6 +460,11 @@
 
        <sqlQuery name="Notes"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd1_200</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_string"/>
@@ -462,6 +505,12 @@
 
        <sqlQuery name="UserComments"
                  isCacheable="false">
+
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd1_200</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_id"/>
@@ -499,6 +548,11 @@
 
        <sqlQuery name="EcNumber"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd2_980</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="ec_number" />
@@ -709,6 +763,11 @@
 
        <sqlQuery name="Epitopes"
                   isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd6_1800</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="iedb_id"/>
@@ -736,6 +795,11 @@
 
        <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
                   isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd6_2090</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="total"/>
@@ -931,6 +995,9 @@
   <!--===========================================================================-->
 
        <sqlQuery name="GeneGffAliases" isCacheable="false">
+
+            <testParamValues minRows="0" includeProjects="CryptoDB"/>
+
          <paramRef ref="recordParams.primaryKey"/>
          <paramRef ref="recordParams.projectId"/>
                 <column name="gff_alias"/>
@@ -1578,6 +1645,11 @@
        <!-- SGC 3-D structure predictions                                --> 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+
+            <testParamValues>
+               <paramValue name="primaryKey">cgd3_300</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.primaryKey"/>
             <column name="pdb_id"/>
             <sql>

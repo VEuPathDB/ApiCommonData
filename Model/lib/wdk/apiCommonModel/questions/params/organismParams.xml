@@ -522,6 +522,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="cp-tg" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="CryptoDB,ToxoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -565,6 +568,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="cp-tg-pb" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="CryptoDB,ToxoDB,PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -610,6 +616,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="CryptoDB,ToxoDB,PlasmoDB,TrichDB,GiardiaDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -647,6 +656,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -700,6 +712,9 @@
 
 
 <sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB">
+
+      <testParamValues excludeProjects="GiardiaDB,TrichDB,PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -755,6 +770,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB,CryptoDB">
+
+      <testParamValues excludeProjects="ToxoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       
@@ -863,6 +881,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf-gl" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="GiardiaDB,ToxoDB,PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -900,6 +921,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="ToxoDB,PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -935,6 +959,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="pf" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -969,6 +996,9 @@
     <!--===================================================================-->
 
     <sqlQuery name="pb" excludeProjects="ApiDB">
+
+      <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
+
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>
