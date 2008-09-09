@@ -41,7 +41,7 @@
             
             <primaryKeyAttribute name="primary_key"
                                  displayName="Gene" 
-                                 excludeProjects="PlasmoDB">
+                                 excludeProjects="ToxoDB,PlasmoDB">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
@@ -51,6 +51,17 @@
                 </text>                
             </primaryKeyAttribute>
 
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="ID" 
+                                 includeProjects="ToxoDB">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
 
       <!-- =============================================================== -->
       <!--   Filters -->  
@@ -456,6 +467,13 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <attributeQueryRef ref="GeneAttributes.Bfmv">
+            <textAttribute name="gene_id" displayName="Gene ID" includeProjects="ToxoDB">
+              <text>
+                  <![CDATA[
+                  TG_$$internal_gene_id$$
+                  ]]>
+              </text>
+            </textAttribute>
             <columnAttribute displayName="Data Source" name="external_db_name"/>
             <columnAttribute displayName="Genomic Sequence ID" name="sequence_id"/>
             <textAttribute name="location_text" displayName="Genomic Location">
@@ -554,7 +572,8 @@
             <columnAttribute name="rh" displayName="RH strain expression" includeProjects="ToxoDB"/>
             <columnAttribute name="rh_no_glucose" displayName="No-glucose expression" includeProjects="ToxoDB"/>
             <columnAttribute name="rh_high_glucose" displayName="High-glucose expression" includeProjects="ToxoDB"/>
-            <columnAttribute name="gene_id" displayName="Reference Gene ID" includeProjects="ToxoDB"/>
+            <columnAttribute name="internal_gene_id" displayName="Internal Gene ID" includeProjects="ToxoDB" 
+                             internal="true" inReportMaker="false"/>
 
             <textAttribute name="rhGlucose" displayName="RH in Glucose expr profile graph"
                            inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">

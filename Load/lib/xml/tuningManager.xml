@@ -2748,6 +2748,13 @@ GROUP BY ga.source_id
       ]]>
     </sql>
     <sql>
+insert into apidb.TOXOEXPRESSIONGRAPHS&1
+(source_id,graph_starvation,graph_archetypal)
+select source_id,0,0 from apidb.GENEATTRIBUTES
+minus
+select source_id,0,0 from apidb.TOXOEXPRESSIONGRAPHS&1
+    </sql>
+    <sql>
       <![CDATA[
 CREATE INDEX apidb.ToxoExp_sourceId_idx&1 ON apidb.ToxoExpressionGraphs&1 (source_id)
       ]]>

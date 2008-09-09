@@ -148,7 +148,11 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
               summary="organism,location_text,product,is_pseudo,is_deprecated"
               sorting="organism asc,location_text asc"
         />
-         <attributesList excludeProjects="GiardiaDB"
+         <attributesList includeProjects="ToxoDB"
+              summary="gene_id,organism,location_text,product,is_pseudo"
+              sorting="gene_id asc,organism asc,location_text asc"
+        />
+         <attributesList excludeProjects="ToxoDB,GiardiaDB"
               summary="organism,location_text,product,is_pseudo"
               sorting="organism asc,location_text asc"
         />
@@ -175,7 +179,11 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
               queryRef="GeneId.GenesByExonCount"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
-        <attributesList
+         <attributesList includeProjects="ToxoDB"
+              summary="gene_id,organism,location_text,product,exon_count"
+              sorting="gene_id asc,exon_count desc,location_text asc"
+        />
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,exon_count"
               sorting="organism asc,exon_count desc,location_text asc"
         />
@@ -1361,7 +1369,11 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
          category="Cellular Location"
          queryRef="GeneId.GenesWithSignalPeptide"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+         <attributesList includeProjects="ToxoDB"
+            summary="gene_id,organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
+            sorting="gene_id asc,sigp_sum_score desc,location_text asc"
+        />
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
          sorting="organism asc,sigp_sum_score desc,location_text asc"
         /> 
