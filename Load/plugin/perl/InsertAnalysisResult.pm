@@ -49,7 +49,7 @@ sub getArgumentsDeclaration{
                isList         => 0,
                reqd           => 1,
                constraintFunc => undef,
-               enum           => "DataTransformationResult,DifferentialExpression",
+               enum           => "DataTransformationResult,DifferentialExpression,ExpressionProfile",
              }),
 
      enumArg({ descr          => 'View of naFeatureImp',
