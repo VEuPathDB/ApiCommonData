@@ -346,6 +346,12 @@ create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
     </sql>
     <sql>
       <![CDATA[
+create index apidb.fl_seq_st_end_feat_idx&1
+      on apidb.FEATURELOCATION&1 (na_sequence_id,start_min,end_max,na_feature_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
 create index apidb.featloc3_ix&1 on apidb.FeatureLocation&1
              (na_feature_id, na_sequence_id, is_top_level)
       ]]>
@@ -1664,6 +1670,12 @@ WHERE edr.external_database_release_id = snp.external_database_release_id
       <![CDATA[
 CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id)
       ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+      ]]>
+create INDEX apidb.Snp_nafeat_dataset_ix&1
+       ON apidb.SnpAttributes&1 (na_feature_id, dataset)
     </sql>
     <sql>
       <![CDATA[
