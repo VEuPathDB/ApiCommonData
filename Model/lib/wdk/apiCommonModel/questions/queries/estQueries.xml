@@ -244,6 +244,12 @@
     <wsQuery name="EstsBySimilarity" 
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">TAGGGGTATAGCTGAGATAGTTTTACTTGCTGCAGATGC</paramValue>
+            <paramValue name="BlastDatabaseType">EST</paramValue>
+        </testParamValues>
+
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>

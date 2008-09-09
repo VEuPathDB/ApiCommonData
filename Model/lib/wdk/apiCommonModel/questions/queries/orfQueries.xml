@@ -192,6 +192,13 @@
  
     <wsQuery name="OrfsBySimilarity" 
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">FYLFICNSLCCGSCNSTVTHSYDFKPSDECCIRKLWIC</paramValue>
+            <paramValue name="BlastDatabaseType">ORF</paramValue>
+            <paramValue name="BlastAlgorithm">blastp</paramValue>
+        </testParamValues>
+
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>

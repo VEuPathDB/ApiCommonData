@@ -93,7 +93,6 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon (Species, Organism) -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
     <sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB,PlasmoDB">
         <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true" includeProjects="CryptoDB"/>
         <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true" includeProjects="PlasmoDB"/>
@@ -390,6 +389,13 @@
     <wsQuery name="IsolatesBySimilarity"
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">TATTTTGGAGGGTTCAATTGCAGGTATTAGAAGCGAATCTTGCGTTGTATCTG</paramValue>
+            <paramValue name="BlastDatabaseType">Isolates</paramValue>
+            <paramValue name="BlastDatabaseOrganism">All Cryptosporidium Isolates</paramValue>
+        </testParamValues>
+
       <paramRef ref="sharedParams.BlastDatabaseType"/>
       <paramRef ref="sharedParams.BlastAlgorithm"/>
       <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>

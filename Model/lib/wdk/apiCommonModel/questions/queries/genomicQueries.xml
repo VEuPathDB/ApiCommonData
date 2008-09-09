@@ -102,6 +102,11 @@
     <wsQuery name="SequencesBySimilarity" 
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
 
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">CGTATTCAAGAGAGTAGTCCATTTGGAATTGATTTCTGTCAAAGT</paramValue>
+            <paramValue name="BlastDatabaseType">Genome</paramValue>
+        </testParamValues>
+
         <paramRef ref="sharedParams.BlastDatabaseType"/>
         <paramRef ref="sharedParams.BlastAlgorithm"/>
         <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
