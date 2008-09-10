@@ -1321,7 +1321,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
               isCacheable="true">
-        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
+        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,CryptoDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" multiPick="false" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -1330,7 +1331,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="source_id"/>
         <column name="dynamic_location"/>
 
-        <sql includeProjects="PlasmoDB,CryptoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
             SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -1344,6 +1345,21 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
+              fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
+            FROM apidb.featurelocation fl,apidb.SEQUENCEATTRIBUTES satr,
+                 apidb.GENEATTRIBUTES gatr,dots.nasequence seq
+            WHERE satr.na_sequence_id = seq.na_sequence_id
+              AND ((seq.taxon_id in ($$organism$$) AND satr.CHROMOSOME like $$chromosomeOptional$$ )
+                   OR lower(satr.source_id) = lower($$sequenceId$$))
+              AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
+              AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID
+              AND fl.end_max >= $$start_point$$
+              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+           ]]>
+       </sql>
 <!--
         <sql includeProjects="CryptoDB,ToxoDB">
             <![CDATA[
