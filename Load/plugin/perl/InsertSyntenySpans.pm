@@ -38,14 +38,14 @@ my $argsDeclaration =
 	      descr => 'where do we find source_id\'s from sequence A',
 	      constraintFunc => undef,
 	      reqd => 1,
-	      isList => 0
+	      isList => 1
 	     }),
 
    stringArg({name => 'extDbRlsSpecB',
-	      descr => 'where do we find source_id\'s from sequence A',
+	      descr => 'where do we find source_id\'s from sequence B',
 	      constraintFunc => undef,
 	      reqd => 1,
-	      isList => 0
+	      isList => 1
 	     }),
 
    stringArg({name => 'syntenyDbRlsSpec',
@@ -119,8 +119,18 @@ sub run {
   my ($self) = @_;
 
   my $file = $self->getArg('inputFile');
-  my $extDbRlsIdA = $self->getExtDbRlsId($self->getArg('extDbRlsSpecA'));
-  my $extDbRlsIdB = $self->getExtDbRlsId($self->getArg('extDbRlsSpecB'));
+  my(@extDbRlsIdA, @extDbRlsIdB);
+
+  foreach my $extDbRlsSpecA (@{$self->getArg('extDbRlsSpecA')}){
+      push(@extDbRlsIdA,$self->getExtDbRlsId($extDbRlsSpecA));
+  }
+  my $extDbRlsIdA = join(",",@extDbRlsIdA);
+
+  foreach my $extDbRlsSpecB (@{$self->getArg('extDbRlsSpecB')}){
+      push(@extDbRlsIdB,$self->getExtDbRlsId($extDbRlsSpecB));
+  }
+  my $extDbRlsIdB = join(",",@extDbRlsIdB);
+
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
   my $count = 0;
@@ -141,8 +151,8 @@ sub run {
   }
   close(IN);
 
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdA, $self->getArg('extDbRlsSpecA'));
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdB, $self->getArg('extDbRlsSpecB'));
+  $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
+  $self->insertAnchors($synDbRlsId, $extDbRlsIdB);
 
   my $anchorCount = $self->getAnchorCount();
 
@@ -249,12 +259,14 @@ sub getNaSequenceId {
   my ($self, $sourceId, $extDbRlsId, $seqTable) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $sql = "SELECT na_sequence_id FROM $seqTable 
-             WHERE  source_id = ? AND external_database_release_id = ?";
+
+  my $sql = "SELECT na_sequence_id FROM $seqTable
+             WHERE  source_id = ? AND external_database_release_id IN ($extDbRlsId)";
 
   my $sh = $dbh->prepare($sql);
 
-  my @ids = $self->sqlAsArray( Handle => $sh, Bind => [$sourceId, $extDbRlsId] );
+  my @ids = $self->sqlAsArray( Handle => $sh, Bind => [$sourceId] );
+
 
   if(scalar @ids != 1) {
     $self->error("Sql Should return only one value: $sql\n for values: $sourceId and $extDbRlsId");
@@ -282,7 +294,7 @@ select syn.*
 from apidb.Synteny syn, dots.NaSequence seq
 where syn.external_database_release_id = $synDbRlsId
 and seq.na_sequence_id = syn.a_na_sequence_id
-and seq.external_database_release_id = $extDbRlsIdA
+and seq.external_database_release_id IN ($extDbRlsIdA)
 and syn.row_alg_invocation_id = $algorithmInvocationId
 ";
 
