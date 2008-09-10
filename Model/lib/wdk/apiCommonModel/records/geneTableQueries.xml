@@ -269,7 +269,7 @@
              tmf.aa_feature_id AS tmf_name,
              tmf.parent_id AS tmf_parent_id, tmf.topology AS tmf_topology,
              aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max,
-             dbms_lob.substr(tas.sequence,aal.end_max - aal.start_min + 1,aal.start_min)
+             substr(tas.sequence,aal.start_min,aal.end_max - aal.start_min + 1) AS tmf_sequence
              from
              dots.aalocation aal,
              dots.genefeature gf,
@@ -461,7 +461,7 @@
              dots.genefeature gf,
              dots.transcript t,
              dots.translatedaafeature taf,
-             dots.transmembraneaafeature lc, 
+             dots.lowcomplexityaafeature lc, 
              dots.aaSequence aas
              where gf.source_id = $$source_id$$
              and gf.na_feature_id = t.parent_id
