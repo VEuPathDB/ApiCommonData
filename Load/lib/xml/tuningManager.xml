@@ -1972,7 +1972,7 @@ ON apidb.ArrayElementAttributes&1 (source_id)
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
           and virtualseq.subclass_view = vti.name
 SQL
-
+      
       my $queryHandle = $dbh->prepare($sql);
       $queryHandle->execute();
 
@@ -2012,7 +2012,7 @@ SQL
           if ($strand_orientation eq '-') {
             $virtual_target_start = $distance_from_left + $length - $target_end;
             $virtual_target_end = $distance_from_left + $length - $target_start;
-            $virtual_tstarts = '???';
+            $virtual_tstarts = &getReversedTstarts($distance_from_left,$length,$tstarts,$blocksizes);
           } else {
             $virtual_target_start = $target_start + $distance_from_left;
             $virtual_target_end = $target_end + $distance_from_left;
@@ -2037,6 +2037,17 @@ SQL
 
       $insertHandle->finish();
       $queryHandle->finish();
+
+sub getReversedTstarts {
+  my($dfl,$len,$tstart,$blocksizes) = @_;
+  my @ts = split(',',$tstart);
+  my @bs = split(',',$blocksizes);
+  my @new;
+  for(my $a = scalar(@ts) - 1;$a >= 0;$a--){
+    push(@new,($dfl + $len - $ts[$a] - $bs[$a] + 2));
+  }
+  return join(',',@new);
+}
       ]]> 
     </perl>
   </tuningTable>
