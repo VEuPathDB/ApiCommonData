@@ -3108,7 +3108,7 @@ sub loadBlastWithSqlldr {
 
   my $oracleUserPswd = $propertySet->getProp('oracleUserPswd');
 
-  my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile rows=10000";
+  my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile rows=25000 direct=TRUE";
 
   $mgr->runCmd($cmd);
 
@@ -3154,7 +3154,7 @@ evalueExponentCutoff=-5
   print CONFIG $configString;
   close(CONFIG);
 
-  my $cmd = "orthomclEdges $configFile cleanup=$cleanup 2>> $logfile";
+  my $cmd = "nohup orthomclEdges $configFile cleanup=$cleanup 2>> $logfile";
 
   $cmd .= " startAfter=$startAfter" if $startAfter;
 
