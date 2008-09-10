@@ -279,7 +279,7 @@ sub insertAnchors {
 
   my $retrieveSyntenySql = "
 select syn.*
-from apidb.Synteny syn, dots.ExternalNaSequence seq
+from apidb.Synteny syn, dots.NaSequence seq
 where syn.external_database_release_id = $synDbRlsId
 and seq.na_sequence_id = syn.a_na_sequence_id
 and seq.external_database_release_id = $extDbRlsIdA
