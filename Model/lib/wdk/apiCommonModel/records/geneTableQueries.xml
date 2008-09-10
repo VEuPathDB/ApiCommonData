@@ -285,10 +285,11 @@
 
             <sql>
            <![CDATA[
-             select gf.source_id, tmf.aa_feature_id AS tmf_name,
+              select gf.source_id, '@PROJECT_ID@' AS project_id, 
+             tmf.aa_feature_id AS tmf_name,
              tmf.parent_id AS tmf_parent_id, tmf.topology AS tmf_topology,
              aal.start_min AS tmf_start_min, aal.end_max AS tmf_end_max,
-             dbms_lob.substr(tas.sequence,aal.end_max - aal.start_min + 1,aal.start_min) tmf_sequence
+             substr(tas.sequence,aal.start_min,aal.end_max - aal.start_min + 1) AS tmf_sequence
              from
              dots.aalocation aal,
              dots.genefeature gf,
@@ -432,7 +433,8 @@
 
             <sql>
             <![CDATA[
-             select gf.source_id, lc.aa_feature_id AS lc_name,
+             select gf.source_id, '@PROJECT_ID@' AS project_id, 
+             lc.aa_feature_id AS lc_name,
              lc.aa_sequence_id AS lc_parent_id,
              aal.start_min AS lc_start_min, aal.end_max AS lc_end_max,
              substr(aas.sequence, aal.start_min, (aal.end_max-aal.start_min+1)) AS lc_sequence
@@ -441,7 +443,7 @@
              dots.genefeature gf,
              dots.transcript t,
              dots.translatedaafeature taf,
-             dots.transmembraneaafeature lc, 
+             dots.lowcomplexityaafeature lc, 
              dots.aaSequence aas
              where gf.source_id = $$primaryKey$$
              and gf.na_feature_id = t.parent_id
@@ -449,7 +451,7 @@
              and taf.aa_sequence_id = lc.aa_sequence_id
              and lc.aa_feature_id = aal.aa_feature_id
              and lc.aa_sequence_id = aas.aa_sequence_id
-             ORDER BY lc_start_min            
+             ORDER BY lc_start_min     
              ]]>
             </sql>
         </sqlQuery>
