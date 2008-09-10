@@ -706,7 +706,7 @@
         <column name="gff_transcript_sequence"/>
         <sql>
           <![CDATA[
-            select 'apidb|' || gf.source_id, '@project_id@' as project_id,
+            select 'apidb|' || gf.source_id AS source_id, '@project_id@' as project_id,
                    s.sequence as gff_transcript_sequence
             from DoTS.GeneFeature gf, 
                  DoTS.Transcript rna,
