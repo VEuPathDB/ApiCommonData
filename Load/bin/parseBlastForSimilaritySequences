@@ -128,14 +128,23 @@ while(<IN>){
 
     $arr[1] =~ s/\s//g;
 
-    my ($mant,$exp) = split(/e/,$arr[3]);
-
-    $mant = 1 if (!$mant);
+    my ($mant, $exp);
+    if ($arr[3] =~ /e/) {
+      $arr[3] = '1' . $arr[3] if ($arr[3] =~ /^e/);
+      ($mant, $exp) = split(/e/, $arr[3]);
+    } else {
+	$mant = int($arr[3]);
+	$exp = 0;
+    }
 
     my $perIdent = sprintf("%.0f", (($arr[10]/$arr[9])*100));
     my $perMatch = sprintf("%.0f", $arr[16]);
 
     my $str = "$queryId $arr[1] $taxons{$queryId} $taxons{$arr[1]} $mant $exp $perIdent $perMatch\n";
+
+    my @arr = split(/\s/,$str);
+
+    print STDERR "Missing attributes in $str" if (@arr != 8);
 
     push(@lines,$str);
   }
