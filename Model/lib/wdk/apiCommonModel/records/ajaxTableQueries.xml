@@ -8,7 +8,33 @@
 <!--====================================================================================-->
 <!-- INTERPRO TERM QUERIES -->
 <!--=====================================================================-->
-  <querySet name="AjaxTables" doNotTest="true" queryType="table">
+  <querySet name="AjaxTables" queryType="table">
+
+            <defaultTestParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">INTERPRO</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">InterPro</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">InterPro</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">InterPro</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">InterPro</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </defaultTestParamValues>
+
         <!-- AjaxTables.InterproTermList -->
         <sqlQuery name="InterproTermList" isCacheable='true' excludeProjects="ApiDB"> 
             <paramRef ref="recordParams.primaryKey"/> 
