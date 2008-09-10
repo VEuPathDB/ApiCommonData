@@ -3320,45 +3320,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </processQuery>
 
   </querySet>
-  
+
   <querySet name="GeneSubTypes">
-  
-    <sqlQuery name="GenesByFilters" includeProjects="GiardiaDB,ToxoDB"
-              isCacheable="false">
-        <paramRef ref="geneParams.geneResult"/>
-        <paramRef ref="geneParams.subType"/>
-        <column name="project_id"/>
-        <column name="source_id"/>
-        <sql includeProjects="GiardiaDB">
-            <![CDATA[
-            SELECT c.*
-            FROM ($$geneResult$$) c,
-                 apidb.GeneAttributes ga
-            WHERE c.source_id = ga.source_id
-              AND c.project_id = ga.project_id
-              AND ga.is_deprecated = $$subType$$
-            ]]>
-        </sql>
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT c.*
-            FROM ($$geneResult$$) c,
-                 (SELECT MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
-                            DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
-                                                'Toxoplasma gondii GT1', 2,
-                                                'Toxoplasma gondii VEG', 3)) AS source_id
-                  FROM ($$geneResult$$) c, apidb.GeneAttributes ga
-                  WHERE c.source_id = ga.source_id
-                  AND ncbi_tax_id in ($$subType$$)
-                  GROUP BY ga.gene_id) f
-            WHERE c.source_id = f.source_id
-            ]]>
-        </sql>
-    </sqlQuery>  
-  
+
     <sqlQuery name="GenesByTransformers" includeProjects="ToxoDB"
               isCacheable="true">
-        <paramRef ref="geneParams.geneResult"/>
+        <paramRef ref="geneParams.gene_result"/>
         <paramRef ref="organismParams.organism" 
                   queryRef="organismVQ.withStrains"
                   default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
@@ -3371,8 +3338,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             FROM apidb.GeneAttributes ga
             WHERE ga.gene_id IN
                     (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, $$geneResult$$ c
-                     WHERE ga.source_id = c.source_id)
+                     FROM apidb.GeneAttributes ga, $$gene_result$$
+                     WHERE $$gene_result.condition$$
+                       AND ga.source_id = $$gene_result$$.source_id)
               AND ga.ncbi_tax_id IN ($$organism$$)
             ]]>
        </sql>
