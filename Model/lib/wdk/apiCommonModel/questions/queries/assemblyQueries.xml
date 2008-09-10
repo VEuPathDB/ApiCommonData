@@ -6,7 +6,7 @@
     <!-- EST Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="AssembliesByEstAccession" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="AssembliesByEstAccession" doNotTest= "true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -36,6 +36,11 @@
 
     <sqlQuery name="AssembliesByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB" 
              isCacheable='true'>
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="libraryId">WatanabeCpHNJ-1</paramValue> 
+        </testParamValues>
+
         <paramRef ref="sharedParams.libraryId"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
         <paramRef ref="sharedParams.min_lib_ests_in_assembly"/>
@@ -75,6 +80,11 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="AssembliesByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
           isCacheable="true">
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="sequenceId">AAEE01000006</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
@@ -361,6 +371,13 @@
     <wsQuery name="AssembliesBySimilarity"
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">TAGGGGTATAGCTGAGATAGTTTTACTTGCTGCAGATGC</paramValue>
+            <paramValue name="BlastDatabaseType">Assemblies</paramValue>
+        </testParamValues>
+
+
       <paramRef ref="sharedParams.BlastDatabaseType"/>
       <paramRef ref="sharedParams.BlastAlgorithm"/>
       <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>

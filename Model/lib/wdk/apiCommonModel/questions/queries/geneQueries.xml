@@ -62,8 +62,8 @@
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneByLocusTag" excludeProjects="ApiDB"
-              isCacheable="true" doNotTest="true">
+    <sqlQuery name="GeneByLocusTag" doNotTest="true" excludeProjects="ApiDB"
+              isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -446,8 +446,7 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
-              isCacheable="true" doNotTest="true">
+    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB" isCacheable="true">
         <paramRef ref="sharedParams.geneHistoryId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
@@ -2069,8 +2068,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByPhyleticProfile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPhyleticProfile" includeProjects="PlasmoDB"
-              isCacheable="true" doNotTest="true">
+    <sqlQuery name="GenesByPhyleticProfile" doNotTest="true" includeProjects="PlasmoDB" isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids" default="PY03942"/>
         <paramRef ref="geneParams.min_mutual_information_score"/>
         <paramRef ref="geneParams.include_only_queries"/>
@@ -2150,8 +2148,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByFunctionalInteraction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByFunctionalInteraction" includeProjects="PlasmoDB" 
-              isCacheable="true" doNotTest="true">
+    <sqlQuery name="GenesByFunctionalInteraction" doNotTest="true" includeProjects="PlasmoDB" isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
         <paramRef ref="geneParams.min_interaction"/>
         <paramRef ref="geneParams.include_only_queries"/>

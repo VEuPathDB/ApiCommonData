@@ -80,6 +80,9 @@
 
         <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB" minRows="0"/>
+
             <paramRef ref="recordParams.primaryKey"/>
             <paramRef ref="recordParams.projectId"/>
             <column name="comment_id"/>
