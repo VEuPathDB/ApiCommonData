@@ -692,8 +692,6 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <attributeQueryRef ref="GeneAttributes.ExpressionGraphs" includeProjects="ToxoDB">
-            <columnAttribute name="graph_starvation" internal="true"
-                             inReportMaker="false"/>
             <columnAttribute name="graph_archetypal" internal="true"
                              inReportMaker="false"/>
           </attributeQueryRef>
@@ -1831,6 +1829,11 @@
             <text includeProjects="PlasmoDB">
                  <![CDATA[
                  @CGI_URL@/gbrowse_img/plasmodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
+                 ]]>
+            </text>
+            <text includeProjects="ToxoDB">
+                 <![CDATA[
+                 @CGI_URL@/gbrowse_img/toxodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
                  ]]>
             </text>
          </textAttribute>

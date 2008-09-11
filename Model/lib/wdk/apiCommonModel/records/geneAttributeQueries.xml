@@ -423,13 +423,13 @@
             <![CDATA[
             SELECT gf.source_id,
                    tas.sequence AS workshop_protein_sequence,'@project_id@' as project_id
-            FROM dots.GeneFeature gf, dots.Transcript t,
+            FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  apidb.TRACKNEWANNOTATION tna
             WHERE tna.new_source_id(+) = gf.source_id
-              AND t.parent_id = gf.na_feature_id
-              AND t.na_feature_id = taf.na_feature_id
-              AND taf.aa_sequence_id = tas.aa_sequence_id
+              AND t.parent_id(+) = gf.na_feature_id
+              AND t.na_feature_id = taf.na_feature_id(+)
+              AND taf.aa_sequence_id = tas.aa_sequence_id(+)
             ]]>
             </sql>
         </sqlQuery>
@@ -445,11 +445,11 @@
             <![CDATA[
             SELECT gf.source_id, '@project_id@' as project_id,
                    tas.sequence AS protein_sequence
-            FROM dots.GeneFeature gf, dots.Transcript t,
+            FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
             WHERE t.parent_id = gf.na_feature_id
-              AND t.na_feature_id = taf.na_feature_id
-              AND taf.aa_sequence_id = tas.aa_sequence_id
+              AND t.na_feature_id = taf.na_feature_id(+)
+              AND taf.aa_sequence_id = tas.aa_sequence_id(+)
             ]]>
             </sql>
         </sqlQuery>
@@ -502,7 +502,7 @@
             <sql>
             <![CDATA[
               select gf.source_id, s.sequence as workshop_transcript_sequence,'@project_id@' as project_id
-              from dots.genefeature gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
+              from apidb.geneattributes gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
               where tna.new_source_id(+) = gf.source_id
                 and t.parent_id = gf.na_feature_id
                 and s.na_sequence_id = t.na_sequence_id
@@ -518,7 +518,7 @@
             <sql>
             <![CDATA[
               select gf.source_id, s.sequence as transcript_sequence,'@project_id@' as project_id
-              from dots.genefeature gf, dots.transcript t, dots.splicednasequence s
+              from apidb.geneattributes gf, dots.transcript t, dots.splicednasequence s
               where t.parent_id = gf.na_feature_id
                 and s.na_sequence_id = t.na_sequence_id
             ]]>
@@ -562,13 +562,13 @@
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
                        AS workshop_cds,'@project_id@' as project_id
-              FROM dots.genefeature gf, dots.transcript t,
+              FROM apidb.geneattributes gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf,
                    apidb.TRACKNEWANNOTATION tna
               WHERE tna.new_source_id(+) = gf.source_id
                 AND t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
-                AND t.na_feature_id = tf.na_feature_id
+                AND t.na_feature_id = tf.na_feature_id(+)
             ]]>
             </sql>
         </sqlQuery>
@@ -587,11 +587,11 @@
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
                        AS cds,'@PROJECT_ID@' as project_id
-              FROM dots.genefeature gf, dots.transcript t,
+              FROM apidb.geneattributes gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
               WHERE t.parent_id = gf.na_feature_id
                 AND s.na_sequence_id = t.na_sequence_id
-                AND t.na_feature_id = tf.na_feature_id
+                AND t.na_feature_id = tf.na_feature_id(+)
             ]]>
             </sql>
         </sqlQuery>
@@ -661,20 +661,13 @@
        <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="ToxoDB">
             <column name="source_id"/>
             <column name="project_id"/>
-            <column name="graph_starvation" />
             <column name="graph_archetypal"/>
             <sql>
             <![CDATA[
-/*
                SELECT egs.source_id AS source_id, '@project_id@' as project_id,
-                      NVL(MAX(graph_starvation), 0) AS graph_starvation,
-                      NVL(MAX(graph_archetypal), 0) AS graph_archetypal
-               FROM apidb.ToxoExpressionGraphs egs
-*/
-               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
-                      0 AS graph_starvation,
-                      0 AS graph_archetypal
-               FROM apidb.ToxoExpressionGraphs egs
+                      NVL(egs.graph_archetypal, 0) AS graph_archetypal
+               FROM apidb.ToxoExpressionGraphs egs, apidb.geneattributes ga
+               WHERE ga.source_id = egs.source_id(+)
             ]]>
             </sql>
         </sqlQuery>
@@ -690,8 +683,9 @@
             <sql>
             <![CDATA[
                SELECT egs.source_id AS source_id, '@project_id@' as project_id,
-                      NVL(MAX(graph_stress), 0) AS graph_stress
-               FROM apidb.GiardiaExpressionGraphs egs
+                      NVL(graph_stress, 0) AS graph_stress
+               FROM apidb.GiardiaExpressionGraphs egs,apidb.geneattributes ga
+               WHERE ga.source_id = egs.source_id(+) 
             ]]>
             </sql>
         </sqlQuery>
@@ -706,9 +700,9 @@
         <column name="gff_transcript_sequence"/>
         <sql>
           <![CDATA[
-            select 'apidb|' || gf.source_id AS source_id, '@project_id@' as project_id,
+            select gf.source_id AS source_id, '@project_id@' as project_id,
                    s.sequence as gff_transcript_sequence
-            from DoTS.GeneFeature gf, 
+            from Apidb.Geneattributes gf, 
                  DoTS.Transcript rna,
                  dots.splicednasequence s
             where gf.na_feature_id = rna.parent_id
@@ -790,7 +784,7 @@
                        )
                   as linkout, 
                   t.protein_id
-            FROM  dots.transcript t, dots.genefeature g
+            FROM  dots.transcript t, apidb.geneattributes g
             WHERE g.na_feature_id = t.parent_id(+)
             ]]>
             </sql>
@@ -804,14 +798,14 @@
               <![CDATA[
             SELECT gf.source_id, '@project_id@' as project_id,
                    dr.primary_identifier AS pdb_id
-            FROM dots.GeneFeature gf,
+            FROM apidb.geneattributes gf,
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.na_feature_id = drnf.na_feature_id
-            AND drnf.db_ref_id = dr.db_ref_id
-            AND dr.external_database_release_id = edr.external_database_release_id
-            AND edr.external_database_id = ed.external_database_id
+            WHERE gf.na_feature_id = drnf.na_feature_id(+)
+            AND drnf.db_ref_id = dr.db_ref_id(+)
+            AND dr.external_database_release_id = edr.external_database_release_id(+)
+            AND edr.external_database_id = ed.external_database_id(+)
             AND ed.name = 'Structural Genomics Consortium 3D Structures'
             ORDER BY dr.primary_identifier
               ]]>
@@ -831,7 +825,8 @@
             <!-- The sql weirdness is to force a single row result set of null
                  values when there is no translation (as is the case for 
                  non-protein coding genes) - the WDK doesn't allow an empty result.    -->
-            <![CDATA[  SELECT g.source_id, '@project_id@' as project_id,
+            <![CDATA[  
+              SELECT g.source_id, '@project_id@' as project_id,
                           tas.sequence as translation, tas.molecular_weight,
                           DECODE (
                             tas.molecular_weight, null,
@@ -840,13 +835,13 @@
                             tas.molecular_weight  ||
                             '</b><font size=''-1''><i> [computed from raw translation]</i></font>'
                           ) as molecular_weight_note
-            FROM    dots.genefeature g,
+              FROM    apidb.geneattributes g,
                     dots.translatedaasequence tas, 
                     dots.translatedaafeature taf, 
                     dots.transcript t
-            WHERE taf.aa_sequence_id = tas.aa_sequence_id 
-            AND taf.na_feature_id = t.na_feature_id
-            AND g.na_feature_id = t.parent_id         
+              WHERE g.na_feature_id = t.parent_id        
+              AND taf.na_feature_id(+) = t.na_feature_id
+              AND taf.aa_sequence_id = tas.aa_sequence_id(+) 
            
             ]]>
             </sql>
