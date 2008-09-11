@@ -150,7 +150,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="SequenceDumpQuery" isCacheable="true" excludeProjects="ApiDB">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
+        <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sqlParamValue name="sequence_table" excludeProjects="ToxoDB">dots.NaSequence</sqlParamValue>
@@ -163,7 +163,7 @@
                  apidb.SequenceAttributes sa
             WHERE sa.ncbi_tax_id IN (SELECT ncbi_tax_id FROM sres.taxon                        
                                   CONNECT BY parent_id = prior taxon_id
-                                  START WITH taxon_id in ($$organism$$))
+                                  START WITH taxon_id in ($$gff_organism$$))
               AND sa.project_id = '@PROJECT_ID@'
               AND sa.is_top_level = 1
             ]]>
