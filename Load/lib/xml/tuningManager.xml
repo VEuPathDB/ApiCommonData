@@ -2743,19 +2743,14 @@ CREATE INDEX apidb.PlasmoExp_sourceId_idx&1 ON apidb.PlasmoExpressionGraphs&1 (s
       <![CDATA[
 CREATE TABLE apidb.ToxoExpressionGraphs&1 NOLOGGING AS
 SELECT ga.source_id,
-       COUNT(starvation) as graph_starvation, COUNT(archetypal) AS graph_archetypal
+       COUNT(archetypal) AS graph_archetypal
 FROM apidb.GeneAttributes ga,
-     (SELECT p.source_id, 1 AS starvation
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Effects of Glucose Starvation in Toxoplasma gondii'
-        AND p.profile_set_id = ps.profile_set_id) starvation,
      (SELECT p.source_id, 1 AS archetypal
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
         AND p.profile_set_id = ps.profile_set_id) archetypal
-  WHERE ga.source_id = starvation.source_id(+)
-    AND ga.source_id = archetypal.source_id(+)
-GROUP BY ga.source_id
+  WHERE ga.source_id = archetypal.source_id(+)
+GROUP BY ga.source_id)
       ]]>
     </sql>
     <sql>
