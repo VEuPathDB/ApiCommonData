@@ -10,7 +10,7 @@
     <!-- Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="EstBySourceId" excludeProjects="ApiDB"
+    <sqlQuery name="EstBySourceId" doNotTest="true" excludeProjects="ApiDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -41,6 +41,12 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
           isCacheable="true">
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="sequenceId">AAEE01000001</paramValue>
+          <paramValue name="libraryId">WatanabeCpHNJ-1</paramValue> 
+        </testParamValues>
+
         <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
@@ -238,6 +244,12 @@
     <processQuery name="EstsBySimilarity" 
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">TAGGGGTATAGCTGAGATAGTTTTACTTGCTGCAGATGC</paramValue>
+            <paramValue name="BlastDatabaseType">EST</paramValue>
+        </testParamValues>
+
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>

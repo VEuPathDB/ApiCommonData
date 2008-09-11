@@ -15,7 +15,7 @@
     <!-- SourceId -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="SequenceBySourceId" excludeProjects="ApiDB"
+    <sqlQuery name="SequenceBySourceId" doNotTest="true" excludeProjects="ApiDB"
         isCacheable="true">
         <paramRef ref="genomicParams.sequenceId" default="TGG_994746" includeProjects="ToxoDB"/> 
         <paramRef ref="genomicParams.sequenceId" default="MAL4" includeProjects="PlasmoDB"/> 
@@ -100,6 +100,11 @@
     
     <processQuery name="SequencesBySimilarity" 
         processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">CGTATTCAAGAGAGTAGTCCATTTGGAATTGATTTCTGTCAAAGT</paramValue>
+            <paramValue name="BlastDatabaseType">Genome</paramValue>
+        </testParamValues>
 
         <paramRef ref="sharedParams.BlastDatabaseType"/>
         <paramRef ref="sharedParams.BlastAlgorithm"/>

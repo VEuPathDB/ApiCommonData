@@ -15,8 +15,10 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Reference" isCacheable="true" includeProjects="CryptoDB,ApiDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="title"/>
             <column name="author"/>
             <column name="journal_or_book_name"/>
@@ -49,8 +51,10 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SNP" isCacheable="true" includeProjects="ApiDB,PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
+            <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.projectId"/>
+            <column name="source_id" />
+            <column name="project_id" />
             <column name="start_min"/>
             <column name="chromosome"/>
             <column name="allele"/>

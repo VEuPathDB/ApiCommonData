@@ -2,8 +2,6 @@
     <querySet name="IsolateAttributes">
 
         <sqlQuery name="Sequence" isCacheable='false'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="organism" sortingTable="apidb.IsolateAttributes"/> 
@@ -46,22 +44,21 @@
                       iso.data_type,
                       length(iso.sequence) length,
                       iso.sequence,
-                      $$projectId$$ as project_id
-               FROM   ApiDB.IsolateAttributes iso
-               WHERE  iso.source_id = $$primaryKey$$
+                      '@PROJECT_ID@' as project_id
+                FROM   ApiDB.IsolateAttributes iso
            </sql>
       </sqlQuery>
 
       <sqlQuery name="ProteinSequence" isCacheable='true'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
             <column name="gene_description"/>
             <column name="protein_sequence"/>
             <sql>
                SELECT etn.source_id, 
                       tas.description as gene_description,
                       tas.sequence as protein_sequence,
-                      $$projectId$$ as project_id
+                      '@PROJECT_ID@' as project_id
                FROM   DoTS.TranslatedAAFeature taf,
                       DoTS.TranslatedAASequence tas,
                       DoTS.Transcript trp, 
@@ -77,13 +74,12 @@
                   AND tas.aa_sequence_id = taf.aa_sequence_id
                   AND trp.parent_id = gf.na_feature_id
                   AND etn.na_sequence_id = gf.na_sequence_id
-                  AND etn.source_id = $$primaryKey$$
            </sql>
       </sqlQuery>
 
       <sqlQuery name="Reference" isCacheable='true'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
             <column name="title"/>
             <column name="author"/>
             <column name="year"/>
@@ -99,7 +95,7 @@
                       ref.journal_or_book_name,
                       ref.journal_vol,
                       ref.journal_page,
-                      $$projectId$$ as project_id
+                      '@PROJECT_ID@' as project_id
                FROM   DoTS.ExternalNASequence etn,
                       DoTS.NASequenceRef nasr,
                       SRES.Reference ref,
@@ -111,15 +107,14 @@
                   AND edr.version = '2007-12-12'
                   AND nasr.reference_id = ref.reference_id
                   AND etn.na_sequence_id = nasr.na_sequence_id
-                  AND etn.source_id = $$primaryKey$$
                   and rownum = 1
                ORDER BY ref.reference_id asc
            </sql>
       </sqlQuery>
 
       <sqlQuery name="GeneOverlap" isCacheable='true'>
-            <paramRef ref="recordParams.projectId"/>
-            <paramRef ref="recordParams.primaryKey"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
             <column name="gene"/>
             <column name="gene_product"/>
             <sql>
@@ -127,7 +122,7 @@
               SELECT t.source_id,
                      gf.product gene_product,
                      gf.source_id as gene,
-                     $$projectId$$ as project_id
+                     '@PROJECT_ID@' as project_id
               FROM   DoTS.GeneFeature gf,
                      DoTS.ExternalNASequence etn,
                      DoTS.NaLocation nal,
@@ -139,7 +134,6 @@
                 AND t.target_name = etn.source_id
                 AND nal.start_min <= t.max_subject_end
                 AND nal.end_max >= t.min_subject_start
-                AND t.source_id = $$primaryKey$$
             ]]>
            </sql>
       </sqlQuery>

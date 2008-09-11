@@ -5,7 +5,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <sqlQuery name="SnpBySourceId" includeProjects="PlasmoDB,ToxoDB,CryptoDB"  isCacheable="true">
+      <sqlQuery name="SnpBySourceId" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,CryptoDB"  isCacheable="true">
           <paramRef ref="snpParams.snp_id"/>
 	  <column name="source_id"/>
 	  <column name="project_id"/>
@@ -30,7 +30,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <sqlQuery name="SnpsByGeneId"  includeProjects="PlasmoDB,ToxoDB,CryptoDB"
+      <sqlQuery name="SnpsByGeneId" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,CryptoDB"
              isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids" excludeProjects="CryptoDB"/>
         <paramRef ref="sharedParams.ds_gene_ids" default="cgd3_510" includeProjects="CryptoDB"/>
@@ -346,6 +346,12 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <processQuery name="SnpsByLocation" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="snp_strain_m">Cp-MD</paramValue>
+            <paramValue name="chromosomeOptional">C.p. AAEE01000005 (Chromosome 2)</paramValue>
+        </testParamValues>
+
           <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>-->
           <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
           <paramRef ref="sharedParams.chromosomeOptional" />

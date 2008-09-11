@@ -14,7 +14,7 @@
     <!-- ORF ID -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="OrfByOrfId" excludeProjects="ApiDB"
+    <sqlQuery name="OrfByOrfId" doNotTest="true"  excludeProjects="ApiDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="orfParams.orf_id"/>
         <column name="project_id"/>
@@ -46,6 +46,11 @@
  
     <sqlQuery name="OrfsByLocation" 
                isCacheable="true" excludeProjects="ApiDB">
+
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="sequenceId">AAEE01000001</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
@@ -186,6 +191,13 @@
  
     <processQuery name="OrfsBySimilarity" 
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">FYLFICNSLCCGSCNSTVTHSYDFKPSDECCIRKLWIC</paramValue>
+            <paramValue name="BlastDatabaseType">ORF</paramValue>
+            <paramValue name="BlastAlgorithm">blastp</paramValue>
+        </testParamValues>
+
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="sharedParams.BlastAlgorithm"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>

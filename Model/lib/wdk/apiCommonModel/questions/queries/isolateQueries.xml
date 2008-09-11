@@ -12,7 +12,7 @@
     <!-- Isolate ID -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="IsolateByIsolateId" includeProjects="CryptoDB,PlasmoDB"
+    <sqlQuery name="IsolateByIsolateId" doNotTest="true" includeProjects="CryptoDB,PlasmoDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="isolateParams.isolate_id"/>
         <column name="source_id"/>
@@ -272,6 +272,11 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="continent">Africa</paramValue>
+        </testParamValues>        
+
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
@@ -391,6 +396,13 @@
     <processQuery name="IsolatesBySimilarity"
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="BlastQuerySequence">TATTTTGGAGGGTTCAATTGCAGGTATTAGAAGCGAATCTTGCGTTGTATCTG</paramValue>
+            <paramValue name="BlastDatabaseType">Isolates</paramValue>
+            <paramValue name="BlastDatabaseOrganism">All Cryptosporidium Isolates</paramValue>
+        </testParamValues>
+
       <paramRef ref="sharedParams.BlastDatabaseType"/>
       <paramRef ref="sharedParams.BlastAlgorithm"/>
       <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
