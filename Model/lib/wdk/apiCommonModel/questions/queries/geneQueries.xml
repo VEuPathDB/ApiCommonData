@@ -2280,30 +2280,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <sql>
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-	    SELECT sof.source_id, '@PROJECT_ID@' as project_id,
-	      max(round(de.fold_change, 2)) as fold_change,
-              max(round(de.confidence, 2)) as confidence
-            FROM RAD.DifferentialExpression de, Rad.ShortOligoFamily sof,
-                 Rad.Analysis a, Rad.AnalysisInput aia, Rad.AnalysisInput aib,
-		 Rad.LogicalGroup lga, Rad.LogicalGroup lgb,
-                 Rad.Protocol p, Rad.ProtocolParam pp, Rad.AnalysisParam ap
-            WHERE sof.composite_element_id = de.row_id
-             AND a.analysis_id = de.analysis_id
-             AND a.analysis_id = aia.analysis_id
-             AND a.analysis_id = aib.analysis_id
-             AND aia.logical_group_id = lga.logical_group_id 
-             AND aib.logical_group_id = lgb.logical_group_id
-             AND a.protocol_id = p.protocol_id
-             AND pp.protocol_id = p.protocol_id
-             AND ap.protocol_param_id = pp.protocol_param_id
-             AND ap.analysis_id = a.analysis_id
-             AND pp.name = 'reference_condition'
-             AND p.name = 'PaGE'
-	     AND lga.name = regexp_replace($$exprnsample$$, ' vs.*','')             
-	     AND lgb.name = regexp_replace($$exprnsample$$, '.*vs. ','')     
-             AND de.confidence >= $$confidence$$
-             AND ($$regulated_dir$$ (de.fold_change) >= $$fold_change$$)
-             GROUP BY sof.source_id
+          select '@PROJECT_ID@' as project_id, ga.source_id as source_id, 
+                 d.fold_change, d.confidence
+          from rad.differentialexpression d, Core.tableInfo t , 
+               Apidb.GeneAttributes ga, rad.analysis a 
+          where ga.na_feature_id = d.row_id 
+           and t.table_id = d.table_id
+           and a.analysis_id = d.analysis_id
+           and t.name = 'GeneFeature'
+           and $$regulated_dir$$(d.fold_change) >= $$fold_change$$
+           and d.confidence >= $$confidence$$
+           and a.name = $$exprnsample$$
             ]]>
           </sql>
     </sqlQuery>  
