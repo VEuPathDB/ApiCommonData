@@ -2425,7 +2425,7 @@ CREATE INDEX apidb.chfe_str_anti_rep_idx&1 ON apidb.ChIPFeature&1 (strain,antibo
   <tuningTable name="apidb.ChIPchipGene">
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GeneAttributes"/>
-    <internalDependency name="apidb.ChipFeature"/>
+    <internalDependency name="apidb.ChIPFeature"/>
     <internalDependency name="apidb.SequenceAttributes"/>
     <sql>
       <![CDATA[
@@ -3185,7 +3185,7 @@ where sim.similarity_id = simp.similarity_id
     <externalDependency name="dots.NaLocation"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <internalDependency name="apidb.isolateattributes"/>
+    <internalDependency name="apidb.IsolateAttributes"/>
     <sql>
       <![CDATA[
 create table apidb.IsolateSNPs&1 NOLOGGING as
