@@ -1888,7 +1888,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneDumpQuery" isCacheable="true" excludeProjects="ApiDB">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -1900,7 +1900,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                      dots.NaSequence ns, 
                      apidb.GeneAttributes ga
                 WHERE gf.na_sequence_id = ns.na_sequence_id
-                  AND ns.taxon_id IN ($$organism$$)
+                  AND ns.taxon_id IN ($$gff_organism$$)
                   AND gf.source_id IS NOT NULL
                   AND gf.source_id = ga.source_id
                   AND ga.project_id = '@PROJECT_ID@'
