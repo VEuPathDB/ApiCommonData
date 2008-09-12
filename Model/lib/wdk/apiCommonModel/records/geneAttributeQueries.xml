@@ -126,7 +126,7 @@
             <column name="rh"  sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
             <column name="rh_no_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
             <column name="rh_high_glucose" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
-            <column name="internal_gene_id" sortingTable="apidb.GeneAttributes" 
+            <column name="int_gene_id" sortingTable="apidb.GeneAttributes" 
                     sortingColumn="gene_id" includeProjects="ToxoDB"/>
 
             <column name="is_deprecated" sortingTable="apidb.GeneAttributes" includeProjects="GiardiaDB"/>
@@ -134,7 +134,7 @@
              <sqlParamValue name="toxo_expression" includeProjects="ToxoDB">
                 <![CDATA[
                    bfmv.pru, bfmv.veg, bfmv.rh, bfmv.rh_no_glucose,
-                   bfmv.rh_high_glucose, bfmv.gene_id as internal_gene_id,
+                   bfmv.rh_high_glucose, bfmv.gene_id as int_gene_id,
                 ]]>
             </sqlParamValue>
             <sqlParamValue name="toxo_expression" excludeProjects="ToxoDB">
@@ -280,7 +280,7 @@
                    bfmv.predicted_go_function as pred_go_function,
                    bfmv.predicted_go_process as pred_go_process,
                    bfmv.pru, bfmv.veg, bfmv.rh, bfmv.rh_no_glucose,
-                   bfmv.rh_high_glucose, bfmv.gene_id as internal_gene_id
+                   bfmv.rh_high_glucose, bfmv.gene_id as int_gene_id
             FROM apidb.GeneAttributes bfmv
                WHERE bfmv.source_id=$$primaryKey$$
                  AND bfmv.project_id=$$projectId$$
