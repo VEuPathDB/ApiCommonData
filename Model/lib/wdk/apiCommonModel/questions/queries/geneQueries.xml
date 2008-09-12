@@ -2281,7 +2281,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
           select '@PROJECT_ID@' as project_id, ga.source_id as source_id, 
-                 d.fold_change, d.confidence
+                 to_char(d.fold_change, '999.9') as fold_change, d.confidence
           from rad.differentialexpression d, Core.tableInfo t , 
                Apidb.GeneAttributes ga, rad.analysis a 
           where ga.na_feature_id = d.row_id 
@@ -2322,7 +2322,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
           select '@PROJECT_ID@' as project_id, ga.source_id as source_id, 
-                 d.confidence, d.fold_change 
+                 d.confidence, to_char(d.fold_change, '999.9') as fold_change
           from Apidb.GeneAttributes ga, 
                (select r.row_id, r.confidence, 
                    case when lower(a.name) = $$lineages_a$$ || 'vs' || $$lineages_b$$
