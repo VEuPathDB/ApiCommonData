@@ -22,7 +22,6 @@
                 <![CDATA[
                     SELECT source_id, project_id
                     FROM $$gene_answer$$
-                    WHERE $$gene_answer.condition$$
                 ]]>
             </sql>
         </sqlQuery>
@@ -34,9 +33,8 @@
             <sql>
                 <![CDATA[
                     SELECT gb.source_id, gb.project_id
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = c.source_id
                     AND gb.gene_id = ga.gene_id
                 ]]>
             </sql>
@@ -52,15 +50,13 @@
                  SELECT c.*
                  FROM   
                     (SELECT source_id, project_id
-                      FROM $$gene_answer$$
-                      WHERE $$gene_answer.condition$$) c,
+                      FROM $$gene_answer$$ ) c,
                     (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$organism$$
                       GROUP BY ga.gene_id) f
                 WHERE c.source_id = f.source_id
@@ -76,9 +72,8 @@
             <sql>
                 <![CDATA[
                     SELECT ga.source_id, ga.project_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
                       AND ga.organism = $$organism$$
                 ]]>
             </sql>
@@ -92,9 +87,8 @@
             <sql>
                 <![CDATA[
                     SELECT ga.source_id, ga.project_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$organism$$
                 ]]>
             </sql>
@@ -111,15 +105,13 @@
                  SELECT c.*
                  FROM   
                     (SELECT source_id, project_id
-                      FROM $$gene_answer$$
-                      WHERE $$gene_answer.condition$$) c,
+                      FROM $$gene_answer$$ ) c,
                     (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
                       AND ga.organism like 'Toxoplasma gondii%'
                       GROUP BY ga.gene_id having count(*) = 3) f
                 WHERE c.source_id = f.source_id
@@ -134,10 +126,9 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                    SELECT $$gene_answer$$.source_id, $$gene_answer$$.project_id
-                    FROM $$gene_answer$$, apidb.geneattributes ga
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    SELECT ga.source_id, ga.project_id
+                    FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                    WHERE ga.source_id = ca.source_id
                     AND ga.organism = $$strain_a$$
                 ]]>
             </sql>
@@ -153,15 +144,13 @@
                  SELECT c.*
                  FROM   
                     (SELECT source_id, project_id
-                      FROM $$gene_answer$$
-                      WHERE $$gene_answer.condition$$) c,
+                      FROM $$gene_answer$$ ) c,
                     (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$strain_a$$
                       GROUP BY ga.gene_id) f
                 WHERE c.source_id = f.source_id
@@ -177,23 +166,20 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                  SELECT $$gene_answer$$.source_id, $$gene_answer$$.project_id
-                  FROM $$gene_answer$$, (
+                  SELECT ca.source_id, ca.project_id
+                  FROM $$gene_answer$$ ca, (
                     SELECT gb.source_id, gb.project_id, ga.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cb.source_id
                     AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id
                       INTERSECT
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cc, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cc.source_id
                     AND ga.organism = $$strain_b$$
                     AND gb.gene_id = ga.gene_id ) c
-                  WHERE $$gene_answer.condition$$
-                  AND c.source_id = $$gene_answer$$.source_id
+                  WHERE c.source_id = ca.source_id
                   AND c.organism = $$strain_a$$
                 ]]>
             </sql>
@@ -208,22 +194,19 @@
             <sql>
                 <![CDATA[
                   SELECT c.source_id, c.project_id
-                  FROM $$gene_answer$$, (
+                  FROM $$gene_answer$$ ca, (
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cb.source_id
                     AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id
                      MINUS
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cc, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cc.source_id
                     AND ga.organism = $$strain_b$$
                     AND gb.gene_id = ga.gene_id ) c
-                  WHERE $$gene_answer.condition$$
-                  AND c.source_id = $$gene_answer$$.source_id
+                  WHERE c.source_id = ca.source_id
                   AND c.organism = $$strain_a$$
                 ]]>
             </sql>
@@ -242,26 +225,22 @@
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ci, apidb.geneattributes ga
+                      WHERE ga.source_id = ci.source_id
                       GROUP BY ga.gene_id) f,
                   (SELECT c.source_id, c.project_id
-                  FROM $$gene_answer$$, (
+                  FROM $$gene_answer$$ ca, (
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cb.source_id
                     AND gb.gene_id = ga.gene_id
                      MINUS
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cc, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cc.source_id
                     AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id ) c
-                  WHERE $$gene_answer.condition$$
-                  AND c.source_id = $$gene_answer$$.source_id) d
+                  WHERE c.source_id = ca.source_id) d
                 WHERE d.source_id = f.source_id
                 ]]>
             </sql>
@@ -279,26 +258,22 @@
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id
-                      FROM $$gene_answer$$, apidb.geneattributes ga
-                      WHERE $$gene_answer.condition$$
-                      AND ga.source_id = $$gene_answer$$.source_id
+                      FROM $$gene_answer$$ ci, apidb.geneattributes ga
+                      WHERE ga.source_id = ci.source_id
                       GROUP BY ga.gene_id) f,
                   (SELECT c.source_id, c.project_id
-                  FROM $$gene_answer$$, (
+                  FROM $$gene_answer$$ ca, (
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cb.source_id
                     AND gb.gene_id = ga.gene_id
                      INTERSECT
                     SELECT gb.source_id, gb.project_id, gb.organism
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ cc, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = cc.source_id
                     AND ga.organism = $$strain_a$$
                     AND gb.gene_id = ga.gene_id ) c
-                  WHERE $$gene_answer.condition$$
-                  AND c.source_id = $$gene_answer$$.source_id) d
+                  WHERE c.source_id = ca.source_id) d
                 WHERE d.source_id = f.source_id
                 ]]>
             </sql>

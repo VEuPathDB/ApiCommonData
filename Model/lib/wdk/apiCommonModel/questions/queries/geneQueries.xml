@@ -3346,7 +3346,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
   <querySet name="GeneSubTypes">
 
-    <sqlQuery name="GenesByTransformers" includeProjects="ToxoDB"
+    <sqlQuery name="GenesByOrthologTransform" includeProjects="ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.gene_result"/>
         <paramRef ref="organismParams.organism" 
@@ -3361,32 +3361,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             FROM apidb.GeneAttributes ga
             WHERE ga.gene_id IN
                     (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, $$gene_result$$
-                     WHERE $$gene_result.condition$$
-                       AND ga.source_id = $$gene_result$$.source_id)
-              AND ga.ncbi_tax_id IN ($$organism$$)
-            ]]>
-       </sql>
-    </sqlQuery>  
-
-    <sqlQuery name="GenesByTransformToOrthologs" includeProjects="ToxoDB"
-              isCacheable="true">
-        <paramRef ref="geneParams.gene_result"/>
-        <paramRef ref="organismParams.organism" 
-                  queryRef="organismVQ.withStrains"
-                  default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
-                  allowEmpty="true"/>
-        <column name="project_id"/>
-        <column name="source_id"/>
-        <sql>
-            <![CDATA[
-            SELECT ga.source_id, '@PROJECT_ID@' AS project_id
-            FROM apidb.GeneAttributes ga
-            WHERE ga.gene_id IN
-                    (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, $$gene_result$$
-                     WHERE $$gene_result.condition$$
-                       AND ga.source_id = $$gene_result$$.source_id)
+                     FROM apidb.GeneAttributes ga, $$gene_result$$ c
+                     WHERE ga.source_id = c.source_id)
               AND ga.ncbi_tax_id IN ($$organism$$)
             ]]>
        </sql>
@@ -3400,14 +3376,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
                     SELECT gb.source_id, gb.project_id
-                    FROM $$gene_answer$$, apidb.geneattributes ga, apidb.geneattributes gb
-                    WHERE $$gene_answer.condition$$
-                    AND ga.source_id = $$gene_answer$$.source_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga, apidb.geneattributes gb
+                    WHERE ga.source_id = c.source_id
                     AND gb.gene_id = ga.gene_id
             ]]>
        </sql>
     </sqlQuery> 
-
+<!--
     <sqlQuery name="GenesByExpandOrganism" includeProjects="ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.gene_result"/>
@@ -3424,6 +3399,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             ]]>
        </sql>
     </sqlQuery> 
+-->
     
   </querySet>
 
