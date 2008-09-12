@@ -10,8 +10,32 @@
 --> 
 
 
-  <querySet name="GeneTables">
+  <querySet name="GeneTables" queryType="table">
 
+            <defaultTestParamValues includeProjects="PlasmoDB">
+               <paramValue name="primaryKey">PB400024.00.0</paramValue>
+               <paramValue name="projectId">PlasmoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="ToxoDB">
+               <paramValue name="primaryKey">44.m00048</paramValue>
+               <paramValue name="projectId">ToxoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_1400</paramValue>
+               <paramValue name="projectId">CryptoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="GiardiaDB">
+               <paramValue name="primaryKey">GL50803_112048</paramValue>
+               <paramValue name="projectId">GiardiaDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="TrichDB">
+               <paramValue name="primaryKey">TVAG_386080</paramValue>
+               <paramValue name="projectId">TrichDB</paramValue>
+            </defaultTestParamValues>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Gene Model -->  
@@ -103,6 +127,11 @@
 
         <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_510</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -197,6 +226,10 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="InterPro" isCacheable="false">
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd3_1400</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -331,6 +364,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SignalP" isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd7_110</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -480,6 +518,11 @@
 
        <sqlQuery name="Notes"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd1_200</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -524,6 +567,12 @@
 
        <sqlQuery name="UserComments"
                  isCacheable="false">
+
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd1_200</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -564,6 +613,11 @@
 
        <sqlQuery name="EcNumber"
                isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd2_980</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -788,6 +842,11 @@
 
        <sqlQuery name="Epitopes"
                   isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd6_1800</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -818,6 +877,11 @@
 
        <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
                   isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="primaryKey">cgd6_2090</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1061,6 +1125,9 @@
   <!--===========================================================================-->
 
        <sqlQuery name="GeneGffAliases" isCacheable="false">
+
+            <testParamValues minRows="0" includeProjects="CryptoDB"/>
+
          <paramRef ref="recordParams.source_id"/>
          <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1784,6 +1851,11 @@
        <!-- SGC 3-D structure predictions                                --> 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+
+            <testParamValues>
+               <paramValue name="primaryKey">cgd3_300</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
