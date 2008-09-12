@@ -2064,15 +2064,54 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
              Find genes whose expression was found to be up-regulated or down-regulated 
 	    in a particular microarray study based upon 
             <a href="http://www.cbil.upenn.edu/PaGE/">PaGE</a> differential expression analysis.	    
+	         Determination of  strain-specific differential expression by profiling 
+		 wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of T. gondii
+
+               <br />
+              <center>
+             <img src="images/toxo_microarray_strains.jpg">
+              </center>
+	     <BR>
+	     For further information on the strains, refer to: <BR>
+	     Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal lineages:
+	     correlation of parasite genotype with human disease. J. Infect. Dis. 172:1561-1566 
 	     <BR>&nbsp;<BR>
-	     <center>
-	     <table border="1" width="90%"
-	     <thead><tr><td><b>Experiment</b></td><td><b>Description</b></td></thead>
-	     <tr><td>Expression profiling of three archetypal T. gondii lineages</td>
-	         <td>Determination of  strain-specific differential expression by profiling 
-		 wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of T. gondii</td></tr>
-	     </table>
-	     </center>
+            ]]>
+        </description>
+	<dynamicAttributes>
+	     <columnAttribute name="fold_change" displayName="Fold Change" align="center"/>
+	     <columnAttribute name="confidence" displayName="Confidence" align="center"/>
+	</dynamicAttributes>
+       <propertyList name="specificAttribution">
+           <value>Tg_3_Archetypal_Lineages_ExpressionData</value>
+       </propertyList>
+    </question>
+
+
+    <question name="ToxoGenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB,ApiDB"
+              category="Transcript Expression"
+              displayName="Differential Expression of individual strains (T.g.)"
+              queryRef="GeneId.GenesByDifferentialExpressionChooseComparisons" 
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <summary>
+            Find genes by differential expression analysis
+        </summary>
+        <attributesList
+              summary="product,location_text,fold_change,confidence"
+              sorting="fold_change desc,confidence desc,location_text asc"
+        /> 
+        <description>
+            <![CDATA[
+             Find genes whose expression was found to be up-regulated or down-regulated 
+	    in a particular microarray study based upon 
+            <a href="http://www.cbil.upenn.edu/PaGE/">PaGE</a> differential expression analysis.	    
+	         Determination of  strain-specific differential expression by profiling 
+		 wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of T. gondii
+
+               <br />
+                <center>
+             <img src="images/toxo_microarray_strains.jpg">
+                </center>
 	     <BR>
 	     For further information on the strains, refer to: <BR>
 	     Howe, D. K., and L. D. Sibley. 1995. Toxoplasma gondii comprises three clonal lineages:

@@ -2307,6 +2307,55 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <wsColumn name="fold_change" />
     </processQuery> 
 
+    <sqlQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.lineages_a"/>
+       <paramRef ref="geneParams.lineages_b"/>
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+        <column name="project_id"/>
+       <column name="source_id" />
+       <column name="confidence" />
+       <column name="fold_change" />
+       <sql>
+           <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+          select '@PROJECT_ID@' as project_id, ga.source_id as source_id, 
+                 d.confidence, d.fold_change 
+          from Apidb.GeneAttributes ga, 
+               (select r.row_id, r.confidence, 
+                   case when lower(a.name) = $$lineages_a$$ || 'vs' || $$lineages_b$$
+                        then r.fold_change
+                        else -(r.fold_change)
+                   end as fold_change
+                from rad.analysis a, rad.differentialexpression r, core.tableinfo t
+                where a.analysis_id = r.analysis_id
+                  and r.table_id = t.table_id
+                  and t.name = 'GeneFeature'
+                  and (lower(a.name) = $$lineages_a$$ || 'vs' || $$lineages_b$$ 
+                    or lower(a.name) = $$lineages_b$$ || 'vs' || $$lineages_a$$)
+                ) d
+           where ga.na_feature_id = d.row_id
+             and $$regulated_dir$$(d.fold_change) >= $$fold_change$$
+             and d.confidence >= $$confidence$$
+            ]]>
+          </sql>
+    </sqlQuery>  
+
+    <processQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="geneParams.lineages_a"/>
+       <paramRef ref="geneParams.lineages_b"/>
+       <paramRef ref="geneParams.confidence"/>
+       <paramRef ref="geneParams.fold_change"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
+	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="confidence" />
+       <wsColumn name="fold_change" />
+    </processQuery> 
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesByDifferentialExpression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
