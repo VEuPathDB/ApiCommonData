@@ -308,6 +308,24 @@ sub makeBrcSeqXmlFile {
     $mgr->endStep($signal);
 }
 
+sub makeBrcGOAssociationFile {
+    my ($mgr, $extDbName, $extDbRlsVer, $outFile,  $Prefix, $dbName) = @_;
+
+    my $dataDir = $mgr->{dataDir};
+
+    my $brcDir = "brcGOAssociationFiles";
+
+    my $signal = "makeBrcGOAssociationFile_${outFile}";
+
+    return if $mgr->startStep("Making BRC GO Association File ${outFile}", $signal);
+
+    &_createDir($mgr, "$dataDir/$brcDir");
+
+    $mgr->runCmd("makeBrcGOAssociationFile --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --Prefix '$Prefix' --dbName '$dbName' > $dataDir/$brcDir/$outFile");
+
+    $mgr->endStep($signal);
+}
+
 sub createBlastMatrixDir {
   my ($mgr, $species, $queryFile, $subjectFile) = @_;
 
