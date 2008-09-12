@@ -99,6 +99,32 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- ToxoDB Expand Strains Microarray Expression Mini Graphs -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <sqlQuery name="ToxoExpandStrainsMicroarray" isCacheable="false" includeProjects="ToxoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="me49_source_id"/>
+            <sql>
+            select oga.source_id as me49_source_id,
+                   ga.source_id as source_id,
+                   '@PROJECT_ID@' as project_id
+            from dots.geneinstance gi, apidb.geneattributes ga,
+                 dots.geneinstance ogi, apidb.geneattributes oga,
+                 apidb.ToxoExpressionGraphs teg
+            where gi.na_feature_id = ga.na_feature_id
+             and gi.gene_id = ogi.gene_id
+             and ogi.na_feature_id = oga.na_feature_id
+             and ga.source_id = $$source_id$$
+             and teg.source_id = oga.source_id
+             and teg.graph_archetypal = 1
+            </sql>
+        </sqlQuery>
+
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

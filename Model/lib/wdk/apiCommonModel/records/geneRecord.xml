@@ -567,28 +567,15 @@
                 ]]>
               </text>
             </textAttribute>
-            <columnAttribute name="pru" displayName="Pru strain expression" includeProjects="ToxoDB"/>
-            <columnAttribute name="veg" displayName="VEG strain expression" includeProjects="ToxoDB"/>
-            <columnAttribute name="rh" displayName="RH strain expression" includeProjects="ToxoDB"/>
-            <columnAttribute name="rh_no_glucose" displayName="No-glucose expression" includeProjects="ToxoDB"/>
-            <columnAttribute name="rh_high_glucose" displayName="High-glucose expression" includeProjects="ToxoDB"/>
+
             <columnAttribute name="int_gene_id" displayName="Internal Gene ID" includeProjects="ToxoDB" 
                              internal="true" inReportMaker="false"/>
-
-            <textAttribute name="rhGlucose" displayName="RH in Glucose expr profile graph"
-                           inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
-              <text>
-                <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::RHinGlucose::Ver1&project_id=ToxoDB&id=$$primary_key$$&model=toxo&fmt=png&thumb=1"/>
-                ]]>
-              </text>
-            </textAttribute>
 
             <textAttribute name="3strains" displayName="3 Clonal Lineages expr profile graph"
                         inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
             <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ThreeClonalStrains::Ver1&project_id=ToxoDB&id=$$primary_key$$&model=toxo&fmt=png&thumb=1"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ToxoLineages::Ver1&project_id=ToxoDB&id=$$primary_key$$&model=toxo&fmt=png&thumb=1"/>
                 ]]>
             </text>
             </textAttribute>
@@ -831,6 +818,34 @@
             <columnAttribute displayName="Start" name="gm_start"/>
             <columnAttribute displayName="End" name="gm_end"/>
             <columnAttribute name="sequence" inReportMaker="false"/>
+          </table>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Toxo Expand Microarray table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+         <table name="ToxoExpandStrainsMicroarray"
+                 displayName="ME49 Microarray Expression Data"
+                 queryRef="GeneTables.ToxoExpandStrainsMicroarray"
+                 includeProjects="ToxoDB">
+
+            <columnAttribute name="me49_source_id" internal="true" inReportMaker="false"/>
+
+            <textAttribute name="3strains" displayName="3 Clonal Lineages Expression Profile Graph"
+                        inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
+            <text>
+                <![CDATA[
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ToxoLineages::Ver1&project_id=ToxoDB&id=$$me49_source_id$$&model=toxo&fmt=png&thumb=1"/>
+                ]]>
+            </text>
+            </textAttribute>
+
+          <linkAttribute displayName="ME49 Gene Model" name="view_link" inReportMaker="false" internal="false" >
+                 <displayText>$$me49_source_id$$</displayText>
+                   <url>
+             <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$me49_source_id$$#Expression]]>
+                   </url>
+            </linkAttribute>
           </table>
 
 
