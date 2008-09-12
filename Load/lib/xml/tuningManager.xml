@@ -2743,26 +2743,13 @@ CREATE INDEX apidb.PlasmoExp_sourceId_idx&1 ON apidb.PlasmoExpressionGraphs&1 (s
       <![CDATA[
 CREATE TABLE apidb.ToxoExpressionGraphs&1 NOLOGGING AS
 SELECT ga.source_id,
-        COUNT(archetypal) AS graph_archetypal,
-              COUNT(expand_archetypal) AS graph_expand_archetypal
+        COUNT(archetypal) AS graph_archetypal
 FROM Apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS archetypal
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
-        AND p.profile_set_id = ps.profile_set_id) archetypal,
-      (SELECT ef.source_id, 1 as expand_archetypal
-FROM apidb.profile p, apidb.profileSet ps, 
-      dots.geneinstance gi, dots.genefeature gf, 
-      dots.geneinstance ei, dots.genefeature ef
-WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
-AND p.profile_set_id = ps.profile_set_id
-and p.source_id = gf.source_id
-and gf.na_feature_id = gi.na_feature_id
-and gi.gene_id = ei.gene_id
-and gi.na_feature_id != ei.na_feature_id
-and ei.na_feature_id = ef.na_feature_id) expand_archetypal
+        AND p.profile_set_id = ps.profile_set_id) archetypal
   WHERE ga.source_id = archetypal.source_id(+)
-   AND ga.source_id = expand_archetypal.source_id (+)
 GROUP BY ga.source_id
       ]]>
     </sql>
