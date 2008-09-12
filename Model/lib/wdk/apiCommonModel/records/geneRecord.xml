@@ -531,7 +531,7 @@
                            includeProjects="GiardiaDB">
               <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Stress::Ver1&project_id=GiardiaDB&model=giardia&fmt=png&id=$$source_id$$&thumb=1&vp=hist"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Stress::Ver1&project_id=GiardiaDB&model=giardia&fmt=png&id=$$primaryKey$$&thumb=1&vp=hist"/>
                 ]]>
               </text>
             </textAttribute>
@@ -543,7 +543,7 @@
                            includeProjects="PlasmoDB">
               <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&project_id=PlasmoDB&id=$$source_id$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&project_id=PlasmoDB&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND"/>
                 ]]>
               </text>
             </textAttribute>
@@ -553,7 +553,7 @@
                         includeProjects="PlasmoDB">
               <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&project_id=PlasmoDB&id=$$source_id$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&project_id=PlasmoDB&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
                 ]]>
               </text>
             </textAttribute>
@@ -563,7 +563,7 @@
                         includeProjects="PlasmoDB">
               <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&project_id=PlasmoDB&id=$$source_id$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&project_id=PlasmoDB&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
                 ]]>
               </text>
             </textAttribute>
@@ -579,7 +579,7 @@
                            inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
               <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::RHinGlucose::Ver1&project_id=ToxoDB&id=$$source_id$$&model=toxo&fmt=png&thumb=1"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::RHinGlucose::Ver1&project_id=ToxoDB&id=$$primaryKey$$&model=toxo&fmt=png&thumb=1"/>
                 ]]>
               </text>
             </textAttribute>
@@ -588,7 +588,7 @@
                         inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
             <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ThreeClonalStrains::Ver1&project_id=ToxoDB&id=$$source_id$$&model=toxo&fmt=png&thumb=1"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Roos::ThreeClonalStrains::Ver1&project_id=ToxoDB&id=$$primaryKey$$&model=toxo&fmt=png&thumb=1"/>
                 ]]>
             </text>
             </textAttribute>
@@ -1709,7 +1709,7 @@
             </displayText>
             <url>
                <![CDATA[
-                     @PUBLICATIONS_URL@$$source_id$$
+                     @PUBLICATIONS_URL@$$primaryKey$$
                      ]]>
             </url>
          </linkAttribute>
@@ -1773,12 +1773,12 @@
                internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;options=CombinedSNPs+2;h_feat=$$source_id$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;options=CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
             <text includeProjects="ToxoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;h_feat=$$source_id$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
          </textAttribute>
@@ -1787,7 +1787,7 @@
                internal="true" inReportMaker="false">
             <text>
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+WorkshopAnnotatedGenes+EviganGeneModels+CombinedSNPs+;options=WorkshopAnnotatedGenes+EviganGeneModels+CombinedSNPs+2;h_feat=$$source_id$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+WorkshopAnnotatedGenes+EviganGeneModels+CombinedSNPs+;options=WorkshopAnnotatedGenes+EviganGeneModels+CombinedSNPs+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
          </textAttribute>
@@ -1795,12 +1795,12 @@
          <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" includeProjects="PlasmoDB,ToxoDB">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
-                @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$source_id$$@thistle
+                @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
                 ]]>
             </text>
             <text includeProjects="ToxoDB">
                  <![CDATA[
-                @CGI_URL@/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$source_id$$@thistle
+                @CGI_URL@/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;enable=AnnotatedGenes;h_feat=$$primaryKey$$@thistle
                 ]]>
             </text>
          </textAttribute>
@@ -1808,7 +1808,7 @@
          <textAttribute name="GBrowse" inReportMaker="false" includeProjects="ToxoDB">
             <text>
                  <![CDATA[
-                <a href="@CGI_URL@/gbrowse/toxodb/?name=$$source_id$$;enable=AnnotatedGenes">view</a>
+                <a href="@CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$;enable=AnnotatedGenes">view</a>
                 ]]>
             </text>
          </textAttribute>
@@ -1818,7 +1818,7 @@
                internal="true" inReportMaker="false">
             <text>
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions;options=AnnoatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions+2;h_feat=$$source_id$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions;options=AnnoatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions+2;h_feat=$$primaryKey$$@thistle;width=600;hmap=dnaContextMap;base=@CGI_URL@/gbrowse
                 ]]>
             </text>
          </textAttribute>
@@ -1828,12 +1828,12 @@
                         internal="true" inReportMaker="false">
             <text includeProjects="PlasmoDB">
                  <![CDATA[
-                 @CGI_URL@/gbrowse_img/plasmodbaa/?name=$$source_id$$;embed=1;width=600;hmap=proteinFeatureMap
+                 @CGI_URL@/gbrowse_img/plasmodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
                  ]]>
             </text>
             <text includeProjects="ToxoDB">
                  <![CDATA[
-                 @CGI_URL@/gbrowse_img/toxodbaa/?name=$$source_id$$;embed=1;width=600;hmap=proteinFeatureMap
+                 @CGI_URL@/gbrowse_img/toxodbaa/?name=$$primaryKey$$;embed=1;width=600;hmap=proteinFeatureMap
                  ]]>
             </text>
          </textAttribute>
