@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use Data::Dumper;
+
+my ($extDbName, $extDbRlsVer, $dbName, $Prefix);
+&GetOptions("extDbName=s" => \$extDbName,
+	    "extDbRlsVer=s" => \$extDbRlsVer,
+            "Prefix=s" => \$Prefix,
+            "dbName=s" => \$dbName,
+             );
+
+&usage() unless ($extDbName && $extDbRlsVer && $Prefix);
+
+my $gusconfig = GUS::Supported::GusConfig->new();
+
+
+my $dsn = $dbName? "dbi:Oracle:$dbName" : $gusconfig->getDbiDsn();
+
+my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        0,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+print "DB\tDB_Object_ID\tAssertion\tDirect reference\tEvidence code\tWith (or) From\tAssertion_type\tIndirect reference\tDate\n";
+print &makeGOAssociation($extDbName, $extDbRlsVer, $db, $Prefix);
+
+#################################################################
+
+
+
+sub makeGOAssociation {
+  my ($extDbName, $extDbRlsVer, $db, $Prefix) = @_;
+
+  my $dbh = $db->getQueryHandle(0);
+
+  my $sql = "
+   SELECT '$Prefix'||chr(9)||gs.source_id||chr(9)||gs.GO_id||chr(9)||chr(9)||gs.evidence_code||chr(9)||chr(9)||gs.ontology||chr(9)||chr(9) as summary
+     FROM apidb.gotermsummary gs, dots.genefeature gf, sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+    WHERE ed.name='$extDbName'
+      AND edr.version='$extDbRlsVer'
+      AND ed.external_database_id = edr.external_database_id
+      AND gf.external_database_release_id=edr.external_database_release_id
+      AND gf.source_id=gs.source_id
+ ORDER By gs.source_id
+";
+
+  my $stmt = $dbh->prepareAndExecute($sql);
+
+  my @gosummaries;
+
+  while(my ($goSummary) = $stmt->fetchrow_array()) {
+   
+    push(@gosummaries, $goSummary);
+  }
+  scalar(@gosummaries) || die "\nerror: no GO Summary found\n";
+  
+  return join("\n", @gosummaries);
+}
+
+
+
+
+
+sub usage {
+  print STDERR q{
+Create an flat file to send to BRC Central specifying the GO Association info.  Uses $GUS_HOME/config/gus.config for db connection info.
+
+usage: makeBrcGOAssociationFile --extDbName --extDbRlsVer --Prefix [--dbName]
+
+where:
+  extDbName:   ExternalDatabase.name for the genome annotation
+  extDbRlsVer: ExternalDatabaseRelease.version for the genome annotatino
+  dbName:      optional.  to override the db name in gus.config.  Example: toxo43penn
+  Prefix:      GO Database Abbreviations (http://www.geneontology.org/cgi-bin/xrefs.cgi)
+
+Sample command line:
+% makeBrcGOAssociationFile --extDbName "Sanger P. falciparum chromosomes"  --extDbRlsVer "2005-09-26"  --Prefix ApiDB_PlasmoDB
+};
+  exit(1);
+}
