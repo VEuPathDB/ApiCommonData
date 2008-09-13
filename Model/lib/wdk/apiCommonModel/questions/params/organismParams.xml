@@ -326,7 +326,7 @@
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="withGenes" excludeProjects="ApiDB">
+    <sqlQuery name="withGenes" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
 
@@ -455,7 +455,7 @@
     <!-- with ESTs -->  
     <!--===================================================================-->
 
-        <sqlQuery name="withESTs" excludeProjects="ApiDB">
+        <sqlQuery name="withESTs" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
              <sql>
@@ -491,7 +491,7 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-        <sqlQuery name="withESTsAndGenes" excludeProjects="ApiDB">
+        <sqlQuery name="withESTsAndGenes" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
              <sql>
@@ -539,7 +539,7 @@
     <!-- with EC -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withEC" excludeProjects="ApiDB">
+    <sqlQuery name="withEC" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -605,7 +605,7 @@
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg" excludeProjects="ApiDB">
+    <sqlQuery name="cp-tg" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -648,7 +648,7 @@
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg-pb" excludeProjects="ApiDB">
+    <sqlQuery name="cp-tg-pb" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -693,7 +693,7 @@
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="ApiDB">
+    <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
@@ -730,7 +730,7 @@
     <!-- plasmoWithGenes  -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB">
+    <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -783,7 +783,7 @@
 <!--====================================================================-->
 
 
-<sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB">
+<sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -838,7 +838,7 @@
     <!-- tg withPlasmoGenes -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB,CryptoDB">
+    <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB,CryptoDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       
@@ -946,7 +946,7 @@
     <!-- tg pf gl   for genes by sage tags-->
     <!--===================================================================-->
 
-    <sqlQuery name="tg-pf-gl" excludeProjects="ApiDB">
+    <sqlQuery name="tg-pf-gl" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -983,7 +983,7 @@
     <!-- tg pf -->  
     <!--===================================================================-->
 
-    <sqlQuery name="tg-pf" excludeProjects="ApiDB">
+    <sqlQuery name="tg-pf" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -1018,7 +1018,7 @@
     <!-- pf -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pf" excludeProjects="ApiDB">
+    <sqlQuery name="pf" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
@@ -1052,7 +1052,7 @@
     <!-- pb -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pb" excludeProjects="ApiDB">
+    <sqlQuery name="pb" excludeProjects="ApiDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>

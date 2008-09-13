@@ -2208,7 +2208,7 @@ SELECT f.na_feature_id   as na_feature_id,
        decode(p.name, 'ChIP_chip_Einstein', 'raw', 'called_peaks') as protocol_type,
        CASE 
           WHEN a.name like '%RH%' then 'RH'
-          WHEN a.name like '%TypeIII%' then 'TypeIII'
+          WHEN a.name like '%TypeIII%' then 'CTG'
           WHEN a.name like '%PLK%' then 'PLK'
        ELSE 'unknown' 
        END as strain,
