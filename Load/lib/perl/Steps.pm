@@ -156,8 +156,10 @@ sub dumpNaSequence {
 
   my $signal = "dumpSequence-$shortName";
 
+  return if $mgr->startStep("Dumping NASequence [$shortName]..", $signal);
   unless(-e $mercatorDir) {
     $mgr->runCmd("mkdir -p $mercatorDir");
+    $mgr->runCmd("chmod -R g+w $mercatorDir");
   }
 
   my $outputFile = "$mercatorDir/$shortName.fsa";
