@@ -49,8 +49,7 @@
              from apidb.SAGETAGATTRIBUTES a
              where a.composite_element_id in 
                  (select composite_element_id 
-                  from apidb.SAGETAGATTRIBUTES 
-                  where source_id = $$primaryKey$$)
+                  from apidb.SAGETAGATTRIBUTES )
             group by a.source_id, a.composite_element_id
             ]]>
            </sql>
@@ -67,8 +66,7 @@
              from apidb.SAGETAGATTRIBUTES a
              where a.composite_element_id in 
                  (select composite_element_id 
-                  from apidb.SAGETAGATTRIBUTES 
-                  where source_id = $$primaryKey$$)
+                  from apidb.SAGETAGATTRIBUTES )
             group by a.source_id, a.composite_element_id
             ]]>
            </sql>

@@ -5,12 +5,12 @@
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
-                                 displayName="Gene">
+                                 displayName="Tag">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$source_id$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
@@ -86,7 +86,7 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     
-      <table name="Locations" includeProjects="GiardiaDB,PlasmoDB"
+      <table name="Locations" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
                  displayName="Genomic Locations"
                  queryRef="SageTagTables.Locations">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -111,6 +111,11 @@
                    <url includeProjects="PlasmoDB">
                     <![CDATA[
                     @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=AnnotatedGenes;label=DeprecatedGene;h_feat=$$feature_source_id$$
+                        ]]>
+                   </url> 
+                   <url includeProjects="ToxoDB">
+                    <![CDATA[
+                    @CGI_URL@/gbrowse_img/toxodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;embed=1;h_feat=$$feature_source_id$$@thistle;width=600;label=SAGEtags;label=AnnotatedGenes;base=@CGI_URL@/gbrowse
                         ]]>
                    </url> 
            </linkAttribute>
@@ -144,7 +149,7 @@
                     <![CDATA[ $$source_id$$ ]]>
                  </displayText>
              <url><![CDATA[
-                     showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$
+                     showRecord.do?name=SageTagRecordClasses.SageTagRecordClass&project_id=@PROJECT_ID@&source_id=$$source_id$$
                     ]]>
              </url>
            </linkAttribute>
@@ -154,7 +159,7 @@
                     <![CDATA[ $$gene_source_id$$ ]]>
                  </displayText>
              <url><![CDATA[
-                     showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$gene_source_id$$
+                     showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$gene_source_id$$
                     ]]>
              </url>
            </linkAttribute>
