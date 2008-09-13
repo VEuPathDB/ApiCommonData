@@ -118,7 +118,7 @@
 
 
         <!-- AssemblyTables.LibraryInfo -->
-        <sqlQuery name="LibraryInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
+        <sqlQuery name="LibraryInfo"  isCacheable='false' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -134,7 +134,7 @@
               AND  asmbly.na_sequence_id = aseq.assembly_na_sequence_id
               AND  aseq.na_sequence_id = e.na_sequence_id
               AND  e.library_id = l.library_id 
-            GROUP BY l.dbest_name
+            GROUP BY asmbly.source_id,l.dbest_name
             ORDER BY est_count desc
             ]]>
             </sql>
@@ -142,7 +142,7 @@
 
 
         <!-- AssemblyTables.EstInfo -->
-            <sqlQuery name="EstInfo"  isCacheable='true' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
+            <sqlQuery name="EstInfo"  isCacheable='false' includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />

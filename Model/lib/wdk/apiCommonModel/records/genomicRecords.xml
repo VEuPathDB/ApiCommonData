@@ -26,12 +26,12 @@
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
-                                 displayName="Gene">
+                                 displayName="Sequence">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                      $$source_id$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
@@ -132,6 +132,8 @@
 
 
        <attributeQueryRef ref="SequenceAttributes.Aliases" includeProjects="GiardiaDB">
+            <columnAttribute name="source_id" displayName="sid" internal="true" />
+            <columnAttribute name="project_id" displayName="pid" internal="true" />
             <columnAttribute name="alias" displayName="Sequence Alias" internal="false" />
         </attributeQueryRef>
 
