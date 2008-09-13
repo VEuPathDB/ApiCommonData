@@ -215,7 +215,7 @@
         <column name="project_id"/>
         <column name="gff_sequence"/>
         <sql>
-            select 'apidb|'||ns.source_id, '@project_id@' AS project_id,
+            select ns.source_id, '@project_id@' AS project_id,
                    ns.sequence as gff_sequence
             from apidb.SequenceAttributes gs,
                  dots.NaSequence ns
