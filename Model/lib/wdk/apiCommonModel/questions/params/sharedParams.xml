@@ -1802,7 +1802,7 @@ by the sequence generator.</help>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>
 
-        <sqlQuery name="EstLibraries" excludeProjects="ApiDB">
+        <sqlQuery name="EstLibraries" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -1822,7 +1822,7 @@ by the sequence generator.</help>
 
 
 
- <sqlQuery name="EstLibrariesAssemblies" excludeProjects="ApiDB">
+ <sqlQuery name="EstLibrariesAssemblies" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -1844,7 +1844,7 @@ by the sequence generator.</help>
 
 
 
-        <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" >
+        <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <sql  includeProjects="CryptoDB">
