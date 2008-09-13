@@ -2238,22 +2238,7 @@ WHERE  a.analysis_id = r.analysis_id
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.ChIPFeature_sourceId_idx&1 ON apidb.ChIPFeature&1 (name)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX apidb.ChIPFeat_naFeatId_idx&1 ON apidb.ChIPFeature&1 (na_feature_id)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
 CREATE INDEX apidb.Chfe_id_st_end_prn_str_idx&1 ON apidb.ChIPFeature&1 (na_sequence_id,start_min,end_max,protocol_name,strain)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX apidb.chfe_str_anti_rep_idx&1 ON apidb.ChIPFeature&1 (strain,antibody,rep)
       ]]>
     </sql>
   </tuningTable>
