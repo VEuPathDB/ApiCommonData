@@ -140,7 +140,7 @@
             WHERE ens.source_id = $$source_id$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
-            SELECT ens.source_id,
+            SELECT ens.source_id,  '@project_id@' AS project_id,
                    'GenBank:' || dr.primary_identifier AS thingie
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
@@ -153,7 +153,7 @@
               AND edr.external_database_id = ed.external_database_id
               AND ed.name = 'GenBank'
            UNION
-            SELECT ens.source_id,
+            SELECT ens.source_id, '@project_id@' AS project_id,
                    '&&brcName&&:' || ens.source_id AS gff_dbxref
             FROM dots.NaSequence ens
             WHERE ens.source_id = $$source_id$$
