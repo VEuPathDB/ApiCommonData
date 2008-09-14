@@ -29,9 +29,17 @@
           <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+      <flatVocabParam name="sequence_organism_text"
+                     queryRef="organismVQ.textSequenceOrganism"
+                     prompt="Organism"
+                     multiPick="false"
+                     quote="true">
+                     <useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
 
 <!-- cannot reuse "organism" param above because apidb needs to use the internal value in the local ortholog question -->
-<flatVocabParam name="localorganism"
+      <flatVocabParam name="localorganism"
                      queryRef="organismVQ.LocalOrganisms"
                      prompt="Organism"
                      multiPick="true"
@@ -45,6 +53,7 @@
                      quote="false">
           <useTermOnly value="true"/>
       </flatVocabParam>
+
 
     <enumParam name="organismWithChromosomes"
                      prompt="Organism"
@@ -398,6 +407,18 @@
       </sql>
     </sqlQuery>
 
+    <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+           SELECT distinct sa.organism as term,sa.organism as internal
+           FROM  apidb.sequenceattributes sa
+           WHERE organism != 'Toxoplasma gondii RH'
+           ORDER BY organism asc
+        ]]>
+      </sql>
+    </sqlQuery>
 
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>

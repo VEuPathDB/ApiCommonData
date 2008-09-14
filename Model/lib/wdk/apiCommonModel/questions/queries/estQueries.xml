@@ -47,17 +47,24 @@
           <paramValue name="libraryId">WatanabeCpHNJ-1</paramValue> 
         </testParamValues>
 
-        <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
-        <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB"/>
+        <paramRef ref="organismParams.organismWithEstsInChromosomes" 
+                  includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts" 
+                  includeProjects="PlasmoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sharedParams.libraryId"/>
-        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.best_alignment_only" 
+                  groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.high_confidence_only" 
+                  groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_identity" 
+                  groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="sharedParams.min_percent_est_aligned" 
+                  groupRef="paramGroups.advancedParams"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="est_location"/>
@@ -67,16 +74,30 @@
                OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
-        <sqlParamValue name="chroOpt" includeProjects="ToxoDB">
+        <sqlParamValue name="orgParam" includeProjects="ToxoDB">
             <![CDATA[
-              (s.chromosome = $$chromosomeOptional$$
-               OR lower(s.source_id) = lower($$sequenceId$$))
+              $$sequence_organism_text$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="orgParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$organismWithEstsInChromosomes$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="ToxoDB">
+            <![CDATA[
+              $$chromosomeOptional$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$chromosomeOptionalForEsts$$
             ]]>
         </sqlParamValue>
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
             SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
@@ -101,7 +122,8 @@
             GROUP BY eags.accession)
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB">
+
+        <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
             SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
@@ -113,7 +135,7 @@
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS est_location
             FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceAttributes sa
-            WHERE ((sa.chromosome=$$chromosomeOptionalForEsts$$ and sa.organism = $$organismWithEstsInChromosomes$$)
+            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = &&orgParam&&)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  $$start_point$$
