@@ -58,23 +58,30 @@
 
 
 
-    <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId"/>
         <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="dynamic_location"/>
-       <sql includeProjects="GiardiaDB">
+        <sqlParamValue name="source" includeProjects="GiardiaDB">
+          <![CDATA[ lower(a.sequence_source_id) = lower($$sequenceId$$) ]]>
+        </sqlParamValue>
+        <sqlParamValue name="source" includeProjects="PlasmoDB">
+          <![CDATA[ a.sequence_source_id in ($$chromosome$$) ]]>
+        </sqlParamValue>
+       <sql includeProjects="GiardiaDB,PlasmoDB">
          <![CDATA[
             select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
-            where lower(a.sequence_source_id) = lower($$sequenceId$$)
+            where  &&source&&
               AND  a.feature_type = 'SAGETagFeature'
               AND  a.end_max >=  $$start_point$$
               AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
@@ -82,13 +89,14 @@
               AND (sg.gene_source_id is $$is_within_gene_not$$ null OR sg.gene_source_id is not null)
          ]]>
        </sql>
-       <sql includeProjects="PlasmoDB">
+       <sql includeProjects="ToxoDB">
          <![CDATA[
             select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
-            from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
+            from apidb.sequenceattributes satr, apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
-            where a.sequence_source_id in ($$chromosome$$)
+            where  satr.chromosome = $$chromosomeOptional$$
+              AND  a.na_sequence_id = satr.na_sequence_id
               AND  a.feature_type = 'SAGETagFeature'
               AND  a.end_max >=  $$start_point$$
               AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
@@ -171,7 +179,7 @@
    </processQuery> 
 
   
- <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB,PlasmoDB"
+ <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.rad_source_id"/>
         <column name="source_id"/>
@@ -181,9 +189,9 @@
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
          where ds.dataset_id = $$rad_source_id$$
-           and (a.rad_source_id is null -- as in the case of plasmodb 5.5
-             or a.rad_source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', ''))
-           and a.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', '')
+             and ( a.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', '')
+             OR 
+                   a.rad_source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', ''))
          ]]>
        </sql>
 </sqlQuery>

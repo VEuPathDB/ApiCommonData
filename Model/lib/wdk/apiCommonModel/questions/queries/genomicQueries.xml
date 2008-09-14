@@ -57,7 +57,10 @@
 
     <sqlQuery name="SequencesByTaxon" excludeProjects="ApiDB"
         isCacheable="true">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"
+                  excludeProjects="ToxoDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withSequenceStrains" 
+                  includeProjects="ToxoDB"/>
         <paramRef ref="genomicParams.sequenceTypes" includeProjects="GiardiaDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -65,9 +68,7 @@
             <![CDATA[
             SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens,apidb.sequenceattributes atr
-            WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
-               CONNECT BY parent_id = prior taxon_id
-               START WITH taxon_id in ($$organism$$))
+            WHERE ens.taxon_id IN ($$organism$$)
                AND atr.na_sequence_id = ens.na_sequence_id
                AND atr.is_top_level = 1
            ]]>

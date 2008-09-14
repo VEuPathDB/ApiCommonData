@@ -48,7 +48,8 @@
         </testParamValues>
 
         <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
-        <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptionalForEsts" includeProjects="PlasmoDB,CryptoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -60,9 +61,15 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="est_location"/>
-        <sqlParamValue name="chroOpt" includeProjects="ToxoDB,CryptoDB">
+        <sqlParamValue name="chroOpt" includeProjects="CryptoDB">
             <![CDATA[
               (s.source_id IN ($$chromosomeOptionalForEsts$$)
+               OR lower(s.source_id) = lower($$sequenceId$$))
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chroOpt" includeProjects="ToxoDB">
+            <![CDATA[
+              (s.chromosome = $$chromosomeOptional$$
                OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
@@ -80,7 +87,7 @@
                        || '-' || trim(to_char(b.target_end,'999,999,999'))
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS est_location
-            FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, dots.NASEQUENCE s
+            FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceattributes s
             WHERE &&chroOpt&&
             AND   s.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  $$start_point$$
