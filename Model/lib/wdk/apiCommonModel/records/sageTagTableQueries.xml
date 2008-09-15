@@ -2,7 +2,23 @@
 
   <querySet name="SageTagTables" queryType="table">
 
-       <sqlQuery name="Experiments" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
+             <defaultTestParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id"></paramValue>
+               <paramValue name="project_id">PlasmoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_chrII-1015856-1015870.1</paramValue>
+               <paramValue name="project_id">ToxoDB</paramValue>
+            </defaultTestParamValues>
+
+            <defaultTestParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id"></paramValue>
+               <paramValue name="project_id">GiardiaDB</paramValue>
+            </defaultTestParamValues>
+
+
+      <sqlQuery name="Experiments" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>

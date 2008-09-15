@@ -18,7 +18,7 @@
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="ToxoDB">
-               <paramValue name="source_id">44.m00048</paramValue>
+               <paramValue name="source_id">TGME49_021330</paramValue>
                <paramValue name="project_id">ToxoDB</paramValue>
             </defaultTestParamValues>
 
@@ -315,6 +315,9 @@
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd7_50</paramValue>
             </testParamValues>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGGT1_097190</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -398,6 +401,9 @@
 
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd7_110</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_054560</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -780,7 +786,11 @@
 
        <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB,ApiDB"
                    isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
+             <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_078740</paramValue>
+            </testParamValues>
+
+           <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -879,6 +889,9 @@
 
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd6_1800</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGVEG_071430</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -1159,8 +1172,11 @@
        <sqlQuery name="GeneGffAliases" isCacheable="false">
 
             <testParamValues minRows="0" includeProjects="CryptoDB"/>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">NC_LIV_120410</paramValue>
+            </testParamValues>
 
-         <paramRef ref="recordParams.source_id"/>
+        <paramRef ref="recordParams.source_id"/>
          <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -1686,6 +1702,10 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Antibody" isCacheable="false" includeProjects="ToxoDB">
+            <testParamValues>
+               <paramValue name="source_id">TGGT1_043200</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>

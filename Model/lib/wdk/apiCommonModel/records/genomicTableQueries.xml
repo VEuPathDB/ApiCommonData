@@ -118,7 +118,11 @@
 
     <sqlQuery name="SequenceGffDbxrefs"  excludeProjects="ApiDB" 
             isCacheable="false">
-        <paramRef ref="recordParams.source_id"/>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">20.m00337-1</paramValue>
+            </testParamValues>
+
+       <paramRef ref="recordParams.source_id"/>
         <paramRef ref="recordParams.project_id"/>
         <column name="source_id" />
         <column name="project_id" />
