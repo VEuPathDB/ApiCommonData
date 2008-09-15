@@ -2,28 +2,28 @@
     <querySet name="SequenceTables" queryType="table">
 
             <defaultTestParamValues includeProjects="PlasmoDB">
-               <paramValue name="primaryKey">PB_PH0001</paramValue>
-               <paramValue name="projectId">PlasmoDB</paramValue>
+               <paramValue name="source_id">PB_PH0001</paramValue>
+               <paramValue name="project_id">PlasmoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="ToxoDB">
-               <paramValue name="primaryKey">Ia</paramValue>
-               <paramValue name="projectId">ToxoDB</paramValue>
+               <paramValue name="source_id">Ia</paramValue>
+               <paramValue name="project_id">ToxoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">AAEE01000001</paramValue>
-               <paramValue name="projectId">CryptoDB</paramValue>
+               <paramValue name="source_id">AAEE01000001</paramValue>
+               <paramValue name="project_id">CryptoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="GiardiaDB">
-               <paramValue name="primaryKey">ctg02_243</paramValue>
-               <paramValue name="projectId">GiardiaDB</paramValue>
+               <paramValue name="source_id">ctg02_243</paramValue>
+               <paramValue name="project_id">GiardiaDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="TrichDB">
-               <paramValue name="primaryKey">DS113177</paramValue>
-               <paramValue name="projectId">TrichDB</paramValue>
+               <paramValue name="source_id">DS113177</paramValue>
+               <paramValue name="project_id">TrichDB</paramValue>
             </defaultTestParamValues>
 
         <sqlQuery name="SequencePieces" includeProjects="GiardiaDB"
@@ -135,7 +135,7 @@
             WHERE ens.source_id = $$source_id$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
-            SELECT ens.source_id, so.so_id AS gff_dbxref
+            SELECT ens.source_id, '@project_id@' AS project_id, so.so_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.source_id = $$source_id$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id

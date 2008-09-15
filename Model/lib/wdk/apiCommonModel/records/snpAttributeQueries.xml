@@ -1,5 +1,5 @@
 <wdkModel>
-    <querySet name="SnpAttributes" includeProjects="PlasmoDB,ToxoDB,ApiDB,CryptoDB">
+    <querySet name="SnpAttributes" queryType="attribute" includeProjects="PlasmoDB,ToxoDB,ApiDB,CryptoDB">
 
         <sqlQuery name="Bfmv" isCacheable="false">
             <column name="source_id" />
@@ -102,7 +102,6 @@
                        WHEN bfmv.gene_strand is null THEN ''
                        ELSE bfmv.strains END as strains_gene_strand
        FROM   apidb.SnpAttributes bfmv
-       WHERE  bfmv.source_id = $$primaryKey$$
              ]]>
            </sql>
         </sqlQuery>

@@ -13,28 +13,28 @@
   <querySet name="GeneTables" queryType="table">
 
             <defaultTestParamValues includeProjects="PlasmoDB">
-               <paramValue name="primaryKey">PB400024.00.0</paramValue>
-               <paramValue name="projectId">PlasmoDB</paramValue>
+               <paramValue name="source_id">PB400024.00.0</paramValue>
+               <paramValue name="project_id">PlasmoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="ToxoDB">
-               <paramValue name="primaryKey">44.m00048</paramValue>
-               <paramValue name="projectId">ToxoDB</paramValue>
+               <paramValue name="source_id">44.m00048</paramValue>
+               <paramValue name="project_id">ToxoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd3_1400</paramValue>
-               <paramValue name="projectId">CryptoDB</paramValue>
+               <paramValue name="source_id">cgd3_1400</paramValue>
+               <paramValue name="project_id">CryptoDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="GiardiaDB">
-               <paramValue name="primaryKey">GL50803_112048</paramValue>
-               <paramValue name="projectId">GiardiaDB</paramValue>
+               <paramValue name="source_id">GL50803_112048</paramValue>
+               <paramValue name="project_id">GiardiaDB</paramValue>
             </defaultTestParamValues>
 
             <defaultTestParamValues includeProjects="TrichDB">
-               <paramValue name="primaryKey">TVAG_386080</paramValue>
-               <paramValue name="projectId">TrichDB</paramValue>
+               <paramValue name="source_id">TVAG_386080</paramValue>
+               <paramValue name="project_id">TrichDB</paramValue>
             </defaultTestParamValues>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -155,7 +155,7 @@
                isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd3_510</paramValue>
+               <paramValue name="source_id">cgd3_510</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -253,7 +253,7 @@
 
        <sqlQuery name="InterPro" isCacheable="false">
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd3_1400</paramValue>
+               <paramValue name="source_id">cgd3_1400</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -311,6 +311,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="TMHMM" isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="source_id">cgd7_50</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -392,7 +397,7 @@
        <sqlQuery name="SignalP" isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd7_110</paramValue>
+               <paramValue name="source_id">cgd7_110</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -503,6 +508,9 @@
 
 
        <sqlQuery name="LowComplexity" isCacheable="false">
+
+            <testParamValues minRows="0" includeProjects="CryptoDB"/>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -546,7 +554,7 @@
                isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd1_200</paramValue>
+               <paramValue name="source_id">cgd1_200</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -596,7 +604,7 @@
 
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd1_200</paramValue>
+               <paramValue name="source_id">cgd1_200</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -641,7 +649,7 @@
                isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd2_980</paramValue>
+               <paramValue name="source_id">cgd2_980</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -870,7 +878,7 @@
                   isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd6_1800</paramValue>
+               <paramValue name="source_id">cgd6_1800</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -905,7 +913,7 @@
                   isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
-               <paramValue name="primaryKey">cgd6_2090</paramValue>
+               <paramValue name="source_id">cgd6_2090</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -913,15 +921,13 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="total"/>
-            <column name="gene_id"/>
             <sql>
             <![CDATA[
             SELECT total, 
-                   gene_id,
                    gf.source_id, '@PROJECT_ID@' as project_id
             FROM(
             SELECT count(gf.source_id) as total,
-                   gf.source_id as gene_id
+                   gf.source_id
             FROM   DoTS.GeneFeature gf,
                     DoTS.ExternalNASequence etn,
                     DoTS.NaLocation nal,
@@ -1879,7 +1885,7 @@
         <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
 
             <testParamValues>
-               <paramValue name="primaryKey">cgd3_300</paramValue>
+               <paramValue name="source_id">cgd3_300</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>

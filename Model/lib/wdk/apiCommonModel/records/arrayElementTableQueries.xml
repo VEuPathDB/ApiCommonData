@@ -2,22 +2,24 @@
     <querySet name="ArrayElementTables" queryType="table" includeProjects="PlasmoDB">
 
       <defaultTestParamValues>
-         <paramValue name="primaryKey">Ks382_1</paramValue>
-         <paramValue name="projectId">PlasmoDB</paramValue>
+         <paramValue name="source_id">Ks382_1</paramValue>
+         <paramValue name="project_id">PlasmoDB</paramValue>
       </defaultTestParamValues>
 
         <sqlQuery name="Genes" isCacheable="false">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
+            <column name="project_id" />
+            <column name="gene_source_id" />
             <sql>
             <![CDATA[
-              SELECT substr(t.source_id, 1, length(t.source_id)-2) as source_id
+              SELECT ens.source_id, '@PROJECT_ID@' as project_id,
+                     substr(t.source_id, 1, length(t.source_id)-2) as gene_source_id
               FROM dots.Similarity s, dots.Transcript t,
                    dots.ExternalNaSequence ens,
                    core.TableInfo ti1, core.TableInfo ti2
-              WHERE ens.source_id = $$primaryKey$$
-                AND ens.na_sequence_id = s.query_id
+              WHERE ens.na_sequence_id = s.query_id
                 AND 'ExternalNASequence' = ti1.name
                 AND ti1.table_id = s.query_table_id
                 AND 'Transcript' = ti2.name
@@ -28,9 +30,11 @@
         </sqlQuery>
 
         <sqlQuery name="GenomicLocations" isCacheable="false" includeProjects="PlasmoDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
+            <column name="project_id" />
+            <column name="genomic_source_id" />
             <column name="min_subject_start" />
             <column name="max_subject_end" />
             <column name="gbrowse_start" />
@@ -38,7 +42,7 @@
             <column name="is_reversed" />
             <sql>
             <![CDATA[
-              SELECT ens2.source_id, s.min_subject_start, s.max_subject_end,
+              SELECT ens2.source_id as genomic_source_id, '@PROJECT_ID@' as project_id, ens1.source_id, s.min_subject_start, s.max_subject_end,
                      s.is_reversed,
                      s.min_subject_start - 25000 as gbrowse_start,
                      s.min_subject_start + 25000 as gbrowse_end
@@ -49,8 +53,7 @@
                    sres.ExternalDatabaseRelease edr2,
                    dots.ExternalNaSequence ens2,
                    core.TableInfo ti2
-              WHERE ens1.source_id = $$primaryKey$$
-                AND ens1.na_sequence_id = s.query_id
+              WHERE ens1.na_sequence_id = s.query_id
                 AND 'ExternalNASequence' = ti1.name
                 AND ti1.table_id = s.query_table_id
                 AND ed2.name in ('Sanger P. falciparum chromosomes',

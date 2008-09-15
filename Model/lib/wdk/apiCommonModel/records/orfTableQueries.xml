@@ -3,33 +3,33 @@
   <querySet name="OrfTables" queryType="table">
 
       <defaultTestParamValues includeProjects="PlasmoDB">
-         <paramValue name="primaryKey">PB_RP3804-2-1862-2092</paramValue>
-         <paramValue name="projectId">PlasmoDB</paramValue>
+         <paramValue name="source_id">PB_RP3804-2-1862-2092</paramValue>
+         <paramValue name="project_id">PlasmoDB</paramValue>
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="ToxoDB">
-         <paramValue name="primaryKey">XI-4-4777010-4776843</paramValue>
-         <paramValue name="projectId">ToxoDB</paramValue>
+         <paramValue name="source_id">XI-4-4777010-4776843</paramValue>
+         <paramValue name="project_id">ToxoDB</paramValue>
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="CryptoDB">
-         <paramValue name="primaryKey">AAEE01000015-4-52922-52668</paramValue>
-         <paramValue name="projectId">CryptoDB</paramValue>
+         <paramValue name="source_id">AAEE01000015-4-52922-52668</paramValue>
+         <paramValue name="project_id">CryptoDB</paramValue>
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="GiardiaDB">
-         <paramValue name="primaryKey">AACB02000007-2-49229-49390</paramValue>
-         <paramValue name="projectId">GiardiaDB</paramValue>
+         <paramValue name="source_id">AACB02000007-2-49229-49390</paramValue>
+         <paramValue name="project_id">GiardiaDB</paramValue>
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="TrichDB">
-         <paramValue name="primaryKey">DS164731-2-86-799</paramValue>
-         <paramValue name="projectId">TrichDB</paramValue>
+         <paramValue name="source_id">DS164731-2-86-799</paramValue>
+         <paramValue name="project_id">TrichDB</paramValue>
       </defaultTestParamValues>
  
      <sqlQuery name="Locations" isCacheable="false" includeProjects="GiardiaDB">
-            <paramRef ref="recordParams.primaryKey"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence_source_id"/>
@@ -52,7 +52,7 @@
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl, apidb.orfattributes oa 
-              WHERE oa.source_id=$$primaryKey$$
+              WHERE oa.source_id=$$source_id$$
                 AND fl.feature_source_id = oa.source_id
               ORDER BY fl.is_top_level desc
             ]]>

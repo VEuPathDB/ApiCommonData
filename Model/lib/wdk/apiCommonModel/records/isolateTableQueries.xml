@@ -11,13 +11,13 @@
   <querySet name="IsolateTables" queryType="table">
     
       <defaultTestParamValues includeProjects="PlasmoDB">
-         <paramValue name="primaryKey">BC.458098</paramValue>
-         <paramValue name="projectId">PlasmoDB</paramValue>
+         <paramValue name="source_id">BC.458098</paramValue>
+         <paramValue name="project_id">PlasmoDB</paramValue>
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="CryptoDB">
-         <paramValue name="primaryKey">AY168847</paramValue>
-         <paramValue name="projectId">CryptoDB</paramValue>
+         <paramValue name="source_id">AY168847</paramValue>
+         <paramValue name="project_id">CryptoDB</paramValue>
       </defaultTestParamValues>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -38,7 +38,7 @@
                    ref.title,
                    ref.author,
                    ref.journal_or_book_name,
-                   $$projectId$$ as project_id
+                   '@PROJECT_ID@' as project_id
             FROM   DoTS.ExternalNASequence etn,
                    DoTS.NASequenceRef nasr,
                    SRES.Reference ref,
@@ -50,7 +50,6 @@
                AND edr.version = '2007-12-12'
                AND nasr.reference_id = ref.reference_id
                AND etn.na_sequence_id = nasr.na_sequence_id
-               AND etn.source_id = $$primaryKey$$
             ORDER BY ref.reference_id
             ]]>
             </sql>
@@ -62,7 +61,7 @@
 
        <sqlQuery name="SNP" isCacheable="true" includeProjects="ApiDB,PlasmoDB">
             <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.projectId"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="start_min"/>
@@ -84,7 +83,7 @@
                    end colored_allele,
                    snp.major_allele,
                    snp.minor_allele,
-                   $$projectId$$ as project_id
+                   '@PROJECT_ID@' as project_id
             FROM   ApiDB.IsolateAttributes etn,
                    DoTS.IsolateFeature if,
                    DoTS.IsolateSource src,
@@ -97,7 +96,6 @@
                AND nal.na_feature_id = if.na_feature_id
                AND chr.na_sequence_id = if.na_sequence_id
                AND snp.source_id = if.source_id
-               AND etn.source_id = $$primaryKey$$
             ORDER BY if.source_id
             ]]>
             </sql>
