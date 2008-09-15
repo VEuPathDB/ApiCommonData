@@ -332,10 +332,10 @@
                        ELSE apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') END as genes
 	    FROM (
                  
-               SELECT distinct i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
-                FROM apidb.ASMALIGNMENTGENESUMMARY i, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds, apidb.GeneId gi
-                WHERE gi.gene = $$single_gene_id$$
-                 AND gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+               SELECT distinct i.source_id,i.gene ,i.target_start,i.target_end, 
+                      i.is_reversed, i.target_sequence_source_id
+                FROM apidb.ASMALIGNMENTGENESUMMARY i, apidb.GeneId gi
+                WHERE gi.id LIKE REGEXP_REPLACE(REPLACE(LOWER($$single_gene_id$$),
                                                        '*', '%'),
                                                '[[:space:]]', '')
                 AND i.gene = gi.gene
