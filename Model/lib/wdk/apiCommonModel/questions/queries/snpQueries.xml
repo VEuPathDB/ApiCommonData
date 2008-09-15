@@ -186,7 +186,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         </sqlParamValue>
         <sqlParamValue name="providers" includeProjects="CryptoDB"></sqlParamValue>
 
-        <sql includeProjects="PlasmoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
               SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
@@ -269,7 +269,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
               GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product)
            ]]>
        </sql>
-        <sql includeProjects="ToxoDB,CryptoDB">
+        <sql includeProjects="CryptoDB">
             <![CDATA[
               select * from (
               SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
