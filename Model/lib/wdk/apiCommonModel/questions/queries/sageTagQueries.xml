@@ -60,6 +60,11 @@
 
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
               isCacheable="true">
+
+        <testParamValues includeProjects="ToxoDB">
+          <paramValue name="chromosomeOptional">V</paramValue>
+        </testParamValues>
+
         <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId"/>
         <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
@@ -179,7 +184,7 @@
    </processQuery> 
 
   
- <sqlQuery name="ByRadSourceId" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
+ <sqlQuery name="ByRadSourceId" doNotTest="true" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="sageTagParams.rad_source_id"/>
         <column name="source_id"/>

@@ -1351,6 +1351,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="CryptoDB">
           <paramValue name="sequenceId">AAEE01000001</paramValue>
         </testParamValues>
+        <testParamValues includeProjects="ToxoDB">
+          <paramValue name="sequenceId">II</paramValue>
+        </testParamValues>
 
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,CryptoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" multiPick="false" includeProjects="ToxoDB"/>
@@ -1461,9 +1464,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="PlasmoDB">
             <paramValue name="snp_strain_m">Pf-7G8</paramValue>
         </testParamValues>
-
-        <testParamValues includeProjects="CryptoDB">
+ 
+       <testParamValues includeProjects="CryptoDB">
             <paramValue name="snp_strain_m">Cp-MD</paramValue>
+        </testParamValues> 	  
+
+        <testParamValues includeProjects="ToxoDB">
+            <paramValue name="snp_strain_m">Tg-GT1 (type I)</paramValue>
         </testParamValues>
 
         <paramRef ref="sharedParams.snp_strain_a"/>
@@ -1601,6 +1608,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 			isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
+           <paramValue name="domain_database">PRODOM</paramValue>
+           <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
+        </testParamValues>
+
+        <testParamValues includeProjects="ToxoDB">
            <paramValue name="domain_database">PRODOM</paramValue>
            <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
         </testParamValues>
@@ -2309,6 +2321,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB"
           isCacheable='true'>
+
+        <testParamValues includeProjects="ToxoDB">
+            <paramValue name="lineages_b">GT1 (Type I) </paramValue>
+        </testParamValues>
+
        <paramRef ref="geneParams.lineages_a"/>
        <paramRef ref="geneParams.lineages_b"/>
        <paramRef ref="geneParams.confidence"/>
@@ -3393,7 +3410,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
   </querySet>
 
-  <querySet name="GeneSubTypes">
+  <querySet name="GeneSubTypes" doNotTest="true">
 
     <sqlQuery name="GenesByOrthologTransform" includeProjects="ToxoDB"
               isCacheable="true">
