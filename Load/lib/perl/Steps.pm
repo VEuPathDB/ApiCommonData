@@ -4522,10 +4522,19 @@ sub runMercatorMavid {
   my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
   my $tree = $propertySet->getProp('mercator_tree');
 
-  my @drafts =  map { "-d $_" } split(',', $draftString);
-  my @nonDrafts = map { "-n $_" } split(',', $nonDraftString);
+  my $drafts = '';
+  my $nonDrafts = '';
+  if(uc($draftString) ne "NONE"){ 
+      $drafts =  join(" ", map { "-d $_" } split(',', $draftString));
+  }
+  
+  if(uc($nonDraftString) ne "NONE"){
+      $nonDrafts = join(" ",map { "-n $_" } split(',', $nonDraftString));
+  }
 
-  my $command = "runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid " . join(" ", @drafts) . " " . join(" ", @nonDrafts) . " 2>$logFile";
+  my $command = "runMercator  -t '$tree' -p $mercatorDir -c $cndsrcBin -r $referenceGenome -m $mavid $drafts $nonDrafts 2>$logFile";
+  
+ 
   $mgr->runCmd($command);
 
   $mgr->endStep($signal);
