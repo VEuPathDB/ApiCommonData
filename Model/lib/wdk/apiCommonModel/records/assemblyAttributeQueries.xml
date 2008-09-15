@@ -13,7 +13,7 @@
         <column name="c_count" sortingTable="apidb.AssemblyAttributes"/>
         <column name="g_count" sortingTable="apidb.AssemblyAttributes"/>
         <column name="other_count" sortingTable="apidb.AssemblyAttributes"/>
-     <sql includeProjects="ToxoDB">
+<!--     <sql includeProjects="ToxoDB">
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
       REPLACE(SUBSTR(aa.organism, 1,   40),'Toxoplasma','T.') AS organism,
@@ -25,14 +25,17 @@
       FROM  apidb.AssemblyAttributes aa
      ]]>
     </sql>
-     <sql includeProjects="CryptoDB,GiardiaDB,TrichDB,ApiDB,PlasmoDB">
+-->
+     <sql includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrichDB,ApiDB,PlasmoDB">
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
       REPLACE(
         REPLACE(
+         REPLACE(
           REPLACE(
             REPLACE(aa.organism,'Cryptosporidium','C.' ),
                                 'Giardia',        'G.' ),
+                                'Toxoplasma',        'T.' ),
                                 'Plasmodium',        'P.' ),
                                 'Trichomonas',    'T.' ) AS organism,
  '<i>' || SUBSTR(aa.organism, 1, 1) || '.' ||

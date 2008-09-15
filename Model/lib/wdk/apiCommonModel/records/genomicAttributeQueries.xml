@@ -94,7 +94,7 @@
                       AS formatted_organism,
                     bfmv.ncbi_tax_id, bfmv.sequence_description,
                     bfmv.genbank_accession, bfmv.database_name,
-                    bfmv.database_version, bfmv.chromosome,database_name as externalDbName
+                    bfmv.database_version as externalDbVersion, bfmv.chromosome,database_name as externalDbName
               FROM apidb.SequenceAttributes bfmv
              ]]>
            </sql>
@@ -150,7 +150,7 @@
             <![CDATA[
            select sa.source_id, sa.project_id, count(*) as gene_count
             from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
-            where ga.sequence_id = sa.source_id
+            where ga.sequence_id(+) = sa.source_id
             group by sa.source_id, sa.project_id
              ]]>
            </sql>
@@ -274,8 +274,7 @@
                  sres.externaldatabase ed,
                  sres.externaldatabaserelease edr,
                  sres.TaxonName tn
-            where gs.is_top_level = 1
-              and ns.na_sequence_id = gs.na_sequence_id
+            where ns.na_sequence_id = gs.na_sequence_id
               and ns.external_database_release_id = edr.external_database_release_id
               and edr.external_database_id = ed.external_database_id
               and ns.taxon_id = tn.taxon_id

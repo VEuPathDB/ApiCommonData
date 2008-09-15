@@ -93,7 +93,7 @@
         <description>Find EST Assemblies by Library Name</description>
 
         <attributesList
-              summary="formatted_organism,est_count,est_library_count"
+              summary="formatted_organism,est_count,length,est_library_count"
               sorting="formatted_organism asc,est_count desc,est_library_count desc"
         />
 
@@ -129,11 +129,8 @@
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
- 
-
-
         <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
-              summary="formatted_organism, assembly_location,est_count"
+              summary="formatted_organism, est_count, length, assembly_location,est_count"
               sorting="formatted_organism asc, assembly_location asc"
         /> 
 
@@ -199,7 +196,7 @@
 
       
         <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB"
-           summary="formatted_organism,assembly_locations,genes,est_count"
+           summary="formatted_organism,assembly_locations,genes,est_count, length"
            sorting="formatted_organism asc,assembly_locations asc"
         /> 
 <summary>Find EST assemblies that do or do not overlap with a gene.</summary>
@@ -244,7 +241,7 @@
 
       
         <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB"
-           summary="formatted_organism,assembly_locations,genes,est_count"
+           summary="formatted_organism,assembly_locations,genes,est_count, length"
            sorting="formatted_organism asc,assembly_locations asc"
         /> 
         <summary>Find EST assemblies by gene id(s).</summary>
