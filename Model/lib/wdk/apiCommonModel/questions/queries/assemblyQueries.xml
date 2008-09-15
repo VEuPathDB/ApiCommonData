@@ -6,7 +6,7 @@
     <!-- EST Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="AssembliesByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -14,7 +14,7 @@
         <sql>
           <![CDATA[
              SELECT distinct aa.source_id, aa.project_id
-             FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa, userlogins2.dataset_values@apidb.LOGIN_COMMENT ds
+             FROM apidb.EstAttributes ea, apidb.AssemblyAttributes aa,  @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
              WHERE ds.dataset_id = $$est_id$$
               AND LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE(ds.dataset_value,' ',''), '*', '%'))
                AND ea.assembly_source_id = aa.source_id
@@ -23,7 +23,7 @@
        </sql>
     </sqlQuery>
 
- <processQuery name="AssembliesByEstAccession" includeProjects="ApiDB"
+ <processQuery name="ByEstAccession" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="estParams.est_id"  default="EV500870"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
@@ -34,7 +34,7 @@
     <!-- Library  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="AssembliesByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB" 
+    <sqlQuery name="ByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB" 
              isCacheable='true'>
 
         <testParamValues includeProjects="CryptoDB">
@@ -62,7 +62,7 @@
     </sqlQuery>
 
 
- <processQuery name="AssembliesByLibrary" includeProjects="ApiDB"
+ <processQuery name="ByLibrary" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.libraryIdAssemblies"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
@@ -78,7 +78,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <sqlQuery name="AssembliesByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
           isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
@@ -86,6 +86,7 @@
         </testParamValues>
 
         <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -98,7 +99,27 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="assembly_location"/>
-        <sqlParamValue name="chroOpt" includeProjects="ToxoDB,CryptoDB">
+        <sqlParamValue name="orgParam" includeProjects="ToxoDB">
+            <![CDATA[
+              $$sequence_organism_text$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="orgParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$organismWithEstsInChromosomes$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="ToxoDB">
+            <![CDATA[
+              $$chromosomeOptional$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$chromosomeOptionalForEsts$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chroOpt" includeProjects="CryptoDB">
             <![CDATA[
               (s.source_id IN ($$chromosomeOptional$$)
                OR lower(s.source_id) = lower($$sequenceId$$))
@@ -107,7 +128,7 @@
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
@@ -142,7 +163,7 @@
             ) */
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
@@ -154,7 +175,7 @@
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS assembly_location
 	    FROM  apidb.ASMALIGNMENTGENESUMMARY eags, apidb.blatalignmentlocation b, apidb.sequenceAttributes sa
-            WHERE ((sa.chromosome=$$chromosomeOptional$$ and sa.organism = $$organismWithEstsInChromosomes$$)
+            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = &&orgParam&&)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  $$start_point$$
@@ -166,16 +187,6 @@
             AND   eags.percent_assembly_bases_aligned >= $$min_percent_assembly_aligned$$
             AND   eags.est_count >= $$min_ests_in_assembly$$
             GROUP BY eags.source_id)
-
-/*            AND target_start >= $$start_point$$
-            AND (target_end <= $$end_point$$ OR $$end_point$$ = 0)
-            AND   is_consistent in ($$high_confidence_only$$)
-            AND   is_best_alignment in ($$best_alignment_only$$)
-            AND   percent_identity >= $$min_percent_identity$$
-            AND   percent_assembly_bases_aligned >= $$min_percent_assembly_aligned$$
-            AND   est_count >= $$min_ests_in_assembly$$
-	    GROUP BY source_id
-            ) */
            ]]>
         </sql>
     </sqlQuery>
@@ -184,7 +195,7 @@
 <!-- while these queries only exist in Giardia we use a hidden organism param to go only there -->
 <!-- Once other sites have assembly queries, we will use the regular organism param instead -->
 
- <processQuery name="AssembliesByLocation" includeProjects="ApiDB"
+ <processQuery name="ByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
         <paramRef ref="organismParams.hiddenOrganismGiardia"/>
@@ -208,7 +219,7 @@
     <!-- Gene Overlap  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="AssembliesWithGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="withGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
             isCacheable='true'>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="assemblyParams.overlapOrNot"/>
@@ -264,7 +275,7 @@
     </sqlQuery>
 
 
- <processQuery name="AssembliesWithGeneOverlap" includeProjects="ApiDB"
+ <processQuery name="withGeneOverlap" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="assemblyParams.overlapOrNot"/>
@@ -288,7 +299,7 @@
     <!-- Gene ID  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="AssembliesByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
             isCacheable='true'>
       
       <paramRef ref="assemblyParams.single_gene_id"/>
@@ -344,7 +355,7 @@
 
 
 
- <processQuery name="AssembliesByGeneIDs" includeProjects="ApiDB"
+ <processQuery name="ByGeneIDs" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="assemblyParams.single_gene_id"/>
       <paramRef ref="sharedParams.bp_overlap_gte"/>
@@ -368,7 +379,7 @@
     <!-- BLAST  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="AssembliesBySimilarity"
+    <processQuery name="BySimilarity"
              displayName="BLAST"
              processName="org.apidb.apicomplexa.wsfplugin.wublast.WuBlastPlugin">
 

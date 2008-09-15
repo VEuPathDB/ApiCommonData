@@ -42,35 +42,6 @@
             <column name="is_reversed" />
             <column name="organism" />
 
-            <sqlParamValue name="alignment_location" includeProjects="GiardiaDB">
-               <![CDATA[
-                apidb.BlatAlignmentLocation
-                ]]>
-            </sqlParamValue>
-            <sqlParamValue name="alignment_location" excludeProjects="GiardiaDB">
-                <![CDATA[
-                dots.blatalignment
-                ]]>
-            </sqlParamValue>
-
-            <sqlParamValue name="sequence_level" includeProjects="GiardiaDB">
-               <![CDATA[
-                AND  blat.location_mapping='virtual'
-                ]]>
-            </sqlParamValue>
-            <sqlParamValue name="sequence_level" excludeProjects="GiardiaDB">
-                <![CDATA[
-                ]]>
-            </sqlParamValue>
-           <sqlParamValue name="extdbrid" includeProjects="GiardiaDB">
-               <![CDATA[
-                ]]>
-            </sqlParamValue>
-            <sqlParamValue name="extdbrid" excludeProjects="GiardiaDB">
-                <![CDATA[
-                 AND  etn.external_database_release_id = blat.target_external_db_release_id 
-                ]]>
-            </sqlParamValue>
             <sql>
             <![CDATA[
             SELECT a.source_id, '@project_id@' AS project_id,
@@ -85,31 +56,17 @@
                    decode(blat.is_reversed,0,'+',1,'-',blat.is_reversed) as is_reversed, 
                    blat.percent_identity,       
                    blat.score || '' score, 
-                   (SELECT DISTINCT
-                     CASE WHEN lower(taxn.name) like 'giardia lamblia%' or lower(taxn.name) like 'giardia intestinalis%' THEN 'Giardia lamblia'
-                          WHEN lower(taxn.name) like 'cryptosporidium parvum%' THEN 'Cryptosporidium parvum' 
-                          WHEN lower(taxn.name) like 'cryptosporidium hominis%'THEN 'Cryptosporidium hominis' 
-                          WHEN lower(taxn.name) like 'toxoplasma%' THEN 'Toxoplasma gondii'
-                          WHEN lower(taxn.name) like 'plasmodium berghei%' THEN 'Plasmodium berghei'
-                          WHEN lower(taxn.name) like 'plasmodium chabaudi%' THEN 'Plasmodium chabaudi'
-                          WHEN lower(taxn.name) like 'plasmodium falciparum%' THEN 'Plasmodium falciparum'
-                          WHEN lower(taxn.name) like 'plasmodium knowlesi%' THEN 'Plasmodium knowlesi'
-                          WHEN lower(taxn.name) like 'plasmodium vivax%' THEN 'Plasmodium vivax'
-                          WHEN lower(taxn.name) like 'plasmodium yoelii%' THEN 'Plasmodium yoelii'
-                     END as organism
-                     FROM sres.taxonname taxn
-                     WHERE etn.taxon_id = taxn.taxon_id) organism,  
+                   etn.organism,
                    a.number_of_contained_sequences as count
-            FROM   &&alignment_location&& blat, 
+            FROM   apidb.blatalignmentlocation blat, 
                    dots.Assembly a, 
-                   dots.NASequence etn
+                   apidb.sequenceattributes etn
             WHERE  blat.query_na_sequence_id = a.na_sequence_id 
               AND  blat.target_na_sequence_id = etn.na_sequence_id 
-              &&extdbrid&&
+              AND  etn.is_top_level = 1
               AND  (blat.target_end - blat.target_start ) < 5000 
               AND  blat.is_best_alignment = 1 
               AND  a.source_id = $$source_id$$
-              &&sequence_level&&
             ORDER BY blat.is_best_alignment desc, blat.percent_identity desc
             ]]>
             </sql>

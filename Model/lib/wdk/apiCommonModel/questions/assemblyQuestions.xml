@@ -7,7 +7,7 @@
 
   <question name="AssembliesByEstAccession"
               displayName="ID"
-              queryRef="AssemblyIds.AssembliesByEstAccession"
+              queryRef="AssemblyIds.ByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
@@ -51,7 +51,7 @@
 
   <question name="AssembliesByEstAccession"
               displayName="ID"
-              queryRef="AssemblyIds.AssembliesByEstAccession"
+              queryRef="AssemblyIds.ByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               noSummaryOnSingleRecord="false" includeProjects="ApiDB">
 
@@ -85,7 +85,7 @@
   <question name="AssembliesByLibrary"
               category="Transcript Expression"
               displayName="Library"
-              queryRef="AssemblyIds.AssembliesByLibrary"
+              queryRef="AssemblyIds.ByLibrary"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
@@ -125,17 +125,17 @@
   <question name="AssembliesByLocation"
               category="Genomic Position"
               displayName="Chromosomal Location"
-              queryRef="AssemblyIds.AssembliesByLocation"
+              queryRef="AssemblyIds.ByLocation"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
-        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList 
               summary="formatted_organism, est_count, length, assembly_location,est_count"
               sorting="formatted_organism asc, assembly_location asc"
         /> 
 
-        <dynamicAttributes includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB">
-            <columnAttribute name="assembly_location" displayName="EST location(s)"/>
+        <dynamicAttributes>
+            <columnAttribute name="assembly_location" displayName="Assembly location(s)"/>
         </dynamicAttributes>
 
         <summary>
@@ -190,7 +190,7 @@
 
     <question name="AssembliesWithGeneOverlap"
          displayName="Extent of Gene Overlap"
-         queryRef="AssemblyIds.AssembliesWithGeneOverlap"
+         queryRef="AssemblyIds.withGeneOverlap"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
@@ -235,7 +235,7 @@
 
     <question name="AssembliesByGeneIDs"
          displayName="Gene ID"
-         queryRef="AssemblyIds.AssembliesByGeneIDs"
+         queryRef="AssemblyIds.ByGeneIDs"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
@@ -277,7 +277,7 @@
   <question name="AssembliesBySimilarity"
          displayName="BLAST"
          category="Similarity/Pattern"
-         queryRef="AssemblyIds.AssembliesBySimilarity"
+         queryRef="AssemblyIds.BySimilarity"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
          fullAnswer="true">
 

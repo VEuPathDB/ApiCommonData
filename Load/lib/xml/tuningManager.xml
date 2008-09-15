@@ -2015,21 +2015,21 @@ CREATE INDEX featso_id_ix&1 ON apidb.FeatureSo&1(na_feature_id)
       <![CDATA[
 CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
   SELECT snp.na_feature_id AS snp_na_feature_id,
-         snp.source_id AS snp_source_id, sa.na_sequence_id,
+         snp.source_id AS snp_source_id, fl.na_sequence_id,
          sa.na_feature_id as na_feature_id_a,
          sb.na_feature_id as na_feature_id_b,
          substr(sa.strain, 1, 12) AS strain_a,
          substr(sb.strain, 1, 12) AS strain_b,
-         nl.start_min AS start_min,
+         fl.start_min AS start_min,
          snp.external_database_release_id,
          gf.na_feature_id as gene_na_feature_id
   FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
-       dots.NaLocation nl, dots.GeneFeature gf
+       apidb.featurelocation fl, dots.GeneFeature gf
   WHERE sa.strain < sb.strain
     AND sa.allele != sb.allele
     AND sa.parent_id = sb.parent_id
     AND sa.parent_id = snp.na_feature_id
-    AND sa.na_feature_id = nl.na_feature_id
+    AND sa.na_feature_id = fl.na_feature_id
     AND snp.parent_id = gf.na_feature_id (+)
       ]]>
     </sql>

@@ -116,7 +116,9 @@
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
             <columnAttribute name="id"            internal="true" />
-            <columnAttribute name="organism" />
+            <columnAttribute name="source_id"            internal="true" />
+            <columnAttribute name="project_id"            internal="true" />
+            <columnAttribute name="organism" displayName="Organism"/>
             <columnAttribute name="sequence_id"   internal="true" />
             <columnAttribute name="target_start"  internal="true" />
             <columnAttribute name="target_end"    internal="true" />
@@ -131,7 +133,7 @@
                  </displayText>
                  <url>
                     <![CDATA[
-                    showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
+                    showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=$$project_id$$&source_id=$$sequence_id$$&modgbrowse=startOverride=$$target_start$$:endOverride=$$target_end$$
                     ]]>
                  </url>
             </linkAttribute>
