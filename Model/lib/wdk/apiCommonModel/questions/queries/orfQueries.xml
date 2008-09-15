@@ -56,6 +56,7 @@
         </testParamValues>
 
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -64,7 +65,17 @@
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
-        <sql includeProjects="PlasmoDB"> 
+        <sqlParamValue name="orgParam" includeProjects="ToxoDB">
+            <![CDATA[
+              $$sequence_organism_text$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="orgParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$organismWithEstsInChromosomes$$
+            ]]>
+        </sqlParamValue>
+        <sql includeProjects="ToxoDB,PlasmoDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -72,7 +83,7 @@
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
 	    WHERE fl.feature_type = 'Miscellaneous'
             AND sa.na_sequence_id = fl.na_sequence_id
-	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = $$organismWithChromosomes$$)
+	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = &&orgParam&&)
                    OR lower(sa.source_id) = lower($$sequenceId$$))
             AND fl.end_max >=  $$start_point$$ 
 	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
@@ -82,7 +93,7 @@
             AND oa.source_id = fl.feature_source_id
            ]]>
        </sql>
-        <sql includeProjects="CryptoDB,ToxoDB"> 
+        <sql includeProjects="CryptoDB"> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
@@ -123,7 +134,7 @@
            ]]>
        </sql>
 -->
-        <sql includeProjects="GiardiaDB"> 
+        <sql includeProjects="TrichDB,GiardiaDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
