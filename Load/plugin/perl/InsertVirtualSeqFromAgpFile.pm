@@ -335,7 +335,7 @@ sub makeVirWithSpacer {
     $virtualSeq->addChild($seqPieceObj);
 
     my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-    $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} =~ /2/;
+    $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
 
     $sequence .= $pieceSeq;
 
@@ -377,7 +377,7 @@ sub makeVir {
     else {
       $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
       $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} =~ /2/;
+      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
     }
 
     my $length = length($sequence);
