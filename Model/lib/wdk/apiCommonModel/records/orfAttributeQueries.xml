@@ -37,9 +37,11 @@
             <sql excludeProjects="ApiDB">
                SELECT nf.source_id,ts.sequence, '@project_id@' as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
-                    dots.NaFeature nf
+                    dots.NaFeature nf, sres.SequenceOntology so
                WHERE nf.na_feature_id = tf.na_feature_id
                  AND ts.aa_sequence_id = tf.aa_sequence_id
+                 AND so.term_name = 'ORF'
+                 AND nf.sequence_ontology_id = so.sequence_ontology_id
            </sql>
 
 
