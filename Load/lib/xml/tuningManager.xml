@@ -2038,6 +2038,12 @@ CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
 CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a, strain_b, start_min)
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX polymorphism_loc_ix&1
+ON apidb.Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, strain_b, start_min)
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.IsolateAttributes">
