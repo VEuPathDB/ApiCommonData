@@ -427,11 +427,13 @@ my $sql;
     from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
     where g.na_feature_id = gi.na_feature_id
     UNION
-    select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
-    from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
+    select gb.na_feature_id, to_char(ssg.sequence_group_id), g.external_database_release_id
+    from dots.SequenceSequenceGroup ssg, apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb, dots.genefeature g, core.TableInfo t
     where t.name = 'GeneFeature'
-    and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
+    and ga.na_feature_id = ssg.sequence_id
+    and gb.gene_id = ga.GENE_ID
+    and g.na_feature_id = gb.na_feature_id
     ";
   }elsif($self->getArg('organism') eq 'Cryptosporidium'){
     $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
