@@ -1263,6 +1263,12 @@ CREATE INDEX apidb.GeneAttr_feat_ix&1
        ON apidb.GeneAttributes&1 (na_feature_id)
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneAttr_geneid_ix&1
+       ON apidb.GeneAttributes&1 (gene_id)
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.GenomicSequence">
