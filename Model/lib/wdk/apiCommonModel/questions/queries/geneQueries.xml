@@ -3442,7 +3442,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
                     SELECT gb.source_id, gb.project_id
-                    FROM $$gene_answer$$ c, apidb.geneattributes ga, apidb.geneattributes gb
+                    FROM $$gene_result$$ c, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE ga.source_id = c.source_id
                     AND gb.gene_id = ga.gene_id
             ]]>
