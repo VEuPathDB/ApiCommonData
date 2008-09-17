@@ -427,7 +427,7 @@ my $sql;
     from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
     where g.na_feature_id = gi.na_feature_id
     UNION
-    select gb.na_feature_id, to_char(ssg.sequence_group_id), g.external_database_release_id
+    select gb.na_feature_id as sequence_id, to_char(ssg.sequence_group_id) as sequence_group_id, g.external_database_release_id
     from dots.SequenceSequenceGroup ssg, apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb, dots.genefeature g, core.TableInfo t
     where t.name = 'GeneFeature'
     and t.table_id = ssg.source_table_id
