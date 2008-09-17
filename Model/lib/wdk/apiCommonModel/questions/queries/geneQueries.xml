@@ -72,8 +72,8 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="chip_distance"/>
-        <column name="chip_total_reps" type="number"/>
-        <column name="chip_antibodies" type="string" width="2000"/>
+        <column name="chip_total_reps"/>
+        <column name="chip_antibodies"/>
        <sql>
              <![CDATA[
             select inner.gene_source_id as source_id, '@PROJECT_ID@' as project_id,
@@ -339,7 +339,7 @@
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id" />
-        <column name="is_pseudo" type="boolean" />
+        <column name="is_pseudo" />
         <sql  excludeProjects="TrichDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
@@ -610,9 +610,9 @@ sns2.external_database_release_id=extr.external_database_release_id
         <paramRef ref="geneParams.any_or_all_sigp" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <column name="sigp_sum_score" type="float" width="12"/>
-        <column name="nn_d_score" type="float" width="12"/>
-        <column name="hmm_signal_probability" type="float" width="12"/>
+        <column name="sigp_sum_score"/>
+        <column name="nn_d_score" />
+        <column name="hmm_signal_probability" />
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id,
@@ -930,7 +930,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="source_id" />
         <column name="project_id"/>
         <column name="confidence" />
-        <column name="count" type="number" width="12" />
+        <column name="count" />
         <sql>
             <![CDATA[
         SELECT gf.source_id, '@PROJECT_ID@' as project_id, count(ef.source_id) AS count,
@@ -991,8 +991,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <column name="source_id" />
         <column name="project_id" />
-        <column name="sum_sequence_count" type="number" width="12" />
-        <column name="sum_spectrum_count" type="number" width="12" />
+        <column name="sum_sequence_count" />
+        <column name="sum_spectrum_count" columnType="number" width="12" />
         <sqlParamValue name="externalDatabase" includeProjects="GiardiaDB">G. lamblia contigs from Genbank</sqlParamValue>
         <sqlParamValue name="externalDatabase" includeProjects="ToxoDB">T.gondii ME49 contigs from Genbank</sqlParamValue>
         <sql includeProjects="CryptoDB,PlasmoDB">
