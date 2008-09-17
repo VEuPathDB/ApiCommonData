@@ -225,6 +225,8 @@
 
     <sqlQuery name="withGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
             isCacheable='true'>
+       <paramRef ref="organismParams.organismWithEstsInChromosomes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="assemblyParams.overlapOrNot"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
@@ -240,7 +242,17 @@
        <column name="project_id"/>
        <column name="assembly_locations"/>
        <column name="genes"/>
-       <sql>
+        <sqlParamValue name="orgParam" includeProjects="ToxoDB">
+            <![CDATA[
+              $$sequence_organism_text$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="orgParam" includeProjects="PlasmoDB">
+            <![CDATA[
+              $$organismWithEstsInChromosomes$$
+            ]]>
+        </sqlParamValue>
+       <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
               SELECT source_id, '@PROJECT_ID@' as project_id,
@@ -275,12 +287,54 @@
             )
            ]]>
        </sql>
+       <sql includeProjects="PlasmoDB,ToxoDB">
+            <![CDATA[
+              select * from (
+              SELECT source_id, '@PROJECT_ID@' as project_id,
+               CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
+                    CAST(
+                      COLLECT(target_sequence_source_id || ':'
+                      || trim(to_char(target_start,'999,999,999'))
+                      || '-' || trim(to_char(target_end,'999,999,999'))
+                      || '(' || decode(is_reversed,0,'+',1,'-',null) || ')')
+                    AS apidb.varchartab), ', ') END AS assembly_locations,
+                  CASE WHEN count(distinct gene) > 20 THEN count(distinct gene)||' genes' 
+                       ELSE apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') END as genes
+	    FROM (
+                SELECT i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
+                FROM apidb.ASMALIGNMENTGENESUMMARY i, apidb.SEQUENCEATTRIBUTES sa
+                WHERE 
+                sa.organism in (&&orgParam&&)
+                AND sa.na_sequence_id = i.target_na_sequence_id
+                AND i.is_consistent in ($$high_confidence_only$$)
+                AND i.is_best_alignment in ($$best_alignment_only$$)
+                AND i.percent_identity >= $$min_percent_identity$$
+                AND i.percent_assembly_bases_aligned >= $$min_percent_assembly_aligned$$
+                AND i.est_count >= $$min_ests_in_assembly$$
+             $$overlapOrNot$$                    
+               SELECT i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
+                FROM apidb.ASMALIGNMENTGENESUMMARY i, apidb.SEQUENCEATTRIBUTES sa
+                WHERE 
+                sa.organism in (&&orgParam&&)
+                AND sa.na_sequence_id = i.target_na_sequence_id
+                AND i.assembly_gene_overlap_length >= $$bp_overlap_gte$$
+                AND i.is_consistent in ($$high_confidence_only$$)
+                AND i.is_best_alignment in ($$best_alignment_only$$)
+                AND i.percent_identity >= $$min_percent_identity$$
+                AND i.percent_assembly_bases_aligned >= $$min_percent_assembly_aligned$$
+                AND i.est_count >= $$min_ests_in_assembly$$
+            )          
+            GROUP BY source_id
+            )
+           ]]>
+       </sql>
 
     </sqlQuery>
 
 
  <processQuery name="withGeneOverlap" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="organismParams.hiddenOrganismGiardia"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="assemblyParams.overlapOrNot"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
