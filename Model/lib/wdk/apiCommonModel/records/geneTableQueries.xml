@@ -441,12 +441,15 @@
              and taf.aa_sequence_id = tas.aa_sequence_id
              and tas.aa_sequence_id = spf.aa_sequence_id
              and spf.aa_feature_id = aal.aa_feature_id
-             and
+             and(
              ( spf.maxy_conclusion +
                spf.maxc_conclusion +
                spf.maxs_conclusion +
                spf.means_conclusion
               ) >= 3
+             or ((spf.means_score + spf.maxy_score) / 2) >= 0.5
+             or spf.signal_probability >= 0.5)
+
              ]]>
             </sql>
         </sqlQuery>
