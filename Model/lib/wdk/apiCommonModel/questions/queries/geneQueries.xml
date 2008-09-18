@@ -3486,8 +3486,49 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             WHERE ga.gene_id IN
                     (SELECT ga.gene_id
                      FROM apidb.GeneAttributes ga, $$gene_result$$ c
-                     WHERE ga.source_id = c.source_id)
+                     WHERE ga.source_id = c.source_id
+                     AND ga.gene_id is NOT NULL)
               AND ga.ncbi_tax_id IN ($$organism$$)
+             UNION
+             SELECT
+             DISTINCT gf.source_id, '@PROJECT_ID@' AS project_id
+             FROM 
+             apidb.GeneAttributes ga,
+             apidb.GeneAttributes gb,
+             dots.SequenceSequenceGroup ssg,
+             dots.SequenceSequenceGroup ossg,
+             dots.GeneFeature gf,
+             $$gene_result$$ c,
+              dots.NaSequence ns,
+             sres.taxon tn
+             WHERE ga.source_id = c.source_id
+             AND  ga.gene_id = gb.gene_id
+             AND  ssg.sequence_id = gb.na_feature_id
+             AND  ossg.sequence_group_id = ssg.sequence_group_id
+             AND ossg.sequence_id != ssg.sequence_id
+             AND  gf.na_feature_id = ossg.sequence_id
+             AND gf.na_sequence_id = ns.na_sequence_id
+             AND ns.taxon_id = tn.taxon_id
+             AND tn.ncbi_tax_id IN ($$organism$$)
+             UNION
+             SELECT
+             DISTINCT gb.source_id, '@PROJECT_ID@' as project_id
+             FROM 
+             apidb.geneattributes ga,
+             apidb.geneattributes gb,
+             dots.SequenceSequenceGroup ssg,
+             dots.SequenceSequenceGroup ossg,
+             dots.GeneFeature gf,
+             $$gene_result$$ c
+             WHERE gf.source_id = c.source_id
+             AND  ssg.sequence_id = gf.na_feature_id
+             AND  ossg.sequence_group_id = ssg.sequence_group_id
+             AND  ossg.sequence_id != ssg.sequence_id
+             AND  ga.na_feature_id = ossg.sequence_id
+             AND  gb.gene_id = ga.gene_id
+             AND gb.ncbi_tax_id IN ($$organism$$)
+     
+         
             ]]>
        </sql>
     </sqlQuery>  
