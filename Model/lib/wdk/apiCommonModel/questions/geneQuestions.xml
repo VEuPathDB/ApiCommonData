@@ -60,9 +60,13 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
          queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
-       <attributesList  excludeProjects="ApiDB" 
+       <attributesList  excludeProjects="ToxoDB,ApiDB" 
          summary="dynamic_location,product"
          sorting="dynamic_location asc"
+        />
+       <attributesList  includeProjects="ToxoDB" 
+         summary="formatted_gene_id,dynamic_location,product"
+         sorting="formatted_gene_id asc,dynamic_location asc"
         />
 
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
