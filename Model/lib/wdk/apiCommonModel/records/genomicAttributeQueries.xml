@@ -219,8 +219,7 @@
                    ns.sequence as gff_sequence
             from apidb.SequenceAttributes gs,
                  dots.NaSequence ns
-            where gs.is_top_level = 1
-              and ns.na_sequence_id = gs.na_sequence_id
+            where ns.na_sequence_id = gs.na_sequence_id
         </sql>
     </sqlQuery>
 
@@ -249,6 +248,7 @@
         <column name="gff_attr_translation_table"/>
         <column name="gff_attr_topology"/>
         <column name="gff_attr_localization"/>
+        <column name="gff_is_top_level"/>
         <sql>
             select ns.source_id, '@project_id@' AS project_id,
                    'apidb|' || ns.source_id as gff_seqid,
@@ -268,7 +268,8 @@
                    SUBSTR(tn.name, 1, INSTR(tn.name || '  ', ' ', 1, 2) - 1) as gff_attr_organism_name,
                    11 as gff_attr_translation_table,
                    'linear' as gff_attr_topology,
-                   'nuclear' as gff_attr_localization
+                   'nuclear' as gff_attr_localization,
+                    gs.is_top_level as gff_is_top_level
             from apidb.SequenceAttributes gs,
                  dots.NaSequence ns,
                  sres.externaldatabase ed,
