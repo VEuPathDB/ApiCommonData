@@ -145,7 +145,7 @@
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,  '@project_id@' AS project_id,
-                   'GenBank:' || dr.primary_identifier AS thingie
+                   'GenBank:' || dr.primary_identifier AS gff_dbxref
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
