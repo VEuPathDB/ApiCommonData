@@ -1274,8 +1274,8 @@
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id = t.taxon_id
            UNION
-            SELECT gf.source_id,
-                   'EC:' || ec.ec_number AS gff_dbxref, '@PROJECT_ID@' as project_id
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+                   'EC:' || ec.ec_number AS gff_dbxref
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
@@ -1285,13 +1285,13 @@
               AND asec.aa_sequence_id = taf.aa_sequence_id
               AND ec.enzyme_class_id = asec.enzyme_class_id
            UNION
-/*            SELECT gf.source_id, so.so_id AS gff_dbxref, '@PROJECT_ID@' as project_id
+/*            SELECT gf.source_id, '@PROJECT_ID@' as project_id, so.so_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.SequenceOntology so
             WHERE gf.source_id = $$source_id$$
               AND gf.sequence_ontology_id = so.sequence_ontology_id
            UNION
-*/            SELECT gf.source_id,
-                   'NCBI_gi:' || dr.secondary_identifier AS gff_dbxref, '@PROJECT_ID@' as project_id
+*/            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+                   'NCBI_gi:' || dr.secondary_identifier AS gff_dbxref
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
@@ -1305,8 +1305,8 @@
                               'NRDB_ref_dbXRefBySeqIdentity',
                               'NRDB_sp_dbXRefBySeqIdentity')
            UNION
-            SELECT gf.source_id,
-                   'PDB:' || dr.primary_identifier AS gff_dbxref, '@PROJECT_ID@' as project_id
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+                   'PDB:' || dr.primary_identifier AS gff_dbxref
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
@@ -1319,8 +1319,8 @@
               AND edr.external_database_id = ed.external_database_id
               AND ed.name = 'Predicted protein structures'
            UNION
-            SELECT DISTINCT gf.source_id,
-                   'Sanger:' || gf.source_id AS gff_dbxref, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id,
+                   'Sanger:' || gf.source_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
             WHERE gf.source_id = $$source_id$$
@@ -1329,8 +1329,8 @@
               AND edr.external_database_id = ed.external_database_id
               AND ed.name like 'Sanger%'
            UNION
-            SELECT gf.source_id,
-                   '&&brcName&&:' || gf.source_id AS gff_dbxref, '@PROJECT_ID@' as project_id
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+                   '&&brcName&&:' || gf.source_id AS gff_dbxref
             FROM dots.GeneFeature gf
             WHERE gf.source_id = $$source_id$$
           ]]>
