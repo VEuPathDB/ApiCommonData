@@ -850,6 +850,11 @@
 
        <sqlQuery name="Orthologs" excludeProjects="TrichDB" 
                   isCacheable="false">
+
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_053730</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>

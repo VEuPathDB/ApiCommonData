@@ -1413,7 +1413,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           <paramValue name="sequenceId">AAEE01000001</paramValue>
         </testParamValues>
         <testParamValues includeProjects="ToxoDB">
-          <paramValue name="sequenceId">II</paramValue>
+          <paramValue name="sequenceId">TGME49_chrII</paramValue>
         </testParamValues>
 
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,CryptoDB"/>
@@ -1853,6 +1853,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
+
+        <testParamValues includeProjects="ToxoDB">
+           <paramValue name="libraryIdGenes">TgME49 3 day invitro bradyzoite</paramValue>
+        </testParamValues>
+
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes" excludeProjects="ToxoDB"/>
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="ToxoDB"/>
        <paramRef ref="sharedParams.libraryIdGenes"/>
