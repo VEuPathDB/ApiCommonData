@@ -14,7 +14,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- BFMV -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="Bfmv" isCacheable="false">
+        <sqlQuery name="Bfmv">
 
             <column name="sequence"
                     sortingTable="apidb.SequenceAttributes" lowerCase="true"
@@ -142,7 +142,7 @@
 
         </sqlQuery>
 
-        <sqlQuery name="GeneCount" isCacheable="false">
+        <sqlQuery name="GeneCount">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="gene_count"/>
@@ -157,7 +157,7 @@
         </sqlQuery>
 
 
-       <sqlQuery name="Aliases" isCacheable="false" includeProjects="GiardiaDB">
+       <sqlQuery name="Aliases" includeProjects="GiardiaDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="alias"/>
@@ -175,7 +175,7 @@
        <!-- Attribution -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Attribution" isCacheable="false" includeProjects="PlasmoDB">
+        <sqlQuery name="Attribution" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="short_name"/>
@@ -210,7 +210,7 @@
     <!-- GFF sequence-->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceGffSequence" isCacheable="false" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceGffSequence" excludeProjects="ApiDB">
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="gff_sequence"/>
@@ -227,7 +227,7 @@
     <!-- GFF attributes (other than sequence) -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceGffAttrs" isCacheable="false" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceGffAttrs" excludeProjects="ApiDB">
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="gff_seqid"/>

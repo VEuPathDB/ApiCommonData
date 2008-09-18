@@ -12,7 +12,7 @@
        <!-- Gene alias -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="GeneAlias" isCacheable="false">
+        <sqlQuery name="GeneAlias">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="new_source_id"/>
@@ -35,7 +35,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-        <sqlQuery name="TrackNewAnnotation" isCacheable="false" includeProjects="PlasmoDB">
+        <sqlQuery name="TrackNewAnnotation" includeProjects="PlasmoDB">
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
             <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
@@ -55,7 +55,7 @@
        <!--  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Bfmv" isCacheable="false">
+        <sqlQuery name="Bfmv">
             <column name="project_id"/>
             <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
             <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
@@ -353,7 +353,7 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Chromosome" displayName="Chromosome" isCacheable="false" includeProjects="CryptoDB">
+        <sqlQuery name="Chromosome" displayName="Chromosome" includeProjects="CryptoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="chromosome"/>
@@ -375,7 +375,7 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" isCacheable="false" includeProjects="PlasmoDB">
+        <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="workshop_protein_sequence"/>
@@ -397,7 +397,7 @@
 
 
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" excludeProjects="ApiDB">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" excludeProjects="ApiDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
@@ -414,7 +414,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" isCacheable="false" includeProjects="ApiDB">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" includeProjects="ApiDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
@@ -436,7 +436,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- phylogenetic trees -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <sqlQuery name="PhylogeneticTree" isCacheable="false"
+        <sqlQuery name="PhylogeneticTree"
                        displayName="Phylogenetic Tree" includeProjects="GiardiaDB">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -454,7 +454,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-        <sqlQuery name="NewAnnotationTranscriptSequence" isCacheable="false"
+        <sqlQuery name="NewAnnotationTranscriptSequence"
                        displayName="RNA Sequence" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -470,7 +470,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="TranscriptSequence" isCacheable="false"  excludeProjects="ApiDB" 
+        <sqlQuery name="TranscriptSequence"  excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -485,7 +485,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="TranscriptSequence" isCacheable="false"  includeProjects="ApiDB">
+        <sqlQuery name="TranscriptSequence"  includeProjects="ApiDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="transcript_sequence"/>
@@ -510,7 +510,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-        <sqlQuery name="NewAnnotationCDS" isCacheable="false"
+        <sqlQuery name="NewAnnotationCDS"
                        displayName="New Annotation RNA Sequence" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -535,7 +535,7 @@
 
 
 
-        <sqlQuery name="CDS" isCacheable="false" excludeProjects="ApiDB" 
+        <sqlQuery name="CDS" excludeProjects="ApiDB" 
                        displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -557,7 +557,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="CDS" isCacheable="false"  includeProjects="ApiDB">
+        <sqlQuery name="CDS"  includeProjects="ApiDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="cds"/>
@@ -580,7 +580,7 @@
        <!-- plasmo expression graphs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="PlasmoDB">
+       <sqlQuery name="ExpressionGraphs" includeProjects="PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="graph_derisi_winzeler" />
@@ -618,7 +618,7 @@
        <!-- toxo expression graphs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="ToxoDB">
+       <sqlQuery name="ExpressionGraphs" includeProjects="ToxoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="graph_archetypal"/>
@@ -636,7 +636,7 @@
        <!-- giardia expression graphs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ExpressionGraphs" isCacheable="false" includeProjects="GiardiaDB">
+       <sqlQuery name="ExpressionGraphs" includeProjects="GiardiaDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="graph_stress" />
@@ -723,7 +723,7 @@
     <!-- Protein Id's and Linkouts -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="Protein_Linkout" isCacheable='true' includeProjects="CryptoDB">
+    <sqlQuery name="Protein_Linkout" includeProjects="CryptoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_id" />
@@ -750,7 +750,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="SGC_3D_Struct" isCacheable="false" includeProjects="CryptoDB">
+        <sqlQuery name="SGC_3D_Struct" includeProjects="CryptoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pdb_id"/>
@@ -772,7 +772,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="Translation" isCacheable='true' includeProjects="CryptoDB">
+        <sqlQuery name="Translation" includeProjects="CryptoDB">
             <column name="source_id" />
             <column name="project_id"/>
             <column name="translation" />
