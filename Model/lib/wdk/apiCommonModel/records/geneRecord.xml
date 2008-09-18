@@ -1235,15 +1235,15 @@
           <table name="Orthologs" excludeProjects="TrichDB"
                  displayName="Paralogs and In-genera Orthologs"
                  queryRef="GeneTables.Orthologs">
-            <columnAttribute name="source_id" internal="true"/>
+            <columnAttribute name="ortho_source_id" internal="true"/>
             <linkAttribute name="gene" displayName="Gene">
                  <displayText>
                     <![CDATA[
-                    $$source_id$$
+                    $$ortho_source_id$$
                     ]]>
                  </displayText>
                  <url>
-                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$source_id$$]]>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$ortho_source_id$$]]>
                  </url>
             </linkAttribute>
             <columnAttribute displayName="Species" name="species"/>
