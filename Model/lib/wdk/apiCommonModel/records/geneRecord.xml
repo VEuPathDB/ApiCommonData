@@ -369,7 +369,7 @@
                       <paramValue name="strain_b">me49</paramValue>
                     <description>
                         <![CDATA[
-                            ME49 genes intersected with GT1 genes
+                            GT1 genes intersected with ME49 genes
                         ]]>
                     </description>      
                 </instance>
@@ -380,7 +380,7 @@
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
-                            VEG genes intersected with GT1 genes
+                            GT1 genes intersected with VEG genes
                         ]]>
                     </description>      
                 </instance>
@@ -391,7 +391,7 @@
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
                         <![CDATA[
-                            VEG genes intersected with ME49 genes
+                            ME49 genes intersected with VEG genes
                         ]]>
                     </description>      
                 </instance>
@@ -467,13 +467,7 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <attributeQueryRef ref="GeneAttributes.Bfmv">
-            <textAttribute name="gene_id" displayName="Gene ID" includeProjects="ToxoDB">
-              <text>
-                  <![CDATA[
-                  TG_$$int_gene_id$$
-                  ]]>
-              </text>
-            </textAttribute>
+            <columnAttribute name="formatted_gene_id" displayName="Gene ID" includeProjects="ToxoDB" />
             <columnAttribute displayName="Data Source" name="external_db_name"/>
             <columnAttribute displayName="Genomic Sequence ID" name="sequence_id"/>
             <textAttribute name="location_text" displayName="Genomic Location">
@@ -570,9 +564,6 @@
                 ]]>
               </text>
             </textAttribute>
-
-            <columnAttribute name="int_gene_id" displayName="Internal Gene ID" includeProjects="ToxoDB" 
-                             internal="true" inReportMaker="false"/>
 
             <textAttribute name="3strains" displayName="3 Clonal Lineages expr profile graph"
                         inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">

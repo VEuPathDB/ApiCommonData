@@ -149,8 +149,8 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
               sorting="organism asc,location_text asc"
         />
          <attributesList includeProjects="ToxoDB"
-              summary="gene_id,organism,location_text,product,is_pseudo"
-              sorting="gene_id asc,organism asc,location_text asc"
+              summary="formatted_gene_id,organism,location_text,product,is_pseudo"
+              sorting="formatted_gene_id asc,organism asc,location_text asc"
         />
          <attributesList excludeProjects="ToxoDB,GiardiaDB"
               summary="organism,location_text,product,is_pseudo"
@@ -180,8 +180,8 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
          <attributesList includeProjects="ToxoDB"
-              summary="gene_id,organism,location_text,product,exon_count"
-              sorting="gene_id asc,exon_count desc,location_text asc"
+              summary="formatted_gene_id,organism,location_text,product,exon_count"
+              sorting="formatted_gene_id asc,exon_count desc,location_text asc"
         />
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,exon_count"
@@ -1389,8 +1389,8 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
          queryRef="GeneId.GenesWithSignalPeptide"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList includeProjects="ToxoDB"
-            summary="gene_id,organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
-            sorting="gene_id asc,sigp_sum_score desc,location_text asc"
+            summary="formatted_gene_id,organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
+            sorting="formatted_gene_id asc,sigp_sum_score desc,location_text asc"
         />
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
@@ -3581,7 +3581,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
               queryRef="GeneTransforms.GenesByOrthologTransform"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summary="organism,product,gene_id"
+              summary="organism,product,formatted_gene_id"
         /> 
         <description>
            <![CDATA[
@@ -3596,7 +3596,7 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
               queryRef="GeneTransforms.GenesByExpandResult"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summary="organism,product,gene_id"
+              summary="organism,product,formatted_gene_id"
         /> 
         <description>
            <![CDATA[
