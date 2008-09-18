@@ -1686,7 +1686,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="e_value"/>
         <sql>
             <![CDATA[
-            SELECT gf.source_id, '@PROJECT_ID@' as project_id, avg(df.e_value) as e_value
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id, to_char(avg(df.e_value),'9.9EEEE') as e_value
             FROM dots.DomainFeature df,dots.translatedaasequence tas,
                  dots.genefeature gf, dots.transcript t, dots.TranslatedAAFeature taf,
                  dots.DbRefAaFeature draf, sres.DbRef dr
