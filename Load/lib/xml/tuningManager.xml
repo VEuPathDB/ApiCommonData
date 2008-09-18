@@ -1652,10 +1652,13 @@ FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
      dots.AssemblySequence aseq, dots.Assembly asm,
-     (SELECT query_na_sequence_id, COUNT(*) AS best_alignment_count
-      FROM dots.BlatAlignment ba
-      WHERE is_best_alignment = 1
-      GROUP BY query_na_sequence_id) best
+     (select query_na_sequence_id,max(ct)
+      from (
+            SELECT query_na_sequence_id, COUNT(*) AS ct
+             FROM dots.BlatAlignment ba
+             WHERE is_best_alignment = 1
+             GROUP BY target_external_db_release_id,query_na_sequence_id)
+      group by query_na_sequence_id) best
 WHERE e.na_sequence_id = ens.na_sequence_id
   AND e.library_id = l.library_id
   AND ens.taxon_id = tn.taxon_id

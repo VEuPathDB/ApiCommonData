@@ -1680,8 +1680,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <column name="e_value" excludeProjects="ToxoDB"/>
-        <sql excludeProjects="ToxoDB">
+        <column name="e_value"/>
+        <sql>
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, avg(df.e_value) as e_value
             FROM dots.DomainFeature df,dots.translatedaasequence tas,
@@ -1698,25 +1698,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND taf.na_feature_id = t.na_feature_id
               AND gf.na_feature_id = t.parent_id
               GROUP BY gf.source_id
-            ]]>
-       </sql>
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.Transcript t,
-                 dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
-                 dots.DomainFeature df, dots.DbRefAaFeature draf,
-                 sres.DbRef dr
-            WHERE t.parent_id = gf.na_feature_id
-              AND t.na_feature_id = taf.na_feature_id
-              AND taf.aa_sequence_id = tas.aa_sequence_id
-              AND tas.aa_sequence_id = df.aa_sequence_id
-              AND df.aa_feature_id = draf.aa_feature_id
-              AND draf.db_ref_id = dr.db_ref_id
-              AND dr.external_database_release_id = $$domain_database$$
-              AND dr.primary_identifier
-                  = substr($$domain_accession$$, 1, instr($$domain_accession$$||':', ':')-1)
-            ORDER BY gf.source_id
             ]]>
        </sql>
     </sqlQuery>
@@ -1869,7 +1850,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes" excludeProjects="ToxoDB"/>
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="ToxoDB"/>
        <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>

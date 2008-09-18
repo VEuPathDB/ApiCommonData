@@ -206,7 +206,11 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
          category="Predicted Proteins"
          queryRef="GeneId.GenesByIsoelectricPoint"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,isoelectric_point"
+         sorting="formatted_gene_id asc,isoelectric_point asc, location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB,GiardiaDB"
          summary="organism,location_text,product,isoelectric_point"
          sorting="organism asc,isoelectric_point asc, location_text asc"
         /> 
@@ -232,7 +236,11 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
          category="Predicted Proteins"
          queryRef="GeneId.GenesByMolecularWeight"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,molecular_weight"
+         sorting="formatted_gene_id asc,molecular_weight asc, location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,molecular_weight"
          sorting="organism asc,molecular_weight asc, location_text asc"
         /> 
@@ -298,8 +306,13 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
          displayName="EC Number"
               queryRef="GeneId.GenesByEcNumber"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
-              summary="organism,product"
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product"
+         sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
+         summary="organism,location_text,product"
+         sorting="organism asc, location_text asc"
         /> 
         <summary>
            <![CDATA[
@@ -387,7 +400,11 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
               displayName="SNP Characteristics"
               queryRef="GeneId.GenesBySnps"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
+              sorting="formatted_gene_id asc,total_snps desc,cds_snp_density desc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="product,total_snps,num_non_synonymous,num_synonymous,num_nonsense,num_noncoding,dn_ds_ratio,cds_snp_density"
               sorting="total_snps desc,cds_snp_density desc"
         /> 
@@ -483,7 +500,11 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
           category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList 
+        <attributesList  includeProjects="ToxoDB"
+              summary="formatted_gene_id,location_text,product,sum_sequence_count,sum_spectrum_count"
+              sorting="formatted_gene_id asc,sum_sequence_count desc,sum_spectrum_count desc"
+        /> 
+        <attributesList  excludeProjects="ToxoDB"
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
@@ -948,7 +969,11 @@ Mass spec data from Silvia Moreno lab.
               queryRef="GeneId.GenesWithEpitopes" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+           summary="formatted_gene_id,product,organism,location_text,count,confidence"
+           sorting="formatted_gene_id asc,count desc, confidence asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
            summary="product,organism,location_text,count,confidence"
            sorting="organism desc,location_text desc, count desc, confidence asc"
         /> 
@@ -1026,7 +1051,11 @@ Mass spec data from Silvia Moreno lab.
          category="Similarity/Pattern"
          queryRef="GeneId.GenesByMotifSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,Locations,MatchCount,Sequence"
+         sorting="formatted_gene_id asc,MatchCount desc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,Locations,MatchCount,Sequence"
          sorting="organism asc,MatchCount desc,location_text asc"
         /> 
@@ -1204,13 +1233,13 @@ Mass spec data from Silvia Moreno lab.
               displayName="Interpro Domain"
               queryRef="GeneId.GenesByInterproDomain"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList excludeProjects="ToxoDB,ApiDB"
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,e_value"
               sorting="organism asc,e_value asc, location_text asc"
         /> 
-        <attributesList includeProjects="ToxoDB,ApiDB"
-              summary="organism,location_text,product"
-              sorting="organism asc, location_text asc"
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product,e_value"
+              sorting="formatted_gene_id asc,e_value asc, location_text asc"
         /> 
         <summary>
           Find genes containing a specified protein domain from the InterPro database.
@@ -1231,7 +1260,7 @@ Mass spec data from Silvia Moreno lab.
               here</a>.
               ]]>
         </description>
-       <dynamicAttributes excludeProjects="ToxoDB,ApiDB">
+       <dynamicAttributes>
 	     <columnAttribute name="e_value" displayName="Score / E value" align="center"/> 
        </dynamicAttributes>
 
@@ -1250,8 +1279,14 @@ Mass spec data from Silvia Moreno lab.
          displayName="GO Term"
               queryRef="GeneId.GenesByGoTerm"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
-              summary="organism,product"/> 
+        <attributesList excludeProjects="ToxoDB"
+              summary="organism,location_text,product"
+              sorting="organism asc,location_text asc"
+        /> 
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product"
+              sorting="formatted_gene_id asc,location_text asc"
+        /> 
         <summary>
 Find genes by Gene Ontology (GO) term for molecular function, biological process or subcellular localization.
         </summary>
@@ -1291,7 +1326,11 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          category="Putative Function"
          queryRef="GeneId.GenesByMetabolicPathway"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,location_text,product,met_pathways"
+         sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
         /> 
@@ -1361,7 +1400,11 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          displayName="Transmembrane Domain Count"
               queryRef="GeneId.GenesByTransmembraneDomains"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product,tm_count"
+              sorting="formatted_gene_id asc,tm_count asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,tm_count"
               sorting="organism asc,tm_count asc,location_text asc"
         /> 
@@ -1430,7 +1473,11 @@ Find genes that are predicted to encode a signal peptide.
          category="Evolution"
          queryRef="GeneId.GenesByOrthologPattern"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism, location_text,product"
+         sorting="formatted_gene_id asc, location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism, location_text,product"
          sorting="organism asc, location_text asc"
         /> 
@@ -1565,15 +1612,19 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Single locus tag -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <question name="GeneBySingleLocusTag"
+     <question name="GeneBySingleLocusTag" excludeProjects="ApiDB"
          category="Other Attributes"
          displayName="ID"
               queryRef="GeneId.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="true"
-              ignoreSubType="true"
-              excludeProjects="ApiDB">
-        <attributesList
+              ignoreSubType="true">
+              
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product,gene_type"
+              sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"
         /> 
@@ -1592,12 +1643,12 @@ Find genes that are predicted to encode a signal peptide.
         </description>
     </question>
 
-     <question name="GeneBySingleLocusTag"
+     <question name="GeneBySingleLocusTag" includeProjects="ApiDB"
          category="Other Attributes"
          displayName="ID"
               queryRef="GeneId.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false">
         <attributesList
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"
@@ -1621,15 +1672,19 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Gene locus tag -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <question name="GeneByLocusTag"
+     <question name="GeneByLocusTag" excludeProjects="ApiDB"
          category="Other Attributes"
          displayName="List of IDs"
               queryRef="GeneId.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="true"
-              ignoreSubType="true"
-              excludeProjects="ApiDB">
-        <attributesList
+              ignoreSubType="true">
+              
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product,gene_type"
+              sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"
         /> 
@@ -1646,12 +1701,12 @@ Find genes that are predicted to encode a signal peptide.
         </description>
     </question>
 
-     <question name="GeneByLocusTag"
+     <question name="GeneByLocusTag" includeProjects="ApiDB"
          category="Other Attributes"
          displayName="List of IDs"
               queryRef="GeneId.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false">
         <attributesList
               summary="organism,location_text,product,gene_type"
               sorting="organism asc,location_text asc"
@@ -1678,7 +1733,11 @@ Find genes that are predicted to encode a signal peptide.
          category="Other Attributes"
          queryRef="GeneId.GenesByTextSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,text_fields"
+         sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,text_fields"
          sorting="organism asc,location_text asc"
         /> 
@@ -1714,7 +1773,11 @@ Find genes that are predicted to encode a signal peptide.
          displayName="Species"
          queryRef="GeneId.GenesByTaxon"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product"
+         sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product"
          sorting="organism asc,location_text asc"
         /> 
@@ -1739,7 +1802,7 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneId.GenesByChIPchip"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="organism,location_text,product,chip_distance,chip_total_reps,chip_antibodies"
+         summary="formatted_gene_id,organism,location_text,product,chip_distance,chip_total_reps,chip_antibodies"
          sorting="chip_total_reps desc, chip_distance desc"
         /> 
         <summary>
@@ -1769,7 +1832,11 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneId.GenesBySageTag"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,sense_count,antisense_count"
+         sorting="formatted_gene_id asc,sense_count desc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,sense_count,antisense_count"
          sorting="organism asc,sense_count desc"
         /> 
@@ -1807,7 +1874,11 @@ Find genes that are predicted to encode a signal peptide.
          queryRef="GeneId.GenesBySageTagRStat"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product,R"
+         sorting="formatted_gene_id asc, R desc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,R"
          sorting="organism asc, R desc"
         /> 
@@ -1849,7 +1920,11 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
               displayName="EST evidence"
               queryRef="GeneId.GenesByESTOverlap"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product,number_of_ests"
+              sorting="formatted_gene_id asc,number_of_ests desc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,number_of_ests"
               sorting="organism asc,number_of_ests desc"
         /> 
@@ -1925,7 +2000,11 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
          queryRef="GeneId.GenesByNonnuclearGenomicRegion"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
 
-        <attributesList 
+        <attributesList  includeProjects="ToxoDB"
+         summary="formatted_gene_id,organism,location_text,product"
+         sorting="formatted_gene_id asc,location_text asc"
+        />
+        <attributesList  excludeProjects="ToxoDB"
          summary="organism,location_text,product"
          sorting="organism asc,location_text asc"
         />
@@ -1983,7 +2062,11 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
               category="Evolution"
               queryRef="GeneId.GenesOrthologousToAGivenGene"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,location_text,product"
+              sorting="formatted_gene_id asc,location_text asc"
+        /> 
+        <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product"
               sorting="organism asc,location_text asc"
         /> 
@@ -2075,7 +2158,7 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
             Find genes by differential expression analysis of the 3 archetypal lineages.
         </summary>
         <attributesList
-              summary="product,location_text,fold_change,confidence"
+              summary="formatted_gene_id,product,location_text,fold_change,confidence"
               sorting="fold_change desc,confidence desc,location_text asc"
         /> 
         <description>
@@ -2116,7 +2199,7 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
           Find genes by 2 state comparisons using any combination of the following strains:  RH,GT1,ME49,Pru,VEG,CTG.
         </summary>
         <attributesList
-              summary="product,location_text,fold_change,confidence"
+              summary="formatted_gene_id,product,location_text,fold_change,confidence"
               sorting="fold_change desc,confidence desc,location_text asc"
         /> 
         <description>
@@ -2161,7 +2244,7 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
             Find genes by expression percentile analysis
         </summary>
         <attributesList
-              summary="product,percentile"
+              summary="formatted_gene_id,product,percentile"
               sorting="percentile desc"
         /> 
         <description>
@@ -3581,7 +3664,8 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
               queryRef="GeneTransforms.GenesByOrthologTransform"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summary="organism,product,formatted_gene_id"
+              summary="formatted_gene_id,organism,product"
+              sorting="formatted_gene_id asc,location_text asc"
         /> 
         <description>
            <![CDATA[
@@ -3596,7 +3680,8 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
               queryRef="GeneTransforms.GenesByExpandResult"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-              summary="organism,product,formatted_gene_id"
+              summary="formatted_gene_id,organism,location_text,product"
+              sorting="formatted_gene_id asc,location_text asc"
         /> 
         <description>
            <![CDATA[
