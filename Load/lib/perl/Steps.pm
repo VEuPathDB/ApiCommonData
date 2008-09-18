@@ -2467,7 +2467,7 @@ EOF
  # my $file = "$dir/$organism";
   $organism = lcfirst($organism);
   $organism =~ s/^(\w)\w+_(\w+)$/$1_$2/;
-  $file = "$dir/${species}_${projectDB}-${release}.gff";
+  my $file = "$dir/${species}_${projectDB}-${release}.gff";
 
   die "Did not create non-empty file $file\n" unless (-s $file);
   $mgr->endStep($signal);
