@@ -17,6 +17,8 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::Taxon;
 
 use Bio::PrimarySeq;
+use Bio::Tools::SeqStats;
+
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -307,6 +309,18 @@ sub makeVirtualSequence {
 
 
   $virtualSeq->setSequence($sequence);
+
+  my $virtualBioperlSeq = Bio::PrimarySeq->new(-seq => $sequence);
+
+  if ($virtualBioperlSeq->seq()) {
+      my $seqcount = Bio::Tools::SeqStats->count_monomers($virtualBioperlSeq);
+
+      $virtualSeq->setACount($seqcount->{'A'});
+      $virtualSeq->setCCount($seqcount->{'C'});
+      $virtualSeq->setGCount($seqcount->{'G'});
+      $virtualSeq->setTCount($seqcount->{'T'});
+  
+  } 
   my $submitted = $virtualSeq->submit();
   $virtualSeq->undefPointerCache();
 
