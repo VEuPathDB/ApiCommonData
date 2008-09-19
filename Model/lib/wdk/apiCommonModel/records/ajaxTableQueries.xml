@@ -260,9 +260,7 @@
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
-                 SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
-                 SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual UNION
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual
                  ) t
@@ -375,9 +373,13 @@
                         'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
             </sql>
 
-            <sql includeProjects="ToxoDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
+             <sql includeProjects="ToxoDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+                 SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual
+                 ) t
              </sql>
 
             <sql includeProjects="PlasmoDB">
@@ -531,8 +533,13 @@
                         'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual
              </sql>
              <sql includeProjects="ToxoDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual UNION
+                 SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual
+                 ) t
              </sql>
             <sql includeProjects="PlasmoDB">
             SELECT t.term, t.internal, 
@@ -598,8 +605,12 @@
       </sql>
 
       <sql includeProjects="ToxoDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
+     SELECT t.term, t.internal, 
+            $$source_id$$ AS source_id, $$project_id$$ AS project_id
+     FROM (
+          SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+          SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual
+          ) t
       </sql>
 
       <sql includeProjects="ApiDB">
