@@ -1,5 +1,21 @@
 <wdkModel>
-    <querySet name="SnpTables" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+    <querySet name="SnpTables" queryType="table" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+
+
+      <defaultTestParamValues includeProjects="PlasmoDB">
+         <paramValue name="source_id"></paramValue>
+         <paramValue name="project_id">PlasmoDB</paramValue>
+      </defaultTestParamValues>
+
+      <defaultTestParamValues includeProjects="ToxoDB">
+         <paramValue name="source_id">SNP_VI_485196</paramValue>
+         <paramValue name="project_id">ToxoDB</paramValue>
+      </defaultTestParamValues>
+
+      <defaultTestParamValues includeProjects="CryptoDB">
+         <paramValue name="source_id"></paramValue>
+         <paramValue name="project_id">CryptoDB</paramValue>
+      </defaultTestParamValues>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Strains -->  

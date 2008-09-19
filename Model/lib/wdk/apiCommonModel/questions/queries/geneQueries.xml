@@ -1,6 +1,6 @@
 <wdkModel>
 
-<querySet name="GeneId">
+<querySet name="GeneId" queryType="id">
 
   <!-- notes: 
  
@@ -3479,7 +3479,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
   </querySet>
 
-  <querySet name="GeneTransforms" doNotTest="true">
+  <querySet name="GeneTransforms" queryType="transform" doNotTest="true">
 
     <sqlQuery name="GenesByOrthologTransform" includeProjects="ToxoDB"
               isCacheable="true">
