@@ -15,17 +15,27 @@
         <sqlQuery name="GeneAlias">
             <column name="source_id"/>
             <column name="project_id"/>
-            <column name="new_source_id"/>
-            <column name="new_project_id"/>
+            <column name="old_source_id"/>
+            <column name="old_project_id"/>
             <sql includeProjects="PlasmoDB">
-                SELECT gene as new_source_id, '@project_id@' AS new_project_id,
-                       alias as source_id, '@project_id@' AS project_id
+              <![CDATA[
+                SELECT gene as source_id, '@project_id@' AS project_id,
+                       alias as old_source_id, '@project_id@' AS old_project_id
                 FROM apidb.GeneAlias
+              ]]>
             </sql>
-            <sql excludeProjects="PlasmoDB">
-                SELECT source_id as new_source_id, '@project_id@' AS new_project_id,
-                       source_id as source_id, '@project_id@' AS project_id
-                FROM apidb.GeneAttributes
+            <sql includeProjects="ToxoDB">
+              <![CDATA[
+                SELECT f.gene as source_id, '@project_id@' AS project_id,
+                       f.id as old_source_id, '@project_id@' AS old_project_id
+                FROM (SELECT gene AS id, gene 
+                      FROM apidb.geneid
+                      WHERE id = lower(gene)
+                      UNION
+                      SELECT id, gene
+                      FROM apidb.geneid
+                      WHERE id <> lower(gene)) f
+              ]]>
             </sql>
         </sqlQuery>
 
