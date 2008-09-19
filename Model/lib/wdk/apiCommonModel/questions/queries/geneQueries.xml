@@ -433,7 +433,7 @@
 
     <processQuery name="GenesByMotifSearch" excludeProjects="ApiDB"  
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
-       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="sharedParams.motif_expression" quote="false"/>
        <paramRef ref="geneSimilarityParams.motif_organism" quote="false" />
        <wsColumn name="source_id" width="32" wsName="GeneID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
@@ -445,7 +445,7 @@
     <processQuery name="GenesByMotifSearch" includeProjects="ApiDB"  
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneSimilarityParams.motif_organism" quote="false" />
-       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="sharedParams.motif_expression" quote="false"/>
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="Locations" width="4000"/>

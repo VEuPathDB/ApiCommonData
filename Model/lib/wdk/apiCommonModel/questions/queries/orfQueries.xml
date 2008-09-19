@@ -176,7 +176,7 @@
  
     <processQuery name="OrfsByMotifSearch"   excludeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
-       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="sharedParams.motif_expression" quote="false"/>
        <paramRef ref="orfSimilarityParams.motif_organism" quote="false"/>
        <wsColumn name="source_id" width="60" wsName="GeneID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
@@ -189,7 +189,7 @@
     <processQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
                 processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="orfSimilarityParams.motif_organism"/>
-       <paramRef ref="sharedParams.motif_expression"/>
+       <paramRef ref="sharedParams.motif_expression" quote="false"/>
 
        <wsColumn name="source_id" width="60" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
