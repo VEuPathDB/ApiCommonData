@@ -21,10 +21,11 @@ chomp($nodename);
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as process $$ on $nodename at $timestamp with arguments:\n"
 					      . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $propFile, $instance, $instanceName, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
+           "instanceName=s" => \$instanceName,
            "password=s" => \$password,
            "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
@@ -220,7 +221,7 @@ ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
 $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-my $instance_name = $tuningRegistry->getInstanceName() || $instance;
+my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
 ###############################################################################
@@ -239,6 +240,7 @@ options:
   configFile      an xml file describing the tables to be created
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
+  instanceName    what the instance should be called in the log (useful if the Oracle name is unwieldy)
   password        database login password
   tables          check/update only listed tables (and their antecedants)
   doUpdate        update any tables found to be out of date

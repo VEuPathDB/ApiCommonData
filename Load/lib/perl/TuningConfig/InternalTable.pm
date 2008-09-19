@@ -361,13 +361,17 @@ SQL
   my $sql = <<SQL;
     create or replace synonym $self->{name} for $self->{name}$suffix
 SQL
-  my $rtn = $dbh->do($sql);
+  my $synonymRtn = $dbh->do($sql);
 
-  if (!defined $rtn) {
+  if (!defined $synonymRtn) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
-  return $rtn
+  # Run stored procedure to analye any apidb tables that need it
+  $dbh->do("BEGIN apidb.apidb_unanalyzed_stats; END;")
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+  return $synonymRtn
 }
 
 1;
