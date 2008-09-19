@@ -802,7 +802,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql>
+        <sql excludeProjects="ToxoDB">
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
             FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
@@ -811,6 +811,27 @@ sns2.external_database_release_id=extr.external_database_release_id
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id in ($$organism$$)
             ORDER BY ns.taxon_id, gf.source_id
+           ]]>
+       </sql>
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT source_id, project_id, taxon_id FROM (SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
+            FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
+            WHERE pp.profile_string LIKE $$profile_pattern$$
+              AND pp.source_id = gf.source_id
+              AND gf.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id in ($$organism$$)            
+            UNION
+            SELECT DISTINCT ga2.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
+            FROM apidb.PhylogeneticProfile pp, dots.NaSequence ns, apidb.GeneAttributes ga1, apidb.GeneAttributes ga2
+            WHERE pp.profile_string LIKE $$profile_pattern$$
+              AND pp.source_id = ga1.source_id
+              AND ga1.gene_id = ga2.gene_id
+              AND ga1.gene_id IS NOT NULL
+              AND ga1.na_sequence_id = ns.na_sequence_id
+              AND ns.taxon_id in ($$organism$$)
+            )
+            ORDER BY taxon_id, source_id
            ]]>
        </sql>
     </sqlQuery>
