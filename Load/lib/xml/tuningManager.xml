@@ -2940,7 +2940,11 @@ CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
   </tuningTable>
 
   <tuningTable name="apidb.SimilaritySpanLocation">
-    <externalDependency name="DoTS.Similarity"/>
+    <externalDependency name="dots.Similarity"/>
+    <externalDependency name="dots.SimilaritySpan"/>
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.NaSequence"/>
+    <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
 create table apidb.SimilaritySpanLocation&1 NOLOGGING as
