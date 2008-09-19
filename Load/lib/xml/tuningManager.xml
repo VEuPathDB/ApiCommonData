@@ -2253,7 +2253,14 @@ WHERE  a.analysis_id = r.analysis_id
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.Chfe_id_st_end_prn_str_idx&1 ON apidb.ChIPFeature&1(na_sequence_id,protocol_name,strain,start_min,end_max)
+CREATE INDEX apidb.Chfe_id_st_end_prn_str_idx&1
+ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+         CREATE INDEX apidb.Chfe_big_idx_&1
+         ON apidb.ChipFeature&1 (na_sequence_id, protocol_name, strain, start_min, end_max, na_feature_id, antibody, rep, score)
       ]]>
     </sql>
   </tuningTable>
