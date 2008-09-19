@@ -238,7 +238,7 @@
            </text>
            <text includeProjects="ToxoDB">
                 <![CDATA[
-                @CGI_URL@/gbrowse_img/toxodb/?name=$$primaryKey$$;embed=1;type=AnnotatedGenes;width=600;base=@CGI_URL@/gbrowse
+                @CGI_URL@/gbrowse_img/toxodb/?name=$$source_id$$;embed=1;type=AnnotatedGenes;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
            <text includeProjects="GiardiaDB">
@@ -278,7 +278,7 @@
             displayName="Genome Browser" align="center" inReportMaker="false">
            <text>
                 <![CDATA[
-                <a href="@CGI_URL@/gbrowse/toxodb/?name=$$primaryKey$$:1-$$length$$;enable=AnnotatedGenes">view</a>
+                <a href="@CGI_URL@/gbrowse/toxodb/?name=$$source_id$$:1-$$length$$;enable=AnnotatedGenes">view</a>
                 ]]>
            </text>
         </textAttribute>
@@ -306,7 +306,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB"
             displayName="Retrieve Sequence" inReportMaker="false">
-           <text>
+           <text excludeProjects="ToxoDB">
                 <![CDATA[
                     <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
                     <form action="@CGI_URL@/contigSrt" method="get">
@@ -316,6 +316,28 @@
                         <tr><td colspan="2"><h3>Retrieve this sequence</h3>
                                 <input name='project_id' value=@PROJECT_ID@ size='20' type='hidden' />
                                 <input name='ids' value='$$primaryKey$$' size='20' type='hidden' />
+                            </td></tr>
+                        <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
+                                   <input type="text" name="start" value="1" maxlength="7" size="8"/>
+                                to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                       <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
+                           <tr><td align="left"><input type="submit" name='go' value='Get Sequence' /></td></tr>
+                    </table>
+                    </td></tr></table>
+                    </form>
+                ]]>
+           </text>
+           <text includeProjects="ToxoDB">
+                <![CDATA[
+                    <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
+                    <form action="@CGI_URL@/contigSrt" method="get">
+                    <table border="0" cellpadding="5" cellspacing="1">
+                      <tr class="secondary3"><td>
+                        <table border="0" cellpadding="0">
+                        <tr><td colspan="2"><h3>Retrieve this sequence</h3>
+                                <input name='project_id' value=@PROJECT_ID@ size='20' type='hidden' />
+                                <input name='ids' value='$$source_id$$' size='20' type='hidden' />
                             </td></tr>
                         <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
                                    <input type="text" name="start" value="1" maxlength="7" size="8"/>
