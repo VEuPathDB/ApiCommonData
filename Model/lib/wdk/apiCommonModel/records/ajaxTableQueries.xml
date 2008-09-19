@@ -304,7 +304,7 @@
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'Toxoplasma gondii apicoplast' as internal from dual UNION
                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION
                 SELECT 'Trichomonas vaginalis (Repeated Genes)' as term, 'Trichomonas vaginalis (Repeated Genes)' as internal from dual
-                 ) t
+                 ) 
 
              </sql>
         </sqlQuery>
@@ -536,7 +536,9 @@
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
-                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual UNION
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual
                  ) t
