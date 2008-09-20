@@ -2116,7 +2116,7 @@
       SELECT NVL(c.content, '<i>none</i>') AS comment_string, 
              c.stable_id, '@PROJECT_ID@' as project_id
 /*      FROM toxocomm.comments@COMMENT_DBLINK@ c  */
-      FROM comments@COMMENT_DBLINK@ c
+      FROM @TOXO_COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
       WHERE c.stable_id = $$source_id$$
         AND c.review_status_id = 'task'
       ]]>
