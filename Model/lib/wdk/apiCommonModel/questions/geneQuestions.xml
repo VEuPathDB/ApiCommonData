@@ -1809,14 +1809,32 @@ Find genes that are predicted to encode a signal peptide.
          summary="formatted_gene_id,organism,location_text,product,chip_distance,chip_total_reps,chip_antibodies"
          sorting="chip_total_reps desc, chip_distance desc"
         /> 
-        <summary>
+         <summary>
            <![CDATA[
-            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP chip peaks
+            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP-chip peaks
            ]]>
         </summary>
         <description>
            <![CDATA[
-            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP chip peaks.  Two different antibodies were used identifying different chromatin marks which indicate active transcription.  This query allows you to identify genes where the 5' end is within a selected distance (maximum of 3000 bp) from the center of a ChIP chip peak.
+            Find all <i>T. gondii</i> genes with evidence for expression based on ChIP-chip peaks.  Two different antibodies were used identifying different chromatin marks which indicate active transcription. Coincident Histone 3 Lysine 4 trimethylation (H3K4me3) and Histone 3 Lysine 9 acetylation (H3K9ac) peaks are highly correlated with active
+promoters, with H3K4me3 marks oriented closer to the 5' end of the gene.  This query allows you to identify genes where the 5' end is within a selected distance (maximum of 3000 bp) from the center of a ChIP-chip peak.
+<p>A 770,000 Nimblegen oligonucleotide array was custom designed based upon
+the Release 4 ME49 genomic sequence (63 Mb) with an average
+oligonucleotide length of 50 bp (isothermal hybridization design) and
+spacing of approximately 80 bp.
+<p>
+Tachyzoites of CTG (Type III), PLK (ME49 clone, Type II) and RH (Type
+I) strains were harvested 36 hours after inoculation of human foreskin
+fibroblasts and chromatin immunoprecipitation hybridization (ChIP-chip)
+performed as described in <a href="http://www.ncbi.nlm.nih.gov/pubmed/17559302">Gissot et al PLoS Pathogens 2007</a>.<publication pmid="17559302"/>
+</p>
+<p>
+Mathieu Gissot, J. Eduardo Fajardo, Louis M. Weiss, Andras Fiser, Kami Kim
+Albert Einstein College of Medicine, unpublished.
+
+<p>
+Contact Kami Kim, kkim@aecom.yu.edu, for further information
+</p>
           ]]>
         </description>
         <dynamicAttributes>
