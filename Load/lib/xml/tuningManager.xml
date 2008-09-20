@@ -3009,6 +3009,12 @@ where sim.similarity_id = simp.similarity_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+        create index apidb.spanloc_query_ix&1
+        on apidb.SimilaritySpanLocation&1 (query_id, query_table_id, min_query_start, max_query_end)
+      ]]>
+    </sql>
   </tuningTable>
 
 
