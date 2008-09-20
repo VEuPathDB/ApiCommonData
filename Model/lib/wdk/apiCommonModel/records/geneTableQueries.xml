@@ -2100,6 +2100,8 @@
  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Task comments -->  
+       <!-- NOTE: NEED TO CHANGE THE TOXOCOMM BACK .. COMMENTED OUT NOW .. -->  
+       <!-- WHEN TASK COMMENTS ARE FIXED .. SHOULD CONSIDER USING SOMETHING BESIDES TOXOCOMM -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="TaskComments" 
@@ -2113,7 +2115,8 @@
       <![CDATA[
       SELECT NVL(c.content, '<i>none</i>') AS comment_string, 
              c.stable_id, '@PROJECT_ID@' as project_id
-      FROM toxocomm.comments@COMMENT_DBLINK@ c
+/*      FROM toxocomm.comments@COMMENT_DBLINK@ c  */
+      FROM comments@COMMENT_DBLINK@ c
       WHERE c.stable_id = $$source_id$$
         AND c.review_status_id = 'task'
       ]]>
