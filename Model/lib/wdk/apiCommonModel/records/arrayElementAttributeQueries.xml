@@ -7,7 +7,11 @@
          <paramValue name="project_id">PlasmoDB</paramValue>
       </defaultTestParamValues>
 
-        <sqlQuery name="ProviderAndOrganism" includeProjects="PlasmoDB">
+      <testRowCountSql>
+               select 0 from dual
+      </testRowCountSql>
+
+       <sqlQuery name="ProviderAndOrganism" includeProjects="PlasmoDB">
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="provider"/>
