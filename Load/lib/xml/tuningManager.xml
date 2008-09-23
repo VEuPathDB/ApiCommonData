@@ -2273,12 +2273,13 @@ ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max
     <sql>
       <![CDATA[
          create table apidb.chipchipgene&1 NOLOGGING AS
-         SELECT distinct
-         ga.source_id as gene_source_id, 
+         SELECT distinct ga.source_id as gene_source_id, 
          cf.name as probe_id,cf.score,
          cf.analysis_name,cf.strain,cf.antibody,cf.rep,
-         round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) as distance,
-         CASE WHEN fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min) > 0 THEN 
+         CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
+              ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END as distance,
+         CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
+                        ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END > 0 THEN 
               CASE WHEN ga.is_reversed = 0 THEN '-' ELSE '+' END ELSE 
               CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
          FROM apidb.chipfeature cf,
@@ -2288,7 +2289,8 @@ ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max
             AND cf.na_sequence_id = fl.na_sequence_id
             AND fl.is_top_level = 1
             and fl.na_feature_id = ga.na_feature_id
-            and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000
+            and ( (fl.is_reversed = 0 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000)
+                  or (fl.is_reversed = 1 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.end_max) <= 3000) )
       ]]>
     </sql>
     <sql>
