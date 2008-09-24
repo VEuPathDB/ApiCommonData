@@ -44,9 +44,13 @@
         </stringParam>
 
 
-        <datasetParam name="rad_source_id" excludeProjects="ApiDB"
+        <datasetParam name="rad_source_id"
                      prompt="SAGE Tag ID input set">
             <help>Input a comma delimited set of SAGE Tag IDs, or upload a file. Wildcards (*) are allowed.</help>
+ 
+           <suggest includeProjects="ApiDB"
+                    sample="670,880,MAL2-128298-128312.0"
+                    default="670,MAL11-1259434-1259448.1"/>
            <suggest includeProjects="GiardiaDB"
                     sample="670,880"
                     default="670"/>
@@ -54,7 +58,7 @@
                     sample="MAL11-1259434-1259448.1,MAL2-128298-128312.0"
                     default="MAL11-1259434-1259448.1"/>
 	</datasetParam>
-
+<!--
        <stringParam name="rad_source_id" includeProjects="ApiDB"
                      prompt="ID"
                      substitute="yes">
@@ -65,7 +69,7 @@
                     sample="670,880,MAL2-128298-128312.0"
                     default="670"/>
         </stringParam>
-
+-->
 
         <enumParam name="is_within_gene"
                      prompt="Within Genes Only"

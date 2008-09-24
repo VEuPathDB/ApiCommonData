@@ -7,9 +7,12 @@
 
 
     <!-- sequenceId dataset param needed for SequenceBySourceId query -->
-     <datasetParam name="sequenceId" excludeProjects="ApiDB"
+     <datasetParam name="sequenceId" 
              prompt="Genomic sequence ID">
 
+         <help includeProjects="ApiDB">
+           Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
+         </help>
          <help includeProjects="TrichDB">
            Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use DS11* to ask for all contigs that have identifiers that begin with DS11.
          </help>
@@ -32,7 +35,9 @@
          <help includeProjects="PlasmoDB">
              Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'MAL1' through 'MAL14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  &#60;i&#62;P. berghei &#60;/i&#62; sequences start with PB,  &#60;i&#62; P. chabaudi &#60;/i&#62; sequences start with PC, and  &#60;i&#62;P.knowlesi &#60;/i&#62; sequences start with PKH. Wild cards are permitted  in most queries, i.e. use MALPY* to ask for all &#60;i&#62; P. yoelii &#60;/i&#62; sequences.
          </help>
-
+         <suggest includeProjects="ApiDB"
+             sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_994746"
+             default="(Examples: AAEL01000057,VIIb,MAL4,DS113177)"/>
          <suggest includeProjects="CryptoDB"
              sample="AAEL01000057, AAEE01000009, BX526834"
              default="(Example: AAEE01000006)"
@@ -56,7 +61,7 @@
              default="DS113177"/>     
      </datasetParam>
 
-
+<!--
      <stringParam name="sequenceId"
              prompt="Genomic sequence ID" includeProjects="ApiDB">
 
@@ -68,7 +73,7 @@
              sample="AAEL010000057, AAEE01000009, BX526834, MAL4, MALPY00019, VIIa, TGG_994746"
              default="(Example: AAEL01000057)"/>
      </stringParam>    
-
+-->
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Blast database type -->  
