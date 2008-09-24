@@ -2272,8 +2272,9 @@ ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max
     <internalDependency name="apidb.SequenceAttributes"/>
     <sql>
       <![CDATA[
-         create table apidb.chipchipgene&1 NOLOGGING AS
-         SELECT distinct ga.source_id as gene_source_id, 
+        create table apidb.chipchipgene&1 NOLOGGING AS
+         SELECT distinct
+         ga.source_id as gene_source_id, 
          cf.name as probe_id,cf.score,
          cf.analysis_name,cf.strain,cf.antibody,cf.rep,
          CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
