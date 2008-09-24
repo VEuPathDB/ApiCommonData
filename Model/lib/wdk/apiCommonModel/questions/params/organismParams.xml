@@ -205,7 +205,7 @@
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium falciparum</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="CryptoDB">Cryptosporidium parvum</sqlParamValue>
-      <sql>
+      <sql  includeProjects="CryptoDB,ToxoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -223,6 +223,25 @@
           ORDER BY organisms.name
         ]]>
       </sql>
+ <sql  includeProjects="PlasmoDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND tn.name in ('Plasmodium falciparum','Plasmodium vivax','Plasmodium knowlesi') )  organisms
+          ORDER BY organisms.name
+        ]]>
+      </sql>
+
     </sqlQuery>
 
     <wsQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
