@@ -86,11 +86,9 @@ sub getExternalDependencies {
 }
 
 sub getState {
-  my ($self, $doUpdate, $dbh) = @_;
+  my ($self, $doUpdate, $dbh, $purgeObsoletes) = @_;
 
   return $self->{state} if defined $self->{state};
-
-# return "up-to-date" if $self->{name} eq "apidb.GeneAttributes";
 
   ApiCommonData::Load::TuningConfig::Log::addLog("checking $self->{name}");
 
@@ -112,7 +110,7 @@ sub getState {
 
     # increase log-file indentation for recursive call
     ApiCommonData::Load::TuningConfig::Log::increaseIndent();
-    my $childState = $dependency->getState($doUpdate, $dbh);
+    my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes);
     ApiCommonData::Load::TuningConfig::Log::decreaseIndent();
 
     if ($childState eq "neededUpdate") {
@@ -132,7 +130,7 @@ sub getState {
   }
 
   if ($doUpdate and $needUpdate) {
-    my $updateResult = $self->update($dbh);
+    my $updateResult = $self->update($dbh, $purgeObsoletes);
     $broken = 1 if $updateResult eq "broken";
   }
 
@@ -154,7 +152,7 @@ sub getState {
 }
 
 sub update {
-  my ($self, $dbh) = @_;
+  my ($self, $dbh, $purgeObsoletes) = @_;
 
   my $startTime = time;
 
@@ -210,7 +208,7 @@ sub update {
 
   $self->dropIntermediateTables($dbh, 'warn on nonexistence');
 
-  $self->publish($suffix, $dbh) or return "broken";
+  $self->publish($suffix, $dbh, $purgeObsoletes) or return "broken";
 
   ApiCommonData::Load::TuningConfig::Log::addLog("    " . (time - $startTime) .
 						 " seconds to rebuild tuningTable " .
@@ -327,7 +325,7 @@ SQL
 }
 
 sub publish {
-  my ($self, $suffix, $dbh) = @_;
+  my ($self, $suffix, $dbh, $purgeObsoletes) = @_;
 
   # grant select privilege on new table
     my $sql = <<SQL;
@@ -342,20 +340,37 @@ SQL
   # store definition
   $self->storeDefinition($dbh);
 
-  # mark old table obsolete
+  # get name of old table (for subsequenct purging). . .
+  my $oldTable;
   my ($schema, $table) = split(/\./, $self->{name});
-  my $sql = <<SQL;
-    insert into apidb.ObsoleteTuningTable (name, timestamp)
-    select table_owner || '.' || table_name, sysdate
-    from all_synonyms
-    where owner = upper(?)
-      and synonym_name = upper(?)
+  if ($purgeObsoletes) {
+    my $sql = <<SQL;
+      select table_owner || '.' || table_name
+      from all_synonyms
+      where owner = upper(?)
+        and synonym_name = upper(?)
 SQL
 
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute("$schema", "$table")
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-  $stmt->finish();
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute("$schema", "$table")
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    ($oldTable) = $stmt->fetchrow_array();
+    $stmt->finish();
+  } else {
+    # . . . or just mark it obsolete
+    my $sql = <<SQL;
+      insert into apidb.ObsoleteTuningTable (name, timestamp)
+      select table_owner || '.' || table_name, sysdate
+      from all_synonyms
+      where owner = upper(?)
+        and synonym_name = upper(?)
+SQL
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute("$schema", "$table")
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    $stmt->finish();
+  }
 
   # update synonym
   my $sql = <<SQL;
@@ -365,6 +380,13 @@ SQL
 
   if (!defined $synonymRtn) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  }
+
+  # drop obsolete table, if we're doing that
+  if (defined $synonymRtn && $purgeObsoletes) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("purging obsolete table " . $oldTable);    
+    $dbh->do("drop table " . $oldTable)
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
   # Run stored procedure to analye any apidb tables that need it

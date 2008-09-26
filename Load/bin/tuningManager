@@ -41,6 +41,8 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
   unless $instance;
 &usage unless ($instance && ($propFile || $password));
 
+$cleanupAge = 1.5 if !defined $cleanupAge;
+
 my $dbh = getDbHandle($instance, $propFile, $password);
 
 my $tuningRegistry =
@@ -143,7 +145,7 @@ foreach my $table (@tableList) {
   }
 
   $tableCount++;
-  my $state = $tuningTables{$table}->getState($doUpdate, $dbh);
+  my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
 
   if ($state eq "broken") {
     $brokenCount++;
@@ -375,7 +377,6 @@ sub cleanup {
   my $cleanupCount = 0;
 
   # drop any tables that are listed as obsolete more than the threshold
-  $cleanupAge = 1.5 if !defined $cleanupAge;
   my $sql = <<SQL;
 select ott.name,
        to_char(sysdate - ott.timestamp, '9.99') as days_old
