@@ -3029,7 +3029,6 @@ where sim.similarity_id = simp.similarity_id
     </sql>
   </tuningTable>
 
-
   <tuningTable name="apidb.IsolateSNPs">
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaSequenceImp"/>
@@ -3073,6 +3072,61 @@ and d.name in ('PlasmoDB combined SNPs','Broad SNPs','Sanger falciparum SNPs','S
     <sql>
       <![CDATA[
         create index apidb.isnps_snp_sq_strt_idx&1 on apidb.isolatesnps&1 (snp_na_sequence_id,snp_start_min)
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.MassSpecGeneTable">
+    <externalDependency name="apidb.MassSpecSummary"/>
+    <externalDependency name="dots.AaLocation"/>
+    <externalDependency name="dots.AaSequence"/>
+    <externalDependency name="dots.GeneFeature"/>
+    <externalDependency name="dots.MassSpecFeature"/>
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <sql>
+      <![CDATA[
+create table apidb.MassSpecGeneTable&1 as
+select sequencetable.source_id, substr(sequencetable.sequence, 1, 200) as sequence,
+       seq.sum_sequence_count, spec.sum_spectrum_count,
+       sequencetable.name as experiment
+from (select intseq.aa_sequence_id,count(*) as sum_sequence_count
+      from (select mss.aa_sequence_id, count(*) as sum_seq_ct
+            from apidb.MassSpecSummary mss, dots.MassSpecFeature msf,
+                 dots.AaLocation aal, sres.ExternalDatabase ed,
+                 sres.ExternalDatabaseRelease edr
+            where mss.mass_spec_summary_id = msf.source_id
+              and msf.aa_feature_id = aal.aa_feature_id
+              and msf.external_database_release_id = edr.external_database_release_id
+              and edr.external_database_id = ed.external_database_id
+            group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
+      group by intseq.aa_sequence_id) seq,
+     (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
+      from apidb.MassSpecSummary mss
+      group by mss.aa_sequence_id) spec,
+     (select msf.aa_sequence_id, to_char(substr(aas.sequence, aal.start_min,
+             aal.end_max - aal.start_min + 1)) as sequence, ed.name, gf.source_id
+      from dots.MassSpecFeature msf,dots.AaLocation aal, dots.AaSequence aas,
+           dots.TranslatedAaFeature taaf, sres.ExternalDatabaseRelease edr,
+           sres.ExternalDatabase ed, dots.GeneFeature gf, dots.Transcript t
+      where t.parent_id = gf.na_feature_id
+        and taaf.na_feature_id = t.na_feature_id
+        and msf.parent_id = taaf.aa_feature_id
+        and msf.aa_feature_id = aal.aa_feature_id
+        and msf.aa_sequence_id = aas.aa_sequence_id
+        and msf.external_database_release_id = edr.external_database_release_id
+        and edr.external_database_id = ed.external_database_id) sequencetable
+where seq.aa_sequence_id = sequencetable.aa_sequence_id
+  and spec.aa_sequence_id = sequencetable.aa_sequence_id
+group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
+         spec.sum_spectrum_count, sequencetable.source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index apidb.MassSpec_idx&1 on apidb.MassSpecGeneTable&1 (source_id)
       ]]>
     </sql>
   </tuningTable>
