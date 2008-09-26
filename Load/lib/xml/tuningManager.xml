@@ -335,7 +335,7 @@ commit
     <sql>
       <![CDATA[
 create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
-             (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_sequence_id)
+             (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_feature_id)
       ]]>
     </sql>
     <sql>
@@ -347,7 +347,7 @@ create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
     <sql>
       <![CDATA[
 create index apidb.fl_seq_st_end_feat_idx&1
-      on apidb.FEATURELOCATION&1 (na_sequence_id,start_min,end_max,na_feature_id)
+      on apidb.FeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
       ]]>
     </sql>
     <sql>
@@ -2162,10 +2162,10 @@ SELECT etn.na_sequence_id,
        dbms_lob.substr(etn.sequence),
        src.collected_by,
        'Barcode' as data_type
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateSource src,
-       SRES.ExternalDatabaseRelease edr,
-       SRES.ExternalDatabase edb
+FROM   dots.ExternalNaSequence etn,
+       dots.IsolateSource src,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase edb
 WHERE  etn.na_sequence_id = src.na_sequence_id
    AND edr.external_database_id = edb.external_database_id
    AND edr.external_database_release_id = etn.external_database_release_id
@@ -2195,10 +2195,10 @@ SELECT etn.na_sequence_id,
        dbms_lob.substr(etn.sequence),
        src.collected_by,
        '3kChip' as data_type
-FROM   DoTS.ExternalNASequence etn,
-       DoTS.IsolateSource src,
-       SRES.ExternalDatabaseRelease edr,
-       SRES.ExternalDatabase edb
+FROM   dots.ExternalNaSequence etn,
+       dots.IsolateSource src,
+       sres.ExternalDatabaseRelease edr,
+       sres.ExternalDatabase edb
 WHERE  etn.na_sequence_id = src.na_sequence_id
    AND edr.external_database_id = edb.external_database_id
    AND edr.external_database_release_id = etn.external_database_release_id
@@ -2216,8 +2216,8 @@ CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&
   <tuningTable name="apidb.ChIPFeature">
     <internalDependency name="apidb.FeatureLocation"/>
     <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="RAD.DatatransformationResult"/>
-    <externalDependency name="RAD.Analysis"/>
+    <externalDependency name="rad.DataTransformationResult"/>
+    <externalDependency name="rad.Analysis"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ChIPFeature&1 NOLOGGING AS
@@ -2246,12 +2246,12 @@ SELECT f.na_feature_id   as na_feature_id,
           WHEN a.name like '%Rep2%' then '2'
        ELSE '0' 
        END as rep 
-FROM   RAD.DatatransformationResult r, 
-       RAD.Analysis a, 
-       RAD.Protocol p, 
-       Core.Tableinfo t, 
-       DoTS.ArrayelEmentFeature f, 
-       ApiDB.FeatureLocation l 
+FROM   rad.DataTransformationResult r, 
+       rad.Analysis a, 
+       rad.Protocol p, 
+       core.Tableinfo t, 
+       dots.ArrayElementFeature f, 
+       apidb.FeatureLocation l 
 WHERE  a.analysis_id = r.analysis_id 
    AND p.protocol_id = a.protocol_id
    AND t.table_id = r.table_id
