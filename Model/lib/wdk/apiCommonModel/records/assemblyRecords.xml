@@ -140,6 +140,7 @@
             <columnAttribute name="source_id"            internal="true" />
             <columnAttribute name="project_id"            internal="true" />
             <columnAttribute name="organism" displayName="Organism"/>
+            <columnAttribute name="gene" internal="true"/>
             <columnAttribute name="sequence_id"   internal="true" />
             <columnAttribute name="target_start"  internal="true" />
             <columnAttribute name="target_end"    internal="true" />
@@ -148,6 +149,7 @@
 
             <columnAttribute displayName="Length" name="length"   internal="false" />
             <columnAttribute displayName="Number of ESTs" name="count" />
+
             <linkAttribute displayName="Genomic Sequence" name="alignedcontig">
                  <displayText>
                     <![CDATA[ $$sequence_id$$ ]]>
@@ -163,6 +165,17 @@
             <columnAttribute displayName="Score" name="score" />
             <columnAttribute displayName="Is Consistent" name="is_consistent" />
             <columnAttribute displayName="Is Reversed" name="is_reversed" />
+
+            <linkAttribute displayName="Gene" name="gene_link">
+                 <displayText>
+                    <![CDATA[ $$gene$$ ]]>
+                 </displayText>
+                 <url>
+                    <![CDATA[
+                   showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=$$project_id$$&source_id=$$gene$$
+                    ]]>
+                 </url>
+            </linkAttribute>
 
             <linkAttribute displayName="Alignment" name="alignmentlink">
                  <displayText>
