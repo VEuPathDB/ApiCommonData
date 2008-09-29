@@ -167,6 +167,21 @@
                 <columnAttribute inReportMaker="true"  name="percent_identity" displayName="Percent identity"  internal="false" />
                 <columnAttribute inReportMaker="true"  name="is_best_alignment" displayName="Best alignment?"  internal="false" />
                 <columnAttribute inReportMaker="true"  name="is_consistent" displayName="Consistent?"  internal="false" />
+                <columnAttribute inReportMaker="true"  name="gene" internal="true" />
+
+                <linkAttribute displayName="Gene" name="gene_link"
+                   inReportMaker="false" internal="false" >
+                    <displayText>
+                        <![CDATA[ $$gene$$ ]]>
+                    </displayText>
+                     <url>
+                        <![CDATA[
+                       showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=$$project_id$$&source_id=$$gene$$
+  ]]>
+                     </url>
+                </linkAttribute>
+
+
                 <columnAttribute inReportMaker="true"  name="sequence_id" displayName="Sequence"    internal="true" />
                 <columnAttribute inReportMaker="true"  name="target_start" displayName="Start" internal="true" />
                 <columnAttribute inReportMaker="true"  name="target_end"  displayName="End" internal="true" />
