@@ -384,7 +384,7 @@ SQL
 
   # drop obsolete table, if we're doing that
   if (defined $synonymRtn && $purgeObsoletes) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("purging obsolete table " . $oldTable);    
+    ApiCommonData::Load::TuningConfig::Log::addLog("    purging obsolete table " . $oldTable);    
     $dbh->do("drop table " . $oldTable)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
