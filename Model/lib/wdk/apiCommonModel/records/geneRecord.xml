@@ -93,8 +93,13 @@
       <!--  Default summary attributes and sorting attributes -->  
       <!-- =============================================================== -->
             
-         <attributesList
+         <attributesList includeProjects="ToxoDB"
               summary="formatted_gene_id,location_text,product"
+              sorting="location_text asc"
+         />
+
+         <attributesList excludeProjects="ToxoDB"
+              summary="location_text,product"
               sorting="location_text asc"
          />
 

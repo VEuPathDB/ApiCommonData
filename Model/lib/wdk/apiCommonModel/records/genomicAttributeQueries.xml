@@ -37,7 +37,18 @@
             </defaultTestParamValues>
 
             <testRowCountSql>
-               select 3469 from dual
+               select count(na_sequence_id)
+               from dots.NaSequence
+               where external_database_release_id in (
+                 select distinct(dbr.external_database_release_id)
+                 from apidb.SequenceAttributes a, sres.ExternalDatabase db,
+                      sres.ExternalDatabaseRelease dbr
+                 where db.name = a.database_name
+                   and dbr.version = a.database_version
+                   and dbr.external_database_id = db.external_database_id
+                 )
+               and subclass_view in ('VirtualSequence', 'ExternalNASequence')
+ 
             </testRowCountSql>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

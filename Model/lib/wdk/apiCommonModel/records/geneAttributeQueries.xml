@@ -34,15 +34,24 @@
                <paramValue name="project_id">TrichDB</paramValue>
             </defaultTestParamValues>
 
-            <testRowCountSql includeProjects="ToxoDB">
-               select 30228 from dual
+            <testRowCountSql>
+               select count(na_feature_id)
+               from dots.GeneFeature
+               where external_database_release_id in (
+                 select distinct(dbr.external_database_release_id)
+                 from apidb.GeneAttributes ga, sres.ExternalDatabase db,
+                      sres.ExternalDatabaseRelease dbr
+                 where db.name = ga.external_db_name
+                   and dbr.version = ga.external_db_version
+                   and dbr.external_database_id = db.external_database_id
+                 )
             </testRowCountSql>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Gene alias -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="GeneAlias">
+        <sqlQuery name="GeneAlias" includeProjects="ToxoDB,PlasmoDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="old_source_id"/>

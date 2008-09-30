@@ -27,7 +27,10 @@
       </defaultTestParamValues>
 
       <testRowCountSql>
-               select 3152378 from dual
+               select count(na_feature_id)
+               from dots.miscellaneous f, sres.SequenceOntology so
+               where so.sequence_ontology_id = f.sequence_ontology_id
+                 and so.term_name = 'ORF'
       </testRowCountSql>
 
         <sqlQuery name="Bfmv">
