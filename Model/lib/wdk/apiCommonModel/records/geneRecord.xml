@@ -674,7 +674,7 @@
                     <![CDATA[
                         <script language='JavaScript' type='text/javascript' src='js/atv.js'></script>
                         <a href="#"
-                        onClick="openATVWin( '/cgi-bin/atvData?project_id=@PROJECT_ID@&id=$$phyTreeId$$' )">
+                        onClick="openATVWin( '/cgi-bin/atvData?project_id=@project_id@&id=$$phyTreeId$$' )">
                         Consensus tree</a> 
                     ]]>
                 </text>
@@ -877,7 +877,7 @@
           <linkAttribute displayName="ME49 Gene Model" name="view_link" inReportMaker="false" internal="false" >
                  <displayText>$$me49_source_id$$</displayText>
                    <url>
-             <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$me49_source_id$$#Expression]]>
+             <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@project_id@&source_id=$$me49_source_id$$#Expression]]>
                    </url>
             </linkAttribute>
           </table>
@@ -1122,7 +1122,7 @@
                     ]]>
                  </displayText>
         <url>
-        <![CDATA[showComment.do?projectId=@PROJECT_ID@&stableId=$$stable_id$$#$$comment_id$$]]>
+        <![CDATA[showComment.do?projectId=@project_id@&stableId=$$stable_id$$#$$comment_id$$]]>
         </url>
       </linkAttribute>
             <columnAttribute name="user_name" displayName="Made by"/>
@@ -1244,7 +1244,7 @@
                     ]]>
                  </displayText>
                    <url>
-                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
+                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@project_id@&primary_key=$$source_id$$]]>
                    </url>
               </linkAttribute>
               <columnAttribute name="bait_start" displayName="Bait Start"
@@ -1283,7 +1283,7 @@
                     ]]>
                  </displayText>
                  <url>
-                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$ortho_source_id$$]]>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@project_id@&source_id=$$ortho_source_id$$]]>
                  </url>
             </linkAttribute>
             <columnAttribute displayName="Species" name="species"/>
@@ -1331,7 +1331,7 @@
                     ]]>
                  </displayText>
                  <url>
-                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&source_id=$$source_id$$]]>
+                    <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@project_id@&source_id=$$source_id$$]]>
                  </url>
             </linkAttribute>
             <columnAttribute displayName="Strain" name="strain"/>
@@ -1802,7 +1802,7 @@
 
              <text excludeProjects="CryptoDB">
                   <![CDATA[
-                     $$organism$$ $$gene_type$$ on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
+                     $$organism$$ $$gene_type$$ on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@project_id@&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
                   ]]>
              </text>
 

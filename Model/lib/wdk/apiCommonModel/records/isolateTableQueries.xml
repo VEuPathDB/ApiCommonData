@@ -38,7 +38,7 @@
                    ref.title,
                    ref.author,
                    ref.journal_or_book_name,
-                   '@PROJECT_ID@' as project_id
+                   '@project_id@' as project_id
             FROM   DoTS.ExternalNASequence etn,
                    DoTS.NASequenceRef nasr,
                    SRES.Reference ref,
@@ -83,7 +83,7 @@
                    end colored_allele,
                    snp.major_allele,
                    snp.minor_allele,
-                   '@PROJECT_ID@' as project_id
+                   '@project_id@' as project_id
             FROM   ApiDB.IsolateAttributes etn,
                    DoTS.IsolateFeature if,
                    DoTS.IsolateSource src,

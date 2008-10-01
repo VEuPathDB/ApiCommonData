@@ -14,7 +14,7 @@
             <column name="gene_source_id" />
             <sql>
             <![CDATA[
-              SELECT ens.source_id, '@PROJECT_ID@' as project_id,
+              SELECT ens.source_id, '@project_id@' as project_id,
                      substr(t.source_id, 1, length(t.source_id)-2) as gene_source_id
               FROM dots.Similarity s, dots.Transcript t,
                    dots.ExternalNaSequence ens,
@@ -42,7 +42,7 @@
             <column name="is_reversed" />
             <sql>
             <![CDATA[
-              SELECT ens2.source_id as genomic_source_id, '@PROJECT_ID@' as project_id, ens1.source_id, s.min_subject_start, s.max_subject_end,
+              SELECT ens2.source_id as genomic_source_id, '@project_id@' as project_id, ens1.source_id, s.min_subject_start, s.max_subject_end,
                      s.is_reversed,
                      s.min_subject_start - 25000 as gbrowse_start,
                      s.min_subject_start + 25000 as gbrowse_end

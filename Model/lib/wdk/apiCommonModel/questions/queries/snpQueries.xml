@@ -11,7 +11,7 @@
 	  <column name="project_id"/>
 	  <sql>
 	    <![CDATA[
-	      SELECT distinct sf.source_id AS source_id, '@PROJECT_ID@' as project_id
+	      SELECT distinct sf.source_id AS source_id, '@project_id@' as project_id
 	      FROM dots.SnpFeature sf, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
 	      WHERE ds.dataset_id = $$snp_id$$
               AND LOWER(source_id) LIKE LOWER(REPLACE(REPLACE(ds.dataset_value,' ',''), '*', '%'))
@@ -59,7 +59,7 @@
         <sql>
             <![CDATA[
 select * from (
-SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
+SELECT snpq.source_id, '@project_id@' as project_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,                              
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_all END) AS apidb.varchartab), ', ') as comp_alleles,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.comp_product END) AS apidb.varchartab), ', ') as comp_products,                
   apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN snpq.allele_a != snpq.allele_b THEN snpq.phenotype END) AS apidb.varchartab), ', ') as phenotype,                  
@@ -189,7 +189,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
-            SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
+            SELECT snpq.source_id, '@project_id@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
               apidb.tab_to_string(CAST(COLLECT(distinct snpq.comp_all) AS apidb.varchartab), ', ') as comp_alleles,
               apidb.tab_to_string(CAST(COLLECT(distinct snpq.comp_product) AS apidb.varchartab), ', ') as comp_products,
               apidb.tab_to_string(CAST(COLLECT(distinct snpq.phenotype) AS apidb.varchartab), ', ') as phenotype,
@@ -258,7 +258,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <sql includeProjects="CryptoDB">
             <![CDATA[
               select * from (
-              SELECT snpq.source_id, '@PROJECT_ID@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
+              SELECT snpq.source_id, '@project_id@' as project_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product,
                 apidb.tab_to_string(CAST(COLLECT(distinct snpq.comp_all) AS apidb.varchartab), ', ') as comp_alleles,
                 apidb.tab_to_string(CAST(COLLECT(distinct snpq.comp_product) AS apidb.varchartab), ', ') as comp_products,
                 apidb.tab_to_string(CAST(COLLECT(distinct snpq.phenotype) AS apidb.varchartab), ', ') as phenotype,
@@ -424,7 +424,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <column name="set_b_count"/>
         <sql>
             <![CDATA[
-              select seta.snp_source_id as source_id,'@PROJECT_ID@' as project_id,
+              select seta.snp_source_id as source_id,'@project_id@' as project_id,
               seta.allele as set_a_allele,setb.allele as set_b_allele,
               seta.total as set_a_count, setb.total as set_b_count
               from (select isnp.snp_source_id,isnp.allele,count(*) as total
@@ -481,7 +481,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <column name="set_b_allele"/>
         <sql>
             <![CDATA[
-              select seta.snp_source_id as source_id,'@PROJECT_ID@' as project_id,
+              select seta.snp_source_id as source_id,'@project_id@' as project_id,
               seta.allele as set_a_allele,setb.allele as set_b_allele
               from (select isnp.snp_source_id,isnp.allele
               from apidb.isolatesnps isnp
@@ -527,7 +527,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <column name="project_id"/>
         <sql>
             <![CDATA[
-              select distinct snp_source_id as source_id, '@PROJECT_ID@' as project_id
+              select distinct snp_source_id as source_id, '@project_id@' as project_id
               from apidb.isolatesnps isnp, apidb.isolateattributes atr
               where atr.source_id = isnp.is_source_id
               and atr.data_type in ($$type$$)

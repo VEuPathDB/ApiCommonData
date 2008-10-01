@@ -18,7 +18,7 @@
              WHERE ds.dataset_id = $$est_id$$
               AND LOWER(ea.source_id) LIKE LOWER(REPLACE(REPLACE(ds.dataset_value,' ',''), '*', '%'))
                AND ea.assembly_source_id = aa.source_id
-               AND aa.project_id = '@PROJECT_ID@'
+               AND aa.project_id = '@project_id@'
           ]]>
        </sql>
     </sqlQuery>
@@ -55,7 +55,7 @@
             WHERE aa.source_id = ea.assembly_source_id
               AND ea.library_id in ($$libraryId$$)
               AND ea.assembly_est_count >= $$min_ests_in_assembly$$
-              AND aa.project_id = '@PROJECT_ID@'
+              AND aa.project_id = '@project_id@'
             GROUP BY aa.source_id, aa.project_id
             HAVING count(*) >= $$min_lib_ests_in_assembly$$
        </sql>
@@ -135,7 +135,7 @@
         <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
-            SELECT eags.source_id, '@PROJECT_ID@' as project_id,
+            SELECT eags.source_id, '@project_id@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(s.source_id || ':'
@@ -170,7 +170,7 @@
         <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
-            SELECT eags.source_id, '@PROJECT_ID@' as project_id,
+            SELECT eags.source_id, '@project_id@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(sa.source_id || ':'
@@ -255,7 +255,7 @@
        <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
-              SELECT source_id, '@PROJECT_ID@' as project_id,
+              SELECT source_id, '@project_id@' as project_id,
                CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'
@@ -290,7 +290,7 @@
        <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
-              SELECT source_id, '@PROJECT_ID@' as project_id,
+              SELECT source_id, '@project_id@' as project_id,
                CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'
@@ -378,7 +378,7 @@
        <sql>
             <![CDATA[
               select * from (
-              SELECT source_id, '@PROJECT_ID@' as project_id,
+              SELECT source_id, '@project_id@' as project_id,
                CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'

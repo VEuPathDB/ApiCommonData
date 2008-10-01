@@ -591,7 +591,7 @@
                      SUBSTR(s.sequence,
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
-                       AS cds,'@PROJECT_ID@' as project_id
+                       AS cds,'@project_id@' as project_id
               FROM apidb.geneattributes gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
               WHERE t.parent_id = gf.na_feature_id

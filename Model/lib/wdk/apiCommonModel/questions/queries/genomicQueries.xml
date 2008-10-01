@@ -24,7 +24,7 @@
         <column name="project_id"/>
         <sql includeProjects="CryptoDB">
              <![CDATA[
-            SELECT distinct enas.source_id, '@PROJECT_ID@' as project_id
+            SELECT distinct enas.source_id, '@project_id@' as project_id
             FROM dots.externalnasequence enas,
                  sres.sequenceontology so, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE  ds.dataset_id = $$sequenceId$$
@@ -35,7 +35,7 @@
         </sql>
         <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
         <![CDATA[
-            SELECT distinct sequence as source_id, '@PROJECT_ID@' as project_id
+            SELECT distinct sequence as source_id, '@project_id@' as project_id
             FROM apidb.SequenceId si, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE  ds.dataset_id = $$sequenceId$$
               AND LOWER(id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),'*', '%'),'[[:space:]]', '')
@@ -66,7 +66,7 @@
         <column name="project_id"/>
         <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB">
             <![CDATA[
-            SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT ens.source_id, '@project_id@' as project_id
             FROM dots.NaSequence ens,apidb.sequenceattributes atr
             WHERE ens.taxon_id IN ($$organism$$)
                AND atr.na_sequence_id = ens.na_sequence_id
@@ -75,7 +75,7 @@
         </sql>
        <sql includeProjects="GiardiaDB">
             <![CDATA[
-            SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT ens.source_id, '@project_id@' as project_id
             FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.taxon_id IN (SELECT taxon_id FROM sres.taxon                        
                CONNECT BY parent_id = prior taxon_id
@@ -163,13 +163,13 @@
         <sql>
             <!-- use CDATA because query includes angle brackets -->
             <![CDATA[
-            SELECT DISTINCT sa.source_id, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT sa.source_id, '@project_id@' as project_id
             FROM  
                  apidb.SequenceAttributes sa
             WHERE sa.ncbi_tax_id IN (SELECT ncbi_tax_id FROM sres.taxon                        
                                   CONNECT BY parent_id = prior taxon_id
                                   START WITH taxon_id in ($$gff_organism$$))
-              AND sa.project_id = '@PROJECT_ID@'
+              AND sa.project_id = '@project_id@'
               AND sa.is_top_level = 1
             ]]>
         </sql>

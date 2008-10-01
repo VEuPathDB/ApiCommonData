@@ -17,7 +17,7 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT DISTINCT ea.source_id, '@PROJECT_ID@' as project_id
+            SELECT DISTINCT ea.source_id, '@project_id@' as project_id
             FROM apidb.EstAttributes ea, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
             WHERE ds.dataset_id = $$est_id$$
               AND ea.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,
@@ -106,7 +106,7 @@
         <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
-            SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
+            SELECT eags.accession as source_id, '@project_id@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(s.source_id || ':'
@@ -132,7 +132,7 @@
         <sql includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
-            SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
+            SELECT eags.accession as source_id, '@project_id@' as project_id,
                    apidb.tab_to_string(
                      CAST(
                        COLLECT(sa.source_id || ':'
@@ -188,7 +188,7 @@
             SELECT ea.source_id, ea.project_id
             FROM apidb.EstAttributes ea
             WHERE ea.library_id in ($$libraryId$$)
-              AND ea.project_id = '@PROJECT_ID@'
+              AND ea.project_id = '@project_id@'
        </sql>
     </sqlQuery>
 
@@ -225,7 +225,7 @@
        <sql>
             <![CDATA[
               select * from (
-              SELECT accession as source_id, '@PROJECT_ID@' as project_id,
+              SELECT accession as source_id, '@project_id@' as project_id,
                CASE WHEN count(*) > 20 THEN count(*)||' locations' ELSE apidb.tab_to_string(
                     CAST(
                       COLLECT(target_sequence_source_id || ':'

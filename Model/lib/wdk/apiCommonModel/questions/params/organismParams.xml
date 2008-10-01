@@ -199,14 +199,14 @@
                                 FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                                 WHERE gf.na_sequence_id = ns.na_sequence_id
                                 AND ga.source_id = gf.source_id
-                                AND ga.project_id = '@PROJECT_ID@' 
+                                AND ga.project_id = '@project_id@' 
                               UNION
                                 SELECT ns.taxon_id
                                 FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                                 WHERE so.sequence_ontology_id = ns.sequence_ontology_id
                                 AND so.term_name IN ('contig', 'supercontig', 'chromosome')
                                 AND ga.source_id = ns.source_id
-                                AND ga.project_id = '@PROJECT_ID@' 
+                                AND ga.project_id = '@project_id@' 
                                   ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
@@ -302,7 +302,7 @@
                               WHERE so.sequence_ontology_id = ns.sequence_ontology_id
                                 AND so.term_name IN ('contig', 'supercontig', 'chromosome')
                                 AND ga.source_id = ns.source_id
-                                AND ga.project_id = '@PROJECT_ID@'
+                                AND ga.project_id = '@project_id@'
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
@@ -365,7 +365,7 @@
                               FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                               WHERE gf.na_sequence_id = ns.na_sequence_id
                               AND ga.source_id = gf.source_id
-                              AND ga.project_id = '@PROJECT_ID@' 
+                              AND ga.project_id = '@project_id@' 
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
@@ -401,7 +401,7 @@
            SELECT distinct sa.organism as term,ns.taxon_id as internal
            FROM dots.NaSequence ns, apidb.sequenceattributes sa
            WHERE sa.na_sequence_id = ns.na_sequence_id
-           AND sa.project_id = '@PROJECT_ID@'
+           AND sa.project_id = '@project_id@'
            ORDER BY organism asc
         ]]>
       </sql>
@@ -449,7 +449,7 @@
                               FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                               WHERE gf.na_sequence_id = ns.na_sequence_id
                               AND ga.source_id = gf.source_id
-                              AND ga.project_id = '@PROJECT_ID@' 
+                              AND ga.project_id = '@project_id@' 
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
@@ -475,7 +475,7 @@
            FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
            WHERE gf.na_sequence_id = ns.na_sequence_id
            AND ga.source_id = gf.source_id
-           AND ga.project_id = '@PROJECT_ID@'
+           AND ga.project_id = '@project_id@'
            ORDER BY organism asc
         ]]>
       </sql>
@@ -510,7 +510,7 @@
                               FROM dots.ExternalNaSequence ens, dots.Est e, apidb.EstAttributes ea
                               WHERE e.na_sequence_id = ens.na_sequence_id
                               AND ens.source_id = ea.source_id
-                              AND ea.project_id = '@PROJECT_ID@'))) orgs,
+                              AND ea.project_id = '@project_id@'))) orgs,
                      (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
                       UNION
                       SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
@@ -554,7 +554,7 @@
                               AND s.gene is not null
                               AND e.na_sequence_id = ens.na_sequence_id
                               AND ens.source_id = ea.source_id
-                              AND ea.project_id = '@PROJECT_ID@'))) orgs,
+                              AND ea.project_id = '@project_id@'))) orgs,
                      (SELECT 'Plasmodium falciparum' AS term, 1 as rank from dual
                       UNION
                       SELECT 'Plasmodium vivax' AS term, 2 as rank from dual
@@ -607,7 +607,7 @@
                               AND t.na_feature_id = taf.na_feature_id
                               AND gf.na_feature_id = t.parent_id
                               AND ga.source_id = gf.source_id
-                              ANd ga.project_id = '@PROJECT_ID@'
+                              ANd ga.project_id = '@project_id@'
                               AND nas.na_sequence_id = gf.na_sequence_id
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
@@ -860,7 +860,7 @@
                               FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                               WHERE gf.na_sequence_id = ns.na_sequence_id
                               AND ga.source_id = gf.source_id
-                              AND ga.project_id = '@PROJECT_ID@' 
+                              AND ga.project_id = '@project_id@' 
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
@@ -972,7 +972,7 @@
                               FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
                               WHERE gf.na_sequence_id = ns.na_sequence_id
                               AND ga.source_id = gf.source_id
-                              AND ga.project_id = '@PROJECT_ID@' 
+                              AND ga.project_id = '@project_id@' 
                               ))) organisms,
                (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
                  UNION
