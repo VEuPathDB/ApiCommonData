@@ -76,10 +76,13 @@
                from dots.ExonFeature left, apidb.FeatureLocation leftLoc,
                     dots.ExonFeature right, apidb.FeatureLocation rightLoc
                where left.parent_id = right.parent_id
-                 and left.order_number = right.order_number - 1
+                 and (left.order_number = right.order_number - 1
+                      or left.order_number = right.order_number + 1)
+                 and leftLoc.start_min < rightLoc.start_min
                  and left.na_feature_id = leftLoc.na_feature_id
                  and leftLoc.is_top_level = 1
                  and right.na_feature_id = rightLoc.na_feature_id
+                 and rightLoc.is_top_level = 1
               ) gm
          where gm.na_feature_id = gf.na_feature_id
          and s.na_sequence_id = gl.na_sequence_id
