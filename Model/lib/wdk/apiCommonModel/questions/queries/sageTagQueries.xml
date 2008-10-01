@@ -180,10 +180,9 @@
          <![CDATA[
          select distinct a.source_id, a.project_id
          from apidb.SageTagAttributes a, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
-         where ds.dataset_id = $$rad_source_id$$
-           and (a.rad_source_id is null -- as in the case of plasmodb 5.5
-             or a.rad_source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', ''))
-           and a.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', '')
+         where ds.dataset_id =  $$rad_source_id$$
+           and (a.rad_source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', '') 
+                 or a.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', ''))
          ]]>
        </sql>
 </sqlQuery>
