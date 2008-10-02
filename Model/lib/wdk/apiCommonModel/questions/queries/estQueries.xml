@@ -23,7 +23,7 @@
               AND ea.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,
                                                        '*', '%'),
                                                '[[:space:]]', '') 
-              AND LOWER(ea.project_id) = LOWER($$projectId$$)
+              AND LOWER(ea.project_id) = LOWER('@PROJECT_ID@')
           ]]>
        </sql>
     </sqlQuery>
