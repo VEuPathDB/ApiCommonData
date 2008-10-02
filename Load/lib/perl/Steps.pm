@@ -1373,7 +1373,7 @@ sub makeTranscriptDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            gf.organism
+            replace( gf.organism, ' ', '_')
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -1663,7 +1663,7 @@ sub makeDerivedCdsDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            gf.organism
+           replace( gf.organism, ' ', '_') 
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -1885,7 +1885,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                 ||' | organism='||
-            gf.organism
+             replace( gf.organism, ' ', '_')
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -2322,7 +2322,7 @@ sub makeMixedGenomicDownloadFile {
                 ||'|'||
                sa.source_id
                 ||' | organism='||
-               sa.organism
+               replace(sa.organism, ' ', '_')
                 ||' | version='||
                sa.database_version
                 ||' | length=' ||
