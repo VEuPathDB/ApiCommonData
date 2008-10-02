@@ -2,19 +2,21 @@ create or replace function apidb.reverse_complement_clob (seq clob)
 return clob
 is
     rslt clob;
-    idx    number;
+    idx  number;
+    base char;
 begin
     rslt := '';
     if seq is not null
     then
         for idx IN 1 .. length(seq)
         loop
-            case upper(substr(seq, idx, 1))
+            base := substr(seq, idx, 1);
+            case upper(base)
                 when 'A' then rslt := 'T' || rslt;
                 when 'C' then rslt := 'G' || rslt;
                 when 'G' then rslt := 'C' || rslt;
                 when 'T' then rslt := 'A' || rslt;
-                else rslt := substr(seq, idx, 1) || rslt;
+                else rslt := base || rslt;
             end case;
         end loop;
     end if;
