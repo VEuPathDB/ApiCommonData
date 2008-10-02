@@ -120,6 +120,36 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- ToxoDB Table for Expression Percentiles                      -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="ToxoStrainsMicroarrayPercentile" isCacheable="false" includeProjects="ToxoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="strain"/>
+            <column name="percentile"/>
+            <sql>
+           select gf.source_id as source_id,
+                  '@PROJECT_ID@' as project_id,
+                  regexp_replace(a.name, '\(Type.+') as strain, 
+                  regexp_replace(a.name, '.+\(') as type,
+                  r.percentile
+           from rad.analysis a, rad.protocol p, Core.tableinfo t,
+                rad.expressionprofile r, dots.genefeature gf
+           where p.protocol_id = a.protocol_id
+            and a.analysis_id = r.analysis_id
+            and r.row_id = gf.na_feature_id
+            and r.table_id = t.table_id
+            and t.name = 'GeneFeature'
+            and gf.source_id = $$source_id$$
+            and p.name = 'Paul Davis Expression Percentile'
+           order by type, strain
+            </sql>
+        </sqlQuery>
+
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
