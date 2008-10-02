@@ -19,10 +19,11 @@
           <![CDATA[
             SELECT DISTINCT ea.source_id, '@PROJECT_ID@' as project_id
             FROM apidb.EstAttributes ea, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
-            WHERE ds.dataset_id = $$est_id$$
+            WHERE ds.dataset_id = $$est_id$$ 
               AND ea.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,
                                                        '*', '%'),
-                                               '[[:space:]]', '')
+                                               '[[:space:]]', '') 
+              AND LOWER(ea.project_id) = LOWER($$projectId$$)
           ]]>
        </sql>
     </sqlQuery>
