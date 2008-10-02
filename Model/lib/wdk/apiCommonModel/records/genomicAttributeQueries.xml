@@ -221,7 +221,7 @@
             <column name="short_name"/>
             <sql>
             <![CDATA[
-                SELECT ens.source_id, '@PROJECT_ID@' as project_id,
+               SELECT ens.source_id, '@PROJECT_ID@' as project_id, 
                        decode(ed.name,
                               'Jane Carlton P. vivax chromosomes', 'TIGR',
                               'Sanger P. reichenowi contigs', 'Sanger',
@@ -236,9 +236,10 @@
                               ed.name) AS short_name
                 FROM dots.NaSequence ens,
                      sres.ExternalDatabaseRelease edr,
-                     sres.ExternalDatabase ed
-                WHERE ens.external_database_release_id
-                      = edr.external_database_release_id
+                     sres.ExternalDatabase ed,
+                     apidb.sequenceAttributes sa
+                WHERE ens.external_database_release_id = edr.external_database_release_id
+                  AND sa.source_id = ens.source_id
                   AND edr.external_database_id = ed.external_database_id
              ]]>
            </sql>
