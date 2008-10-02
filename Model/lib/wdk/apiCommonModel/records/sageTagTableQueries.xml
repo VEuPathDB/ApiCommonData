@@ -31,7 +31,7 @@
             <column name="total_raw_count"/>
             <sql>
             <![CDATA[
-            select a.source_id, '@project_id@' AS project_id,
+            select a.source_id, '@PROJECT_ID@' AS project_id,
                    aa.library_name as experiment, 
                    to_char(aa.raw_count, '99999') as raw_count,
                    to_char(aa.total_raw_count, '99999') as total_raw_count, 
@@ -63,7 +63,7 @@
             <column name="bp_from_gene"/>
             <sql>
             <![CDATA[
-         select distinct $$source_id$$ AS source_id, '@project_id@' AS project_id,
+         select distinct $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
                    a.source_id AS aligned_source_id, sg.gene_source_id, g.product as gene_product,
                    g.sequence_id || ':' || g.start_min || '-' || g.end_max || '(' || 
                        case when g.is_reversed = 1 then '-' 
@@ -98,7 +98,7 @@
             <column name="feature_source_id"/>
             <sql>
             <![CDATA[
-              SELECT sta.source_id, '@project_id@' AS project_id,
+              SELECT sta.source_id, '@PROJECT_ID@' AS project_id,
                      sta.feature_source_id,
                      fl.sequence_source_id,
                      Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,

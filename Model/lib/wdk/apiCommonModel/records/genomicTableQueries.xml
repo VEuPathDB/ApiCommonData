@@ -40,7 +40,7 @@
             <column name="piece_strand" />
             <sql>
             <![CDATA[
-            select vs.source_id as source_id, '@project_id@' AS project_id,
+            select vs.source_id as source_id, '@PROJECT_ID@' AS project_id,
                    sp.distance_from_left + 1 as start_min, 
                    es.length + sp.distance_from_left as end_max,
                    case when es.source_id is null then '(N)-' || es.length else es.source_id end as piece_source_id,
@@ -69,7 +69,7 @@
             <column name="end_max" />
             <sql>
             <![CDATA[
-            SELECT ens.source_id as source_id, '@project_id@' AS project_id,
+            SELECT ens.source_id as source_id, '@PROJECT_ID@' AS project_id,
                    nl.start_min, nl.end_max
             FROM dots.NaSequence ens, dots.Miscellaneous m,
                  dots.NaLocation nl, sres.SequenceOntology so
@@ -99,13 +99,13 @@
             <column name="comment_date"/>
             <sql>
             <![CDATA[
-              SELECT DISTINCT ens.source_id as source_id, '@project_id@' AS project_id,
+              SELECT DISTINCT ens.source_id as source_id, '@PROJECT_ID@' AS project_id,
                      c.comment_id, c.stable_id,
                      NVL(c.headline, '<i>none</i>') AS headline,
                      (u.first_name || ' ' || u.last_name) AS user_name,
 					 u.organization,
                      c.comment_date
-              FROM @LOGIN_SCHEMA@users@LOGIN_DBLINK@ u,
+              FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.NaSequence ens
               WHERE lower(u.email) = lower(c.email)
@@ -133,18 +133,18 @@
         <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB">ApiDB</sqlParamValue>
         <sql>
           <![CDATA[
-            SELECT ens.source_id, '@project_id@' AS project_id,
+            SELECT ens.source_id, '@PROJECT_ID@' AS project_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.Taxon t
             WHERE ens.source_id = $$source_id$$
               AND ens.taxon_id = t.taxon_id
 /*           UNION
-            SELECT ens.source_id, '@project_id@' AS project_id, so.so_id AS gff_dbxref
+            SELECT ens.source_id, '@PROJECT_ID@' AS project_id, so.so_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.SequenceOntology so
             WHERE ens.source_id = $$source_id$$
               AND ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
-            SELECT ens.source_id,  '@project_id@' AS project_id,
+            SELECT ens.source_id,  '@PROJECT_ID@' AS project_id,
                    'GenBank:' || dr.primary_identifier AS gff_dbxref
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
@@ -157,7 +157,7 @@
               AND edr.external_database_id = ed.external_database_id
               AND ed.name = 'GenBank'
            UNION
-            SELECT ens.source_id, '@project_id@' AS project_id,
+            SELECT ens.source_id, '@PROJECT_ID@' AS project_id,
                    '&&brcName&&:' || ens.source_id AS gff_dbxref
             FROM dots.NaSequence ens
             WHERE ens.source_id = $$source_id$$

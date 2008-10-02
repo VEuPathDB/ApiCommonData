@@ -58,15 +58,15 @@
             <column name="old_project_id"/>
             <sql includeProjects="PlasmoDB">
               <![CDATA[
-                SELECT gene as source_id, '@project_id@' AS project_id,
-                       alias as old_source_id, '@project_id@' AS old_project_id
+                SELECT gene as source_id, '@PROJECT_ID@' AS project_id,
+                       alias as old_source_id, '@PROJECT_ID@' AS old_project_id
                 FROM apidb.GeneAlias
               ]]>
             </sql>
             <sql includeProjects="ToxoDB">
               <![CDATA[
-                SELECT f.gene as source_id, '@project_id@' AS project_id,
-                       f.id as old_source_id, '@project_id@' AS old_project_id
+                SELECT f.gene as source_id, '@PROJECT_ID@' AS project_id,
+                       f.id as old_source_id, '@PROJECT_ID@' AS old_project_id
                 FROM (SELECT gene AS id, gene 
                       FROM apidb.geneid
                       WHERE id = lower(gene)
@@ -94,7 +94,7 @@
             <column name="new_protein" sortingTable="apidb.trackNewAnnotation"/>
             <column name="new_product_string" sortingTable="apidb.trackNewAnnotation" sortingColumn="product"/>
             <sql>
-               select '@project_id@' as project_id, tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
+               select '@PROJECT_ID@' as project_id, tna.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
                from Apidb.TRACKNEWANNOTATION tna
             </sql>
         </sqlQuery>
@@ -405,7 +405,7 @@
             <sql>
             <![CDATA[SELECT g.source_id,
                             src.chromosome as chromosome,
-                            '@project_id@' as project_id
+                            '@PROJECT_ID@' as project_id
                      FROM dots.genefeature g,
                           dots.externalnasequence enas,
                           dots.source src
@@ -427,7 +427,7 @@
             <sql>
             <![CDATA[
             SELECT gf.source_id,
-                   tas.sequence AS workshop_protein_sequence,'@project_id@' as project_id
+                   tas.sequence AS workshop_protein_sequence,'@PROJECT_ID@' as project_id
             FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  apidb.TRACKNEWANNOTATION tna
@@ -448,7 +448,7 @@
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT gf.source_id, '@project_id@' as project_id,
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                    tas.sequence AS protein_sequence
             FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas
@@ -465,7 +465,7 @@
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-                  SELECT g.source_id, '@project_id@' as project_id, g.sequence as protein_sequence 
+                  SELECT g.source_id, '@PROJECT_ID@' as project_id, g.sequence as protein_sequence 
                   FROM dots.TranslatedAASequence g, 
                        sres.SequenceOntology s, 
                        sres.ExternalDatabaseRelease extr, 
@@ -488,7 +488,7 @@
             <column name="phyTreeId"/>
             <sql>
             <![CDATA[
-              select tree.source_id as phyTreeId,tree.source_id, '@project_id@' as project_id
+              select tree.source_id as phyTreeId,tree.source_id, '@PROJECT_ID@' as project_id
               from apidb.phylogenetictree tree
             ]]>
             </sql>
@@ -506,7 +506,7 @@
             <column name="workshop_transcript_sequence"/>
             <sql>
             <![CDATA[
-              select gf.source_id, s.sequence as workshop_transcript_sequence,'@project_id@' as project_id
+              select gf.source_id, s.sequence as workshop_transcript_sequence,'@PROJECT_ID@' as project_id
               from apidb.geneattributes gf, dots.transcript t, dots.splicednasequence s, apidb.TRACKNEWANNOTATION tna
               where tna.new_source_id(+) = gf.source_id
                 and t.parent_id = gf.na_feature_id
@@ -522,7 +522,7 @@
             <column name="transcript_sequence"/>
             <sql>
             <![CDATA[
-              select gf.source_id, s.sequence as transcript_sequence,'@project_id@' as project_id
+              select gf.source_id, s.sequence as transcript_sequence,'@PROJECT_ID@' as project_id
               from apidb.geneattributes gf, dots.transcript t, dots.splicednasequence s
               where t.parent_id = gf.na_feature_id
                 and s.na_sequence_id = t.na_sequence_id
@@ -566,7 +566,7 @@
                      SUBSTR(s.sequence,
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
-                       AS workshop_cds,'@project_id@' as project_id
+                       AS workshop_cds,'@PROJECT_ID@' as project_id
               FROM apidb.geneattributes gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf,
                    apidb.TRACKNEWANNOTATION tna
@@ -591,7 +591,7 @@
                      SUBSTR(s.sequence,
                             tf.translation_start,
                             tf.translation_stop - tf.translation_start + 1)
-                       AS cds,'@project_id@' as project_id
+                       AS cds,'@PROJECT_ID@' as project_id
               FROM apidb.geneattributes gf, dots.transcript t,
                    dots.splicednasequence s, dots.TranslatedAaFeature tf
               WHERE t.parent_id = gf.na_feature_id
@@ -641,7 +641,7 @@
             <column name="graph_daily"/>
             <sql>
             <![CDATA[
-               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
+               SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
@@ -669,7 +669,7 @@
             <column name="graph_archetypal"/>
             <sql>
             <![CDATA[
-               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
+               SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
                       NVL(egs.graph_archetypal, 0) AS graph_archetypal
                FROM apidb.ToxoExpressionGraphs egs, apidb.geneattributes ga
                WHERE ga.source_id = egs.source_id(+)
@@ -687,7 +687,7 @@
             <column name="graph_stress" />
             <sql>
             <![CDATA[
-               SELECT egs.source_id AS source_id, '@project_id@' as project_id,
+               SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
                       NVL(graph_stress, 0) AS graph_stress
                FROM apidb.GiardiaExpressionGraphs egs,apidb.geneattributes ga
                WHERE ga.source_id = egs.source_id(+) 
@@ -705,7 +705,7 @@
         <column name="gff_transcript_sequence"/>
         <sql>
           <![CDATA[
-            select gf.source_id AS source_id, '@project_id@' as project_id,
+            select gf.source_id AS source_id, '@PROJECT_ID@' as project_id,
                    s.sequence as gff_transcript_sequence
             from Apidb.Geneattributes gf, 
                  DoTS.Transcript rna,
@@ -739,7 +739,7 @@
         <column name="gff_attr_size"/>
         <sql>
           <![CDATA[
-            select ga.source_id, '@project_id@' as project_id,
+            select ga.source_id, '@PROJECT_ID@' as project_id,
                    'apidb|' || ga.sequence_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'gene' as gff_type,
@@ -776,7 +776,7 @@
             <sql>
             <![CDATA[           
             SELECT 
-                  g.source_id,'@project_id@' as project_id,
+                  g.source_id,'@PROJECT_ID@' as project_id,
                   DECODE (
                        protein_id, null, 
                            '', 
@@ -801,7 +801,7 @@
             <column name="pdb_id"/>
             <sql>
               <![CDATA[
-            SELECT gf.source_id, '@project_id@' as project_id,
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                    dr.primary_identifier AS pdb_id
             FROM apidb.geneattributes gf,
                  dots.DbRefNaFeature drnf,
@@ -831,7 +831,7 @@
                  values when there is no translation (as is the case for 
                  non-protein coding genes) - the WDK doesn't allow an empty result.    -->
             <![CDATA[  
-              SELECT g.source_id, '@project_id@' as project_id,
+              SELECT g.source_id, '@PROJECT_ID@' as project_id,
                           tas.sequence as translation, tas.molecular_weight,
                           DECODE (
                             tas.molecular_weight, null,

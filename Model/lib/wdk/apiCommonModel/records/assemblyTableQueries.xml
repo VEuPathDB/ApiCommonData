@@ -45,7 +45,7 @@
 
             <sql>
             <![CDATA[
-            SELECT a.source_id, '@project_id@' AS project_id,
+            SELECT a.source_id, '@PROJECT_ID@' AS project_id,
                    etn.source_id as sequence_id,
                    a.source_id as id,
                    a.length,
@@ -88,7 +88,7 @@
             <column name="est_count" />
             <sql>
             <![CDATA[
-            SELECT asmbly.source_id, '@project_id@' AS project_id,
+            SELECT asmbly.source_id, '@PROJECT_ID@' AS project_id,
                    l.dbest_name as library, count(e.est_id) as est_count
             FROM   dots.est e, dots.library l, dots.assemblysequence aseq, dots.assembly asmbly
             WHERE  asmbly.source_id = $$source_id$$
@@ -118,7 +118,7 @@
             <sql>
             <![CDATA[
 
-              select att.assembly_source_id, '@project_id@' AS project_id,
+              select att.assembly_source_id, '@PROJECT_ID@' AS project_id,
                      att.source_id as est, length(aseq.gapped_sequence)  as gapped_length,
                      aseq.assembly_offset + 1 as "start", 
                      aseq.assembly_offset + length(aseq.gapped_sequence) as "end",

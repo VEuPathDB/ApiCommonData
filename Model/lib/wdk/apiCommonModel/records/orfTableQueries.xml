@@ -42,7 +42,7 @@
             <column name="feature_source_id"/>
             <sql>
             <![CDATA[
-             SELECT  oa.source_id, '@project_id@' AS project_id,
+             SELECT  oa.source_id, '@PROJECT_ID@' AS project_id,
                      fl.feature_source_id,
                      fl.sequence_source_id,
                      Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,

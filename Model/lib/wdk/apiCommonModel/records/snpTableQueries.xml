@@ -34,7 +34,7 @@
             <column name="product"/>
             <sql>
             <![CDATA[
-       SELECT snp.source_id, '@project_id@' AS project_id,
+       SELECT snp.source_id, '@PROJECT_ID@' AS project_id,
               CASE
                   WHEN var.strain = 'iowa_II' THEN 'IOWA II'
                   WHEN var.strain = 'md' THEN 'MD'
@@ -86,7 +86,7 @@
 
             <sql>
             <![CDATA[
-               SELECT sa.source_id, '@project_id@' AS project_id,
+               SELECT sa.source_id, '@PROJECT_ID@' AS project_id,
                sb.source_id as source_id_link,
                &&name&& as name
                FROM  dots.SnpFeature sa, dots.snpfeature sb, dots.nalocation la, dots.nalocation lb,
@@ -120,7 +120,7 @@
             <column name="allele"/>
             <sql>
             <![CDATA[
-              select isnp.snp_source_id, AS source_id, '@project_id@' AS project_id,
+              select isnp.snp_source_id, AS source_id, '@PROJECT_ID@' AS project_id,
               atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
               isnp.allele, atr.DATA_TYPE as assay_type
               from apidb.isolateattributes atr, apidb.isolatesnps isnp

@@ -80,7 +80,7 @@
         <column name="sequence"/>
      <sql includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrichDB,PlasmoDB">
       <![CDATA[ 
-        select a.source_id, '@project_id@' as project_id, 
+        select a.source_id, '@PROJECT_ID@' as project_id, 
                a.sequence 
         from dots.assembly a 
      ]]>
@@ -88,7 +88,7 @@
  <sql includeProjects="ApiDB">
                 <![CDATA[
                 SELECT ens.source_id, ens.sequence,
-                       '@project_id@' as project_id
+                       '@PROJECT_ID@' as project_id
                 FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
                 WHERE so.term_name = 'assembly'
                   AND so.sequence_ontology_id = ens.sequence_ontology_id

@@ -136,7 +136,7 @@
             <column name="rflank"/>
             <sql>
             <![CDATA[    
-            select sf.source_id, '@project_id@' AS project_id,
+            select sf.source_id, '@PROJECT_ID@' AS project_id,
             SUBSTR(nas.sequence,l.start_min - 60,60) as lflank,
             SUBSTR(nas.sequence,l.start_min,1) as allele,
             SUBSTR(nas.sequence,l.start_min + 1,60) as rflank

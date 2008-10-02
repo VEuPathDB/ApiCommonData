@@ -69,7 +69,7 @@
             <column name="os_user" />
            <sql> 
             <![CDATA[           
-            select $$source_id$$ AS source_id, '@project_id@' AS project_id,
+            select $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
                 global_name, 
                 ver.banner version,
                 UTL_INADDR.get_host_name as server_name,
@@ -101,7 +101,7 @@
             <column name="last_time" />
            <sql> 
             <![CDATA[           
-            SELECT $$source_id$$ AS source_id, '@project_id@' AS project_id,
+            SELECT $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
             count(*) as cache_count
             FROM queryinstance
              ]]>
@@ -115,7 +115,7 @@
             <column name="apicomm_global_name" />
            <sql> 
             <![CDATA[           
-             select $$source_id$$ AS source_id, '@project_id@' AS project_id,
+             select $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
                     global_name as apicomm_global_name
             from global_name@LOGIN_DBLINK@
              ]]>
@@ -133,7 +133,7 @@
             <column name="created" />
            <sql> 
             <![CDATA[           
-            select $$source_id$$ AS source_id, '@project_id@' AS project_id,
+            select $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
             lower(owner) owner, lower(db_link) db_link, 
             lower(username) username, lower(host) host, created
             from  all_db_links

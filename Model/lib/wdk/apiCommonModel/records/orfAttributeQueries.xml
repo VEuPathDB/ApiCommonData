@@ -67,7 +67,7 @@
             <column name="project_id"/>
             <column name="sequence"/>
             <sql excludeProjects="ApiDB">
-               SELECT nf.source_id,ts.sequence, '@project_id@' as project_id
+               SELECT nf.source_id,ts.sequence, '@PROJECT_ID@' as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
                     dots.NaFeature nf, sres.SequenceOntology so
                WHERE nf.na_feature_id = tf.na_feature_id

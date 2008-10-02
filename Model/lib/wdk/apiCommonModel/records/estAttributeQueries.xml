@@ -94,7 +94,7 @@
             <sql>
                 <![CDATA[
                 SELECT ens.source_id, ens.sequence,
-                       '@project_id@' as project_id
+                       '@PROJECT_ID@' as project_id
                 FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
                 WHERE so.term_name = 'EST'
                   AND so.sequence_ontology_id = ens.sequence_ontology_id
@@ -108,7 +108,7 @@
             <column name="linkout" />
             <sql>
             <![CDATA[
-            SELECT source_id, '@project_id@' as project_id,
+            SELECT source_id, '@PROJECT_ID@' as project_id,
                 CASE 
                   WHEN bfmv.dbest_name = 'WatanabeCpHNJ-1' then
                      '<a href="http://fullmal.hgc.jp/cgi-bin/fulcrypto_start.cgi?UID=11&SEE=1&MXX=750&VSP=&ONF=&SMF=0&VPLN=sp005%7Cstcrm%7Csp005%7Cgn0110%7Csp003%7Ccl0110%7Csp003%7Ccl0610%7Cscale%7Ccl0600%7Csp003%7Ccl0100%7Csp003%7Cgn0100%7C&SRH=1%21'|| bfmv.source_id || '">Full-Cryptosporidium</a>'
@@ -136,7 +136,7 @@
             <column name="address" />
             <sql>
             <![CDATA[
-            SELECT e.accession as source_id, '@project_id@' as project_id,
+            SELECT e.accession as source_id, '@PROJECT_ID@' as project_id,
                    c.name as author,
                    c.address1 as affiliation,
                    c.address2 as address

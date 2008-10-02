@@ -21,8 +21,8 @@
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT DISTINCT oa.source_id, '@project_id@' as project_id
-            FROM apidb.OrfAttributes oa, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+            SELECT DISTINCT oa.source_id, '@PROJECT_ID@' as project_id
+            FROM apidb.OrfAttributes oa, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
             WHERE ds.dataset_id = $$orf_id$$
               AND oa.lowercase_source_id LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
                                                        '*', '%'),
@@ -77,7 +77,7 @@
         </sqlParamValue>
         <sql includeProjects="ToxoDB,PlasmoDB"> 
             <![CDATA[
-            SELECT distinct oa.source_id, '@project_id@' as project_id,
+            SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
 	    FROM dots.TranslatedAaFeature taaf, apidb.orfattributes oa, apidb.sequenceAttributes sa,
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
@@ -95,7 +95,7 @@
        </sql>
         <sql includeProjects="CryptoDB"> 
             <![CDATA[
-	    SELECT distinct m.source_id, '@project_id@' as project_id,'dynamic location' as dynamic_location
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
@@ -116,7 +116,7 @@
 <!-- should be same as giardia 
         <sql includeProjects="TrichDB"> 
             <![CDATA[
-	    SELECT distinct m.source_id, '@project_id@' as project_id,'dynamic location' as dynamic_location
+	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
 	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
 	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
                  apidb.GenomicSequence gs
@@ -136,7 +136,7 @@
 -->
         <sql includeProjects="TrichDB,GiardiaDB"> 
             <![CDATA[
-            SELECT distinct oa.source_id, '@project_id@' as project_id,
+            SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
 	    FROM dots.TranslatedAaFeature taaf, apidb.orfattributes oa,
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
@@ -271,7 +271,7 @@
         <column name="sum_spectrum_count" />
         <sql includeProjects="ToxoDB,GiardiaDB">
             <![CDATA[
-            select distinct misc.source_id, '@project_id@' as project_id,
+            select distinct misc.source_id, '@PROJECT_ID@' as project_id,
                             seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,
@@ -311,7 +311,7 @@
        </sql>
         <sql includeProjects="CryptoDB">
             <![CDATA[
-                select distinct misc.source_id, '@project_id@' as project_id,
+                select distinct misc.source_id, '@PROJECT_ID@' as project_id,
                        seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, dots.translatedaafeature taaf,  
                  dots.miscellaneous misc, sres.sequenceontology o,

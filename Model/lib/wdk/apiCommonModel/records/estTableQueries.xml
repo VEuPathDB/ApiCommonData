@@ -45,7 +45,7 @@
             <column name="gene" />
             <sql>
             <![CDATA[
-           SELECT accession AS source_id, '@project_id@' AS project_id,
+           SELECT accession AS source_id, '@PROJECT_ID@' AS project_id,
                    sequence_id, accession, target_start, target_end, context_start, context_end, 
                    is_best_alignment, is_consistent, is_reversed, percent_identity, gene
             FROM (
@@ -85,7 +85,7 @@
             <column name="mate_type" />
             <sql>
             <![CDATA[           
-            select $$source_id$$ AS source_id, '@project_id@' AS project_id, 
+            select $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id, 
                    enas.source_id as mate_id, 'EST' as mate_type
             from dots.assembly asmbly, dots.assemblysequence aseq, dots.ExternalNASequence enas
             where aseq.assembly_na_sequence_id = asmbly.na_sequence_id 
@@ -116,7 +116,7 @@
 
             <sql>
             <![CDATA[           
-            SELECT enas.source_id AS source_id, '@project_id@' AS project_id,
+            SELECT enas.source_id AS source_id, '@PROJECT_ID@' AS project_id,
                    asmbly.source_id as assembly_source_id,
                    asmbly.number_of_contained_sequences, 
                    asmbly.length as assembly_length

@@ -142,7 +142,7 @@
            <sql includeProjects="CryptoDB"> 
             <![CDATA[           
             SELECT enas.sequence, 
-            enas.source_id, '@project_id@' as project_id, 
+            enas.source_id, '@PROJECT_ID@' as project_id, 
             enas.source_id as secondary_identifier, 
             DECODE(src.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
             'This contig has been mapped to chromosome ' || src.chromosome || '.') as chromosomemappingtext, 
@@ -203,7 +203,7 @@
             <column name="alias"/>
             <sql>
             <![CDATA[
-            SELECT  id as alias, sequence as source_id, '@project_id@' as project_id
+            SELECT  id as alias, sequence as source_id, '@PROJECT_ID@' as project_id
             FROM    apidb.SequenceId si 
             WHERE   NOT lower(sequence) = id
              ]]>
@@ -221,7 +221,7 @@
             <column name="short_name"/>
             <sql>
             <![CDATA[
-                SELECT ens.source_id, '@project_id@' as project_id,
+                SELECT ens.source_id, '@PROJECT_ID@' as project_id,
                        decode(ed.name,
                               'Jane Carlton P. vivax chromosomes', 'TIGR',
                               'Sanger P. reichenowi contigs', 'Sanger',
@@ -255,7 +255,7 @@
         <column name="project_id"/>
         <column name="gff_sequence"/>
         <sql>
-            select ns.source_id, '@project_id@' AS project_id,
+            select ns.source_id, '@PROJECT_ID@' AS project_id,
                    ns.sequence as gff_sequence
             from apidb.SequenceAttributes gs,
                  dots.NaSequence ns
@@ -290,7 +290,7 @@
         <column name="gff_attr_localization"/>
         <column name="gff_is_top_level"/>
         <sql>
-            select ns.source_id, '@project_id@' AS project_id,
+            select ns.source_id, '@PROJECT_ID@' AS project_id,
                    'apidb|' || ns.source_id as gff_seqid,
                    'ApiDB' as gff_source,
                    'supercontig' as gff_type,

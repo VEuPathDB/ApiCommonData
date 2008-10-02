@@ -64,7 +64,7 @@
             <column name="total_alignments"/>
             <sql>
             <![CDATA[
-             select source_id, '@project_id@' AS project_id, 
+             select source_id, '@PROJECT_ID@' AS project_id, 
                     count(composite_element_id) as total_alignments
              from apidb.SAGETAGATTRIBUTES
              group by source_id
@@ -78,7 +78,7 @@
             <column name="total_gene_alignments"/>
             <sql>
             <![CDATA[
-             select source_id, '@project_id@' AS project_id, 
+             select source_id, '@PROJECT_ID@' AS project_id, 
                     sum(gene_count) as total_gene_alignments
              from apidb.SAGETAGATTRIBUTES 
              group by source_id

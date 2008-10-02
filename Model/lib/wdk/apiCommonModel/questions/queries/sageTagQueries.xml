@@ -13,7 +13,7 @@
        <sql>
          <![CDATA[
        select source_id,
-              '@project_id@' as project_id, 
+              '@PROJECT_ID@' as project_id, 
               to_char(sum(xij * log(10, (xij/(Ni * fj)))), '99999D0') as R
        from (
          select a.source_id, aa.library_name, library_count.n as ni, f.frequency as fj, sum(aa.raw_count) as xij
@@ -82,7 +82,7 @@
         </sqlParamValue>
        <sql includeProjects="GiardiaDB,PlasmoDB">
          <![CDATA[
-            select distinct sta.source_id as source_id, '@project_id@' as project_id,
+            select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
@@ -96,7 +96,7 @@
        </sql>
        <sql includeProjects="ToxoDB">
          <![CDATA[
-            select distinct sta.source_id as source_id, '@project_id@' as project_id,
+            select distinct sta.source_id as source_id, '@PROJECT_ID@' as project_id,
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sequenceattributes satr, apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
@@ -192,7 +192,7 @@
        <sql>
          <![CDATA[
          select distinct a.source_id, a.project_id
-         from apidb.SageTagAttributes a, @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+         from apidb.SageTagAttributes a, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
          where ds.dataset_id =  $$rad_source_id$$
            and (a.rad_source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', '') 
                  or a.source_id LIKE REGEXP_REPLACE(REPLACE(ds.dataset_value,'*', '%'),'[[:space:]]', ''))

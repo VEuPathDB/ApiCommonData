@@ -20,11 +20,11 @@
         <sql includeProjects="CryptoDB">
             <![CDATA[
                 SELECT distinct etn.source_id as source_id, 
-                       '@project_id@' as project_id
+                       '@PROJECT_ID@' as project_id
                 FROM   DoTS.ExternalNASequence etn,
                        SRes.ExternalDatabaseRelease edr,
                        SRes.ExternalDatabase edb, 
-                       @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+                       @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
                  WHERE ds.dataset_id = $$isolate_id$$
                    AND lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
                                                        '*', '%'), '[[:space:]]', '')
@@ -36,9 +36,9 @@
         </sql>
         <sql includeProjects="PlasmoDB">
             <![CDATA[
-            SELECT source_id, '@project_id@' as project_id
+            SELECT source_id, '@PROJECT_ID@' as project_id
             FROM   ApiDB.IsolateAttributes, 
-                   @LOGIN_SCHEMA@dataset_values@LOGIN_DBLINK@ ds
+                   @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
             WHERE  ds.dataset_id = $$isolate_id$$
             AND    lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
                                                        '*', '%'), '[[:space:]]', '')
@@ -66,7 +66,7 @@
       <sql includeProjects="CryptoDB">
       <![CDATA[
           SELECT distinct etn.source_id as source_id,
-                 '@project_id@' as project_id
+                 '@PROJECT_ID@' as project_id
           FROM   DoTS.ExternalNASequence etn,
                  DoTS.NASequenceRef nasr,
                  SRES.Reference ref,
@@ -103,7 +103,7 @@
         <column name="data_type" includeProjects="PlasmoDB"/>
         <sql includeProjects="CryptoDB">
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@project_id@' as project_id
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM   DoTS.IsolateSource src, 
                    DoTS.ExternalNASequence etn,
                    SRes.ExternalDatabaseRelease edr,
@@ -125,7 +125,7 @@
 
         <sql includeProjects="PlasmoDB">
           <![CDATA[
-            SELECT src.source_id, '@project_id@' as project_id, src.data_type,src.strain
+            SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type,src.strain
             FROM   ApiDB.IsolateAttributes src
             WHERE  lower(regexp_replace(src.strain, '[-_/]', '-')) in ($$strain$$)
             AND  src.data_type in ($$type$$)
@@ -153,7 +153,7 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@project_id@' as project_id
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM   DoTS.IsolateSource src, 
                    DoTS.ExternalNASequence etn,
                    SRes.ExternalDatabaseRelease edr,
@@ -191,7 +191,7 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id
             FROM   ApiDB.IsolateAttributes src 
             WHERE  src.isolation_source in ($$isolation_source$$)
             ORDER BY src.source_id
@@ -215,7 +215,7 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT gf.source_id, '@project_id@' as project_id
+            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
             FROM ApiDB.IsolateAttributes gf
             WHERE gf.product IN ($$product$$)
               AND gf.product IS NOT NULL
@@ -242,7 +242,7 @@
         <column name="project_id"/>
         <sql>
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@project_id@' as project_id
+            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
             FROM DoTS.ExternalNASequence etn, 
                  DoTS.NASequenceRef nasr,
                  SRES.Reference ref,
@@ -285,13 +285,13 @@
         <column name="data_type"/>
         <sql includeProjects="PlasmoDB">
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id,
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
                                src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  replace(src.country, ',', ';') IN ($$country$$)
                     AND  src.data_type in ($$type$$)
             UNION
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id,
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
                    src.data_type
             FROM   ApiDB.IsolateAttributes src,
                    ApiDB.Continents cnt
@@ -303,12 +303,12 @@
 
         <sql includeProjects="CryptoDB">
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id,
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
 						       src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  replace(src.country, ',', ';') IN ($$country$$)
 						UNION
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id,
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
 						       src.data_type
             FROM   ApiDB.IsolateAttributes src,
 						       ApiDB.Continents cnt
@@ -337,7 +337,7 @@
         <column name="data_type"/>
         <sql>
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@project_id@' as project_id,
+            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
                                src.data_type
             FROM   ApiDB.IsolateAttributes src
             WHERE  src.collected_by IN ($$submitter$$)
@@ -365,7 +365,7 @@
       <sql>
          <![CDATA[
          SELECT distinct t.source_id,
-                '@project_id@' as project_id
+                '@PROJECT_ID@' as project_id
          FROM   DoTS.GeneFeature gf, 
                 DoTS.ExternalNASequence etn, 
                 DoTS.NaLocation nal,
