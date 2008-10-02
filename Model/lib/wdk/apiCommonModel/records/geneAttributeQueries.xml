@@ -641,7 +641,7 @@
             <column name="graph_daily"/>
             <sql>
             <![CDATA[
-               SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
+           SELECT egs.source_id, 'PlasmoDB' as project_id,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
@@ -653,7 +653,9 @@
                       NVL(MAX(graph_mexp128), 0) AS graph_mexp128,
                       NVL(MAX(graph_kappe), 0) AS graph_kappe,
                       NVL(MAX(graph_daily), 0) AS graph_daily
-               FROM apidb.PlasmoExpressionGraphs egs
+               FROM apidb.PlasmoExpressionGraphs egs, apidb.geneattributes ga
+                where ga.source_id = egs.source_id (+)
+               group by egs.source_id
             ]]>
             </sql>
         </sqlQuery>
