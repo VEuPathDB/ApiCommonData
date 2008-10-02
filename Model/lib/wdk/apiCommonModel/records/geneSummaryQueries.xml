@@ -101,7 +101,7 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-select source_id,'@PROJECT_ID' as project_id
+select source_id,'@PROJECT_ID@' as project_id
 from 
 (SELECT  MAX(i.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(i.organism, 'Toxoplasma gondii ME49', 1, 
