@@ -140,8 +140,12 @@
                    c.name as author,
                    c.address1 as affiliation,
                    c.address2 as address
-            FROM dots.est e, sres.contact c
+            FROM dots.est e, sres.contact c, 
+                 dots.externalnasequence ens, sres.sequenceontology so
             WHERE e.contact_id = c.contact_id
+            and ens.na_sequence_id = e.na_sequence_id
+            and ens.sequence_ontology_id = so.sequence_ontology_id
+            and so.term_name = 'EST'
             ]]>
             </sql>
         </sqlQuery>
