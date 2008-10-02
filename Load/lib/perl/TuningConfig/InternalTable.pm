@@ -303,7 +303,7 @@ sub dropIntermediateTables {
   my ($self, $dbh, $warningFlag) = @_;
 
   foreach my $intermediate (@{$self->{intermediateTables}}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("must drop intermediate table $intermediate->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    must drop intermediate table $intermediate->{name}");
 
     my $sql = <<SQL;
        drop table $intermediate->{name}
