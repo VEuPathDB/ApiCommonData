@@ -120,7 +120,7 @@
        </enumList>
     </enumParam>
 
-      <flatVocabParam name="sequenceTypes" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+      <flatVocabParam name="sequenceTypes" includeProjects="GiardiaDB,ApiDB"
                      queryRef="genomicVQ.sequenceTypes"
                      prompt="Sequence Type"
                      multiPick="true">
@@ -136,12 +136,12 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
  <querySet name="genomicVQ" queryType="vocab">
-   <sqlQuery name="sequenceTypes" includeProjects="PlasmoDB,GiardiaDB,ToxoDB,CryptoDB">
+   <sqlQuery name="sequenceTypes" includeProjects="GiardiaDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
          <![CDATA[
-            select distinct so.so_id as internal, so.term_name || 's' as term,
+            select distinct so.sequence_ontology_id as internal, so.term_name || 's' as term,
             case when so.term_name = 'chromosome' then 1
                  when so.term_name = 'supercontig' then 2
                  when so.term_name = 'contig' then 3

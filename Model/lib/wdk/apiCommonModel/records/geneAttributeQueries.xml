@@ -803,18 +803,18 @@
             <column name="pdb_id"/>
             <sql>
               <![CDATA[
-            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
-                   dr.primary_identifier AS pdb_id
+            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id, xx.pdb_id
             FROM apidb.geneattributes gf,
-                 dots.DbRefNaFeature drnf,
+             (SELECT drnf.na_feature_id, dr.primary_identifier AS pdb_id
+              FROM dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.na_feature_id = drnf.na_feature_id(+)
-            AND drnf.db_ref_id = dr.db_ref_id(+)
-            AND dr.external_database_release_id = edr.external_database_release_id(+)
-            AND edr.external_database_id = ed.external_database_id(+)
-            AND ed.name = 'Structural Genomics Consortium 3D Structures'
-            ORDER BY dr.primary_identifier
+              WHERE drnf.db_ref_id = dr.db_ref_id
+                AND dr.external_database_release_id = edr.external_database_release_id
+                AND edr.external_database_id = ed.external_database_id
+                AND ed.name = 'Structural Genomics Consortium 3D Structures') xx                      
+            WHERE gf.na_feature_id = xx.na_feature_id(+)             
+            ORDER BY pdb_id
               ]]>
             </sql>
         </sqlQuery>

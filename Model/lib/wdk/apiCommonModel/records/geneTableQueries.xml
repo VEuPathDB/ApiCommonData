@@ -1012,7 +1012,7 @@
             <sql>
             <![CDATA[
             SELECT total, 
-                   gf.source_id, '@PROJECT_ID@' as project_id
+                   source_id, '@PROJECT_ID@' as project_id
             FROM(
             SELECT count(gf.source_id) as total,
                    gf.source_id
@@ -1947,6 +1947,7 @@
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pdb_id"/>
@@ -1958,7 +1959,7 @@
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = '$$source_id$$'
+            WHERE gf.source_id = $$source_id$$
             AND gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             AND dr.external_database_release_id = edr.external_database_release_id
