@@ -13,7 +13,7 @@
   <querySet name="GeneTables" queryType="table">
 
             <defaultTestParamValues includeProjects="PlasmoDB">
-               <paramValue name="source_id">PB400024.00.0</paramValue>
+               <paramValue name="source_id">PF11_0344</paramValue>
                <paramValue name="project_id">PlasmoDB</paramValue>
             </defaultTestParamValues>
 
@@ -684,6 +684,10 @@
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd2_980</paramValue>
             </testParamValues>
+            <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">MAL13P1.166 </paramValue>
+            </testParamValues>
+
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -1528,6 +1532,12 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="InteractionsAsPrey" isCacheable="false" includeProjects="PlasmoDB">
+
+            <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">PFL0275w</paramValue>
+            </testParamValues>
+
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1559,6 +1569,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="InteractionsAsBait" isCacheable="false" includeProjects="PlasmoDB">
+
+          <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">PFL0275w</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1590,6 +1605,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Y2hInteractions" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+
+         <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">PFL0275w</paramValue>
+            </testParamValues>
+
         <paramRef ref="recordParams.source_id"/>
         <paramRef ref="recordParams.project_id"/>
         <column name="source_id"/>
@@ -1669,6 +1689,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ProteinExpression" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+
+        <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">PB000172.01.0</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1791,7 +1816,7 @@
             <column name="link_url"/>
             <sql>
             <![CDATA[
-               select gf.source_id,
+               select gf.source_id, $$project_id$$ AS project_id,
                DECODE(ed.name,'Winzeler_OPI_clusters','Ontology Based pattern Identification',
                       'Winzeler_Literature_References','Literature Database') as dataset,
                r.remark || gf.source_id as link_url
