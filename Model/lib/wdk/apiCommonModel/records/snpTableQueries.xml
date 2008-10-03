@@ -3,7 +3,7 @@
 
 
       <defaultTestParamValues includeProjects="PlasmoDB">
-         <paramValue name="source_id"></paramValue>
+         <paramValue name="source_id">CombinedSNP.MAL13.6332</paramValue>
          <paramValue name="project_id">PlasmoDB</paramValue>
       </defaultTestParamValues>
 
@@ -109,6 +109,11 @@
 
         <sqlQuery name="isolates" includeProjects="PlasmoDB" 
               isCacheable="false">
+
+           <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">CombinedSNP.MAL2.3180</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -120,7 +125,7 @@
             <column name="allele"/>
             <sql>
             <![CDATA[
-              select isnp.snp_source_id, AS source_id, '@PROJECT_ID@' AS project_id,
+              select isnp.snp_source_id AS source_id, '@PROJECT_ID@' AS project_id,
               atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
               isnp.allele, atr.DATA_TYPE as assay_type
               from apidb.isolateattributes atr, apidb.isolatesnps isnp

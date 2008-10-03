@@ -76,6 +76,7 @@
             SELECT nal.start_min,
                    chr.source_id chromosome,
                    if.source_id snp_id, 
+                   if.source_id source_id, 
                    if.allele,
                    case when if.allele = snp.major_allele
                         then '<font color=#342D7E><b>' || if.allele || '</b></font>'

@@ -2063,6 +2063,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB,ApiDB">
+
+       <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">PB000296.02.0</paramValue>
+            </testParamValues>
+
        <paramRef ref="recordParams.source_id"/>
        <paramRef ref="recordParams.project_id"/>
         <column name="source_id"/>
@@ -2076,7 +2081,7 @@
           SELECT lg.name as studyName,
                  max(to_char(de.fold_change, '999.99')) as fold_change,
                  max(to_char(de.confidence,'99.99')) as confidence, 
-                 ga.gene, '@PROJECT_ID@' as project_id
+                 '@PROJECT_ID@' as project_id
             FROM Rad.LogicalGroup lg,
                  Rad.AnalysisInput ai,
                  Rad.Analysis a, 
