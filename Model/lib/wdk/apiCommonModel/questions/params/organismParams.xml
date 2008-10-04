@@ -237,7 +237,7 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name in ('Plasmodium falciparum','Plasmodium vivax','Plasmodium knowlesi') )  organisms
+                  AND tn.name in ('Plasmodium falciparum','Plasmodium knowlesi','Plasmodium vivax') )  organisms
           ORDER BY organisms.name
         ]]>
       </sql>
@@ -249,6 +249,51 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </wsQuery>
 
+ <!--===================================================================-->
+    <!-- with chromosomes and ESTs -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withChromosomesESTs" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+            <sql  includeProjects="CryptoDB">
+            SELECT * FROM (
+               SELECT 'Cryptosporidium parvum' as term,
+                       '''' ||'Cryptosporidium parvum'|| '''' as internal 
+               FROM dual
+            )
+            </sql>          
+
+            <sql  includeProjects="ToxoDB">
+            SELECT * FROM (
+                SELECT 'Toxoplasma gondii' as term,
+                        '''' ||'Toxoplasma gondii'|| ''''  as internal 
+                FROM dual
+            )
+            </sql>
+ 
+            <sql  includeProjects="PlasmoDB">
+            SELECT * FROM (
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+            UNION
+                SELECT 'Plasmodium vivax' as term,
+                       '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
+                FROM dual
+            )
+            </sql>
+
+        </sqlQuery>
+
+
+
+    <wsQuery name="withChromosomesESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </wsQuery>
+
     <!--===================================================================-->
     <!-- with genomic seq
 
@@ -256,7 +301,7 @@
          associated with a sequence whose sequence_ontology_id maps to
          'contig', 'supercontig' or 'chromosome'.
                                                                            -->
-    <!--===================================================================-->
+    <!--=======================================================<============-->
 
     <sqlQuery name="withGenomicSeq" excludeProjects="ApiDB">
       <column name="internal"/>
