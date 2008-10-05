@@ -60,8 +60,10 @@
 
     <sqlQuery name="ByLocation" includeProjects="GiardiaDB,PlasmoDB"
               isCacheable="true">
+ <paramRef ref="organismParams.organism"  queryRef="organismVQ.pf" multiPick="false"  includeProjects="PlasmoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional2" includeProjects="PlasmoDB"/>
         <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId"/>
-        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
+     <!--   <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/> -->
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
@@ -88,7 +90,7 @@
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
-            where a.sequence_source_id in ($$chromosome$$)
+            where a.sequence_source_id in ($$chromosomeOptional2$$)
               AND  a.feature_type = 'SAGETagFeature'
               AND  a.end_max >=  $$start_point$$
               AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
@@ -100,9 +102,10 @@
 
 <wsQuery name="ByLocation" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-
-        <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId" default="CH991779"/>
-        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome" default="P.f. chromosome 1"/>
+ 
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/> 
+        <paramRef ref="sharedParams.chromosomeOptional2"/>
+        <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
