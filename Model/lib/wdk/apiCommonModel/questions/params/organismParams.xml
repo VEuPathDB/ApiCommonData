@@ -198,7 +198,7 @@
     <!--===================================================================-->
     <!-- with chromosomes -->  
     <!--===================================================================-->
-
+<!--
     <sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
@@ -243,6 +243,47 @@
       </sql>
 
     </sqlQuery>
+-->
+
+ <sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+            <sql  includeProjects="CryptoDB">
+            SELECT * FROM (
+               SELECT 'Cryptosporidium parvum' as term,
+                       '''' ||'Cryptosporidium parvum'|| '''' as internal 
+               FROM dual
+            )
+            </sql>          
+
+            <sql  includeProjects="ToxoDB">
+            SELECT * FROM (
+                SELECT 'Toxoplasma gondii' as term,
+                        '''' ||'Toxoplasma gondii'|| ''''  as internal 
+                FROM dual
+            )
+            </sql>
+ 
+            <sql  includeProjects="PlasmoDB">
+            SELECT * FROM (
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+            UNION
+                SELECT 'Plasmodium knowlesi' as term,
+                       '''' ||'Plasmodium knowlesi strain H'|| ''''   as internal 
+                FROM dual
+            UNION
+                SELECT 'Plasmodium vivax' as term,
+                       '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
+                FROM dual
+            )
+            </sql>
+
+        </sqlQuery>
+
+
 
     <wsQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
