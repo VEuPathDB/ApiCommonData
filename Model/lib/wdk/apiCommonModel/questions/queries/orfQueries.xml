@@ -52,7 +52,7 @@
           <paramValue name="sequenceId">AAEE01000001</paramValue>
         </testParamValues>
 
-        <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomes"  multiPick="false" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -69,7 +69,7 @@
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
 	    WHERE fl.feature_type = 'Miscellaneous'
             AND sa.na_sequence_id = fl.na_sequence_id
-	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = $$organismWithChromosomes$$)
+	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = $$organism$$)
                    OR lower(sa.source_id) = lower($$sequenceId$$))
             AND fl.end_max >=  $$start_point$$ 
 	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
