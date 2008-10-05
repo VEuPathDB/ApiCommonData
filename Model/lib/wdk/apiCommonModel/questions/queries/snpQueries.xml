@@ -353,7 +353,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <wsQuery name="SnpsByLocation" includeProjects="ApiDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
           <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>-->
-          <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
+          <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesSNPs"/>
           <paramRef ref="sharedParams.chromosomeOptional" />
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
