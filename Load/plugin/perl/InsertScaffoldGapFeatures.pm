@@ -101,7 +101,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = {requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision$',
+		       cvsRevision => '$Revision: 23998 $',
 		       cvsTag => '$Name$',
 		       name => ref($self),
 		       revisionNotes => '',
