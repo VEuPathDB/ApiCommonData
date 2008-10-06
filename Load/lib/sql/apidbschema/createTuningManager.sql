@@ -16,7 +16,11 @@ create table apidb.TuningMgrExternalDependency (
    timestamp    date not null,
    row_count    number not null);
 
-create table apidb.InstanceMetaInfo (
-   family_name varchar2(32));
+create table apidb.InstanceMetaInfo as
+select substr(sys_context ('USERENV', 'SERVICE_NAME'), 1, instr(sys_context ('USERENV', 'SERVICE_NAME'), '.')-1) as instance_name,
+       sys_context ('USERENV', 'SERVICE_NAME') as service_name
+       cast(null as varchar2(50)) as validation_key,
+       cast(null as varchar2(50)) as current_updater
+from dual;
 
 exit
