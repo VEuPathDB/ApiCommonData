@@ -1795,7 +1795,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 -->
 	 </processQuery>
 
-    <sqlQuery name="GenesBySageTagRStat" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+    <sqlQuery name="GenesBySageTagRStat" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"
                  includeProjects="GiardiaDB,ToxoDB"/> 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
@@ -1995,7 +1995,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--  plasmoDB 4.4 dataset-->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPlasmoDbDataset" includeProjects="PlasmoDB"
+    <sqlQuery name="GenesByPlasmoDbDataset" doNotTest="true" includeProjects="PlasmoDB"
                  isCacheable="true">
         <paramRef ref="geneParams.plasmodb_4-4_dataset"/>
         <column name="project_id"/>

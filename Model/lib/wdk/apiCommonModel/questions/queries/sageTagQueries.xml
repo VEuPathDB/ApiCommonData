@@ -3,8 +3,9 @@
   <querySet name="SageTagIds" queryType="id">
 
 
-    <sqlQuery name="ByRStat" includeProjects="GiardiaDB,ToxoDB,PlasmoDB"
+    <sqlQuery name="ByRStat" doNotTest="true" includeProjects="GiardiaDB,ToxoDB,PlasmoDB"
               isCacheable="true">
+
        <paramRef ref="geneParams.sage_tag_library_name"/>
        <paramRef ref="geneParams.sage_tag_min_r"/>
         <column name="source_id"/>

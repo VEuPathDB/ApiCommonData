@@ -273,9 +273,9 @@
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
 
-        <testParamValues includeProjects="CryptoDB">
+        <testParamValues includeProjects="CryptoDB,PlasmoDB">
             <paramValue name="continent">Africa</paramValue>
-        </testParamValues>        
+        </testParamValues>     
 
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
