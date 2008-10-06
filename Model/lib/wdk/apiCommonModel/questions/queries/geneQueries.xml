@@ -786,12 +786,9 @@ sns2.external_database_release_id=extr.external_database_release_id
         </testParamValues>
 
         <testParamValues includeProjects="PlasmoDB">
-          <paramValue name="profile_pattern"></paramValue>
-          <paramValue name="included_species"></paramValue>
-          <paramValue name="excluded_species"></paramValue>
-          <paramValue name="phyletic_indent_map"></paramValue>
-          <paramValue name="phyletic_term_map"></paramValue>
-          <paramValue name="organism"></paramValue>
+          <paramValue name="included_species">fru</paramValue>
+          <paramValue name="excluded_species">Fungi</paramValue>
+          <paramValue name="organism">Plasmodium falciparum</paramValue>
         </testParamValues>
 
         <paramRef ref="geneParams.profile_pattern"/>
@@ -1315,6 +1312,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
               isCacheable="true">
+
+        <testParamValues includeProjects="PlasmoDB">
+          <paramValue name="single_gene_id">PVX_092275</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
         <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="TGME49_053730" />
@@ -1689,7 +1691,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByInterproDomain" excludeProjects="ApiDB"  
 			isCacheable="true">
 
-        <testParamValues includeProjects="CryptoDB">
+        <testParamValues includeProjects="CryptoDB,PlasmoDB">
            <paramValue name="domain_database">PRODOM</paramValue>
            <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
         </testParamValues>
@@ -2656,6 +2658,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB"
           isCacheable='true'>
+
+        <testParamValues includeProjects="PlasmoDB">
+            <paramValue name="diffMeanExpr_comparitor">W2mef EBA175 KO (late T)</paramValue>
+        </testParamValues>
+
        <paramRef ref="geneParams.diffMeanExpr_reference"/>
        <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
        <paramRef ref="geneParams.regulated_dir"/>
