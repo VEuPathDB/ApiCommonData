@@ -1101,8 +1101,8 @@ SELECT CASE
        gf.is_pseudo,
        LEAST(nl.start_min, nl.end_max) AS start_min,
        GREATEST(nl.start_min, nl.end_max) AS end_max,
-       exons.coding_start,
-       exons.coding_end,
+       first_exon.coding_start,
+       last_exon.coding_end,
        nl.is_reversed,
        sns.length AS transcript_length,
        GREATEST(0, least(nl.start_min, nl.end_max) - 5000)
@@ -1163,11 +1163,18 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      apidb.DerisiExpn DerisiExpn, apidb.WinzelerExpn WinzelerExpn,
      apidb.ToxoExpn ToxoExpn, apidb.GenomicSequence sequence,
      dots.geneinstance gi,
-     (SELECT parent_id, count(*) AS exon_count,
-             min(coding_start) as coding_start,
-             max(coding_end) as coding_end
+     (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
+     (SELECT ef.parent_id, fl.coding_start
+      FROM dots.ExonFeature ef, apidb.FeatureLocation fl
+      WHERE ef.order_number = 1
+        AND ef.na_feature_id = fl.na_feature_id
+        AND fl.is_top_level = 1) first_exon,
+     (SELECT ef.parent_id, ef.order_number, fl.coding_end
+      FROM dots.ExonFeature ef, apidb.FeatureLocation fl
+      WHERE ef.na_feature_id = fl.na_feature_id
+        AND fl.is_top_level = 1) last_exon,
      (SELECT nfc.na_feature_id,
              MAX(DBMS_LOB.SUBSTR(nfc.comment_string, 300, 1))
                AS comment_string
@@ -1222,6 +1229,9 @@ WHERE gf.source_id is not null
        = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
+  AND gf.na_feature_id = first_exon.parent_id(+)
+  AND exons.parent_id = last_exon.parent_id(+)
+  AND exons.exon_count = last_exon.order_number(+)
   AND gf.na_feature_id = cmnt.na_feature_id(+)
   AND gf.source_id = deprecated.source_id(+)
   AND gf.na_feature_id = gi.na_feature_id(+)
