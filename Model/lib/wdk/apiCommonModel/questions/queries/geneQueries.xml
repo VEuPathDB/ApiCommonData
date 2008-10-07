@@ -2050,7 +2050,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByProfileSimilarity" includeProjects="ApiDB"  
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+    <!--   <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>  -->
        <paramRef ref="geneParams.ProfileGeneId"/>
        <paramRef ref="geneParams.ProfileDistanceMethod"/>
        <paramRef ref="geneParams.ProfileNumToReturn"/>
@@ -2666,6 +2666,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <wsQuery name="GenesByKappeFoldChange" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="geneParams.kappeAnalysis"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
