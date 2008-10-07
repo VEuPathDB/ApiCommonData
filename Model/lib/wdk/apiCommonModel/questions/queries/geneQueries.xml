@@ -1321,6 +1321,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           <paramValue name="single_gene_id">PVX_092275</paramValue>
         </testParamValues>
 
+        <testParamValues includeProjects="CryptoDB">
+          <paramValue name="single_gene_id">Chro.70036</paramValue>
+        </testParamValues>
+
+
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
         <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="TGME49_053730" />
