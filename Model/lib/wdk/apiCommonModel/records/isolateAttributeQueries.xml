@@ -74,10 +74,11 @@
             <column name="gene_description"/>
             <column name="protein_sequence"/>
             <sql>
-               SELECT etn.source_id, 
+            select ia.source_id, p.gene_description,
+                   p.protein_sequence, '@PROJECT_ID@' as project_id
+            from  (SELECT etn.source_id, 
                       tas.description as gene_description,
-                      tas.sequence as protein_sequence,
-                      '@PROJECT_ID@' as project_id
+                      tas.sequence as protein_sequence
                FROM   DoTS.TranslatedAAFeature taf,
                       DoTS.TranslatedAASequence tas,
                       DoTS.Transcript trp, 
@@ -92,6 +93,8 @@
                   AND tas.aa_sequence_id = taf.aa_sequence_id
                   AND trp.parent_id = gf.na_feature_id
                   AND etn.na_sequence_id = gf.na_sequence_id
+                  ) p, apidb.isolateattributes ia
+            where ia.source_id = p.source_id (+)
            </sql>
       </sqlQuery>
 
@@ -105,16 +108,18 @@
             <column name="journal_vol"/>
             <column name="journal_page"/>
             <sql>
-               SELECT rownum as row_number, 
+            select ia.source_id, '@PROJECT_ID@' as project_id,
+                   r.title, r.author, r.year, r.journal_or_book_name, 
+                   r.journal_vol, r.journal_page
+            from ( SELECT rownum as row_number, 
                       etn.source_id, 
                       ref.title,
                       ref.author,
                       ref.year,
                       ref.journal_or_book_name,
                       ref.journal_vol,
-                      ref.journal_page,
-                      '@PROJECT_ID@' as project_id
-               FROM   DoTS.ExternalNASequence etn,
+                      ref.journal_page
+               FROM   DoTS.NASequence etn,
                       DoTS.NASequenceRef nasr,
                       SRES.Reference ref,
                       SRes.ExternalDatabaseRelease edr,
@@ -127,6 +132,8 @@
                   AND etn.na_sequence_id = nasr.na_sequence_id
                   and rownum = 1
                ORDER BY ref.reference_id asc
+               ) r, apidb.isolateattributes ia
+            where ia.source_id = r.source_id (+)
            </sql>
       </sqlQuery>
 
@@ -137,21 +144,16 @@
             <column name="gene_product"/>
             <sql>
             <![CDATA[
-              SELECT t.source_id,
-                     gf.product gene_product,
-                     gf.source_id as gene,
-                     '@PROJECT_ID@' as project_id
-              FROM   DoTS.GeneFeature gf,
-                     DoTS.ExternalNASequence etn,
-                     DoTS.NaLocation nal,
-                     (SELECT source_id, target_name, min_subject_start,
-                             max_subject_end, product 
-                      FROM   ApiDB.IsolateAttributes) t
-              WHERE etn.na_sequence_id = gf.na_sequence_id
-                AND nal.na_feature_id = gf.na_feature_id
-                AND t.target_name = etn.source_id
-                AND nal.start_min <= t.max_subject_end
-                AND nal.end_max >= t.min_subject_start
+            select ia.source_id, '@PROJECT_ID@' as project_id,
+                   gene.gene_product, gene.gene
+             from (select ia.source_id, 
+                          ga.product as gene_product, ga.source_id as gene
+                   from apidb.geneattributes ga, apidb.isolateattributes ia
+                   where ia.target_name = ga.sequence_id
+                   and ga.start_min <= ia.max_subject_end
+                   and ga.end_max >= ia.min_subject_start
+                  ) gene, apidb.isolateattributes ia
+             where ia.source_id = gene.source_id (+)
             ]]>
            </sql>
       </sqlQuery>
