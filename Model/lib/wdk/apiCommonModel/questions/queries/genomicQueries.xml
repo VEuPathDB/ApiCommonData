@@ -66,7 +66,7 @@
         <column name="project_id"/>
         <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB">
             <![CDATA[
-            SELECT DISTINCT ens.source_id, '@PROJECT_ID@' as project_id
+            SELECT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens,apidb.sequenceattributes atr
             WHERE ens.taxon_id IN ($$organism$$)
                AND atr.na_sequence_id = ens.na_sequence_id
