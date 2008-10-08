@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false">
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ToxoDB,GiardiaDB">
             <paramRef ref="recordParams.strains_row"/>
             <paramRef ref="recordParams.strains_column"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -26,7 +26,22 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="BooleanExpansion" isCacheable="false">
+        <sqlQuery name="DeprecatedGenes" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.deprecated_genes"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.is_deprecated = $$deprecated_genes$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="BooleanExpansion" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -40,7 +55,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ToxoGenes" isCacheable="false">
+        <sqlQuery name="ToxoGenes" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -64,7 +79,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="NeosporaGenes" isCacheable="false">
+        <sqlQuery name="NeosporaGenes" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -79,7 +94,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="AllTgResults" isCacheable="false">
+        <sqlQuery name="AllTgResults" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -94,7 +109,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="OneToOneToOneTgGenes" isCacheable="false">
+        <sqlQuery name="OneToOneToOneTgGenes" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -136,7 +151,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="StrainInstances" isCacheable="false">
+        <sqlQuery name="StrainInstances" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -151,7 +166,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="TgStrainGenes" isCacheable="false">
+        <sqlQuery name="TgStrainGenes" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -175,7 +190,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsTgStrainIntersect" isCacheable="false">
+        <sqlQuery name="DetailsTgStrainIntersect" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.strain_b"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -210,7 +225,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsTgStrainMinus" isCacheable="false">
+        <sqlQuery name="DetailsTgStrainMinus" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.strain_b"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -245,7 +260,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="DetailsTgAllMinus" isCacheable="false">
+        <sqlQuery name="DetailsTgAllMinus" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -278,7 +293,8 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
                 ]]>
             </sql>
         </sqlQuery>
-        <sqlQuery name="DetailsTgAllIntersect" isCacheable="false">
+
+        <sqlQuery name="DetailsTgAllIntersect" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.strain_a"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>

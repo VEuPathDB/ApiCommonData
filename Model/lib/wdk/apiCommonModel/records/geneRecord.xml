@@ -103,64 +103,6 @@
               sorting="location_text asc"
          />
 
-      <!-- =============================================================== -->
-      <!--   Filters -->  
-      <!-- =============================================================== -->
-
-<!--
-            <answerFilterLayout name="strains"
-                                displayName="Strain Summary">
-                <description>
-                    <![CDATA[
-                      Summary views of results from specific strains.
-                    ]]>
-                </description>
-                
-                <instanceRef ref="any_instance"   layout="1-1" />
-                <instanceRef ref="any_genes"      layout="1-2" />
-                <instanceRef ref="all_instances"  layout="1-3" />
-                <instanceRef ref="gt1_instances"  layout="1-4" />
-                <instanceRef ref="me49_instances" layout="1-5" />
-                <instanceRef ref="veg_instances"  layout="1-6" />
-
-            </answerFilterLayout>
-
-            <answerFilterLayout name="strain_comparison"
-                                displayName="Strain Comparisons">
-                <description>
-                    <![CDATA[
-                      Detailed views of results examining similarities and differences between strains.
-                    ]]>
-                </description>
-                
-                <instanceRef ref="all_int_gt1"   layout="1-1" />
-                <instanceRef ref="all_min_gt1"   layout="1-2" />
-                <instanceRef ref="all_int_me49"  layout="1-3" />
-                <instanceRef ref="all_min_me49"  layout="1-4" />
-                <instanceRef ref="all_int_veg"   layout="1-5" />
-                <instanceRef ref="all_min_veg"   layout="1-6" />
-                <instanceRef ref="gt1_int_gt1"   layout="2-1" />
-                <instanceRef ref="gt1_min_gt1"   layout="2-2" />
-                <instanceRef ref="gt1_int_me49"  layout="2-3" />
-                <instanceRef ref="gt1_min_me49"  layout="2-4" />
-                <instanceRef ref="gt1_int_veg"   layout="2-5" />
-                <instanceRef ref="gt1_min_veg"   layout="2-6" />
-                <instanceRef ref="me49_int_gt1"  layout="3-1" />
-                <instanceRef ref="me49_min_gt1"  layout="3-2" />
-                <instanceRef ref="me49_int_me49" layout="3-3" />
-                <instanceRef ref="me49_min_me49" layout="3-4" />
-                <instanceRef ref="me49_int_veg"  layout="3-5" />
-                <instanceRef ref="me49_min_veg"  layout="3-6" />
-                <instanceRef ref="veg_int_gt1"   layout="4-1" />
-                <instanceRef ref="veg_min_gt1"   layout="4-2" />
-                <instanceRef ref="veg_int_me49"  layout="4-3" />
-                <instanceRef ref="veg_min_me49"  layout="4-4" />
-                <instanceRef ref="veg_int_veg"   layout="4-5" />
-                <instanceRef ref="veg_min_veg"   layout="4-6" />
-
-            </answerFilterLayout>
--->
-                                
 
       <!-- =============================================================== -->
       <!--   Filters -->  
@@ -180,16 +122,43 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB">
+                          includeProjects="ToxoDB,GiardiaDB">
                 
-                <instance name="all_results" displayName="All Results" isDefault="true">
+                <instance name="all_results" displayName="All Results" isDefault="true" includeProjects="ToxoDB">
                     <description>
                         <![CDATA[
                             All results
                         ]]>
                     </description>   
                 </instance>
+                <instance name="all_results" displayName="All Results" includeProjects="GiardiaDB">
+                    <description>
+                        <![CDATA[
+                            All results
+                        ]]>
+                    </description>   
+                </instance>
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.DeprecatedGenes"
+                          includeProjects="GiardiaDB">
                 
+                <instance name="deprecated_genes" displayName="Deprecated Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="deprecated_genes">genes</paramValue>
+                </instance>
+                <instance name="all_genes" displayName="Genes" isDefault="true">
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> deprecated genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="deprecated_genes">deprecated_genes</paramValue>
+                </instance>
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
