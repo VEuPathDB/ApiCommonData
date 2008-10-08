@@ -33,7 +33,7 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                    SELECT source_id, project_id
+                    SELECT c.source_id, c.project_id
                     FROM $$gene_answer$$ c, apidb.geneattributes ga
                     where ga.source_id = c.source_id
                     and ga.is_deprecated = $$deprecated_genes$$
