@@ -564,7 +564,7 @@ Find genes containing a given Pfam domain, family or repeat.  Type a Pfam name, 
 
              <p>SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.</p>
 	     <div align="center">
-                <img src="images/dnds_ratio.png">
+                <img src="images/dnds_ratio.png" alt="Chart of gene count for those with fifty or fewer total SNPs">
              </div>
 	     <br><br>
             ]]>
@@ -911,7 +911,7 @@ References:
                         inReportMaker="false" truncateTo="100000">
                 <text>
                    <![CDATA[
-                   <img src="@CGI_URL@/dataPlotter.pl?id=$$primaryKey$$&sid=$$query_source_id$$&type=DeRisiProfileQuery::Ver1&model=plasmo&fmt=png&thumb=1"/>
+                   <img src="@CGI_URL@/dataPlotter.pl?id=$$primaryKey$$&sid=$$query_source_id$$&type=DeRisiProfileQuery::Ver1&model=plasmo&fmt=png&thumb=1" alt=""/>
                     ]]>
                 </text>
              </textAttribute>
@@ -994,7 +994,7 @@ References:
                 strain 3D7. It uses data from a total of 23 microarray
                 experiments (1), as shown here for gene PFD0830w:<br><br>
                 <div align="center">
-                <img src="images/gam_pct_pfd0830w.png">
+                <img src="images/gam_pct_pfd0830w.png" alt="Expression levels chart">
                 </div><br><br>
                 These experiments were performed using an Affymetrix short
                 oligonucleotide platform, which contains oligos (25-mers)
@@ -1317,15 +1317,15 @@ Find genes that are predicted to encode a signal peptide.
             across those ortholog groups, and find genes that match that pattern.  The pattern is a
             specification, for each species, of "include", "exclude", or "don't care."  Click on the
             radio button next to a species to toggle through the three states.  (A
-            <img src="images/yes.gif"> means
-            "include", an <img src="images/no.gif"> means "exclude"
-            and <img src="images/dc.gif"> means "don't care".)
+            <img src="images/yes.gif" alt="include"> means
+            "include", an <img src="images/no.gif" alt="exclude"> means "exclude"
+            and <img src="images/dc.gif" alt="don't care"> means "don't care".)
             <br> <br>
             For example, to find genes
             that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
-            a <img src="images/yes.gif"> and click on <i>Homo
+            a <img src="images/yes.gif" alt="include"> and click on <i>Homo
             sapiens</i> until you see an
-            <img src="images/no.gif">.
+            <img src="images/no.gif" alt="exclude">.
             <br> <br>
             Note that this query can take some time because of the large number
             of combinations of possible presence/absence calls (2<sup>87</sup>
@@ -4765,7 +4765,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
                            inReportMaker="false" truncateTo="100000" sortable="false">
             <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=DeRisiOverlay::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=lgr,LEGEND" alt=""/>
                 ]]>
             </text>
          </textAttribute>
@@ -4774,7 +4774,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
                         inReportMaker="false" truncateTo="100000" sortable="false">
             <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Winzeler::Cc&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct" alt=""/>
                 ]]>
             </text>
          </textAttribute>
@@ -4783,7 +4783,7 @@ group by snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.major_all
                         inReportMaker="false" truncateTo="100000" sortable="false">
             <text>
                 <![CDATA[
-                <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct"/>
+                <img src="@CGI_URL@/dataPlotter.pl?type=Waters::Ver1&id=$$primaryKey$$&model=plasmo&fmt=png&thumb=1&vp=pct" alt=""/>
                 ]]>
             </text>
          </textAttribute>
