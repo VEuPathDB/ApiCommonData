@@ -316,6 +316,10 @@
 
     <sqlQuery name="GenesByPhylogeneticTree" includeProjects="GiardiaDB" 
               isCacheable="true">
+        <testParamValues>
+
+          <paramValue name="source_id">GL50803_23492</paramValue>
+        </testParamValues>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id" />
