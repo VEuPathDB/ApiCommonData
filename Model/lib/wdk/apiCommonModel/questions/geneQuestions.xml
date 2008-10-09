@@ -94,10 +94,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
         <description includeProjects="PlasmoDB">
           <![CDATA[
           Find genes that are located in a specified genomic region.<br><br>
-          Select a genomic sequence from the
-          pull-down menu <i>and/or</i> enter a genomic sequence ID from any
-          <i>Plasmodium</i> species (if you supply both,  your result will include the union).
-          The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+          Select a genomic sequence from the pull-down menu <i>and/or</i> enter a genomic sequence ID from any <i>Plasmodium</i> species (if you supply both,  your result will include the union). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
         <description includeProjects="ApiDB">
@@ -129,11 +126,12 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
 	<description includeProjects="ToxoDB">
 	      <![CDATA[
           Find genes that are located in a specified genomic region.<br><br>
-          Either select a <i>T. gondii</i> chromosome from the pull-down menu
-          <b>or</b> enter a sequence ID of a chromosome (e.g. "VIIa") or a 
-          scaffold (e.g. "TGG_995305"). <br> 
-          If you enter both, your result will include the union.
-          The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+          Here you can retrieve genes based on their chromosomal location in either <i>T. gondii</i> or <i>N. caninum</i>. For example, all genes located on chromosome <b>Ia</b> can be retrieved by selecting "Ia" from the chromosome pull-down menu, and entering "1" in the "start at" field and "0" in the "End Location" field. <br>
+Alternatively, genes can be obtained by entering a specific sequence ID:<br>
+<u>Chromosome ID examples:</u> <i>T. gondii</i> ME49 chromosome VIIa = TGME49_chrVIIa; <i>T. gondii</i> VEG chromosome VIIa = TGVEG_chrVIIa; <i>T. gondii</i> GT1 chromosome VIIa = TGGT1_chrVIIa; <i>N. caninum</i> chromosome VIIa = NEO_chrVIIa.<br>
+<u><i>T. gondii</i> scaffold ID example:</u> DS984804 (ME49), scf_1104442824720 (VEG or GT1) -- remember, not all scaffolds contain genes. <br>
+<u>Contig ID example (only <i>N. caninum</i>):</u> Contig1086.<br>
+If you enter a specific ID and select a chromosome from the pull-down menu, your result will include the union. The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
        
@@ -194,11 +192,21 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
         <summary>
         Find genes having a given number of exons.
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
            <![CDATA[
         To find genes with a desired number of exons, enter the minimum and maximun number of exons, and select one or more <i>Plasmodium</i> species.
           ]]>
         </description>
+			<description includeProjects="ToxoDB">
+			<![CDATA[
+        To find genes with a desired number of exons, enter the minimum and maximun number of exons, and select <i>T. gondii</i>, <i>N. caninum</i> or both.
+          ]]>
+        </description>
+		<description includeProjects="CryptoDB,GiardiaDB,TrichDB,ApiDB">
+			<![CDATA[
+        To find genes with a desired number of exons, enter the minimum and maximun number of exons, and select an organism and/or species.
+          ]]>
+    </description>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1694,12 +1702,44 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
            Find a gene by its ID.
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
            <![CDATA[
            Find genes by a list of IDs. Either enter the ID list manually, 
            or upload a file that contains the list. IDs can be delimited by a comma, 
            a semi colon, or any white spaces. For example, a list can be in the
            following form: "PF11_0344, PF11_0306"
+          ]]>
+        </description>
+        <description includeProjects="ToxoDB">
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: TGME49_039250 for <i>T. gondii</i> (ME49) or NC_LIV_000080 for <i>N. caninum</i>.
+          ]]>
+        </description>
+        <description includeProjects="GiardiaDB">
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: "GL50803_102438, GL50803_5213"
+          ]]>
+        </description>
+        <description includeProjects="TrichDB">
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: "TVAG_386080, TVAG_386090"
+          ]]>
+        </description>
+        <description includeProjects="CryptoDB">
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: "cgd7_220, cgd7_230"
           ]]>
         </description>
     </question>
@@ -1721,8 +1761,8 @@ Find genes that are predicted to encode a signal peptide.
            <![CDATA[
            Find genes by a list of IDs. Either enter the ID list manually, 
            or upload a file that contains the list. IDs can be delimited by a comma, 
-           a semi colon, or any white spaces. For example, a list can be in the
-           following form: "PF11_0344, PF11_0306"
+           a semi colon, or any white spaces. Also, the list may contain gene IDs from any of the EuPathDB organisms.  For example, a list can be in the
+           following form: "PF11_0344, cgd7_230, 65.m01111, TVAG_386090,  GL50803_5213"
           ]]>
         </description>
     </question>
@@ -1749,7 +1789,7 @@ Find genes that are predicted to encode a signal peptide.
          </summary>
          <description>
            <![CDATA[
-             Find genes by searching text annotations. Asterisks ("*") can be used as a wildcard, matching any sequence of characters.  The search compares your term against the text in the fields you specify, returning genes that have a match. Remember to select your species of interest (more than one species may be selected).
+             Find genes by searching text annotations. Asterisks ("*") can be used as a wildcard, matching any sequence of characters.  The search compares your term against the text in the fields you specify, returning genes that have a match. Remember to select your species/organism of interest (more than one species may be selected).
 <p>
 <i>Note about non-relevant results</i>:  Depending on how you configure it, this text search may return "non-relevant" genes (false positives).  The search mechanically matches the term you supply against the fields described in the Fields parameter.  The presence of your term in that field does not necessarily mean that the term <i>actually describes the gene</i>.  The term may be mentioned in that field for less relevant reasons.  To work around this, please choose the Fields you want to search carefully, and then, before drawing any conclusions, review the reference to your term in all matched fields in the gene page to confirm the meaning of its mention. The "Gene product" field is the most stringent and is unlikely to return false positives. 
           ]]>
@@ -1789,7 +1829,7 @@ Find genes that are predicted to encode a signal peptide.
         </summary>
         <description>
            <![CDATA[
-            Find all genes from one or more species. 
+            Find all genes from one or more species/organism. 
           ]]>
         </description>
     </question>
@@ -2058,8 +2098,8 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
         </description>
 <description includeProjects="ToxoDB">
           <![CDATA[
-          Find genes that are encoded in a specified region of the non-nuclear genome.
-          The apicoplast genome of <i>T. gondii</i> is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html">here</a> to view a map of the <i>T. gondii</i> apicoplast.
+          Find genes that are encoded in a specified region of the non-nuclear genome.<br>
+          The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html">here</a> to view a map of the <i>T. gondii</i> apicoplast.
 <p> The genome of the <i>T. gondii</i> mitochondrion has not been sequenced.<br><br>
           ]]>
         </description>
@@ -2192,7 +2232,7 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
 	    in a particular microarray study based upon 
             <a href="http://www.cbil.upenn.edu/PaGE/">PaGE</a> differential expression analysis.	    
 	         Determination of  strain-specific differential expression by profiling 
-		 wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of T. gondii
+		 wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of <i>T. gondii</i>
 
                <br />
               <center>
