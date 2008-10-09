@@ -492,8 +492,9 @@
             <column name="phyTreeId"/>
             <sql>
             <![CDATA[
-              select tree.source_id as phyTreeId,tree.source_id, '@PROJECT_ID@' as project_id
-              from apidb.phylogenetictree tree
+              select tree.source_id as phyTreeId,ga.source_id, '@PROJECT_ID@' as project_id
+              from apidb.phylogenetictree tree, apidb.geneattributes ga
+              where ga.source_id = tree.source_id(+)
             ]]>
             </sql>
         </sqlQuery>
