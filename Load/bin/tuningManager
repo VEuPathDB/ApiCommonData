@@ -18,10 +18,12 @@ my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
 my $nodename = `uname -n`;
 chomp($nodename);
-ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as process $$ on $nodename at $timestamp with arguments:\n"
-					      . join(' ', @ARGV));
+ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as "
+					       . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
+					       . " at $timestamp with arguments:\n"
+					       . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $instanceName, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge);
+my ($configFile, $propFile, $instance, $instanceName, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey);
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
@@ -33,6 +35,7 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
+           "validationKey=s" => \$validationKey,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
@@ -122,6 +125,14 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   $doUpdate = 0;
 } else {
   ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
+}
+
+if ($doUpdate) {
+  $doUpdate = 0 if lockForUpdate() eq "fail";
+}
+
+if ($validationKey) {
+  $doUpdate = 0 if checkValidationKey($validationKey) eq "fail";
 }
 
 my $tableCount = 0;
@@ -215,6 +226,8 @@ if (!$indexesConfigured) {
 						 . $indexesConfigured
 						 . " indexes were found to exist.");
 }
+
+releaseLockForUpdate();
 
 my $elapsed = time - $startTime;
 my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
@@ -465,3 +478,43 @@ SQL
   ApiCommonData::Load::TuningConfig::Log::addLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
       if $cleanupCount && $cleanupWarnOnly;
 }
+
+sub lockForUpdate() {
+
+  $dbh->do("update apidb.InstanceMetaInfo set current_updater = '"
+	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
+	   . "' where current_updater is null")
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+  my $stmt = $dbh->prepare("select current_updater from apidb.InstanceMetaInfo");
+  $stmt->execute();
+  my ($updater) = $stmt->fetchrow_array();
+
+  if ($updater ne ApiCommonData::Load::TuningConfig::Log::getProcessInfo()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("CURRENT_UPDATER set to \"$updater\"");
+    return("fail");
+  }
+}
+
+sub releaseLockForUpdate() {
+
+  $dbh->do("update apidb.InstanceMetaInfo set current_updater = null where current_updater = '"
+	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
+	   . "'")
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+}
+
+sub checkValidationKey() {
+  my ($key) = @_;
+
+  my $stmt = $dbh->prepare("select validation_key from apidb.InstanceMetaInfo");
+  $stmt->execute();
+  my ($db_key) = $stmt->fetchrow_array();
+
+  if ($db_key ne $key) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("supplied key \"$key\" does not match value in database of \"$db_key\"");
+    return("fail");
+  }
+
+}
+

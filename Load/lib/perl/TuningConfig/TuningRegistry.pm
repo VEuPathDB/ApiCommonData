@@ -19,10 +19,10 @@ sub getInfoFromRegistry {
     my $dbh = $self->{dbh};
 
     my $sql = <<SQL;
-      select svc_name.service_name, ti.instance_name, tf.subversion_url, tf.notify_emails
+      select imi.service_name, ti.instance_name, tf.subversion_url, tf.notify_emails
       from apidb.TuningInstance\@apidb.login_comment ti, apidb.TuningFamily\@apidb.login_comment tf,
-           (select sys_context ('USERENV', 'SERVICE_NAME') as service_name from dual) svc_name
-      where ti.service_name(+) =  svc_name.service_name
+           apidb.InstanceMetaInfo imi
+      where ti.service_name(+) =  imi.service_name
         and ti.family_name = tf.family_name(+)
 SQL
 

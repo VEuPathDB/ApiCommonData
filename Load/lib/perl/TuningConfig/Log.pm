@@ -11,6 +11,7 @@ BEGIN {
   my $updateNeededFlag;
   my $updatePerformedFlag;
   my $errorsEncounteredFlag;
+  my $partialUpdateFlag;
   my $indentString;
 
   sub addLog {
@@ -60,6 +61,14 @@ BEGIN {
     return $errorsEncounteredFlag;
   }
 
+  sub setPartialUpdatedFlag {
+    $partialUpdatedFlag = 1;
+  }
+
+  sub getPartialUpdatedFlag {
+    return $partialUpdatedFlag;
+  }
+
 }
 
 sub addErrorLog {
@@ -102,6 +111,12 @@ sub mailLog {
     print MAIL getLog();
     close(MAIL);
   }
+}
+
+sub getProcessInfo {
+  my $nodename = `uname -n`;
+  chomp($nodename);
+  return("process $$ on $nodename");
 }
 
 1;
