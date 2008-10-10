@@ -429,6 +429,9 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGME49_054560</paramValue>
             </testParamValues>
+            <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_20315</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -687,7 +690,9 @@
             <testParamValues includeProjects="PlasmoDB">
                <paramValue name="source_id">MAL13P1.166 </paramValue>
             </testParamValues>
-
+            <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_10055</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -786,6 +791,10 @@
 
        <sqlQuery name="GoTerms"
                   isCacheable="false">
+           <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_10019</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -973,6 +982,10 @@
                <paramValue name="source_id">TGVEG_071430</paramValue>
             </testParamValues>
 
+         <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_21512</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1044,6 +1057,7 @@
 
        <sqlQuery name="MassSpec" includeProjects="PlasmoDB,ApiDB"
                   isCacheable="false">
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1073,6 +1087,11 @@
         </sqlQuery>
         <sqlQuery name="MassSpec" includeProjects="GiardiaDB,ToxoDB,CryptoDB"
                   isCacheable="false">
+
+       <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_17249</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1217,6 +1236,9 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">NC_LIV_120410</paramValue>
             </testParamValues>
+          <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id"></paramValue>
+            </testParamValues>
 
         <paramRef ref="recordParams.source_id"/>
          <paramRef ref="recordParams.project_id"/>
@@ -1236,6 +1258,11 @@
        </sqlQuery>
         
        <sqlQuery name="GeneGffGoTerms" displayName="GO Terms" isCacheable="false">
+
+          <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_14842</paramValue>
+            </testParamValues>
+
          <paramRef ref="recordParams.source_id"/>
          <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
