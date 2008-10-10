@@ -81,7 +81,7 @@
                CONNECT BY parent_id = prior taxon_id
                START WITH taxon_id in ($$organism$$))
                AND ens.sequence_ontology_id = so.sequence_ontology_id
-              AND so.so_id in ($$sequenceTypes$$)
+              AND so.sequence_ontology_id in ($$sequenceTypes$$)
             ORDER BY ens.source_id           
            ]]>
         </sql>
@@ -109,6 +109,11 @@
 
         <testParamValues includeProjects="ToxoDB">
             <paramValue name="BlastQuerySequence">TGTCGCAAAAAAGCGCAACAACAGCCATTCAGCGCTGCACGTCTCCCCCGCGTCTCCAAGGAA</paramValue>
+            <paramValue name="BlastDatabaseType">Genome</paramValue>
+        </testParamValues>
+
+        <testParamValues includeProjects="GiardiaDB">
+            <paramValue name="BlastQuerySequence">AGAGATCATCAGGATTAGTGATTGGAATTACTTAACTCGAACAAGATAGTATATGGTCCTTCATCTTCAGGCCGTTGTATAGACATGCGAGAATTTGTTCAAGGCTATAGAGCTCTAAAT</paramValue>
             <paramValue name="BlastDatabaseType">Genome</paramValue>
         </testParamValues>
 

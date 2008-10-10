@@ -316,10 +316,7 @@
 
     <sqlQuery name="GenesByPhylogeneticTree" includeProjects="GiardiaDB" 
               isCacheable="true">
-        <testParamValues>
 
-          <paramValue name="source_id">GL50803_23492</paramValue>
-        </testParamValues>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id" />
@@ -396,6 +393,9 @@
         <testParamValues includeProjects="PlasmoDB">
            <paramValue name="BlastQuerySequence">GCAGGAAATATGATTCCAGATAATGATAAAAATTCAAATTATAAATATCCAGCTGTTTATGATGACAAAGATAAAAAGTGTCATATATTATATATTGCAGCTCAAGAAAATAATGGTCCT</paramValue>
             <paramValue name="BlastDatabaseOrganism">Plasmodium falciparum</paramValue>
+        </testParamValues>
+        <testParamValues includeProjects="GiardiaDB">
+           <paramValue name="BlastQuerySequence">CTTAGAGACAAGTATGGCAGTATAGAAGGTCTAGCAAAAGAATTGGGGTCTGACCCTGCCACAGGCCTTTTGAAACCTACCGTTTTGCTCCATCGAAAAACCTATGGTAGCAATACAATG</paramValue>
         </testParamValues>
 
        <paramRef ref="sharedParams.BlastDatabaseType" quote="false" />
@@ -1704,12 +1704,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByInterproDomain" excludeProjects="ApiDB"  
 			isCacheable="true">
 
-        <testParamValues includeProjects="CryptoDB,PlasmoDB">
-           <paramValue name="domain_database">PRODOM</paramValue>
-           <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
-        </testParamValues>
-
-        <testParamValues includeProjects="ToxoDB">
+        <testParamValues includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB">
            <paramValue name="domain_database">PRODOM</paramValue>
            <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
         </testParamValues>
