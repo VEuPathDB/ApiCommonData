@@ -639,10 +639,8 @@
        <sqlQuery name="UserComments"
                  isCacheable="false">
 
+            <testParamValues minRows="0" includeProjects="CryptoDB"/>
             <testParamValues minRows="0" includeProjects="GiardiaDB"/>
-            <testParamValues includeProjects="CryptoDB">
-               <paramValue name="source_id">cgd1_200</paramValue>
-            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
