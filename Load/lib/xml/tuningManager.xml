@@ -244,7 +244,8 @@ select case
        least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
        greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
-       cast (null as number) as is_top_level, ef.coding_start, ef.coding_end
+       cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
+       nf.external_database_release_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
      dots.ExonFeature ef,
      (select edr.external_database_release_id, ed.name
@@ -300,7 +301,7 @@ select -- virtual feature locations mapped through SequencePiece
            then sp.distance_from_left + contig.length
                 - coding_end
          else sp.distance_from_left + coding_end
-       end as coding_end
+       end as coding_end, nf.external_database_release_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
      apidb.SequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
      (select edr.external_database_release_id, ed.name
