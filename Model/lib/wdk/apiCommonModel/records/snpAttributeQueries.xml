@@ -128,6 +128,42 @@
            </sql>
         </sqlQuery>
 
+       <sqlQuery name="isolateSummary" isCacheable="false" includeProjects="PlasmoDB">
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="iso_major_allele"/>
+            <column name="iso_major_percent"/>
+            <column name="iso_minor_allele"/>
+            <column name="iso_minor_percent"/>
+            <column name="iso_number_strains"/>
+            <sql>
+            <![CDATA[    
+               select snp_source_id as source_id, '@PROJECT_ID@' as project_id,
+                 major_allele as iso_major_allele,
+                 round((to_number(major_count) / total),2) as iso_major_percent,
+                 minor_allele as iso_minor_allele,
+                 round((to_number(minor_count) / total),2) as iso_minor_percent,
+                 total as iso_number_strains
+               from (
+               select snp_source_id,
+                apidb.tab_to_string(CAST(COLLECT(CASE WHEN row_number = 1 THEN allele END) AS apidb.varchartab), ', ') as major_allele,
+                apidb.tab_to_string(CAST(COLLECT(CASE WHEN row_number = 1 THEN to_char(ct) END) AS apidb.varchartab), ', ') as major_count,
+                apidb.tab_to_string(CAST(COLLECT(CASE WHEN row_number = 2 THEN allele END) AS apidb.varchartab), ', ') as minor_allele,
+                apidb.tab_to_string(CAST(COLLECT(CASE WHEN row_number = 2 THEN to_char(ct) END) AS apidb.varchartab), ', ') as minor_count,
+                sum(ct) as total
+               from (
+               select rownum as row_number,snp_source_id,allele,ct from (
+               select snp_source_id,allele,count(*) as ct
+               from apidb.ISOLATESNPS
+               where  allele in ('A','C','G','T')
+               group by snp_source_id,allele
+               order by ct desc))
+               group by snp_source_id)
+             ]]>
+           </sql>
+        </sqlQuery>
+
+
         <sqlQuery name="Sequence">
             <column name="source_id" />
             <column name="project_id" />
