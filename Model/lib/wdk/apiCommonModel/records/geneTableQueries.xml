@@ -592,6 +592,7 @@
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd1_200</paramValue>
             </testParamValues>
+            <testParamValues minRows="0" includeProjects="GiardiaDB"/>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -638,7 +639,7 @@
        <sqlQuery name="UserComments"
                  isCacheable="false">
 
-
+            <testParamValues minRows="0" includeProjects="GiardiaDB"/>
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd1_200</paramValue>
             </testParamValues>
@@ -886,7 +887,7 @@
        <!-- Orthologs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Orthologs" excludeProjects="TrichDB" 
+       <sqlQuery name="Orthologs" excludeProjects="TrichDB,GiardiaDB"
                   isCacheable="false">
 
             <testParamValues includeProjects="ToxoDB">
@@ -1236,9 +1237,7 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">NC_LIV_120410</paramValue>
             </testParamValues>
-          <testParamValues includeProjects="GiardiaDB">
-               <paramValue name="source_id"></paramValue>
-            </testParamValues>
+            <testParamValues minRows="0" includeProjects="GiardiaDB"/>
 
         <paramRef ref="recordParams.source_id"/>
          <paramRef ref="recordParams.project_id"/>
