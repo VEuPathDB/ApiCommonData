@@ -649,6 +649,28 @@
                     ]]>
                 </text>
             </textAttribute>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Toxo release 4 info -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <attributeQueryRef ref="GeneAttributes.ToxoRelease4Info" includeProjects="ToxoDB">
+            <columnAttribute name="old_source_id" displayName="Release4 IDs" internal="false" inReportMaker="true"/>
+            <columnAttribute name="same_protein" displayName="= Release4 Protein?" internal="false" inReportMaker="true"/>
+          </attributeQueryRef>   
+
+          <textAttribute name="tree_applet_link" displayName="Tree" internal="false" 
+                         inReportMaker="false" truncateTo="1000" includeProjects="GiardiaDB">
+                <text>
+                    <![CDATA[
+                        <script language='JavaScript' type='text/javascript' src='js/atv.js'></script>
+                        <a href="#"
+                        onClick="openATVWin( '/cgi-bin/atvData?project_id=@PROJECT_ID@&id=$$phyTreeId$$' )">
+                        Consensus tree</a> 
+                    ]]>
+                </text>
+            </textAttribute>
+
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Plasmo Expression attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

@@ -397,6 +397,26 @@
 
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- toxo release4 genes -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <sqlQuery name="ToxoRelease4Info" displayName="Release4 Info" includeProjects="ToxoDB">
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="old_source_id"/>
+            <column name="same_protein"/>
+            <sql>
+            <![CDATA[
+              select ga.source_id,ga.project_id,
+              apidb.tab_to_string(CAST(COLLECT(toa.old_source_id) AS apidb.varchartab),', ') as old_source_id,
+              decode(max(toa.new_protein),1,'No',0,'Yes') as same_protein
+              from apidb.TRACKOLDANNOTATION toa, apidb.GENEATTRIBUTES ga
+              where toa.source_id(+) = ga.SOURCE_ID
+              group by ga.source_id,ga.project_id
+            ]]>
+            </sql>
+        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- protein sequence  -->  
@@ -421,7 +441,7 @@
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- protein sequence  -->  
+       <!-- protein sequence new annotation  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
         <sqlQuery name="NewAnnotationProteinSequence" displayName="New Annotation Protein Sequence" includeProjects="PlasmoDB">
