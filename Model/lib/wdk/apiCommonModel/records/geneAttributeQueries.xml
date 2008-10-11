@@ -410,7 +410,7 @@
             <![CDATA[
               select ga.source_id,ga.project_id,
               apidb.tab_to_string(CAST(COLLECT(toa.old_source_id) AS apidb.varchartab),', ') as old_source_id,
-              decode(max(toa.new_protein),1,'No',0,'Yes') as same_protein
+              decode(min(toa.new_protein),1,'No',0,'Yes') as same_protein
               from apidb.TRACKOLDANNOTATION toa, apidb.GENEATTRIBUTES ga
               where toa.source_id(+) = ga.SOURCE_ID
               group by ga.source_id,ga.project_id
