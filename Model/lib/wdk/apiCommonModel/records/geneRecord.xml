@@ -638,7 +638,8 @@
             <columnAttribute name="phyTreeId" internal="true" inReportMaker="false"/>
           </attributeQueryRef>   
 
-          <textAttribute name="tree_applet_link" displayName="Tree" internal="true" inReportMaker="false" includeProjects="GiardiaDB">
+          <textAttribute name="tree_applet_link" displayName="Tree" internal="false" 
+                         inReportMaker="false" truncateTo="1000" includeProjects="GiardiaDB">
                 <text>
                     <![CDATA[
                         <script language='JavaScript' type='text/javascript' src='js/atv.js'></script>
@@ -1255,7 +1256,7 @@
           <!-- Orthologs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Orthologs" excludeProjects="TrichDB,GiardiaDB"
+          <table name="Orthologs" excludeProjects="TrichDB"
                  displayName="Paralogs and In-genera Orthologs"
                  queryRef="GeneTables.Orthologs">
             <columnAttribute name="ortho_source_id" internal="true"/>

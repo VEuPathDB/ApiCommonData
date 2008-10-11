@@ -67,7 +67,7 @@
               <![CDATA[
                 SELECT f.gene as source_id, '@PROJECT_ID@' AS project_id,
                        f.id as old_source_id, '@PROJECT_ID@' AS old_project_id
-                FROM (SELECT gene AS id, gene 
+                FROM (SELECT gene AS id, gene
                       FROM apidb.geneid
                       WHERE id = lower(gene)
                       UNION
@@ -492,7 +492,7 @@
             <column name="phyTreeId"/>
             <sql>
             <![CDATA[
-              select tree.source_id as phyTreeId,ga.source_id, '@PROJECT_ID@' as project_id
+              select NVL(tree.source_id,'null') as phyTreeId,ga.source_id, '@PROJECT_ID@' as project_id
               from apidb.phylogenetictree tree, apidb.geneattributes ga
               where ga.source_id = tree.source_id(+)
             ]]>
