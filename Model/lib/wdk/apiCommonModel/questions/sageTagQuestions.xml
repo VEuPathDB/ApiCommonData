@@ -31,7 +31,7 @@
              <summary>
                Find SAGE Tags that are differentially expressed across 2 or more libraries.
              </summary>
-             <description>
+             <description includeProjects="PlasmoDB,ApiDB,GiardiaDB">
            <![CDATA[
             <p>Find SAGE Tags with evidence of differential expression by choosing libraries (more than one) to compare across.  A large R value indicates differential expression.
 
@@ -39,6 +39,26 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
 </p>               
 <p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagRStat"><b>Genes by Differential Expression of SAGE Tag Evidence</b></a> query for summing SAGE tag counts within predicted genes.
 </p>
+          ]]>
+             </description>
+<description includeProjects="ToxoDB">
+           <![CDATA[
+            <p>Find SAGE Tags with evidence of differential expression by choosing libraries (more than one) to compare across.  A large R value indicates differential expression.
+
+Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?cmd=Retrieve&db=PubMed&list_uids=11116099">The comparison of gene expression from multiple cDNA libraries.</a>  Genome Res.  2000.  Dec:10(12):2055-61.
+</p>               
+<p>See the related <a href="showQuestion.do?questionFullName=GeneQuestions.GenesBySageTagRStat"><b>Genes by Differential Expression of SAGE Tag Evidence</b></a> query for summing SAGE tag counts within predicted genes.
+</p>
+The data available here is from a study conducted by <a href ="http://www.ncbi.nlm.nih.gov/pubmed/16324218">Radke et. al. </a> where SAGE tag libraries were generated from <i>T. gondii</i> parasites at specific stages of development.  The data available through ToxoDB includes 3' (3p) SAGE tag libraries only. Abbreviations are as follows:<br>
+sp&nbsp;&nbsp;&nbsp;= Oocyst population that contains sporozoites (VEG strain).<br>
+d4&nbsp;&nbsp;&nbsp;= Day 4 parasites (post-inoculation of human forskin fibroblast cells (HFFs)). <br>
+d6&nbsp;&nbsp;&nbsp;= Day 6 parasites (post-inoculation of HFFs) -- rapidly growing in the second host cell. <br>
+d7&nbsp;&nbsp;&nbsp;= Day 7 parasites (post-inoculation of HFFs) -- parasites undergo a growth shift at this point. <br>
+d15&nbsp;= Day 15 parasites (post-inoculation of HFFs) -- The parasites are slow growing and include a mixture of tachyzoites and bradyzoites. <br>
+ph&nbsp;&nbsp;&nbsp;= VEG parasites that were alkaline-differentiated into bradyzoites for 72 hours. <br>
+rh&nbsp;&nbsp;&nbsp;&nbsp;= TypeI-RH. <br>
+b7&nbsp;&nbsp;&nbsp;= TypeII-ME49B7. <br>
+msj&nbsp;= TypeIII-VEGmsj. <br>
           ]]>
              </description>
 
@@ -50,8 +70,8 @@ Stekel DJ, Git Y, Falciani F. <a href="http://www.ncbi.nlm.nih.gov/sites/entrez?
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
            <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
            <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
-           <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value>
-           <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value>
+          <!--  <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value> -->
+           <!-- <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value> -->
            <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
            <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
        </propertyList>
