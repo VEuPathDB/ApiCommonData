@@ -16,17 +16,17 @@ my $argsDeclaration  =
 [
 
 stringArg({name => 'extDbRlsName',
-       descr => 'External database for the scaffolds',
+       descr => 'List of External Database names for the scaffolds or chromosomes',
        constraintFunc=> undef,
        reqd  => 1,
-       isList => 0
+       isList => 1
       }),
 
 stringArg({name => 'extDbRlsVer',
-       descr => 'Version of external database for the scaffolds',
+       descr => 'List of version of each External Database, corresponding to the names',
        constraintFunc=> undef,
        reqd  => 1,
-       isList => 0
+       isList => 1
       }),
 
 stringArg({name => 'SOTerm',
@@ -36,13 +36,6 @@ stringArg({name => 'SOTerm',
        isList => 0,
        default => "gap",
       }),
- integerArg({name => 'gapSize',
-       descr => 'Number of Ns inserted between contigs in a scaffold',
-       constraintFunc=> undef,
-       reqd  => 0,
-       isList => 0,
-       default => 100,
-      })
 ];
 
 return $argsDeclaration;
@@ -59,11 +52,11 @@ my $description = <<NOTES;
 NOTES
 
 my $purpose = <<PURPOSE;
-To load gap info for scaffolds into the database.
+To load gap info for scaffolds and chromosomes into the database.
 PURPOSE
 
 my $purposeBrief = <<PURPOSEBRIEF;
-For every scaffold, the plugin find the poistions of the gaps, and loads this info the ScaffoldGapFeature and NALocation tables.
+For every scaffold and every chromosome, the plugin find the positions of the gaps, and loads this info the ScaffoldGapFeature and NALocation tables.
 PURPOSEBRIEF
 
 my $syntax = <<SYNTAX;
@@ -117,11 +110,6 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $extDbName = $self->getArg('extDbRlsName');
-  my $extDbVer = $self->getArg('extDbRlsVer');
-  my $extDbRlsId = $self->getExtDbRlsId($extDbName, $extDbVer)
-    or die "Couldn't find source db: $extDbName, $extDbVer\n";
-
   my $SOTermArg = $self->getArg("SOTerm");
   my $SOTerm = GUS::Model::SRes::SequenceOntology->new({ term_name => $SOTermArg });
   unless($SOTerm->retrieveFromDB()) {
@@ -129,93 +117,76 @@ sub run {
   }
   my $SOTermId = $SOTerm->getId();
 
-  my $gapSize = $self->getArg("gapSize");
+  # the array of External Database Names and their corresponding versions
+  my @extDbNameArr = @{$self->getArg('extDbRlsName')};
+  my @extDbVerArr  = @{$self->getArg('extDbRlsVer')};
 
-  # retrieve sequences for each scaffold in a hash
-  my $scaffSeqsRef = $self->retrieveScaffoldSeqs($extDbRlsId);
+  for (my $i=0; $i<=$#extDbNameArr; $i++) {
+    my $extDbName = $extDbNameArr[$i];
+    my $extDbVer  = $extDbVerArr[$i];
+    my $extDbRlsId = $self->getExtDbRlsId($extDbName, $extDbVer)
+      or die "Couldn't find source db: $extDbName, $extDbVer\n";
+    $self->log("External Database Name: $extDbName, Version: $extDbVer, ReleaseID: $extDbRlsId");
 
-  # for each scaffold, create a row in ScaffoldGapFeature, with chr coords for the gaps
-  my $ct = $self->makeGapFeatureAssignments($scaffSeqsRef, $extDbRlsId, $gapSize, $SOTermArg, $SOTermId);
 
-  return("$ct scaffold gap features created.");
+    # retrieve sequences in a hash
+    my $seqsRef = $self->retrieveSequences($extDbRlsId);
+
+    # create a feature for each gap
+    my $ct = $self->makeGapFeatureAssignments($seqsRef, $extDbRlsId, $SOTermArg, $SOTermId);
+    $self->log("$ct gap features created for $extDbName.");
+  }
+  return("Gap Features loaded");
 }
 
-# retrieve sequences of scaffolds in a hash
-sub retrieveScaffoldSeqs {
+
+# retrieve scaffold or contig sequences in a hash
+sub retrieveSequences {
   my ($self, $extDbRlsId) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my %scaffSeqs;
+  my %allSeqs;
 
-  my $stmt = $dbh->prepare("SELECT na_sequence_id, sequence FROM DoTS.ExternalNASequence WHERE external_database_release_id =?");
+  my $stmt = $dbh->prepare("SELECT na_sequence_id, sequence FROM DoTS.NASequence WHERE external_database_release_id =?");
   $stmt->execute($extDbRlsId);
 
   while(my ($na_seq_id, $seq) = $stmt->fetchrow_array()) {
-    $scaffSeqs{$na_seq_id}=$seq;
+    $allSeqs{$na_seq_id}=$seq;
   }
 
   $self->undefPointerCache();
-  return(\%scaffSeqs);
+  return(\%allSeqs);
 }
 
+
 sub makeGapFeatureAssignments {
-  my ($self, $scaffRef, $extDbRlsId, $gapSize, $termName, $seqOntId) = @_;
+  my ($self, $scaffRef, $extDbRlsId, $termName, $seqOntId) = @_;
 
   my $count=0;
   my %map = %{$scaffRef};
-  my @keyed = keys(%map);  # array of scaffold IDs
-  $self->log("Number of scaffolds = $#keyed");
+  my @keyed = keys(%map);  # array of sequence IDs
+  $self->log("Number of sequences = ".($#keyed+1));
 
+  # for each sequence
   foreach my $key (@keyed) {
     my $seq = $map{$key};
+    my $prev_pos = 0;
+    my $pos;
 
-    my $start = $self->getScaffStart($key);  # get location of scaffold on chromosome, if mapped
-    $start =1 if (!$start);                  # for scaffold that are not mapped to chromosomes
+    # for each gap
+    while( $seq =~ m/(NNN*)/gi){
+      my $gapSize = length($1);
 
-    my $gapLocsRef = $self->findGapLocations($start, $seq, $key, $gapSize);
-    my @gapLocations = @$gapLocsRef;   # gap locations for a particular scaffold
-
-    # now, for each gap location, create rows in  dots.ScaffoldGapFeature
-    foreach my $loc (@gapLocations) {
+      # find gap position, and create row in ScaffoldGapFeature + NALocation
+      $pos = index ($seq, $1, $prev_pos) + 1;
       my $scaffGap = $self->createScaffoldGapEntry($key, $extDbRlsId, $gapSize, $termName, $seqOntId);
-
-      my $naLocation = $self->createNaLocation($loc, ($loc+$gapSize));
-
-      $$scaffGap->addChild($$naLocation);
-      $$scaffGap->submit();
+      $self->createNaLocation($pos, ($pos + $gapSize));
       $count++;
+
+      $prev_pos = $pos + $gapSize;
     }
   }
   return $count;
-}
-
-sub getScaffStart {
-  my ($self, $naSeqId) = @_;
-
-  my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT startm FROM apidb.scaffold_map WHERE piece_na_sequence_id =?");
-  $stmt->execute($naSeqId);
-
-  my ($start) = $stmt->fetchrow_array();
-  $self->undefPointerCache();
-
-  return ($start);
-}
-
-# find gap locations for each scaffold, **in chromosome coordinates**
-sub findGapLocations {
-  my ($self, $start, $seq, $naSeqId, $gapSize) = @_;
-
-  my $prev_pos = 0;
-  my $pos;
-  my @locations;
-
-  while( $seq =~ m/(NNN*)/gi){
-    $pos = index ($seq, $1, $prev_pos);
-    push (@locations, $pos+1+$start);   # $start is the scaffold start in chromosome
-    $prev_pos = $pos + $gapSize;
-  }
-  return \@locations;
 }
 
 
