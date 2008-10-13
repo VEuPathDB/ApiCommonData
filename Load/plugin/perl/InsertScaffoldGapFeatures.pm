@@ -94,7 +94,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = {requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 24150 $',
+		       cvsRevision => '$Revision: 24152 $',
 		       cvsTag => '$Name$',
 		       name => ref($self),
 		       revisionNotes => '',
@@ -180,7 +180,7 @@ sub makeGapFeatureAssignments {
       # find gap position, and create row in ScaffoldGapFeature + NALocation
       $pos = index ($seq, $1, $prev_pos) + 1;
       my $scaffGap = $self->createScaffoldGapEntry($key, $extDbRlsId, $gapSize, $termName, $seqOntId);
-      $self->createNaLocation($pos, ($pos + $gapSize));
+      my $naLocation = $self->createNaLocation($pos, ($pos + $gapSize));
 
       $$scaffGap->addChild($$naLocation);
       $$scaffGap->submit();
