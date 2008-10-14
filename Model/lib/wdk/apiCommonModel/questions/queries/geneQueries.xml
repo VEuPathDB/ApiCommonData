@@ -1915,7 +1915,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND s.percent_identity >= $$min_percent_identity$$
             AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
             AND s.library_id in ($$libraryIdGenes$$)
-            AND s.query_taxon_id in ($$organism$$)
+            AND s.target_taxon_id in ($$organism$$)
             AND e.source_id = s.accession
             AND e.best_alignment_count <= $$max_number_best_alignments$$
             GROUP by s.gene
