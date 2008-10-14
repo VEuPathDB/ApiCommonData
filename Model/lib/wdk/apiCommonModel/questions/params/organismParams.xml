@@ -424,7 +424,7 @@
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql excludeProjects="ToxoDB">
+      <sql excludeProjects="ToxoDB,CryptoDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -470,7 +470,7 @@
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
       </sql>
-      <sql includeProjects="ToxoDB">
+      <sql includeProjects="ToxoDB,CryptoDB">
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
            FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
