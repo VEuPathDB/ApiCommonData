@@ -1794,7 +1794,7 @@ EOF
   return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
 
   my $propertySet = $mgr->{propertySet};
-  my $release = $propertySet->getProp('projectRelease');
+  my $release = $propertySet->getProp('release');
   my $projectDB = $propertySet->getProp('projectDB');
   my $projectDir = $propertySet->getProp('projectDir');
   my $seqFile = "$mgr->{dataDir}/blastSite/${name}_$projectDB-${release}.fasta";
