@@ -1,44 +1,40 @@
-<workflow name="standardGenomeAnalysis">
-  <params>
-    <param name="genomeName"/>
-    <param name="genomeExtDb"/>
-    <param name="genomeExtDbRls"/>
-    <param name="ncbiTaxonId"/>
-  </param>
+<workflowGraph name="standardGenomeAnalysis">
+  <param name="genomeName"/>
+  <param name="genomeExtDb"/>
+  <param name="genomeExtDbRls"/>
+  <param name="ncbiTaxonId"/>
 
-  <constants>
-    <constant name="Pf">Pfalciparum</constant>
-    <constant name="Pb">Pberghei</constant>
-    <constant name="Pv">Pvivax</constant>
-    <constant name="Py">Pyoelii</constant>
-    <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
-    <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
-    <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
-    <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
-    <constant name="nrdbFile">seqfiles/nr.fsa</constant>
-    <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
-    <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-    <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
-    <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
-  </constants>
+  <constant name="Pf">Pfalciparum</constant>
+  <constant name="Pb">Pberghei</constant>
+  <constant name="Pv">Pvivax</constant>
+  <constant name="Py">Pyoelii</constant>
+  <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
+  <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
+  <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="nrdbFile">seqfiles/nr.fsa</constant>
+  <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
+  <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
+  <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
 
   <steps>
-    <step name="NRDB" subflow="resource" global="true">
+    <subflowStep name="NRDB" subflow="resource" global="true">
       <paramValue name="nrdbExtDbRlsSpec">$nrdbExtDbRlsSpec</paramValue>
       <paramValue name="nrdbOutputFile">$nrdbFile</paramValue>
       <paramValue name="nrdbShortDeflineOutputFile">$nrdbShortDeflineFile</paramValue>
       <paramValue name="extDbRlsSpec">$taxonmyExtDbRlsSpec</paramValue>
     </step>
 
-    <step name="taxonomy" subflow="resource" global="true"/>
+    <subflowStep name="taxonomy" subflow="resource" global="true"/>
       <paramValue name="extDbRlsSpec">$taxonmyExtDbRlsSpec</paramValue>
     </step>
 
-    <step name="SO" subflow="resource" global="true">
+    <subflowStep name="SO" subflow="resource" global="true">
       <paramValue name="extDbRlsSpec">$soExtDbRlsSpec</paramValue>
     </step>
 
-    <step name="genome" subflow="resource">
+    <subflowStep name="genome" subflow="resource">
       <paramValue name="extDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
     </step>
 
