@@ -75,8 +75,9 @@
         </sqlQuery>
 
         <!-- EstTables.ClusterMates -->
-        <sqlQuery name="ClusterMates"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
+        <sqlQuery name="ClusterMates"  includeProjects="CryptoDB,ToxoDB,GiardiaDB"
               displayName="Other ESTs that Cluster with this EST" isCacheable='true'>
+
             <paramRef ref="recordParams.source_id"/> 
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -104,8 +105,9 @@
 
 
         <!-- EstTables.AssemblyInfo -->
-        <sqlQuery name="AssemblyInfo"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB"
+        <sqlQuery name="AssemblyInfo"  includeProjects="CryptoDB,ToxoDB,GiardiaDB"
               displayName="Assembly for this EST" isCacheable='true'>
+
             <paramRef ref="recordParams.source_id"/> 
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />

@@ -342,6 +342,9 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGGT1_097190</paramValue>
             </testParamValues>
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="source_id">TVAG_120600</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -431,6 +434,9 @@
             </testParamValues>
             <testParamValues includeProjects="GiardiaDB">
                <paramValue name="source_id">GL50803_20315</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="source_id">TVAG_119560</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -546,6 +552,10 @@
        <sqlQuery name="LowComplexity" isCacheable="false">
 
             <testParamValues minRows="0" includeProjects="CryptoDB"/>
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="source_id">TVAG_563160</paramValue>
+            </testParamValues>
+
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -691,6 +701,9 @@
             </testParamValues>
             <testParamValues includeProjects="GiardiaDB">
                <paramValue name="source_id">GL50803_10055</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="TrichDB">
+               <paramValue name="source_id">TVAG_072070</paramValue>
             </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
@@ -972,7 +985,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Epitopes"
-                  isCacheable="false">
+                  isCacheable="false"  excludeProjects="TrichDB">
 
             <testParamValues includeProjects="CryptoDB">
                <paramValue name="source_id">cgd6_1800</paramValue>
@@ -980,8 +993,7 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGVEG_071430</paramValue>
             </testParamValues>
-
-         <testParamValues includeProjects="GiardiaDB">
+            <testParamValues includeProjects="GiardiaDB">
                <paramValue name="source_id">GL50803_21512</paramValue>
             </testParamValues>
 
