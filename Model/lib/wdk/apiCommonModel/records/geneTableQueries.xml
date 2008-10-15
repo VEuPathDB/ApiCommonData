@@ -659,6 +659,9 @@
             <testParamValues includeProjects="GiardiaDB">
                <paramValue name="source_id">GL50803_39483</paramValue>
             </testParamValues>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_102050</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -2169,6 +2172,11 @@
 
        <sqlQuery name="TaskComments" 
                   isCacheable="false" includeProjects="ToxoDB,ApiDB">
+
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_033070</paramValue>
+            </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
