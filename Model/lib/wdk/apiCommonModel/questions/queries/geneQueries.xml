@@ -1759,7 +1759,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="geneParams.st_min_tag_count"/>
        <paramRef ref="geneParams.st_max_occurrences"/>
        <paramRef ref="geneParams.sense_antisense"/>
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
                  includeProjects="GiardiaDB,ToxoDB"/> 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
        <column name="project_id"/> 
@@ -1807,7 +1807,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	 </processQuery>
 
     <sqlQuery name="GenesBySageTagRStat" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
-      <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"
+      <paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
                  includeProjects="GiardiaDB,ToxoDB"/> 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
        <paramRef ref="geneParams.sage_tag_library_name"/>
