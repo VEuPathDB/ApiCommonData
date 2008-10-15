@@ -139,7 +139,7 @@ sub makeGusOrf {
 sub makeTranscriptNaSeq {
   my ($plugin, $bioperlTranscript, $taxonId, $dbRlsId) = @_;
 
-  my $soId = $plugin->getSOPrimaryKey('processed_transcript');
+  my $soId = $plugin->getSOPrimaryKey('mature_transcript');
 
   # not using ExternalNASequence here because we're not setting source_id(???)
   my $transcriptNaSeq = 
