@@ -1902,9 +1902,18 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.min_number_est_aligned" groupRef="paramGroups.advancedParams"/>
-        <column name="project_id"/>
+
+       <column name="project_id"/>
        <column name="source_id" />
        <column name="number_of_ests" />
+
+       <sqlParamValue name="restrainOrganism" excludeProjects="TrichDB">
+                <![CDATA[
+                  AND s.target_taxon_id in ($$organism$$)
+                ]]>
+       </sqlParamValue>
+       <sqlParamValue name="restrainOrganism" includeProjects="TrichDB" />
+
        <sql excludeProjects="CryptoDB">
             <![CDATA[
             SELECT s.gene as source_id, '@PROJECT_ID@' as project_id, count(*) as number_of_ests
@@ -1915,7 +1924,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND s.percent_identity >= $$min_percent_identity$$
             AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
             AND s.library_id in ($$libraryIdGenes$$)
-            AND s.target_taxon_id in ($$organism$$)
+            &&restrainOrganism&&
             AND e.source_id = s.accession
             AND e.best_alignment_count <= $$max_number_best_alignments$$
             GROUP by s.gene
@@ -1936,7 +1945,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             AND s.percent_identity >= $$min_percent_identity$$
             AND s.percent_est_bases_aligned >= $$min_percent_est_aligned$$
             AND s.library_id in ($$libraryIdGenes$$)
-            AND s.target_taxon_id in ($$organism$$)
+            &&restrainOrganism&&
             AND e.source_id = s.accession
             AND e.best_alignment_count <= $$max_number_best_alignments$$
             AND s.accession != 'AA555437'
