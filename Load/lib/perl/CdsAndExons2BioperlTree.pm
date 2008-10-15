@@ -20,14 +20,19 @@ sub preprocess {
   # (7) remove exons from gene
   foreach my $bioperlFeatureTree ($bioperlSeq->get_SeqFeatures()) {
     my $type = $bioperlFeatureTree->primary_tag();
-    if (grep {$type eq $_} ("transcript","CDS", "tRNA", "rRNA", "snRNA")) {
+
+    if ($bioperlFeatureTree->has_tag('GeneType')) {
+	($type) = $bioperlFeatureTree->get_tag_values('GeneType');
+    }
+    if (grep {$type eq $_} ("transcript","CDS", "tRNA", "rRNA", "snRNA","coding","pseudo","coding_gene","rRNA_gene","snRNA_gene","tRNA_gene","miRNA_gene","pseudo_gene","snoRNA_gene")) {
       $type = "coding" if ($type eq "CDS" || $type eq "transcript");
-      $bioperlFeatureTree->primary_tag("${type}_gene");
+      if($type =~ /\_gene/){
+	  $bioperlFeatureTree->primary_tag("$type");
+      }else{
+	  $bioperlFeatureTree->primary_tag("${type}_gene");
+      }
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
-      my $score = $gene->score();
-      $gene->add_tag_value('score',$score);
-
       my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
       my @exons = $gene->get_SeqFeatures();
       foreach my $exon (@exons) {
@@ -36,7 +41,6 @@ sub preprocess {
 	$transcript->add_SeqFeature($exon);
 
         # the frame loade to gus will be 1,2 or 3
-
         my $frame = $exon->frame();
         if($frame =~ /[012]/) {
           $frame++;
