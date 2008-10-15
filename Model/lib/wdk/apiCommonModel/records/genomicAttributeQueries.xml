@@ -156,10 +156,13 @@
             <column name="gene_count"/>
             <sql>
             <![CDATA[
-           select sa.source_id, sa.project_id, count(*) as gene_count
-            from apidb.SEQUENCEATTRIBUTES sa, apidb.GENEATTRIBUTES ga
-            where ga.sequence_id(+) = sa.source_id
-            group by sa.source_id, sa.project_id
+           select sa.source_id, sa.project_id, nvl(the_count, 0) as gene_count
+           from apidb.sequenceAttributes sa,
+             (select sa.source_id, sa.project_id, count(*) as the_count
+              from apidb.sequenceAttributes sa, apidb.geneAttributes ga
+              where ga.sequence_id = sa.source_id
+              group by sa.source_id, sa.project_id) gc
+           where sa.source_id = gc.source_id(+)
              ]]>
            </sql>
         </sqlQuery>
