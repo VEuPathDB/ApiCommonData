@@ -42,7 +42,8 @@
                      queryRef="organismVQ.withEpitopes"
                      prompt="Organism"
                      multiPick="true"
-                     quote="false">
+                     quote="false"
+                     includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB">
           <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
@@ -411,7 +412,7 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-    <sqlQuery name="withSageTags" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="withSageTags" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
 
@@ -463,7 +464,7 @@
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="withEpitopes" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="withEpitopes"  includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
 
