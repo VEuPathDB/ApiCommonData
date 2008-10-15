@@ -52,7 +52,7 @@ sub makeGeneSkeleton{
       push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
-    if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene') {
+    if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
       my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
 
@@ -139,7 +139,7 @@ sub makeGusOrf {
 sub makeTranscriptNaSeq {
   my ($plugin, $bioperlTranscript, $taxonId, $dbRlsId) = @_;
 
-  my $soId = $plugin->getSOPrimaryKey('mature_transcript');
+  my $soId = $plugin->getSOPrimaryKey('processed_transcript');
 
   # not using ExternalNASequence here because we're not setting source_id(???)
   my $transcriptNaSeq = 
