@@ -464,6 +464,14 @@
       </sql>
     </sqlQuery>
 
+
+    <processQuery name="withSageTags" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
     <sqlQuery name="withEpitopes"  includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
@@ -547,6 +555,13 @@
         ]]>
       </sql>
     </sqlQuery>
+
+    <processQuery name="textSequenceOrganism" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
 
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
