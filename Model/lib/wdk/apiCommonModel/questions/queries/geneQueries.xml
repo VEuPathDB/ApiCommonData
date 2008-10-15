@@ -957,7 +957,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesWithEpitopes" excludeProjects="ApiDB"
            isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withEpitopes"/>
         <paramRef ref="geneParams.epitope_confidence"/>
         <column name="source_id" />
         <column name="project_id"/>
