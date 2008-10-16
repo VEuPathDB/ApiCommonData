@@ -68,6 +68,7 @@
                      AND  blat.target_na_sequence_id = enas.na_sequence_id
                      AND eags.blat_alignment_id = blat.blat_alignment_id
                      AND  e.accession = $$source_id$$
+                     AND  enas.project_id = $$project_id$$
                      AND  enas.is_top_level = 1 )
                    ORDER BY sequence_id, is_best_alignment desc, is_consistent desc, percent_identity desc
             ]]>
