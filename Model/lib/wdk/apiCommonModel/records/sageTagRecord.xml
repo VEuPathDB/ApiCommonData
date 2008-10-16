@@ -92,6 +92,19 @@
         </text>
       </textAttribute>
 
+      <textAttribute name="gbrowseTracks" inReportMaker="false" internal="true">
+        <text includeProjects="GiardiaDB">
+             <![CDATA[
+              SAGEtags+Gene+DeprecatedGene
+             ]]>
+        </text>
+        <text includeProjects="PlasmoDB,ToxoDB">
+             <![CDATA[
+              SAGEtags+AnnotatedGenes
+             ]]>
+        </text>
+      </textAttribute>
+
 
       <!-- Need to add a text attribute for the genomic context -->
 
@@ -125,7 +138,7 @@
                    </url>
                    <url includeProjects="PlasmoDB">
                     <![CDATA[
-                    @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=AnnotatedGenes;label=DeprecatedGene;h_feat=$$feature_source_id$$
+                    @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=AnnotatedGenes;h_feat=$$feature_source_id$$
                         ]]>
                    </url> 
                    <url includeProjects="ToxoDB">
