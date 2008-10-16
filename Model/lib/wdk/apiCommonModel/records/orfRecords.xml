@@ -111,11 +111,25 @@
                </text>
            </textAttribute>
 
+          <textAttribute name="gbrowseTracks" inReportMaker="false" internal="true">
+            <text includeProjects="GiardiaDB,CryptoDB,TrichDB">
+                <![CDATA[
+                  ORF+Gene
+                ]]>
+            </text>
+            <text includeProjects="PlasmoDB,ToxoDB">
+                 <![CDATA[
+                  ORF+AnnotatedGenes
+                 ]]>
+           </text>
+          </textAttribute>
+
+
         <!-- =================================================================== -->
         <!-- orf Tables++++++++-->
         <!-- =================================================================== -->
 
-        <table name="Locations" includeProjects=""PlasmoDB,ToxoDB,CryptoDB,TrichDB,GiardiaDB"
+        <table name="Locations" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,GiardiaDB"
                  displayName="Orf Location"
                  queryRef="OrfTables.Locations">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
