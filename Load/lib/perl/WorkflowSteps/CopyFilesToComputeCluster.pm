@@ -4,21 +4,25 @@ package ApiCommonData::Load::Steps::WorkflowSteps::LoadFastaSequence;
 
 use ApiCommonData::Load::MakeTaskDirs;
 
+## copy a file from a directory in our local home dir to the cluster home dir.
+## the directory structures in both locations are assumed to be the same, so the 
+
 sub run {
   my ($self) = @_;
 
-  my $file = $self->getConfig('file');
-  
-  my $dir = $self->getConfig('dir');
+  # get param values
+  my $file = $self->getParam('file');  
+  my $relativeDir = $self->getParam('relativeDir');  # dir name relative to home dir
 
-  my $clusterServer = $propertySet->getProp('clusterServer');
-  
-  my $dataDir = $self->getConfig('dataDir');
+  # get global config values
+  my $clusterServer = $self->getGlobalConfig('clusterServer');
+  my $clusterProjectDir = $self->getGlobalConfig('clusterProjectDir');
+  my $dataDir = $self->getGlobalConfig('dataDir');
 
-  my $fileDir = "$dataDir/$dir";
-
-  $mgr->{cluster}->copyTo($fileDir, $file, "$mgr->{clusterDataDir}/$dir");
-
+  # FIX THIS
+  $self->copyToCluster("$dataDir/$relativeDir",
+		       $file,
+		       "$clusterProjectDir/$dataDir/$relativeDir");
 }
 
 sub restart {
