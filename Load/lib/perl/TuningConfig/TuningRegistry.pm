@@ -49,7 +49,7 @@ sub getSubversionUrl {
 sub getNotifyEmails {
     my ($self) = @_;
 
-    getInfoFromRegistry() if !defined $self->{notify_emails};
+    $self->getInfoFromRegistry() if !defined $self->{notify_emails};
 
     return($self->{notify_emails});
 }
@@ -57,7 +57,7 @@ sub getNotifyEmails {
 sub getInstanceName {
     my ($self) = @_;
 
-    getInfoFromRegistry() if !defined $self->{instance_name};
+    $self->getInfoFromRegistry() if !defined $self->{instance_name};
 
     return($self->{instance_name});
 }
