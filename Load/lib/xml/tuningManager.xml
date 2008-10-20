@@ -2238,8 +2238,8 @@ SELECT f.na_feature_id   as na_feature_id,
        r.float_value     as score,
        l.start_min       as start_min,
        l.end_max         as end_max,
-       a.name            as analysis_name,
-       p.name            as protocol_name,
+       substr(a.name, 1, 40) as analysis_name,
+       substr(p.name, 1, 40) as protocol_name,
        decode(p.name, 'ChIP_chip_Einstein', 'raw', 'called_peaks') as protocol_type,
        CASE 
           WHEN a.name like '%RH%' then 'RH'
