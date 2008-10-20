@@ -139,10 +139,10 @@
             <columnAttribute name="genbank_accession"  includeProjects="ApiDB,PlasmoDB" 
                  displayName="GenBank" internal="true"/>
 
-            <columnAttribute name="externalDbName" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB,GiardiaDB"
+            <columnAttribute name="externalDbName" 
                  displayName="External DB Name" internal="true" inReportMaker="false"/>
 
-            <columnAttribute name="externalDbVersion" includeProjects="ToxoDB,CryptoDB,GiardiaDB" 
+            <columnAttribute name="externalDbVersion" 
                  displayName="External DB Version" internal="true" inReportMaker="false"/>
 
             <columnAttribute name="cyc_db" includeProjects="CryptoDB" 
@@ -257,6 +257,26 @@
            <text includeProjects="CryptoDB">
               <![CDATA[
                AnnotationDensity+SyntenySpanParvum+SyntenySpanHominis+SyntenySpanMuris
+              ]]>
+           </text>
+           <text includeProjects="TrichDB">
+              <![CDATA[
+               AnnotationDensity
+              ]]>
+           </text>
+           <text includeProjects="PlasmoDB">
+              <![CDATA[
+               GeneDensity
+              ]]>
+           </text>
+           <text includeProjects="GiardiaDB">
+              <![CDATA[
+               Contigs+AnnotationDensity
+              ]]>
+           </text>
+           <text includeProjects="ToxoDB">
+              <![CDATA[
+               AnnotationDensity+
               ]]>
            </text>
          </textAttribute>
@@ -437,7 +457,7 @@
         <!-- centromere -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <table name="Centromere" includeProjects="PlasmoDB"
+        <table name="Centromere"
                displayName="Centromere"
                queryRef="SequenceTables.Centromere">
             <columnAttribute name="start_min" displayName="Centromere Start"/>
