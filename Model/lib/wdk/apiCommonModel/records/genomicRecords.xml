@@ -114,6 +114,8 @@
 
             <columnAttribute name="length" displayName="Length" internal="true" inReportMaker="false"/>
 
+            <columnAttribute name="is_top_level" internal="true" inReportMaker="false"/>
+
             <columnAttribute name="formatted_length" displayName="Length" align="center"/>
 
             <columnAttribute  name="secondary_identifier" includeProjects="CryptoDB"
@@ -242,10 +244,24 @@
                 Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$, 
                 <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
                 Length: $$length$$<br>
-                $$chromosomemappingtext$$
+                $$chromosomemappingtext$$<br>
+                <a href="http://apicyc.apidb.org/$$cyc_db$$/new-image?object=$$source_id$$">CryptoCyc Metabolic Pathway Database</a><br>
+                <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=$$secondary_identifier$$">GenBank Record</a><br>
+
               ]]>
            </text>
          </textAttribute>
+
+         <textAttribute name="gbrowseTracks" 
+                         inReportMaker="false" internal="true">
+           <text includeProjects="CryptoDB">
+              <![CDATA[
+               AnnotationDensity+SyntenySpanParvum+SyntenySpanHominis+SyntenySpanMuris
+              ]]>
+           </text>
+         </textAttribute>
+
+
 
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
@@ -383,7 +399,7 @@
         <!-- sequence pieces -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <table name="SequencePieces" includeProjects="GiardiaDB"
+        <table name="SequencePieces"
                displayName="Genomic Assembly"
                queryRef="SequenceTables.SequencePieces">
             <columnAttribute name="source_id" internal="true" displayName="Sequence ID"/>

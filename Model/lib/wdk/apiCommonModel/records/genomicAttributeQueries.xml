@@ -88,6 +88,9 @@
             <column name="length" 
                     sortingTable="apidb.SequenceAttributes"/>
 
+           <column name="is_top_level" 
+                    sortingTable="apidb.SequenceAttributes"/>
+
             <column name="formatted_length" 
                     sortingTable="apidb.SequenceAttributes" sortingColumn="length"/>
 
@@ -127,7 +130,7 @@
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
-                    bfmv.length, bfmv.at_percent, bfmv.organism,
+                    bfmv.length, bfmv.at_percent, bfmv.organism, bfmv.is_top_level,
                     trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
                     '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
                     REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
