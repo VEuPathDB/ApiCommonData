@@ -74,6 +74,9 @@ commit;
 
 prompt lookup table for first and last exon
 
+create index dots.ExonOrder_ix
+ on dots.NaFeatureImp (subclass_view, parent_id, number3);
+
 create table apidb.EndExons as
 select parent_id, min(order_number) as min_order_number,
        max(order_number) as max_order_number
@@ -81,6 +84,8 @@ from dots.ExonFeature
 group by parent_id;
 
 create index apidb.endexon_ix on apidb.EndExons(parent_id);
+
+drop index dots.ExonOrder_ix;
 
 prompt fix translation_start for forward strand
 -- simply the exon.coding_start - exonloc.start_min + 1
