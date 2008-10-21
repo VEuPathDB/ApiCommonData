@@ -1,0 +1,74 @@
+#! /usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($verbose, $file, $taxId, $output, $gusConfigFile);
+
+&GetOptions("verbose!"=> \$verbose,
+            "file=s" => \$file,
+            "output=s" => \$output,
+            "taxId=s" => \$taxId,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+die "USAGE: $0 --file  --taxId --output {--verbose} {--gusConfigFile <file>}\n"
+  if (!$file || !$taxId);
+$| = 1;
+
+print STDERR "Establishing dbi login\n" if $verbose;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+					$gusconfig->getReadOnlyDatabaseLogin(),
+					$gusconfig->getReadOnlyDatabasePassword(),
+					$verbose,0,1,
+					$gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle();
+
+# -----------------------------------
+# Main program
+# -----------------------------------
+
+$| = 1;
+
+my $sql = <<SQL;
+
+SELECT taxon_id from sres.taxon
+WHERE ncbi_tax_id = $taxId
+SQL
+
+print "Query for taxon_id: $sql\n" if $verbose;
+
+my $sth = $dbh->prepare($sql);
+$sth->execute();
+my $taxon_id = $sth->fetchrow_array();
+$sth->finish();
+
+die "Couldn't find taxon_id for ncbi_tax_id $taxId\n" if ! $taxon_id;
+
+open(FILE, $file);
+
+open(OUTPUT, "> $output");
+
+while(<FILE>){
+  if ($_ =~ />/){
+    chomp;
+    print OUTPUT "$_ |$taxon_id\n";
+  }
+  else {
+    print OUTPUT "$_";
+  }
+}
+
+close (FILE);
+
+close (OUTPUT);
+
+
+$dbh->disconnect();
+1;
