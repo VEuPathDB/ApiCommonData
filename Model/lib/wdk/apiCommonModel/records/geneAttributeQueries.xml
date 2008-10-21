@@ -187,7 +187,7 @@
              <sqlParamValue name="toxo_expression" includeProjects="ToxoDB">
                 <![CDATA[
                    bfmv.type3_type1_fold_change, bfmv.type3_type2_fold_change, 
-                   bfmv.type2_type1_fold_change, 
+                   bfmv.type2_type1_fold_change, gene_id,
                    CASE WHEN bfmv.organism like 'Toxo%' THEN 'TG_' || to_char(bfmv.gene_id)
                         ELSE to_char(bfmv.gene_id) END as formatted_gene_id,
                 ]]>
