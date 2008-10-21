@@ -23,7 +23,9 @@ ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as "
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $instanceName, $password, $tables, $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey);
+my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey, $forceUpdate);
+
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
@@ -31,6 +33,7 @@ GetOptions("configFile=s" => \$configFile,
            "password=s" => \$password,
            "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
+           "forceUpdate!" => \$forceUpdate,
            "notifyEmail=s" => \$notifyEmail,
            "debug!" => \$debug,
            "cleanupAge:i" => \$cleanupAge,
@@ -128,7 +131,7 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
 }
 
 if ($doUpdate) {
-  $doUpdate = 0 if lockForUpdate() eq "fail";
+  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
 }
 
 if ($validationKey) {
@@ -235,6 +238,14 @@ my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $el
 ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
+# set last update/r in registry if we did a successful full update (and made changes)
+$tuningRegistry->setLastUpdate()
+  if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
+
+# set last check/er in registry if we found everything up to date
+$tuningRegistry->setLastCheck()
+  if !$tables && !$neededUpdateCount;
+
 $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
 my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
@@ -249,7 +260,7 @@ Create/update "tuning tables", denormalized copies of data used to improve web s
 Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>} 
                       --instance <dbInstance> {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
-                     {--cleanupWarnOnly} {--cleanupAge <days>}
+                     {--cleanupWarnOnly} {--cleanupAge <days>} {--forceUpdate}
 
 options:
   configFile      an xml file describing the tables to be created
@@ -262,6 +273,7 @@ options:
   notifyEmail     comma-separated list of email addresses to send log to
   cleanupWarnOnly name but don't drop obsolete tuning tables
   cleanupAge      specify how long (in days) tuning table must be obsolete before dropping
+  forceUpdate     perform update even if current_updater flag is set
   debug           print debugging info
 
 
@@ -479,24 +491,33 @@ SQL
       if $cleanupCount && $cleanupWarnOnly;
 }
 
-sub lockForUpdate() {
+sub lockForUpdate {
+  my ($forceUpdate) = @_;
 
-  $dbh->do("update apidb.InstanceMetaInfo set current_updater = '"
-	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
-	   . "' where current_updater is null")
+  my $processInfo  = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+  my $sql = <<SQL;
+    update apidb.InstanceMetaInfo
+    set current_updater = '$processInfo'
+SQL
+
+  $sql .= " where current_updater is null"
+    unless $forceUpdate;
+
+  $dbh->do($sql)
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
   my $stmt = $dbh->prepare("select current_updater from apidb.InstanceMetaInfo");
   $stmt->execute();
   my ($updater) = $stmt->fetchrow_array();
 
-  if ($updater ne ApiCommonData::Load::TuningConfig::Log::getProcessInfo()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("CURRENT_UPDATER set to \"$updater\"");
+  if ($updater ne $processInfo) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("CURRENT_UPDATER set to \"$updater\". Continuing in read-only mode. Run with \"--forceUpdate\" option to override.");
     return("fail");
   }
 }
 
-sub releaseLockForUpdate() {
+sub releaseLockForUpdate {
 
   $dbh->do("update apidb.InstanceMetaInfo set current_updater = null where current_updater = '"
 	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
@@ -504,7 +525,7 @@ sub releaseLockForUpdate() {
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
-sub checkValidationKey() {
+sub checkValidationKey {
   my ($key) = @_;
 
   my $stmt = $dbh->prepare("select validation_key from apidb.InstanceMetaInfo");

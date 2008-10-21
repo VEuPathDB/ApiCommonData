@@ -62,4 +62,42 @@ sub getInstanceName {
     return($self->{instance_name});
 }
 
+sub setLastUpdate {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+    my $sql = <<SQL;
+      update apidb.TuningInstance\@apidb.login_comment
+      set last_update = sysdate, last_updater = '$processInfo'
+      where service_name = (select service_name from apidb.InstanceMetaInfo)
+SQL
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+    $stmt->finish();
+}
+
+sub setLastCheck {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+    my $sql = <<SQL;
+      update apidb.TuningInstance\@apidb.login_comment
+      set last_check = sysdate, last_checker = '$processInfo'
+      where service_name = (select service_name from apidb.InstanceMetaInfo)
+SQL
+
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+    $stmt->finish();
+}
+
 1;
