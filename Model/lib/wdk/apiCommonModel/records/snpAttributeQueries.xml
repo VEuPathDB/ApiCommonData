@@ -26,43 +26,43 @@
         <sqlQuery name="Bfmv">
             <column name="source_id" />
             <column name="project_id" />
-            <column name="dataset" sortingTable="apidb.SnpAttributes"
-                    lowerCase="true"/>
-            <column name="dataset_hidden" sortingTable="apidb.SnpAttributes"
-                    sortingColumn="dataset" lowerCase="true"/>
-            <column name="seq_source_id" sortingTable="apidb.SnpAttributes" sortingColumn="chromosome_order_num"/>
-            <column name="start_min" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
-            <column name="start_min_text" sortingTable="apidb.SnpAttributes" sortingColumn="start_min" />
-            <column name="chromosome_order_num" sortingTable="apidb.SnpAttributes" sortingColumn="chromosome_order_num" />
-            <column name="is_coding" sortingTable="apidb.SnpAttributes" />
-            <column name="position_in_CDS" sortingTable="apidb.SnpAttributes" />
-            <column name="position_in_protein" sortingTable="apidb.SnpAttributes" />
-            <column name="has_nonsynonymous_allele" sortingTable="apidb.SnpAttributes" />
-            <column name="gene_source_id" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
-            <column name="gene_strand" sortingTable="apidb.SnpAttributes" />
-            <column name="strains"  sortingTable="apidb.SnpAttributes" />
-            <column name="strains_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="strains" lowerCase="true"/>
-            <column name="lflank" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
-            <column name="allele" sortingTable="apidb.SnpAttributes" sortingColumn="reference_na" lowerCase="true"/>
-            <column name="rflank" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
-            <column name="lflank_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="lflank" lowerCase="true"/>
-            <column name="allele_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="allele" lowerCase="true"/>
-            <column name="rflank_gene_strand" sortingTable="apidb.SnpAttributes" sortingColumn="rflank" lowerCase="true"/>
-            <column name="organism" sortingTable="apidb.SnpAttributes" lowerCase="true"/>
-            <column name="formatted_organism" sortingTable="apidb.SnpAttributes" sortingColumn="organism" />
-            <column name="ncbi_tax_id" sortingTable="apidb.SnpAttributes" />
-            <column name="minor_allele_frequency" sortingTable="apidb.SnpAttributes" />
-            <column name="major_allele_frequency" sortingTable="apidb.SnpAttributes" />
-            <column name="strain_count" sortingTable="apidb.SnpAttributes" />
-            <column name="minor_product" sortingTable="apidb.SnpAttributes" />
-            <column name="major_product" sortingTable="apidb.SnpAttributes" />
-            <column name="minor_allele" sortingTable="apidb.SnpAttributes" />
-            <column name="major_allele" sortingTable="apidb.SnpAttributes" />
-            <column name="major_strains" sortingTable="apidb.SnpAttributes" />
-            <column name="minor_strains" sortingTable="apidb.SnpAttributes" />
-            <column name="reference_na" sortingTable="apidb.SnpAttributes" />
-            <column name="reference_aa" sortingTable="apidb.SnpAttributes" />
-            <column name="reference_strain" sortingTable="apidb.SnpAttributes" />
+            <column name="dataset" 
+                    ignoreCase="true"/>
+            <column name="dataset_hidden" 
+                    sortingColumn="dataset" ignoreCase="true"/>
+            <column name="seq_source_id"  sortingColumn="chromosome_order_num"/>
+            <column name="start_min"  sortingColumn="start_min" />
+            <column name="start_min_text"  sortingColumn="start_min" />
+            <column name="chromosome_order_num"  sortingColumn="chromosome_order_num" />
+            <column name="is_coding"  />
+            <column name="position_in_CDS"  />
+            <column name="position_in_protein"  />
+            <column name="has_nonsynonymous_allele"  />
+            <column name="gene_source_id"  ignoreCase="true"/>
+            <column name="gene_strand"  />
+            <column name="strains"   />
+            <column name="strains_gene_strand"  sortingColumn="strains" ignoreCase="true"/>
+            <column name="lflank"  ignoreCase="true"/>
+            <column name="allele"  sortingColumn="reference_na" ignoreCase="true"/>
+            <column name="rflank"  ignoreCase="true"/>
+            <column name="lflank_gene_strand"  sortingColumn="lflank" ignoreCase="true"/>
+            <column name="allele_gene_strand"  sortingColumn="allele" ignoreCase="true"/>
+            <column name="rflank_gene_strand"  sortingColumn="rflank" ignoreCase="true"/>
+            <column name="organism"  ignoreCase="true"/>
+            <column name="formatted_organism"  sortingColumn="organism" />
+            <column name="ncbi_tax_id"  />
+            <column name="minor_allele_frequency"  />
+            <column name="major_allele_frequency"  />
+            <column name="strain_count"  />
+            <column name="minor_product"  />
+            <column name="major_product"  />
+            <column name="minor_allele"  />
+            <column name="major_allele"  />
+            <column name="major_strains"  />
+            <column name="minor_strains"  />
+            <column name="reference_na"  />
+            <column name="reference_aa"  />
+            <column name="reference_strain"  />
             <sqlParamValue includeProjects="ApiDB" name="datasets">
                  'SNPs from alignments of GT1, VEG and RH (AmitAlignmentSnps)', 'Genomic Sequence SNPs', 
                  'John Boothroyd lab at Stanford (ME49_SNPs)', 'EST-based SNPs',

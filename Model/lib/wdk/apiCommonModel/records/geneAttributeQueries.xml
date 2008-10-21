@@ -90,13 +90,13 @@
             </testParamValues>
 
             <column name="project_id"/>
-            <column name="source_id" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="annotation_status" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="new_product" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="new_go" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="new_ec" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="new_protein" sortingTable="apidb.trackNewAnnotation"/>
-            <column name="new_product_string" sortingTable="apidb.trackNewAnnotation" sortingColumn="product"/>
+            <column name="source_id" />
+            <column name="annotation_status" />
+            <column name="new_product" />
+            <column name="new_go" />
+            <column name="new_ec" />
+            <column name="new_protein" />
+            <column name="new_product_string"  sortingColumn="product"/>
             <sql>
                select '@PROJECT_ID@' as project_id, ga.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
                from Apidb.TRACKNEWANNOTATION tna, Apidb.GeneAttributes ga WHERE ga.source_id = tna.source_id(+)
@@ -110,78 +110,78 @@
 
         <sqlQuery name="Bfmv">
             <column name="project_id"/>
-            <column name="source_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
-            <column name="gene_type" sortingTable="apidb.geneattributes" lowerCase="true"/>
-            <column name="product" sortingTable="apidb.geneattributes" lowerCase="true"/>
-            <column name="start_min" sortingTable="apidb.geneattributes"/>
-            <column name="end_max" sortingTable="apidb.geneattributes"/>
-            <column name="start_min_text" sortingTable="apidb.geneattributes" sortingColumn="start_min"/>
-            <column name="end_max_text" sortingTable="apidb.geneattributes" sortingColumn="end_max"/>
-            <column name="transcript_length" sortingTable="apidb.geneattributes"/>
-            <column name="cds_length" sortingTable="apidb.geneattributes"/>
-            <column name="protein_length" sortingTable="apidb.geneattributes"/>
-            <column name="context_start" sortingTable="apidb.geneattributes"/>
-            <column name="context_end" sortingTable="apidb.geneattributes"/>
-            <column name="strand_plus_minus" sortingTable="apidb.geneattributes" sortingColumn="strand"/>
-            <column name="sequence_id" sortingTable="apidb.geneattributes" lowerCase="true"/>
-            <column name="cyc_db" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
-            <column name="cyc_gene_id" sortingTable="apidb.geneattributes" sortingColumn="source_id"/>
-            <column name="tm_count" sortingTable="apidb.geneattributes"/>
-            <column name="so_id" sortingTable="apidb.geneattributes"/>
-            <column name="so_term_name" sortingTable="apidb.geneattributes"/>
-            <column name="so_term_definition" sortingTable="apidb.geneattributes"/>
-            <column name="ontology_name" sortingTable="apidb.geneattributes"/>
-            <column name="so_version" sortingTable="apidb.geneattributes"/>
-            <column name="anticodon" sortingTable="apidb.geneattributes"/>
-            <column name="molecular_weight" sortingTable="apidb.geneattributes"/>
-            <column name="isoelectric_point" sortingTable="apidb.geneattributes"/>
-            <column name="min_molecular_weight" sortingTable="apidb.geneattributes"/>
-            <column name="max_molecular_weight" sortingTable="apidb.geneattributes"/>
-            <column name="hydropathicity_gravy_score" sortingTable="apidb.geneattributes"/>
-            <column name="aromaticity_score" sortingTable="apidb.geneattributes"/>
-            <column name="external_db_name" sortingTable="apidb.geneattributes"/>
-            <column name="external_db_version" sortingTable="apidb.geneattributes"/>
-            <column name="ncbi_tax_id" sortingTable="apidb.geneattributes"/>
-            <column name="species" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
-            <column name="genus_species" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
-            <column name="organism_full" sortingTable="apidb.geneattributes" sortingColumn="organism" excludeProjects="CryptoDB"/>
-            <column name="organism" sortingTable="apidb.geneattributes" sortingColumn="organism"/>
-            <column name="exon_count" sortingTable="apidb.geneattributes"/>
-            <column name="strand" sortingTable="apidb.geneattributes"/>
-            <column name="ec_numbers_string" sortingTable="apidb.geneattributes" sortingColumn="ec_numbers"/>
-            <column name="total_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="total_snps"/>
-            <column name="nonsynonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsynonymous_snps"/>
-            <column name="synonymous_snps_all_strains" sortingTable="apidb.geneattributes" sortingColumn="synonymous_snps"/>
-            <column name="nonsyn_syn_ratio_all_strains" sortingTable="apidb.geneattributes" sortingColumn="nonsyn_syn_ratio"/>
-            <column name="signalp_scores" sortingTable="apidb.geneattributes"/>
-            <column name="signalp_peptide" sortingTable="apidb.geneattributes"/>
-            <column name="ann_go_component" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_component" excludeProjects="GiardiaDB"/>
-            <column name="ann_go_process" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_process" excludeProjects="GiardiaDB"/>
-            <column name="ann_go_function" sortingTable="apidb.geneattributes" sortingColumn="annotated_go_function" excludeProjects="GiardiaDB"/>
-            <column name="pred_go_component" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_component"/>
-            <column name="pred_go_process" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_process"/>
-            <column name="pred_go_function" sortingTable="apidb.geneattributes" sortingColumn="predicted_go_function"/>
-            <column name="genedb_organism" sortingTable="apidb.geneattributes" includeProjects="PlasmoDB"/>
-            <column name="der_min_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_level" includeProjects="PlasmoDB"/>
-            <column name="der_max_level" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_level" includeProjects="PlasmoDB"/>
-            <column name="der_min_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_min_timing" includeProjects="PlasmoDB"/>
-            <column name="der_max_timing" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_timing" includeProjects="PlasmoDB"/>
-            <column name="der_max_pct" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_pct" includeProjects="PlasmoDB"/>
-            <column name="der_max_fold_induction" sortingTable="apidb.geneattributes" sortingColumn="derisi_max_fold_induction" includeProjects="PlasmoDB"/>
-            <column name="winz_min_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_level" includeProjects="PlasmoDB"/>
-            <column name="winz_max_level" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_level" includeProjects="PlasmoDB"/>
-            <column name="winz_min_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_min_timing" includeProjects="PlasmoDB"/>
-            <column name="winz_max_timing" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_timing" includeProjects="PlasmoDB"/>
-            <column name="winz_max_pct" sortingTable="apidb.geneattributes" sortingColumn="winzeler_max_pct" includeProjects="PlasmoDB"/>
+            <column name="source_id"  ignoreCase="true"/>
+            <column name="gene_type"  ignoreCase="true"/>
+            <column name="product"  ignoreCase="true"/>
+            <column name="start_min" />
+            <column name="end_max" />
+            <column name="start_min_text"  sortingColumn="start_min"/>
+            <column name="end_max_text"  sortingColumn="end_max"/>
+            <column name="transcript_length" />
+            <column name="cds_length" />
+            <column name="protein_length" />
+            <column name="context_start" />
+            <column name="context_end" />
+            <column name="strand_plus_minus"  sortingColumn="strand"/>
+            <column name="sequence_id"  ignoreCase="true"/>
+            <column name="cyc_db"  sortingColumn="organism"/>
+            <column name="cyc_gene_id"  sortingColumn="source_id"/>
+            <column name="tm_count" />
+            <column name="so_id" />
+            <column name="so_term_name" />
+            <column name="so_term_definition" />
+            <column name="ontology_name" />
+            <column name="so_version" />
+            <column name="anticodon" />
+            <column name="molecular_weight" />
+            <column name="isoelectric_point" />
+            <column name="min_molecular_weight" />
+            <column name="max_molecular_weight" />
+            <column name="hydropathicity_gravy_score" />
+            <column name="aromaticity_score" />
+            <column name="external_db_name" />
+            <column name="external_db_version" />
+            <column name="ncbi_tax_id" />
+            <column name="species"  sortingColumn="organism"/>
+            <column name="genus_species"  sortingColumn="organism"/>
+            <column name="organism_full"  sortingColumn="organism" excludeProjects="CryptoDB"/>
+            <column name="organism"  sortingColumn="organism"/>
+            <column name="exon_count" />
+            <column name="strand" />
+            <column name="ec_numbers_string"/>
+            <column name="total_snps_all_strains"/>
+            <column name="nonsynonymous_snps_all_strains"  sortingColumn="nonsynonymous_snps"/>
+            <column name="synonymous_snps_all_strains"  sortingColumn="synonymous_snps"/>
+            <column name="nonsyn_syn_ratio_all_strains"  sortingColumn="nonsyn_syn_ratio"/>
+            <column name="signalp_scores" />
+            <column name="signalp_peptide" />
+            <column name="ann_go_component"  sortingColumn="annotated_go_component" excludeProjects="GiardiaDB"/>
+            <column name="ann_go_process"  sortingColumn="annotated_go_process" excludeProjects="GiardiaDB"/>
+            <column name="ann_go_function"  sortingColumn="annotated_go_function" excludeProjects="GiardiaDB"/>
+            <column name="pred_go_component"  sortingColumn="predicted_go_component"/>
+            <column name="pred_go_process"  sortingColumn="predicted_go_process"/>
+            <column name="pred_go_function"  sortingColumn="predicted_go_function"/>
+            <column name="genedb_organism"  includeProjects="PlasmoDB"/>
+            <column name="der_min_level"  sortingColumn="derisi_min_level" includeProjects="PlasmoDB"/>
+            <column name="der_max_level"  sortingColumn="derisi_max_level" includeProjects="PlasmoDB"/>
+            <column name="der_min_timing"  sortingColumn="derisi_min_timing" includeProjects="PlasmoDB"/>
+            <column name="der_max_timing"  sortingColumn="derisi_max_timing" includeProjects="PlasmoDB"/>
+            <column name="der_max_pct"  sortingColumn="derisi_max_pct" includeProjects="PlasmoDB"/>
+            <column name="der_max_fold_induction"  sortingColumn="derisi_max_fold_induction" includeProjects="PlasmoDB"/>
+            <column name="winz_min_level"  sortingColumn="winzeler_min_level" includeProjects="PlasmoDB"/>
+            <column name="winz_max_level"  sortingColumn="winzeler_max_level" includeProjects="PlasmoDB"/>
+            <column name="winz_min_timing"  sortingColumn="winzeler_min_timing" includeProjects="PlasmoDB"/>
+            <column name="winz_max_timing"  sortingColumn="winzeler_max_timing" includeProjects="PlasmoDB"/>
+            <column name="winz_max_pct"  sortingColumn="winzeler_max_pct" includeProjects="PlasmoDB"/>
 
-            <column name="type3_type1_fold_change" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
-            <column name="type3_type2_fold_change" sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
-            <column name="type2_type1_fold_change"  sortingTable="apidb.GeneAttributes" includeProjects="ToxoDB"/>
+            <column name="type3_type1_fold_change"  includeProjects="ToxoDB"/>
+            <column name="type3_type2_fold_change"  includeProjects="ToxoDB"/>
+            <column name="type2_type1_fold_change"   includeProjects="ToxoDB"/>
 
-            <column name="formatted_gene_id" sortingTable="apidb.GeneAttributes" 
+            <column name="formatted_gene_id"  
                     sortingColumn="gene_id" includeProjects="ToxoDB"/>
 
-            <column name="is_deprecated" sortingTable="apidb.GeneAttributes" includeProjects="GiardiaDB"/>
+            <column name="is_deprecated"  includeProjects="GiardiaDB"/>
 
              <sqlParamValue name="toxo_expression" includeProjects="ToxoDB">
                 <![CDATA[

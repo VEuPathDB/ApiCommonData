@@ -36,16 +36,16 @@
         <sqlQuery name="Bfmv">
             <column name="source_id"/>
             <column name="project_id"/>
-            <column name="nas_id" sortingTable="apidb.OrfAttributes" />
-            <!--column name="orf_id" sortingTable="apidb.OrfAttributes" sortingColumn="source_id" /-->
-            <column name="length" sortingTable="apidb.OrfAttributes" />
-            <column name="organism" sortingTable="apidb.OrfAttributes" />
-            <column name="formatted_organism" sortingTable="apidb.OrfAttributes" sortingColumn="organism" />
-            <column name="orf_start" sortingTable="apidb.OrfAttributes" sortingColumn="start_min" />
-            <column name="orf_end" sortingTable="apidb.OrfAttributes" sortingColumn="end_max" />
-            <column name="orf_start_text" sortingTable="apidb.OrfAttributes" sortingColumn="start_min" />
-            <column name="orf_end_text" sortingTable="apidb.OrfAttributes" sortingColumn="end_max" />
-            <column name="orf_strand" sortingTable="apidb.OrfAttributes" sortingColumn="is_reversed" />
+            <column name="nas_id"  />
+            <!--column name="orf_id"  sortingColumn="source_id" /-->
+            <column name="length"  />
+            <column name="organism"  />
+            <column name="formatted_organism"  sortingColumn="organism" />
+            <column name="orf_start"  sortingColumn="start_min" />
+            <column name="orf_end"  sortingColumn="end_max" />
+            <column name="orf_start_text"  sortingColumn="start_min" />
+            <column name="orf_end_text"  sortingColumn="end_max" />
+            <column name="orf_strand"  sortingColumn="is_reversed" />
             <sql>
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.nas_id, bfmv.length, bfmv.organism, bfmv.ncbi_tax_id,

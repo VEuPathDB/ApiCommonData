@@ -35,24 +35,24 @@
        </testRowCountSql>
 
        <sqlQuery name="Bfmv">
-            <column name="source_id" lowerCase="true"/>
+            <column name="source_id" ignoreCase="true"/>
             <column name="project_id"/>
-            <column name="a_count" sortingTable="apidb.EstAttributes"/>
-            <column name="c_count" sortingTable="apidb.EstAttributes"/>
-            <column name="g_count" sortingTable="apidb.EstAttributes"/>
-            <column name="t_count" sortingTable="apidb.EstAttributes"/>
-            <column name="other_count" sortingTable="apidb.EstAttributes"/>
-            <column name="length" sortingTable="apidb.EstAttributes"/>
-            <column name="primer" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="dbest_name" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="assembly_source_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="vector" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="stage" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="organism" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="formatted_organism" sortingTable="apidb.EstAttributes" sortingColumn="organism" lowerCase="true"/>
-            <column name="ncbi_tax_id" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="external_db_name" sortingTable="apidb.EstAttributes" lowerCase="true"/>
-            <column name="assembly_est_count" sortingTable="apidb.EstAttributes" includeProjects="CryptoDB,ToxoDB,GiardiaDB"/>
+            <column name="a_count" />
+            <column name="c_count" />
+            <column name="g_count" />
+            <column name="t_count" />
+            <column name="other_count" />
+            <column name="length" />
+            <column name="primer"  ignoreCase="true"/>
+            <column name="dbest_name"  ignoreCase="true"/>
+            <column name="assembly_source_id"  ignoreCase="true"/>
+            <column name="vector"  ignoreCase="true"/>
+            <column name="stage"  ignoreCase="true"/>
+            <column name="organism"  ignoreCase="true"/>
+            <column name="formatted_organism"  sortingColumn="organism" ignoreCase="true"/>
+            <column name="ncbi_tax_id"  ignoreCase="true"/>
+            <column name="external_db_name"  ignoreCase="true"/>
+            <column name="assembly_est_count"  includeProjects="CryptoDB,ToxoDB,GiardiaDB"/>
             <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
