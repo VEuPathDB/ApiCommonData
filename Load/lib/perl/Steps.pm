@@ -3980,8 +3980,9 @@ sub calculateProteinMolWt {
 sub calculateACGT {
   my ($mgr,$nullsOnly) = @_;
 
-  my $args = "--sqlVerbose $nullsOnly";
+  my $args = "--sqlVerbose";
 
+  $args .= " --$nullsOnly" if ($nullsOnly);
   $mgr->runPlugin("calculateACGT",
                   "ApiCommonData::Load::Plugin::CalculateACGTContent", $args,
                   "Calculating ACGT content of na sequences");
