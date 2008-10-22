@@ -96,7 +96,7 @@
             <column name="new_go" />
             <column name="new_ec" />
             <column name="new_protein" />
-            <column name="new_product_string"  sortingColumn="product"/>
+            <column name="new_product_string"/>
             <sql>
                select '@PROJECT_ID@' as project_id, ga.source_id, tna.status as annotation_status, tna.new_product, tna.new_go, tna.new_ec, tna.new_protein, tna.product as new_product_string
                from Apidb.TRACKNEWANNOTATION tna, Apidb.GeneAttributes ga WHERE ga.source_id = tna.source_id(+)
