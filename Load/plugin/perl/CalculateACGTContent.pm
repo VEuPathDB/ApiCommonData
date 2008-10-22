@@ -100,24 +100,20 @@ sub run {
 sub getSeqId{
   my ($self, $seqArray) = @_;
 
-  my $sql;
-
-  if ($self->getArg('nullsOnly')){
-
-      $sql = <<EOSQL;
-      SELECT distinct na_sequence_id
+ my $sql = <<EOSQL;
+SELECT distinct na_sequence_id
       FROM DoTS.NASequence
-      WHERE a_count is null and t_count is null and c_count is null and g_count is null
-      EOSQL
+EOSQL
 
-}else{
+if ($self->getArg('nullsOnly')){
 
-    $sql = <<EOSQL;
-    SELECT distinct na_sequence_id
-    FROM DoTS.NASequence
-    EOSQL
+ $sql = <<EOSQL;
+SELECT distinct na_sequence_id
+      FROM DoTS.NASequence
+WHERE a_count is null and t_count is null and c_count is null and g_count is null
+
+EOSQL
 }
-
   my $queryHandle = $self->getQueryHandle();
   my $sth = $queryHandle->prepareAndExecute($sql);
 
