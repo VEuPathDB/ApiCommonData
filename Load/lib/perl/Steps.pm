@@ -3978,9 +3978,9 @@ sub calculateProteinMolWt {
 }
 
 sub calculateACGT {
-  my ($mgr) = @_;
+  my ($mgr,$nullsOnly) = @_;
 
-  my $args = "--sqlVerbose ";
+  my $args = "--sqlVerbose $nullsOnly";
 
   $mgr->runPlugin("calculateACGT",
                   "ApiCommonData::Load::Plugin::CalculateACGTContent", $args,
