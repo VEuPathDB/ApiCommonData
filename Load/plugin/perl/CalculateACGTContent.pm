@@ -9,7 +9,20 @@ use base qw(GUS::PluginMgr::Plugin);
 use GUS::Model::DoTS::NASequence;
 use Bio::Tools::SeqStats;
 
-my $argsDeclaration =[];
+my $argsDeclaration =[
+
+
+ booleanArg({
+               name            =>  'nullsOnly', 
+               descr           =>  'if true only calculate for the ones when all residue counts are null',
+               reqd            =>  0,
+               isList          =>  0
+              }),
+
+
+
+
+];
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Calculates the A,C,G,T, other counts for NA sequences.
@@ -87,10 +100,23 @@ sub run {
 sub getSeqId{
   my ($self, $seqArray) = @_;
 
-my $sql = <<EOSQL;
-SELECT distinct na_sequence_id
+  my $sql;
+
+  if ($self->getArg('nullsOnly')){
+
+      $sql = <<EOSQL;
+      SELECT distinct na_sequence_id
       FROM DoTS.NASequence
-EOSQL
+      WHERE a_count is null and t_count is null and c_count is null and g_count is null
+      EOSQL
+
+}else{
+
+    $sql = <<EOSQL;
+    SELECT distinct na_sequence_id
+    FROM DoTS.NASequence
+    EOSQL
+}
 
   my $queryHandle = $self->getQueryHandle();
   my $sth = $queryHandle->prepareAndExecute($sql);
