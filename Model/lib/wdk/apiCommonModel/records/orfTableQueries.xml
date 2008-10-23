@@ -45,7 +45,9 @@
              SELECT  oa.source_id, '@PROJECT_ID@' AS project_id,
                      fl.feature_source_id,
                      fl.sequence_source_id,
-                     Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold') as is_top_level,
+                     case when project_id='ToxoDB' then (Decode(fl.is_top_level,0, 'Scaffold', 1, 'Chromosome'))
+                          else (Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold'))
+                          end as is_top_level,
                      fl.start_min,
                      fl.end_max,
                      Decode(fl.is_reversed, 0, '+', 1, '-') is_reversed,
