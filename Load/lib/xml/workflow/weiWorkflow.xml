@@ -1,0 +1,66 @@
+<workflowGraph name="standardGenomeAnalysis">
+  <param name="genomeName"/>
+  <param name="genomeExtDb"/>
+  <param name="genomeExtDbRls"/>
+  <param name="ncbiTaxonId"/>
+
+  <!-- organism names -->
+  <constant name="Pf">Pfalciparum</constant>
+  <constant name="Pb">Pberghei</constant>
+  <constant name="Pv">Pvivax</constant>
+  <constant name="Py">Pyoelii</constant>
+  <constant name="Tbrucei">Trypanosoma brucei TREU927</constant>
+
+  <!-- data directory names -->
+  <constant name="seqfilesDir">seqfiles</constant>
+  <constant name="miscDir">misc</constant>
+  <constant name="similarityDir">similarity</constant>
+  <constant name="assemblyDir">assembly</constant>
+  <constant name="Dir">mercator</constant>
+ 
+  <!-- handles on external datasets -->
+  <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
+  <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
+  <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="nrdbFile">seqfiles/nr.fsa</constant>
+  <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
+  <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
+  <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
+
+  <steps>
+
+  <step name="extractGenomicSeqs"
+          stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
+      <paramValue name="table">ExternalNASequence</paramValue>
+      <paramValue name="seqType">genomicSeqs</paramValue>
+      <paramValue name="identifier">source_id</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="outputFile">$genomicSeqsFile</paramValue>
+    </step>
+
+    <step name="makeOrfFile"
+          stepClass="ApiCommonData::Load::Steps::MakeOrfFile">
+      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
+      <paramValue name="minPepLength">50</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="outputFile">${genomeName}_Orf50.gff</paramValue>
+      <depends step="extractGenomicSeqs"/>
+    </step>
+
+
+    <step name="loadOrfFile"
+          stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
+      <paramValue name="orfFile">${genomeName}_Orf50.gff</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="subclass">ExternalNASequence</paramValue>
+      <paramValue name="defaultOrg">$Tbrucei</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <depends step="makeOrfFile"/>
+    </step>
+  </steps>
+</workflow>
