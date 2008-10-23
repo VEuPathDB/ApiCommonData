@@ -49,6 +49,7 @@
       <paramValue name="minPepLength">50</paramValue>
       <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
       <paramValue name="outputFile">${genomeName}_Orf50.gff</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
@@ -60,6 +61,27 @@
       <paramValue name="subclass">ExternalNASequence</paramValue>
       <paramValue name="defaultOrg">$Tbrucei</paramValue>
       <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <depends step="makeOrfFile"/>
+    </step>
+
+    <step name="findTandemRepeats"
+          stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
+      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
+      <paramValue name="$seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="$repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <depends step="extractGenomicSeqs"/>
+    </step>
+
+
+    <step name="loadTandemRepeats"
+          stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
+      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="$seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="$repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
       <depends step="makeOrfFile"/>
     </step>
   </steps>
