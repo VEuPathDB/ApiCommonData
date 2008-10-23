@@ -244,6 +244,31 @@
       </sql>
     </sqlQuery>
 
+    <!--===================================================================-->
+    <!-- for tree test -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="toxoForTreeTest" includeProjects="ToxoDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <column name="parentTerm"/>
+      <sql>
+        <![CDATA[
+          select n.name as term,n.taxon_id as internal, tn.name as parentTerm
+          from sres.TAXONNAME n,sres.taxon t,sres.taxonname tn
+          where t.taxon_id in (
+          SELECT taxon_id
+          FROM sres.taxon
+          CONNECT BY prior taxon_id = parent_id
+          START WITH taxon_id in (14104,14204))
+          and t.taxon_id = n.taxon_id
+          and n.name_class='scientific name'
+          and tn.taxon_id = t.parent_id
+          and tn.name_class = 'scientific name'
+        ]]>
+      </sql>
+    </sqlQuery>
+
     <processQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
