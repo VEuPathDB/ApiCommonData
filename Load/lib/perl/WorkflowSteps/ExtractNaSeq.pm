@@ -14,7 +14,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $name = $self->getParamValue('genomeName');
+  my $genomeName = $self->getParamValue('genomeName');
   
   my $seqType = $self->getParamValue('seqType');
 
@@ -36,11 +36,11 @@ sub run {
  
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$seqfilesDir";
+  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/$seqfilesDir";
   
   $outFile = "$seqfilesDir/$outFile";
 
-  my $logFile = "$dataDir/$projectName/$projectVersion/logs/Extract$name-$seqType.log";
+  my $logFile = "$dataDir/$projectName/$projectVersion/logs/$genomeName/Extract$name-$seqType.log";
 
   $self->runCmd(0, "mkdir -p $seqfilesDir") if $seqfilesDir;
   
@@ -86,7 +86,7 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['name', "", ""],
+     ['genomeName', "", ""],
      ['seqType', "", ""],
      ['table', "", ""],
      ['identifier', "", ""],

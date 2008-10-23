@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::ExtractNaSeq;
+package ApiCommonData::Load::WorkflowSteps::MakeOrfFile;
 
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 
@@ -17,13 +17,15 @@ sub run {
   
   my $outFile = $self->getParamValue('outputFile');
 
+  my $genomeName = $self->getParamValue('genomeName');
+
   my $dataDir = $self->getGlobalConfig('dataDir');
 
   my $projectName = $self->getGlobalConfig('projectName');
  
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$seqfilesDir";
+  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/$seqfilesDir";
   
   $outFile = "$seqfilesDir/$outFile";
  
