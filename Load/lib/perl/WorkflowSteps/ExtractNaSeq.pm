@@ -1,40 +1,64 @@
-package ApiCommonData::Load::Steps::WorkflowSteps::ExtractNaSeq;
+package ApiCommonData::Load::WorkflowSteps::ExtractNaSeq;
 
-@ISA = (GUS::Pipeline::WorkflowStep);
+@ISA = (GUS::Workflow::WorkflowStepInvoker);
 
 use strict;
+use GUS::Workflow::WorkflowStepInvoker;
 
-use GUS::PluginMgr::Plugin;
+
+## to do
+## API $self->getExtDbRlsId($genomeExtDbRlsSpec)
+## API $self->getTaxonId($ncbiTaxId) 
+## re-define dataDir
 
 sub run {
-  my ($self) = @_;
+  my ($self, $test) = @_;
 
-  my $name = $self->getConfig('genomeName');
+  my $name = $self->getParamValue('genomeName');
   
-  my $seqType = $self->getConfig('seqType');
+  my $seqType = $self->getParamValue('seqType');
 
-  my $table = $self->getConfig('table');
+  my $table = $self->getParamValue('table');
   
-  my $identifier = $self->getConfig('identifier');
+  my $identifier = $self->getParamValue('identifier');
 
-  my $ncbiTaxId = $self->getConfig('ncbiTaxId');
+  my $ncbiTaxId = $self->getParamValue('ncbiTaxId');
 
-  my $type = ucfirst($seqType);
+  my $dbRlsId = $self->getExtDbRlsId($self->getParamValue('genomeExtDbRlsSpec'));
 
-  my $dbRlsId = $self->getExtDbRlsId($self->getConfig('genomeExtDbRlsSpec'));
+  my $outFile = $self->getParamValue('outputFile');
 
-  my $outFile = $self->getConfig('outputFile');
+  my $seqfilesDir = $self->getParamValue('seqfilesDir');
 
+  my $dataDir = $self->getGlobalConfig('dataDir');
+
+  my $projectName = $self->getGlobalConfig('projectName');
+ 
+  my $projectVersion = $self->getGlobalConfig('projectVersion');
+
+  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$seqfilesDir";
+  
+  $outFile = "$seqfilesDir/$outFile";
+
+  my $logFile = "$dataDir/$projectName/$projectVersion/logs/Extract$name-$seqType.log";
+
+  $self->runCmd(0, "mkdir -p $seqfilesDir") if $seqfilesDir;
+  
   my $sql = my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
              from dots.$table x
              where x.external_database_release_id = $dbRlsId";
 
-  my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
+  my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxId'));
 
   my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
+  if ($test) {
 
-  $self->runCmd($cmd);
+      $self->runCmd($test,$cmd);
+  } else {
+      $self->runCmd(0,"test > $outFile");
+  }
+
 }
 
 
