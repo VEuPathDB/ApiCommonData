@@ -43,6 +43,12 @@
       <paramValue name="outputFile">$genomicSeqsFile</paramValue>
     </step>
 
+   <step name="copyGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">$genomicSeqsFile</paramValue>
+      <paramValue name="relativeDir">$genomeName/$seqfilesDir</paramValue>
+      <depends step="extractGenomicSeqs"/>
+    </step>
+
     <step name="makeOrfFile"
           stepClass="ApiCommonData::Load::Steps::MakeOrfFile">
       <paramValue name="seqFile">$genomicSeqsFile</paramValue>
@@ -68,8 +74,8 @@
     <step name="findTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
       <paramValue name="seqFile">$genomicSeqsFile</paramValue>
-      <paramValue name="$seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="$repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
       <paramValue name="genomeName">$genomeName</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
@@ -79,10 +85,63 @@
           stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
       <paramValue name="seqFile">$genomicSeqsFile</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="$seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="$repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
       <paramValue name="genomeName">$genomeName</paramValue>
       <depends step="makeOrfFile"/>
     </step>
   </steps>
+
+    <step name="filterGenomicSeqs"
+          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="outputFile">$genomicSeqsFile.dust</paramValue>
+      <paramValue name="filterDir">filter</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="filterType">dust</paramValue>
+      <paramValue name="opt">-x</paramValue>
+      <depends step="extractGenomicSeqs"/>
+    </step>
+
+   <step name="filterproteinsFile"
+          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+
+      <paramValue name="seqFile">$proteinsFile</paramValue>
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="outputFile">$proteinsFile.seg</paramValue>
+      <paramValue name="filterDir">filter</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="filterType">seg</paramValue>
+      <paramValue name="opt"/>
+      <depends step="extractProteins"/>
+    </step>
+
+    <step name="loadLowComplexityproteinsFile"
+          stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="inputFile">$proteinsFile.seg</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqType">protein</paramValue>
+      <paramValue name="mask">x</paramValue> 
+      <paramValue name="opt"/>
+      <depends step="filterproteinsFile"/>
+    </step>
+
+     <step name="loadLowComplexityGenomicSeqs"
+          stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
+      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="inputFile">$genomicSeqsFile.dust</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqType">dna</paramValue>
+      <paramValue name="mask">N</paramValue> 
+      <paramValue name="opt">--LowComplexityName 'dust'</paramValue>
+      <depends step="filterGenomicSeqs"/>
+    </step>
+
+  </steps>
+
+
 </workflow>
