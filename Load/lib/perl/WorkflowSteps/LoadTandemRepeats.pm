@@ -36,7 +36,7 @@ sub run {
  
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  my $trfDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/trf";
+  my $trfDir = "$dataDir/$projectName/$projectVersion/primary/data/$genomeName/trf";
 
   my $tandemRepFile = "$trfDir/$seqFile.$repeatFinderArgs.dat";
 
