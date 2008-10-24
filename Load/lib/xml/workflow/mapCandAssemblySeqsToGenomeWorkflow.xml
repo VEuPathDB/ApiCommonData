@@ -1,0 +1,102 @@
+<workflowGraph name="mapCandAssemblySeqsToGenome">
+
+    <param name="genomeDataDir"/>
+    <param name="genomeTaskLogsDir"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="parentNcbiTaxonId"/>
+    <param name="predictedTranscriptsSql"/>
+    <param name="genomeName"/>
+
+   
+    <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
+    </step>
+
+   <step name="extractCandidateAssemblySeqs"
+          stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <depends step="makeCandidateAssemblySeqs"/>
+    </step>
+
+
+    <step name="extractGenomicSeqsIntoSeparateFastaFiles"
+          stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
+      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
+      <paramValue name="table">ExternalNASequence</paramValue>
+      <paramValue name="identifier">source_id</paramValue>
+      <paramValue name="outputFileOrDir">$$genomeDataDir$$/seqfiles/$$genomeName$$-genome</paramValue>
+      <paramValue name="separateFastaFiles">true</paramValue>
+    </step>
+
+    <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+    </step>
+
+    <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
+      <paramValue name="taskInputDir">$$genomeDataDir$$/interpro/input</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
+    <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">interpro</paramValue>
+      <depends step="makeClusterTaskDir"/>
+    </step>
+
+    <step name="makeRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$genomeDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
+    </step>
+
+    <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$genomeDataDir$$/interpro/input</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
+
+    <step name="mirrorRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">interpro</paramValue>
+      <depends step="makeClusterTaskDir"/>
+    </step>
+
+    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+      <paramValue name="taskDir">$$genomeDataDir$$/interpro</paramValue>
+      <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/interpro</paramValue>
+      <paramValue name="queue">apidb</paramValue>
+      <paramValue name="cmdName">runIprScan</paramValue>
+      <paramValue name="cmdArgs">$$proteinsFile$$</paramValue>
+      <depends step="mirrorToCluster"/>
+    </step>
+
+    <step name="waitForClusterTask" waitForPilot="yes">
+      <paramValue name="descrip">interpro</paramValue>
+      <depends step="startClusterTask"/>
+    </step>
+
+    <step name="mirrorGfClientFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$genomeDataDir$$/interpro</paramValue>
+      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <depends step="waitForClusterTask"/>
+    </step>
+
+    <step name="mirrorRepeatMaskFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$genomeDataDir$$/interpro</paramValue>
+      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <depends step="waitForClusterTask"/>
+    </step>
+
+
+    <step name="insert" class="ApiCommonData::Load::WorkflowSteps::InsertInterpro">
+      <paramValue name="">$$proteinsFile$$</paramValue>
+      <paramValue name="interproExtDbRlsSpec">$$interproExtDbRlsSpec$$</paramValue>
+      <paramValue name="configFileRelativeToDownloadDir">InterproscanData/iprscan$$interproVersion$$/iprscan/data/insertInterpro-config.xml</paramValue>
+    </step>
+
+</workflowGraph>
