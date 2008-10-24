@@ -7,6 +7,7 @@
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
+  <param name="genomeTwoLetterAbbrev"/>
 
   <!-- organism names -->
   <constant name="Pf">Pfalciparum</constant>
@@ -29,12 +30,12 @@
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
   <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="proteinsFile">seqfiles/AnnotatedProteins.fsa</constant>
   <constant name="genomicSeqsFile">seqfiles/GenomicSeqs.fsa</constant>
   <constant name="genomeDataDir">data/$$genomeName$$</constant>
   <constant name="genomeTaskLogsDir">taskLogs/$$genomeName$$</constant>
+  <constant name="proteinsFile">$$genomeDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
 
-  <steps>
+
     <step name="initClusterHomeDir"
           stepClass="ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir"
           global="true">
@@ -192,5 +193,4 @@
     </subgraph>
 
 
-  </steps>
 </workflow>
