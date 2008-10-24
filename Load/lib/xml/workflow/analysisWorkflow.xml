@@ -29,8 +29,10 @@
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
   <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="proteinsFile">seqfiles/$$genomeName$$AnnotatedProteins.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/$$genomeName$$GenomicSeqs.fsa</constant>
+  <constant name="proteinsFile">seqfiles/AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/GenomicSeqs.fsa</constant>
+  <constant name="genomeDataDir">data/$$genomeName$$</constant>
+  <constant name="genomeTaskLogsDir">taskLogs/$$genomeName$$</constant>
 
   <steps>
     <step name="initClusterHomeDir"
@@ -45,14 +47,14 @@
 
     <step name="calcTranslatedProteins"
           stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence">
-      <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
+      <include match="$$genomeName$$" list="$Pf,$Pb,$Py,$Pv"/>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <paramValue name="soExtDbRlsSpec">$soExtDbRlsSpec</paramValue>
     </step>
 
     <step name="molecularWeight"
           stepClass="ApiCommonData::Load::Steps::CalculateProteinMolWt">
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends step="calcTranslatedProteins"/>
@@ -123,13 +125,27 @@
       <depends step="runSignalP"/>
     </step>
 
-    <step name="splign" subflow="splignWorkflow">
+    <step name="mirrorProteinsToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">seqfiles</paramValue>
+      <paramValue name="fileOrDirToMirror">AnnotatedProteins.fsa</paramValue>
+      <depends step="extractProteins"/>
+    </step>
+
+    <subgraph name="interpro" xmlFile="interproWorkflow.xml">
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <paramValue name="genomeDataDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="genomeTaskLogsDir">$$genomeTaskLogsDir$$</paramValue>
+      <paramValue name="interproExtDbRlsSpec">interpro:$$interproVersion$$</paramValue>
+      <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    </subgraph>
+
+    <subgraph name="splign" xmlFile="splignWorkflow.xml">
       <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="queryExtDbRlsSpec">$tigrExtDbRlsSpec</paramValue>
-    </step>
+    </subgraph>
 
-    <step name="blastxGenomicSeqsNrdb" subflow="blast">
+    <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="queryAbbrev">genomicSeqs</paramValue>
       <paramValue name="queryFile">$genomicSeqsFile</paramValue>
@@ -146,17 +162,17 @@
       <paramValue name="loadSubjectSubset">true</paramValue>
       <depends step="extractProteins"/></paramValue>
       <depends step="extractGenomicSeqs"/></paramValue>
-    </step>
+    </subgraph>
 
-    <step name="psipred" subflow="psipred">
+    <subgraph name="psipred" xmlFile="psipredWorkflow.xml">
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="nrdbFile">$nrdbShortDeflineFile</paramValue>
       <paramValue name="proteinsFile">$proteinsFile</paramValue>
       <depends step="extractProteins"/>
       <depends step="nrdb"/>
-    </step>
+    </subgraph>
 
-    <step name="blastpProteinsNrdb" subflow="blast">
+    <subgraph name="blastpProteinsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="queryAbbrev">proteins</paramValue>
       <paramValue name="queryFile">$proteinsFile</paramValue>
@@ -173,7 +189,7 @@
       <paramValue name="loadSubjectSubset">true</paramValue>
       <depends step="extractProteins"/>
       <depends step="nrdb"/>
-    </step>
+    </subgraph>
 
 
   </steps>

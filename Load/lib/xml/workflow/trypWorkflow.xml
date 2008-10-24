@@ -1,0 +1,33 @@
+<workflowGraph name="standardGenomeAnalysis">
+  <param name="tryp1ExtDb"/>
+  <param name="tryp1ExtDbRls"/>
+  <param name="tryp2ExtDb"/>
+  <param name="tryp2ExtDbRls"/>
+  <param name="interproVersion"/>
+  <param name="soVersion"/>
+  <param name="tigrVersion"/>
+  <param name="ncbiTaxonVersion"/>
+
+  <subgraph name="tryp1Analysis" xmlFile="analysisWorkflow.xml">
+    <paramValue name="genomeName">tryp1</paramValue>
+    <paramValue name="genomeExtDb">Some kind of fancy name</paramValue>
+    <paramValue name="genomeExtDbRls">2.1</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="soVersion">$$soVersion$$</paramValue>
+    <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId">137566</paramValue>
+  </subgraph>
+
+  <subgraph name="tryp2Analysis" xmlFile="analysisWorkflow.xml">
+    <paramValue name="genomeName">tryp2</paramValue>
+    <paramValue name="genomeExtDb">Some other kind of fancy name</paramValue>
+    <paramValue name="genomeExtDbRls">3.3</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="soVersion">$$soVersion$$</paramValue>
+    <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId">4339566</paramValue>
+  </subgraph>
+
+</workflowGraph>
