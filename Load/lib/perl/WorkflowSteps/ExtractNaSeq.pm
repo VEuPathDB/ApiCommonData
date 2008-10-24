@@ -36,7 +36,7 @@ sub run {
  
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/$seqfilesDir";
+  $seqfilesDir = "$dataDir/$projectName/$projectVersion/primary/data/$genomeName/$seqfilesDir";
   
   $outFile = "$seqfilesDir/$outFile";
 
@@ -53,10 +53,9 @@ sub run {
 
   my $cmd = "gusExtractSequences --outputFile $outFile --idSQL \"$sql\" --verbose 2>> $logFile";
   if ($test) {
-
-      $self->runCmd($test,$cmd);
-  } else {
       $self->runCmd(0,"test > $outFile");
+  } else {
+      $self->runCmd($test,$cmd);
   }
 
 }

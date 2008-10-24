@@ -35,7 +35,7 @@ sub run {
 
   my $soCvsVersion = $self->getGlobalConfig('soCvsVersion');
 
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/$seqfilesDir";
+  $seqfilesDir = "$dataDir/$projectName/$projectVersion/primary/data/$genomeName/$seqfilesDir";
   
   my ($extDbName,$extDbRlsVer);
 

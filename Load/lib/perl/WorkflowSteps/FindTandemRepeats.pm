@@ -25,7 +25,7 @@ sub run {
  
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  my $trfDir = "$dataDir/$projectName/$projectVersion/data/$genomeName/trf";
+  my $trfDir = "$dataDir/$projectName/$projectVersion/pirmary/data/$genomeName/trf";
 
   my $logFile = "$dataDir/$projectName/$projectVersion/logs/$genomeName/run${seqFile}.TRF.log";
 
@@ -33,11 +33,15 @@ sub run {
 
   $self->runCmd(0, "chdir $trfDir");
 
-  my $cmd = "${trfPath}/trf400 ${dataDir}/$projectName/$projectVersion/data/$genomeName/$seqfilesDir/$seqFile $repeatFinderArgs -d > $logFile";
-  
-  $self->runCmd($test,$cmd);
-  
-  $self->runCmd(0, "chdir ${dataDir}/$projectName/$projectVersion/data/$genomeName");
+  my $cmd = "${trfPath}/trf400 ${dataDir}/$projectName/$projectVersion/primary/data/$genomeName/$seqfilesDir/$seqFile $repeatFinderArgs -d > $logFile";
+
+   if ($test) {
+      $repeatFinderArgs =~ s/\s+/\./g;
+      $self->runCmd(0,"test > $trfDir/$seqFile.$repeatFinderArgs.dat");
+  } else {
+      $self->runCmd($test,$cmd); 
+  }
+  $self->runCmd(0, "chdir ${dataDir}/$projectName/$projectVersion/primary/data/$genomeName");
 }
 
 
