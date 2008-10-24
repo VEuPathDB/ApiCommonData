@@ -3,6 +3,8 @@
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
   <param name="ncbiTaxonId"/>
+  <param name="parentNcbiTaxonId"/>
+  <param name="predictedTranscriptsSql"/>
 
   <!-- organism names -->
   <constant name="Pf">Pfalciparum</constant>
@@ -33,14 +35,13 @@
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="seqType">genomicSeqs</paramValue>
       <paramValue name="identifier">source_id</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="outputFile">$genomicSeqsFile</paramValue>
+      <paramValue name="outputFileOrDir">$$genomeDataDir$$/$$seqfiles$$/$$$genomicSeqsFile$$</paramValue>
+      <paramValue name="seqfilesDir">$$genomeDataDir$$/seqfiles</paramValue>
+      <paramValue name="separateFastaFiles">false</paramValue>
     </step>
 
    <step name="copyGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
@@ -140,6 +141,20 @@
       <paramValue name="opt">--LowComplexityName 'dust'</paramValue>
       <depends step="filterGenomicSeqs"/>
     </step>
+
+
+    <subgraph name="mapCandAssemblySeqsToGenome" xmlFile="mapCandAssemblySeqsToGenomeWorkflow.xml">
+      <paramValue name="genomeDataDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="genomeTaskLogsDir"$$$genomeTaskLogsDir$></paramValue>
+      <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
+      <paramValue name="parentNcbiTaxonId">$$nparentNcbiTaxonId$$</paramValue>
+      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
+
+
+
+
+      <depends step="extractGenomicSeqs"/>
+    </subgraph>
 
   </steps>
 
