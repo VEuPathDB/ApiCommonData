@@ -2,6 +2,10 @@
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="interproVersion"/>
+  <param name="soVersion"/>
+  <param name="tigrVersion"/>
+  <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
 
   <!-- organism names -->
@@ -18,15 +22,15 @@
   <constant name="Dir">mercator</constant>
  
   <!-- handles on external datasets -->
-  <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
-  <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
-  <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
-  <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
+  <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
+  <constant name="tigrExtDbRlsSpec">tigr:$$tigrVersion$$</constant>
+  <constant name="taxonomyExtDbRlsSpec">taxonomy:$$taxonomyVersion$$</constant>
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
-  <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
+  <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
+  <constant name="proteinsFile">seqfiles/$$genomeName$$AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/$$genomeName$$GenomicSeqs.fsa</constant>
 
   <steps>
     <step name="initClusterHomeDir"
@@ -93,13 +97,13 @@
     <step name="runTmhmm"
           stepClass="ApiCommonData::Load::Steps::RunTmhmm">
       <paramValue name="seqFile">$proteinsFile</paramValue>
-      <paramValue name="outputFile">tmhmm/${genomeName}Tmhmm.out</paramValue>
+      <paramValue name="outputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
       <depends step="extractProteins"/>
     </step>
 
     <step name="insertTmhmm"
           stepClass="ApiCommonData::Load::Steps::InsertTmhmm">
-      <paramValue name="inputFile">tmhmm/${genomeName}Tmhmm.out</paramValue>
+      <paramValue name="inputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <depends step="runTmhmm"/>
     </step>
@@ -107,14 +111,14 @@
     <step name="runSignalP"
           stepClass="ApiCommonData::Load::Steps::RunSignalP">
       <paramValue name="seqFile">$proteinsFile</paramValue>
-      <paramValue name="outputFile">signalp/${genomeName}SignalP.out</paramValue>
+      <paramValue name="outputFile">signalp/$$genomeName$$SignalP.out</paramValue>
       <paramValue name="options">-t euk -f short -m nn+hmm -q -trunc 70</paramValue>
       <depends step="extractProteins"/>
     </step>
 
     <step name="insertSignalP"
           stepClass="ApiCommonData::Load::Steps::InsertSignalP">
-      <paramValue name="inputFile">signalp/${genomeName}SignalP.out</paramValue>
+      <paramValue name="inputFile">signalp/$$genomeName$$SignalP.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <depends step="runSignalP"/>
     </step>

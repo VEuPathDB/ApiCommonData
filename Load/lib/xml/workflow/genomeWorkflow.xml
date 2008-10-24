@@ -2,21 +2,25 @@
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="interproVersion"/>
+  <param name="soVersion"/>
+  <param name="tigrVersion"/>
+  <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
 
   <constant name="Pf">Pfalciparum</constant>
   <constant name="Pb">Pberghei</constant>
   <constant name="Pv">Pvivax</constant>
   <constant name="Py">Pyoelii</constant>
-  <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
-  <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
-  <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
-  <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
+  <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
+  <constant name="tigrExtDbRlsSpec">tigr:$$tigrVersion$$</constant>
+  <constant name="taxonomyExtDbRlsSpec">ncbiTaxon:$$ncbiTaxonVersion$$</constant>
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
   <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
+  <constant name="proteinsFile">seqfiles/$$genomeName$$AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/$$genomeName$$GenomicSeqs.fsa</constant>
 
   <steps>
     <subflowStep name="NRDB" subflow="resource" global="true">
@@ -152,13 +156,13 @@
     <step name="runTmhmm"
           class="ApiCommonData::Load::Steps::RunTmhmm">
       <paramValue name="seqFile">$proteinsFile</paramValue>
-      <paramValue name="outputFile">tmhmm/${genomeName}Tmhmm.out</paramValue>
+      <paramValue name="outputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
       <depends step="extractProteins"/>
     </step>
 
     <step name="insertTmhmm"
           class="ApiCommonData::Load::Steps::InsertTmhmm">
-      <paramValue name="inputFile">tmhmm/${genomeName}Tmhmm.out</paramValue>
+      <paramValue name="inputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
       <depends step="runTmhmm"/>
     </step>
