@@ -40,11 +40,11 @@ sub run {
   
   $outFile = "$seqfilesDir/$outFile";
 
-  my $logFile = "$dataDir/$projectName/$projectVersion/logs/$genomeName/Extract$name-$seqType.log";
+  my $logFile = "$dataDir/$projectName/$projectVersion/logs/$genomeName/Extract$genomeName-$seqType.log";
 
   $self->runCmd(0, "mkdir -p $seqfilesDir") if $seqfilesDir;
   
-  my $sql = my $sql = "select x.$identifier, x.description,
+  my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
              from dots.$table x
              where x.external_database_release_id = $dbRlsId";
