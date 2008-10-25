@@ -2,26 +2,14 @@
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="genomeTwoLetterAbbrev"/>
   <param name="interproVersion"/>
+  <param name="iedbVersion"/>
   <param name="soVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
-  <param name="genomeTwoLetterAbbrev"/>
 
-  <!-- organism names -->
-  <constant name="Pf">Pfalciparum</constant>
-  <constant name="Pb">Pberghei</constant>
-  <constant name="Pv">Pvivax</constant>
-  <constant name="Py">Pyoelii</constant>
-
-  <!-- data directory names -->
-  <constant name="seqfilesDir">seqfiles</constant>
-  <constant name="miscDir">misc</constant>
-  <constant name="similarityDir">similarity</constant>
-  <constant name="assemblyDir">assembly</constant>
-  <constant name="Dir">mercator</constant>
- 
   <!-- handles on external datasets -->
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
   <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
@@ -48,58 +36,53 @@
 
     <step name="calcTranslatedProteins"
           stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence">
-      <include match="$$genomeName$$" list="$Pf,$Pb,$Py,$Pv"/>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="soExtDbRlsSpec">$soExtDbRlsSpec</paramValue>
+      <include match="$$genomeTwoLetterAbbrev$$" list="Pf,Pb,Py,Pv,Tb,Lm,Li,Lb"/>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="soExtDbRlsSpec">$$soExtDbRlsSpec$$</paramValue>
     </step>
 
     <step name="molecularWeight"
           stepClass="ApiCommonData::Load::Steps::CalculateProteinMolWt">
-      <paramValue name="genomeName">$$genomeName$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends step="calcTranslatedProteins"/>
     </step>
 
     <step name="molecularWeightMinMax"
           stepClass="ApiCommonData::Load::Steps::InsertAASeqMWMinMax">
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends step="calcTranslatedProteins"/>
     </step>
 
     <step name="isoelectricPoint"
           stepClass="ApiCommonData::Load::Steps::InsertAAiP">
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends step="calcTranslatedProteins"/>
     </step>
 
     <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="seqType">genomicSeqs</paramValue>
       <paramValue name="identifier">source_id</paramValue>
-      <paramValue name="outputFile">$genomicSeqsFile</paramValue>
+      <paramValue name="outputFile">$$genomicSeqsFile$$</paramValue>
     </step>
 
     <step name="extractProteins"
           stepClass="ApiCommonData::Load::Steps::ExtractAnnotatedProteinsBySpecies">
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
-      <paramValue name="outputFile">$proteinsFile</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="outputFile">$$proteinsFile$$</paramValue>
       <depends step="calcTranslatedProteins"/>
     </step>
 
     <step name="runTmhmm"
           stepClass="ApiCommonData::Load::Steps::RunTmhmm">
-      <paramValue name="seqFile">$proteinsFile</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
       <depends step="extractProteins"/>
     </step>
@@ -107,13 +90,13 @@
     <step name="insertTmhmm"
           stepClass="ApiCommonData::Load::Steps::InsertTmhmm">
       <paramValue name="inputFile">tmhmm/$$genomeName$$Tmhmm.out</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends step="runTmhmm"/>
     </step>
 
     <step name="runSignalP"
           stepClass="ApiCommonData::Load::Steps::RunSignalP">
-      <paramValue name="seqFile">$proteinsFile</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">signalp/$$genomeName$$SignalP.out</paramValue>
       <paramValue name="options">-t euk -f short -m nn+hmm -q -trunc 70</paramValue>
       <depends step="extractProteins"/>
@@ -122,9 +105,19 @@
     <step name="insertSignalP"
           stepClass="ApiCommonData::Load::Steps::InsertSignalP">
       <paramValue name="inputFile">signalp/$$genomeName$$SignalP.out</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends step="runSignalP"/>
     </step>
+
+    <subgraph name="mapEpitopesToProteins" xmlFile="epitopesWorkflow.xml">
+      <paramValue name="proteinsFile">$proteinsFile</paramValue>
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeDataDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeTwoLetterAbbrev">$$genomeTwoLetterAbbrev$$</paramValue>
+      <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
+      <depends step="extractProteins"/>
+    </subgraph>
 
     <step name="mirrorProteinsToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir">seqfiles</paramValue>
@@ -142,18 +135,18 @@
 
     <subgraph name="splign" xmlFile="splignWorkflow.xml">
       <include match="$genomeName" list="$Pf,$Pb,$Py,$Pv"/>
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$tigrExtDbRlsSpec</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$tigrExtDbRlsSpec$$</paramValue>
     </subgraph>
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="queryAbbrev">genomicSeqs</paramValue>
-      <paramValue name="queryFile">$genomicSeqsFile</paramValue>
+      <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subjectAbbrev">nrdb</paramValue>
-      <paramValue name="subjectFile">$nrdbShortDeflineFile</paramValue>
+      <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec"></paramValue>
       <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1</paramValue>
@@ -166,21 +159,21 @@
     </subgraph>
 
     <subgraph name="psipred" xmlFile="psipredWorkflow.xml">
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="nrdbFile">$nrdbShortDeflineFile</paramValue>
-      <paramValue name="proteinsFile">$proteinsFile</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
+      <paramValue name="nrdbFile">$$nrdbShortDeflineFile$$</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <depends step="extractProteins"/>
       <depends step="nrdb"/>
     </subgraph>
 
     <subgraph name="blastpProteinsNrdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="queryAbbrev">proteins</paramValue>
-      <paramValue name="queryFile">$proteinsFile</paramValue>
+      <paramValue name="queryFile">$$proteinsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subjectAbbrev">nrdb</paramValue>
-      <paramValue name="subjectFile">$nrdbFile</paramValue>
+      <paramValue name="subjectFile">$$nrdbFile$$</paramValue>
       <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec"></paramValue>
       <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1</paramValue>
