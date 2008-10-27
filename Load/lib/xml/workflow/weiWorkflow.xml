@@ -1,16 +1,17 @@
 <workflowGraph name="standardGenomeAnalysis">
+
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="genomeTwoLetterAbbrev"/>
+  <param name="interproVersion"/>
+  <param name="iedbVersion"/>
+  <param name="soVersion"/>
+  <param name="tigrVersion"/>
+  <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
-  <param name="parentNcbiTaxonId"/>
-  <param name="predictedTranscriptsSql"/>
 
   <!-- organism names -->
-  <constant name="Pf">Pfalciparum</constant>
-  <constant name="Pb">Pberghei</constant>
-  <constant name="Pv">Pvivax</constant>
-  <constant name="Py">Pyoelii</constant>
   <constant name="Tbrucei">Trypanosoma brucei TREU927</constant>
 
   <!-- data directory names -->
@@ -19,24 +20,29 @@
   <constant name="similarityDir">similarity</constant>
   <constant name="assemblyDir">assembly</constant>
   <constant name="Dir">mercator</constant>
- 
+
   <!-- handles on external datasets -->
-  <constant name="genomeExtDbRlsSpec">${genomeExtDb}:${genomeExtDbRls}</constant>
-  <constant name="soExtDbRlsSpec">SequenceOntology:${soVersion}</constant>
-  <constant name="tigrExtDbRlsSpec">tigr:${tigrVersion}</constant>
-  <constant name="taxonomyExtDbRlsSpec">tigr:${tigrVersion}</constant>
+  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
+  <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
+  <constant name="tigrExtDbRlsSpec">tigr:$$tigrVersion$$</constant>
+  <constant name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</constant>
+  <constant name="taxonomyExtDbRlsSpec">taxonomy:$$taxonomyVersion$$</constant>
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
-  <constant name="nrdbExtDbRlsSpec">NRDB:$nrdbVersion</constant>
+  <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="proteinsFile">seqfiles/${genomeName}AnnotatedProteins.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/${genomeName}GenomicSeqs.fsa</constant>
+  <constant name="genomicSeqsFile">seqfiles/GenomicSeqs.fsa</constant>
+  <constant name="genomeDataDir">data/$$genomeName$$</constant>
+  <constant name="genomeTaskLogsDir">taskLogs/$$genomeName$$</constant>
+  <constant name="proteinsFile">$$genomeDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">$$genomeDataDir$$/seqfiles/$$genomeName$$GenomicSeqs.fsa</constant>
+  <constant name="ESTSeqsFile">$$genomeDataDir$$/seqfiles/$$genomeName$$ESTSeqs.fsa</constant>
 
   <steps>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxId">$$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="identifier">source_id</paramValue>
       <paramValue name="outputFileOrDir">$$genomeDataDir$$/$$seqfiles$$/$$$genomicSeqsFile$$</paramValue>
@@ -45,61 +51,61 @@
     </step>
 
    <step name="copyGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">$genomicSeqsFile</paramValue>
-      <paramValue name="relativeDir">$genomeName/$seqfilesDir</paramValue>
+      <paramValue name="file">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="relativeDir">$$genomeName$$/$$seqfilesDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
     <step name="makeOrfFile"
           stepClass="ApiCommonData::Load::Steps::MakeOrfFile">
-      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="minPepLength">50</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="outputFile">${genomeName}_Orf50.gff</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="outputFile">$$genomeName$$_Orf50.gff</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
 
     <step name="loadOrfFile"
           stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
-      <paramValue name="orfFile">${genomeName}_Orf50.gff</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="orfFile">$$genomeName$$_Orf50.gff</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subclass">ExternalNASequence</paramValue>
-      <paramValue name="defaultOrg">$Tbrucei</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="defaultOrg">$$Tbrucei$$</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <depends step="makeOrfFile"/>
     </step>
 
     <step name="findTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
-      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
 
     <step name="loadTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
-      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <depends step="makeOrfFile"/>
     </step>
   </steps>
 
     <step name="filterGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::FilterSequences">
-      <paramValue name="seqFile">$genomicSeqsFile</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="outputFile">$genomicSeqsFile.dust</paramValue>
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="outputFile">$$genomicSeqsFile$$.dust</paramValue>
       <paramValue name="filterDir">filter</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="filterType">dust</paramValue>
       <paramValue name="opt">-x</paramValue>
       <depends step="extractGenomicSeqs"/>
@@ -108,11 +114,11 @@
    <step name="filterproteinsFile"
           stepClass="ApiCommonData::Load::Steps::FilterSequences">
 
-      <paramValue name="seqFile">$proteinsFile</paramValue>
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="outputFile">$proteinsFile.seg</paramValue>
+      <paramValue name="seqFile">$$proteinsFile$$</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="filterDir">filter</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="filterType">seg</paramValue>
       <paramValue name="opt"/>
       <depends step="extractProteins"/>
@@ -120,10 +126,10 @@
 
     <step name="loadLowComplexityproteinsFile"
           stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="inputFile">$proteinsFile.seg</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="seqType">protein</paramValue>
       <paramValue name="mask">x</paramValue> 
       <paramValue name="opt"/>
@@ -132,10 +138,10 @@
 
      <step name="loadLowComplexityGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
-      <paramValue name="seqfilesDir">$seqfilesDir</paramValue>
-      <paramValue name="inputFile">$genomicSeqsFile.dust</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
+      <paramValue name="inputFile">$$genomicSeqsFile$$.dust</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="seqType">dna</paramValue>
       <paramValue name="mask">N</paramValue> 
       <paramValue name="opt">--LowComplexityName 'dust'</paramValue>
@@ -149,10 +155,7 @@
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$nparentNcbiTaxonId$$</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
-
-
-
-
+      <paramValue name="dbESTExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 
