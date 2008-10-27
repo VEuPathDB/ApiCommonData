@@ -278,6 +278,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
                     SELECT gb.source_id, gb.project_id, gb.organism
                     FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE ga.source_id = cb.source_id
+                    AND ga.organism like 'Toxoplasma%'
                     AND gb.gene_id = ga.gene_id
                      MINUS
                     SELECT gb.source_id, gb.project_id, gb.organism
