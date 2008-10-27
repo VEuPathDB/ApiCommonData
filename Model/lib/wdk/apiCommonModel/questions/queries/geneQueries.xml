@@ -231,11 +231,10 @@
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf, apidb.GenomicSequence gs,
                  dots.Transcript t, dots.translatedAaFeature taf,
-                 dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE gs.taxon_id in (select taxon_id from sres.taxon
-                                      connect by parent_id = prior taxon_id
-                                      start with taxon_id in ($$organism$$))
+                 dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec,apidb.geneattributes ga
+            WHERE gs.taxon_id in ($$organism$$)
               AND gs.na_sequence_id = gf.na_sequence_id
+              AND ga.source_id = gf.source_id
               AND gf.na_feature_id = t.parent_id
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = asec.aa_sequence_id
