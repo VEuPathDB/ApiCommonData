@@ -16,7 +16,7 @@ sub run {
 
   my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
 
-  my $taxonIdList = $self->getTaxonIdList(taxonId,$self->getParamValue('useTaxonHierarchy'));
+  my $taxonIdList = $self->getTaxonIdList($taxonId,$self->getParamValue('useTaxonHierarchy'));
   
   my $sql = $self->getParamValue('predictedTranscriptsSql');
 

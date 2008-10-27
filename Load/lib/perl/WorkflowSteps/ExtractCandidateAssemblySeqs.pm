@@ -16,13 +16,11 @@ sub run {
 
   my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
 
-  my $taxonIdList = $self->getTaxonIdList(taxonId,$self->getParamValue('useTaxonHierarchy'));
+  my $taxonIdList = $self->getTaxonIdList($taxonId,$self->getParamValue('useTaxonHierarchy'));
   
   my $outputFile = $self->getParamValue('outputFile');
 
   my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
-
-  $args .= " --idSQL \"$sql\"" if($sql);
 
   self->runPlugin( "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
 

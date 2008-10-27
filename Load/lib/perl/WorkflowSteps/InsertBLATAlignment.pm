@@ -22,7 +22,9 @@ sub run {
 
   my $targetExtDbRlsId = $self->getDbRlsId($self->getParamValue('targetExtDbRlsSpec'));
 
-  my $queryExtDbRlsId = $self->getDbRlsId($self->getParamValue('queryExtDbRlsSpec'));
+  my $queryExtDbRlsSpec = $self->$self->getParamValue('queryExtDbRlsSpec');
+
+  my $queryExtDbRlsId = $self->getDbRlsId($queryExtDbRlsSpec) if $queryExtDbRlsSpec;
 
   my $targetTableId = $self->getTableId($self->getParamValue('targetTable'));
 
@@ -45,7 +47,7 @@ sub run {
   
   my $tmpFile = $queryDir . "/blocked.seq";
 
-  $self->runCmd(0,"mkdir -p $queryDir")if ! -d $qDir;
+  $self->runCmd(0,"mkdir -p $queryDir")if ! -d $queryDir;
   
   $self->runCmd(0,"cp $queryFile $tmpFile")if ! -e $tmpFile;
 
