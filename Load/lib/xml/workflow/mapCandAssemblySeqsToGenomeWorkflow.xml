@@ -6,6 +6,10 @@
     <param name="parentNcbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
     <param name="genomeName"/>
+    <param name="dbESTExtDbRlsSpec"/>
+    <param name="BLATQueryName"/>
+    <param name="BLATTargetName"/>
+    <param name="genomicSeqsFile"/>
 
    
     <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
@@ -16,9 +20,9 @@
 
    <step name="extractCandidateAssemblySeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
-      <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="outputFile">$$genomeDataDir$$/seqfiles/$$genomeName$$.fsa</paramValue>
       <depends step="makeCandidateAssemblySeqs"/>
     </step>
 
@@ -38,14 +42,14 @@
     </step>
 
     <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
-      <paramValue name="taskInputDir">$$genomeDataDir$$/interpro/input</paramValue>
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
+      <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
     <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">interpro</paramValue>
+      <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
@@ -54,49 +58,87 @@
     </step>
 
     <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$genomeDataDir$$/interpro/input</paramValue>
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
+      <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
 
     <step name="mirrorRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">interpro</paramValue>
+      <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$genomeDataDir$$/interpro</paramValue>
-      <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/interpro</paramValue>
+      <paramValue name="taskDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="queue">apidb</paramValue>
-      <paramValue name="cmdName">runIprScan</paramValue>
-      <paramValue name="cmdArgs">$$proteinsFile$$</paramValue>
+      <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
+      <paramValue name="cmdArgs">$$ESTSeqsFile$$,$$genomicSeqsFile$$</paramValue>
       <depends step="mirrorToCluster"/>
     </step>
 
     <step name="waitForClusterTask" waitForPilot="yes">
-      <paramValue name="descrip">interpro</paramValue>
+      <paramValue name="descrip">candidateAssemblySeqs</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
     <step name="mirrorGfClientFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$/interpro</paramValue>
+      <paramValue name="parentDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
     <step name="mirrorRepeatMaskFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$/interpro</paramValue>
+      <paramValue name="parentDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
+ 
+    <step name="updateGusTableWithXml" class="ApiCommonData::Load::WorkflowSteps::UpdateGusTableWithXml">
+      <paramValue name="xmlFile">$$PROJECT_HOME$$/ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
+      <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
 
-    <step name="insert" class="ApiCommonData::Load::WorkflowSteps::InsertInterpro">
-      <paramValue name="">$$proteinsFile$$</paramValue>
-      <paramValue name="interproExtDbRlsSpec">$$interproExtDbRlsSpec$$</paramValue>
-      <paramValue name="configFileRelativeToDownloadDir">InterproscanData/iprscan$$interproVersion$$/iprscan/data/insertInterpro-config.xml</paramValue>
+    </step>
+
+    <step name="insertBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
+
+      <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
+      <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
+      <paramValue name="targetTable">ExternalNASequence</paramValue>
+      <paramValue name="queryTable">AssemblySequence</paramValue>
+      <paramValue name="regex">>(\\d+)</paramValue>
+      <paramValue name="action">load</paramValue>
+      <paramValue name="percentTop"></paramValue>
+      <paramValue name="BLATFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
+      <depends step="mirrorRepeatMaskFromCluster"/>
+      <depends step="mirrorGfClientFromCluster"/>
+      <depends step="updateGusTableWithXml"/>
+    </step>
+
+    <step name="setbestBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
+
+      <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
+      <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
+      <paramValue name="targetTable">ExternalNASequence</paramValue>
+      <paramValue name="queryTable">AssemblySequence</paramValue>
+      <paramValue name="regex">>(\\d+)</paramValue>
+      <paramValue name="action">setbest</paramValue>
+      <paramValue name="percentTop">100</paramValue>
+      <paramValue name="BLATFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
+      <depends step="insertBLATAlignment"/>
     </step>
 
 </workflowGraph>
