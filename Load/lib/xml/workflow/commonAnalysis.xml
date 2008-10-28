@@ -1,0 +1,28 @@
+<workflowGraph name="commonAnalysis">
+      <param name="nrdbExtDbRlsSpec"/>
+      <param name="nrdbOutputFile"/>
+      <param name="nrdbShortDeflineOutputFile"/>
+
+    <step name="initClusterHomeDir"
+          stepClass="ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir"
+          global="true">
+    </step>
+
+    <step name="initUserGroupProject" 
+          stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject"
+          global="true">
+    </step>
+
+    <subgraph name="NRDB" xmlFile="nrdbWorkflow.xml">
+      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
+      <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
+    </subgraph>
+
+    <subgraph name="PDB" xmlFile="pdbWorkflow.xml">
+       <depends name="NRDB"/>
+    </subgraph>
+
+
+
+</workflowGraph>
