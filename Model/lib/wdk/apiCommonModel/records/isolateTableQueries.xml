@@ -57,6 +57,53 @@
         </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Isolates in the same study -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="IsoStudy" isCacheable="true" includeProjects="CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
+            <sql>
+            <![CDATA[
+            SELECT distinct etn.source_id,
+                   '@PROJECT_ID@' as project_id
+            FROM   DoTS.ExternalNASequence etn,
+                   DoTS.NASequenceRef nasr,
+                   SRES.Reference ref,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE  edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data'
+               AND edr.version = '2007-12-12'
+               AND nasr.reference_id = ref.reference_id
+               AND etn.na_sequence_id = nasr.na_sequence_id
+               AND etn.source_id != $$source_id$$
+               AND ref.reference_id IN 
+            (
+            SELECT distinct ref.reference_id
+            FROM   DoTS.ExternalNASequence etn,
+                   DoTS.NASequenceRef nasr,
+                   SRES.Reference ref,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE  edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data'
+               AND edr.version = '2007-12-12'
+               AND nasr.reference_id = ref.reference_id
+               AND etn.na_sequence_id = nasr.na_sequence_id
+               AND etn.source_id = $$source_id$$
+            )
+            ORDER BY etn.source_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolate Barcode SNPs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
