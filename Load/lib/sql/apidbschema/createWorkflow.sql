@@ -30,8 +30,6 @@ create table WorkflowStep (
   workflow_step_id    number(10),
   workflow_id         number(10),
   name                varchar(50),
-  step_class          varchar(200),
-  param_values_digest varchar(100),
   host_machine        varchar(30),
   process_id          number(10),
   state               varchar(30),
