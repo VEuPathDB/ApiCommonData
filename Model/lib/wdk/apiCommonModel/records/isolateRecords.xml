@@ -139,9 +139,21 @@
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <table name="IsoStudy" includeProjects="CryptoDB,ApiDB"
-            displayName="Isolates"
+            displayName="Isolate Study"
             queryRef="IsolateTables.IsoStudy">
-        <columnAttribute displayName="Isolate" name="source_id"/>
+        <columnAttribute displayName="Isolates" name="source_id" internal="true"/>
+        <linkAttribute displayName="Isolate Study" name="isolate_study_link" inReportMaker="false" internal="false" >
+           <displayText>
+            <![CDATA[ $$source_id$$ ]]>
+              </displayText>
+              <url>
+              <![CDATA[                       
+              showRecord.do?name=IsolateRecordClasses.IsolateRecordClass&primary_key=$$source_id$$&project_id=CryptoDB
+              ]]>
+              </url>
+        </linkAttribute>
+        <columnAttribute displayName="Title" name="title"/>
+
      </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
