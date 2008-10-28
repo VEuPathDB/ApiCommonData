@@ -1,4 +1,4 @@
-<workflowGraph name="standardGenomeAnalysis">
+<workflowGraph name="organismAnalysis">
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
@@ -23,7 +23,16 @@
   <constant name="genomeTaskLogsDir">taskLogs/$$genomeName$$</constant>
   <constant name="proteinsFile">$$genomeDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
 
-    <subgraph name="genomeSeqsAnalysis" xmlFile="genomeSeqsAnalysis.xml">
+    <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
+      <paramValue name="genomeName">$genomeName</paramValue>
+      <paramValue name="genomeDataDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeTwoLetterAbbrev">$$genomeTwoLetterAbbrev$$</paramValue>
+      <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
+      <depends step="extractProteins"/>
+    </subgraph>
+
+    <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
       <paramValue name="proteinsFile">$proteinsFile</paramValue>
       <paramValue name="genomeName">$genomeName</paramValue>
       <paramValue name="genomeDataDir">$$genomeDataDir$$</paramValue>
