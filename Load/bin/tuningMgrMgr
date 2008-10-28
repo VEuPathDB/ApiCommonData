@@ -1,0 +1,525 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
+use XML::Simple;
+use DBI;
+use Getopt::Long qw(GetOptions);
+use ApiCommonData::Load::TuningConfig::TuningRegistry;
+
+my ($propFile, $instance, $instanceName, $password, $tables,
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey, $forceUpdate);
+
+GetOptions("configFile=s" => \$configFile,
+           "propFile=s" => \$propFile,
+           "instance=s" => \$instance,
+           "instanceName=s" => \$instanceName,
+           "password=s" => \$password,
+           "debug!" => \$debug,
+	  );
+
+$propFile = "/home/iodice/gusApps/plasmo/gus_home/config/tuningManagerProp.xml" unless $propFile;
+
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
+  unless ($propFile || $password);
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")
+  unless $instance;
+&usage unless ($instance && ($propFile || $password));
+
+$cleanupAge = 1.5 if !defined $cleanupAge;
+
+my $dbh = getDbHandle($instance, $propFile, $password);
+
+my $tuningRegistry =
+  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh);
+
+$configFile = getConfigFileName($configFile, $tuningRegistry);
+ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
+my ($config) = &parseConfigFile($configFile);
+
+# create an object for each <tuningTable> entity
+my %tuningTables;
+my %externalTables;
+foreach my $tuningTable (@{$config->{tuningTable}}) {
+
+  $tuningTables{$tuningTable->{name}}
+    = ApiCommonData::Load::TuningConfig::InternalTable->
+      new($tuningTable->{name},
+	  $tuningTable->{internalDependency},
+	  $tuningTable->{externalDependency},
+	  $tuningTable->{intermediateTable},
+	  $tuningTable->{sql},
+	  $tuningTable->{perl}, $dbh, $debug);
+}
+
+# validate config / check external files
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
+my $undefinedInternal;
+my $nonexistentExternal;
+my $dependencyCycle;
+foreach my $tableName (keys(%tuningTables)) {
+
+  # check for internalDependencies that aren't in the list of tuningTables
+  if ($tuningTables{$tableName}->getInternalDependencyNames()) {
+    foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
+      if (!$tuningTables{$dependency->{name}}) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
+	$undefinedInternal = 1;
+      } else {
+	# add object to list of internal dependencies
+	$tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
+      }
+    }
+  }
+
+  # check for externalDependencies that aren't in the database
+  if ($tuningTables{$tableName}->getExternalDependencyNames()) {
+    foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
+
+      # new ExternalTable instance in the hash, if we haven't seen this
+      $externalTables{$dependency->{name}}
+	= ApiCommonData::Load::TuningConfig::ExternalTable->
+	  new($dependency->{name}, $dbh)
+	    unless ($externalTables{$dependency->{name}});
+
+      # add external-table object to list of external dependencies
+      $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
+
+      if (!$externalTables{$dependency->{name}}->exists()) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
+	$nonexistentExternal = 1;
+      }
+    }
+  }
+}
+
+# check for cycles in graph of dependencies
+foreach my $table (keys(%tuningTables)) {
+  $dependencyCycle = 1
+    if $tuningTables{$table}->hasDependencyCycle([]);
+}
+
+ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies must be tables, not views or synonyms.")
+  if $nonexistentExternal;
+
+if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
+  $doUpdate = 0;
+} else {
+  ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
+}
+
+if ($doUpdate) {
+  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
+}
+
+if ($validationKey) {
+  $doUpdate = 0 if checkValidationKey($validationKey) eq "fail";
+}
+
+my $tableCount = 0;
+my $brokenCount = 0;
+my $neededUpdateCount = 0;
+my $upToDateCount = 0;
+
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking whether tuning tables are up to date");
+# check (and potentially update) every tuning table
+my @tableList;
+if ($tables) {
+  @tableList = split(/,/, $tables);
+} else {
+  @tableList = keys(%tuningTables);
+}
+
+foreach my $table (@tableList) {
+  if (!$tuningTables{$table}) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
+    next;
+  }
+
+  $tableCount++;
+  my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
+
+  if ($state eq "broken") {
+    $brokenCount++;
+  } elsif ($state eq "neededUpdate") {
+    $neededUpdateCount++;
+  } elsif ($state eq "up-to-date") {
+    $upToDateCount++;
+  } else {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
+  }
+}
+
+# indexes
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
+my $indexesConfigured;
+my $missingIndexes;
+foreach my $tuningIndex (@{$config->{tuningIndex}}) {
+
+  $indexesConfigured++;
+  my $indexObject =
+    ApiCommonData::Load::TuningConfig::TuningIndex->
+	new($tuningIndex->{name},
+	    $tuningIndex->{table},
+	    $tuningIndex->{content},
+	    $dbh);
+
+  if (!$indexObject->exists()) {
+    $missingIndexes++;
+    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
+
+    $indexObject->create($dbh)
+      if $doUpdate;
+  }
+}
+
+# cleanup
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
+cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
+
+# summary
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
+if (!$tableCount) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
+} else {
+  ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
+}
+
+# list broken tables
+if ($brokenCount) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
+  foreach my $table (keys(%tuningTables)) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
+    if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
+}
+
+}
+
+
+if (!$indexesConfigured) {
+  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
+} elsif ($missingIndexes) {
+  ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
+						 . $indexesConfigured
+						 . " indexes configured were found to be missing");
+} else {
+  ApiCommonData::Load::TuningConfig::Log::addLog("All "
+						 . $indexesConfigured
+						 . " indexes were found to exist.");
+}
+
+releaseLockForUpdate();
+
+my $elapsed = time - $startTime;
+my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
+
+ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+					       " seconds to run tuningManager ($hms)");
+
+# set last update/r in registry if we did a successful full update (and made changes)
+$tuningRegistry->setLastUpdate()
+  if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
+
+# set last check/er in registry if we found everything up to date
+$tuningRegistry->setLastCheck()
+  if !$tables && !$neededUpdateCount;
+
+$notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
+my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
+ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
+
+###############################################################################
+
+sub usage {
+  ApiCommonData::Load::TuningConfig::Log::addLog(
+q{
+Create/update "tuning tables", denormalized copies of data used to improve web site performance.
+
+Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>} 
+                      --instance <dbInstance> {--password <dbPassword>}
+                     {--doUpdate} --notifyEmail <emailAddressList> { --debug }
+                     {--cleanupWarnOnly} {--cleanupAge <days>} {--forceUpdate}
+
+options:
+  configFile      an xml file describing the tables to be created
+  propFile        pathname of a file containing database username and password
+  instance        the database instance to login and craete objects in
+  instanceName    what the instance should be called in the log (useful if the Oracle name is unwieldy)
+  password        database login password
+  tables          check/update only listed tables (and their antecedants)
+  doUpdate        update any tables found to be out of date
+  notifyEmail     comma-separated list of email addresses to send log to
+  cleanupWarnOnly name but don't drop obsolete tuning tables
+  cleanupAge      specify how long (in days) tuning table must be obsolete before dropping
+  forceUpdate     perform update even if current_updater flag is set
+  debug           print debugging info
+
+
+Sample config file XML:
+<tuningConfig>
+
+  <tuningIndex table="dots.NaSequence" name="naSeq_srcSubclass_ix">
+     source_id, subclass_id
+  </tuningIndex>
+
+  <tuningTable name="apidb.EstAlignmentGeneSummary">
+    <internalDependency name="apidb.BlatAlignmentLocation"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="sres.SequenceOntology"/>
+    <intermediateTables name="apidb.EstAlignmentGene"/>
+    <sql>
+      CREATE TABLE apidb.EstAlignmentGene AS
+      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
+               e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
+               ba.query_bases_aligned / (query_sequence.length)
+               * 100 AS percent_est_bases_aligned,
+               ga.source_id AS gene
+        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
+             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+             dots.NaSequence query_sequence, sres.SequenceOntology so
+        WHERE e.na_sequence_id = ba.query_na_sequence_id
+          AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
+          AND so.term_name = 'EST'
+          AND ba.target_na_sequence_id = sequence.na_sequence_id
+    </sql>
+    <sql>
+      CREATE TABLE EstAlignmentGeneSummary&1 AS
+      SELECT * FROM apidb.EstAlignmentNoGene
+      UNION
+      SELECT * FROM apidb.EstAlignmentGene
+    </sql>
+    <sql>
+      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (library_id, percent_identity, is_consistent,
+                       est_gene_overlap_length, percent_est_bases_aligned)
+    </sql>
+    <sql>
+      CREATE INDEX apidb.EstSumm_estSite_ix&1
+                   ON apidb.EstAlignmentGeneSummary&1
+                      (target_sequence_source_id, target_start, target_end,
+                       library_id)
+    </sql>
+  </tuningTable>
+
+</tuningConfig>
+
+Sample prop file:
+<tuningProps>
+  <password>JoeSentMe</password>
+  <username>apidb</username>
+</tuningProps>
+});
+}
+
+sub getConfigFileName {
+  my ($configFile, $tuningRegistry) = @_;
+
+  if (!$configFile) {
+    my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
+    my $subversionUrl = $tuningRegistry->getSubversionUrl();
+    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
+    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
+    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
+    system(@cmdLine) == 0
+      or die "system @cmdLine failed: $?";
+
+    $configFile = $configDir . "/tuningManager.xml";
+  }
+
+  return $configFile;
+}
+
+sub parseConfigFile {
+  my ($configFile) = @_;
+
+  open(FILE, $configFile) || die "can't open configuration file '$configFile' for reading\n";
+  my $simple = XML::Simple->new();
+
+  # use forcearray so elements with one child are still arrays
+  # and use keyattr so that unions are given as an ordered list
+  # rather than a hash
+  my $config = $simple->XMLin($configFile,
+			    forcearray => 1,
+			    KeyAttr => {sqlValue=>'+name'});
+  if ($debug) {
+    print Dumper($config);
+    print "\n\n";
+  }
+
+  return ($config);
+}
+
+sub getDbHandle {
+  my ($instance, $propFile, $password) = @_;
+  my $username = 'apidb';
+
+  if ($propFile) {
+    my $simple = XML::Simple->new();
+    my $props = $simple->XMLin($propFile);
+    $password = $props->{password} if !$password;
+    $username = $props->{username} if $props->{username};
+  }
+
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+  $dbh->{LongReadLen} = 1000000;
+  $dbh->{LongTruncOk} = 1;
+  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
+  return $dbh;
+}
+
+sub cleanup {
+  my ($dbh, $cleanupAge, $cleanupWarnOnly) = @_;
+  my $cleanupCount = 0;
+
+  # drop any tables that are listed as obsolete more than the threshold
+  my $sql = <<SQL;
+select ott.name,
+       to_char(sysdate - ott.timestamp, '9.99') as days_old
+from apidb.ObsoleteTuningTable ott,
+     all_tables at
+where ott.timestamp < sysdate - $cleanupAge
+  and ott.name = at.owner || '.' || at.table_name
+SQL
+  ApiCommonData::Load::TuningConfig::Log::addLog($sql) if $debug;
+
+  my $select = $dbh->prepare($sql);
+  $select->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+  # prepare sql to delete ObsoleteTuningTable record when OTT is dropped
+  my $sql = <<SQL;
+delete from apidb.ObsoleteTuningTable
+where name = ?
+SQL
+  my $delete  = $dbh->prepare($sql);
+
+  while (my ($dropee, $daysOld) = $select->fetchrow_array()) {
+    $cleanupCount++;
+    my $dropMsg = "$dropee obsolete for $daysOld days.";
+
+    if (!$cleanupWarnOnly) {
+      $dropMsg .= " . . .dropping.";
+      my $sql = <<SQL;
+          drop table $dropee
+SQL
+      my $drop = $dbh->prepare($sql);
+      $drop->execute()
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+      $drop->finish();
+
+      $delete->execute($dropee)
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    }
+    ApiCommonData::Load::TuningConfig::Log::addLog($dropMsg);
+  }
+  $select->finish();
+  $delete->finish();
+
+  # check for obsolete tables not in apidb.ObsoleteTuningTable
+  # note that the backslash in the regex is to protect the dollar-sign from Perl
+  # it's really "zero or more digits, followed by end-of-line": [0-9]*$
+  $sql = <<SQL;
+select owner || '.' || table_name
+from (select atab.owner, atab.table_name
+      from all_synonyms asyn, all_tables atab
+      where asyn.owner = atab.owner
+        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name
+    minus select table_owner, table_name from all_synonyms)
+minus select name from apidb.ObsoleteTuningTable
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  while (my ($table) = $stmt->fetchrow_array()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+  }
+  $stmt->finish();
+
+  # check for apidb.ObsoleteTuningTable records whose tables don't exist
+  $sql = <<SQL;
+select name from apidb.ObsoleteTuningTable
+minus select owner || '.' || table_name
+from (select atab.owner, atab.table_name
+      from all_synonyms asyn, all_tables atab
+      where asyn.owner = atab.owner
+        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  while (my ($table) = $stmt->fetchrow_array()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("tuning table $table is listed in apidb.ObsoleteTuningTable but does not exist");
+  }
+  $stmt->finish();
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("$cleanupCount obsolete tables found")
+      if $cleanupCount;
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
+      if $cleanupCount && $cleanupWarnOnly;
+}
+
+sub lockForUpdate {
+  my ($forceUpdate) = @_;
+
+  my $processInfo  = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+  my $sql = <<SQL;
+    update apidb.InstanceMetaInfo
+    set current_updater = '$processInfo'
+SQL
+
+  $sql .= " where current_updater is null"
+    unless $forceUpdate;
+
+  $dbh->do($sql)
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+  my $stmt = $dbh->prepare("select current_updater from apidb.InstanceMetaInfo");
+  $stmt->execute();
+  my ($updater) = $stmt->fetchrow_array();
+
+  if ($updater ne $processInfo) {
+    my $updateLockoutMsg = <<MSG;
+Another tuningManager process appears to be updating the database. CURRENT_UPDATER is set to "$updater".
+Continuing in read-only mode, but not updating tuning tables. If this process ($updater) is not runnning, you can override this lockout by rerunning tuningManager with the "--forceUpdate" option.
+MSG
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($updateLockoutMsg);
+    return("fail");
+  }
+}
+
+sub releaseLockForUpdate {
+
+  $dbh->do("update apidb.InstanceMetaInfo set current_updater = null where current_updater = '"
+	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
+	   . "'")
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+}
+
+sub checkValidationKey {
+  my ($key) = @_;
+
+  my $stmt = $dbh->prepare("select validation_key from apidb.InstanceMetaInfo");
+  $stmt->execute();
+  my ($db_key) = $stmt->fetchrow_array();
+
+  if ($db_key ne $key) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("supplied key \"$key\" does not match value in database of \"$db_key\"");
+    return("fail");
+  }
+
+}
+
