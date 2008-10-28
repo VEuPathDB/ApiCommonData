@@ -9,10 +9,6 @@
   </constants>
 
   <steps>
-    <step name="NRDB" subflow="resource" global="true"/>
-      <paramValue name="extDbRlsSpec">$nrdbExtDbRlsSpec</paramValue>
-    </step>
-
     <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">NRDB/nr.gz</paramValue>
       <paramValue name="toFile">$nrdbOutputFile</paramValue>

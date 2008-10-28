@@ -1,20 +1,22 @@
 <workflowGraph name="trypAnalysisWorkflow">
-  <param name="tryp1ExtDb"/>
-  <param name="tryp1ExtDbRls"/>
-  <param name="tryp2ExtDb"/>
-  <param name="tryp2ExtDbRls"/>
+  <param name="tcruziExtDb"/>
+  <param name="tcruziExtDbRls"/>
+  <param name="tbruceiExtDb"/>
+  <param name="tbruceiExtDbRls"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
   <param name="soVersion"/>
   <param name="tigrVersion"/>
+  <param name="nrdbVersion"/>
   <param name="ncbiTaxonVersion"/>
 
-  <subgraph name="common" xmlFile="commonAnalysisWorkflow.xml">
-    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
-    <paramValue name="iedbVersion">$$interproVersion$$</paramValue>
-    <paramValue name="soVersion">$$soVersion$$</paramValue>
-    <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
-    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+  <constant name="nrdbFile"></constant>
+  <constant name="nrdbShortDeflineFile"></constant>
+
+  <subgraph name="common" xmlFile="commonAnalysis.xml">
+    <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
+    <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
   </subgraph>
 
   <subgraph name="TcruziAnalysis" xmlFile="analysisWorkflow.xml">
@@ -30,6 +32,8 @@
     <paramValue name="ncbiTaxonId">137566</paramValue>    
     <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -45,6 +49,8 @@
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
     <paramValue name="ncbiTaxonId">4339566</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
