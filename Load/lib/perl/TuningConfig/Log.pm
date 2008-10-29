@@ -93,17 +93,17 @@ sub addLogBanner {
 sub mailLog {
   my ($recipientList, $instance_name) = @_;
 
-  my $subject = "tuningManager on $instance_name: ";
+  my $subject = "$instance_name - ";
 
   if (!getUpdateNeededFlag()) {
-    $subject .= 'up-to-date';
+    $subject .= 'ok';
   } elsif (getUpdateNeededFlag() && !getUpdatePerformedFlag()) {
-    $subject .= 'UPDATE NEEDED';
+    $subject .= 'NEEDS UPDATE';
   } elsif (getUpdatePerformedFlag()) {
-    $subject .= "update performed";
+    $subject .= "updated";
   }
 
-  $subject .= "; ERRORS ENCOUNTERED"
+  $subject .= " - ERRORS"
     if getErrorsEncounteredFlag();
 
   foreach my $recipient (split(/,/, $recipientList)) {

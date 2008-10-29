@@ -19,10 +19,10 @@ sub getInfoFromRegistry {
     my $dbh = $self->{dbh};
 
     my $sql = <<SQL;
-      select imi.service_name, ti.instance_name, tf.subversion_url, tf.notify_emails
+      select imi.instance_nickname, ti.instance_nickname, tf.subversion_url, tf.notify_emails
       from apidb.TuningInstance\@apidb.login_comment ti, apidb.TuningFamily\@apidb.login_comment tf,
            apidb.InstanceMetaInfo imi
-      where ti.service_name(+) =  imi.service_name
+      where ti.instance_nickname(+) =  imi.instance_nickname
         and ti.family_name = tf.family_name(+)
 SQL
 
@@ -33,7 +33,7 @@ SQL
     ($self->{service_name}, $self->{instance_name}, $self->{subversion_url}, $self->{notify_emails})
       = $stmt->fetchrow_array();
 
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for service_name \"$self->{service_name}\"")
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for instance_nickname \"$self->{service_name}\"")
 	if !defined $self->{subversion_url};
     $stmt->finish();
 }

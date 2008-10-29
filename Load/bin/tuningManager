@@ -512,7 +512,11 @@ SQL
   my ($updater) = $stmt->fetchrow_array();
 
   if ($updater ne $processInfo) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("CURRENT_UPDATER set to \"$updater\". Continuing in read-only mode. Run with \"--forceUpdate\" option to override.");
+    my $updateLockoutMsg = <<MSG;
+Another tuningManager process appears to be updating the database. CURRENT_UPDATER is set to "$updater".
+Continuing in read-only mode, but not updating tuning tables. If this process ($updater) is not runnning, you can override this lockout by rerunning tuningManager with the "--forceUpdate" option.
+MSG
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($updateLockoutMsg);
     return("fail");
   }
 }
