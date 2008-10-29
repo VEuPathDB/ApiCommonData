@@ -1,12 +1,12 @@
 <workflowGraph name="mapCandAssemblySeqsToGenome">
 
-    <param name="genomeDataDir"/>
-    <param name="genomeTaskLogsDir"/>
+    <param name="organismDataDir"/>
+    <param name="organismTaskLogsDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
     <param name="NcbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
-    <param name="genomeName"/>
+    <param name="organismName"/>
     <param name="BLATQueryName"/>
     <param name="BLATTargetName"/>
     <param name="genomicSeqsFile"/>
@@ -33,45 +33,45 @@
       <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="identifier">source_id</paramValue>
-      <paramValue name="outputFileOrDir">$$genomeDataDir$$/seqfiles/$$genomeName$$-genome</paramValue>
+      <paramValue name="outputFileOrDir">$$organismDataDir$$/seqfiles/$$organismName$$-genome</paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
     </step>
 
     <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="dataDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
     </step>
 
     <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
-      <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
+      <paramValue name="taskInputDir">$$organismDataDir$$/candidateAssemblySeqs/input</paramValue>
       <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
     <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="makeRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$genomeDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
+      <paramValue name="dataDir">$$organismDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
     </step>
 
     <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
+      <paramValue name="taskInputDir">$$organismDataDir$$/candidateAssemblySeqs/input</paramValue>
       <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
 
     <step name="mirrorRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="taskDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
@@ -85,13 +85,13 @@
     </step>
 
     <step name="mirrorGfClientFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="parentDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
     <step name="mirrorRepeatMaskFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$genomeDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="parentDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
@@ -116,8 +116,8 @@
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">load</paramValue>
       <paramValue name="percentTop"></paramValue>
-      <paramValue name="BLATFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="BLATFile">$$organismDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$organismDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
       <depends step="mirrorRepeatMaskFromCluster"/>
       <depends step="mirrorGfClientFromCluster"/>
       <depends step="updateGusTableWithXml"/>
@@ -136,8 +136,8 @@
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">setbest</paramValue>
       <paramValue name="percentTop">100</paramValue>
-      <paramValue name="BLATFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$genomeDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="BLATFile">$$organismDataDir$$/candidateAssemblySeqs/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$organismDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
       <depends step="insertBLATAlignment"/>
     </step>
 
