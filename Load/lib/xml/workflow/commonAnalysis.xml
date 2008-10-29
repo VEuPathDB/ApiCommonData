@@ -3,26 +3,44 @@
       <param name="nrdbOutputFile"/>
       <param name="nrdbShortDeflineOutputFile"/>
 
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">common</paramValue>
+    </step>
+
     <step name="initClusterHomeDir"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir"
-          global="true">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir">
     </step>
 
     <step name="initUserGroupProject" 
-          stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject"
-          global="true">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject">
     </step>
 
-    <subgraph name="NRDB" xmlFile="nrdbWorkflow.xml">
-      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
-      <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
-       <depends name="initClusterHomeDir"/>
-    </subgraph>
+    <step name="copyPdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
+      <paramValue name="fromFile">PDBProteinSequences/pdb.fsa</paramValue>
+      <paramValue name="toFile">common/pdb.fsa</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
 
-    <subgraph name="PDB" xmlFile="pdbWorkflow.xml">
-       <depends name="NRDB"/>
-    </subgraph>
+    <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
+      <paramValue name="fromFile">NRDB/nr.gz</paramValue>
+      <paramValue name="toFile">$nrdbOutputFile</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
+    <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
+      <paramValue name="fromFile">$nrdbOutputFile</paramValue>
+      <paramValue name="toFile">$nrdbShortDeflineOutputFile</paramValue>
+      <depends step="copyNrdbFile"/>
+    </step>
+
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir"></paramValue>
+      <paramValue name="fileOrDirToMirror">common</paramValue>
+      <depends step="makeClusterTaskDir"/>
+      <depends step="shortenNrdbDefline"/>
+      <depends step="copyPdbFile"/>
+    </step>
+
 
 
 

@@ -1,20 +1,19 @@
 <workflowGraph name="epitopes">
 
     <param name="proteinsFile"/>
-    <param name="genomeDataDir"/>
+    <param name="organismDataDir"/>
     <param name="iedbExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
-    <param name="genomeName"/>
-    <param name="genomeTwoLetterAbbrev"/>
+    <param name="organismTwoLetterAbbrev"/>
 
-    <constant name="proteinsFileSimpleDefline">$$genomeDataDir$$/iedb/blastDb/$$genomeName$$_proteins</constant>
+    <constant name="proteinsFileSimpleDefline">$$organismDataDir$$/iedb/blastDb/proteinsSimpleDefline.fsa</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$genomeDataDir$$/iedb</paramValue>
+      <paramValue name="dataDir">$$organismDataDir$$/iedb</paramValue>
     </step>
 
     <step name="makeBlastDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$genomeDataDir$$/iedb/blastDb</paramValue>
+      <paramValue name="dataDir">$$organismDataDir$$/iedb/blastDb</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
@@ -32,16 +31,15 @@
 
     <step name="createEpitopeMapFile" class="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
       <paramValue name="inputDirRelativeToDownloadsDir">IEDB_fixed</paramValue>
-      <paramValue name="blastDbDir">$$genomeDataDir$$/iedb/blastDb</paramValue>
-      <paramValue name="genomeTwoLetterAbbrev">$$genomeTwoLetterAbbrev$$</paramValue>
+      <paramValue name="blastDbDir">$$organismDataDir$$/iedb/blastDb</paramValue>
+      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
-      <paramValue name="outputDir">$$genomeDataDir$$/iedb/results</paramValue>
+      <paramValue name="outputDir">$$organismDataDir$$/iedb/results</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="insertEpitopeMapping" class="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
-      <paramValue name="inputDir">$$genomeDataDir$$/iedb/results</paramValue>
-      <paramValue name="genomeName">$$genomeName$$</paramValue>
+      <paramValue name="inputDir">$$organismDataDir$$/iedb/results</paramValue>
       <paramValue name="iedbExtDbRlsSpec">$$iedbExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     </step>

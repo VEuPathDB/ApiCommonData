@@ -1,56 +1,47 @@
-<workflow name="splign">
-  <params>
+<workflowGraph name="splign">
+
     <param name="queryExtDbRlsSpec"/>
     <param name="subjectExtDbRlsSpec"/>
-    <param name="genomeName"/>
-    <param name="queryFastaFile"/>
 
-  </params>
+    <constant name="queryFastaFile">$$organismDataDir$$/splign/query.fsa</constant>
+    <constant name="subjectFastaFile">$$organismDataDir$$/splign/subject.fsa</constant>
+    <constant name="splignOutputFile">$$organismDataDir$$/splign/splign.out</constant>
 
-  <constants>
-    <constant name="querySeqType">tcLCL</constant>
-    <constant name="subjectSeqType">genomeLCL</constant>
-    <constant name="table">ExternalNaSequence</constant>
-  </constants>
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$organismDataDir$$/splign</paramValue>
+    </step>
 
-
-  <steps>
     <step name="extractQuery" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
-      <paramValue name="extDbRlsSpec">$queryExtDbRlsSpec</paramValue>
-      <paramValue name="genomeName">$genomeName</paramValue>
-      <paramValue name="seqType">$querySeqType</paramValue>
-      <paramValue name="table">$table</paramValue>
+      <paramValue name="extDbRlsSpec">$$queryExtDbRlsSpec$$</paramValue>
+      <paramValue name="table">ExternalNaSequence</paramValue>
       <paramValue name="defline">'lcl|'||source_id'</paramValue>
-      <paramValue name="outputFile">$queryFastaFile</paramValue>
+      <paramValue name="outputFile">$$queryFastaFile$$</paramValue>
+      <depends step="makeDataDir"/>
     </step>
 
     <step name="extractSubject" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">
-      <paramValue name="extDbRlsSpec">$$$subjectExtDbRlsSpec</paramValue>
-      <paramValue name="genomeName">$$$genomeName</paramValue>
-      <paramValue name="seqType">@@@subjectSeqType</paramValue>
-      <paramValue name="table">@@@table</paramValue>
+      <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
+      <paramValue name="table">ExternalNaSequence</paramValue>
       <paramValue name="defline">'lcl|'||source_id'</paramValue>
+      <paramValue name="outputFile">$$subjectFastaFile$$</paramValue>
+      <depends step="makeDataDir"/>
     </step>
 
     <step name="runSplign" class="ApiCommonData::Steps::RunSplign">
-      <paramValue name="genomeName">$$$genomeName</paramValue>
-      <paramValue name="querySeqType">@@@querySeqType</paramValue>
-      <paramValue name="subjectSeqType">@@@subjectSeqType</paramValue>
-      <paramValue name="queryFile">$queryFastaFile</paramValue>
-      <paramValue name="subjectFile">???</paramValue>
+      <paramValue name="queryFile">$$queryFastaFile$$</paramValue>
+      <paramValue name="subjectFile">$$subjectFastaFile$$</paramValue>
+      <paramValue name="outputFile">$$splignOutputFile$$</paramValue>
       <depends step="extractQuery"/>
       <depends step="extractSubject"/>
     </step>
 
     <step name="insertSplign" class="ApiCommonData::Steps::InsertSplign">
-      <paramValue name="genomeName">$$$genomeName</paramValue>
-      <paramValue name="querySeqType">@@@querySeqType</paramValue>
-      <paramValue name="subjectSeqType">@@@subjectSeqType</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$$queryExtDbRlsSpec</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$$$subjectExtDbRlsSpec</paramValue>
-      <paramValue name="queryTable">@@@table</paramValue>
-      <paramValue name="subjectTable">@@@table</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$queryExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
+      <paramValue name="inputFile">$$splignOutputFile$$</paramValue>
+      <paramValue name="queryTable">ExternalNaSequence</paramValue>
+      <paramValue name="subjectTable">ExternalNaSequence</paramValue>
       <depends step="runSplign"/>
     </step>
 
-  </steps
+</workflowGraph>
