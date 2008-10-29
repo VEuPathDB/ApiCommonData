@@ -70,11 +70,11 @@
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
-            <column name="title" />
+            <column name="definition" />
             <sql>
             <![CDATA[
             SELECT distinct etn.source_id,
-                   ref.title,
+                   etn.description definition,
                    '@PROJECT_ID@' as project_id
             FROM   DoTS.ExternalNASequence etn,
                    DoTS.NASequenceRef nasr,
