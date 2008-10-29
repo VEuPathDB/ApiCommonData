@@ -132,6 +132,35 @@
            </sql>
       </sqlQuery>
 
+      <sqlQuery name="UniqueReference" includeProjects="CryptoDB,ApiDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="unique_title"/>
+            <column name="unique_author"/>
+            <column name="unique_year"/>
+            <sql>
+            SELECT etn.source_id, 
+                   ref.title unique_title, 
+                   ref.author unique_author, 
+                   ref.year unique_year,
+                   '@PROJECT_ID@' as project_id
+            FROM   DoTS.NASequence etn,
+                   DoTS.NASequenceRef nasr,
+                   SRES.Reference ref,
+                   SRes.ExternalDatabaseRelease edr,
+                   SRes.ExternalDatabase edb
+            WHERE  edr.external_database_id = edb.external_database_id
+               AND edr.external_database_release_id = etn.external_database_release_id
+               AND edb.name = 'Isolates Data'
+               AND edr.version = '2007-12-12'
+               AND nasr.reference_id = ref.reference_id
+               AND etn.na_sequence_id = nasr.na_sequence_id
+               AND ref.title != 'Direct Submission'
+               AND etn.source_id = $$source_id$$
+               AND rownum = 1
+           </sql>
+      </sqlQuery>
+
       <sqlQuery name="GeneOverlap" includeProjects="CryptoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
