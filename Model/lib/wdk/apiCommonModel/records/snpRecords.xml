@@ -132,7 +132,7 @@
       <!-- Isolate summary attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-
+<!--
       <attributeQueryRef ref="SnpAttributes.isolateSummary" includeProjects="PlasmoDB">
          <columnAttribute name="iso_major_allele" displayName="Isolate Major Allele" internal="true"/>
          <columnAttribute name="iso_major_percent" displayName="Isolate Major Allele Percent" internal="true"/>
@@ -141,6 +141,7 @@
          <columnAttribute name="iso_number_strains" displayName="Number of Genotyped Isolates" internal="true"/>
       </attributeQueryRef>
 
+-->
           <!-- =================================================================== -->
           <!--  Text Attributes  ++++++++-->
           <!-- =================================================================== -->
@@ -228,6 +229,17 @@
               <columnAttribute displayName="Country" name="country"/>
               <columnAttribute displayName="Strain" name="strain"/>
               <columnAttribute displayName="Allele" name="allele" align="center"/>
+          </table>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- isolate allele freq table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="IsolatesAlleleFrequency" includeProjects="PlasmoDB" 
+                 displayName="Isolates Allele Frequency"
+                 queryRef="SnpTables.isolatesAlleleFrequency">
+              <columnAttribute name="allele" displayName="Allele"/>
+              <columnAttribute name="frequency" displayName="Frequency"/>
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

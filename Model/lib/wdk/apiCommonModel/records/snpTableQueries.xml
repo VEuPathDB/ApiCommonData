@@ -137,5 +137,42 @@
         </sqlQuery>
 
 
+        <sqlQuery name="isolatesAlleleFrequency" includeProjects="PlasmoDB" 
+              isCacheable="false">
+
+           <testParamValues includeProjects="PlasmoDB">
+               <paramValue name="source_id">CombinedSNP.MAL2.3180</paramValue>
+            </testParamValues>
+
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="allele"/>
+            <column name="frequency"/>
+            <sql>
+            <![CDATA[
+                 select s.snp_source_id as source_id, '@PROJECT_ID@' as project_id,
+                         s.allele, to_char(s.ct/t.tot, '0.99') as frequency
+                 from (
+                       select snp_source_id,allele,count(*) as ct
+                       from apidb.ISOLATESNPS
+                       where  allele in ('A','C','G','T')
+                       group by snp_source_id,allele
+                       ) s,
+                       (
+                       select snp_source_id, count(*) as tot
+                       from apidb.isolatesnps
+                       where  allele in ('A','C','G','T')
+                       group by snp_source_id
+                       ) t
+                       where s.snp_source_id = t.snp_source_id
+                       and s.snp_source_id = $$source_id$$
+                       order by s.ct desc  
+            ]]>
+           </sql>
+        </sqlQuery>
+
+
     </querySet>
 </wdkModel>
