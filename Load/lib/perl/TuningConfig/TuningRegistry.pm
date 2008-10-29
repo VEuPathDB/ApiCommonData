@@ -71,7 +71,7 @@ sub setLastUpdate {
     my $sql = <<SQL;
       update apidb.TuningInstance\@apidb.login_comment
       set last_update = sysdate, last_updater = '$processInfo'
-      where service_name = (select service_name from apidb.InstanceMetaInfo)
+      where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
     my $stmt = $dbh->prepare($sql);
@@ -90,7 +90,7 @@ sub setLastCheck {
     my $sql = <<SQL;
       update apidb.TuningInstance\@apidb.login_comment
       set last_check = sysdate, last_checker = '$processInfo'
-      where service_name = (select service_name from apidb.InstanceMetaInfo)
+      where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
     my $stmt = $dbh->prepare($sql);
