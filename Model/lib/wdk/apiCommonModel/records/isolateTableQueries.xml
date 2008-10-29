@@ -16,7 +16,7 @@
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="CryptoDB">
-         <paramValue name="source_id">AY168847</paramValue>
+         <paramValue name="source_id">AF266267</paramValue>
          <paramValue name="project_id">CryptoDB</paramValue>
       </defaultTestParamValues>
 
@@ -61,13 +61,20 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="IsoStudy" isCacheable="true" includeProjects="CryptoDB,ApiDB">
+
+         <testParamValues includeProjects="CryptoDB">
+            <paramValue name="source_id">AF266267</paramValue>
+         </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
+            <column name="title" />
             <sql>
             <![CDATA[
             SELECT distinct etn.source_id,
+                   ref.title,
                    '@PROJECT_ID@' as project_id
             FROM   DoTS.ExternalNASequence etn,
                    DoTS.NASequenceRef nasr,
@@ -81,6 +88,7 @@
                AND nasr.reference_id = ref.reference_id
                AND etn.na_sequence_id = nasr.na_sequence_id
                AND etn.source_id != $$source_id$$
+               AND ref.title != 'Direct Submission'
                AND ref.reference_id IN 
             (
             SELECT distinct ref.reference_id
@@ -101,7 +109,6 @@
             ]]>
             </sql>
         </sqlQuery>
-
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolate Barcode SNPs -->  
