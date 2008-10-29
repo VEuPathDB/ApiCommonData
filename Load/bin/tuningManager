@@ -24,7 +24,7 @@ ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as "
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey, $forceUpdate);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -38,7 +38,6 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
-           "validationKey=s" => \$validationKey,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
@@ -132,10 +131,6 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
 
 if ($doUpdate) {
   $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
-}
-
-if ($validationKey) {
-  $doUpdate = 0 if checkValidationKey($validationKey) eq "fail";
 }
 
 my $tableCount = 0;
@@ -527,19 +522,5 @@ sub releaseLockForUpdate {
 	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
 	   . "'")
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-}
-
-sub checkValidationKey {
-  my ($key) = @_;
-
-  my $stmt = $dbh->prepare("select validation_key from apidb.InstanceMetaInfo");
-  $stmt->execute();
-  my ($db_key) = $stmt->fetchrow_array();
-
-  if ($db_key ne $key) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("supplied key \"$key\" does not match value in database of \"$db_key\"");
-    return("fail");
-  }
-
 }
 
