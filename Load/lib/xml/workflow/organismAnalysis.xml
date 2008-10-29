@@ -27,13 +27,18 @@
       <paramValue name="dataDir">$$organismName$$</paramValue>
     </step>
 
+    <step name="makeSeqfilesDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$organismName$$/seqfiles</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
     <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
       <paramValue name="organismName">$organismName</paramValue>
       <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends step="makeSeqfilesDir"/>
     </subgraph>
 
     <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
@@ -43,7 +48,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends step="makeSeqfilesDir"/>
     </subgraph>
 
 

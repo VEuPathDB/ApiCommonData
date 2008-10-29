@@ -1,83 +1,80 @@
-<workflow name="psipred">
-  <params>
-    <param name="genomeName"/>
-    <param name="nrdbFile"/>
-    <param name="proteinsFile"/>
-   </param>
+<workflowGraph name="psipred">
 
-  <constants>
-    <constant name="psipredProteinsFile">seqfiles/psipred${genomeName}Proteins.fsa</constant>
+    <param name="genomeName"/>
+    <param name="nrdbFileShortDefline"/>
+    <param name="proteinsFile"/>
+
+    <constant name="psipredProteinsFile">$$organismDataDir$$/psipred/proteinsFixedIds.fsa</constant>
+    <constant name="psipredNrdbFile">$$organismDataDir$$/psipred/nrdb.pfilt.fsa</constant>
     <constant name="algName">Psipred</constant>
     <constant name="algDesc">Psipred method for protein secondary structure prediction</constant>
     <constant name="algImpVer">2.5</constant>
     <constant name="algResult">Secondary Structure prediction for all $genomeName annotated proteins</constant>
-  </constants>
 
-  <steps>
-
-    <step name="createDataDir" class="ApiCommonData::Load::Steps::CreatePsipredDirWithFormattedDb">
-      <paramValue name="nrdbFile"></paramValue>
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$organismDataDir$$/psipred</paramValue>
     </step>
 
+    <step name="runPfilt" class="ApiCommonData::Load::Steps::RunPfilt">
+      <paramValue name="inputFile">$$nrdbFile$$</paramValue>
+      <paramValue name="outputFile">$$psipredNrdbFile$$</paramValue>
+    </step>
 
     <step name="fixProteinIds" class="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
-      <paramValue name="inputProteinsFile">$$$proteinsFile</paramValue>
-      <paramValue name="outputProteinsFile">$$$psipredProteinsFile</paramValue>
+      <paramValue name="inputProteinsFile">$$proteinsFile$$</paramValue>
+      <paramValue name="outputProteinsFile">$$psipredProteinsFile$$</paramValue>
       <depends step="createDataDir"/>
     </step>
 
-
     <step name="createTaskDir" class="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
-      <paramValue name="proteinsFile">$$$psipredProteinsFile</paramValue>
-      <paramValue name="nrdbFile">$$$nrdbFile</paramValue>
+      <paramValue name="taskInputDir">$$organismDataDir$$/interpro/input</paramValue>
+      <paramValue name="proteinsFile">$$psipredProteinsFile$$</paramValue>
+      <paramValue name="nrdbFile">$$psipredNrdbFile$$</paramValue>
       <depends step="fixProteinIds"/>
     </step>
 
-    <step name="copyDataDirToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">psipred</paramValue>
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">psipred</paramValue>
       <depends step="createTaskDir"/>
     </step>
 
-    <step name="copyProteinFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">$$$psipredProteinsFile</paramValue>
-      <paramValue name="dir">seqfiles</paramValue>
-      <depends step="copyDataDirToCluster"/>
+    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+      <paramValue name="taskDir">$$organismDataDir$$/psipred</paramValue>
+      <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/psipred</paramValue>
+      <paramValue name="queue">apidb</paramValue>
+      <paramValue name="cmdName">runPsipred</paramValue>
+      <paramValue name="cmdArgs">$$psipredProteinsFile$$ $$psipredNrdbFile$$</paramValue>
+      <depends step="mirrorToCluster"/>
     </step>
 
-    <step name="startPsipredOnCluster" class="ApiCommonData::Load::Steps::StartPsipredOnComputeCluster">
-      <paramValue name=""></paramValue>
-      <paramValue name="query">$$$psipredProteinsFile</paramValue>
-      <paramValue name="subject">$$$nrdbFile</paramValue>
-      <depends step="copyProteinFileToCluster"/>
-    </step>
-
-    <step name="waitForCluster" waitForPilot="yes">
-      <paramValue name="descrip">psipred $psipredProteinsFile $nrdbFile</paramValue>
+    <step name="waitForClusterTask">
+      <paramValue name="descrip">psipred</paramValue>
       <depends step="startPsipredOnCluster"/>
     </step>
 
-    <step name="copyFilesFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="file">${psipredProteinsFile}-${nrdbFile}</paramValue>
-      <paramValue name="dir">psipred</paramValue>
-      <depends step="waitForCluster"/>
+    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$organismDataDir$$/psipred</paramValue>
+      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <depends step="waitForClusterTask"/>
     </step>
 
     <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
-      <paramValue name="dir">${psipredProteinsFile}-${nrdbFile}</paramValue>
-      <depends step="copyFilesFromCluster"/>
+      <paramValue name="inputDir">$$organismDataDir$$/psipred/master/mainresult</paramValue>
+      <paramValue name="outputDir">$$organismDataDir$$/psipred/master/mainresult_fixed</paramValue>
+      <depends step="mirrorFromCluster"/>
      </step>
 
     <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
-      <paramValue name="algName">$algName</paramValue>
-      <paramValue name="algDesc">$algDesc</paramValue>
-      <paramValue name="algResult">$algResult</paramValue>
+      <paramValue name="algName">psipred</paramValue>
+      <paramValue name="algDesc">dontcare</paramValue>
+      <paramValue name="algResult">dontcare</paramValue>
       <depends step="fixFileNames"/>
     </step>
 
     <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
-      <paramValue name="algName">$algName</paramValue>
-      <paramValue name="dir"></paramValue>
-      <paramValue name="algResult">$algResult</paramValue>
+      <paramValue name="algName">psipred</paramValue>
+      <paramValue name="inputDir">$$organismDataDir$$/psipred/master/mainresult_fixed</paramValue>
       <depends step="makeAlgInv"/>
     </step>
 

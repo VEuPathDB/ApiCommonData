@@ -91,29 +91,24 @@
       <depends step="extractProteins"/>
     </subgraph>
 
-   <step name="filterproteinsFile"
-          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+   <step name="runLowComplexityFilter"
+          stepClass="ApiCommonData::Load::Steps::RunLowComplexityFilter">
 
       <paramValue name="seqFile">$$proteinsFile$$</paramValue>
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
-      <paramValue name="filterDir">filter</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="filterType">seg</paramValue>
-      <paramValue name="opt"/>
+      <paramValue name="options">-x</paramValue>
       <depends step="extractProteins"/>
     </step>
 
-    <step name="loadLowComplexityproteinsFile"
+    <step name="loadLowComplexityFile"
           stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="seqType">protein</paramValue>
       <paramValue name="mask">x</paramValue> 
-      <paramValue name="opt"/>
-      <depends step="filterproteinsFile"/>
+      <paramValue name="options"></paramValue>
+      <depends step="runLowComplexityFilter"/>
     </step>
 
     <step name="findNrdbXrefs" class="ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs">
@@ -124,7 +119,7 @@
       <paramValue name="outputFile">$$organismDataDir$$/nrdbXrefs.txt</paramValue>
     </step>
 
-    <step name="loaddNrdbXrefs" class="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
+    <step name="loadNrdbXrefs" class="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
       <paramValue name="xrefsFile">$$organismDataDir$$/nrdbXrefs.txt</paramValue>
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
       <paramValue name="nrdbVersion">$$nrdbVersion$$</paramValue>
