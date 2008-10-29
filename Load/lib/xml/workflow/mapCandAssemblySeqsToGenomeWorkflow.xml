@@ -4,14 +4,14 @@
     <param name="genomeTaskLogsDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
+    <param name="NcbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
     <param name="genomeName"/>
-    <param name="dbESTExtDbRlsSpec"/>
     <param name="BLATQueryName"/>
     <param name="BLATTargetName"/>
     <param name="genomicSeqsFile"/>
+    <param name="TranscriptSeqsFile"/>
 
-   
     <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
@@ -22,15 +22,15 @@
           stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="outputFile">$$genomeDataDir$$/seqfiles/$$genomeName$$.fsa</paramValue>
+      <paramValue name="outputFile">$$TranscriptSeqsFile$$</paramValue>
       <depends step="makeCandidateAssemblySeqs"/>
     </step>
 
 
     <step name="extractGenomicSeqsIntoSeparateFastaFiles"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="ncbiTaxId">$ncbiTaxonId</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="identifier">source_id</paramValue>
       <paramValue name="outputFileOrDir">$$genomeDataDir$$/seqfiles/$$genomeName$$-genome</paramValue>
@@ -43,7 +43,7 @@
 
     <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
       <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
-      <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
+      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
@@ -59,7 +59,7 @@
 
     <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$genomeDataDir$$/candidateAssemblySeqs/input</paramValue>
-      <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
+      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
@@ -75,7 +75,7 @@
       <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
-      <paramValue name="cmdArgs">$$ESTSeqsFile$$,$$genomicSeqsFile$$</paramValue>
+      <paramValue name="cmdArgs">$$TranscriptSeqsFile$$,$$genomicSeqsFile$$</paramValue>
       <depends step="mirrorToCluster"/>
     </step>
 
@@ -109,8 +109,8 @@
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
       <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
-      <paramValue name="targetExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
       <paramValue name="queryTable">AssemblySequence</paramValue>
       <paramValue name="regex">>(\\d+)</paramValue>
@@ -129,8 +129,8 @@
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
       <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
-      <paramValue name="targetExtDbRlsSpec">$genomeExtDbRlsSpec</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
       <paramValue name="queryTable">AssemblySequence</paramValue>
       <paramValue name="regex">>(\\d+)</paramValue>
