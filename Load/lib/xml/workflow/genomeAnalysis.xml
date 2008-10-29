@@ -41,7 +41,8 @@
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <include match="$organismName" list="$Pf,$Pb,$Py,$Pv"/>
     <paramValue name="queryExtDbRlsSpec">$$tigrExtDbRlsSpec$$</paramValue>
-    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>    </subgraph>
+    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+  </subgraph>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">

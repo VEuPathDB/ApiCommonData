@@ -5,51 +5,54 @@
   <param name="genomeExtDbRls"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
+  <param name="nrdbVersion"/>
   <param name="soVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
+  <param name="nrdbFile"/>
+  <param name="nrdbShortDeflineFile"/>
+  <param name="pdbFile"/>
 
-  <!-- handles on external datasets -->
-  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
-  <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
-  <constant name="tigrExtDbRlsSpec">tigr:$$tigrVersion$$</constant>
-  <constant name="taxonomyExtDbRlsSpec">taxonomy:$$taxonomyVersion$$</constant>
-  <constant name="nrdbFile">seqfiles/nr.fsa</constant>
-  <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
-  <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/GenomicSeqs.fsa</constant>
+
   <constant name="organismDataDir">data/$$organismName$$</constant>
   <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
-  <constant name="proteinsFile">$$organismDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismName$$</paramValue>
-    </step>
+  <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <paramValue name="dir">$$organismDataDir$$</paramValue>
+  </step>
 
-    <step name="makeSeqfilesDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismName$$/seqfiles</paramValue>
-      <depends step="makeDataDir"/>
-    </step>
+  <step name="makeSeqfilesDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <paramValue name="dir">$$organismDataDir$$/seqfiles</paramValue>
+    <depends step="makeDataDir"/>
+  </step>
 
-    <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
-      <paramValue name="organismName">$organismName</paramValue>
-      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-      <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
-      <depends step="makeSeqfilesDir"/>
-    </subgraph>
+  <step name="makeTaskLogsDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <paramValue name="dir">$$organismTaskLogsDir$$</paramValue>
+  </step>
 
-    <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
-      <paramValue name="proteinsFile">$proteinsFile</paramValue>
-      <paramValue name="organismName">$organismName</paramValue>
-      <paramValue name="genomeDataDir">$$organismDataDir$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-      <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
-      <depends step="makeSeqfilesDir"/>
-    </subgraph>
+  <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
+    <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
+    <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends step="makeSeqfilesDir"/>
+    <depends step="makeTaskLogsDir"/>
+  </subgraph>
 
+  <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
+    <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
+    <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="nrdbVersion">$$nrdbVersion$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
+    <depends step="makeSeqfilesDir"/>
+    <depends step="makeTaskLogsDir"/>
+  </subgraph>
 
-</workflow>
+</workflowGraph>

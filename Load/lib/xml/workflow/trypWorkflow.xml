@@ -5,18 +5,20 @@
   <param name="tbruceiExtDbRls"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
+  <param name="nrdbVersion"/>
   <param name="soVersion"/>
   <param name="tigrVersion"/>
-  <param name="nrdbVersion"/>
   <param name="ncbiTaxonVersion"/>
 
-  <constant name="nrdbFile"></constant>
-  <constant name="nrdbShortDeflineFile"></constant>
+  <constant name="pdbFile">common/pdb.fsa</constant>
+  <constant name="nrdbFile">common/nrdb.fsa</constant>
+  <constant name="nrdbShortDeflineFile">common/nrdb-short-defline.fsa</constant>
 
   <subgraph name="common" xmlFile="commonAnalysis.xml">
     <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
     <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
   </subgraph>
 
   <subgraph name="TcruziAnalysis" xmlFile="organismAnalysis.xml">
@@ -32,6 +34,7 @@
     <paramValue name="ncbiTaxonId">137566</paramValue>    
     <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="pdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <depends name="common"/>
@@ -49,6 +52,7 @@
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
     <paramValue name="ncbiTaxonId">4339566</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="pdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <depends name="common"/>

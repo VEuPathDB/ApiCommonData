@@ -1,14 +1,16 @@
 <workflowGraph name="standardGenomeAnalysis">
-  <param name="organismName"/>
   <param name="organismTwoLetterAbbrev"/>
+  <param name="organismDataDir"/>
+  <param name="organismTaskLogsDir"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
-  <param name="ncbiTaxonId"/>
   <param name="nrdbVersion"/>
+  <param name="ncbiTaxonId"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>
+  <param name="pdbFile"/>
 
   <!-- handles on external datasets -->
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
@@ -140,14 +142,14 @@
     </subgraph>
 
     <subgraph name="psipred" xmlFile="psipredWorkflow.xml">
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="nrdbFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <depends step="extractProteins"/>
+      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue      <depends step="extractProteins"/>
       <depends step="nrdb"/>
     </subgraph>
 
-    <subgraph name="blastpProteinsNrdb" xmlFile="blastWorkflow.xml">
+    <subgraph name="blastpNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="queryAbbrev">proteins</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
@@ -166,7 +168,7 @@
       <depends step="nrdb"/>
     </subgraph>
 
-    <subgraph name="blastpProteinsPdb" xmlFile="blastWorkflow.xml">
+    <subgraph name="blastpPdb" xmlFile="blastWorkflow.xml">
       <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="queryAbbrev">proteins</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>

@@ -1,22 +1,19 @@
 <workflowGraph name="psipred">
 
-    <param name="genomeName"/>
     <param name="nrdbFileShortDefline"/>
     <param name="proteinsFile"/>
+    <param name="organismDataDir"/>
+    <param name="organismTaskLogsDir"/>
 
     <constant name="psipredProteinsFile">$$organismDataDir$$/psipred/proteinsFixedIds.fsa</constant>
     <constant name="psipredNrdbFile">$$organismDataDir$$/psipred/nrdb.pfilt.fsa</constant>
-    <constant name="algName">Psipred</constant>
-    <constant name="algDesc">Psipred method for protein secondary structure prediction</constant>
-    <constant name="algImpVer">2.5</constant>
-    <constant name="algResult">Secondary Structure prediction for all $genomeName annotated proteins</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$organismDataDir$$/psipred</paramValue>
     </step>
 
     <step name="runPfilt" class="ApiCommonData::Load::Steps::RunPfilt">
-      <paramValue name="inputFile">$$nrdbFile$$</paramValue>
+      <paramValue name="inputFile">$$nrdbFileShortDefline$$</paramValue>
       <paramValue name="outputFile">$$psipredNrdbFile$$</paramValue>
     </step>
 

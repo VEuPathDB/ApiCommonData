@@ -2,6 +2,7 @@
       <param name="nrdbExtDbRlsSpec"/>
       <param name="nrdbOutputFile"/>
       <param name="nrdbShortDeflineOutputFile"/>
+      <param name="pdbOutputFile"/>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">common</paramValue>
@@ -17,7 +18,7 @@
 
     <step name="copyPdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">PDBProteinSequences/pdb.fsa</paramValue>
-      <paramValue name="toFile">common/pdb.fsa</paramValue>
+      <paramValue name="toFile">$$pdbOutputFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
