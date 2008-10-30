@@ -11,14 +11,19 @@
     <param name="BLATTargetName"/>
     <param name="genomicSeqsFile"/>
     <param name="TranscriptSeqsFile"/>
+    <param name="maxIntronSize"/>
+ 
+    <constant name ="dataDir">$$organismDataDir$$/assemblies</constant>
+
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
 
     <step name="clusterTranscriptsByGenomeAlignment" class="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
-      <paramValue name="outputFileOrDir">$$organismDataDir$$/cluter</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/cluster.out</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="targetTableName">ExternalNASequence</paramValue>
-      <paramValue name="distanceBetweenStarts">20000</paramValue>
-
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     </step>
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
