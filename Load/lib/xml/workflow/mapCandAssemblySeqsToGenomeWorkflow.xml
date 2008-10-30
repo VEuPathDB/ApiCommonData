@@ -10,8 +10,21 @@
     <param name="bLATQueryName"/>
     <param name="bLATTargetName"/>
     <param name="genomicSeqsFile"/>
-    <param name="transcriptSeqsFile"/>
     <param name="repeatMaskDataDirOutput"/>
+
+
+    <constant name ="assemblyCandRepeatMaskDir">$$organismDataDir$$/assemblyCandRepeatMask</constant>
+    <constant name =assemblyCandGfClientDir"">$$organismDataDir$$/assemblyCandGfClient</constant>
+
+
+    <step name="makeAssemblyCandRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$assemblyCandRepeatMaskDir$$</paramValue>
+    </step>
+
+    <step name="makeAssemblyCandGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$assemblyCandGfClientDir$$</paramValue>
+    </step>
+
 
     <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -23,15 +36,23 @@
           stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="outputFile">$$TranscriptSeqsFile$$</paramValue>
+      <paramValue name="outputFile">$$assemblyCandRepeatMaskDir$$/candidateAssemblySeqs.fsa</paramValue>
       <depends step="makeCandidateAssemblySeqs"/>
+      <depends step="makeAssemblyCandRepeatMaskDataDir"/>
     </step>
 
-    <step name="copyCandidateAssemblySeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">$$TranscriptSeqsFile$$</paramValue>
-      <paramValue name="dir">seqfiles</paramValue>
-      <depends step="copyNrdbFile"/>
+    <step name="makeCandidateRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$assemblyCandRepeatMaskDir$$/input</paramValue>
+      <depends step="makeassemblyCandRepeatMaskDataDir"/>
     </step>
+
+    <step name="mirrorCandidateRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">assemblyCandRepeatMask</paramValue>
+      <depends step="makeCandidateRepeatMaskClusterTaskInputDir"/>
+      <depends step="extractCandidateAssemblySeqs"/>
+    </step>
+
 
     <step name="extractGenomicSeqsIntoSeparateFastaFiles"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
@@ -39,49 +60,23 @@
       <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="identifier">source_id</paramValue>
-      <paramValue name="outputFileOrDir">$$organismDataDir$$/seqfiles/$$organismName$$-genome</paramValue>
+      <paramValue name="outputFileOrDir">$$assemblyCandGfClientDir$$/genome</paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
+      <depends step="makeAssemblyCandGfClientDataDir"/>
     </step>
 
-
-    <step name="copyGenomicSeparateFastaFilesToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">*.out</paramValue>
-      <paramValue name="dir">seqfiles/$$organismName$$-genome</paramValue>
-      <depends step="copyNrdbFile"/>
-    </step>
-
-
-    <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
-    </step>
 
     <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/candidateAssemblySeqs/input</paramValue>
-      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
-      <depends step="makeDataDir"/>
+      <paramValue name="taskInputDir">$$assemblyCandGfClientDir$$/input</paramValue>
+      <depends step="makeAssemblyCandGfClientDataDir"/>
+
     </step>
 
     <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir">$$organismDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
-      <depends step="makeClusterTaskDir"/>
-    </step>
-
-    <step name="makeRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$repeatMaskDataDirOutput$$</paramValue>
-    </step>
-
-    <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/candidateAssemblySeqs/input</paramValue>
-      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
-      <depends step="makeDataDir"/>
-    </step>
-
-
-    <step name="mirrorRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">candidateAssemblySeqs</paramValue>
-      <depends step="makeClusterTaskDir"/>
+      <paramValue name="fileOrDirToMirror">assemblyCandGfClient</paramValue>
+      <depends step="makeGfClientClusterTaskInputDir"/>
+      <depends step="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
@@ -90,28 +85,29 @@
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
       <paramValue name="cmdArgs">$$TranscriptSeqsFile$$,$$genomicSeqsFile$$</paramValue>
-      <depends step="mirrorToCluster"/>
+      <depends step="mirrorGfClientToCluster"/>
+      <depends step="mirrorCandidateRepeatMaskToCluster"/>
     </step>
 
     <step name="waitForClusterTask" waitForPilot="yes">
-      <paramValue name="descrip">candidateAssemblySeqs</paramValue>
+      <paramValue name="descrip">candidateAssemblySeqstoGenome</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
     <step name="mirrorGfClientFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="parentDir">$$assemblyCandGfClientDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
     <step name="mirrorRepeatMaskFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="parentDir">$$assemblyCandRepeatMaskDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
  
-    <step name="updateGusTableWithXml" class="ApiCommonData::Load::WorkflowSteps::UpdateGusTableWithXml">
+    <step name="InsertGusTableWithXml" class="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
       <paramValue name="xmlFile">$$PROJECT_HOME$$/ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
 
@@ -134,7 +130,7 @@
       <paramValue name="queryFile">$$organismDataDir$$/candidateAssemblySeqs/master/mainresult/blocked.seq</paramValue>
       <depends step="mirrorRepeatMaskFromCluster"/>
       <depends step="mirrorGfClientFromCluster"/>
-      <depends step="updateGusTableWithXml"/>
+      <depends step="InsertGusTableWithXml"/>
     </step>
 
     <step name="setbestBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">

@@ -36,8 +36,6 @@
   <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
   <constant name="proteinsFile">$$organismDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
   <constant name="genomicSeqsFile">$$organismDataDir$$/seqfiles/$$organismName$$GenomicSeqs.fsa</constant>
-  <constant name="TranscriptSeqsFile">$$organismDataDir$$/seqfiles/$$organismName$$TranscriptSeqs.fsa</constant>
-
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <include match="$organismName" list="$Pf,$Pb,$Py,$Pv"/>
@@ -169,7 +167,6 @@
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
       <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
       <paramValue name="transcriptRepeatMaskFile">$$organismDataDir$$/candidateAssemblySeqsRepeatMask/master/mainresults/block.err</paramValue>

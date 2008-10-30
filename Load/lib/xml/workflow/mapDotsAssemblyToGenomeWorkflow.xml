@@ -41,7 +41,7 @@
    <step name="assembleTranscripts"
           stepClass="ApiCommonData::Load::Steps::AssembleTranscripts">
       <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
-      <paramValue name="outputDir">$$dataDir$$</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
       <depends step="putUnalignedTranscriptsIntoOneCluster"/>
@@ -49,16 +49,16 @@
 
    <step name="extractAssemblies"
           stepClass="ApiCommonData::Load::Steps::ExtractAssemblies">
-      <paramValue name="outputFile">$$organismDataDir$$/seqfiles/$$organismName$$Assemblies.fsa</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="organismName">$$organismName$$</paramValue>
-      <depends step="splitCluster"/>
+      <depends step="assembleTranscripts"/>
     </step>
 
-   <step name="copyAssembliesFileToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">$$organismName$$Assemblies.fsa</paramValue>
-      <paramValue name="relativeDir">seqfiles</paramValue>
-      <depends step="extractGenomicSeqs"/>
+    <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">AssembliesGfClient</paramValue>
+      <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
@@ -159,6 +159,6 @@
    <step name="updateAssemblySourceId"
           stepClass="ApiCommonData::Load::Steps::updateAssemblySourceId">
       <paramValue name="NcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <depends step="splitCluster"/>
+      <depends step="setbestBLATAlignment"/>
     </step>
 </workflowGraph>
