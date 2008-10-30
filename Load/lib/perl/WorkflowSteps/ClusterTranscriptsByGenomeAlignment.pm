@@ -12,7 +12,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $outputDir = $self->getParamValue('outputFileOrDir');
+  my $outputDir = $self->getParamValue('outputFile');
 
   my $outputFile = $outputDir/cluster.out;
 
