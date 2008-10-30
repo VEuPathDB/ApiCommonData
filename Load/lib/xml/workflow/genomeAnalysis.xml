@@ -158,7 +158,8 @@
       <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
       <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
       <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
+      <paramValue name="transcriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
+      <paramValue name="repeatMaskDataDirOutput">$$organismDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 
@@ -171,6 +172,7 @@
       <paramValue name="TranscriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
       <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
       <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
+      <paramValue name="transcriptRepeatMaskFile">$$organismDataDir$$/candidateAssemblySeqsRepeatMask/master/mainresults/block.err</paramValue>
       <depends step="mapCandAssemblySeqsToGenome"/>
     </subgraph>
 

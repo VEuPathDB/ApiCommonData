@@ -4,13 +4,14 @@
     <param name="organismTaskLogsDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
-    <param name="NcbiTaxonId"/>
+    <param name="ncbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
     <param name="organismName"/>
-    <param name="BLATQueryName"/>
-    <param name="BLATTargetName"/>
+    <param name="bLATQueryName"/>
+    <param name="bLATTargetName"/>
     <param name="genomicSeqsFile"/>
-    <param name="TranscriptSeqsFile"/>
+    <param name="transcriptSeqsFile"/>
+    <param name="repeatMaskDataDirOutput"/>
 
     <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -26,6 +27,11 @@
       <depends step="makeCandidateAssemblySeqs"/>
     </step>
 
+    <step name="copyCandidateAssemblySeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">$$TranscriptSeqsFile$$</paramValue>
+      <paramValue name="dir">seqfiles</paramValue>
+      <depends step="copyNrdbFile"/>
+    </step>
 
     <step name="extractGenomicSeqsIntoSeparateFastaFiles"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
@@ -36,6 +42,14 @@
       <paramValue name="outputFileOrDir">$$organismDataDir$$/seqfiles/$$organismName$$-genome</paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
     </step>
+
+
+    <step name="copyGenomicSeparateFastaFilesToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+      <paramValue name="file">*.out</paramValue>
+      <paramValue name="dir">seqfiles/$$organismName$$-genome</paramValue>
+      <depends step="copyNrdbFile"/>
+    </step>
+
 
     <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$organismDataDir$$/candidateAssemblySeqs</paramValue>
@@ -54,7 +68,7 @@
     </step>
 
     <step name="makeRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
+      <paramValue name="dataDir">$$repeatMaskDataDirOutput$$</paramValue>
     </step>
 
     <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
