@@ -139,7 +139,7 @@
             <column name="unique_author"/>
             <column name="unique_year"/>
             <sql>
-            SELECT etn.source_id, 
+            SELECT distinct etn.source_id, 
                    ref.title unique_title, 
                    ref.author unique_author, 
                    ref.year unique_year,
@@ -156,8 +156,6 @@
                AND nasr.reference_id = ref.reference_id
                AND etn.na_sequence_id = nasr.na_sequence_id
                AND ref.title != 'Direct Submission'
-               AND etn.source_id = $$source_id$$
-               AND rownum = 1
            </sql>
       </sqlQuery>
 
