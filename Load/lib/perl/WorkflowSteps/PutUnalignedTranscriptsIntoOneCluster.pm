@@ -14,7 +14,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $outputFile = $self->getParamValue('outputFileOrDir');
+  my $outputFileDir = $self->getParamValue('outputFileOrDir');
 
   my $queryTaxonId = $self->getTaxonId($self->getParamValue('queryNcbiTaxonId'));
 
@@ -24,14 +24,16 @@ sub run {
   
   my $blockDir = $self->getParamValue('blockDir');
 
-  my $cmd = "getSourceIds --outputFile $outputFile --blockFile $blockFile --clusterDir $clusterDir";
+  my $cmd = "getSourceIds --outputFile $outputFileDir/UnalignedCluster --blockFile $blockFile --clusterDir $clusterDir";
 
   if ($test){
       self->runCmd(0,'test > $outputFile');
   }else{
       self->runCmd($test,$cmd);      
   }
-
+  self->runCmd(0,'mv $outputFileDir/cluster.out $outputFileDir/cluster.out.save');
+  
+  self->runCmd(0,'cat $outputFileDir/cluster.out.save $outputFileDir/UnalignedCluster > $outputFileDir/cluster.out');
 }
 
 
