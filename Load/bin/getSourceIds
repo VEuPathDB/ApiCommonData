@@ -8,10 +8,11 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($verbose,$outputFile, $blockFile, $clusterDir, $gusConfigFile);
+my ($verbose,$outputFile,$inputFile, $blockFile, $clusterDir, $gusConfigFile);
 &GetOptions("verbose!"=> \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "outputFile=s" => \$outputFile,
+            "inputFile=s" => \$inputFile,
 	    "blockFile=s" => \$blockFile,
 	    "clusterDir=s" => \$clusterDir);
 
@@ -124,11 +125,11 @@ $count = keys %assembleidEST;
 
 print STDERR "Total # of Final assembly_sequence_id for cluster:  $count\n";
 
-my $clusterNum=`wc -l $clusterDir/cluster.out`;
+my $clusterNum=`wc -l $inputFile`;
 
 $clusterNum++;
 
-open(OUT,">$outputFile"); 
+open(OUT,">$clusterDir/unAlignedCluster.out"); 
 
 my @myArray = keys %assembleidEST;
 
@@ -138,12 +139,10 @@ my $clusterline ="Cluster_$clusterNum ($count sequences): (".$line.")";
 
 print OUT "$clusterline\n";
 
-close($outputFile);
+close("$clusterDir/unAlignedCluster.out");
 
-print STDERR "$count clusters have been written into $outputFile.\n";
+print STDERR "$count clusters have been added.\n";
 
-system "mv $clusterDir/cluster.out $clusterDir/cluster.out.AlignedEsts";
+system "cat $inputFile $clusterDir/unAlignedCluster.out > $outputFile";
 
-system "cat $clusterDir/cluster.out.AlignedEsts $outputFile > $clusterDir/cluster.out";
-
-print STDERR "Cluster $clusterNum has been added to $clusterDir/cluster.out.\n";
+print STDERR "Cluster $clusterNum has been added to $outputFile.\n";
