@@ -12,7 +12,9 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $inputFileDir = $self->getParamValue('inputFileOrDir');
+  my $inputFile = $self->getParamValue('inputFile');
+
+  my $outputDir = $self->getParamValue('outputDir');
 
   my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxonId'));
 
@@ -22,27 +24,45 @@ sub run {
 
   my $workingDir = $self->runCmd($test,"pwd");
 
-  &runAssemblePlugin("big",$inputFileDir, $reassemble, $taxonId, $cap4Dir); 
+  &splitClusterFile($test,$inputFile);
+
+  &runAssemblePlugin($test,"big",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
 
   $self->runCmd($test,"sleep 10");
 
-  &runAssemblePlugin("small",$inputFileDir, $reassemble, $taxonId, $cap4Dir); 
+  &runAssemblePlugin($test,"small",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
 
   $self->runCmd($test,"chdir $workingDir") || die "Can't chdir to $workingDir";
 
 }
 
+
+sub splitClusterFile{
+
+  my ($test,$inputFile) = @_;
+
+  my $cmd = "splitClusterFile $inputFile";
+
+  if ($test){
+      self->runCmd(0,'test > $inputFile.small');
+      self->runCmd(0,'test > $inputFile.big');
+  }else{
+      self->runCmd($test,$cmd);      
+  }
+
+}
+
 sub runAssemblePlugin{
 
-  my ($suffix, $inputFileDir, $reassemble, $taxonId, $cap4Dir) = @_;
+  my ($test,$suffix, $inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir) = @_;
 
-  my $args = "--clusterfile $inputFileDir/cluster.out.$suffix $reassemble --taxon_id $taxonId --cap4Dir $cap4Dir";
+  my $args = "--clusterfile $inputFile.$suffix $reassemble --taxon_id $taxonId --cap4Dir $cap4Dir";
   
   my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --comment '$args'";
 
-  my $cmd = "runUpdateAssembliesPlugin --clusterFile $inputFileDir/cluster.out.$suffix --pluginCmd \"$pluginCmd\"";
+  my $cmd = "runUpdateAssembliesPlugin --clusterFile $inputFile.$suffix --pluginCmd \"$pluginCmd\"";
 
-  my $assemDir = "$inputFileDir/$suffix";
+  my $assemDir = "$outputDir/$suffix";
 
   $self->runCmd(0,"mkdir -p $assemDir") if ! -d $assemDir;
   
@@ -63,7 +83,7 @@ sub getConfigDeclaration {
     (
      # [name, default, description]
      ['parentNcbiTaxonId', "", ""],
-     ['inputFileDir', "", ""],
+     ['inputFile', "", ""],
      ['cap4Dir', "", ""],
     );
   return @properties;

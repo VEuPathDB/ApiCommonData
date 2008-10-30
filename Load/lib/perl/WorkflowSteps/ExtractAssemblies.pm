@@ -14,7 +14,7 @@ sub run {
 
   my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxId'));
 
-  my $outputFile = $self->getParamValue('outputFileOrDir');
+  my $outputFile = $self->getParamValue('outputFile');
 
   my $organismName = $self->getParamValue('organismName');
 

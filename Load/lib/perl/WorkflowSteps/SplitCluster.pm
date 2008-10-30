@@ -5,16 +5,10 @@ package ApiCommonData::Load::WorkflowSteps::SplitCluster;
 use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
-
-## to do
-## API $self->getTaxonId($ncbiTaxId) 
-## API $self->getTaxonIdList($taxonId,$taxonHierarchy)
-
-
 sub run {
   my ($self, $test) = @_;
 
-  my $clusterFile = $self->getParamValue('outputFileOrDir');
+  my $clusterFile = $self->getParamValue('inputFile');
 
   my $cmd = "splitClusterFile $clusterFile";
 

@@ -12,11 +12,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $outputDir = $self->getParamValue('outputFile');
-
-  my $outputFile = $outputDir/cluster.out;
-
-  $self->runCmd(0,"mkdir -p $outputDir") if ! -d $outputDir;
+  my $outputFile = $self->getParamValue('outputFile');
 
   my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
 
@@ -46,7 +42,7 @@ sub getConfigDeclaration {
     (
      # [name, default, description]
      ['parentNcbiTaxonId', "", ""],
-     ['outputDir', "", ""],
+     ['outputFile', "", ""],
      ['distanceBetweenStarts', "", ""],
     );
   return @properties;

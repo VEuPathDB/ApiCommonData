@@ -14,26 +14,25 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $outputFileDir = $self->getParamValue('outputFileOrDir');
+  my $outputFile = $self->getParamValue('outputFile');
+
+  my $inputFile = $self->getParamValue('inputFile');
 
   my $queryTaxonId = $self->getTaxonId($self->getParamValue('queryNcbiTaxonId'));
 
-  my $targetTaxonId = $self->getTaxonId($self->getParamValue('targetNcbiTaxonId'));
+  my $subjectTaxonId = $self->getTaxonId($self->getParamValue('subjectNcbiTaxonId'));
 
   my $taxonIdList = $self->getTaxonIdList($queryTaxonId,$self->getParamValue('useTaxonHierarchy'));
   
-  my $blockDir = $self->getParamValue('blockDir');
+  my $transcriptRepeatMaskFile = $self->getParamValue('transcriptRepeatMaskFile');
 
-  my $cmd = "getSourceIds --outputFile $outputFileDir/UnalignedCluster --blockFile $blockFile --clusterDir $clusterDir";
+  my $cmd = "getSourceIds --inputFile $inputFile --outputFile $outputFile --blockFile $transcriptRepeatMaskFile";
 
   if ($test){
       self->runCmd(0,'test > $outputFile');
   }else{
       self->runCmd($test,$cmd);      
   }
-  self->runCmd(0,'mv $outputFileDir/cluster.out $outputFileDir/cluster.out.save');
-  
-  self->runCmd(0,'cat $outputFileDir/cluster.out.save $outputFileDir/UnalignedCluster > $outputFileDir/cluster.out');
 }
 
 
