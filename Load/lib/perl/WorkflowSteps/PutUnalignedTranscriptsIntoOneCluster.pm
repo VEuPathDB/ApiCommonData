@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs;
+package ApiCommonData::Load::WorkflowSteps::PutUnalignedTranscriptsIntoOneCluster;
 
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 
