@@ -8,13 +8,12 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($verbose,$outputFile,$inputFile, $blockFile, $clusterDir, $gusConfigFile);
+my ($verbose,$outputFile,$inputFile, $blockFile, $gusConfigFile);
 &GetOptions("verbose!"=> \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "outputFile=s" => \$outputFile,
             "inputFile=s" => \$inputFile,
-	    "blockFile=s" => \$blockFile,
-	    "clusterDir=s" => \$clusterDir);
+	    "blockFile=s" => \$blockFile);
 
 print STDERR "Establishing dbi login\n";
 
@@ -129,7 +128,7 @@ my $clusterNum=`wc -l $inputFile`;
 
 $clusterNum++;
 
-open(OUT,">$clusterDir/unAlignedCluster.out"); 
+open(OUT,">$outputFile.unAlignedCluster"); 
 
 my @myArray = keys %assembleidEST;
 
@@ -139,10 +138,10 @@ my $clusterline ="Cluster_$clusterNum ($count sequences): (".$line.")";
 
 print OUT "$clusterline\n";
 
-close("$clusterDir/unAlignedCluster.out");
+close("$outputFile.unAlignedCluster");
 
 print STDERR "$count clusters have been added.\n";
 
-system "cat $inputFile $clusterDir/unAlignedCluster.out > $outputFile";
+system "cat $inputFile $outputFile.unAlignedCluster > $outputFile";
 
 print STDERR "Cluster $clusterNum has been added to $outputFile.\n";
