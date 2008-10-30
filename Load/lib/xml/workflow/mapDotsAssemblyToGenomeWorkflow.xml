@@ -12,7 +12,7 @@
     <param name="genomicSeqsFile"/>
     <param name="TranscriptSeqsFile"/>
 
-    <step name="clusterTranscriptsByGenomeAlignment" class="ApiCommonData::Load::WorkflowSteps::clusterTranscriptsByGenomeAlignment">
+    <step name="clusterTranscriptsByGenomeAlignment" class="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
       <paramValue name="outputFileOrDir">$$organismDataDir$$/cluter</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -22,7 +22,7 @@
     </step>
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
-          stepClass="ApiCommonData::Load::Steps::putUnalignedTranscriptsIntoOneCluster">
+          stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
       <paramValue name="outputFileOrDir">$$organismDataDir$$/cluter/UnalignedCluster</paramValue>
       <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="targetNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
@@ -32,8 +32,8 @@
     </step>
 
     <step name="splitCluster"
-          stepClass="ApiCommonData::Load::Steps::splitCluster">
-      <paramValue name="outputFileOrDir">$$organismDataDir$$/cluster</paramValue>
+          stepClass="ApiCommonData::Load::Steps::SplitCluster">
+      <paramValue name="inputFileOrDir">$$organismDataDir$$/cluster/cluster.out</paramValue>
       <depends step="putUnalignedTranscriptsIntoOneCluster"/>
     </step>
 
