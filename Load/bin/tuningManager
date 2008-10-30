@@ -514,6 +514,7 @@ MSG
     ApiCommonData::Load::TuningConfig::Log::addErrorLog($updateLockoutMsg);
     return("fail");
   }
+  $stmt->finish();
 }
 
 sub releaseLockForUpdate {

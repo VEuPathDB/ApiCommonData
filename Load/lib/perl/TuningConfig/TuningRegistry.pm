@@ -74,11 +74,8 @@ sub setLastUpdate {
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute()
+    $dbh->do($sql)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-
-    $stmt->finish();
 }
 
 sub setLastCheck {
@@ -93,11 +90,8 @@ sub setLastCheck {
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute()
+    $dbh->do($sql)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-
-    $stmt->finish();
 }
 
 1;
