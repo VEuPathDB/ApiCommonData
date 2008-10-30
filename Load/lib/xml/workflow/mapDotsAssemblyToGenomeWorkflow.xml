@@ -23,7 +23,7 @@
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
           stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
-      <paramValue name="outputFileOrDir">$$organismDataDir$$/cluter/UnalignedCluster</paramValue>
+      <paramValue name="outputFileOrDir">$$organismDataDir$$/cluter</paramValue>
       <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="targetNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
@@ -33,21 +33,23 @@
 
     <step name="splitCluster"
           stepClass="ApiCommonData::Load::Steps::SplitCluster">
-      <paramValue name="inputFileOrDir">$$organismDataDir$$/cluster/cluster.out</paramValue>
+      <paramValue name="inputFileOrDir">$$organismDataDir$$/cluster</paramValue>
       <depends step="putUnalignedTranscriptsIntoOneCluster"/>
     </step>
 
    <step name="assembleTranscripts"
-          stepClass="ApiCommonData::Load::Steps::assembleTranscripts">
+          stepClass="ApiCommonData::Load::Steps::AssembleTranscripts">
       <paramValue name="inputFileOrDir">$$organismDataDir$$/cluter/cluster.out</paramValue>
-      <paramValue name="NcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="reassemble"></paramValue>
       <depends step="splitCluster"/>
     </step>
 
    <step name="extractAssemblies"
-          stepClass="ApiCommonData::Load::Steps::extractAssemblies">
+          stepClass="ApiCommonData::Load::Steps::ExtractAssemblies">
       <paramValue name="outputFileOrDir">$$organismDataDir$$/seqfiles/$$organismName$$Assemblies.fsa</paramValue>
-      <paramValue name="NcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="organismName">$$organismName$$</paramValue>
       <depends step="splitCluster"/>
     </step>
 
