@@ -1,7 +1,6 @@
 <workflowGraph name="proteomeAnalysis">
   <param name="organismTwoLetterAbbrev"/>
   <param name="parentDataDir"/>
-  <param name="organismTaskLogsDir"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
   <param name="interproVersion"/>
@@ -139,7 +138,6 @@
     <subgraph name="interpro" xmlFile="interproWorkflow.xml">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">interpro:$$interproVersion$$</paramValue>
       <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     </subgraph>
@@ -148,13 +146,11 @@
       <paramValue name="nrdbFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue      <depends step="extractProteins"/>
       <depends step="nrdb"/>
     </subgraph>
 
     <subgraph name="blastpNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="nickName">blastpNrdb</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>
@@ -176,7 +172,6 @@
 
     <subgraph name="blastpPdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="nickName">blastpPdb</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>

@@ -1,0 +1,81 @@
+<workflowGraph name="mapDotsAssemblyToGenome">
+
+    <param name="parentDataDir"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="parentNcbiTaxonId"/>
+    <param name="ncbiTaxonId"/>
+    <param name="maxIntronSize"/>
+    <param name="dataDir"/>
+ 
+    <constant name ="dataDir">$$parentDataDir$$/makeAssemblies</constant>
+
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
+    <step name="clusterTranscriptsByGenomeAlignment" class="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
+      <paramValue name="outputFile">$$dataDir$$/alignedClusters.out</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
+   <step name="putUnalignedTranscriptsIntoOneCluster"
+          stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
+      <paramValue name="inputFile">$$dataDir$$/alignedClusters.out</paramValue>
+      <paramValue name="outputDir">$$dataDir$$</paramValue>
+      <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="transcriptRepeatMaskFile">$$transcriptRepeatMaskFile$$</paramValue>
+      <depends step="clusterTranscriptsByGenomeAlignment"/>
+    </step>
+
+   <step name="assembleTranscripts"
+          stepClass="ApiCommonData::Load::Steps::AssembleTranscripts">
+      <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/</paramValue>
+      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="reassemble"></paramValue>
+      <depends step="putUnalignedTranscriptsIntoOneCluster"/>
+    </step>
+
+   <step name="extractAssemblies"
+          stepClass="ApiCommonData::Load::Steps::ExtractAssemblies">
+      <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
+      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <depends step="assembleTranscripts"/>
+    </step>
+
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">makeAssemblies</paramValue>
+      <depends step="makeClusterTaskDir"/>
+    </step>
+
+    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
+      <paramValue name="queue">apidb</paramValue>
+      <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
+      <paramValue name="cmdArgs">???</paramValue>
+      <depends step="mirrorToCluster"/>
+    </step>
+
+    <step name="waitForClusterTask">
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
+      <depends step="startClusterTask"/>
+    </step>
+
+    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$dataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <depends step="waitForClusterTask"/>
+    </step>
+
+</workflowGraph>

@@ -20,21 +20,15 @@
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
-  <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
 
   <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
     <paramValue name="dir">$$dataDir$$</paramValue>
-  </step>
-
-  <step name="makeTaskLogsDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dir">$$organismTaskLogsDir$$</paramValue>
   </step>
 
   <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="genomeExtDb">$$genomeExtDb$$</paramValue>
     <paramValue name="genomeExtDbRls">$$genomeExtDbRls$$</paramValue>
@@ -49,12 +43,10 @@
     <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
     <paramValue name="runSplign">$$runSplign$$</paramValue>
     <depends step="makeSeqfilesDir"/>
-    <depends step="makeTaskLogsDir"/>
   </subgraph>
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
@@ -65,7 +57,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="calculateTranslatedProteins">$$calculateTranslatedProteins$$</paramValue>
     <depends step="makeSeqfilesDir"/>
-    <depends step="makeTaskLogsDir"/>
   </subgraph>
 
 </workflowGraph>

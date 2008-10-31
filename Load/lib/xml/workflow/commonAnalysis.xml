@@ -24,13 +24,13 @@
 
     <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">NRDB/nr.gz</paramValue>
-      <paramValue name="toFile">$nrdbOutputFile</paramValue>
+      <paramValue name="toFile">$$nrdbOutputFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
     <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
-      <paramValue name="fromFile">$nrdbOutputFile</paramValue>
-      <paramValue name="toFile">$nrdbShortDeflineOutputFile</paramValue>
+      <paramValue name="fromFile">$$nrdbOutputFile$$</paramValue>
+      <paramValue name="toFile">$$nrdbShortDeflineOutputFile$$</paramValue>
       <depends step="copyNrdbFile"/>
     </step>
 

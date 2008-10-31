@@ -3,7 +3,6 @@
     <param name="nrdbFileShortDefline"/>
     <param name="proteinsFile"/>
     <param name="parentDataDir"/>
-    <param name="organismTaskLogsDir"/>
 
     <constant name="dataDir">$$parentDataDir$$/interpro</constant>
 
@@ -40,7 +39,6 @@
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/psipred</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runPsipred</paramValue>
       <paramValue name="cmdArgs">$$psipredProteinsFile$$ $$psipredNrdbFile$$</paramValue>
@@ -48,7 +46,7 @@
     </step>
 
     <step name="waitForClusterTask">
-      <paramValue name="descrip">psipred</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startPsipredOnCluster"/>
     </step>
 

@@ -1,130 +1,56 @@
 <workflowGraph name="mapDotsAssemblyToGenome">
 
-    <param name="organismDataDir"/>
-    <param name="organismTaskLogsDir"/>
+    <param name="parentDataDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
     <param name="ncbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
-    <param name="organismName"/>
-    <param name="BLATQueryName"/>
-    <param name="BLATTargetName"/>
     <param name="genomicSeqsFile"/>
     <param name="TranscriptSeqsFile"/>
     <param name="maxIntronSize"/>
-    <param name="transcriptRepeatMaskFile"/>
+    <param name="seqsDataDir"/>
+    
  
-    <constant name ="dataDir">$$organismDataDir$$/assemblies</constant>
+    <constant name ="dataDir">$$dataDir$$/mapAssemblies</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="clusterTranscriptsByGenomeAlignment" class="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
-      <paramValue name="outputFile">$$dataDir$$/alignedClusters.out</paramValue>
-      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
-    </step>
-
-   <step name="putUnalignedTranscriptsIntoOneCluster"
-          stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
-      <paramValue name="inputFile">$$dataDir$$/alignedClusters.out</paramValue>
-      <paramValue name="outputDir">$$dataDir$$</paramValue>
-      <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="transcriptRepeatMaskFile">$$transcriptRepeatMaskFile$$</paramValue>
-      <depends step="clusterTranscriptsByGenomeAlignment"/>
-    </step>
-
-   <step name="assembleTranscripts"
-          stepClass="ApiCommonData::Load::Steps::AssembleTranscripts">
-      <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
-      <paramValue name="outputDir">$$dataDir$$/</paramValue>
-      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="reassemble"></paramValue>
-      <depends step="putUnalignedTranscriptsIntoOneCluster"/>
-    </step>
-
-   <step name="extractAssemblies"
-          stepClass="ApiCommonData::Load::Steps::ExtractAssemblies">
-      <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
-      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <depends step="assembleTranscripts"/>
-    </step>
-
-    <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">AssembliesGfClient</paramValue>
-      <depends step="makeClusterTaskDir"/>
-    </step>
-
-    <step name="makeGfClientDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/AssembliesGfClient</paramValue>
-    </step>
-
-    <step name="makeGfClientClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/AssembliesGfClient/input</paramValue>
+    <step name="makeTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
-    <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">AssembliesGfClient</paramValue>
-      <depends step="makeClusterTaskDir"/>
-    </step>
-
-    <step name="makeRepeatMaskDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/AssembliesRepeatMask</paramValue>
-    </step>
-
-    <step name="makeRepeatMaskClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/AssembliesRepeatMask/input</paramValue>
-      <depends step="makeDataDir"/>
-    </step>
-
-
-    <step name="mirrorRepeatMaskToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">AssembliesRepeatMask</paramValue>
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">mapAssemblies</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$organismDataDir$$/AssembliesGfClient</paramValue>
-      <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/AssembliesGfClient</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
-      <paramValue name="cmdArgs">$$TranscriptSeqsFile$$,$$genomicSeqsFile$$</paramValue>
+      <paramValue name="cmdArgs">???</paramValue>
       <depends step="mirrorToCluster"/>
     </step>
 
-    <step name="waitForClusterTask" waitForPilot="yes">
-      <paramValue name="descrip">AssembliesGfClient</paramValue>
+    <step name="waitForClusterTask">
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
-    <step name="mirrorGfClientFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/AssembliesGfClient</paramValue>
+    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
-
-    <step name="mirrorRepeatMaskFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/AssembliesGfClient</paramValue>
-      <paramValue name="fileOrDirToMirror">master</paramValue>
-      <depends step="waitForClusterTask"/>
-    </step>
-
 
     <step name="insertBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentncbiTaxonId$$</paramValue>
-      <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
-      <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
@@ -132,18 +58,15 @@
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">load</paramValue>
       <paramValue name="percentTop"></paramValue>
-      <paramValue name="BLATFile">$$organismDataDir$$/AssembliesGfClient/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$organismDataDir$$/AssembliesGfClient/master/mainresult/blocked.seq</paramValue>
-      <depends step="mirrorRepeatMaskFromCluster"/>
-      <depends step="mirrorGfClientFromCluster"/>
+      <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$seqsDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <depends step="mirrorFromCluster"/>
     </step>
 
-    <step name="setbestBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
+    <step name="setbestBlatAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentncbiTaxonId$$</paramValue>
-      <paramValue name="BLATQueryName">$$BLATQueryName$$</paramValue>
-      <paramValue name="BLATTargetName">$$BLATTargetName$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
@@ -151,9 +74,9 @@
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">setbest</paramValue>
       <paramValue name="percentTop">100</paramValue>
-      <paramValue name="BLATFile">$$organismDataDir$$/AssembliesGfClient/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$organismDataDir$$/AssembliesGfClient/master/mainresult/blocked.seq</paramValue>
-      <depends step="insertBLATAlignment"/>
+      <paramValue name="BlatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$seqsDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <depends step="insertBlatAlignment"/>
     </step>
 
    <step name="updateAssemblySourceId"

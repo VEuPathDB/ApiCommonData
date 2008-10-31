@@ -1,6 +1,5 @@
 <workflowGraph name="blast">
     <param name="parentDataDir"/>
-    <param name="organismTaskLogsDir"/>
     <param name="nickName"/>
     <param name="queryFile"/>
     <param name="queryTable"/>
@@ -41,7 +40,6 @@
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/$$nickName$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runBlastSimilarities</paramValue>
       <paramValue name="cmdArgs">$$queryFile$$ $$subjectFile$$</paramValue>
@@ -49,7 +47,7 @@
     </step>
 
     <step name="waitForClusterTask">
-      <paramValue name="descrip">$$nickName$$</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
@@ -91,12 +89,12 @@
 
     <step name="loadSimilarities" class="ApiCommonData::Load::Steps::LoadBlastSimilarities">
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
-      <paramValue name="queryTable">$queryTable</paramValue>
+      <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="queryTableIdCol">source_id</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$queryExtDbRlsSpec</paramValue>
-      <paramValue name="subjectTable">$subjectTable</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$queryExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectTable">$$subjectTable$$</paramValue>
       <paramValue name="subjectTableIdCol">source_id</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$subjectExtDbRlsSpec</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValues name="options">$$loadOptions$$</paramValues>
       <depends step="loadSubjectSubset"/>
     </step>

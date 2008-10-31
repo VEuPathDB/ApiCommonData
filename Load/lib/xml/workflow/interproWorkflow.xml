@@ -2,7 +2,6 @@
 
     <param name="proteinsFile"/>
     <param name="parentDataDir"/>
-    <param name="organismTaskLogsDir"/>
     <param name="interproExtDbRlsSpec"/>
     <param name="interproVersion"/>
 
@@ -26,7 +25,6 @@
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/interpro</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runIprScan</paramValue>
       <paramValue name="cmdArgs">$$proteinsFile$$</paramValue>
@@ -34,7 +32,7 @@
     </step>
 
     <step name="waitForClusterTask">
-      <paramValue name="descrip">interpro</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startClusterTask"/>
     </step>
 

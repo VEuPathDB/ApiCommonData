@@ -4,12 +4,9 @@
     <param name="organismTaskLogsDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="ncbiTaxonId"/>
-    <param name="blatQueryName"/>
-    <param name="blatTargetName"/>
     <param name="candSeqsDataDir"/>
 
-    <constant name="dataDir">$$parentDataDir$$/assemblyCandGfClient</constant>
-
+    <constant name="dataDir">$$candSeqsDataDir$$</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -51,7 +48,7 @@
     </step>
 
     <step name="waitForClusterTask" waitForPilot="yes">
-      <paramValue name="descrip">candidateAssemblySeqstoGenome</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
@@ -71,8 +68,6 @@
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="blatQueryName">$$blatQueryName$$</paramValue>
-      <paramValue name="blatTargetName">$$blatTargetName$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
@@ -91,8 +86,6 @@
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="blatQueryName">$$blatQueryName$$</paramValue>
-      <paramValue name="blatTargetName">$$blatTargetName$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>

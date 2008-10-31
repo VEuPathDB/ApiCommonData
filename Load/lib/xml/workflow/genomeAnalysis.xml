@@ -1,7 +1,6 @@
 <workflowGraph name="standardGenomeAnalysis">
 
   <param name="parentDataDir"/>
-  <param name="organismTaskLogsDir"/>
   <param name="organismName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
@@ -45,7 +44,6 @@
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -119,7 +117,6 @@
 
     <subgraph name="makeAndBlockCandAssemblySeqs" xmlFile="makeAndBlockCandAssemblySeqs.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir"$$organismTaskLogsDir$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
@@ -129,24 +126,20 @@
 
     <subgraph name="mapCandAssemblySeqsToGenome" xmlFile="mapCandAssemblySeqsToGenomeWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir"$$organismTaskLogsDir$$></paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="blatQueryName">transcriptSeqs</paramValue>
-      <paramValue name="blatTargetName">genome</paramValue>
       <paramValue name="candSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 
     <subgraph name="assembleTranscriptsandMapAssemblySeqsToGenome" xmlFile="mapDotsAssemblyToGenomeWorkflow.xml">
-      <paramValue name="parentDataDir">$$genomeDataDir$$</paramValue>
-      <paramValue name="organismTaskLogsDir"$$$genomeTaskLogsDir$></paramValue>
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
-      <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
-      <paramValue name="transcriptRepeatMaskFile">$$dataDir$$/candidateAssemblySeqsRepeatMask/master/mainresults/block.err</paramValue>
+      <paramValue name="blatQueryName">$$organismName$$TranscriptSeqs</paramValue>
+      <paramValue name="blatTargetName">$$organismName$$Genome</paramValue>
+      <paramValue name="candSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
       <depends step="mapCandAssemblySeqsToGenome"/>
     </subgraph>
 
