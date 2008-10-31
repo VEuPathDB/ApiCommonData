@@ -1,0 +1,62 @@
+<workflowGraph name="makeAndBlockCandAssemblySeqs">
+
+    <param name="parentDataDir"/>
+    <param name="organismTaskLogsDir"/>
+    <param name="parentNcbiTaxonId"/>
+    <param name="ncbiTaxonId"/>
+    <param name="predictedTranscriptsSql"/>
+    <param name="dataDir"/>
+
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
+    </step>
+
+   <step name="extractCandidateAssemblySeqs"
+          stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/candidateAssemblySeqs.fsa</paramValue>
+      <depends step="makeCandidateAssemblySeqs"/>
+      <depends step="makeDataDir"/>
+    </step>
+
+    <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <depends step="makeassemblyCandRepeatMaskDataDir"/>
+    </step>
+
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">makeAndBlockAssemblyCands</paramValue>
+      <depends step="makeTaskInputDir"/>
+      <depends step="extractCandidateAssemblySeqs"/>
+    </step>
+
+    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
+      <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/candidateAssemblySeqs</paramValue>
+      <paramValue name="queue">apidb</paramValue>
+      <paramValue name="cmdName">runRepeatMask</paramValue>
+      <paramValue name="cmdArgs">????</paramValue>
+      <depends step="mirrorToCluster"/>
+    </step>
+
+    <step name="waitForClusterTask" waitForPilot="yes">
+      <paramValue name="descrip">blockAssemblyCandSeqs</paramValue>
+      <depends step="startClusterTask"/>
+    </step>
+
+    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="parentDir">$$dataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <depends step="waitForClusterTask"/>
+    </step>
+
+
+</workflowGraph>

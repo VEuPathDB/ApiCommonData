@@ -1,4 +1,5 @@
 <workflowGraph name="organismAnalysis">
+  <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="organismTwoLetterAbbrev"/>
   <param name="genomeExtDb"/>
@@ -18,16 +19,11 @@
   <param name="taxonHierarchyForBlastxFilter"/>
 
 
-  <constant name="organismDataDir">data/$$organismName$$</constant>
+  <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
 
   <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dir">$$organismDataDir$$</paramValue>
-  </step>
-
-  <step name="makeSeqfilesDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dir">$$organismDataDir$$/seqfiles</paramValue>
-    <depends step="makeDataDir"/>
+    <paramValue name="dir">$$dataDir$$</paramValue>
   </step>
 
   <step name="makeTaskLogsDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
@@ -35,16 +31,29 @@
   </step>
 
   <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
-    <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
-    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
-    <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
+    <paramValue name="organismName">$$organismName$$</paramValue>
+    <paramValue name="genomeExtDb">$$genomeExtDb$$</paramValue>
+    <paramValue name="genomeExtDbRls">$$genomeExtDbRls$$</paramValue>
+    <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>    
+    <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+    <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
+    <paramValue name="runSplign">$$runSplign$$</paramValue>
     <depends step="makeSeqfilesDir"/>
     <depends step="makeTaskLogsDir"/>
   </subgraph>
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
-    <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>

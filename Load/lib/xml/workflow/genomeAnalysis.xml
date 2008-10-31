@@ -2,32 +2,29 @@
 
   <param name="parentDataDir"/>
   <param name="organismTaskLogsDir"/>
+  <param name="organismName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
+  <param name="parentNcbiTaxonId"/>
+  <param name="predictedTranscriptsSql"/>
+  <param name="nrdbFile"/>
+  <param name="nrdbShortDeflineFile"/>
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
+  <param name="runSplign"/>
 
-  <!-- organism names -->
-  <constant name="Tbrucei">Trypanosoma brucei TREU927</constant>
-
-  <!-- handles on external datasets -->
+  <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
-  <constant name="nrdbFile">seqfiles/nr.fsa</constant>
-  <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
-  <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="genomicSeqsFile">genomicSeqs.fsa</constant>
-  <constant name="organismDataDir">data/$$organismName$$</constant>
-  <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
-  <constant name="proteinsFile">$$organismDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
+  <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
-    <include match="$organismName" list="$Pf,$Pb,$Py,$Pv"/>
+    <includeIf>$$runSplign$$</includeIf>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="queryExtDbRlsSpec">tigr:$$tigrVersion$$</paramValue>
-    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
-  </subgraph>
+    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>    </subgraph>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
@@ -40,14 +37,14 @@
       <paramValue name="outputDirForSeparateFiles"></paramValue>
     </step>
 
-   <step name="mirrorGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
-      <paramValue name="fileOrDirToMirror">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+   <step name="mirrorToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
+      <paramValue name="fileOrDirToMirror">genome</paramValue>
+      <paramValue name="parentDir">$$parentDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
@@ -71,20 +68,16 @@
           stepClass="ApiCommonData::Load::Steps::MakeOrfFile">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="minPepLength">50</paramValue>
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
-      <paramValue name="outputFile">$$organismName$$_Orf50.gff</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/Orf50.gff</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
     <step name="loadOrfFile"
           stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
-      <paramValue name="orfFile">$$organismName$$_Orf50.gff</paramValue>
+      <paramValue name="orfFile">$$dataDir$$/Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subclass">ExternalNASequence</paramValue>
-      <paramValue name="defaultOrg">$$Tbrucei$$</paramValue>
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
+      <paramValue name="defaultOrg">$$organismName$$</paramValue>
       <depends step="makeOrfFile"/>
     </step>
 
@@ -93,45 +86,36 @@
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
     <step name="loadTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
-      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="inputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
-      <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <depends step="makeOrfFile"/>
     </step>
 
-    <step name="filterGenomicSeqs"
-          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+   <step name="runLowComplexityFilter"
+          stepClass="ApiCommonData::Load::Steps::RunLowComplexityFilter">
+
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="outputFile">$$genomicSeqsFile$$.dust</paramValue>
-      <paramValue name="filterDir">filter</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="filterType">dust</paramValue>
-      <paramValue name="opt">-x</paramValue>
+      <paramValue name="options">-x</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
-
-     <step name="loadLowComplexityGenomicSeqs"
+    <step name="loadLowComplexityFile"
           stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
-      <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
-      <paramValue name="inputFile">$$genomicSeqsFile$$.dust</paramValue>
+      <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="seqType">dna</paramValue>
       <paramValue name="mask">N</paramValue> 
-      <paramValue name="opt">--LowComplexityName 'dust'</paramValue>
-      <depends step="filterGenomicSeqs"/>
+      <paramValue name="options">--LowComplexityName 'dust'</paramValue>
+      <depends step="runLowComplexityFilter"/>
     </step>
-
 
     <subgraph name="makeAndBlockCandAssemblySeqs" xmlFile="makeAndBlockCandAssemblySeqs.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -155,14 +139,14 @@
     </subgraph>
 
     <subgraph name="assembleTranscriptsandMapAssemblySeqsToGenome" xmlFile="mapDotsAssemblyToGenomeWorkflow.xml">
-      <paramValue name="organismDataDir">$$genomeDataDir$$</paramValue>
+      <paramValue name="parentDataDir">$$genomeDataDir$$</paramValue>
       <paramValue name="organismTaskLogsDir"$$$genomeTaskLogsDir$></paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
       <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
-      <paramValue name="transcriptRepeatMaskFile">$$organismDataDir$$/candidateAssemblySeqsRepeatMask/master/mainresults/block.err</paramValue>
+      <paramValue name="transcriptRepeatMaskFile">$$dataDir$$/candidateAssemblySeqsRepeatMask/master/mainresults/block.err</paramValue>
       <depends step="mapCandAssemblySeqsToGenome"/>
     </subgraph>
 
