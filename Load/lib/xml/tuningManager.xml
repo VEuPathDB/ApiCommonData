@@ -1106,9 +1106,9 @@ SELECT CASE
        last_exon.coding_end,
        nl.is_reversed,
        sns.length AS transcript_length,
-       GREATEST(0, least(nl.start_min, nl.end_max) - 5000)
+       GREATEST(0, least(nl.start_min, nl.end_max) - 15000)
            AS context_start,
-       LEAST(sequence.length, greatest(nl.start_min, nl.end_max) + 5000)
+       LEAST(sequence.length, greatest(nl.start_min, nl.end_max) + 15000)
            AS context_end,
        DECODE(nvl(nl.is_reversed, 0), 0, 'forward', 1, 'reverse',
               nl.is_reversed) AS strand,
