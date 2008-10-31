@@ -8,7 +8,7 @@ DROP TABLE announce.message_projects;
 
 CREATE TABLE announce.messages
 (
-  message_id NUMBER(7) NOT NULL,
+  message_id NUMBER(10) NOT NULL,
   message_text VARCHAR2(4000) NOT NULL,
   message_category VARCHAR2(150) NOT NULL,
   start_date DATE NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE announce.category
 
 CREATE TABLE announce.message_projects
 (
-  message_id NUMBER(3) NOT NULL,
+  message_id NUMBER(10) NOT NULL,
   project_id NUMBER(3) NOT NULL,
   CONSTRAINT message_id_fkey FOREIGN KEY (message_id) REFERENCES announce.messages(message_id),
   CONSTRAINT project_id_fkey FOREIGN KEY (project_id) REFERENCES announce.projects(project_id)
