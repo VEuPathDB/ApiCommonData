@@ -1,72 +1,57 @@
 <workflowGraph name="standardGenomeAnalysis">
 
-  <param name="organismName"/>
+  <param name="parentDataDir"/>
+  <param name="organismTaskLogsDir"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
-  <param name="genomeTwoLetterAbbrev"/>
-  <param name="interproVersion"/>
-  <param name="iedbVersion"/>
-  <param name="soVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
   <param name="maxIntronSize"/>
+  <param name="taxonHierarchyForBlastxFilter"/>
 
   <!-- organism names -->
   <constant name="Tbrucei">Trypanosoma brucei TREU927</constant>
 
-  <!-- data directory names -->
-  <constant name="seqfilesDir">seqfiles</constant>
-  <constant name="miscDir">misc</constant>
-  <constant name="similarityDir">similarity</constant>
-  <constant name="assemblyDir">assembly</constant>
-  <constant name="Dir">mercator</constant>
-
   <!-- handles on external datasets -->
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
-  <constant name="soExtDbRlsSpec">SequenceOntology:$$soVersion$$</constant>
-  <constant name="tigrExtDbRlsSpec">tigr:$$tigrVersion$$</constant>
-  <constant name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</constant>
-  <constant name="taxonomyExtDbRlsSpec">taxonomy:$$taxonomyVersion$$</constant>
   <constant name="nrdbFile">seqfiles/nr.fsa</constant>
   <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="nrdbShortDeflineFile">seqfiles/nrShortDefline.fsa</constant>
-  <constant name="genomicSeqsFile">seqfiles/GenomicSeqs.fsa</constant>
+  <constant name="genomicSeqsFile">genomicSeqs.fsa</constant>
   <constant name="organismDataDir">data/$$organismName$$</constant>
   <constant name="organismTaskLogsDir">taskLogs/$$organismName$$</constant>
   <constant name="proteinsFile">$$organismDataDir$$/seqfiles/AnnotatedProteins.fsa</constant>
-  <constant name="genomicSeqsFile">$$organismDataDir$$/seqfiles/$$organismName$$GenomicSeqs.fsa</constant>
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <include match="$organismName" list="$Pf,$Pb,$Py,$Pv"/>
-    <paramValue name="queryExtDbRlsSpec">$$tigrExtDbRlsSpec$$</paramValue>
+    <paramValue name="queryExtDbRlsSpec">tigr:$$tigrVersion$$</paramValue>
     <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
   </subgraph>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="ncbiTaxId">$$$ncbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
       <paramValue name="identifier">source_id</paramValue>
-      <paramValue name="outputFileOrDir">$$organismDataDir$$/$$seqfiles$$/$$$genomicSeqsFile$$</paramValue>
-      <paramValue name="seqfilesDir">$$organismDataDir$$/seqfiles</paramValue>
+      <paramValue name="outputFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="separateFastaFiles">false</paramValue>
+      <paramValue name="outputDirForSeparateFiles"></paramValue>
     </step>
 
-   <step name="copyGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
-      <paramValue name="file">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="relativeDir">$$organismName$$/$$seqfilesDir$$</paramValue>
+   <step name="mirrorGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
+      <paramValue name="fileOrDirToMirror">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <paramValue name="queryAbbrev">genomicSeqs</paramValue>
+      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+      <paramValue name="organismTaskLogsDir">$$organismTaskLogsDir$$</paramValue>
       <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="subjectAbbrev">nrdb</paramValue>
       <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec"></paramValue>
@@ -75,6 +60,9 @@
       <paramValue name="blastType">blastx</paramValue>
       <paramValue name="vendor">wu</paramValue>
       <paramValue name="loadSubjectSubset">true</paramValue>
+      <paramValue name="filterByTaxon">true</paramValue>
+      <paramValue name="taxonHierarchyForFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
+      <paramValue name="loadOptions"></paramValue>
       <depends step="extractProteins"/></paramValue>
       <depends step="extractGenomicSeqs"/></paramValue>
     </subgraph>
@@ -145,19 +133,24 @@
     </step>
 
 
+    <subgraph name="makeAndBlockCandAssemblySeqs" xmlFile="makeAndBlockCandAssemblySeqs.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="organismTaskLogsDir"$$organismTaskLogsDir$$></paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
+      <depends step="extractGenomicSeqs"/>
+    </subgraph>
+
     <subgraph name="mapCandAssemblySeqsToGenome" xmlFile="mapCandAssemblySeqsToGenomeWorkflow.xml">
-      <paramValue name="organismDataDir">$$organismDataDir$$</paramValue>
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="organismTaskLogsDir"$$organismTaskLogsDir$$></paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
-      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="NcbiTaxonId">$$NcbiTaxonId$$</paramValue>
-      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <paramValue name="BLATQueryName">$$organismName$$TranscriptSeqs</paramValue>
-      <paramValue name="BLATTargetName">$$organismName$$Genome</paramValue>
-      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="transcriptSeqsFile">$$TranscriptSeqsFile$$</paramValue>
-      <paramValue name="repeatMaskDataDirOutput">$$organismDataDir$$/candidateAssemblySeqsRepeatMask</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="blatQueryName">transcriptSeqs</paramValue>
+      <paramValue name="blatTargetName">genome</paramValue>
+      <paramValue name="candSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 

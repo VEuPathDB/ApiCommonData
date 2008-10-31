@@ -1,29 +1,31 @@
 <workflowGraph name="interpro">
 
     <param name="proteinsFile"/>
-    <param name="organismDataDir"/>
+    <param name="parentDataDir"/>
     <param name="organismTaskLogsDir"/>
     <param name="interproExtDbRlsSpec"/>
     <param name="interproVersion"/>
 
+    <constant name="dataDir">$$parentDataDir$$/interpro</constant>
+
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/interpro</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
     <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/interpro/input</paramValue>
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">interpro</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$organismDataDir$$/interpro</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/interpro</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runIprScan</paramValue>
@@ -37,7 +39,7 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/interpro</paramValue>
+      <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>

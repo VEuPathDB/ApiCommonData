@@ -2,14 +2,15 @@
 
     <param name="queryExtDbRlsSpec"/>
     <param name="subjectExtDbRlsSpec"/>
-    <param name="organismDataDir"/>
+    <param name="parentDataDir"/>
 
-    <constant name="queryFastaFile">$$organismDataDir$$/splign/query.fsa</constant>
-    <constant name="subjectFastaFile">$$organismDataDir$$/splign/subject.fsa</constant>
-    <constant name="splignOutputFile">$$organismDataDir$$/splign/splign.out</constant>
+    <constant name="dataDir">$$parentDataDir$$/splign</constant>
+    <constant name="queryFastaFile">$$dataDir$$/query.fsa</constant>
+    <constant name="subjectFastaFile">$$dataDir$$/subject.fsa</constant>
+    <constant name="splignOutputFile">$$dataDir$$/splign.out</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/splign</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
     <step name="extractQuery" class="ApiCommonData::Steps::ExtractNaSeqAltDefLine">

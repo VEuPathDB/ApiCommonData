@@ -1,19 +1,20 @@
 <workflowGraph name="epitopes">
 
     <param name="proteinsFile"/>
-    <param name="organismDataDir"/>
+    <param name="parentDataDir"/>
     <param name="iedbExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="organismTwoLetterAbbrev"/>
 
-    <constant name="proteinsFileSimpleDefline">$$organismDataDir$$/iedb/blastDb/proteinsSimpleDefline.fsa</constant>
+    <constant name="dataDir">$$parentDataDir$$/iedb</constant>
+    <constant name="proteinsFileSimpleDefline">$$dataDir$$/blastDb/proteinsSimpleDefline.fsa</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/iedb</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
     <step name="makeBlastDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/iedb/blastDb</paramValue>
+      <paramValue name="dataDir">$$dataDir$$/blastDb</paramValue>
       <depends step="makeDataDir"/>
     </step>
 
@@ -31,15 +32,15 @@
 
     <step name="createEpitopeMapFile" class="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
       <paramValue name="inputDirRelativeToDownloadsDir">IEDB_fixed</paramValue>
-      <paramValue name="blastDbDir">$$organismDataDir$$/iedb/blastDb</paramValue>
+      <paramValue name="blastDbDir">$$dataDir$$/blastDb</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
-      <paramValue name="outputDir">$$organismDataDir$$/iedb/results</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/results</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="insertEpitopeMapping" class="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
-      <paramValue name="inputDir">$$organismDataDir$$/iedb/results</paramValue>
+      <paramValue name="inputDir">$$dataDir$$/results</paramValue>
       <paramValue name="iedbExtDbRlsSpec">$$iedbExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     </step>

@@ -2,14 +2,16 @@
 
     <param name="nrdbFileShortDefline"/>
     <param name="proteinsFile"/>
-    <param name="organismDataDir"/>
+    <param name="parentDataDir"/>
     <param name="organismTaskLogsDir"/>
 
-    <constant name="psipredProteinsFile">$$organismDataDir$$/psipred/proteinsFixedIds.fsa</constant>
-    <constant name="psipredNrdbFile">$$organismDataDir$$/psipred/nrdb.pfilt.fsa</constant>
+    <constant name="dataDir">$$parentDataDir$$/interpro</constant>
+
+    <constant name="psipredProteinsFile">$$dataDir$$/proteinsFixedIds.fsa</constant>
+    <constant name="psipredNrdbFile">$$dataDir$$/nrdb.pfilt.fsa</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">$$organismDataDir$$/psipred</paramValue>
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
     <step name="runPfilt" class="ApiCommonData::Load::Steps::RunPfilt">
@@ -24,20 +26,20 @@
     </step>
 
     <step name="createTaskDir" class="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
-      <paramValue name="taskInputDir">$$organismDataDir$$/interpro/input</paramValue>
+      <paramValue name="taskInputDir">$$parentDataDir$$/interpro/input</paramValue>
       <paramValue name="proteinsFile">$$psipredProteinsFile$$</paramValue>
       <paramValue name="nrdbFile">$$psipredNrdbFile$$</paramValue>
       <depends step="fixProteinIds"/>
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$organismDataDir$$</paramValue>
+      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">psipred</paramValue>
       <depends step="createTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$organismDataDir$$/psipred</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="taskLogsDir">$$organismTaskLogsDir$$/psipred</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runPsipred</paramValue>
@@ -51,14 +53,14 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$organismDataDir$$/psipred</paramValue>
+      <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
     <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
-      <paramValue name="inputDir">$$organismDataDir$$/psipred/master/mainresult</paramValue>
-      <paramValue name="outputDir">$$organismDataDir$$/psipred/master/mainresult_fixed</paramValue>
+      <paramValue name="inputDir">$$dataDir$$/master/mainresult</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
       <depends step="mirrorFromCluster"/>
      </step>
 
@@ -71,7 +73,7 @@
 
     <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
       <paramValue name="algName">psipred</paramValue>
-      <paramValue name="inputDir">$$organismDataDir$$/psipred/master/mainresult_fixed</paramValue>
+      <paramValue name="inputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
       <depends step="makeAlgInv"/>
     </step>
 
