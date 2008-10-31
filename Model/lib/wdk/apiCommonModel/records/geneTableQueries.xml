@@ -399,20 +399,24 @@
             <column name="signalp_scores"/>
             <column name="tm_count"/>
             <column name="proteomics"/>
+            <column name="user_comment"/>
             <sql>
             <![CDATA[
                select gb.SOURCE_ID, replace(gb.organism,'Toxoplasma gondii ','') as strain, 
                  gb.project_id, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,
                  CASE WHEN gb.SIGNALP_SCORES is null THEN 'No' ELSE 'Yes' END as signalp_scores,
                  gb.TM_COUNT,
-                 CASE WHEN min(ms.aa_sequence_id) is null THEN 'No' ELSE 'Yes' END as proteomics
+                 CASE WHEN min(ms.aa_sequence_id) is null THEN 'No' ELSE 'Yes' END as proteomics,
+                 CASE WHEN min(c.stable_id) is null THEN 'No' ELSE 'Yes' END as user_comment
                from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,dots.TRANSCRIPT t, 
-                 dots.TRANSLATEDAAFEATURE taaf, apidb.MASSSPECSUMMARY ms
+                 dots.TRANSLATEDAAFEATURE taaf, apidb.MASSSPECSUMMARY ms,
+                 @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
                where ga.source_id = $$source_id$$ 
                and gb.GENE_ID = ga.GENE_ID
                and gb.na_feature_id = t.parent_id(+)
                and t.na_feature_id = taaf.na_feature_id(+)
                and taaf.aa_sequence_id = ms.aa_sequence_id(+)
+               and gb.source_id = c.stable_id(+)
                group by gb.SOURCE_ID, gb.project_id, gb.organism, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,gb.SIGNALP_SCORES,gb.TM_COUNT
                order by gb.organism
              ]]>
@@ -1148,15 +1152,17 @@
             <column name="context_start"/>
             <column name="context_end"/>
             <column name="product"/>
+            <column name="same_protein"/>
             <sql>
             <![CDATA[
-              SELECT $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
-              tv.source_id as old_source_id,tv.sequence_id,tv.start_min,tv.end_max,
-              decode(tv.strand,'reverse','-','+') as strand,
-              tv.context_start,tv.context_end,tv.product
-              from apidb.geneid gid, apidb.TOXOVERSION4GENES tv
-              where gid.gene = $$source_id$$
-              and gid.id = tv.source_id
+              select toa.source_id, '@PROJECT_ID@' AS project_id,
+                     old_source_id,tv.sequence_id,tv.start_min,tv.end_max,
+                     decode(tv.strand,'reverse','-','+') as strand,
+                     tv.context_start,tv.context_end,tv.product,
+                     decode(toa.new_protein,0,'Yes',1,'No') as same_protein
+              from apidb.TRACKOLDANNOTATION toa, apidb.TOXOVERSION4GENES tv
+              where toa.source_id = $$source_id$$
+              and toa.old_source_id = tv.source_id
             ]]>
             </sql>
         </sqlQuery>
