@@ -141,6 +141,63 @@
            </sql>
         </sqlQuery>
 
+        <!-- UtilityQueries.TuningTables -->
+        <sqlQuery name="TuningTables" isCacheable='false'>
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="name" />
+            <column name="timestamp" />
+           <sql> 
+            <![CDATA[           
+            select $$source_id$$ AS source_id, 
+                   '@PROJECT_ID@' AS project_id,
+                    name, 
+                    timestamp 
+            from apidb.tuningtable 
+            order by timestamp desc
+            ]]>
+           </sql>
+        </sqlQuery>
+
+        <!-- UtilityQueries.TuningManager -->
+        <sqlQuery name="TuningManager" isCacheable='false'>
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="family_name" /> 
+            <column name="last_update" /> 
+            <column name="last_updater" /> 
+            <column name="last_check" /> 
+            <column name="last_checker" /> 
+            <column name="instance_nickname" />
+            <column name="subversion_url" /> 
+            <column name="notify_emails" />
+            <column name="elapsedCheckDays" />
+            <column name="elapsedCheckHours" />
+            <column name="elapsedCheckMinutes" />
+           <sql> 
+            <![CDATA[           
+            select $$source_id$$ AS source_id, 
+                   '@PROJECT_ID@' AS project_id,
+                   ti.family_name family_name,
+                   last_update, 
+                   last_updater, 
+                   last_check, 
+                   last_checker, 
+                   instance_nickname,
+                   subversion_url, 
+                   notify_emails,
+                   trunc(sysdate - last_check) elapsedCheckDays,
+                   to_char(   trunc(sysdate) + (sysdate - last_check),  'HH24') elapsedCheckHours,
+                   to_char(   trunc(sysdate) + (sysdate - last_check),  'MI') elapsedCheckMinutes
+            from apidb.TuningInstance@apidb.login_comment ti,
+                   apidb.tuningfamily@apidb.login_comment tf
+            where ti.service_name = 
+              (select sys_context ('userenv', 'service_name') from dual)
+            and ti.family_name = tf.family_name
+            ]]>
+           </sql>
+        </sqlQuery>
+
      </querySet>
 <!-- ////////// END UTILITY //////////// -->
 

@@ -47,6 +47,22 @@
                 <columnAttribute name="apicomm_global_name" internal="true" />
             </attributeQueryRef>
 
+            <attributeQueryRef ref="UtilityQueries.TuningManager">
+                <columnAttribute name="family_name" internal="true" />
+                <columnAttribute name="last_update" internal="true" />
+                <columnAttribute name="last_updater" internal="true" />
+                <columnAttribute name="last_check" internal="true" />
+                <columnAttribute name="last_checker" internal="true" />
+                <columnAttribute name="instance_nickname" internal="true" />
+                <columnAttribute name="subversion_url" internal="true" />
+                <columnAttribute name="notify_emails" internal="true" />
+                <columnAttribute name="elapsedCheckDays" internal="true" />
+                <columnAttribute name="elapsedCheckHours" internal="true" />
+                <columnAttribute name="elapsedCheckMinutes" internal="true" />
+            </attributeQueryRef>
+
+
+
             <table name="AllDbLinks" displayName="All DBLinks"
                    queryRef="UtilityQueries.AllDbLinks">
                 <columnAttribute name="owner"     displayName="owner" />
@@ -54,6 +70,12 @@
                 <columnAttribute name="username"  displayName="username" />
                 <columnAttribute name="host"      displayName="host" />
                 <columnAttribute name="created"   displayName="created" />
+            </table>
+
+            <table name="TuningTables" displayName="ApiDB Tuning Tables"
+                   queryRef="UtilityQueries.TuningTables">
+                <columnAttribute name="name"        displayName="Table" />
+                <columnAttribute name="timestamp"   displayName="Last Update" />
             </table>
 
            <textAttribute name="apicommMacro" displayName="Links to Other Web Pages" 
