@@ -18,6 +18,9 @@
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
+  <constant name="candAssemSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</constant>
+  <constant name="mapCandAssemSeqsDataDir">$$dataDir$$/mapCandidateAssemSeqs</constant>
+  <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <includeIf>$$runSplign$$</includeIf>
@@ -120,7 +123,7 @@
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
-      <paramValue name="dataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
+      <paramValue name="dataDir">$$candAssemSeqsDataDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 
@@ -128,20 +131,30 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="candSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <paramValue name="candSeqsDataDir">$$candAssemSeqsDataDir$$</paramValue>
+      <paramValue name="dataDir">$$mapCandAssemSeqsDataDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapCandAssemSeqsDataDir$$/genomicSeqs</paramValue>
+      <depends step="makeAndBlockCandAssemblySeqs"/>
     </subgraph>
 
-    <subgraph name="assembleTranscriptsandMapAssemblySeqsToGenome" xmlFile="mapDotsAssemblyToGenomeWorkflow.xml">
+    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="blatQueryName">$$organismName$$TranscriptSeqs</paramValue>
-      <paramValue name="blatTargetName">$$organismName$$Genome</paramValue>
-      <paramValue name="candSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="dataDir">$$dataDir$$/makeAssemblies</paramValue>
+      <paramValue name="candSeqsDataDir">$$candAssemSeqsDataDir$$</paramValue>
       <depends step="mapCandAssemblySeqsToGenome"/>
     </subgraph>
 
+    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="assembliesDataDir">$$assembliesDataDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapCandAssemSeqsDataDir$$/genomicSeqs</paramValue>
+      <depends step="makeAndBlockAssemblies"/>
+    </subgraph>
 
 </workflowGraph>

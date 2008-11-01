@@ -27,14 +27,13 @@
 
     <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends step="makeassemblyCandRepeatMaskDataDir"/>
+      <depends step="extractCandidateAssemblySeqs"/>
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">makeAndBlockAssemblyCands</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends step="makeTaskInputDir"/>
-      <depends step="extractCandidateAssemblySeqs"/>
+      <depends step="makeClusterTaskInputDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
@@ -51,8 +50,7 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$dataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 

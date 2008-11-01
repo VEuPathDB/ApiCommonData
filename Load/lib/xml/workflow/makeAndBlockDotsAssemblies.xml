@@ -6,9 +6,8 @@
     <param name="ncbiTaxonId"/>
     <param name="maxIntronSize"/>
     <param name="dataDir"/>
+    <param name="candSeqsDataDir"/>
  
-    <constant name ="dataDir">$$parentDataDir$$/makeAssemblies</constant>
-
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
@@ -33,7 +32,7 @@
       <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="transcriptRepeatMaskFile">$$transcriptRepeatMaskFile$$</paramValue>
+      <paramValue name="repeatMaskErrFile">$$candSeqsDataDir$$/master/mainresult/blocked.err</paramValue>
       <depends step="clusterTranscriptsByGenomeAlignment"/>
     </step>
 
@@ -54,15 +53,14 @@
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">makeAssemblies</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends step="makeClusterTaskDir"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
-      <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
+      <paramValue name="cmdName">runRepeatMask</paramValue>
       <paramValue name="cmdArgs">???</paramValue>
       <depends step="mirrorToCluster"/>
     </step>
@@ -73,8 +71,7 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$dataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 

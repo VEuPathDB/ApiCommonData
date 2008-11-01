@@ -1,12 +1,11 @@
 <workflowGraph name="mapCandAssemblySeqsToGenome">
 
     <param name="parentDataDir"/>
-    <param name="organismTaskLogsDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="ncbiTaxonId"/>
     <param name="candSeqsDataDir"/>
-
-    <constant name="dataDir">$$candSeqsDataDir$$</constant>
+    <param name="dataDir"/>
+    <param name="genomicSeqsDir"/>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -20,31 +19,27 @@
       <paramValue name="identifier">source_id</paramValue>
       <paramValue name="outputFile"></paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
-      <paramValue name="outputDirForSeparateFiles">$$dataDir$$/genomeFiles</paramValue>
-      <depends step="makeAssemblyCandGfClientDataDir"/>
+      <paramValue name="outputDirForSeparateFiles">$$genomicSeqsDir$$</paramValue>
+      <depends step="makeDataDir"/>
     </step>
 
     <step name="makeTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends step="makeAssemblyCandGfClientDataDir"/>
-
+      <depends step="makeDataDir"/>
     </step>
 
-    <step name="mirrorGfClientToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">assemblyCandGfClient</paramValue>
-      <depends step="makeGfClientClusterTaskInputDir"/>
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends step="makeTaskInputDir"/>
       <depends step="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="taskLogsDir">$$genomeTaskLogsDir$$/candidateAssemblySeqs</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
-      <paramValue name="cmdArgs">???</paramValue>
-      <depends step="mirrorGfClientToCluster"/>
-      <depends step="mirrorCandidateRepeatMaskToCluster"/>
+      <paramValue name="cmdArgs">$$candSeqsDataDir$$/master/mainresult/blocked.seq,$$genomicSeqsDir$$</paramValue>
+      <depends step="mirrorToCluster"/>
     </step>
 
     <step name="waitForClusterTask" waitForPilot="yes">
@@ -53,15 +48,13 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$dataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
     <step name="InsertGusTableWithXml" class="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
       <paramValue name="xmlFile">$$PROJECT_HOME$$/ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
-
     </step>
 
     <step name="insertBlatAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
@@ -77,8 +70,7 @@
       <paramValue name="percentTop"></paramValue>
       <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
       <paramValue name="queryFile">$$candSeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
-      <depends step="mirrorRepeatMaskFromCluster"/>
-      <depends step="mirrorGfClientFromCluster"/>
+      <depends step="mirrorFromCluster"/>
       <depends step="InsertGusTableWithXml"/>
     </step>
 

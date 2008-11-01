@@ -32,8 +32,7 @@
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="parentDir">$$parentDataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">psipred</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends step="createTaskDir"/>
     </step>
 
@@ -51,8 +50,7 @@
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="parentDir">$$dataDir$$</paramValue>
-      <paramValue name="fileOrDirToMirror">master</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
