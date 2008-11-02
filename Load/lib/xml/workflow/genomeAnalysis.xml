@@ -14,6 +14,7 @@
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
+  <param name="genomeVirtualSeqExtDbRlsSpec"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
@@ -21,6 +22,7 @@
   <constant name="candAssemSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</constant>
   <constant name="mapCandAssemSeqsDataDir">$$dataDir$$/mapCandidateAssemSeqs</constant>
   <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
+  <constant name="dumpVirtualSeqDataDir">$$dataDir$$/common/mercator/</constant>
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <includeIf>$$runSplign$$</includeIf>
@@ -38,6 +40,13 @@
       <paramValue name="separateFastaFiles">false</paramValue>
       <paramValue name="outputDirForSeparateFiles"></paramValue>
     </step>
+
+    <subgraph name="dumpAndBlockVirtualSeqs" xmlFile="dumpAndBlockVirtualSeqs.xml">
+      <paramValue name="dataDir">$$dumpVirtualSeqDataDir$$</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    </subgraph>
+
 
    <step name="mirrorToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">genome</paramValue>

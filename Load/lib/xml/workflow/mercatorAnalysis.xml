@@ -1,0 +1,29 @@
+<workflowGraph name="mercatorAnalysis">
+
+    <param name="mercator_genomes"/>
+    <param name="mercator_reference_genome"/>
+    <param name="mercator_draft_genomes"/>
+    <param name="mercator_nondraft_genomes"/>
+    <param name="mercator_tree"/>
+    <param name="syntenyExtDbRlsSpec"/>
+    <param name="genomeVirtualSeqsExtDbRlsSpec"/>
+    <param name="genomeExtDbRlsSpec"/>
+
+    <step name="runMercatorMavid" class="ApiCommonData::Load::WorkflowSteps::runMercatorMavid">
+      <paramValue name="outputDir">$$dataDir$$/common/mercator/</paramValue>
+    </step>
+
+    <step name="createSyntenyExtDbRls" class="ApiCommonData::Load::WorkflowSteps::CreateExtDbAndDbRls">
+      <paramValue name="syntenyExtDbRlsSpec">$$syntenyExtDbRlsSpec$$</paramValue>
+      <depends step="runMercatorMavid"/>
+    </step>
+
+    <step name="insertMercatorSyntenySpans" class="ApiCommonData::Load::WorkflowSteps::InsertMercatorSyntenySpans">
+      <paramValue name="inputDir">$$dataDir$$/common/mercator/</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+
+      <depends step="createSyntenyExtDbRls"/>
+    </step>
+
+</workflowGraph>

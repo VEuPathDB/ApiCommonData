@@ -1,0 +1,50 @@
+<workflowGraph name="dumpAndBlockVirtualSeqs">
+
+    <param name="ncbiTaxonId"/>
+    <param name="dataDir"/>
+    <param name="genomeVirtualSeqsExtDbRlsSpec"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="organismName"/>
+ 
+    <constant name="repeatMaskDataDir">$$dataDir$$/repeatmask/$$organismName$$</constant>
+
+    <step name="dumpVirtualSeqs" class="ApiCommonData::Load::WorkflowSteps::DumpVirtualSeqs">
+      <paramValue name="outputFile">$$dataDir$$/seqfiles/$$organismName$$MixedGenomic.fasta</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    </step>
+
+    <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$repeatMaskDataDir$$/input</paramValue>
+      <depends step="dumpVirtualSeqs"/>
+    </step>
+
+    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+      <paramValue name="fileOrDirToMirror">$$repeatMaskDataDir$$</paramValue>
+      <depends step="makeClusterTaskInputDir"/>
+    </step>
+
+    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+      <paramValue name="taskDir">$$repeatMaskDataDir$$</paramValue>
+      <paramValue name="queue">apidb</paramValue>
+      <paramValue name="cmdName">runRepeatMask</paramValue>
+      <paramValue name="cmdArgs">????</paramValue>
+      <depends step="mirrorToCluster"/>
+    </step>
+
+    <step name="waitForClusterTask" waitForPilot="yes">
+      <paramValue name="taskDir">$$repeatMaskDataDir$$</paramValue>
+      <depends step="startClusterTask"/>
+    </step>
+
+    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+      <paramValue name="fileOrDirToMirror">$$repeatMaskDataDir$$/master</paramValue>
+      <depends step="waitForClusterTask"/>
+    </step>
+
+    <step name="copyBlockedFileToMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="fromFile">$$downloadSiteDataDir$$/$$organismName$$MixedGenomic_$$projectDB$$-$$projectRelease$$.gff</paramValue>
+      <paramValue name="toFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+    <depends step="mirrorFromCluster">
+    </step>
+</workflowGraph>

@@ -16,6 +16,27 @@
           stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject">
     </step>
 
+    <step name="makeBlastWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
+    </step>
+
+    <step name="makeTextSearchWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
+    </step>
+
+    <step name="makeMercatorWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
+    </step>
+
+    <step name="makeMotifWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
+    </step>
+
+    <step name="makeMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">common/mercator</paramValue>
+      <depends step="makeDataDir"/>
+    </step>
+
     <step name="copyPdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">PDBProteinSequences/pdb.fsa</paramValue>
       <paramValue name="toFile">$$pdbOutputFile$$</paramValue>
@@ -41,8 +62,5 @@
       <depends step="shortenNrdbDefline"/>
       <depends step="copyPdbFile"/>
     </step>
-
-
-
 
 </workflowGraph>

@@ -17,12 +17,24 @@
   <param name="maxIntronSize"/>
   <param name="calculateTranslatedProteins"/>
   <param name="taxonHierarchyForBlastxFilter"/>
+  <param name="ncbiTaxonId"/>
+  <param name="genomeVirtualSeqExtDbRlsSpec"/>
+  <param name="genomeSource"/>
+  <param name="projectDB"/>
+  <param name="projectRelease"/>
+  <param name="ebESTVersion"/>
+  <param name="webServicesDataDir"/>
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
+  <constant name="downloadSiteDataDir">/files/cbil/data/cbil/apiSiteFiles/downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
 
   <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
     <paramValue name="dir">$$dataDir$$</paramValue>
+  </step>
+
+  <step name="makedownloadSiteDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
   <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
@@ -59,4 +71,38 @@
     <depends step="makeSeqfilesDir"/>
   </subgraph>
 
+
+  <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
+    <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqExtDbRlsSpec">$$genomeVirtualSeqExtDbRlsSpec$$</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$genomeSource$$</paramValue>
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <depends step="proteomeAnalysis"/>
+    <depends step="genomeAnalysis"/>
+  </subgraph>
+
+  <subgraph name="makeGffFile" xmlFile="makeGffFile.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">$$organismName$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <depends step="proteomeAnalysis"/>
+    <depends step="genomeAnalysis"/>
+  </subgraph>
+
+  <step name="fullRecordDump" class="ApiCommonData::Load::WorkflowSteps::RunfullRecordDump">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">$$organismName$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <depends step="proteomeAnalysis"/>
+    <depends step="genomeAnalysis"/>
+  </step>
 </workflowGraph>

@@ -1,0 +1,118 @@
+<workflowGraph name="makeAndFormatDownloadFiles">
+
+    <param name="downloadSiteDataDir"/>
+    <param name="organismName"/>
+    <param name="ncbiTaxonId"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="genomeVirtualSeqExtDbRlsSpec"/>
+    <param name="interproVersion"/>
+    <param name="genomeSource"/>
+    <param name="projectDB"/>
+    <param name="projectRelease"/>
+    <param name="dbESTExtDbRlsSpec"/>
+    <param name="webServicesDataDir"/>
+
+    <step name="makeESTDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="dbESTExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="formatESTDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-n</paramValue>
+    <depends step="makeESTDownloadFile">
+    </step>
+
+
+    <step name="makeDotsAssemblyDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+
+    <step name="formatDotsAssemblyDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-n</paramValue>
+    <depends step="makeDotsAssemblyDownloadFile">
+    </step>
+
+    <step name="makeAnnotatedCDSDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="formatAnnotatedCDSDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-n</paramValue>
+    <depends step="makeAnnotatedCDSDownloadFile">
+    </step>
+
+    <step name="makeAnnotatedTranscriptsDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedTranscripts_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="formatAnnotatedCDSDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-n</paramValue>
+    <depends step="makeAnnotatedCDSDownloadFile">
+    </step>
+
+    <step name="makeAnnotatedProteinsDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="formatAnnotatedProteinsDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-p -C X</paramValue>
+    <depends step="makeAnnotatedProteinsDownloadFile">
+    </step>
+
+
+    <step name="makeOrfDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeOrfDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Orfs_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="formatOrfDownloadFile" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Orfs_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="args">-p -C X</paramValue>
+    <depends step="makeOrfDownloadFile">
+    </step>
+
+    <step name="makeOrfNADownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$OrfNAs_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="makeInterproDownloadFile" class="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Interpro_$$projectDB$$-$$projectRelease$$.txt</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="interproExtDbRlsSpec">INTERPRO:$$interproVersion$$</paramValue>
+      <paramValue name="projectDB">$$projectDB$$</paramValue>
+    </step>
+
+    <step name="makeCondonUsage" class="ApiCommonData::Load::WorkflowSteps::MakeCondonUsage">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>     
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$CondonUsage_$$projectDB$$-$$projectRelease$$.txt</paramValue>
+    </step>
+
+</workflowGraph>
