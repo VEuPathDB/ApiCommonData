@@ -3,13 +3,14 @@
     <param name="dataDir"/>
     <param name="genomeVirtualSeqsExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
+    <param name="organismName"/>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
  
     <step name="dumpMixedGenomicSeqs" class="ApiCommonData::Load::WorkflowSteps::DumpMixedGenomicSeqs">
-      <paramValue name="outputFile">$$dataDir$$/mixedGenomic.fasta</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/mixedGenomic.fsa</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     </step>
@@ -25,7 +26,7 @@
     </step>
 
     <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$repeatMaskDataDir$$</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runRepeatMask</paramValue>
       <paramValue name="cmdArgs">????</paramValue>
@@ -33,18 +34,18 @@
     </step>
 
     <step name="waitForClusterTask" waitForPilot="yes">
-      <paramValue name="taskDir">$$repeatMaskDataDir$$</paramValue>
+      <paramValue name="taskDir">$$dataDir$$</paramValue>
       <depends step="startClusterTask"/>
     </step>
 
     <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
-      <paramValue name="fileOrDirToMirror">$$repeatMaskDataDir$$/master</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends step="waitForClusterTask"/>
     </step>
 
-    <step name="copyBlockedFileToMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
-      <paramValue name="fromFile">$$downloadSiteDataDir$$/$$organismName$$MixedGenomic_$$projectDB$$-$$projectRelease$$.gff</paramValue>
-      <paramValue name="toFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
+    <step name="copyBlockedFileToMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::MoveDownloadFile">
+      <paramValue name="fromFile">$$dataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="toFile">common/mercator/$$organismName$$BlockedMixedGenomicSeq.fsa</paramValue>
     <depends step="mirrorFromCluster">
     </step>
 </workflowGraph>
