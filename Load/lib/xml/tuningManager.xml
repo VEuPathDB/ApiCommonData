@@ -1806,9 +1806,6 @@ ON apidb.ArrayElementAttributes&1 (source_id)
       <![CDATA[ 
       use strict;
       use lib "$ENV{GUS_HOME}/lib/perl";
-      use Getopt::Long;
-      use GUS::ObjRelP::DbiDatabase;
-
 
       my $sql = <<SQL;
         select blat_alignment_id, query_na_sequence_id, target_na_sequence_id,
@@ -3176,6 +3173,10 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
 
   <tuningIndex name="dots.nasequenceimp_string1_seq_idx" table="dots.NaSequenceImp">
     string1, na_sequence_id
+  </tuningIndex>
+
+  <tuningIndex name="dots.nasequenceimp_string1_idx" table="dots.NaSequenceImp">
+    STRING1, EXTERNAL_DATABASE_RELEASE_ID, NA_SEQUENCE_ID
   </tuningIndex>
 
   <tuningIndex name="dots.aafeat_subclassparent_ix" table="dots.AaFeatureImp">
