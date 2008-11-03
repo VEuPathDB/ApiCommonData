@@ -24,9 +24,9 @@ sub run {
 
   my $workingDir = $self->runCmd($test,"pwd");
 
-  &splitClusterFile($test,$inputFile);
+  &splitClusterFile($self,$test,$inputFile);
 
-  &runAssemblePlugin($test,"big",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
+  &runAssemblePlugin($self, $test,"big",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
 
   $self->runCmd($test,"sleep 10");
 
@@ -39,22 +39,22 @@ sub run {
 
 sub splitClusterFile{
 
-  my ($test,$inputFile) = @_;
+  my ($self,$test,$inputFile) = @_;
 
   my $cmd = "splitClusterFile $inputFile";
 
   if ($test){
-      self->runCmd(0,'test > $inputFile.small');
-      self->runCmd(0,'test > $inputFile.big');
+      $self->runCmd(0,'test > $inputFile.small');
+      $self->runCmd(0,'test > $inputFile.big');
   }else{
-      self->runCmd($test,$cmd);      
+      $self->runCmd($test,$cmd);      
   }
 
 }
 
 sub runAssemblePlugin{
 
-  my ($test,$suffix, $inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir) = @_;
+  my ($self,$test,$suffix, $inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir) = @_;
 
   my $args = "--clusterfile $inputFile.$suffix $reassemble --taxon_id $taxonId --cap4Dir $cap4Dir";
   
@@ -68,7 +68,7 @@ sub runAssemblePlugin{
   
   $self->runCmd($test,"chdir $assemDir") || die "Can't chdir to $assemDir";
 
-  $self ->runCmdInBackground($test,$cmd);
+  $self->runCmdInBackground($test,$cmd);
 }
 
 sub restart {
