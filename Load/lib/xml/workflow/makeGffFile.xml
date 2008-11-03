@@ -6,31 +6,31 @@
     <param name="projectDB"/>
     <param name="projectRelease"/>
 
-    <step name="makeGffFile" class="ApiCommonData::Load::WorkflowSteps::RunGffDump">
+    <step name="makeGffFile" stepClass="ApiCommonData::Load::WorkflowSteps::RunGffDump">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff</paramValue>
       <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="organismFullName">$$organismFullName$$</paramValue>
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="copyGffFileToMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::MoveDownloadFile">
+    <step name="copyGffFileToMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MoveDownloadFile">
       <paramValue name="fromFile">$$downloadSiteDataDir$$/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff</paramValue>
       <paramValue name="toFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff</paramValue>
-    <depends step="makeGffFile">
+    <depends name="makeGffFile"/>
     </step>
 
 
-    <step name="grepExonAndCDSFromGff" class="ApiCommonData::Load::WorkflowSteps::GrepMercatorGff">
+    <step name="grepExonAndCDSFromGff" stepClass="ApiCommonData::Load::WorkflowSteps::GrepMercatorGff">
       <paramValue name="inputFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff</paramValue>
       <paramValue name="outputFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff.in</paramValue>
-    <depends step="makeGffFile">
+    <depends name="makeGffFile"/>
     </step>
 
-    <step name="correctReadingFrameInGff" class="ApiCommonData::Load::WorkflowSteps::FixMercatorOffsetsInGFF">
+    <step name="correctReadingFrameInGff" stepClass="ApiCommonData::Load::WorkflowSteps::FixMercatorOffsetsInGFF">
       <paramValue name="inputFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff.in</paramValue>
       <paramValue name="fsaFile">common/mercator/$$organismName$$MixedGenomic_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputFile">common/mercator/$$organismName$$_$$projectDB$$-$$projectRelease$$.gff</paramValue>
-    <depends step="grepExonAndCDSFromGff">
+    <depends name="grepExonAndCDSFromGff"/>
     </step>
 
 </workflowGraph>

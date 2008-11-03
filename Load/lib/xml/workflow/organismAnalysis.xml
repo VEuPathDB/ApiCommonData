@@ -32,11 +32,11 @@
   <constant name="downloadSiteDataDir">/files/cbil/data/cbil/apiSiteFiles/downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
   <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</constant>
 
-  <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
 
-  <step name="makedownloadSiteDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+  <step name="makedownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
     <paramValue name="dataDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
@@ -58,7 +58,7 @@
     <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
     <paramValue name="runSplign">$$runSplign$$</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-    <depends step="makeDataDir"/>
+    <depends name="makeDataDir"/>
   </subgraph>
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
@@ -72,7 +72,7 @@
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="calculateTranslatedProteins">$$calculateTranslatedProteins$$</paramValue>
-    <depends step="makeDataDir"/>
+    <depends name="makeDataDir"/>
   </subgraph>
 
 
@@ -88,9 +88,9 @@
     <paramValue name="projectDB">$$projectDB$$</paramValue>
     <paramValue name="projectRelease">$$projectRelease$$</paramValue>
     <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
-    <depends step="makedownloadSiteDataDir"/>
-    <depends step="proteomeAnalysis"/>
-    <depends step="genomeAnalysis"/>
+    <depends name="proteomeAnalysis"/>
+    <depends name="genomeAnalysis"/>
+    <depends name="makedownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="makeGffFile" xmlFile="makeGffFile.xml">
@@ -98,18 +98,18 @@
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
     <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <depends step="makedownloadSiteDataDir"/>
-    <depends step="proteomeAnalysis"/>
-    <depends step="genomeAnalysis"/>
+    <depends name="proteomeAnalysis"/>
+    <depends name="genomeAnalysis"/>
+    <depends name="makedownloadSiteDataDir"/>
   </subgraph>
 
-  <step name="fullRecordDump" class="ApiCommonData::Load::WorkflowSteps::RunfullRecordDump">
+  <step name="fullRecordDump" stepClass="ApiCommonData::Load::WorkflowSteps::RunfullRecordDump">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
     <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <depends step="makedownloadSiteDataDir"/>
-    <depends step="proteomeAnalysis"/>
-    <depends step="genomeAnalysis"/>
+    <depends name="proteomeAnalysis"/>
+    <depends name="genomeAnalysis"/>
+    <depends name="makedownloadSiteDataDir"/>
   </step>
 </workflowGraph>

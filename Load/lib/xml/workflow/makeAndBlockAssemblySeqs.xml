@@ -6,11 +6,11 @@
     <param name="predictedTranscriptsSql"/>
     <param name="dataDir"/>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs">
+    <step name="makeAssemblySeqs" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
@@ -21,37 +21,36 @@
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="outputFile">$$dataDir$$/assemblySeqs.fsa</paramValue>
-      <depends step="makeAssemblySeqs"/>
-      <depends step="makeDataDir"/>
+      <depends name="makeAssemblySeqs"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends step="extractAssemblySeqs"/>
+      <depends name="extractAssemblySeqs"/>
     </step>
 
-    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
-      <depends step="makeTaskInputDir"/>
-      <depends step="makeClusterTaskInputDir"/>
+      <depends name="makeClusterTaskInputDir"/>
     </step>
 
-    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runRepeatMask</paramValue>
       <paramValue name="cmdArgs">????</paramValue>
-      <depends step="mirrorToCluster"/>
+      <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="waitForClusterTask" waitForPilot="yes">
+    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends step="startClusterTask"/>
+      <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
-      <depends step="waitForClusterTask"/>
+      <depends name="waitForClusterTask"/>
     </step>
 
 

@@ -7,7 +7,7 @@
     <param name="dataDir"/>
     <param name="genomicSeqsDir"/>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
@@ -20,44 +20,44 @@
       <paramValue name="outputFile"></paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
       <paramValue name="outputDirForSeparateFiles">$$genomicSeqsDir$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="makeTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
+    <step name="makeTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
-      <depends step="makeTaskInputDir"/>
-      <depends step="extractGenomicSeqsIntoSeparateFastaFiles"/>
+      <depends name="makeTaskInputDir"/>
+      <depends name="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
-    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
       <paramValue name="cmdArgs">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq,$$genomicSeqsDir$$</paramValue>
-      <depends step="mirrorToCluster"/>
+      <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="waitForClusterTask" waitForPilot="yes">
+    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends step="startClusterTask"/>
+      <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
-      <depends step="waitForClusterTask"/>
+      <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="InsertGusTableWithXml" class="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
+    <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
       <paramValue name="xmlFile">$$PROJECT_HOME$$/ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
     </step>
 
-    <step name="insertBlatAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
+    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
@@ -70,11 +70,11 @@
       <paramValue name="percentTop"></paramValue>
       <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
       <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
-      <depends step="mirrorFromCluster"/>
-      <depends step="InsertGusTableWithXml"/>
+      <depends name="mirrorFromCluster"/>
+      <depends name="InsertGusTableWithXml"/>
     </step>
 
-    <step name="setBestBlatAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
+    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
@@ -87,7 +87,7 @@
       <paramValue name="percentTop">100</paramValue>
       <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
       <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
-      <depends step="insertBlatAlignment"/>
+      <depends name="insertBlatAlignment"/>
     </step>
 
 </workflowGraph>

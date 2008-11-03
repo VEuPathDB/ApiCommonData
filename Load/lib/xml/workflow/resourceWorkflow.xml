@@ -1,26 +1,26 @@
-<workflow name="resource">
+<workflow name="resourceWorkflow">
   <params>
     <param name="extDbRlsSpec"/>
   </params>
 
   <steps>
-    <step name="acquire" class="ApiCommonData::Steps::AcquireExternalResource">
+    <step name="acquire" stepClass="ApiCommonData::Steps::AcquireExternalResource">
       <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="unpack" class="ApiCommonData::Steps::UnpackExternalResource">
+    <step name="unpack" stepClass="ApiCommonData::Steps::UnpackExternalResource">
       <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insertExtDb" class="ApiCommonData::Steps::InsertExtDb">
+    <step name="insertExtDb" stepClass="ApiCommonData::Steps::InsertExtDb">
       <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insertExtDbRls" class="ApiCommonData::Steps::InsertExtDbRls">
+    <step name="insertExtDbRls" stepClass="ApiCommonData::Steps::InsertExtDbRls">
       <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 
-    <step name="insert" class="ApiCommonData::Steps::InsertExternalResource">
+    <step name="insert" stepClass="ApiCommonData::Steps::InsertExternalResource">
       <paramValue name="extDbRlsSpec">$extDbRlsSpec</paramValue>
     </step>
 

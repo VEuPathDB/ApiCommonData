@@ -18,8 +18,7 @@
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
 
     <step name="calcTranslatedProteins"
-          stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence">
-      <includeIf>$$calculateTranslatedProteins$$</includeIf>
+          stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="soExtDbRlsSpec">$$soExtDbRlsSpec$$</paramValue>
     </step>
@@ -28,24 +27,24 @@
           stepClass="ApiCommonData::Load::Steps::CalculateProteinMolWt">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends step="calcTranslatedProteins"/>
+      <depends name="calcTranslatedProteins"/>
     </step>
 
     <step name="molecularWeightMinMax"
           stepClass="ApiCommonData::Load::Steps::InsertAASeqMWMinMax">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends step="calcTranslatedProteins"/>
+      <depends name="calcTranslatedProteins"/>
     </step>
 
     <step name="isoelectricPoint"
           stepClass="ApiCommonData::Load::Steps::InsertAAiP">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends step="calcTranslatedProteins"/>
+      <depends name="calcTranslatedProteins"/>
     </step>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
@@ -54,21 +53,21 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$</paramValue>
-      <depends step="calcTranslatedProteins"/>
+      <depends name="calcTranslatedProteins"/>
     </step>
 
     <step name="runTmhmm"
           stepClass="ApiCommonData::Load::Steps::RunTmhmm">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$dataDir$$/tmhmm.out</paramValue>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </step>
 
     <step name="insertTmhmm"
           stepClass="ApiCommonData::Load::Steps::InsertTmhmm">
       <paramValue name="inputFile">$$dataDir$$/tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <depends step="runTmhmm"/>
+      <depends name="runTmhmm"/>
     </step>
 
     <step name="runSignalP"
@@ -76,14 +75,14 @@
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$dataDir$$/signalP.out</paramValue>
       <paramValue name="options">-t euk -f short -m nn+hmm -q -trunc 70</paramValue>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </step>
 
     <step name="insertSignalP"
           stepClass="ApiCommonData::Load::Steps::InsertSignalP">
       <paramValue name="inputFile">$$dataDir$$/signalP.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <depends step="runSignalP"/>
+      <depends name="runSignalP"/>
     </step>
 
     <subgraph name="mapEpitopesToProteins" xmlFile="epitopesWorkflow.xml">
@@ -92,7 +91,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="iedbExtDbRlsSpec">iedb:$$iedbVersion$$</paramValue>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </subgraph>
 
    <step name="runLowComplexityFilter"
@@ -102,7 +101,7 @@
       <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="filterType">seg</paramValue>
       <paramValue name="options">-x</paramValue>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </step>
 
     <step name="loadLowComplexityFile"
@@ -112,10 +111,10 @@
       <paramValue name="seqType">protein</paramValue>
       <paramValue name="mask">x</paramValue> 
       <paramValue name="options"></paramValue>
-      <depends step="runLowComplexityFilter"/>
+      <depends name="runLowComplexityFilter"/>
     </step>
 
-    <step name="findNrdbXrefs" class="ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs">
+    <step name="findNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
       <paramValue name="proteinsFileRegex">^([\\w\\.]+)</paramValue>
@@ -123,16 +122,16 @@
       <paramValue name="outputFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
     </step>
 
-    <step name="loadNrdbXrefs" class="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
+    <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
       <paramValue name="xrefsFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
       <paramValue name="nrdbVersion">$$nrdbVersion$$</paramValue>
     </step>
 
-    <step name="mirrorProteinsToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir">seqfiles</paramValue>
       <paramValue name="fileOrDirToMirror">AnnotatedProteins.fsa</paramValue>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </step>
 
     <subgraph name="interpro" xmlFile="interproWorkflow.xml">
@@ -140,13 +139,14 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">interpro:$$interproVersion$$</paramValue>
       <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+      <depends name="mirrorProteinsToCluster"/>
     </subgraph>
 
     <subgraph name="psipred" xmlFile="psipredWorkflow.xml">
       <paramValue name="nrdbFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <depends step="nrdb"/>
+      <depends name="mirrorProteinsToCluster"/>
     </subgraph>
 
     <subgraph name="blastpNrdb" xmlFile="blastWorkflow.xml">
@@ -166,8 +166,7 @@
       <paramValue name="filterByTaxon">false</paramValue>
       <paramValue name="taxonHierarchyForFilter"></paramValue>
       <paramValue name="loadOptions">--subjectsLimit 50</paramValue>
-      <depends step="extractProteins"/>
-      <depends step="nrdb"/>
+      <depends name="mirrorProteinsToCluster"/>
     </subgraph>
 
     <subgraph name="blastpPdb" xmlFile="blastWorkflow.xml">
@@ -187,8 +186,7 @@
       <paramValue name="filterByTaxon">false</paramValue>
       <paramValue name="taxonHierarchyForFilter"></paramValue>
       <paramValue name="loadOptions">--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30</paramValue>
-      <depends step="extractProteins"/>
-      <depends step="nrdb"/>
+      <depends name="mirrorProteinsToCluster"/>
     </subgraph>
 
-</workflow>
+</workflowGraph>

@@ -6,7 +6,7 @@
       <param name="projectDB"/>
       <param name="projectRelease"/>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">common</paramValue>
     </step>
 
@@ -18,51 +18,51 @@
           stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject">
     </step>
 
-    <step name="makeBlastWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeBlastWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
     </step>
 
-    <step name="makeTextSearchWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeTextSearchWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
     </step>
 
-    <step name="makeMercatorWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeMercatorWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
     </step>
 
-    <step name="makeMotifWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeMotifWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
     </step>
 
-    <step name="makeMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">common/mercator</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="copyPdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
+    <step name="copyPdbFile" stepClass="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">PDBProteinSequences/pdb.fsa</paramValue>
       <paramValue name="toFile">$$pdbOutputFile$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="copyNrdbFile" class="ApiCommonData::Load::Steps::MoveDownloadFile">
+    <step name="copyNrdbFile" stepClass="ApiCommonData::Load::Steps::MoveDownloadFile">
       <paramValue name="fromFile">NRDB/nr.gz</paramValue>
       <paramValue name="toFile">$$nrdbOutputFile$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="shortenNrdbDefline" class="ApiCommonData::Load::Steps::ShortenDefline">
+    <step name="shortenNrdbDefline" stepClass="ApiCommonData::Load::Steps::ShortenDefline">
       <paramValue name="fromFile">$$nrdbOutputFile$$</paramValue>
       <paramValue name="toFile">$$nrdbShortDeflineOutputFile$$</paramValue>
-      <depends step="copyNrdbFile"/>
+      <depends name="copyNrdbFile"/>
     </step>
 
-    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="parentDir"></paramValue>
       <paramValue name="fileOrDirToMirror">common</paramValue>
-      <depends step="makeClusterTaskDir"/>
-      <depends step="shortenNrdbDefline"/>
-      <depends step="copyPdbFile"/>
+      <depends name="initClusterHomeDir"/>
+      <depends name="shortenNrdbDefline"/>
+      <depends name="copyPdbFile"/>
     </step>
 
 </workflowGraph>

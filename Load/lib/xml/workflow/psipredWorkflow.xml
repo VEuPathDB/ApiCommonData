@@ -1,4 +1,4 @@
-<workflowGraph name="psipred">
+<workflowGraph name="psipredWorkflow">
 
     <param name="nrdbFileShortDefline"/>
     <param name="proteinsFile"/>
@@ -9,70 +9,68 @@
     <constant name="psipredProteinsFile">$$dataDir$$/proteinsFixedIds.fsa</constant>
     <constant name="psipredNrdbFile">$$dataDir$$/nrdb.pfilt.fsa</constant>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="runPfilt" class="ApiCommonData::Load::Steps::RunPfilt">
+    <step name="runPfilt" stepClass="ApiCommonData::Load::Steps::RunPfilt">
       <paramValue name="inputFile">$$nrdbFileShortDefline$$</paramValue>
       <paramValue name="outputFile">$$psipredNrdbFile$$</paramValue>
     </step>
 
-    <step name="fixProteinIds" class="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
+    <step name="fixProteinIds" stepClass="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
       <paramValue name="inputProteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputProteinsFile">$$psipredProteinsFile$$</paramValue>
-      <depends step="createDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="createTaskDir" class="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
+    <step name="createTaskDir" stepClass="ApiCommonData::Load::Steps::CreatePsipredTaskDir">
       <paramValue name="taskInputDir">$$parentDataDir$$/interpro/input</paramValue>
       <paramValue name="proteinsFile">$$psipredProteinsFile$$</paramValue>
       <paramValue name="nrdbFile">$$psipredNrdbFile$$</paramValue>
-      <depends step="fixProteinIds"/>
+      <depends name="fixProteinIds"/>
     </step>
 
-    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
-      <depends step="createTaskDir"/>
+      <depends name="createTaskDir"/>
     </step>
 
-    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runPsipred</paramValue>
       <paramValue name="cmdArgs">$$psipredProteinsFile$$ $$psipredNrdbFile$$</paramValue>
-      <depends step="mirrorToCluster"/>
+      <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="waitForClusterTask">
+    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends step="startPsipredOnCluster"/>
+      <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
-      <depends step="waitForClusterTask"/>
+      <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="fixFileNames" class="ApiCommonData::Load::Steps::FixPsipredFileNames">
+    <step name="fixFileNames" stepClass="ApiCommonData::Load::Steps::FixPsipredFileNames">
       <paramValue name="inputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
-      <depends step="mirrorFromCluster"/>
+      <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="makeAlgInv" class="ApiCommonData::Load::Steps::MakeAlgInv">
+    <step name="makeAlgInv" stepClass="ApiCommonData::Load::Steps::MakeAlgInv">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="algDesc">dontcare</paramValue>
       <paramValue name="algResult">dontcare</paramValue>
-      <depends step="fixFileNames"/>
+      <depends name="fixFileNames"/>
     </step>
 
-    <step name="insertPsipred" class="ApiCommonData::Load::Steps::LoadSecondaryStructures">
+    <step name="insertPsipred" stepClass="ApiCommonData::Load::Steps::LoadSecondaryStructures">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="inputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
-      <depends step="makeAlgInv"/>
+      <depends name="makeAlgInv"/>
     </step>
 
- </steps>
-
-</workflow>
+</workflowGraph>

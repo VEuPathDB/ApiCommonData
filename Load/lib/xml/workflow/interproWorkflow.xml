@@ -1,4 +1,4 @@
-<workflowGraph name="interpro">
+<workflowGraph name="interproWorkflow">
 
     <param name="proteinsFile"/>
     <param name="parentDataDir"/>
@@ -7,41 +7,41 @@
 
     <constant name="dataDir">$$parentDataDir$$/interpro</constant>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir">
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
-      <depends step="makeClusterTaskDir"/>
+      <depends name="makeClusterTaskInputDir"/>
     </step>
 
-    <step name="startClusterTask" class="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
+    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runIprScan</paramValue>
       <paramValue name="cmdArgs">$$proteinsFile$$</paramValue>
-      <depends step="mirrorToCluster"/>
+      <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="waitForClusterTask">
+    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends step="startClusterTask"/>
+      <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" class="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesFromComputeCluster">
       <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
-      <depends step="waitForClusterTask"/>
+      <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="insert" class="ApiCommonData::Load::WorkflowSteps::InsertInterpro">
+    <step name="insert" stepClass="ApiCommonData::Load::WorkflowSteps::InsertInterpro">
       <paramValue name="">$$proteinsFile$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">$$interproExtDbRlsSpec$$</paramValue>
       <paramValue name="configFileRelativeToDownloadDir">InterproscanData/iprscan$$interproVersion$$/iprscan/data/insertInterpro-config.xml</paramValue>

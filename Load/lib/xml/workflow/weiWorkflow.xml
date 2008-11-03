@@ -1,4 +1,4 @@
-<workflowGraph name="standardGenomeAnalysis">
+<workflowGraph>
 
   <param name="genomeName"/>
   <param name="genomeExtDb"/>
@@ -51,10 +51,10 @@
       <paramValue name="separateFastaFiles">false</paramValue>
     </step>
 
-   <step name="copyGenomicSeqsToCluster" class="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+   <step name="copyGenomicSeqsToCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
       <paramValue name="file">$$genomicSeqsFile$$</paramValue>
       <paramValue name="relativeDir">$$genomeName$$/$$seqfilesDir$$</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </step>
 
     <step name="makeOrfFile"
@@ -64,7 +64,7 @@
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="outputFile">$$genomeName$$_Orf50.gff</paramValue>
       <paramValue name="genomeName">$$genomeName$$</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </step>
 
 
@@ -72,11 +72,11 @@
           stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
       <paramValue name="orfFile">$$genomeName$$_Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="subclass">ExternalNASequence</paramValue>
+      <paramValue name="substepClass">ExternalNASequence</paramValue>
       <paramValue name="defaultOrg">$$Tbrucei$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="genomeName">$$genomeName$$</paramValue>
-      <depends step="makeOrfFile"/>
+      <depends name="makeOrfFile"/>
     </step>
 
     <step name="findTandemRepeats"
@@ -85,7 +85,7 @@
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
       <paramValue name="genomeName">$$genomeName$$</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </step>
 
 
@@ -96,7 +96,7 @@
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
       <paramValue name="genomeName">$$genomeName$$</paramValue>
-      <depends step="makeOrfFile"/>
+      <depends name="makeOrfFile"/>
     </step>
   </steps>
 
@@ -109,7 +109,7 @@
       <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="filterType">dust</paramValue>
       <paramValue name="opt">-x</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </step>
 
    <step name="filterproteinsFile"
@@ -122,7 +122,7 @@
       <paramValue name="genomeName">$$genomeName$$</paramValue>
       <paramValue name="filterType">seg</paramValue>
       <paramValue name="opt"/>
-      <depends step="extractProteins"/>
+      <depends name="extractProteins"/>
     </step>
 
     <step name="loadLowComplexityproteinsFile"
@@ -134,7 +134,7 @@
       <paramValue name="seqType">protein</paramValue>
       <paramValue name="mask">x</paramValue> 
       <paramValue name="opt"/>
-      <depends step="filterproteinsFile"/>
+      <depends name="filterproteinsFile"/>
     </step>
 
      <step name="loadLowComplexityGenomicSeqs"
@@ -146,7 +146,7 @@
       <paramValue name="seqType">dna</paramValue>
       <paramValue name="mask">N</paramValue> 
       <paramValue name="opt">--LowComplexityName 'dust'</paramValue>
-      <depends step="filterGenomicSeqs"/>
+      <depends name="filterGenomicSeqs"/>
     </step>
 
 
@@ -161,7 +161,7 @@
       <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
       <paramValue name="BLATQueryName">$$genomeName$$ESTSeqs</paramValue>
       <paramValue name="BLATTargetName">$$genomeName$$Genome</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </subgraph>
 
     <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapDotsAssemblyToGenomeWorkflow.xml">
@@ -174,7 +174,7 @@
       <paramValue name="ESTSeqsFile">$$ESTSeqsFile$$</paramValue>
       <paramValue name="BLATQueryName">$$genomeName$$ESTSeqs</paramValue>
       <paramValue name="BLATTargetName">$$genomeName$$Genome</paramValue>
-      <depends step="extractGenomicSeqs"/>
+      <depends name="extractGenomicSeqs"/>
     </subgraph>
 
   </steps>

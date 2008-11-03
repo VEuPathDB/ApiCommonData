@@ -1,85 +1,85 @@
 <workflow>
   <step name="init-data-dir"
-        class="GUS::Pipeline::Workflow::SampleSteps::InitDataDir">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InitDataDir">
   </step>
 
   <step name="EnzymeDB-extdb"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="EnzymeDB-extdb-rls"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
     <depends name="EnzymeDB-extdb"/>
   </step>
 
   <step name="GeneOntology-extdb"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="GeneOntology-extdb-rls"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
     <depends name="GeneOntology-extdb"/>
   </step>
 
   <step name="NRDB-extdb"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="NRDB-extdb-rls"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
     <depends name="NRDB-extdb"/>
   </step>
 
   <step name="GiardiaContigs-extdb"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="GiardiaContigs-extdb-rls"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
     <depends name="GiardiaContigs-extdb"/>
   </step>
 
   <step name="GiardiaScaffolds-extdb"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabase">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="GiardiaScaffolds-extdb-rls"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertExternalDatabaseRelease">
     <depends name="GiardiaScaffolds-extdb"/>
   </step>
 
   <step name="SequenceOntology-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertSequenceOntology">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertSequenceOntology">
     <depends name="init-data-dir"/>
   </step>
 
    <step name="GeneOntologyEvidence-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertGeneOntologyEvidence">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertGeneOntologyEvidence">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="Taxonomy-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertTaxonomy">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertTaxonomy">
     <depends name="init-data-dir"/>
   </step>
 
   <step name="GeneOntology-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertGeneOntology">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertGeneOntology">
     <depends name="GeneOntology-extdb-rls"/>
   </step>
 
   <step name="EnzymeDB-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertEnzymeDB">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertEnzymeDB">
     <depends name="EnzymeDB-extdb-rls"/>
   </step>
 
   <step name="Genome-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertSequenceFeatures">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertSequenceFeatures">
     <depends name="SequenceOntology-insert"/>
     <depends name="EnzymeDB-insert"/>
     <depends name="Taxonomy-insert"/>
@@ -87,17 +87,17 @@
   </step>
 
   <step name="AnnotatedProteins-extract"
-        class="GUS::Pipeline::Workflow::SampleSteps::ExtractAnnotatedProteins">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::ExtractAnnotatedProteins">
     <depends name="Genome-insert"/>
   </step>
 
   <step name="VirtualSeqs-insert"
-        class="GUS::Pipeline::Workflow::SampleSteps::InsertVirtualSequences">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::InsertVirtualSequences">
     <depends name="GiardiaScaffolds-extdb-rls"/>
   </step>
 
   <step name="SignalP-run"
-        class="GUS::Pipeline::Workflow::SampleSteps::RunSignalP">
+        stepClass="GUS::Pipeline::Workflow::SampleSteps::RunSignalP">
     <depends name="AnnotatedProteins-extract"/>
   </step>
 

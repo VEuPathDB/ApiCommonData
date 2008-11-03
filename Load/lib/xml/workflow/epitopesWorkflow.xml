@@ -1,4 +1,4 @@
-<workflowGraph name="epitopes">
+<workflowGraph name="epitopesWorkflow">
 
     <param name="proteinsFile"/>
     <param name="parentDataDir"/>
@@ -9,37 +9,37 @@
     <constant name="dataDir">$$parentDataDir$$/iedb</constant>
     <constant name="proteinsFileSimpleDefline">$$dataDir$$/blastDb/proteinsSimpleDefline.fsa</constant>
 
-    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeBlastDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeBlastDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$/blastDb</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="makeProteinsFileSimpleDefline" class="ApiCommonData::Load::WorkflowSteps::MakeProteinsFileSimpleDefline">
+    <step name="makeProteinsFileSimpleDefline" stepClass="ApiCommonData::Load::WorkflowSteps::MakeProteinsFileSimpleDefline">
       <paramValue name="inputProteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputProteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
-      <depends step="makeDataDir"/>
+      <depends name="makeDataDir"/>
     </step>
 
-    <step name="formatNcbiBlastFile" class="ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile">
+    <step name="formatNcbiBlastFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile">
       <paramValue name="inputFile">$$proteinsFileSimpleDefline$$</paramValue>
       <paramValue name="formatterArgs">T</paramValue>
-      <depends step="makeProteinsFileSimpleDefline"/>
+      <depends name="makeProteinsFileSimpleDefline"/>
     </step>
 
-    <step name="createEpitopeMapFile" class="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
+    <step name="createEpitopeMapFile" stepClass="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
       <paramValue name="inputDirRelativeToDownloadsDir">IEDB_fixed</paramValue>
       <paramValue name="blastDbDir">$$dataDir$$/blastDb</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/results</paramValue>
-      <depends step="makeClusterTaskDir"/>
+      <depends name="makeBlastDir"/>
     </step>
 
-    <step name="insertEpitopeMapping" class="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
+    <step name="insertEpitopeMapping" stepClass="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
       <paramValue name="inputDir">$$dataDir$$/results</paramValue>
       <paramValue name="iedbExtDbRlsSpec">$$iedbExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
