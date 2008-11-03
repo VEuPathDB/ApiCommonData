@@ -58,25 +58,25 @@
     <step name="filterResultsByTaxon" class="ApiCommonData::Load::Steps::FilterBlastResultsByTaxon" includeIf="$$filterByTaxon$$">
       <paramValue name="taxonHierarchy">$$taxonHierarchyForFilter$$</paramValue>
       <paramValue name="gi2taxidFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
-      <paramValue name=""></paramValue>
       <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
       <paramValue name="unfilteredOutputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.orig.gz</paramValue>
       <paramValue name="filteredOutputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
-      <depends step="copyDataDirFromCluster"/>
+      <depends step="mirrorFromCluster"/>
      </step>
 
     <step name="extractIdsFromBlastResult" class="ApiCommonData::Load::Steps::ExtractIdsFromBlastResult" includeIf="$$loadSubjectSubset$$">
       <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
       <paramValue name="idType">subject</paramValue>
       <paramValue name="outputFile">$$dataDir$$/blastSimIds.out</paramValue>
-      <depends step="copyDataDirFromCluster"/>
+      <depends step="mirrorFromCluster"/>
      </step>
 
     <step name="loadSubjectSubset" class="ApiCommonData::Load::Steps::LoadFastaSubset"> 
       <includeIf>$$loadSubjectSubset$$</includeIf>
-      <paramValue name="extDbRlsSpec">$subjectExtDbRlsSpec</paramValue>
-      <paramValue name="fastaFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
+      <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
+      <paramValue name="fastaFile">common/nrdb.fsa</paramValue>
       <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
+      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <depends step="extractIdsFromBlastResult"/>
     </step>
 

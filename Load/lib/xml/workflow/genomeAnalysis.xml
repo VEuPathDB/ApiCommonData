@@ -16,6 +16,7 @@
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
+  <param name="nrdbExtDbRlsSpec"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</constant>
@@ -34,7 +35,8 @@
     <includeIf>$$runSplign$$</includeIf>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="queryExtDbRlsSpec">tigr:$$tigrVersion$$</paramValue>
-    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>    
+    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>   
+    <depends step="makeDataDir"/> 
   </subgraph>
 
   <step name="extractGenomicSeqs"
@@ -45,7 +47,16 @@
       <paramValue name="outputFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="separateFastaFiles">false</paramValue>
       <paramValue name="outputDirForSeparateFiles"></paramValue>
+      <depends step="makeDataDir"/> 
     </step>
+
+    <subgraph name="dumpAndBlockMixedGenomicSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
+      <paramValue name="dataDir">$$virtualSeqsDataDir$$</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="organismName">$$organismName$$</paramValue>
+      <depends step="makeDataDir"/> 
+    </subgraph>
 
    <step name="mirrorToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">genome</paramValue>
@@ -53,22 +64,15 @@
       <depends step="extractGenomicSeqs"/>
     </step>
 
-    <subgraph name="dumpAndBlockMixedGenomicsSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
-      <paramValue name="dataDir">$$virtualSeqsDataDir$$</paramValue>
-      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-    </subgraph>
-
-
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="nickName">blastxNrdb</paramValue>
       <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="queryTable">Dots.ExternalNaSequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
-      <paramValue name="subjectExtDbRlsSpec"></paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1</paramValue>
       <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
       <paramValue name="blastType">blastx</paramValue>
@@ -77,8 +81,7 @@
       <paramValue name="filterByTaxon">true</paramValue>
       <paramValue name="taxonHierarchyForFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
       <paramValue name="loadOptions"></paramValue>
-      <depends step="extractProteins"/></paramValue>
-      <depends step="extractGenomicSeqs"/></paramValue>
+      <depends step="mirrorToCluster"/>
     </subgraph>
 
     <step name="makeOrfFile"
