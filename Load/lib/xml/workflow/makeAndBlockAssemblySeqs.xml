@@ -1,4 +1,4 @@
-<workflowGraph name="makeAndBlockCandAssemblySeqs">
+<workflowGraph name="makeAndBlockAssemblySeqs">
 
     <param name="parentDataDir"/>
     <param name="parentNcbiTaxonId"/>
@@ -10,24 +10,24 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeCandidateAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeCandidateAssemblySeqs">
+    <step name="makeAssemblySeqs" class="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
     </step>
 
-   <step name="extractCandidateAssemblySeqs"
-          stepClass="ApiCommonData::Load::Steps::ExtractCandidateAssemblySeqs">
+   <step name="extractAssemblySeqs"
+          stepClass="ApiCommonData::Load::Steps::ExtractAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/candidateAssemblySeqs.fsa</paramValue>
-      <depends step="makeCandidateAssemblySeqs"/>
+      <paramValue name="outputFile">$$dataDir$$/assemblySeqs.fsa</paramValue>
+      <depends step="makeAssemblySeqs"/>
       <depends step="makeDataDir"/>
     </step>
 
     <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends step="extractCandidateAssemblySeqs"/>
+      <depends step="extractAssemblySeqs"/>
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">

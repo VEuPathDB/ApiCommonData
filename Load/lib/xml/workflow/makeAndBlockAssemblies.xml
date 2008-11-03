@@ -6,7 +6,7 @@
     <param name="ncbiTaxonId"/>
     <param name="maxIntronSize"/>
     <param name="dataDir"/>
-    <param name="candSeqsDataDir"/>
+    <param name="assemblySeqsDataDir"/>
  
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -32,7 +32,7 @@
       <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
-      <paramValue name="repeatMaskErrFile">$$candSeqsDataDir$$/master/mainresult/blocked.err</paramValue>
+      <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
       <depends step="clusterTranscriptsByGenomeAlignment"/>
     </step>
 
