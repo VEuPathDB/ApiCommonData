@@ -1,9 +1,9 @@
-<workflowGraph name="mapCandAssemblySeqsToGenome">
+<workflowGraph name="mapAssemblySeqsToGenome">
 
     <param name="parentDataDir"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="ncbiTaxonId"/>
-    <param name="candSeqsDataDir"/>
+    <param name="assemblySeqsDataDir"/>
     <param name="dataDir"/>
     <param name="genomicSeqsDir"/>
 
@@ -38,7 +38,7 @@
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runGenomeAlignWithGfClient</paramValue>
-      <paramValue name="cmdArgs">$$candSeqsDataDir$$/master/mainresult/blocked.seq,$$genomicSeqsDir$$</paramValue>
+      <paramValue name="cmdArgs">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq,$$genomicSeqsDir$$</paramValue>
       <depends step="mirrorToCluster"/>
     </step>
 
@@ -69,7 +69,7 @@
       <paramValue name="action">load</paramValue>
       <paramValue name="percentTop"></paramValue>
       <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$candSeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
       <depends step="mirrorFromCluster"/>
       <depends step="InsertGusTableWithXml"/>
     </step>
@@ -86,7 +86,7 @@
       <paramValue name="action">setbest</paramValue>
       <paramValue name="percentTop">100</paramValue>
       <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
-      <paramValue name="queryFile">$$candSeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
       <depends step="insertBlatAlignment"/>
     </step>
 
