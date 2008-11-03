@@ -55,11 +55,7 @@
       <depends step="waitForClusterTask"/>
     </step>
 
-    <step name="filterResultsByTaxon" class="ApiCommonData::Load::Steps::FilterBlastResultsByTaxon">
-      <include>
-        <match>$$filterByTaxon$$</match>
-        <list>true</list>
-      </include>
+    <step name="filterResultsByTaxon" class="ApiCommonData::Load::Steps::FilterBlastResultsByTaxon" includeIf="$$filterByTaxon$$">
       <paramValue name="taxonHierarchy">$$taxonHierarchyForFilter$$</paramValue>
       <paramValue name="gi2taxidFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
       <paramValue name=""></paramValue>
@@ -69,8 +65,7 @@
       <depends step="copyDataDirFromCluster"/>
      </step>
 
-    <step name="extractIdsFromBlastResult" class="ApiCommonData::Load::Steps::ExtractIdsFromBlastResult">
-      <includeIf>$$loadSubjectSubset$$</includeIf>
+    <step name="extractIdsFromBlastResult" class="ApiCommonData::Load::Steps::ExtractIdsFromBlastResult" includeIf="$$loadSubjectSubset$$">
       <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
       <paramValue name="idType">subject</paramValue>
       <paramValue name="outputFile">$$dataDir$$/blastSimIds.out</paramValue>

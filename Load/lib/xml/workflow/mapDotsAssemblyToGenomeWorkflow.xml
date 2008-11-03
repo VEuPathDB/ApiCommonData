@@ -44,10 +44,10 @@
     <step name="insertBLATAlignment" class="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
+      <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="queryTable">AssemblySequence</paramValue>
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">load</paramValue>
