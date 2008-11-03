@@ -8,303 +8,102 @@ use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 
-my ($propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $validationKey, $forceUpdate);
+my ($propFile, $connectName, $password, $instanceNickname, $family, $svn);
 
-GetOptions("configFile=s" => \$configFile,
-           "propFile=s" => \$propFile,
-           "instance=s" => \$instance,
-           "instanceName=s" => \$instanceName,
+my $subcommand = $ARGV[0];
+
+GetOptions("propFile=s" => \$propFile,
+           "connectName=s" => \$connectName,
            "password=s" => \$password,
-           "debug!" => \$debug,
+           "instanceNickname=s" => \$instanceNickname,
+           "family=s" => \$family,
+           "svn=s" => \$svn,
 	  );
 
-$propFile = "/home/iodice/gusApps/plasmo/gus_home/config/tuningManagerProp.xml" unless $propFile;
+my $badUsage;
 
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
-  unless ($propFile || $password);
-ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")
-  unless $instance;
-&usage unless ($instance && ($propFile || $password));
-
-$cleanupAge = 1.5 if !defined $cleanupAge;
-
-my $dbh = getDbHandle($instance, $propFile, $password);
-
-my $tuningRegistry =
-  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh);
-
-$configFile = getConfigFileName($configFile, $tuningRegistry);
-ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
-my ($config) = &parseConfigFile($configFile);
-
-# create an object for each <tuningTable> entity
-my %tuningTables;
-my %externalTables;
-foreach my $tuningTable (@{$config->{tuningTable}}) {
-
-  $tuningTables{$tuningTable->{name}}
-    = ApiCommonData::Load::TuningConfig::InternalTable->
-      new($tuningTable->{name},
-	  $tuningTable->{internalDependency},
-	  $tuningTable->{externalDependency},
-	  $tuningTable->{intermediateTable},
-	  $tuningTable->{sql},
-	  $tuningTable->{perl}, $dbh, $debug);
+if (!$propFile && !$password) {
+  print STDERR "ERROR: A password must be specified, either with the -password parameter or in a property file specified with the -propFile parameter\n";
+  $badUsage = 1;
 }
 
-# validate config / check external files
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
-my $undefinedInternal;
-my $nonexistentExternal;
-my $dependencyCycle;
-foreach my $tableName (keys(%tuningTables)) {
+if ($subcommand ne "addinstance" && $subcommand ne "removeinstance" && $subcommand ne "list" && $subcommand ne "changesvn") {
+  print STDERR "ERROR: invalid subcommand \"$subcommand\"\n";
+  $badUsage = 1;
+}
 
-  # check for internalDependencies that aren't in the list of tuningTables
-  if ($tuningTables{$tableName}->getInternalDependencyNames()) {
-    foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
-      if (!$tuningTables{$dependency->{name}}) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
-	$undefinedInternal = 1;
-      } else {
-	# add object to list of internal dependencies
-	$tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
-      }
-    }
+if ($subcommand ne "list" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
+  print STDERR "ERROR: An instance must be specified, by either the \"-connectName\" or the \"-instanceNickname\" parameter.";
+  $badUsage = 1;
+}
+
+if ($subcommand eq "changesvn" && !$svn) {
+  print STDERR "ERROR: Subversion setting (e.g. \"trunk\" or \"branches/api-aug-08\") must be specified with \"-svn\" parameter";
+  $badUsage = 1;
+}
+
+if ($subcommand eq "changesvn" && !$family) {
+  print STDERR "ERROR: Subversion setting must be done by family (with \"-family\" parameter)";
+  $badUsage = 1;
+}
+
+if ($subcommand eq "addinstance") {
+  if (!$connectName) {
+    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-connectName\" parameter\n";
+    $badUsage = 1;
   }
 
-  # check for externalDependencies that aren't in the database
-  if ($tuningTables{$tableName}->getExternalDependencyNames()) {
-    foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
+  if (!$instanceNickname) {
+    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-instanceNickname\" parameter\n";
+    $badUsage = 1;
+  }
 
-      # new ExternalTable instance in the hash, if we haven't seen this
-      $externalTables{$dependency->{name}}
-	= ApiCommonData::Load::TuningConfig::ExternalTable->
-	  new($dependency->{name}, $dbh)
-	    unless ($externalTables{$dependency->{name}});
-
-      # add external-table object to list of external dependencies
-      $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
-
-      if (!$externalTables{$dependency->{name}}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
-	$nonexistentExternal = 1;
-      }
-    }
+  if (!$family) {
+    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-family\" parameter\n";
+    $badUsage = 1;
   }
 }
 
-# check for cycles in graph of dependencies
-foreach my $table (keys(%tuningTables)) {
-  $dependencyCycle = 1
-    if $tuningTables{$table}->hasDependencyCycle([]);
+if ($badUsage) {
+  usage();
+  die;
 }
 
-ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies must be tables, not views or synonyms.")
-  if $nonexistentExternal;
-
-if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
-  $doUpdate = 0;
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
+my $dblink = "\@apidb.login_comment";
+if (!$connectName) {
+  $connectName = "apicomm";
+  $dblink = "";
 }
 
-if ($doUpdate) {
-  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
-}
+my $dbh = getDbHandle($connectName, $propFile, $password);
 
-if ($validationKey) {
-  $doUpdate = 0 if checkValidationKey($validationKey) eq "fail";
-}
-
-my $tableCount = 0;
-my $brokenCount = 0;
-my $neededUpdateCount = 0;
-my $upToDateCount = 0;
-
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking whether tuning tables are up to date");
-# check (and potentially update) every tuning table
-my @tableList;
-if ($tables) {
-  @tableList = split(/,/, $tables);
-} else {
-  @tableList = keys(%tuningTables);
-}
-
-foreach my $table (@tableList) {
-  if (!$tuningTables{$table}) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
-    next;
-  }
-
-  $tableCount++;
-  my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
-
-  if ($state eq "broken") {
-    $brokenCount++;
-  } elsif ($state eq "neededUpdate") {
-    $neededUpdateCount++;
-  } elsif ($state eq "up-to-date") {
-    $upToDateCount++;
-  } else {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
-  }
-}
-
-# indexes
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
-my $indexesConfigured;
-my $missingIndexes;
-foreach my $tuningIndex (@{$config->{tuningIndex}}) {
-
-  $indexesConfigured++;
-  my $indexObject =
-    ApiCommonData::Load::TuningConfig::TuningIndex->
-	new($tuningIndex->{name},
-	    $tuningIndex->{table},
-	    $tuningIndex->{content},
-	    $dbh);
-
-  if (!$indexObject->exists()) {
-    $missingIndexes++;
-    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
-
-    $indexObject->create($dbh)
-      if $doUpdate;
-  }
-}
-
-# cleanup
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
-cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
-
-# summary
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
-if (!$tableCount) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
-}
-
-# list broken tables
-if ($brokenCount) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
-  foreach my $table (keys(%tuningTables)) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
-    if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
-}
-
-}
-
-
-if (!$indexesConfigured) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
-} elsif ($missingIndexes) {
-  ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
-						 . $indexesConfigured
-						 . " indexes configured were found to be missing");
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("All "
-						 . $indexesConfigured
-						 . " indexes were found to exist.");
-}
-
-releaseLockForUpdate();
-
-my $elapsed = time - $startTime;
-my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
-
-ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
-					       " seconds to run tuningManager ($hms)");
-
-# set last update/r in registry if we did a successful full update (and made changes)
-$tuningRegistry->setLastUpdate()
-  if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
-
-# set last check/er in registry if we found everything up to date
-$tuningRegistry->setLastCheck()
-  if !$tables && !$neededUpdateCount;
-
-$notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
-ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
+list($dbh, $dblink) if $subcommand eq "list";
+addInstance($dbh, $instanceNickname, $family, $svn)
+  if $subcommand eq "addinstance";
+removeInstance($dbh, $dblink, $instanceNickname)
+  if $subcommand eq "removeinstance";
+changeSvn($dbh, $dblink, $family, $svn)
+  if $subcommand eq "changesvn";
 
 ###############################################################################
 
 sub usage {
   ApiCommonData::Load::TuningConfig::Log::addLog(
 q{
-Create/update "tuning tables", denormalized copies of data used to improve web site performance.
+Usage:
 
-Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>} 
-                      --instance <dbInstance> {--password <dbPassword>}
-                     {--doUpdate} --notifyEmail <emailAddressList> { --debug }
-                     {--cleanupWarnOnly} {--cleanupAge <days>} {--forceUpdate}
+tuningMgrMgr addinstance -connectName xxxx {-password xxxx | -propFile xxxx} -instanceNickname xxxx -family xxxx {-svn xxxx}
+tuningMgrMgr removeInstance {-connectName xxxx  | -instanceNickname } {-password xxxx | -propFile xxxx}
+tuningMgrMgr list {-password xxxx | -propFile xxxx}
+tuningMgrMgr changesvn {-connectName xxxx  | -instanceNickname } {-password xxxx | -propFile xxxx} -svn xxxx
 
 options:
-  configFile      an xml file describing the tables to be created
-  propFile        pathname of a file containing database username and password
-  instance        the database instance to login and craete objects in
-  instanceName    what the instance should be called in the log (useful if the Oracle name is unwieldy)
-  password        database login password
-  tables          check/update only listed tables (and their antecedants)
-  doUpdate        update any tables found to be out of date
-  notifyEmail     comma-separated list of email addresses to send log to
-  cleanupWarnOnly name but don't drop obsolete tuning tables
-  cleanupAge      specify how long (in days) tuning table must be obsolete before dropping
-  forceUpdate     perform update even if current_updater flag is set
-  debug           print debugging info
-
-
-Sample config file XML:
-<tuningConfig>
-
-  <tuningIndex table="dots.NaSequence" name="naSeq_srcSubclass_ix">
-     source_id, subclass_id
-  </tuningIndex>
-
-  <tuningTable name="apidb.EstAlignmentGeneSummary">
-    <internalDependency name="apidb.BlatAlignmentLocation"/>
-    <internalDependency name="apidb.GeneAttributes"/>
-    <externalDependency name="sres.SequenceOntology"/>
-    <intermediateTables name="apidb.EstAlignmentGene"/>
-    <sql>
-      CREATE TABLE apidb.EstAlignmentGene AS
-      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
-               e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
-               ba.query_bases_aligned / (query_sequence.length)
-               * 100 AS percent_est_bases_aligned,
-               ga.source_id AS gene
-        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
-             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
-             dots.NaSequence query_sequence, sres.SequenceOntology so
-        WHERE e.na_sequence_id = ba.query_na_sequence_id
-          AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
-          AND so.term_name = 'EST'
-          AND ba.target_na_sequence_id = sequence.na_sequence_id
-    </sql>
-    <sql>
-      CREATE TABLE EstAlignmentGeneSummary&1 AS
-      SELECT * FROM apidb.EstAlignmentNoGene
-      UNION
-      SELECT * FROM apidb.EstAlignmentGene
-    </sql>
-    <sql>
-      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
-                      (library_id, percent_identity, is_consistent,
-                       est_gene_overlap_length, percent_est_bases_aligned)
-    </sql>
-    <sql>
-      CREATE INDEX apidb.EstSumm_estSite_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
-                      (target_sequence_source_id, target_start, target_end,
-                       library_id)
-    </sql>
-  </tuningTable>
-
-</tuningConfig>
+  propFile         pathname of a file containing database username and password, as with tuningManager
+  connectName      tnsping name to use to connect to database
+  instanceNickname unique name to identify instance in registry and in email subject-lines
+  family           name of family of instances (e.g. "toxo440") to which this instance belongs
+  password         database login password
+  svn              Subversion trunk/branch info, e.g. "trunk" or "branches/api-aug-08"
 
 Sample prop file:
 <tuningProps>
@@ -314,43 +113,6 @@ Sample prop file:
 });
 }
 
-sub getConfigFileName {
-  my ($configFile, $tuningRegistry) = @_;
-
-  if (!$configFile) {
-    my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
-    my $subversionUrl = $tuningRegistry->getSubversionUrl();
-    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
-    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
-    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
-    system(@cmdLine) == 0
-      or die "system @cmdLine failed: $?";
-
-    $configFile = $configDir . "/tuningManager.xml";
-  }
-
-  return $configFile;
-}
-
-sub parseConfigFile {
-  my ($configFile) = @_;
-
-  open(FILE, $configFile) || die "can't open configuration file '$configFile' for reading\n";
-  my $simple = XML::Simple->new();
-
-  # use forcearray so elements with one child are still arrays
-  # and use keyattr so that unions are given as an ordered list
-  # rather than a hash
-  my $config = $simple->XMLin($configFile,
-			    forcearray => 1,
-			    KeyAttr => {sqlValue=>'+name'});
-  if ($debug) {
-    print Dumper($config);
-    print "\n\n";
-  }
-
-  return ($config);
-}
 
 sub getDbHandle {
   my ($instance, $propFile, $password) = @_;
@@ -373,153 +135,159 @@ sub getDbHandle {
                 ) or die "Can't connect to the database: $DBI::errstr\n";
   $dbh->{LongReadLen} = 1000000;
   $dbh->{LongTruncOk} = 1;
-  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
   return $dbh;
 }
 
-sub cleanup {
-  my ($dbh, $cleanupAge, $cleanupWarnOnly) = @_;
-  my $cleanupCount = 0;
+sub list {
+  my ($dbh, $dblink) = @_;
 
-  # drop any tables that are listed as obsolete more than the threshold
-  my $sql = <<SQL;
-select ott.name,
-       to_char(sysdate - ott.timestamp, '9.99') as days_old
-from apidb.ObsoleteTuningTable ott,
-     all_tables at
-where ott.timestamp < sysdate - $cleanupAge
-  and ott.name = at.owner || '.' || at.table_name
+  my $stmt = $dbh->prepare(<<SQL);
+      select ti.instance_nickname,
+             replace(replace(tf.subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', ''),
+             ti.family_name,
+             to_char(last_check, 'yy-mon-dd hh24:mi'),
+             to_char(last_update, 'yy-mon-dd hh24:mi')
+      from apidb.TuningInstance$dblink ti, apidb.TuningFamily$dblink tf
+      where ti.family_name = tf.family_name(+)
+      order by ti.family_name, ti.instance_nickname
 SQL
-  ApiCommonData::Load::TuningConfig::Log::addLog($sql) if $debug;
 
-  my $select = $dbh->prepare($sql);
-  $select->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  $stmt->execute()
+    or print STDERR $dbh->errstr;
 
-  # prepare sql to delete ObsoleteTuningTable record when OTT is dropped
-  my $sql = <<SQL;
-delete from apidb.ObsoleteTuningTable
-where name = ?
-SQL
-  my $delete  = $dbh->prepare($sql);
+  my $printedSomething;
+  my $lastFamily = 'gambino';
+  my $instanceCount;
+  while (my ($nickname, $svn, $family, $lastCheck, $lastUpdate) = $stmt->fetchrow_array()) {
+    $instanceCount++;
 
-  while (my ($dropee, $daysOld) = $select->fetchrow_array()) {
-    $cleanupCount++;
-    my $dropMsg = "$dropee obsolete for $daysOld days.";
+    print "\n--family---- --instance--------------- --subversion--------------- --checked-------- --updated------\n"
+      if !$printedSomething;
+    $printedSomething = 1;
 
-    if (!$cleanupWarnOnly) {
-      $dropMsg .= " . . .dropping.";
-      my $sql = <<SQL;
-          drop table $dropee
-SQL
-      my $drop = $dbh->prepare($sql);
-      $drop->execute()
-	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-      $drop->finish();
-
-      $delete->execute($dropee)
-	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    if ($family eq $lastFamily) {
+      $family = "";
+      $svn = "";
+    } else {
+      $lastFamily = $family;
     }
-    ApiCommonData::Load::TuningConfig::Log::addLog($dropMsg);
-  }
-  $select->finish();
-  $delete->finish();
 
-  # check for obsolete tables not in apidb.ObsoleteTuningTable
-  # note that the backslash in the regex is to protect the dollar-sign from Perl
-  # it's really "zero or more digits, followed by end-of-line": [0-9]*$
-  $sql = <<SQL;
-select owner || '.' || table_name
-from (select atab.owner, atab.table_name
-      from all_synonyms asyn, all_tables atab
-      where asyn.owner = atab.owner
-        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name
-    minus select table_owner, table_name from all_synonyms)
-minus select name from apidb.ObsoleteTuningTable
-SQL
-
-  my $stmt = $dbh->prepare($sql);
-  $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-  while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+    printf "%-12s %-25s %-25s %17s %17s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
   }
   $stmt->finish();
 
-  # check for apidb.ObsoleteTuningTable records whose tables don't exist
-  $sql = <<SQL;
-select name from apidb.ObsoleteTuningTable
-minus select owner || '.' || table_name
-from (select atab.owner, atab.table_name
-      from all_synonyms asyn, all_tables atab
-      where asyn.owner = atab.owner
-        and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name)
+  printf "\n%d instance" . ($instanceCount == 1 ? '' : 's') . " configured\n\n", $instanceCount;
+}
+
+sub addInstance {
+  my ($dbh, $instanceNickname, $family, $svn) = @_;
+
+  # find out whether this family exists
+  my $stmt = $dbh->prepare(<<SQL);
+      select replace(replace(subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', '')
+      from apidb.TuningFamily\@apidb.login_comment
+      where family_name = '$family'
 SQL
 
-  my $stmt = $dbh->prepare($sql);
   $stmt->execute()
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-  while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("tuning table $table is listed in apidb.ObsoleteTuningTable but does not exist");
-  }
+    or print STDERR $dbh->errstr;
+  my ($existingSvn) = $stmt->fetchrow_array();
   $stmt->finish();
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("$cleanupCount obsolete tables found")
-      if $cleanupCount;
+  if ($svn && $svn ne $existingSvn) {
+    # update to new svn
+    print "Changing svn configuration from \"$existingSvn\" to \"$svn\" for family \"$family\"\n";
+    my $url = svnUrl($svn);
+    $dbh->do(<<SQL) or die $dbh->errstr;
+      update apidb.TuningFamily\@apidb.login_comment
+      set subversion_url = '$url'
+      where family_name = '$family'
+SQL
+  } elsif ($svn && !$existingSvn) {
+    # insert new family
+      my $url = svnUrl($svn);
+      $dbh->do(<<SQL) or die $dbh->errstr;
+        insert into apidb.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails)
+        values ('$family', '$url',
+                'TuningMgr\@pcbi.upenn.edu')
+SQL
+  } elsif (!$svn && !$existingSvn) {
+    # new family, but subversion config not supplied
+    die "ERROR: Subversion setting (e.g. \"trunk\" or \"branches/api-aug-08\") must be specified (using \"-svn\" parameter) for new family \"$family\"\n"
+  }
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("*** NOTE: obsolete tables retained because --cleanupWarnOnly parameter is set ***")
-      if $cleanupCount && $cleanupWarnOnly;
+  # remove old InstanceMetaInfo
+  $dbh->do("delete from apidb.InstanceMetaInfo")
+    or die $dbh->errstr;
+
+  # add new InstanceMetaInfo
+  $dbh->do("insert into apidb.InstanceMetaInfo (instance_nickname) values ('$instanceNickname')")
+    or die $dbh->errstr;
+
+  # insert new TuningInstance
+  $dbh->do(<<SQL) or die $dbh->errstr;
+      insert into apidb.TuningInstance\@apidb.login_comment
+          (instance_nickname, family_name, instance_name, service_name)
+      values ('$instanceNickname', '$family', '$instanceNickname', '$instanceNickname')
+SQL
 }
 
-sub lockForUpdate {
-  my ($forceUpdate) = @_;
+sub removeInstance {
+  my ($dbh, $dblink, $instanceNickname) = @_;
 
-  my $processInfo  = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+  # get instanceNickname from InstanceMetaInfo, if not supplied
+  if (!$instanceNickname) {
+    my $stmt = $dbh->prepare("select instance_nickname from apidb.InstanceMetaInfo");
+    $stmt->execute() or print STDERR $dbh->errstr;
+    ($instanceNickname) = $stmt->fetchrow_array();
+    $stmt->finish();
+  }
 
-  my $sql = <<SQL;
-    update apidb.InstanceMetaInfo
-    set current_updater = '$processInfo'
+  # get family name
+  my $stmt = $dbh->prepare(<<SQL);
+    select family_name from apidb.TuningInstance$dblink
+    where instance_nickname = '$instanceNickname'
+SQL
+  $stmt->execute() or print STDERR $dbh->errstr;
+  my ($family) = $stmt->fetchrow_array();
+  $stmt->finish();
+
+  # remove instance
+  my $rowCount = $dbh->do(<<SQL) or die $dbh->errstr;
+    delete from apidb.TuningInstance$dblink
+    where instance_nickname = '$instanceNickname'
 SQL
 
-  $sql .= " where current_updater is null"
-    unless $forceUpdate;
+  printf "removed %d " . ($rowCount == 1 ? "instance" : "instances") . ", nicknamed \"$instanceNickname\", from the family \"$family\"\n", $rowCount;
 
-  $dbh->do($sql)
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  # is this the last member of the family?
+  my $stmt = $dbh->prepare("select count(*) from apidb.TuningInstance$dblink where family_name = '$family'");
+  $stmt->execute() or print STDERR $dbh->errstr;
+  my ($familyCount) = $stmt->fetchrow_array();
+  $stmt->finish();
 
-  my $stmt = $dbh->prepare("select current_updater from apidb.InstanceMetaInfo");
-  $stmt->execute();
-  my ($updater) = $stmt->fetchrow_array();
-
-  if ($updater ne $processInfo) {
-    my $updateLockoutMsg = <<MSG;
-Another tuningManager process appears to be updating the database. CURRENT_UPDATER is set to "$updater".
-Continuing in read-only mode, but not updating tuning tables. If this process ($updater) is not runnning, you can override this lockout by rerunning tuningManager with the "--forceUpdate" option.
-MSG
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog($updateLockoutMsg);
-    return("fail");
+  # if so, remove the family
+  if (!$familyCount) {
+    $dbh->do("delete from apidb.TuningFamily$dblink where family_name = '$family'")
+      or die $dbh->errstr;
   }
 }
 
-sub releaseLockForUpdate {
+sub changeSvn {
+   my ($dbh, $dblink, $family, $svn) = @_;
 
-  $dbh->do("update apidb.InstanceMetaInfo set current_updater = null where current_updater = '"
-	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
-	   . "'")
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+   # set svn, based on family
+   my $url = svnUrl($svn);
+   my $familyCount = $dbh->do(<<SQL);
+     update apidb.TuningFamily$dblink
+       set subversion_url = '$url'
+       where family_name = '$family'
+SQL
+  printf "updated subversion URL to \"$url\" (from config of \"$svn\") for %d "
+    . (($familyCount == 1) ? "family" : "families") . " named \"$family\".\n", $familyCount;
 }
 
-sub checkValidationKey {
-  my ($key) = @_;
-
-  my $stmt = $dbh->prepare("select validation_key from apidb.InstanceMetaInfo");
-  $stmt->execute();
-  my ($db_key) = $stmt->fetchrow_array();
-
-  if ($db_key ne $key) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("supplied key \"$key\" does not match value in database of \"$db_key\"");
-    return("fail");
-  }
-
+sub svnUrl {
+  my ($svn) = @_;
+  return "https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/$svn/Load/lib/xml"
 }
-
