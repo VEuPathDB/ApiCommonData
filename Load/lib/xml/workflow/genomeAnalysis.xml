@@ -4,6 +4,8 @@
   <param name="organismName"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="genomeVirtualSeqExtDb"/>
+  <param name="genomeVirtualSeqExtDbRls"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
@@ -14,7 +16,6 @@
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
-  <param name="genomeVirtualSeqExtDbRlsSpec"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
@@ -22,13 +23,18 @@
   <constant name="assemblySeqsDataDir">$$dataDir$$/makeAssemblySeqs</constant>
   <constant name="mapAssemblySeqsDataDir">$$dataDir$$/mapAssemblySeqs</constant>
   <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
-  <constant name="dumpVirtualSeqDataDir">$$dataDir$$/common/mercator/</constant>
+  <constant name="dumpVirtualSeqDataDir">common/mercator/</constant>
+
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
 
   <subgraph name="splign" xmlFile="splignWorkflow.xml">
     <includeIf>$$runSplign$$</includeIf>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="queryExtDbRlsSpec">tigr:$$tigrVersion$$</paramValue>
-    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>    </subgraph>
+    <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>    
+  </subgraph>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">

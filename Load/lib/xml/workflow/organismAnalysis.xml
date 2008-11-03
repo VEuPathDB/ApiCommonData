@@ -1,60 +1,63 @@
 <workflowGraph name="organismAnalysis">
+  <param name="projectDB"/>
+  <param name="projectRelease"/>
   <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="organismTwoLetterAbbrev"/>
   <param name="genomeExtDb"/>
   <param name="genomeExtDbRls"/>
+  <param name="genomeVirtualSeqExtDb"/>
+  <param name="genomeVirtualSeqExtDbRls"/>
+  <param name="genomeSource"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
-  <param name="nrdbVersion"/>
   <param name="soVersion"/>
+  <param name="dbESTVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
-  <param name="nrdbFile"/>
-  <param name="nrdbShortDeflineFile"/>
-  <param name="pdbFile"/>
+  <param name="parentNcbiTaxonId"/>
+  <param name="predictedTranscriptsSql"/>
+  <param name="pdbOutputFile"/>
+  <param name="nrdbOutputFile"/>
+  <param name="nrdbShortDeflineFile"/>  
   <param name="maxIntronSize"/>
   <param name="calculateTranslatedProteins"/>
   <param name="taxonHierarchyForBlastxFilter"/>
-  <param name="ncbiTaxonId"/>
-  <param name="genomeVirtualSeqExtDbRlsSpec"/>
-  <param name="genomeSource"/>
-  <param name="projectDB"/>
-  <param name="projectRelease"/>
-  <param name="ebESTVersion"/>
-  <param name="webServicesDataDir"/>
+  <param name="runSplign"/>
+  <param name="nrdbExtDbRlsSpec"/>
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">/files/cbil/data/cbil/apiSiteFiles/downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
+  <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</constant>
 
   <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dir">$$dataDir$$</paramValue>
+    <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
 
   <step name="makedownloadSiteDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="dataDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
   <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="genomeExtDb">$$genomeExtDb$$</paramValue>
     <paramValue name="genomeExtDbRls">$$genomeExtDbRls$$</paramValue>
+    <paramValue name="genomeVirtualExtDb">$$genomeVirtualSeqExtDb$$</paramValue>
+    <paramValue name="genomeVirtualExtDbRls">$$genomeVirtualSeqExtDbRls$$</paramValue>
     <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
     <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>    
     <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
-    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbOutputFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
     <paramValue name="runSplign">$$runSplign$$</paramValue>
-    <depends step="makeSeqfilesDir"/>
+    <depends step="makeDataDir"/>
   </subgraph>
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
@@ -63,18 +66,18 @@
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
-    <paramValue name="nrdbVersion">$$nrdbVersion$$</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="calculateTranslatedProteins">$$calculateTranslatedProteins$$</paramValue>
-    <depends step="makeSeqfilesDir"/>
+    <depends step="makeDataDir"/>
   </subgraph>
 
 
   <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
-    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="webServiceBlastsDataDir">$$webServicesBlastDataDir$$</paramValue>
     <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
     <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -84,6 +87,7 @@
     <paramValue name="projectDB">$$projectDB$$</paramValue>
     <paramValue name="projectRelease">$$projectRelease$$</paramValue>
     <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <depends step="makedownloadSiteDataDir"/>
     <depends step="proteomeAnalysis"/>
     <depends step="genomeAnalysis"/>
   </subgraph>
@@ -93,6 +97,7 @@
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
     <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <depends step="makedownloadSiteDataDir"/>
     <depends step="proteomeAnalysis"/>
     <depends step="genomeAnalysis"/>
   </subgraph>
@@ -102,6 +107,7 @@
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
     <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <depends step="makedownloadSiteDataDir"/>
     <depends step="proteomeAnalysis"/>
     <depends step="genomeAnalysis"/>
   </step>

@@ -16,6 +16,8 @@
   <param name="soVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
+  <param name="projectDB"/>
+  <param name="projectRelease"/>
 
   <constant name="pdbFile">common/pdb.fsa</constant>
   <constant name="nrdbFile">common/nrdb.fsa</constant>
@@ -26,17 +28,21 @@
     <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
   </subgraph>
 
   <subgraph name="TcruziAnalysis" xmlFile="organismAnalysis.xml">
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
     <paramValue name="parentDataDir"></paramValue>
     <paramValue name="organismName">Tcruzi</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tc</paramValue>
-    <paramValue name="genomeExtDb">Some kind of fancy name</paramValue>
-    <paramValue name="genomeExtDbRls">2.1</paramValue>
-    <paramValue name="tcruziVirtualSeqExtDb">$$tcruziVirtualSeqExtDb$$</paramValue>
-    <paramValue name="tcruziVirtualSeqExtDbRls">$$tcruziVirtualSeqExtDbRls$$</paramValue>
-    <paramValue name="genomeGenomeSource">$$tcruziGenomeSource$$</paramValue>
+    <paramValue name="genomeExtDb">$$tcruziVirtualSeqExtDb$$</paramValue>
+    <paramValue name="genomeExtDbRls">$$$tbruceiExtDbRls$</paramValue>
+    <paramValue name="genomeVirtualSeqExtDb">$$tcruziVirtualSeqExtDb$$</paramValue>
+    <paramValue name="genomeVirtualSeqExtDbRls">$$tcruziVirtualSeqExtDbRls$$</paramValue>
+    <paramValue name="genomeSource">$$tcruziGenomeSource$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="iedbVersion">$$interproVersion$$</paramValue>
     <paramValue name="soVersion">$$soVersion$$</paramValue>
@@ -53,17 +59,20 @@
     <paramValue name="calculateTranslatedProteins">false</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
     <paramValue name="runSplign">true</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
   <subgraph name="TbruceiAnalysis" xmlFile="organismAnalysis.xml">
+    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
     <paramValue name="parentDataDir"></paramValue>
     <paramValue name="organismName">Tbrucei</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tb</paramValue>
     <paramValue name="genomeExtDb">Some other kind of fancy name</paramValue>
     <paramValue name="genomeExtDbRls">3.3</paramValue>
-    <paramValue name="tbruceiVirtualSeqExtDb">$$tbruceiVirtualSeqExtDb$$</paramValue>
-    <paramValue name="tbruceiVirtualSeqExtDbRls">$$tbruceiVirtualSeqExtDbRls$$</paramValue>
+    <paramValue name="genomeVirtualSeqExtDb">$$tbruceiVirtualSeqExtDb$$</paramValue>
+    <paramValue name="genomeVirtualSeqExtDbRls">$$tbruceiVirtualSeqExtDbRls$$</paramValue>
     <paramValue name="genomeGenomeSource">$$tbruceiGenomeSource$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="iedbVersion">$$interproVersion$$</paramValue>
@@ -80,6 +89,7 @@
     <paramValue name="calculateTranslatedProteins">false</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
     <paramValue name="runSplign">true</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
     <depends name="common"/>
   </subgraph>
 

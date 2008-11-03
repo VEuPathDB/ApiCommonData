@@ -3,6 +3,8 @@
       <param name="nrdbOutputFile"/>
       <param name="nrdbShortDeflineOutputFile"/>
       <param name="pdbOutputFile"/>
+      <param name="projectDB"/>
+      <param name="projectRelease"/>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">common</paramValue>
@@ -17,19 +19,19 @@
     </step>
 
     <step name="makeBlastWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
+      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
     </step>
 
     <step name="makeTextSearchWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
+      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
     </step>
 
     <step name="makeMercatorWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
+      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
     </step>
 
     <step name="makeMotifWebServicesDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="blastWebServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
+      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
     </step>
 
     <step name="makeMercatorDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
