@@ -1,26 +1,26 @@
 <workflowGraph name="dumpAndBlockVirtualSeqs">
 
-    <param name="ncbiTaxonId"/>
     <param name="dataDir"/>
     <param name="genomeVirtualSeqsExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
-    <param name="organismName"/>
- 
-    <constant name="repeatMaskDataDir">$$dataDir$$/repeatmask/$$organismName$$</constant>
 
-    <step name="dumpVirtualSeqs" class="ApiCommonData::Load::WorkflowSteps::DumpVirtualSeqs">
-      <paramValue name="outputFile">$$dataDir$$/seqfiles/$$organismName$$MixedGenomic.fasta</paramValue>
+    <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+ 
+    <step name="dumpMixedGenomicSeqs" class="ApiCommonData::Load::WorkflowSteps::DumpMixedGenomicSeqs">
+      <paramValue name="outputFile">$$dataDir$$/mixedGenomic.fasta</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     </step>
 
     <step name="makeClusterTaskInputDir" class="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$repeatMaskDataDir$$/input</paramValue>
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <depends step="dumpVirtualSeqs"/>
     </step>
 
     <step name="mirrorToCluster" class="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
-      <paramValue name="fileOrDirToMirror">$$repeatMaskDataDir$$</paramValue>
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends step="makeClusterTaskInputDir"/>
     </step>
 

@@ -18,12 +18,13 @@
   <param name="runSplign"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
-  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
+  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</constant>
+  <constant name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
   <constant name="assemblySeqsDataDir">$$dataDir$$/makeAssemblySeqs</constant>
   <constant name="mapAssemblySeqsDataDir">$$dataDir$$/mapAssemblySeqs</constant>
   <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
-  <constant name="dumpVirtualSeqDataDir">common/mercator/</constant>
+  <constant name="virtualSeqsDataDir">$$dataDir$$/mixedGenomicSeqs</constant>
 
     <step name="makeDataDir" class="ApiCommonData::Load::WorkflowSteps::MakeDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -38,27 +39,27 @@
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="extDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="identifier">source_id</paramValue>
+      <paramValue name="defline">source_id,description,'length='||length</paramValue>
       <paramValue name="outputFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="separateFastaFiles">false</paramValue>
       <paramValue name="outputDirForSeparateFiles"></paramValue>
     </step>
-
-    <subgraph name="dumpAndBlockVirtualSeqs" xmlFile="dumpAndBlockVirtualSeqs.xml">
-      <paramValue name="dataDir">$$dumpVirtualSeqDataDir$$</paramValue>
-      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    </subgraph>
-
 
    <step name="mirrorToCluster" class="ApiCommonData::Load::Steps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">genome</paramValue>
       <paramValue name="parentDir">$$parentDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </step>
+
+    <subgraph name="dumpAndBlockMixedGenomicsSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
+      <paramValue name="dataDir">$$virtualSeqsDataDir$$</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="organismName">$$organismName$$</paramValue>
+    </subgraph>
+
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
