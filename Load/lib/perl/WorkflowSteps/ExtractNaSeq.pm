@@ -15,39 +15,35 @@ sub run {
   my ($self, $test) = @_;
 
   my $table = $self->getParamValue('table');
+
+  my $dbRlsId = $self->getExtDbRlsId($self->getParamValue('extDbRlsSpec'));
+
+  my $defline = $self->getParamValue('defline');
   
-  my $identifier = $self->getParamValue('identifier');
-
-  my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxId'));
-
-  my $dbRlsId = $self->getExtDbRlsId($self->getParamValue('genomeExtDbRlsSpec'));
-
-  my $outputFileOrDir = $self->getParamValue('outputFileOrDir');
+  my $outputFile = $self->getParamValue('outputFile');
 
   my $separateFastaFiles = $self->getParamValue('separateFastaFiles');
 
-  my $seqfilesDir = $self->getParamValue('seqfilesDir');
+  my $outputDirForSeparateFiles = $self->getParamValue('outputDirForSeparateFiles');
   
-  $self->runCmd(0, "mkdir -p $seqfilesDir") if $seqfilesDir;
+  my $sql = "select $defLine,sequence
+             from dots.$table
+             where external_database_release_id = $dbRlsId";
   
-  my $sql = "select x.$identifier, x.description,
-            'length='||x.length,x.sequence
-             from dots.$table x
-             where x.external_database_release_id = $dbRlsId";
   my $cmd;
 
   if ($separateFastaFiles) {
 
-      $cmd="gusExtractIndividualSequences --outputDir $outputFileOrDir --idSQL \"$sql\" --verbose";
+      $cmd="gusExtractIndividualSequences --outputDir $outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
 
   } else {
 
-      $cmd = "gusExtractSequences --outputFile $outputFileOrDir --idSQL \"$sql\" --verbose";
+      $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
   }
   
   if ($test) {
 
-      $self->runCmd(0,"test > $outputFileOrDir");
+      $self->runCmd(0,"test > $outputFile");
 
   } else {
 
@@ -55,20 +51,6 @@ sub run {
 
   }
 
-}
-
-
-sub getTaxonId {
-  my ($self,$ncbiTaxId) = @_;
-  my $taxon = GUS::Model::SRes::Taxon->new({ncbi_tax_id => $ncbiTaxId});
-
-  unless ($taxon->retrieveFromDB()) {
-    die "$ncbiTaxId not found in sres.taxon.ncbi_tax_id\n";
-  }
-
-  my $taxonId = $taxon->getId();
-
-  return $taxonId;
 }
 
 sub restart {
@@ -82,11 +64,9 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['genomeName', "", ""],
-     ['seqType', "", ""],
+     ['separateFastaFiles', "", ""],
      ['table', "", ""],
-     ['identifier', "", ""],
-     ['ncbiTaxId', "", ""],
+     ['defline', "", ""],
      ['genomeExtDbRlsSpec', "", ""],
      ['outputFile', "", ""],
     );
