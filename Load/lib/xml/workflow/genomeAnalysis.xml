@@ -19,8 +19,8 @@
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
-  <constant name="candAssemSeqsDataDir">$$dataDir$$/makeCandidateAssemSeqs</constant>
-  <constant name="mapCandAssemSeqsDataDir">$$dataDir$$/mapCandidateAssemSeqs</constant>
+  <constant name="assemblySeqsDataDir">$$dataDir$$/makeAssemblySeqs</constant>
+  <constant name="mapAssemblySeqsDataDir">$$dataDir$$/mapAssemblySeqs</constant>
   <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
   <constant name="dumpVirtualSeqDataDir">$$dataDir$$/common/mercator/</constant>
 
@@ -127,23 +127,23 @@
       <depends step="runLowComplexityFilter"/>
     </step>
 
-    <subgraph name="makeAndBlockCandAssemblySeqs" xmlFile="makeAndBlockCandAssemblySeqs.xml">
+    <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
-      <paramValue name="dataDir">$$candAssemSeqsDataDir$$</paramValue>
+      <paramValue name="dataDir">$$assemblySeqsDataDir$$</paramValue>
       <depends step="extractGenomicSeqs"/>
     </subgraph>
 
-    <subgraph name="mapCandAssemblySeqsToGenome" xmlFile="mapCandAssemblySeqsToGenomeWorkflow.xml">
+    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec"$$genomeExtDbRlsSpec$$></paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="candSeqsDataDir">$$candAssemSeqsDataDir$$</paramValue>
-      <paramValue name="dataDir">$$mapCandAssemSeqsDataDir$$</paramValue>
-      <paramValue name="genomicSeqsDir">$$mapCandAssemSeqsDataDir$$/genomicSeqs</paramValue>
-      <depends step="makeAndBlockCandAssemblySeqs"/>
+      <paramValue name="candSeqsDataDir">$$assemSeqsDataDir$$</paramValue>
+      <paramValue name="dataDir">$$mapAssemblySeqsDataDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
+      <depends step="makeAndBlockAssemblySeqs"/>
     </subgraph>
 
     <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml">
@@ -153,8 +153,8 @@
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="dataDir">$$dataDir$$/makeAssemblies</paramValue>
-      <paramValue name="candSeqsDataDir">$$candAssemSeqsDataDir$$</paramValue>
-      <depends step="mapCandAssemblySeqsToGenome"/>
+      <paramValue name="candSeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
+      <depends step="mapAssemblySeqsToGenome"/>
     </subgraph>
 
     <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml">
@@ -162,7 +162,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="assembliesDataDir">$$assembliesDataDir$$</paramValue>
-      <paramValue name="genomicSeqsDir">$$mapCandAssemSeqsDataDir$$/genomicSeqs</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
       <depends step="makeAndBlockAssemblies"/>
     </subgraph>
 
