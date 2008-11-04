@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::LoadTandemRepeats;
+package ApiCommonData::Load::WorkflowSteps::InsertTandemRepeats;
 
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 

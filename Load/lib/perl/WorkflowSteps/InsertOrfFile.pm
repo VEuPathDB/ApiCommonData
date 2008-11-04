@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::LoadOrfFile;
+package ApiCommonData::Load::WorkflowSteps::InsertOrfFile;
 
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 

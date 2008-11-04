@@ -9,7 +9,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $seqFile = $self->getParamValue('inputFile');
+  my $seqFile = $self->getParamValue('seqFile');
   
   my $minPepLength = $self->getParamValue('minPepLength');
 
