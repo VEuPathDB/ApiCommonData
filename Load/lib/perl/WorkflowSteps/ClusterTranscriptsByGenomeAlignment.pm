@@ -20,10 +20,10 @@ sub run {
 
   my $targetTableName = $self->getParamValue('targetTableName');
 
-  my $distanceBetweenStarts = $self->getParamValue('distanceBetweenStarts');
+  my $maxIntronSize = $self->getParamValue('maxIntronSize');
 
-  my $args = "--taxon_id $taxonId --target_table_name  $targetTableName --mixedESTs "
-	. "--target_db_rel_id $targetDbRlsId --out $outputFile --sort 1 --distanceBetweenStarts $distanceBetweenStarts";
+  my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs "
+	. "--target_db_rel_id $targetDbRlsId --out $outputFile --sort 1 --distanceBetweenStarts $maxIntronSize";
 
   self->runPlugin( "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
 
@@ -43,7 +43,8 @@ sub getConfigDeclaration {
      # [name, default, description]
      ['parentNcbiTaxonId', "", ""],
      ['outputFile', "", ""],
-     ['distanceBetweenStarts', "", ""],
+     ['maxIntronSize', "", ""],
+     ['genomeExtDbRlsSpec', "", ""],
     );
   return @properties;
 }

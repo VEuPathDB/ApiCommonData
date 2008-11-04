@@ -16,9 +16,7 @@ sub run {
 
   my $outputFile = $self->getParamValue('outputFile');
 
-  my $organismName = $self->getParamValue('organismName');
-
-  my $sql = "select na_sequence_id,'[$organismName]',description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
+  my $sql = "select na_sequence_id,description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
  
   my $cmd = "gusExtractSequences --outputFile $outputFile --verbose --idSQL \"$sql\"";
 
@@ -42,9 +40,8 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['useTaxonHierarchy', "", ""],
-     ['predictedTranscriptsSql', "", ""],
+     ['ncbiTaxonId', "", ""],
+     ['outputFile', "", ""],
     );
   return @properties;
 }

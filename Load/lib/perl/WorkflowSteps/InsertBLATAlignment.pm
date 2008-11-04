@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment;
+package ApiCommonData::Load::WorkflowSteps::InsertBLatlignment;
 
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 

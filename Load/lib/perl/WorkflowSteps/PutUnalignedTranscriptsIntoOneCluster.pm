@@ -24,9 +24,9 @@ sub run {
 
   my $taxonIdList = $self->getTaxonIdList($queryTaxonId,$self->getParamValue('useTaxonHierarchy'));
   
-  my $transcriptRepeatMaskFile = $self->getParamValue('transcriptRepeatMaskFile');
+  my $repeatMaskErrFile = $self->getParamValue('repeatMaskErrFile');
 
-  my $cmd = "getSourceIds --inputFile $inputFile --outputFile $outputFile --blockFile $transcriptRepeatMaskFile";
+  my $cmd = "getSourceIds --inputFile $inputFile --outputFile $outputFile --blockFile $repeatMaskErrFile";
 
   if ($test){
       self->runCmd(0,'test > $outputFile');
@@ -47,9 +47,12 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
+     ['inputFile', "", ""],
+     ['outputFile', "", ""],
+     ['queryNcbiTaxonId', "", ""],
+     ['subjectNcbiTaxonId', "", ""],
      ['useTaxonHierarchy', "", ""],
-     ['predictedTranscriptsSql', "", ""],
+     ['repeatMaskErrFile', "", ""],
     );
   return @properties;
 }

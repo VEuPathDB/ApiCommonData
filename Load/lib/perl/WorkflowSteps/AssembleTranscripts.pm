@@ -22,15 +22,15 @@ sub run {
 
   my $cap4Dir = $self->getConfig('cap4Dir');
 
-  my $workingDir = $self->runCmd($test,"pwd");
+  my $workingDir = $self->runCmd(0,"pwd");
 
   &splitClusterFile($self,$test,$inputFile);
 
   &runAssemblePlugin($self, $test,"big",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
 
-  $self->runCmd($test,"sleep 10");
+  $self->runCmd(0,"sleep 10");
 
-  &runAssemblePlugin($test,"small",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
+  &runAssemblePlugin($self,$test,"small",$inputFile,$outputDir, $reassemble, $taxonId, $cap4Dir); 
 
   $self->runCmd($test,"chdir $workingDir") || die "Can't chdir to $workingDir";
 
@@ -64,8 +64,6 @@ sub runAssemblePlugin{
 
   my $assemDir = "$outputDir/$suffix";
 
-  $self->runCmd(0,"mkdir -p $assemDir") if ! -d $assemDir;
-  
   $self->runCmd($test,"chdir $assemDir") || die "Can't chdir to $assemDir";
 
   $self->runCmdInBackground($test,$cmd);
@@ -82,9 +80,10 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
+     ['outputDir', "", ""],
      ['inputFile', "", ""],
-     ['cap4Dir', "", ""],
+     ['ncbiTaxonId', "", ""],
+     ['reassemble', "", ""],
     );
   return @properties;
 }
