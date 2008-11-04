@@ -9,34 +9,20 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $seqFile = $self->getParamValue('seqFile');
+  my $seqFile = $self->getParamValue('inputFile');
   
   my $minPepLength = $self->getParamValue('minPepLength');
 
-  my $seqfilesDir = $self->getParamValue('seqfilesDir');
-  
-  my $outFile = $self->getParamValue('outputFile');
+  my $outputFile = $self->getParamValue('outputFile');
 
-  my $genomeName = $self->getParamValue('genomeName');
-
-  my $dataDir = $self->getGlobalConfig('dataDir');
-
-  my $projectName = $self->getGlobalConfig('projectName');
- 
-  my $projectVersion = $self->getGlobalConfig('projectVersion');
-
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/primary/data/$genomeName/$seqfilesDir";
-  
-  $outFile = "$seqfilesDir/$outFile";
- 
    my $cmd = <<"EOF";
-orfFinder --dataset  $seqfilesDir/$seqFile \\
+orfFinder --dataset  $seqFile \\
 --minPepLength $minPepLength \\
---outFile $outFile
+--outFile $outputFile
 EOF
 
   if ($test) {
-      $self->runCmd(0,"test > $outFile");
+      $self->runCmd(0,"test > $outputFile");
   } else {
       $self->runCmd($test,$cmd);
   }
@@ -55,9 +41,8 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['seqFile', "", ""],
+     ['inputFile', "", ""],
      ['minPepLength', "", ""],
-     ['seqfilesDir', "", ""],
      ['outputFile', "", ""],
     );
   return @properties;

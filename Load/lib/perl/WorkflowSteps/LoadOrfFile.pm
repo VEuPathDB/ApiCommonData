@@ -13,51 +13,46 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $orfFile = $self->getParamValue('orfFile');
+  my $orfFile = $self->getParamValue('inputFile');
   
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
 
-  my $subclass = $self->getParamValue('subclass');
+  my ($extDbName,$extDbRlsVer);
+
+  if ($genomeExtDbRlsSpec =~ /(.+)\|(.+)/) {
+
+      $extDbName = $1;
+
+      $extDbRlsVer = $2
+
+    } else {
+
+      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name|version' format";
+  }
+
+  my $substepClass = $self->getParamValue('substepClass');
   
   my $defaultOrg = $self->getParamValue('defaultOrg');
-
-  my $seqfilesDir = $self->getParamValue('seqfilesDir');
-
-  my $genomeName = $self->getParamValue('genomeName');
-
-  my $dataDir = $self->getGlobalConfig('dataDir');
-  
-  my $projectName = $self->getGlobalConfig('projectName');
- 
-  my $projectVersion = $self->getGlobalConfig('projectVersion');
 
   my $mapFile = $self->getConfig('orf2gusFile');
 
   my $soCvsVersion = $self->getGlobalConfig('soCvsVersion');
 
-  $seqfilesDir = "$dataDir/$projectName/$projectVersion/primary/data/$genomeName/$seqfilesDir";
-  
-  my ($extDbName,$extDbRlsVer);
-
-  if ($genomeExtDbRlsSpec =~ /(.+)\:(.+)/) {
-      $extDbName = $1;
-      $extDbRlsVer = $2
-    } else {
-      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name:version' format";
-  }
 
   my $args = <<"EOF";
 --extDbName '$extDbName'  \\
 --extDbRlsVer '$extDbRlsVer' \\
 --mapFile $mapFile \\
---inputFileOrDir $seqfilesDir/$orfFile \\
+--inputFileOrDir $orfFile \\
 --fileFormat gff3   \\
 --seqSoTerm ORF  \\
 --soCvsVersion $soCvsVersion \\
---naSequenceSubclass $subclass \\
+--naSequenceSubclass $substepClass \\
 EOF
  if ($defaultOrg){
+
       $args .= "--defaultOrganism '$defaultOrg'";
+
     }
 
   $self->runPlugin("GUS::Supported::Plugin::InsertSequenceFeatures",$args);
@@ -75,11 +70,10 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['orfFile', "", ""],
+     ['inputFile', "", ""],
      ['genomeExtDbRlsSpec', "", ""],
-     ['subclass', "", ""],
+     ['substepClass', "", ""],
      ['defaultOrg',"",""],
-     ['seqfilesDir',"",""],
     );
   return @properties;
 }

@@ -11,7 +11,17 @@ sub run {
 
   my $extDbRlsSpec = $self->getParamValue('extDbRlsSpec');
 
-  my ($extDbName, $extDbRlsVer) = split('|',$extDbRlsSpec) if $extDbRlsSpec;
+  my ($extDbName, $extDbRlsVer);
+
+  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
+
+      $extDbName = $1;
+
+      $extDbRlsVer = $2
+    } else {
+
+      die "Database specifier '$extDbRlsSpec' is not in 'name|version' format";
+  }
 
   my $fastaFile = $self->getParamValue('fastaFile');
 
