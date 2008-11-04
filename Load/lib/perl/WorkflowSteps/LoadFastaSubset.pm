@@ -11,13 +11,13 @@ sub run {
 
   my $extDbRlsSpec = $self->getParamValue('extDbRlsSpec');
 
-  my ($extDbName, $extDbRlsVer) = split('|',$extDbRlsSpec);
+  my ($extDbName, $extDbRlsVer) = split('|',$extDbRlsSpec) if $extDbRlsSpec;
 
   my $fastaFile = $self->getParamValue('fastaFile');
 
   my $idsFile = $self->getParamValue('idsFile');
 
-  $self->runCmd(0,"gunzip $fastaFile") if (-e "${fastaFile}.gz");
+  $self->runCmd(0,"gunzip -f $fastaFile") if (-e "${fastaFile}.gz");
 
   my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $fastaFile --sourceIdsFile  $idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
 

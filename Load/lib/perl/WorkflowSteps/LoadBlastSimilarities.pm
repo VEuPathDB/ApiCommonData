@@ -5,7 +5,6 @@ package ApiCommonData::Load::Steps::WorkflowSteps::LoadBlastSimilarities;
 sub run {
   my ($self) = @_;
 
-  my $dataDir = $self->getParam('dataDir');
   my $inputFile = $self->getParam('inputFile');
   my $queryTable = $self->getParam('queryTable');
   my $queryTableIdCol = $self->getParam('queryTableSrcIdCol');
@@ -49,7 +48,6 @@ sub undo {
 
 sub getParamsDeclaration {
     return (
-	'dataDir',
 	'inputFile',
 	'queryTable',
 	'queryTableSrcIdCol',

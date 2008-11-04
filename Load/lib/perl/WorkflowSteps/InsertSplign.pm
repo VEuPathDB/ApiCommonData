@@ -9,7 +9,7 @@ use GUS::Workflow::WorkflowStepInvoker;
 sub run {
   my ($self, $test) = @_;
 
-  my $queryExtDbRlsSpecc = $self->getParamValue('queryExtDbRlsSpecc');
+  my $queryExtDbRlsSpec = $self->getParamValue('queryExtDbRlsSpecc');
 
   my $subjectExtDbRlsSpec = $self->getParamValue('subjectExtDbRlsSpec');
 

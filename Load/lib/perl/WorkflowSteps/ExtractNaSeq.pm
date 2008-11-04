@@ -8,8 +8,6 @@ use GUS::Workflow::WorkflowStepInvoker;
 
 ## to do
 ## API $self->getExtDbRlsId($genomeExtDbRlsSpec)
-## API $self->getTaxonId($ncbiTaxId) 
-## re-define dataDir
 
 sub run {
   my ($self, $test) = @_;
@@ -18,17 +16,29 @@ sub run {
 
   my $dbRlsId = $self->getExtDbRlsId($self->getParamValue('extDbRlsSpec'));
 
-  my $defline = $self->getParamValue('defline');
+  my $alternateDefline = $self->getParamValue('alternateDefline');
   
   my $outputFile = $self->getParamValue('outputFile');
 
   my $separateFastaFiles = $self->getParamValue('separateFastaFiles');
 
   my $outputDirForSeparateFiles = $self->getParamValue('outputDirForSeparateFiles');
+
+  my $sql;
   
-  my $sql = "select $defLine,sequence
+  if ($alternateDefline eq ""){
+
+  $sql = "select source_id, description,
+            'length='||length,sequence
              from dots.$table
              where external_database_release_id = $dbRlsId";
+ 
+  }else{
+ 
+  $sql = "select $alternateDefline,sequence
+             from dots.$table
+             where external_database_release_id = $dbRlsId";
+  }
   
   my $cmd;
 
@@ -64,11 +74,12 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['separateFastaFiles', "", ""],
      ['table', "", ""],
-     ['defline', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
+     ['extDbRlsSpec', "", ""],
+     ['alternateDefline', "", ""],
+     ['separateFastaFiles', "", ""],
      ['outputFile', "", ""],
+     ['outputDirForSeparateFiles', "", ""],
     );
   return @properties;
 }

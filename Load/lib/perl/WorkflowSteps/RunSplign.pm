@@ -27,13 +27,13 @@ sub run {
 
   } else {
 
-      $mgr->runCmd("${splignPath}/splign -mklds $splignDir");
+      $self->runCmd("${splignPath}/splign -mklds $splignDir");
 
-      $mgr->runCmd("${ncbiBlastPath}/formatdb -i $subjectFile -p F -o F");
+      $self->runCmd("${ncbiBlastPath}/formatdb -i $subjectFile -p F -o F");
 
-      $mgr->runCmd("${ncbiBlastPath}/megablast -i $queryFile -d $subjectFile -m 8 | sort -k 2,2 -k 1,1 > $splignDir/test.hit");
+      $self->runCmd("${ncbiBlastPath}/megablast -i $queryFile -d $subjectFile -m 8 | sort -k 2,2 -k 1,1 > $splignDir/test.hit");
 
-      $mgr->runCmd("${splignPath}/splign -ldsdir $splignDir -hits $splignDir/test.hit > $outputFile");
+      $self->runCmd("${splignPath}/splign -ldsdir $splignDir -hits $splignDir/test.hit > $outputFile");
 
   }
 
@@ -52,13 +52,12 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['genomeName', "", ""],
-     ['seqType', "", ""],
-     ['table', "", ""],
-     ['identifier', "", ""],
-     ['ncbiTaxId', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
+     ['queryFile', "", ""],
+     ['subjectFile', "", ""],
      ['outputFile', "", ""],
+     ['splignDir', "", ""],
+     ['splignPath', "", ""],
+     ['ncbiBlastPath', "", ""],
     );
   return @properties;
 }

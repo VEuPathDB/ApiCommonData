@@ -15,7 +15,7 @@ sub run {
 
   my $outputFile = $self->getParamValue('outputFile');
 
-  $self->runCmd(0,"gunzip $inputFile");
+  $self->runCmd(0,"gunzip -f $inputFile") if ($inputFile=~ /\.gz/);
 
   my $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $inputFile --outFile $outputFile";
 
