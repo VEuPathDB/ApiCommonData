@@ -28,12 +28,22 @@
    <step name="putUnalignedTranscriptsIntoOneCluster"
           stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
       <paramValue name="inputFile">$$dataDir$$/alignedClusters.out</paramValue>
-      <paramValue name="outputDir">$$dataDir$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
       <depends name="clusterTranscriptsByGenomeAlignment"/>
+    </step>
+
+    <step name="makeAssembliesSmallClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$/small</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="makeAssembliesBigClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+      <paramValue name="dataDir">$$dataDir$$/big</paramValue>
+      <depends name="makeDataDir"/>
     </step>
 
    <step name="assembleTranscripts"
@@ -61,7 +71,7 @@
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runRepeatMask</paramValue>
-      <paramValue name="cmdArgs">???</paramValue>
+      <paramValue name="cmdArgs">$$dataDir$$/assemblies.fsa</paramValue>
       <depends name="mirrorToCluster"/>
     </step>
 

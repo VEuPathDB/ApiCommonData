@@ -27,19 +27,20 @@
 
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <depends name="extractAssemblySeqs"/>
+      <depends name="makeDataDir"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
+      <depends name="makeAssemblySeqs"/>
     </step>
 
     <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
       <paramValue name="taskDir">$$dataDir$$</paramValue>
       <paramValue name="queue">apidb</paramValue>
       <paramValue name="cmdName">runRepeatMask</paramValue>
-      <paramValue name="cmdArgs">????</paramValue>
+      <paramValue name="cmdArgs">$$dataDir$$/assemblySeqs.fsa</paramValue>
       <depends name="mirrorToCluster"/>
     </step>
 

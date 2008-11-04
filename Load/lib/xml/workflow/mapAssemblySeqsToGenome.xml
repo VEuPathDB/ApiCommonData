@@ -13,11 +13,10 @@
 
     <step name="extractGenomicSeqsIntoSeparateFastaFiles"
           stepClass="ApiCommonData::Load::Steps::ExtractNaSeq">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="extDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="identifier">source_id</paramValue>
       <paramValue name="outputFile"></paramValue>
+      <paramValue name="alternateDefline"></paramValue>
       <paramValue name="separateFastaFiles">true</paramValue>
       <paramValue name="outputDirForSeparateFiles">$$genomicSeqsDir$$</paramValue>
       <depends name="makeDataDir"/>
@@ -53,7 +52,7 @@
     </step>
 
     <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
-      <paramValue name="xmlFile">$$PROJECT_HOME$$/ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
+      <paramValue name="xmlFileRelativeToProjectHomeDir">ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
     </step>
 

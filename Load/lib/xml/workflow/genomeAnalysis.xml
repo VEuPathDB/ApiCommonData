@@ -17,6 +17,7 @@
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
   <param name="nrdbExtDbRlsSpec"/>
+  <param name="organismTwoLetterAbbrev"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</constant>
@@ -92,25 +93,31 @@
     </step>
 
     <step name="loadOrfFile"
-          stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
-      <paramValue name="orfFile">$$dataDir$$/Orf50.gff</paramValue>
+          stepClass="ApiCommonData::Load::Steps::InsertOrfFile">
+      <paramValue name="inputFile">$$dataDir$$/Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="substepClass">ExternalNASequence</paramValue>
       <paramValue name="defaultOrg">$$organismName$$</paramValue>
       <depends name="makeOrfFile"/>
     </step>
 
+  <step name="makeTrfDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <paramValue name="dataDir">$$dataDir$$/trf</paramValue>
+      <depends name="makeDataDir"/>
+  </step>
+
     <step name="findTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/tandemRepeats.out</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/trf</paramValue>
       <depends name="extractGenomicSeqs"/>
+      <depends name="makeTrfDataDir"/>
     </step>
 
     <step name="loadTandemRepeats"
-          stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
-      <paramValue name="inputFile">$$dataDir$$/tandemRepeats.out</paramValue>
+          stepClass="ApiCommonData::Load::Steps::InsertTandemRepeats">
+      <paramValue name="inputFile">$$dataDir$$/trf/$$genomicSeqsFile$$.2.7.7.80.20.50.500.dat</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="makeOrfFile"/>
     </step>
@@ -121,7 +128,7 @@
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="outputFile">$$genomicSeqsFile$$.dust</paramValue>
       <paramValue name="filterType">dust</paramValue>
-      <paramValue name="options">-x</paramValue>
+      <paramValue name="options"></paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
 
@@ -148,7 +155,7 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="candSeqsDataDir">$$assemSeqsDataDir$$</paramValue>
+      <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
       <paramValue name="dataDir">$$mapAssemblySeqsDataDir$$</paramValue>
       <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
       <depends name="makeAndBlockAssemblySeqs"/>
@@ -160,8 +167,8 @@
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
-      <paramValue name="dataDir">$$dataDir$$/makeAssemblies</paramValue>
-      <paramValue name="candSeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
+      <paramValue name="dataDir">$$assembliesDataDir$$</paramValue>
+      <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
       <depends name="mapAssemblySeqsToGenome"/>
     </subgraph>
 
@@ -171,6 +178,7 @@
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="assembliesDataDir">$$assembliesDataDir$$</paramValue>
       <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
+      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <depends name="makeAndBlockAssemblies"/>
     </subgraph>
 

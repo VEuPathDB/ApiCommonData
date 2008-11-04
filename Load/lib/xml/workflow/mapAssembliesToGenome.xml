@@ -6,6 +6,7 @@
     <param name="ncbiTaxonId"/>
     <param name="assembliesDataDir"/>
     <param name="genomicSeqsDir"/>
+    <param name="organismTwoLetterAbbrev"/>
     
     <constant name ="dataDir">$$dataDir$$/mapAssemblies</constant>
 
@@ -41,7 +42,7 @@
       <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
+    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -57,7 +58,7 @@
       <depends name="mirrorFromCluster"/>
     </step>
 
-    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBLATAlignment">
+    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentncbiTaxonId$$</paramValue>
@@ -74,8 +75,9 @@
     </step>
 
    <step name="updateAssemblySourceId"
-          stepClass="ApiCommonData::Load::Steps::updateAssemblySourceId">
-      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+          stepClass="ApiCommonData::Load::Steps::UpdateAssemblySourceId">
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <depends name="setBestBlatAlignment"/>
     </step>
 </workflowGraph>
