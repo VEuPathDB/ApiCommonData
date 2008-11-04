@@ -133,6 +133,30 @@ if ($doUpdate) {
   $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
 }
 
+# indexes
+ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
+my $indexesConfigured;
+my $missingIndexes;
+foreach my $tuningIndex (@{$config->{tuningIndex}}) {
+
+  $indexesConfigured++;
+  my $indexObject =
+    ApiCommonData::Load::TuningConfig::TuningIndex->
+	new($tuningIndex->{name},
+	    $tuningIndex->{table},
+	    $tuningIndex->{content},
+	    $dbh);
+
+  if (!$indexObject->exists()) {
+    $missingIndexes++;
+    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
+
+    $indexObject->create($dbh)
+      if $doUpdate;
+  }
+}
+
+# tables
 my $tableCount = 0;
 my $brokenCount = 0;
 my $neededUpdateCount = 0;
@@ -164,29 +188,6 @@ foreach my $table (@tableList) {
     $upToDateCount++;
   } else {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
-  }
-}
-
-# indexes
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
-my $indexesConfigured;
-my $missingIndexes;
-foreach my $tuningIndex (@{$config->{tuningIndex}}) {
-
-  $indexesConfigured++;
-  my $indexObject =
-    ApiCommonData::Load::TuningConfig::TuningIndex->
-	new($tuningIndex->{name},
-	    $tuningIndex->{table},
-	    $tuningIndex->{content},
-	    $dbh);
-
-  if (!$indexObject->exists()) {
-    $missingIndexes++;
-    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
-
-    $indexObject->create($dbh)
-      if $doUpdate;
   }
 }
 
