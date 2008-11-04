@@ -66,14 +66,16 @@
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">$$soExtDbRlsSpec$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="calculateTranslatedProteins">$$calculateTranslatedProteins$$</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
     <depends name="makeDataDir"/>
   </subgraph>
 
@@ -83,7 +85,7 @@
     <paramValue name="webServiceBlastsDataDir">$$webServicesBlastDataDir$$</paramValue>
     <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
     <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</paramValue>
     <paramValue name="genomeVirtualSeqExtDbRlsSpec">$$genomeVirtualSeqExtDbRlsSpec$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="genomeSource">$$genomeSource$$</paramValue>

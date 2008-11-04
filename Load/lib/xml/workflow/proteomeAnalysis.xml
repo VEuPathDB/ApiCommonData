@@ -1,26 +1,24 @@
 <workflowGraph name="proteomeAnalysis">
   <param name="organismTwoLetterAbbrev"/>
   <param name="parentDataDir"/>
-  <param name="genomeExtDb"/>
-  <param name="genomeExtDbRls"/>
+  <param name="genomeExtDbRlsSpec"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
-  <param name="nrdbVersion"/>
+  <param name="nrdbExtDbRlsSpec"/>
   <param name="ncbiTaxonId"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>
   <param name="pdbFile"/>
   <param name="calculateTranslatedProteins"/>
+  <param name="soVersion"/>
 
   <constant name="dataDir">$$parentDataDir$$/proteome</constant>
-  <constant name="genomeExtDbRlsSpec">$$genomeExtDb$$:$$genomeExtDbRls$$</constant>
-  <constant name="nrdbExtDbRlsSpec">NRDB:$$nrdbVersion$$</constant>
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
 
     <step name="calcTranslatedProteins"
           stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="soExtDbRlsSpec">$$soExtDbRlsSpec$$</paramValue>
+      <paramValue name="soVersion">$$soVersion$$</paramValue>
     </step>
 
     <step name="molecularWeight"
