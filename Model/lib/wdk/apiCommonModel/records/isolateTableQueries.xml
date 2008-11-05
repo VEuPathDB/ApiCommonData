@@ -71,17 +71,25 @@
             <column name="source_id" />
             <column name="project_id" />
             <column name="definition" />
+            <column name="checkbox" />
+            <column name="strain" />
+            <column name="organism" />
             <sql>
             <![CDATA[
             SELECT distinct etn.source_id,
+                   '<input type=checkbox name=selectedFields value=\"' || etn.source_id || '\">' checkbox,
                    etn.description definition,
+                   src.organism organism,
+                   src.strain || src.isolate strain,
                    '@PROJECT_ID@' as project_id
             FROM   DoTS.ExternalNASequence etn,
+                   DoTS.IsolateSource src,
                    DoTS.NASequenceRef nasr,
                    SRES.Reference ref,
                    SRes.ExternalDatabaseRelease edr,
                    SRes.ExternalDatabase edb
-            WHERE  edr.external_database_id = edb.external_database_id
+            WHERE  src.na_sequence_id = etn.na_sequence_id
+               AND edr.external_database_id = edb.external_database_id
                AND edr.external_database_release_id = etn.external_database_release_id
                AND edb.name = 'Isolates Data'
                AND edr.version = '2007-12-12'
