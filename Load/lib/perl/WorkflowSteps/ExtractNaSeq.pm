@@ -53,7 +53,7 @@ sub run {
   
   if ($test) {
 
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo Hello > $outputFile");
 
   } else {
 
