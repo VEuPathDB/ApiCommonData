@@ -101,25 +101,19 @@
       <depends name="makeOrfFile"/>
     </step>
 
-  <step name="makeTrfDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dataDir">$$dataDir$$/trf</paramValue>
-      <depends name="makeDataDir"/>
-  </step>
-
     <step name="findTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
-      <paramValue name="outputDir">$$dataDir$$/trf</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <depends name="extractGenomicSeqs"/>
-      <depends name="makeTrfDataDir"/>
     </step>
 
     <step name="loadTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::InsertTandemRepeats">
-      <paramValue name="inputFile">$$dataDir$$/trf/$$genomicSeqsFile$$.2.7.7.80.20.50.500.dat</paramValue>
+      <paramValue name="inputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <depends name="makeOrfFile"/>
+      <depends name="findTandemRepeats"/>
     </step>
 
    <step name="runLowComplexityFilter"
