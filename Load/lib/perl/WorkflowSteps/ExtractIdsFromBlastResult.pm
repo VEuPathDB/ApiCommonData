@@ -21,7 +21,7 @@ sub run {
 
   if ($test) {
 
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo hello > $outputFile");
 
   } else {
 
@@ -41,10 +41,16 @@ sub undo {
 sub getConfigDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['idType', "", ""],
-     ['outputFile', "", ""],
-     ['inputFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['idType'],
+     ['outputFile'],
+     ['inputFile'],
     );
   return @properties;
 }

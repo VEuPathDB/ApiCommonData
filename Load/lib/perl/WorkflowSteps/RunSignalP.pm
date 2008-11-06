@@ -11,9 +11,9 @@ sub run {
 
   my $proteinsFile = $self->getParamValue('proteinsFile');
 
-  my $outputFile = $self->getConfig('outputFile');
+  my $outputFile = $self->getParamValue('outputFile');
 
-  my $options = $self->getConfig('options');
+  my $options = $self->getParamValue('options');
 
   my $binPath = $self->getConfig('path');
 
@@ -21,7 +21,7 @@ sub run {
 
   if ($test){
 
-      $self->runCmd(0,"test>$outputFile");
+      $self->runCmd(0,"echo hello >$outputFile");
 
   }else{
 
@@ -42,12 +42,20 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['proteinsFile', "", ""],
-     ['outputFile', "", ""],
-     ['options', "", ""],
+     ['binPath', "", ""],
     );
   return @properties;
 }
+
+sub getParamDeclaration {
+  my $properties =
+     ['proteinsFile'],
+     ['outputFile'],
+     ['options'],
+  return $properties;
+}
+
+
 
 sub getDocumentation {
 }

@@ -63,17 +63,25 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['targetTaxonId', "", ""],
-     ['queryTaxonId', "", ""],
-     ['targetExtDbRlsSpec', "", ""],
-     ['queryExtDbRlsSpec', "", ""],
-     ['regex', "", ""],
-     ['action', "", ""],
-     ['percentTop', "", ""],
-     ['blatFile', "", ""],
-     ['queryFile', "", ""],
-     ['targetTable', "", ""],
-     ['queryTable', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['targetTaxonId'],
+     ['queryTaxonId'],
+     ['targetExtDbRlsSpec'],
+     ['queryExtDbRlsSpec'],
+     ['regex'],
+     ['action'],
+     ['percentTop'],
+     ['blatFile'],
+     ['queryFile'],
+     ['targetTable'],
+     ['queryTable'],
     );
   return @properties;
 }

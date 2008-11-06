@@ -48,11 +48,18 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['inputFile', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
-     ['mask',"",""],
-     ['seqType',"",""],
-     ['options',"",""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['inputFile'],
+     ['genomeExtDbRlsSpec'],
+     ['mask'],
+     ['seqType'],
+     ['options'],
     );
   return @properties;
 }

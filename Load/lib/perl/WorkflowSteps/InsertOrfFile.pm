@@ -5,10 +5,6 @@ package ApiCommonData::Load::WorkflowSteps::InsertOrfFile;
 use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
-##to do
-##add orf2gusFile = $ENV{GUS_HOME}/config/orf2gus.xml to step prop file
-##add soCvsVersion = 2.3 to global prop file
-##add <constant name="Tbrucei">Trypanosoma brucei TREU927</constant>
 
 sub run {
   my ($self, $test) = @_;
@@ -70,10 +66,18 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['inputFile', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
-     ['substepClass', "", ""],
-     ['defaultOrg',"",""],
+     ['orf2gusFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['inputFile'],
+     ['genomeExtDbRlsSpec'],
+     ['substepClass'],
+     ['defaultOrg'],
     );
   return @properties;
 }

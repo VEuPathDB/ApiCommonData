@@ -44,9 +44,19 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['useTaxonHierarchy', "", ""],
-     ['predictedTranscriptsSql', "", ""],
+     ['vectorFile', "", ""],
+     ['phrapDir', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['parentNcbiTaxonId'],
+     ['useTaxonHierarchy'],
+     ['predictedTranscriptsSql'],
     );
   return @properties;
 }

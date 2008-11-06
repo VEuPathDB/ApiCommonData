@@ -5,13 +5,13 @@ package ApiCommonData::Load::Steps::WorkflowSteps::LoadBlastSimilarities;
 sub run {
   my ($self) = @_;
 
-  my $inputFile = $self->getParam('inputFile');
-  my $queryTable = $self->getParam('queryTable');
-  my $queryTableIdCol = $self->getParam('queryTableSrcIdCol');
-  my $queryExtDbRlsSpec = $self->getParam('queryExtDbRlsSpec');
-  my $subjectTable = $self->getParam('subjectTable');
-  my $subjectTableIdCol = $self->getParam('subjectTableSrcIdCol');
-  my $subjectExtDbRlsSpec = $self->getParam('subjectExtDbRlsSpec');
+  my $inputFile = $self->getParamValue('inputFile');
+  my $queryTable = $self->getParamValue('queryTable');
+  my $queryTableIdCol = $self->getParamValue('queryTableSrcIdCol');
+  my $queryExtDbRlsSpec = $self->getParamValue('queryExtDbRlsSpec');
+  my $subjectTable = $self->getParamValue('subjectTable');
+  my $subjectTableIdCol = $self->getParamValue('subjectTableSrcIdCol');
+  my $subjectExtDbRlsSpec = $self->getParamValue('subjectExtDbRlsSpec');
 
   my $queryColArg = "--queryTableSrcIdCol $queryTableSrcIdCol" if $queryTableSrcIdCol;
 

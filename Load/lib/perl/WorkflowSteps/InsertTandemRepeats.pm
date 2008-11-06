@@ -41,9 +41,16 @@ sub undo {
 sub getConfigDeclaration {
   my @properties = 
     (
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
      # [name, default, description]
-     ['inputFile', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
+     ['inputFile'],
+     ['genomeExtDbRlsSpec'],
     );
   return @properties;
 }

@@ -41,10 +41,17 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['outputFile', "", ""],
-     ['maxIntronSize', "", ""],
-     ['genomeExtDbRlsSpec', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['parentNcbiTaxonId'],
+     ['outputFile'],
+     ['maxIntronSize'],
+     ['genomeExtDbRlsSpec'],
     );
   return @properties;
 }

@@ -43,8 +43,15 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['genomeExtDbRlsSpec', "", ""],
-     ['table', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['genomeExtDbRlsSpec'],
+     ['table'],
     );
   return @properties;
 }

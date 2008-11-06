@@ -44,8 +44,8 @@ sub splitClusterFile{
   my $cmd = "splitClusterFile $inputFile";
 
   if ($test){
-      $self->runCmd(0,'test > $inputFile.small');
-      $self->runCmd(0,'test > $inputFile.big');
+      $self->runCmd(0,'echo hello > $inputFile.small');
+      $self->runCmd(0,'echo hello > $inputFile.big');
   }else{
       $self->runCmd($test,$cmd);      
   }
@@ -80,10 +80,18 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['outputDir', "", ""],
-     ['inputFile', "", ""],
-     ['ncbiTaxonId', "", ""],
-     ['reassemble', "", ""],
+     ['cap4Dir', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['outputDir'],
+     ['inputFile'],
+     ['ncbiTaxonId'],
+     ['reassemble'],
     );
   return @properties;
 }

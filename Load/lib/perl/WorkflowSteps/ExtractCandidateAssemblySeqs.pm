@@ -9,7 +9,6 @@ use GUS::Workflow::WorkflowStepInvoker;
 ## to do
 ## API $self->getTaxonId($ncbiTaxId) 
 ## API $self->getTaxonIdList($taxonId,$taxonHierarchy)
-## define genomeDataDir
 
 sub run {
   my ($self, $test) = @_;
@@ -38,9 +37,16 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['useTaxonHierarchy', "", ""],
-     ['outputFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['parentNcbiTaxonId'],
+     ['useTaxonHierarchy'],
+     ['outputFile'],
     );
   return @properties;
 }

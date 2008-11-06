@@ -15,11 +15,15 @@ sub run {
 
   $repeatFinderArgs =~ s/\s+/\./g;
 
-  my $outputDir = $self->getParamValue('outputDir');
+  my $outputFile = $self->getParamValue('outputFile');
 
   my $trfPath = $self->getConfig('trfPath');
 
   my $workingDir = $self->runCmd(0,'pwd');
+
+  my $outputDir = " $workingDir/temp";
+
+  $self->runCmd(0, "mkdir -p $outputDir") if ! -d $outputDir;
 
   $self->runCmd(0, "chdir $outputDir") if -d $outputDir;
 
@@ -27,11 +31,15 @@ sub run {
 
   if ($test) {
 
-      $self->runCmd(0,"test > $outputDir/$seqFile.$repeatFinderArgs.dat");
+      $self->runCmd(0,"echo hello > $outputFile");
 
   } else {
       
       $self->runCmd($test,$cmd); 
+
+      $self->runCmd($test,"mv $outputDir/$seqFile.$repeatFinderArgs.dat $outputFile"); 
+
+      $self->runCmd($test,"rm -fr $outputDir"); 
   }
   
   $self->runCmd(0, "chdir $workingDir");
@@ -49,9 +57,18 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['inputFile', "", ""],
-     ['repeatFinderArgs', "", ""],
-     ['outputDir',"",""],
+     ['trfPath', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['inputFile'],
+     ['repeatFinderArgs'],
+     ['outputFile'],
     );
   return @properties;
 }

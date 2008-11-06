@@ -22,7 +22,7 @@ orfFinder --dataset  $seqFile \\
 EOF
 
   if ($test) {
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo hello > $outputFile");
   } else {
       $self->runCmd($test,$cmd);
   }
@@ -41,9 +41,17 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['inputFile', "", ""],
-     ['minPepLength', "", ""],
-     ['outputFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['inputFile'],
+     ['minPepLength'],
+     ['outputFile'],
     );
   return @properties;
 }

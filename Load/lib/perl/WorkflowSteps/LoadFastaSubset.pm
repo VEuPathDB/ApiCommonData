@@ -45,13 +45,21 @@ sub undo {
 sub getConfigDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['idsFile', "", ""],
-     ['extDbRlsSpec', "", ""],
-     ['fastaFile', "", ""],
     );
   return @properties;
 }
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['idsFile'],
+     ['extDbRlsSpec'],
+     ['fastaFile'],
+    );
+  return @properties;
+}
+
 
 sub getDocumentation {
 }

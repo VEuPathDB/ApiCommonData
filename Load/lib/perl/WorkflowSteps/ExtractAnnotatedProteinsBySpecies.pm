@@ -38,7 +38,7 @@ sub run {
   
   if ($test) {
 
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo hello > $outputFile");
 
   } else {
 
@@ -59,9 +59,17 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['genomeExtDbRlsSpec', "", ""],
-     ['ncbiTaxonId', "", ""],
-     ['outputFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['genomeExtDbRlsSpec'],
+     ['ncbiTaxonId'],
+     ['outputFile'],
     );
   return @properties;
 }

@@ -31,8 +31,15 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['xmlFile', "", ""],
-     ['gusTable', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['xmlFile'],
+     ['gusTable'],
     );
   return @properties;
 }

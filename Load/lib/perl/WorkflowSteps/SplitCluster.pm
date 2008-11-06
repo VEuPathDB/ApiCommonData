@@ -13,8 +13,8 @@ sub run {
   my $cmd = "splitClusterFile $clusterFile";
 
   if ($test){
-      self->runCmd(0,'test > $clusterFile.small');
-      self->runCmd(0,'test > $clusterFile.big');
+      self->runCmd(0,'echo hello > $clusterFile.small');
+      self->runCmd(0,'echo hello > $clusterFile.big');
   }else{
       self->runCmd($test,$cmd);      
   }
@@ -33,9 +33,15 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['useTaxonHierarchy', "", ""],
-     ['predictedTranscriptsSql', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['inputFile'],
     );
   return @properties;
 }

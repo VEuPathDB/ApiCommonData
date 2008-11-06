@@ -22,7 +22,7 @@ sub run {
   my $filter = "$blastDir/filter/$filterType";
 
   if ($test) {
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo hello > $outputFile");
   } else {
       self->runCmd($test,"$filter $seqFile $options > $outputFile"); 
   }
@@ -39,10 +39,18 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['seqFile', "", ""],
-     ['outputFile', "", ""],
-     ['filterType', "", ""],
-     ['options',"",""],
+     ['wuBlastPath', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['seqFile'],
+     ['outputFile'],
+     ['filterType'],
+     ['options'],
     );
   return @properties;
 }

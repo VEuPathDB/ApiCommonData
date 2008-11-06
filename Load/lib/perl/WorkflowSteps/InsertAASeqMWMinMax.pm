@@ -42,9 +42,15 @@ sub undo {
 sub getConfigDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['genomeExtDbRlsSpec', "", ""],
-     ['table', "", ""],
+    );
+  return @properties;
+}
+
+sub getConfigDeclaration {
+  my @properties = 
+    (
+     ['genomeExtDbRlsSpec'],
+     ['table'],
     );
   return @properties;
 }

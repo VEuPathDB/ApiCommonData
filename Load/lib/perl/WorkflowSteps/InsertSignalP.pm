@@ -56,5 +56,13 @@ sub getConfigDeclaration {
   return @properties;
 }
 
+sub getParamDeclaration {
+  my $properties =
+     ['proteinsFile'],
+     ['outputFile'],
+     ['options'],
+  return $properties;
+}
+
 sub getDocumentation {
 }

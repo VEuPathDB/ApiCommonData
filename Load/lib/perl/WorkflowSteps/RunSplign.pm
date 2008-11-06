@@ -23,7 +23,7 @@ sub run {
 
   if ($test) {
 
-      $self->runCmd(0,"test > $outputFile");
+      $self->runCmd(0,"echo hello > $outputFile");
 
   } else {
 
@@ -52,12 +52,21 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['queryFile', "", ""],
-     ['subjectFile', "", ""],
-     ['outputFile', "", ""],
-     ['splignDir', "", ""],
      ['splignPath', "", ""],
      ['ncbiBlastPath', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['queryFile'],
+     ['subjectFile'],
+     ['outputFile'],
+     ['splignDir'],
+     ['splignPath'],
+     ['ncbiBlastPath'],
     );
   return @properties;
 }

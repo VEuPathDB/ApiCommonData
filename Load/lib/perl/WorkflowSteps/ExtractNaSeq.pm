@@ -45,21 +45,24 @@ sub run {
   if ($separateFastaFiles) {
 
       $cmd="gusExtractIndividualSequences --outputDir $outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
+      
+      if ($test) {
+
+           $self->runCmd(0,"mkdir -p $outputDirForSeparateFiles");} else{
+
+           $self->runCmd($test,$cmd); }
 
   } else {
 
       $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
+      if ($test) {
+
+           $self->runCmd(0,"echo Hello > $outputFile");} else{
+
+           $self->runCmd($test,$cmd); }
   }
   
-  if ($test) {
-
-      $self->runCmd(0,"echo Hello > $outputFile");
-
-  } else {
-
-      $self->runCmd($test,$cmd);
-
-  }
+ 
 
 }
 
@@ -74,14 +77,19 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['table', "", ""],
-     ['extDbRlsSpec', "", ""],
-     ['alternateDefline', "", ""],
-     ['separateFastaFiles', "", ""],
-     ['outputFile', "", ""],
-     ['outputDirForSeparateFiles', "", ""],
     );
   return @properties;
+}
+
+sub getParamDeclaration {
+  my $properties =
+     ['table'],
+     ['extDbRlsSpec'],
+     ['alternateDefline'],
+     ['separateFastaFiles'],
+     ['outputFile'],
+     ['outputDirForSeparateFiles'],
+  return $properties;
 }
 
 sub getDocumentation {

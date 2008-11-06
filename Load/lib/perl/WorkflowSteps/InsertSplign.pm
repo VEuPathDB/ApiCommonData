@@ -36,12 +36,18 @@ sub undo {
 sub getConfigDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['queryExtDbRlsSpecc', "", ""],
-     ['subjectExtDbRlsSpec', "", ""],
-     ['inputFile', "", ""],
-     ['queryTable', "", ""],
-     ['subjectTable', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['queryExtDbRlsSpecc'],
+     ['subjectExtDbRlsSpec'],
+     ['inputFile'],
+     ['queryTable'],
+     ['subjectTable'],
     );
   return @properties;
 }

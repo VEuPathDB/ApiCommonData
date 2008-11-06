@@ -31,7 +31,7 @@ sub run {
 
   if ($test) {
 
-      $self->runCmd(0,"test > $filteredOutputFile");
+      $self->runCmd(0,"echo hello > $filteredOutputFile");
 
   } else {
 
@@ -52,11 +52,19 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['taxonHierarchy', "", ""],
-     ['gi2taxidFileRelativeToDownloadDir', "", ""],
-     ['inputFile', "", ""],
-     ['unfilteredOutputFile', "", ""],
-     ['filteredOutputFile', "", ""],
+     ['downloadDir', "", ""],
+    );
+  return @properties;
+}
+
+sub getConfigDeclaration {
+  my @properties = 
+    (
+     ['taxonHierarchy'],
+     ['gi2taxidFileRelativeToDownloadDir'],
+     ['inputFile'],
+     ['unfilteredOutputFile'],
+     ['filteredOutputFile'],
     );
   return @properties;
 }

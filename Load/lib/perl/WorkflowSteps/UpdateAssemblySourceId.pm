@@ -36,5 +36,14 @@ sub getConfigDeclaration {
   return @properties;
 }
 
+sub getParamDeclaration {
+  my @properties = 
+    (
+     ['ncbiTaxonId'],
+     ['organismTwoLetterAbbrev'],
+    );
+  return @properties;
+}
+
 sub getDocumentation {
 }

@@ -38,9 +38,17 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['parentNcbiTaxonId', "", ""],
-     ['useTaxonHierarchy', "", ""],
-     ['outputFile', "", ""],
+    );
+  return @properties;
+}
+
+sub getConfigDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['parentNcbiTaxonId'],
+     ['useTaxonHierarchy'],
+     ['outputFile'],
     );
   return @properties;
 }
