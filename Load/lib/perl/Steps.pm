@@ -139,6 +139,21 @@ sub initCryptoAnalysis {
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+
+sub initTrypAnalysis{
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Tbrucei,Tcruzi,Lbraziliensis,Linfantum,Lmajor';
+
+  my $taxId = ["Cparvum:5807","Chominis:353151","Cmuris:5808"];
+
+  my $taxId = ["Tbrucei:185431","Tcruzi:353153","Lbraziliensis:420245","Linfantum:435258","Lmajor:347515"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
 sub UpdateGusTableWithXml {
   my ($mgr,$file,$table) = @_;
   my $signal = "Load${table}WithXml";
@@ -1184,7 +1199,7 @@ sub extractNaSeq {
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  my $sql = my $sql = "select x.$identifier, x.description,
+  my $sql = "select x.$identifier, x.description,
             'length='||x.length,x.sequence
              from dots.$table x
              where x.external_database_release_id = $dbRlsId";
@@ -2668,7 +2683,7 @@ sub extractNaSeqAltDefLine {
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  my $sql = my $sql = "select $defLine,sequence
+  my $sql = "select $defLine,sequence
              from dots.$table
              where external_database_release_id = $dbRlsId";
 
