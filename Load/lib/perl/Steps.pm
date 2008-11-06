@@ -1789,7 +1789,7 @@ sub makeAnnotatedProteinDownloadFileForncbiBlast {
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
   
-  my $signal = "${name}DownloadFile";
+  my $signal = "${name}NcbiBlastDownloadFile";
 
   return if $mgr->startStep("Extracting $name sequences from GUS", $signal);
 
@@ -6280,7 +6280,7 @@ sub getNotAlignedEstAndAddOneCluster {
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
-  my $sqlEST = "select distinct e.na_sequence_id from dots.ExternalNASequence e, sres.sequenceontology s where e.taxon_id in($taxonIdList) and s.term_name in ('EST') and e.sequence_ontology_id = s.sequence_ontology_id";
+  my $sqlEST = "select distinct e.na_sequence_id from dots.ExternalNASequence e, sres.sequenceontology s where e.taxon_id in($taxonIdList) and s.term_name in ('EST','mRNA') and e.sequence_ontology_id = s.sequence_ontology_id";
 
   my $sqlBLAT = "select distinct query_na_sequence_id from dots.blatalignment where target_taxon_id=$targetTaxonId and is_best_alignment=1 and query_na_sequence_id=?";
 
