@@ -819,6 +819,9 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <intermediateTable name="apidb.DerisiExpn"/>
     <intermediateTable name="apidb.WinzelerExpn"/>
     <intermediateTable name="apidb.ToxoExpn"/>
+    <intermediateTable name="apidb.ProteinTransmembrane"/>
+    <intermediateTable name="apidb.ProteinEc"/>
+    <intermediateTable name="apidb.ProteinSignalp"/>
     <intermediateTable name="apidb.GeneProteinAttributes"/>
     <sql>
       <![CDATA[
@@ -1011,6 +1014,48 @@ CREATE INDEX apidb.Toxo_sourceId ON apidb.ToxoExpn (source_id)
     </sql>
     <sql>
       <![CDATA[
+CREATE TABLE apidb.ProteinTransmembrane NOLOGGING AS
+             SELECT aa_sequence_id, max(tm_domains) AS tm_domains
+             FROM (SELECT tmaf.aa_sequence_id, COUNT(*) AS tm_domains
+                   FROM dots.TransmembraneAaFeature tmaf, dots.AaLocation al
+                   WHERE tmaf.aa_feature_id = al.aa_feature_id
+                   GROUP BY tmaf.aa_sequence_id) tms
+             GROUP BY tms.aa_sequence_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.ProteinEc NOLOGGING AS
+             SELECT aa_sequence_id,
+                    SUBSTR(apidb.tab_to_string(CAST(COLLECT(ec_number)
+                                               AS apidb.varchartab), '; '),
+                           1, 300)
+                      AS ec_numbers
+             FROM (SELECT DISTINCT asec.aa_sequence_id,
+                          ec.ec_number || ' (' || ec.description || ')' AS ec_number
+                   FROM dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
+                   WHERE ec.enzyme_class_id = asec.enzyme_class_id)
+             GROUP BY aa_sequence_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.ProteinSignalp NOLOGGING AS
+              SELECT spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
+              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2) as scores,
+               apidb.tab_to_string(CAST(COLLECT(decode(spf.algorithm_name,'SignalPhmm','HMM: ','NN: ') || dbms_lob.substr(s.sequence,aal.end_max,1)) AS apidb.varchartab), ', ') as pep
+              FROM dots.signalpeptidefeature spf, dots.aalocation aal,dots.AASEQUENCE s
+              WHERE spf.aa_sequence_id = s.aa_sequence_id 
+              and  aal.aa_feature_id = spf.aa_feature_id
+              and (spf.signal_probability >= .5
+              or ((spf.means_score + spf.maxy_score) / 2) >= .5
+              or ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3)
+              group by spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
+              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
 CREATE TABLE apidb.GeneProteinAttributes NOLOGGING AS
 SELECT gene.source_id,
        protein.tm_count, protein.molecular_weight,
@@ -1036,33 +1081,9 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
             dots.TranslatedAaFeature taf,
             dots.TranslatedAaSequence tas,
             apidb.AaSequenceAttribute asa,
-            (SELECT aa_sequence_id, max(tm_domains) AS tm_domains
-             FROM (SELECT tmaf.aa_sequence_id, COUNT(*) AS tm_domains
-                   FROM dots.TransmembraneAaFeature tmaf, dots.AaLocation al
-                   WHERE tmaf.aa_feature_id = al.aa_feature_id
-                   GROUP BY tmaf.aa_sequence_id) tms
-             GROUP BY tms.aa_sequence_id) transmembrane,
-            (SELECT aa_sequence_id,
-                    SUBSTR(apidb.tab_to_string(CAST(COLLECT(ec_number)
-                                               AS apidb.varchartab), '; '),
-                           1, 300)
-                      AS ec_numbers
-             FROM (SELECT DISTINCT asec.aa_sequence_id,
-                          ec.ec_number || ' (' || ec.description || ')' AS ec_number
-                   FROM dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-                   WHERE ec.enzyme_class_id = asec.enzyme_class_id)
-             GROUP BY aa_sequence_id) ec,
-             (SELECT spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
-              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2) as scores,
-               apidb.tab_to_string(CAST(COLLECT(decode(spf.algorithm_name,'SignalPhmm','HMM: ','NN: ') || dbms_lob.substr(s.sequence,aal.end_max,1)) AS apidb.varchartab), ', ') as pep
-              FROM dots.signalpeptidefeature spf, dots.aalocation aal,dots.AASEQUENCE s
-              WHERE spf.aa_sequence_id = s.aa_sequence_id 
-              and  aal.aa_feature_id = spf.aa_feature_id
-              and (spf.signal_probability >= .5
-              or ((spf.means_score + spf.maxy_score) / 2) >= .5
-              or ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) >= 3)
-              group by spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
-              ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2)) sigp
+            apidb.ProteinTransmembrane transmembrane,
+            apidb.ProteinEc ec,
+            apidb.ProteinSignalp sigp
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_feature_id = taf.na_feature_id
         AND taf.aa_sequence_id = tas.aa_sequence_id
