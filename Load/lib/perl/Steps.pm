@@ -413,7 +413,7 @@ sub createSimilarityDir {
   my $nodeClass = $propertySet->getProp('nodeClass');
   my $bsTaskSize = $propertySet->getProp('blastsimilarity.taskSize');
   my $blastBinPathCluster = $propertySet->getProp('wuBlastBinPathCluster');
-  my $blastBinPathCluster = $propertySet->getProp('ncbiBlastBinPathCluster') if ($vendor eq 'ncbi');
+  $blastBinPathCluster = $propertySet->getProp('ncbiBlastBinPathCluster') if ($vendor eq 'ncbi');
 
   &makeSimilarityDir($queryFile, $subjectFile, $dataDir, $clusterDataDir,
 		     $nodePath, $bsTaskSize,
