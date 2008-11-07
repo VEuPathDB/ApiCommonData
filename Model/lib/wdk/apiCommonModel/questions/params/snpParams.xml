@@ -4,7 +4,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <datasetParam name="snp_id" excludeProjects="ApiDB"
+        <datasetParam name="snp_id"
                      prompt="SNP ID input set">
             <help>Input a comma delimited set of SNP ids, or upload a file</help>
             <suggest  includeProjects="PlasmoDB"
@@ -15,8 +15,12 @@
                 sample="SNP_Ia_17864, SNP_Ia_130295"/>
             <suggest includeProjects="CryptoDB"
                 default="chr3-2_66329"/>
-	</datasetParam>
+ <suggest  includeProjects="ApiDB" 
+               default="CombinedSNP.MAL11.3000,SNP_Ia_17864,chr3-2_66329"
+               sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
 
+	</datasetParam>
+<!--
         <stringParam name="snp_id"  includeProjects="ApiDB"
                      prompt="SNP ID"
                      substitute="yes">
@@ -25,7 +29,7 @@
                default="CombinedSNP.MAL11.3000"
                sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
         </stringParam>
-
+-->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- alleles -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->

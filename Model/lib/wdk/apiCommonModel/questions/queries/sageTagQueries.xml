@@ -179,7 +179,7 @@
        <paramRef ref="sageTagParams.single_gene_id"/>
        <paramRef ref="geneParams.st_max_five_prime_distance"/>
        <paramRef ref="geneParams.st_max_three_prime_distance"/>
-
+      
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
    </processQuery> 
@@ -204,7 +204,7 @@
  <processQuery name="ByRadSourceId" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sageTagParams.rad_source_id"/>
-
+       <paramRef ref="sharedParams.signature" quote="false"/>
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
    </processQuery> 

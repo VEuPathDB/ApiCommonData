@@ -11,7 +11,7 @@
       <!-- EST ID  -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <datasetParam name="est_id" excludeProjects="ApiDB"
+        <datasetParam name="est_id"
                      prompt="EST ID input set">
             <help>Input a comma delimited set of EST ids, or upload a file</help>
             <suggest includeProjects="PlasmoDB"
@@ -29,8 +29,12 @@
             <suggest includeProjects="CryptoDB"
                sample="AA420947, AA224667"
                default="AA420947"/>
-      </datasetParam>
+ <suggest  includeProjects="ApiDB"
+               sample="AU087658, N98084,AA009308, AA011973"
+               default="AU087658,AA009308,EV500870,AA420947,CV202103"/>
 
+      </datasetParam>
+<!--
       <stringParam name="est_id" includeProjects="ApiDB"
                      prompt="EST ID"
                      substitute="yes">
@@ -39,7 +43,7 @@
                sample="AU087658, N98084,AA009308, AA011973"
                default="AU087658"/>
       </stringParam>
-
+-->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Blast database type  -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

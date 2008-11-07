@@ -23,6 +23,7 @@
               isCacheable="true" 
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
           <paramRef ref="snpParams.snp_id"/>
+          <paramRef ref="sharedParams.signature" quote="false"/>
 	  <wsColumn name="source_id" width="50" wsName="source_id"/>
           <wsColumn name="project_id" width="32" wsName="project_id"/>
       </processQuery>
@@ -111,10 +112,10 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <processQuery name="SnpsByGeneId" includeProjects="ApiDB" 
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sharedParams.ds_gene_ids"  default="cgd3_510"/>
-        <paramRef ref="sharedParams.snp_strain_a" default="Cp-IOWA II"/>
-        <paramRef ref="sharedParams.snp_strain_m" default="Cp-TU114"/>
-        <paramRef ref="sharedParams.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids"  default="cgd3_510" quote="false"/>
+        <paramRef ref="sharedParams.snp_strain_a" default="Cp-IOWA II" quote="false"/>
+        <paramRef ref="sharedParams.snp_strain_m" default="Cp-TU114" quote="false"/>
+        <paramRef ref="sharedParams.signature" quote="false"/>
         <wsColumn name="source_id"  width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="snp_location" width="32"/>
