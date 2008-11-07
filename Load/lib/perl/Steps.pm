@@ -145,8 +145,6 @@ sub initTrypAnalysis{
 
   my $allSpecies = 'Tbrucei,Tcruzi,Lbraziliensis,Linfantum,Lmajor';
 
-  my $taxId = ["Cparvum:5807","Chominis:353151","Cmuris:5808"];
-
   my $taxId = ["Tbrucei:185431","Tcruzi:353153","Lbraziliensis:420245","Linfantum:435258","Lmajor:347515"];
 
   my ($mgr, $projectDir, $release)
