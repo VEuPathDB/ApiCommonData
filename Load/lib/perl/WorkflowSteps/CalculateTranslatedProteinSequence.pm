@@ -11,31 +11,13 @@ sub run {
 
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
 
-  my ($extDbName, $extDbRlsVer);
-
-  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
-
-      $extDbName = $1;
-
-      $extDbRlsVer = $2
-
-    } else {
-
-      die "Database specifier '$extDbRlsSpec' is not in 'name|version' format";
-  }
+  my ($extDbName, $extDbRlsVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
 
   my $soVersion = $self->getParamValue('soVersion');
 
   my $args = "--sqlVerbose --extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --soCvsVersion $soVersion";
 
-  $self->runPlugin("GUS::Supported::Plugin::CalculateTranslatedAASequences",$args);
-
-}
-
-sub restart {
-}
-
-sub undo {
+  $self->runPlugin($test, "GUS::Supported::Plugin::CalculateTranslatedAASequences", $args);
 
 }
 
@@ -47,14 +29,22 @@ sub getConfigDeclaration {
   return @properties;
 }
 
-sub getConfigDeclaration {
+sub getParamDeclaration {
   my @properties = 
     (
-     ['genomeExtDbRlsSpec'],
-     ['soVersion'],
+     ['genomeExtDbRlsSpec',
+      'soVersion'],
     );
   return @properties;
 }
 
 sub getDocumentation {
 }
+
+sub restart {
+}
+
+sub undo {
+
+}
+
