@@ -5,10 +5,6 @@ package ApiCommonData::Load::WorkflowSteps::ExtractNaSeq;
 use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
-
-## to do
-## API $self->getExtDbRlsId($genomeExtDbRlsSpec)
-
 sub run {
   my ($self, $test) = @_;
 
@@ -83,12 +79,13 @@ sub getConfigDeclaration {
 
 sub getParamDeclaration {
   my $properties =
-     ['table'],
-     ['extDbRlsSpec'],
-     ['alternateDefline'],
-     ['separateFastaFiles'],
-     ['outputFile'],
-     ['outputDirForSeparateFiles'],
+     ['table',
+      'extDbRlsSpec',
+      'alternateDefline',
+      'separateFastaFiles',
+      'outputFile',
+      'outputDirForSeparateFiles',
+     ]
   return $properties;
 }
 

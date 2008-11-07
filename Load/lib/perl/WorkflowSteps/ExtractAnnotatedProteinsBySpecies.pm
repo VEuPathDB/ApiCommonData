@@ -6,16 +6,11 @@ use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
 
-## to do
-## API $self->getExtDbRlsId($genomeExtDbRlsSpec)
-
 sub run {
   my ($self, $test) = @_;
 
   my $genomeDbRlsId = $self->getExtDbRlsId($self->getParamValue('genomeExtDbRlsSpec'));
-
   my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxonId'));
-
   my $outputFile = $self->getParamValue('outputFile');
 
   my $sql = "SELECT tx.source_id,g.product,
@@ -66,10 +61,10 @@ sub getConfigDeclaration {
 sub getParamDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['genomeExtDbRlsSpec'],
-     ['ncbiTaxonId'],
-     ['outputFile'],
+     ['genomeExtDbRlsSpec',
+      'ncbiTaxonId',
+      'outputFile',
+     ]
     );
   return @properties;
 }

@@ -5,12 +5,6 @@ package ApiCommonData::Load::WorkflowSteps::ExtractAssemblySeqs;
 use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
-
-## to do
-## API $self->getTaxonId($ncbiTaxId) 
-## API $self->getTaxonIdList($taxonId,$taxonHierarchy)
-
-
 sub run {
   my ($self, $test) = @_;
 
@@ -22,7 +16,7 @@ sub run {
 
   my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
 
-  self->runPlugin( "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
+  self->runPlugin( $test, "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
 
 }
 
@@ -42,13 +36,13 @@ sub getConfigDeclaration {
   return @properties;
 }
 
-sub getConfigDeclaration {
+sub getParamDeclaration {
   my @properties = 
     (
-     # [name, default, description]
-     ['parentNcbiTaxonId'],
-     ['useTaxonHierarchy'],
-     ['outputFile'],
+     ['parentNcbiTaxonId',
+      'useTaxonHierarchy',
+      'outputFile',
+     ]
     );
   return @properties;
 }

@@ -60,11 +60,12 @@ sub getConfigDeclaration {
 sub getConfigDeclaration {
   my @properties = 
     (
-     ['taxonHierarchy'],
-     ['gi2taxidFileRelativeToDownloadDir'],
-     ['inputFile'],
-     ['unfilteredOutputFile'],
-     ['filteredOutputFile'],
+     ['taxonHierarchy',
+      'gi2taxidFileRelativeToDownloadDir',
+      'inputFile',
+      'unfilteredOutputFile',
+      'filteredOutputFile',
+     ]
     );
   return @properties;
 }

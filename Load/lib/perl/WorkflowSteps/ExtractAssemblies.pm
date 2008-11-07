@@ -5,10 +5,6 @@ package ApiCommonData::Load::WorkflowSteps::ExtractAssemblies;
 use strict;
 use GUS::Workflow::WorkflowStepInvoker;
 
-
-## to do
-## API $self->getTaxonId($ncbiTaxId) 
-
 sub run {
   my ($self, $test) = @_;
 
@@ -47,8 +43,9 @@ sub getConfigDeclaration {
 sub getParamDeclaration {
   my @properties = 
     (
-     ['ncbiTaxonId'],
-     ['outputFile'],
+     ['ncbiTaxonId',
+      'outputFile',
+     ]
     );
   return @properties;
 }

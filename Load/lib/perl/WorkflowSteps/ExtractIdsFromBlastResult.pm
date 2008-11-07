@@ -48,9 +48,10 @@ sub getConfigDeclaration {
 sub getParamDeclaration {
   my @properties = 
     (
-     ['idType'],
-     ['outputFile'],
-     ['inputFile'],
+     ['idType',
+      'outputFile',
+      'inputFile',
+     ]
     );
   return @properties;
 }
