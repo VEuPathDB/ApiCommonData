@@ -151,8 +151,8 @@
 
     <processQuery name="GeneByLocusTag" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sharedParams.ds_gene_ids"/>
-        <paramRef ref="sharedParams.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids" quote="false"/>
+        <paramRef ref="sharedParams.signature"  quote="false"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
      </processQuery>
@@ -211,7 +211,7 @@
 
     <processQuery name="GeneBySingleLocusTag" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.single_gene_id"/>
+        <paramRef ref="geneParams.single_gene_id" quote="false"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
      </processQuery>
@@ -249,7 +249,7 @@
              isCacheable='true' includeProjects="ApiDB"
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
-        <paramRef ref="geneParams.ec_number_pattern"/>
+        <paramRef ref="geneParams.ec_number_pattern" quote="false"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
     </processQuery>
@@ -484,10 +484,10 @@
     <processQuery name="GenesByTextSearch" includeProjects="ApiDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.text_search_organism"/>
-            <paramRef ref="geneParams.text_fields"/>
-            <paramRef ref="geneParams.text_expression"/>
-            <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
-            <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
+            <paramRef ref="geneParams.text_fields" quote="false"/>
+            <paramRef ref="geneParams.text_expression" quote="false"/>
+            <paramRef ref="geneParams.max_pvalue"  quote="false" groupRef="paramGroups.advancedParams"/>
+            <paramRef ref="geneParams.whole_words" quote="false" groupRef="paramGroups.advancedParams"/>
             <wsColumn name="project_id" width="32" wsName="project_id"/>
             <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="text_fields" width="64"/>
@@ -608,7 +608,7 @@ sns2.external_database_release_id=extr.external_database_release_id
 	<processQuery name="GenesByGoTerm" includeProjects="ApiDB" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-	              <paramRef ref="geneParams.go_term"/>
+	              <paramRef ref="geneParams.go_term" quote="false"/>
 	              <wsColumn name="project_id" width="32" wsName="project_id"/>
 	              <wsColumn name="source_id" width="32" wsName="source_id"/>
     </processQuery>
@@ -656,7 +656,10 @@ sns2.external_database_release_id=extr.external_database_release_id
 	<processQuery name="GenesWithSignalPeptide" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-	    <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams" />
+	    <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.min_sigp_d_score" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.min_sigp_signal_probability" groupRef="paramGroups.advancedParams" />
+        <paramRef ref="geneParams.any_or_all_sigp" groupRef="paramGroups.advancedParams" quote="false"/>
 	    <wsColumn name="source_id" width="32" wsName="source_id"/>
 	    <wsColumn name="project_id" width="32" wsName="project_id"/>
 	    <wsColumn name="sigp_sum_score" width="32" wsName="sigp_sum_score"/>
@@ -699,7 +702,7 @@ sns2.external_database_release_id=extr.external_database_release_id
                    includeProjects="ApiDB"
                    isCacheable="true" 
                    processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg"/>	  
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg" quote="false"/>	  
                 <paramRef ref="geneParams.min_isoelectric_point"/>
 	        <paramRef ref="geneParams.max_isoelectric_point"/>
                 <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -848,12 +851,12 @@ sns2.external_database_release_id=extr.external_database_release_id
     <processQuery name="GenesByOrthologPattern" includeProjects="ApiDB"
              isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                    <paramRef ref="geneParams.profile_pattern"/>
-                    <paramRef ref="geneParams.included_species"/>
-                    <paramRef ref="geneParams.excluded_species"/>
-                    <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-                    <paramRef ref="geneParams.phyletic_indent_map"/>
-                    <paramRef ref="geneParams.phyletic_term_map"/>
+                    <paramRef ref="geneParams.profile_pattern" quote="false"/>
+                    <paramRef ref="geneParams.included_species"  quote="false"/>
+                    <paramRef ref="geneParams.excluded_species"  quote="false"/>
+                    <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"  quote="false"/>
+                    <paramRef ref="geneParams.phyletic_indent_map"  quote="false"/>
+                    <paramRef ref="geneParams.phyletic_term_map"  quote="false"/>
                     <wsColumn name="source_id" width="32" wsName="source_id"/>
                     <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -914,7 +917,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	<processQuery name="GenesByMetabolicPathway" includeProjects="ApiDB"
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
-	        <paramRef ref="geneParams.metabolic_pathway"/>
+	        <paramRef ref="geneParams.metabolic_pathway" quote="false"/>
 	        <wsColumn name="source_id" width="32" wsName="source_id"/>
 	        <wsColumn name="project_id" width="32" wsName="project_id"/>
 	        <wsColumn name="met_pathways" width="1000" wsName="met_pathways"/>
@@ -1005,7 +1008,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesWithEpitopes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
            isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <paramRef ref="geneParams.epitope_confidence"/>
+        <paramRef ref="geneParams.epitope_confidence" quote="false"/>
         <wsColumn name="source_id" />
         <wsColumn name="project_id"/>
         <wsColumn name="confidence" />
@@ -1743,8 +1746,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	 <processQuery name="GenesByInterproDomain" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-	              <paramRef ref="geneParams.domain_database"/>
-	              <paramRef ref="geneParams.domain_accession"/>
+	              <paramRef ref="geneParams.domain_database" quote="false"/>
+	              <paramRef ref="geneParams.domain_accession"  quote="false"/>
 	              <wsColumn name="e_value" width="12" columnType="float"/>
 	              <wsColumn name="project_id" width="32" wsName="project_id"/>
 	              <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -1792,7 +1795,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	 <processQuery name="GenesBySageTag" includeProjects="ApiDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="ApiDB"/> 
-                <paramRef ref="geneParams.sage_tag_library"/>
+                <paramRef ref="geneParams.sage_tag_library" quote="false"/>
                 <paramRef ref="geneParams.st_max_five_prime_distance"/>
                 <paramRef ref="geneParams.st_max_three_prime_distance"/>
                 <paramRef ref="geneParams.st_min_tag_count"/>
@@ -1871,7 +1874,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl"/> 
-        <paramRef ref="geneParams.sage_tag_library_name"/>
+        <paramRef ref="geneParams.sage_tag_library_name" quote="false"/>
         <paramRef ref="geneParams.sage_tag_min_r"/>
         <paramRef ref="geneParams.st_max_five_prime_distance"/>
         <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -2103,10 +2106,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                         isCacheable="true" 
                         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.single_gene_id" default="PFL0275w"/>
+        <paramRef ref="geneParams.single_gene_id" default="PFL0275w"  quote="false"/>
         <paramRef ref="geneParams.min_searches"/>
         <paramRef ref="geneParams.min_observed"/>
-        <paramRef ref="geneParams.bait_or_prey"/>
+        <paramRef ref="geneParams.bait_or_prey" quote="false"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="gene_source_id" width="32" wsName="gene_source_id"/>
@@ -2284,10 +2287,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByPhyleticProfile" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sharedParams.ds_gene_ids" default="PY03942"/>
- <paramRef ref="sharedParams.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids" default="PY03942" quote="false"/>
+ <paramRef ref="sharedParams.signature"  quote="false"/>
         <paramRef ref="geneParams.min_mutual_information_score"/>
-        <paramRef ref="geneParams.include_only_queries"/>
+        <paramRef ref="geneParams.include_only_queries"  quote="false"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -2355,10 +2358,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByFunctionalInteraction" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344"/>
-<paramRef ref="sharedParams.signature"/>
+        <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344" quote="false"/>
+<paramRef ref="sharedParams.signature"  quote="false"/>
         <paramRef ref="geneParams.min_interaction"/>
-        <paramRef ref="geneParams.include_only_queries"/>
+        <paramRef ref="geneParams.include_only_queries"  quote="false"/>
         <paramRef ref="geneParams.min_num_query_matches"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -3040,7 +3043,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesBySubcellularLocalization" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
  <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.localization"/>
+        <paramRef ref="geneParams.localization" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -3150,7 +3153,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByMr4Reagents" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.mr4_reagent_type"/>
+        <paramRef ref="geneParams.mr4_reagent_type" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -3220,8 +3223,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByCentromereProximity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.max_centromere_distance"/>
-        <paramRef ref="sharedParams.chromosome"/>
+        <paramRef ref="geneParams.max_centromere_distance"  quote="false"/>
+        <paramRef ref="sharedParams.chromosome" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="dist_centromere"/>
@@ -3256,8 +3259,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByTelomereProximity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.distanceFromTelomere"/>
-        <paramRef ref="sharedParams.chromosome"/>
+        <paramRef ref="geneParams.distanceFromTelomere"  quote="false"/>
+        <paramRef ref="sharedParams.chromosome"  quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="dist_telomere"/>
@@ -3290,9 +3293,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByNonnuclearGenomicRegion" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
-        <paramRef ref="geneParams.nonnuclearSequence"/>
-        <paramRef ref="sharedParams.start_point"/>
-        <paramRef ref="sharedParams.end_point"/>
+        <paramRef ref="geneParams.nonnuclearSequence"  quote="false"/>
+        <paramRef ref="sharedParams.start_point"  quote="false"/>
+        <paramRef ref="sharedParams.end_point"  quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -3381,7 +3384,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByPdbSimilarity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes"/>
-        <paramRef ref="geneParams.clades"/>
+        <paramRef ref="geneParams.clades" quote="false"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
