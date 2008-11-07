@@ -28,7 +28,11 @@
 
         <sqlQuery name="SequencePieces"
                isCacheable="false">
-            <testParamValues minRows="0" includeProjects="ToxoDB,TrichDB,GiardiaDB,CryptoDB"/>
+
+            <testParamValues minRows="0" includeProjects="TrichDB,CryptoDB"/>
+            <testParamValues includeProjects="PlasmoDB">
+                <paramValue name="source_id">CM000442</paramValue>
+            </testParamValues>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
