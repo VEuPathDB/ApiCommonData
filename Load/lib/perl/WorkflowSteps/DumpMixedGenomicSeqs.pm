@@ -13,9 +13,7 @@ sub run {
   my ($self, $test) = @_;
 
   my $outputFile = $self->getParamValue('outputFile');
-
   my $genomDbRlsId = $self->getExtDbRlsId($self->getParamValue('genomeExtDbRlsSpecc'));
- 
   my $virtualDbRlsId = $self->getExtDbRlsId($self->getParamValue('genomeVirtualSeqsExtDbRlsSpec'));
 
   my $sql = "SELECT source_id, sequence from Dots.VIRTUALSEQUENCE
@@ -58,9 +56,10 @@ sub getConfigDeclaration {
   my @properties = 
     (
      # [name, default, description]
-     ['outputFile'],
-     ['genomeExtDbRlsSpecc'],
-     ['genomeVirtualSeqsExtDbRlsSpec'],
+     ['outputFile',
+      'genomeExtDbRlsSpecc',
+      'genomeVirtualSeqsExtDbRlsSpec',
+     ]
     );
   return @properties;
 }

@@ -13,13 +13,9 @@ sub run {
   my ($self, $test) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
-
   my $outputDir = $self->getParamValue('outputDir');
-
   my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxonId'));
-
   my $reassemble = $self->getParamValue('reassemble') eq "yes" ? "--reassemble" :"";
-
   my $cap4Dir = $self->getConfig('cap4Dir');
 
   my $workingDir = $self->runCmd(0,"pwd");
@@ -88,10 +84,11 @@ sub getConfigDeclaration {
 sub getParamDeclaration {
   my @properties = 
     (
-     ['outputDir'],
-     ['inputFile'],
-     ['ncbiTaxonId'],
-     ['reassemble'],
+     ['outputDir',
+      'inputFile',
+      'ncbiTaxonId',
+      'reassemble',
+     ]
     );
   return @properties;
 }
