@@ -1153,13 +1153,15 @@
             <column name="context_end"/>
             <column name="product"/>
             <column name="same_protein"/>
+            <column name="cyc_gene_id"/>
             <sql>
             <![CDATA[
               select toa.source_id, '@PROJECT_ID@' AS project_id,
                      old_source_id,tv.sequence_id,tv.start_min,tv.end_max,
                      decode(tv.strand,'reverse','-','+') as strand,
                      tv.context_start,tv.context_end,tv.product,
-                     decode(toa.new_protein,0,'Yes',1,'No') as same_protein
+                     decode(toa.new_protein,0,'Yes',1,'No') as same_protein,
+                     upper(old_source_id) as cyc_gene_id
               from apidb.TRACKOLDANNOTATION toa, apidb.TOXOVERSION4GENES tv
               where toa.source_id = $$source_id$$
               and toa.old_source_id = tv.source_id

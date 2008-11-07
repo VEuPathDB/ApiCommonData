@@ -1035,7 +1035,7 @@
                  </displayText>
                    <url>
                     <![CDATA[
-                       http://toxodb.org/toxo/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$old_source_id$$&project_id=ToxoDB
+                       http://v4-3.toxodb.org/toxo/showRecord.do?name=GeneRecordClasses.GeneRecordClass&primary_key=$$old_source_id$$&project_id=ToxoDB
                         ]]>
                    </url>
             </linkAttribute>
@@ -1051,7 +1051,31 @@
                         ]]>
                    </url>
             </linkAttribute>
-
+            <linkAttribute displayName="OrthoMCL" name="orthomcl_link" inReportMaker="false" internal="false" align="center" >
+                 <displayText>
+                    <![CDATA[
+                       OrthoMCL
+                     ]]>
+                 </displayText>
+                   <url>
+                    <![CDATA[
+                      http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=$$old_source_id$$
+                        ]]>
+                   </url>
+            </linkAttribute>
+            <linkAttribute name="toxocyc" displayName="ToxoCyc" internal="false" inReportMaker="false" align="center">
+               <displayText>
+                  <![CDATA[
+                     ToxoCyc
+                     ]]>
+               </displayText>
+               <url>
+                  <![CDATA[
+                        http://apicyc.apidb.org/TOXO/NEW-IMAGE?type=GENE&object=$$cyc_gene_id$$
+                        ]]>
+               </url>
+            </linkAttribute>
+            <columnAttribute displayName= "cyc_gene_id" name="cyc_gene_id" internal="true"/>
             <columnAttribute displayName= "start" name="start_min" internal="true"/>
             <columnAttribute displayName= "end" name="end_max" internal="true"/>
             <columnAttribute displayName= "strand" name="strand" internal="true"/>
