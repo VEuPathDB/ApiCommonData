@@ -84,7 +84,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateByAuthor" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.author"/>
+      <paramRef ref="isolateParams.author" quote="false"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -95,8 +95,8 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB,PlasmoDB">
-      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true" includeProjects="CryptoDB"/>
-        <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true" includeProjects="PlasmoDB"/>
+     <!--  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true" includeProjects="CryptoDB"/> -->
+        <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -111,7 +111,7 @@
             WHERE  etn.na_sequence_id IN
                    (SELECT sc.na_sequence_id
                     FROM DoTS.IsolateSource sc
-                    WHERE sc.organism in ($$isolate_organism$$)
+                    WHERE sc.organism in ($$strain$$)
                    )
                AND etn.source_id IS NOT NULL
                AND etn.na_sequence_id = src.na_sequence_id
@@ -135,9 +135,9 @@
     </sqlQuery>
 
     <processQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>
-      <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
-      <paramRef ref="isolateParams.type"  quote="true"/>
+   <!--   <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>  -->
+      <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates"  quote="false"/>
+      <paramRef ref="isolateParams.type"  quote="false"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -175,7 +175,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateByHost" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -200,7 +200,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateByIsolationSource" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -225,7 +225,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateByProduct" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -262,7 +262,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateByStudy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -319,9 +319,9 @@
     </sqlQuery>
 
     <processQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-      <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
-      <paramRef ref="isolateParams.type" quote="true"/>
+      <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates"  quote="false"/>
+      <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates"  quote="false"/>
+      <paramRef ref="isolateParams.type"  quote="false"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -347,7 +347,7 @@
     </sqlQuery>
 
     <processQuery name="IsolateBySubmitter" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
+      <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>

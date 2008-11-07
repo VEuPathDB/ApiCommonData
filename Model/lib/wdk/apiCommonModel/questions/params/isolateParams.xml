@@ -101,9 +101,9 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam> 
 
-        <flatVocabParam name="strain" includeProjects="PlasmoDB,ApiDB"
+        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
-            prompt="Strain Name"
+            prompt="Strain/Taxon Name"
             multiPick="true"
             quote="false">
                   <help>
@@ -375,10 +375,32 @@
   </querySet>
 
   <querySet name="strainVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="PlasmoDB">
+
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql>
+
+<sql includeProjects="CryptoDB">
+      <![CDATA[
+      SELECT src.organism || '  - (' || count(src.organism) || ' isolates)' AS term,
+             src.organism AS internal
+      FROM   DoTS.IsolateSource src,
+             DoTS.ExternalNASequence etn,
+             SRes.ExternalDatabaseRelease edr,
+             SRes.ExternalDatabase edb
+      WHERE  edr.external_database_id = edb.external_database_id
+         AND edr.external_database_release_id = etn.external_database_release_id
+         AND edb.name = 'Isolates Data'
+         AND edr.version = '2007-12-12'
+         AND src.na_sequence_id = etn.na_sequence_id
+         AND src.organism is not null
+      GROUP BY src.organism
+      ORDER BY src.organism
+     ]]>
+      </sql>
+
+
+      <sql  includeProjects="PlasmoDB">
       <![CDATA[
     select 'P.f. ' || new as term, new as internal
     from (
