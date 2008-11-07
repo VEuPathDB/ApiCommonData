@@ -41,14 +41,11 @@
             <column name="length"  />
             <column name="organism"  />
             <column name="formatted_organism"  sortingColumn="organism" />
-            <column name="start_min" />
-            <column name="end_max" />
-            <column name="is_reversed" />
-            <column name="orf_start"  sortingColumn="start_min" />
-            <column name="orf_end"  sortingColumn="end_max" />
-            <column name="orf_start_text"  sortingColumn="start_min" />
-            <column name="orf_end_text"  sortingColumn="end_max" />
-            <column name="orf_strand"  sortingColumn="is_reversed" />
+            <column name="orf_start" />
+            <column name="orf_end" />
+            <column name="orf_start_text" sortingColumn="orf_start" />
+            <column name="orf_end_text" sortingColumn="orf_end" />
+            <column name="orf_strand" />
             <sql>
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.nas_id, bfmv.length, bfmv.organism, bfmv.ncbi_tax_id,
