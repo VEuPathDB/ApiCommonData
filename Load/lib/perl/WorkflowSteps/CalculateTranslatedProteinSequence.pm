@@ -1,21 +1,19 @@
 package ApiCommonData::Load::WorkflowSteps::CalculateTranslatedProteinSequence;
 
-@ISA = (GUS::Workflow::WorkflowStepInvoker);
+@ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
 use strict;
-use GUS::Workflow::WorkflowStepInvoker;
-
+use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
   my ($self, $test) = @_;
 
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
-
-  my ($extDbName, $extDbRlsVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
-
   my $soVersion = $self->getParamValue('soVersion');
 
-  my $args = "--sqlVerbose --extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --soCvsVersion $soVersion";
+  my ($extDbName, $extDbVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
+
+  my $args = "--sqlVerbose --extDbRlsName '$extDbName' --extDbRlsVer '$extDbVer' --soCvsVersion $soVersion";
 
   $self->runPlugin($test, "GUS::Supported::Plugin::CalculateTranslatedAASequences", $args);
 
