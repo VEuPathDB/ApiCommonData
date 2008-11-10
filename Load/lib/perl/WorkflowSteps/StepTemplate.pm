@@ -24,18 +24,18 @@ sub run {
 
 }
 
+sub getParamsDeclaration {
+  my $params =
+    ['', ''];
+  return $params;
+}
+
 sub getConfigDeclaration {
   my $properties =
     [
      # [name, default, description]
      ['', "", ""],
     ];
-  return $properties;
-}
-
-sub getParamDeclaration {
-  my $properties =
-    [];
   return $properties;
 }
 

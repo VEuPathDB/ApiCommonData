@@ -20,22 +20,16 @@ sub run {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
+sub getParamsDeclaration {
+  return ('genomeExtDbRlsSpec',
+	  'table',
+	 );
 }
 
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['genomeExtDbRlsSpec',
-      'table',
-     ]
-    );
-  return @properties;
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
 }
 
 sub getDocumentation {

@@ -62,29 +62,24 @@ $vendorString
   #&runCmd("chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['taskSize', "", ""],
-     ['wuBlastBinPathCluster', "", ""],
-     ['ncbiBlastBinPathCluster', "", ""],
-    );
-  return @properties;
+sub getParamsDeclaration {
+  return ('taskInputDir',
+	  'queryFile',
+	  'subjectFile',
+	  'blastArgs',
+	  'idRegex',
+	  'blastType',
+	  'vendor',
+	 );
 }
 
-sub getParamDeclaration {
-  my @properties =
-    (
-     ['taskInputDir',
-     'queryFile',
-     'subjectFile',
-     'blastArgs',
-     'idRegex',
-     'blastType',
-     'vendor'],
-    );
-  return @properties;
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['taskSize', "", ""],
+	  ['wuBlastBinPathCluster', "", ""],
+	  ['ncbiBlastBinPathCluster', "", ""],
+	 );
 }
 
 sub restart {
