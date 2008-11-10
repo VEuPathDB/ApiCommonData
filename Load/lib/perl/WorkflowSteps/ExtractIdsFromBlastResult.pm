@@ -1,9 +1,9 @@
 package ApiCommonData::Load::WorkflowSteps::ExtractIdsFromBlastResult;
 
-@ISA = (GUS::Workflow::WorkflowStepInvoker);
+@ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
 use strict;
-use GUS::Workflow::WorkflowStepInvoker;
+use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {

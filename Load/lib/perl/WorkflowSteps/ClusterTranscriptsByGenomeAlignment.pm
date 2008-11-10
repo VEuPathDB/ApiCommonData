@@ -1,9 +1,9 @@
-package ApiCommonData::Load::WorkflowSteps::clusterTranscriptsByGenomeAlignment;
+package ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment;
 
-@ISA = (GUS::Workflow::WorkflowStepInvoker);
+@ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
 use strict;
-use GUS::Workflow::WorkflowStepInvoker;
+use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 ## to do
@@ -14,7 +14,7 @@ sub run {
 
   my $outputFile = $self->getParamValue('outputFile');
   my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
-  my $targetDbRlsId = $self->getExtDbRlsId( $self->getParamValue('genomeExtDbRlsSpec');
+  my $targetDbRlsId = $self->getExtDbRlsId( $self->getParamValue('genomeExtDbRlsSpec'));
   my $maxIntronSize = $self->getParamValue('maxIntronSize');
 
   my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs "

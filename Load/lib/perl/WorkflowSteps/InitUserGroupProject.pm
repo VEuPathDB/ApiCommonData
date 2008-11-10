@@ -1,8 +1,8 @@
 package GUS::ApiCommonData::Load::WorkflowSteps::InitUserGroupProject;
 
-@ISA = (GUS::Workflow::WorkflowStepInvoker);
+@ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
-use GUS::Workflow::WorkflowStepInvoker;
+use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
   my ($self, $test) = @_;
