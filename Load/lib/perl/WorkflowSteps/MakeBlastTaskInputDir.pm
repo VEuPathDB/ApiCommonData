@@ -5,7 +5,7 @@ package ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self) = @_;
+  my ($self, $test) = @_;
 
   # get parameter values
   my $taskInputDir = $self->getParamValue("taskInputDir");
@@ -26,23 +26,23 @@ sub run {
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize, $nodePath, 
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize, $nodePath,
 				       "DJob::DistribJobTasks::BlastMatrixTask",
 				       $nodeClass);
 
   # make task.prop file
-  my $computeClusterDataDir = $self->getComputClusterDataDir();
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  my $dbFilePath = "$computeClusterDataDir/$subjectFile"; 
-  my $inputFilePath = "$computeClusterDataDir/$queryFile"; 
+  my $dbFilePath = "$computeClusterDataDir/$subjectFile";
+  my $inputFilePath = "$computeClusterDataDir/$queryFile";
   my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
   my $vendorString = $vendor? "blastVendor=$vendor" : "";
 
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
 
-  print F 
+  print F
 "blastBinDir=$blastBinPathCluster
 dbFilePath=$dbFilePath
 inputFilePath=$inputFilePath
