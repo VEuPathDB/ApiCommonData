@@ -183,17 +183,17 @@
                    last_updater, 
                    last_check, 
                    last_checker, 
-                   instance_nickname,
+                   mi.instance_nickname,
                    subversion_url, 
                    notify_emails,
                    trunc(sysdate - last_check) elapsedCheckDays,
                    to_char(   trunc(sysdate) + (sysdate - last_check),  'HH24') elapsedCheckHours,
                    to_char(   trunc(sysdate) + (sysdate - last_check),  'MI') elapsedCheckMinutes
             from apidb.TuningInstance@apidb.login_comment ti,
-                   apidb.tuningfamily@apidb.login_comment tf
-            where ti.service_name = 
-              (select sys_context ('userenv', 'service_name') from dual)
-            and ti.family_name = tf.family_name
+                   apidb.tuningfamily@apidb.login_comment tf,
+                   apidb.instancemetainfo mi
+            where mi.instance_nickname = ti.instance_nickname
+            and   ti.family_name = tf.family_name
             ]]>
            </sql>
         </sqlQuery>
