@@ -4244,7 +4244,20 @@ sub xdformatDownloadFileForBlastSite {
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $inputFile 2>> $logFile");
+  if ($type =~/\-C X/){
+
+        my $tempFile = "$inputFile.temp";
+
+        $mgr->runCmd("perl -pe 'while(<>){if ($_ !~ /^>/){ $_ =~ s/J/X/g;}print "$_";}' $inputFile > $tempFile");
+
+        $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $tempFile 2>> $logFile");
+ 
+        $mgr->runCmd("rm -fr $tempFile");
+
+  }else {
+
+      $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $inputFile 2>> $logFile");
+  }
 
   $mgr->endStep($signal);
 }
