@@ -16,9 +16,13 @@ sub run {
   my $blastType = $self->getParamValue("blastType");
   my $vendor = $self->getParamValue("vendor");
 
-  my $bsTaskSize = $self->getConfig('blastsimilarity.taskSize');
-  my $blastBinPathCluster = $self->getConfig('wuBlastBinPathCluster');
-  $blastBinPathCluster = $self->getConfig('ncbiBlastBinPathCluster') if ($vendor eq 'ncbi');
+  my $bsTaskSize = $self->getConfig('taskSize');
+  my $wuBlastBinPathCluster = $self->getConfig('wuBlastBinPathCluster');
+  my $ncbiBlastBinPathCluster = $self->getConfig('ncbiBlastBinPathCluster');
+
+  my $wuBlastBinPathCluster = ($vendor eq 'ncbi')?
+    $ncbiBlastBinPathCluster : $wuBlastBinPathCluster;
+
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
   # make controller.prop file
@@ -58,27 +62,36 @@ $vendorString
   #&runCmd("chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }
 
+sub getConfigDeclaration {
+  my @properties = 
+    (
+     # [name, default, description]
+     ['taskSize', "", ""],
+     ['wuBlastBinPathCluster', "", ""],
+     ['ncbiBlastBinPathCluster', "", ""],
+    );
+  return @properties;
+}
+
+sub getParamDeclaration {
+  my @properties =
+    (
+     ['taskInputDir',
+     'queryFile',
+     'subjectFile',
+     'blastArgs',
+     'idRegex',
+     'blastType',
+     'vendor'],
+    );
+  return @properties;
+}
+
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['' "", ""],
-    );
-  return @properties;
 }
 
 sub getDocumentation {
