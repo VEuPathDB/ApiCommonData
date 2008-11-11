@@ -9,77 +9,58 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $orfFile = $self->getParamValue('inputFile');
-  
+  my $inputFile = $self->getParamValue('inputFile');
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
-
-  my ($extDbName,$extDbRlsVer);
-
-  if ($genomeExtDbRlsSpec =~ /(.+)\|(.+)/) {
-
-      $extDbName = $1;
-
-      $extDbRlsVer = $2
-
-    } else {
-
-      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name|version' format";
-  }
-
   my $substepClass = $self->getParamValue('substepClass');
-  
   my $defaultOrg = $self->getParamValue('defaultOrg');
+  my $isfMappingFileRelToGusHome = $self->getParamValue('isfMappingFileRelToGusHome');
+  my $soVersion = $self->getParamValue('soVersion');
 
-  my $mapFile = $self->getConfig('orf2gusFile');
+  my $gusHome = $self->getGlobalConfig('gusHome');
 
-  my $soCvsVersion = $self->getGlobalConfig('soCvsVersion');
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
 
   my $args = <<"EOF";
 --extDbName '$extDbName'  \\
 --extDbRlsVer '$extDbRlsVer' \\
---mapFile $mapFile \\
---inputFileOrDir $orfFile \\
+--mapFile $gusHome/$isfMappingFileRelToGusHome \\
+--inputFileOrDir $inputFile \\
 --fileFormat gff3   \\
 --seqSoTerm ORF  \\
---soCvsVersion $soCvsVersion \\
+--soCvsVersion $soVersion \\
 --naSequenceSubclass $substepClass \\
 EOF
- if ($defaultOrg){
+  if ($defaultOrg) {
+    $args .= "--defaultOrganism '$defaultOrg'";
+  }
 
-      $args .= "--defaultOrganism '$defaultOrg'";
-
-    }
-
-  $self->runPlugin("GUS::Supported::Plugin::InsertSequenceFeatures",$args);
+  $self->runPlugin($test, "GUS::Supported::Plugin::InsertSequenceFeatures", $args);
 }
 
+
+sub getParamsDeclaration {
+  return (
+	  'inputFile',
+	  'genomeExtDbRlsSpec',
+	  'substepClass',
+	  'defaultOrg',
+	  'isfMappingFileRelToGusHome',
+	  'soVersion',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['orf2gusFile', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['inputFile'],
-     ['genomeExtDbRlsSpec'],
-     ['substepClass'],
-     ['defaultOrg'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {

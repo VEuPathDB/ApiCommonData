@@ -72,7 +72,9 @@ sub runCmdOnCluster {
 # are called from the workflow should take an extDbRlsSpec as an argument,
 # not an internal id
 sub getExtDbRlsId {
-  my ($self, $extDbName, $extDbRlsVer) = @_;
+  my ($self, $extDbRlsSpec) = @_;
+
+  my ($extDbName, $extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
 
   my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
 
@@ -93,4 +95,15 @@ sub getExtDbInfo {
       die "Database specifier '$extDbRlsSpec' is not in 'name|version' format";
     }
 }
+
+sub getTableId {
+  my ($self, $tableName) = @_;
+  my $sql = "select table_id from core.tableinfo where name = '$tableName'";
+
+  my $cmd = "getValueFromTable --idSQL \"$sql\"";
+  my $tableId = $self->runCmd(0, $cmd);
+  return  $tableId;
+}
+
+1;
 

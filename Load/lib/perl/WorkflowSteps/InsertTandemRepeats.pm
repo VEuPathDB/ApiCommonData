@@ -9,26 +9,26 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $tandemRepFile = $self->getParamValue('inputFile');
-  
-  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec'); 
+  my $inputFile = $self->getParamValue('inputFile');
+  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
 
-  my ($extDbName,$extDbRlsVer);
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
-  if ($genomeExtDbRlsSpec =~ /(.+)\|(.+)/) {
+  my $args = "--tandemRepeatFile $inputFile --extDbName '$extDbName' --extDbVersion '$extDbRlsVer'";
 
-      $extDbName = $1;
+  $self->runPlugin($test, "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
+}
 
-      $extDbRlsVer = $2
+sub getParamsDeclaration {
+  return (
+	  'inputFile',
+	  'genomeExtDbRlsSpec',
+	 );
+}
 
-    } else {
-
-      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name|version' format";
-  }
-
-  my $args = "--tandemRepeatFile $tandemRepFile --extDbName '$extDbName' --extDbVersion '$extDbRlsVer'";
-  
-  $self->runPlugin("GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
+sub getConfigDeclaration {
+  return (
+	 );
 }
 
 sub restart {
@@ -38,23 +38,6 @@ sub undo {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['inputFile'],
-     ['genomeExtDbRlsSpec'],
-    );
-  return @properties;
-}
-
 sub getDocumentation {
 }
-1
+

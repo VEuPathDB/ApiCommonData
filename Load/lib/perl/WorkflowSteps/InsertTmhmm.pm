@@ -10,30 +10,30 @@ sub run {
   my ($self, $test) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
+  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
 
   my $version = $self->getConfig('version');
 
-  my $desc = "TMHTMM version $version";
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
-  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec'); 
+  my $args = "--data_file $inputFile --algName TMHMM --algDesc 'TMHMM $version' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
 
-  my ($extDbName,$extDbRlsVer);
+  $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadTMDomains",$args);
 
-  if ($genomeExtDbRlsSpec =~ /(.+)\|(.+)/) {
+}
 
-      $extDbName = $1;
+sub getParamDeclaration {
+  return (
+	  'inputFile',
+	  'genomeExtDbRlsSpec',
+	 );
+}
 
-      $extDbRlsVer = $2
-
-    } else {
-
-      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name|version' format";
-  }
-
-  my $args = "--data_file $inputFile --algName TMHMM --algDesc '$desc' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
-
-  $self->runPlugin("ApiCommonData::Load::Plugin::LoadTMDomains",$args);
-
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['version', "", ""],
+	 );
 }
 
 sub restart {
@@ -41,24 +41,6 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['version', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['inputFile'],
-     ['genomeExtDbRlsSpec'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {

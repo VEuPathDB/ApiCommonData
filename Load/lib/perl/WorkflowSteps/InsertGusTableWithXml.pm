@@ -10,7 +10,6 @@ sub run {
   my ($self, $test) = @_;
 
   my $xmlFile = $self->getParamValue('xmlFileRelativeToProjectHomeDir');
-
   my $gusTable = $self->getParamValue('gusTable');
 
   my $args = "--filename $xmlFile";
@@ -19,30 +18,25 @@ sub run {
 
 }
 
+sub getParamsDeclaration {
+  return (
+	  'xmlFile',
+	  'gusTable',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
+
+sub getDocumentation {
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['xmlFile'],
-     ['gusTable'],
-    );
-  return @properties;
-}
-
-sub getDocumentation {
 }

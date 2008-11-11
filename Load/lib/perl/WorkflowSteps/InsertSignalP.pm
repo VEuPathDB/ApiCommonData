@@ -10,32 +10,31 @@ sub run {
   my ($self, $test) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
+  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
 
-  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec'); 
-
-  my ($extDbName,$extDbRlsVer);
-
-  if ($genomeExtDbRlsSpec =~ /(.+)\|(.+)/) {
-
-      $extDbName = $1;
-
-      $extDbRlsVer = $2
-
-    } else {
-
-      die "Database specifier '$genomeExtDbRlsSpec' is not in 'name|version' format";
-  }
-
-  my $version = $self->getConfig('version');
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
   my $projectName = $self->getGlobalConfig('projectName');
+  my $version = $self->getConfig('version');
 
-  my $desc = "SignalP version $version";
+  my $args = "--data_file $inputFile --algName 'SignalP' --algVer '$version' --algDesc 'SignalP' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --project_name $projectName --useSourceId";
 
-  my $args = "--data_file $inputFile --algName 'SignalP' --algVer '$version' --algDesc '$desc' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --project_name $projectName --useSourceId";
+  $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadSignalP", $args);
 
-  $self->runPlugin("ApiCommonData::Load::Plugin::LoadSignalP",$args);
+}
 
+sub getParamsDeclaration {
+  return (
+	  'inputFile',
+	  'genomeExtDbRlsSpec',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['version', "", ""],
+	 );
 }
 
 sub restart {
@@ -43,25 +42,6 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['proteinsFile', "", ""],
-     ['outputFile', "", ""],
-     ['options', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my $properties =
-     ['proteinsFile'],
-     ['outputFile'],
-     ['options'],
-  return $properties;
 }
 
 sub getDocumentation {
