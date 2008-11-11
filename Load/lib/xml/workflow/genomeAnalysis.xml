@@ -8,6 +8,7 @@
   <param name="genomeVirtualSeqExtDbRls"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
+  <param name="soVersion"/>
   <param name="ncbiTaxonId"/>
   <param name="parentNcbiTaxonId"/>
   <param name="predictedTranscriptsSql"/>
@@ -98,12 +99,14 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="substepClass">ExternalNASequence</paramValue>
       <paramValue name="defaultOrg">$$organismName$$</paramValue>
+      <paramValue name="isfMappingFileRelToGusHome">lib/xml/orf2gus.xml</paramValue>
+      <paramValue name="soVersion"/>$$soVersion$$</paramValue>
       <depends name="makeOrfFile"/>
     </step>
 
     <step name="findTandemRepeats"
           stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
-      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="seqsFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
       <paramValue name="outputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <depends name="extractGenomicSeqs"/>
