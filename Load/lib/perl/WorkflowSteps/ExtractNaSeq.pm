@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::ExtractNaSeq;
+package ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -9,57 +9,57 @@ sub run {
   my ($self, $test) = @_;
 
   my $table = $self->getParamValue('table');
-
-  my $dbRlsId = $self->getExtDbRlsId($self->getParamValue('extDbRlsSpec'));
-
+  my $extDbRlsSpec = $self->getParamValue('extDbRlsSpec');
   my $alternateDefline = $self->getParamValue('alternateDefline');
-  
   my $outputFile = $self->getParamValue('outputFile');
-
   my $separateFastaFiles = $self->getParamValue('separateFastaFiles');
-
   my $outputDirForSeparateFiles = $self->getParamValue('outputDirForSeparateFiles');
 
-  my $sql;
-  
-  if ($alternateDefline eq ""){
+  my $dbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
 
-  $sql = "select source_id, description,
-            'length='||length,sequence
-             from dots.$table
-             where external_database_release_id = $dbRlsId";
- 
-  }else{
- 
-  $sql = "select $alternateDefline,sequence
-             from dots.$table
-             where external_database_release_id = $dbRlsId";
-  }
-  
-  my $cmd;
+  my $deflineSelect = $alternateDefline?
+    $alternateDefline :
+      "source_id, description, 'length='||length";
+
+  my $sql = "SELECT $deflineSelect, sequence
+             FROM dots.$table
+             WHERE external_database_release_id = $dbRlsId";
 
   if ($separateFastaFiles) {
 
-      $cmd="gusExtractIndividualSequences --outputDir $outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
-      
+      my $cmd = "gusExtractIndividualSequences --outputDir $outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
+
       if ($test) {
-
-           $self->runCmd(0,"mkdir -p $outputDirForSeparateFiles");} else{
-
-           $self->runCmd($test,$cmd); }
-
+	$self->runCmd(0,"mkdir -p $outputDirForSeparateFiles");
+      } else {
+	$self->runCmd($test,$cmd); 
+      }
   } else {
 
-      $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
+      my $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
       if ($test) {
+           $self->runCmd(0,"echo test > $outputFile");
+	 } else {
+           $self->runCmd($test,$cmd);
+	 }
+    }
+}
 
-           $self->runCmd(0,"echo Hello > $outputFile");} else{
+sub getParamsDeclaration {
+  return (
+	  'table',
+	  'extDbRlsSpec',
+	  'alternateDefline',
+	  'separateFastaFiles',
+	  'outputFile',
+	  'outputDirForSeparateFiles',
+	 );
+}
 
-           $self->runCmd($test,$cmd); }
-  }
-  
- 
-
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
 }
 
 sub restart {
@@ -67,26 +67,6 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my $properties =
-     ['table',
-      'extDbRlsSpec',
-      'alternateDefline',
-      'separateFastaFiles',
-      'outputFile',
-      'outputDirForSeparateFiles',
-     ]
-  return $properties;
 }
 
 sub getDocumentation {

@@ -8,11 +8,12 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
-
-  my $taxonIdList = $self->getTaxonIdList($taxonId,$self->getParamValue('useTaxonHierarchy'));
-  
+  my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
+  my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
   my $outputFile = $self->getParamValue('outputFile');
+
+  my $taxonId = $self->getTaxonId($parentNcbiTaxonId);
+  my $taxonIdList = $self->getTaxonIdList($taxonId, $useTaxonHierarchy);
 
   my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
 
@@ -20,6 +21,22 @@ sub run {
 
 }
 
+sub getParamsDeclaration {
+  return (
+	  'parentNcbiTaxonId',
+	  'useTaxonHierarchy',
+	  'outputFile',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
+
+sub getDocumentation {
+}
 
 sub restart {
 }
@@ -28,24 +45,3 @@ sub undo {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['parentNcbiTaxonId',
-      'useTaxonHierarchy',
-      'outputFile',
-     ]
-    );
-  return @properties;
-}
-
-sub getDocumentation {
-}

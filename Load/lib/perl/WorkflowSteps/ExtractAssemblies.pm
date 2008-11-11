@@ -8,22 +8,38 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxId'));
-
+  my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $outputFile = $self->getParamValue('outputFile');
+
+  my $taxonId = $self->getTaxonId($ncbiTaxonId);
+
 
   my $sql = "select na_sequence_id,description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
  
   my $cmd = "gusExtractSequences --outputFile $outputFile --verbose --idSQL \"$sql\"";
 
   if ($test){
-      self->runCmd(0,'echo hello > $outputFile');
+      self->runCmd(0,'echo test > $outputFile');
   }else{
-      self->runCmd($test,$cmd);      
+      self->runCmd($test,$cmd);
   }
 
 }
 
+sub getParamsDeclaration {
+  return ('ncbiTaxonId',
+	  'outputFile',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
+
+sub getDocumentation {
+}
 
 sub restart {
 }
@@ -32,23 +48,3 @@ sub undo {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['ncbiTaxonId',
-      'outputFile',
-     ]
-    );
-  return @properties;
-}
-
-sub getDocumentation {
-}
