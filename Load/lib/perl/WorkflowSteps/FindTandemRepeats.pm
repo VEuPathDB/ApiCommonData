@@ -9,69 +9,49 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $seqFile = $self->getParamValue('seqFile');
-  
+  my $seqFile = $self->getParamValue('seqsFile');
   my $repeatFinderArgs = $self->getParamValue('repeatFinderArgs');
-
-  $repeatFinderArgs =~ s/\s+/\./g;
-
   my $outputFile = $self->getParamValue('outputFile');
 
   my $trfPath = $self->getConfig('trfPath');
 
-  my $workingDir = $self->runCmd(0,'pwd');
+  $repeatFinderArgs =~ s/\s+/\./g;
 
-  my $outputDir = " $workingDir/temp";
-
-  $self->runCmd(0, "mkdir -p $outputDir") if ! -d $outputDir;
-
-  $self->runCmd(0, "chdir $outputDir") if -d $outputDir;
+  my $stepDir = $self->getStepDir();
 
   my $cmd = "${trfPath}/trf400 $seqFile $repeatFinderArgs -d";
 
   if ($test) {
 
-      $self->runCmd(0,"echo hello > $outputFile");
+      $self->runCmd(0,"echo test > $outputFile");
 
   } else {
-      
-      $self->runCmd($test,$cmd); 
-
-      $self->runCmd($test,"mv $outputDir/$seqFile.$repeatFinderArgs.dat $outputFile"); 
-
-      $self->runCmd($test,"rm -fr $outputDir"); 
+      $self->runCmd($test, $cmd);
+      $self->runCmd($test, "mv $stepDir/$seqFile.$repeatFinderArgs.dat $outputFile");
   }
-  
-  $self->runCmd(0, "chdir $workingDir");
 }
 
+sub getParamsDeclaration {
+  return (
+	  'seqsFile',
+	  'repeatFinderArgs',
+	  'outputFile',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['trfPath', "", ""],
+	 );
+}
+
+sub getDocumentation {
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['trfPath', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['inputFile'],
-     ['repeatFinderArgs'],
-     ['outputFile'],
-    );
-  return @properties;
-}
-
-sub getDocumentation {
 }

@@ -63,6 +63,10 @@ restart=no
     close(F);
 }
 
+sub runCmdOnCluster {
+  my ($self, $test, $cmd) = @_;
+}
+
 # avoid using this subroutine!
 # it is provided for backward compatibility.  plugins and commands that
 # are called from the workflow should take an extDbRlsSpec as an argument,

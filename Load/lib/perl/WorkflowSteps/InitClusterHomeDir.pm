@@ -12,22 +12,19 @@ sub run {
   my $projectVersion = $self->getGlobalConfig('projectVersion');
   my $clusterDir = $self->getGlobalConfig('clusterDir');
 
-  $self->runCmdOnCluster(0, "mkdir -p $clusterDir$projectName/$projectVersion/data");
-  $self->runCmdOnCluster(0, "mkdir -p $clusterDir$projectName/$projectVersion/logs");
+  $self->runCmdOnCluster(0, "mkdir -p $clusterDir/$projectName/$projectVersion/data");
+  $self->runCmdOnCluster(0, "mkdir -p $clusterDir/$projectName/$projectVersion/clusterTaskLogs");
 
+}
+
+sub getParamsDeclaration {
+  return (
+	 );
 }
 
 sub getConfigDeclaration {
-  my $properties =
-    [
-    ];
-  return $properties;
-}
-
-sub getParamDeclaration {
-  my $properties =
-    [];
-  return $properties;
+  return (
+	 );
 }
 
 sub restart {

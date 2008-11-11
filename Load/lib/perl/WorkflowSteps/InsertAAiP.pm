@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::InsertAAiP;
+package ApiCommonData::Load::WorkflowSteps::InsertIsoelectricPoint;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -10,26 +10,27 @@ sub run {
   my ($self, $test) = @_;
 
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
-
-  my ($extDbName, $extDbRlsVer);
-
-  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
-
-      $extDbName = $1;
-
-      $extDbRlsVer= $2
-
-    } else {
-
-      die "Database specifier '$extDbRlsSpec' is not in 'name|version' format";
-  }
-
   my $table = $self->getParamValue('table');
+
+  my ($extDbName, $extDbRlsVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
 
   my $args = "--extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --seqTable $table";
 
-  $self->runPlugin("GUS::Supported::Plugin::CalculateAASequenceIsoelectricPoint",$args);
+  $self->runPlugin($test, "GUS::Supported::Plugin::CalculateAASequenceIsoelectricPoint",$args);
 
+}
+
+sub getParamsDeclaration {
+  return (
+     'genomeExtDbRlsSpec',
+     'table',
+    );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
 }
 
 sub restart {
@@ -37,23 +38,6 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['genomeExtDbRlsSpec'],
-     ['table'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {

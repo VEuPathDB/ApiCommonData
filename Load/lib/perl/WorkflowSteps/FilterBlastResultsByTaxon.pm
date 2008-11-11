@@ -10,35 +10,46 @@ sub run {
   my ($self, $test) = @_;
 
   my $taxonList = $self->getParamValue('taxonHierarchy');
+  my $inputFile = $self->getParamValue('inputFile');
+  my $unfilteredOutputFile = $self->getParamValue('unfilteredOutputFile');
+  my $filteredOutputFile = $self->getParamValue('filteredOutputFile');
+  my $gi2taxidFileRelativeToDownloadDir = $self->getParamValue('gi2taxidFileRelativeToDownloadDir');
+
+  my $downloadDir = $self->getGlobalConfig('downloadDir');
 
   $taxonList =~ s/\"//g if $taxonList;
 
-  my $gi2taxidFileRelativeToDownloadDir = $self->getParamValue('gi2taxidFileRelativeToDownloadDir');
+  my $gi2taxidFile = "$downloadDir/$gi2taxidFileRelativeToDownloadDir";
 
-  my $gi2taxidFile = "$self->getGlobalConfig('downloadDir')/${gi2taxidFileRelativeToDownloadDir}" if $gi2taxidFileRelativeToDownloadDir;
- 
-  $self->runCmd(0,"gunzip -f ${gi2taxidFile}.gz") if (-e "${gi2taxidFile}.gz");
+  $self->runCmd(0,"cp $inputFile $unfilteredOutputFile");
 
-  my $inputFile = $self->getParamValue('inputFile');
-
-  my $unfilteredOutputFile = $self->getParamValue('unfilteredOutputFile');
-
-  my $filteredOutputFile = $self->getParamValue('filteredOutputFile');
-
-  $self->runCmd(0,"mv $inputFile $unfilteredOutputFile") if $inputFile;
-
-  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $unfilteredOutputFile --outputFile $filteredOutputFile";
+  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $filteredOutputFile";
 
   if ($test) {
-
-      $self->runCmd(0,"echo hello > $filteredOutputFile");
-
+      $self->runCmd(0,"echo test > $filteredOutputFile");
   } else {
-
       $self->runCmd($test,$cmd);
-
   }
+}
 
+sub getParamsDeclaration {
+  return (
+	  'taxonHierarchy',
+	  'gi2taxidFileRelativeToDownloadDir',
+	  'inputFile',
+	  'unfilteredOutputFile',
+	  'filteredOutputFile',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['downloadDir', "", ""],
+	 );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
@@ -48,27 +59,3 @@ sub undo {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['downloadDir', "", ""],
-    );
-  return @properties;
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     ['taxonHierarchy',
-      'gi2taxidFileRelativeToDownloadDir',
-      'inputFile',
-      'unfilteredOutputFile',
-      'filteredOutputFile',
-     ]
-    );
-  return @properties;
-}
-
-sub getDocumentation {
-}

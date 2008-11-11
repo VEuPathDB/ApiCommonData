@@ -14,17 +14,14 @@ sub run {
 
 }
 
-sub getConfigDeclaration {
-  my $properties =
-    [
-    ];
-  return $properties;
+sub getParamsDeclaration {
+  return (
+	 );
 }
 
-sub getParamDeclaration {
-  my $properties =
-    [];
-  return $properties;
+sub getConfigDeclaration {
+  return (
+	 );
 }
 
 sub restart {
