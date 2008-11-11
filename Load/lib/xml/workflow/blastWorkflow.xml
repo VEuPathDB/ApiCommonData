@@ -71,7 +71,7 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::Steps::LoadFastaSubset" includeIf="$$loadSubjectSubset$$">
+    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::Steps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">common/nrdb.fsa</paramValue>
       <paramValue name="idsFile">$$dataDir$
@@ -80,7 +80,7 @@ $/blastSimIds.out</paramValue>
       <depends name="extractIdsFromBlastResult"/>
     </step>
 
-    <step name="loadSimilarities" stepClass="ApiCommonData::Load::Steps::LoadBlastSimilarities">
+    <step name="loadSimilarities" stepClass="ApiCommonData::Load::Steps::InsertBlastSimilarities">
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
       <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="queryTableIdCol">source_id</paramValue>
