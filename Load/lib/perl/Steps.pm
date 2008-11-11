@@ -4248,7 +4248,7 @@ sub xdformatDownloadFileForBlastSite {
 
         my $tempFile = "$inputFile.temp";
 
-        $mgr->runCmd("perl -pe 'while(<>){if ($_ !~ /^>/){ $_ =~ s/J/X/g;}print "$_";}' $inputFile > $tempFile");
+        $mgr->runCmd("perl -pe 'while(<>){if ($_ !~ /^>/){ $_ =~ s/J/X/g;}print $_;}' $inputFile > $tempFile");
 
         $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $tempFile 2>> $logFile");
  
