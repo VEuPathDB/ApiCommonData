@@ -13,7 +13,7 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="extractQuery" stepClass="ApiCommonData::Steps::ExtractNaSeq">
+    <step name="extractQuery" stepClass="ApiCommonData::Steps::ExtractNaSeqs">
       <paramValue name="extDbRlsSpec">$$queryExtDbRlsSpec$$</paramValue>
       <paramValue name="table">ExternalNaSequence</paramValue>
       <paramValue name="alternateDefline">'lcl|'||source_id'</paramValue>
@@ -23,7 +23,7 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="extractSubject" stepClass="ApiCommonData::Steps::ExtractNaSeq">
+    <step name="extractSubject" stepClass="ApiCommonData::Steps::ExtractNaSeqs">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="table">ExternalNaSequence</paramValue>
       <paramValue name="alternateDefline">'lcl|'||source_id'</paramValue>
