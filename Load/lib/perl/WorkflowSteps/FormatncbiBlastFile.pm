@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::formatncbiBlastFile;
+package ApiCommonData::Load::WorkflowSteps::FormatncbiBlastFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
