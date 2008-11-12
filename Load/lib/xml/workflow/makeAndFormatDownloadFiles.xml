@@ -19,7 +19,7 @@
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="formatESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-n</paramValue>
@@ -34,7 +34,7 @@
     </step>
 
 
-    <step name="formatDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-n</paramValue>
@@ -48,7 +48,7 @@
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-n</paramValue>
@@ -62,7 +62,7 @@
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="formatAnnotatedTranscriptDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatAnnotatedTranscriptDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-n</paramValue>
@@ -76,7 +76,7 @@
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-p -C X</paramValue>
@@ -90,7 +90,7 @@
       <paramValue name="projectDB">$$projectDB$$</paramValue>
     </step>
 
-    <step name="formatOrfDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::formatDownloadFile">
+    <step name="formatOrfDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Orfs_$$projectDB$$-$$projectRelease$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
       <paramValue name="args">-p -C X</paramValue>
