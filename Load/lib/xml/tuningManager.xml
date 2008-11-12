@@ -2120,16 +2120,15 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
                  sres.ExternalDatabase edb
             WHERE edr.external_database_id = edb.external_database_id
               AND edr.external_database_release_id = extq.external_database_release_id
-              AND edb.name = 'Isolates Data'
-              AND edr.version = '2007-12-12'
+              AND edb.name = 'C. parvum isolate data'
               AND sim.query_id = extq.na_sequence_id
               AND sim.subject_id = extt.na_sequence_id) aln
       WHERE aln.source_id(+) = etn.source_id
         AND etn.na_sequence_id = src.na_sequence_id
         AND edr.external_database_id = edb.external_database_id
         AND edr.external_database_release_id = etn.external_database_release_id
-        AND edb.name = 'Isolates Data'
-        AND edr.version = '2007-12-12') A,
+        AND edb.name = 'C. parvum isolate data'
+        ) A,
      (SELECT etn.source_id,
              substr(apidb.tab_to_string(cast(collect(distinct if.product)
                                         as apidb.varchartab), ' | '), 1, 80)
@@ -2142,8 +2141,7 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
       WHERE etn.na_sequence_id = if.na_sequence_id
         AND edr.external_database_id = edb.external_database_id
         AND edr.external_database_release_id = etn.external_database_release_id
-        AND edb.name = 'Isolates Data'
-        AND edr.version = '2007-12-12'
+        AND edb.name = 'C. parvum isolate data'
       GROUP BY etn.source_id) B
 WHERE A.source_id = B.source_id(+)
 UNION
