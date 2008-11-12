@@ -6119,7 +6119,7 @@ EOF
 ################################################################################
 
 # load the OrthoMCL groups
-sub loadOrthoMCLResults{
+sub loadOrthoMCLResultsForOrthomclDB {
    my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
 
 
@@ -6137,7 +6137,7 @@ $addedArgs \\
 EOF
 
    $mgr->runPlugin($signal, 
-         "OrthoMCLData::Load::Plugin::InsertOrthologousGroups", 
+         "OrthoMCLData::Load::Plugin::InsertOrthologousGroupsFromMcl", 
          $args,
          "Loading OrthoMCL output");
 }
@@ -6306,15 +6306,10 @@ sub getNotAlignedEstAndAddOneCluster {
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
-  my $sqlEST = "select distinct e.na_sequence_id from dots.ExternalNASequence e, sres.sequenceontology s where e.taxon_id in($taxonIdList) and s.term_name in ('EST','mRNA') and e.sequence_ontology_id = s.sequence_ontology_id";
-
-  my $sqlBLAT = "select distinct query_na_sequence_id from dots.blatalignment where target_taxon_id=$targetTaxonId and is_best_alignment=1 and query_na_sequence_id=?";
-
-  my $sqlBLOCK = "select distinct assembly_sequence_id from DoTS.assemblysequence where na_sequence_id = ?";
-  
   my $outputFile ="$clusterDir/AddCluster";
- 
-  my $cmd = "getSourceIds --idSQLEST \"$sqlEST\" --idSQLBLAT \"$sqlBLAT\" --idSQLBLOCK \"$sqlBLOCK\" --outputFile $outputFile --blockFile $blockFile --clusterDir $clusterDir  2>> $logFile";
+  my $alignedClustersFile ="$clusterDir/cluster.out.AlignedEsts";
+
+  my $cmd = "getUnalignedAssemSeqIds --outputFile $outputFile --repeatMaskErrFile $blockFile  --alignedClustersFile $alignedClustersFile 2>> $logFile";
  
   $mgr->runCmd($cmd);
 
