@@ -19,10 +19,6 @@ sub run {
 
     my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
 
-    my $baseFileName = $file;
-    $baseFileName =~ /\/(IEDBExport\S+)\./;
-    $baseFileName = $1;
-
     $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
   }
 
