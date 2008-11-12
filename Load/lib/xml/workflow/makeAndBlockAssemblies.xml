@@ -27,11 +27,8 @@
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
           stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
-      <paramValue name="inputFile">$$dataDir$$/alignedClusters.out</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/allClusters.out</paramValue>
-      <paramValue name="queryNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <paramValue name="subjectNcbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="alignedClustersFile">$$dataDir$$/alignedClusters.out</paramValue>
+      <paramValue name="allClustersOutputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
       <depends name="clusterTranscriptsByGenomeAlignment"/>
     </step>
