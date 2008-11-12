@@ -19,7 +19,7 @@ sub run {
   my $cmd = "gusExtractSequences --outputFile $outputFile --verbose --idSQL \"$sql\"";
 
   if ($test){
-      self->runCmd(0,'echo test > $outputFile');
+      self->runCmd(0, "echo test > $outputFile");
   }else{
       self->runCmd($test,$cmd);
   }

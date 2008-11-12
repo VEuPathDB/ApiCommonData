@@ -19,7 +19,7 @@ sub run {
 
   if ($test) {
 
-      $self->runCmd(0,"echo hello > $outputFile");
+      $self->runCmd(0,"echo test > $outputFile");
 
   } else {
 

@@ -40,10 +40,10 @@ sub splitClusterFile{
   my $cmd = "splitClusterFile $inputFile";
 
   if ($test){
-      $self->runCmd(0,'echo hello > $inputFile.small');
-      $self->runCmd(0,'echo hello > $inputFile.big');
+      $self->runCmd(0,"echo hello > $inputFile.small");
+      $self->runCmd(0,"echo hello > $inputFile.big");
   }else{
-      $self->runCmd($test,$cmd);      
+      $self->runCmd($test,$cmd);
   }
 
 }

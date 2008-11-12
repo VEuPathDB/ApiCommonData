@@ -13,10 +13,10 @@ sub run {
   my $cmd = "splitClusterFile $clusterFile";
 
   if ($test){
-      self->runCmd(0,'echo hello > $clusterFile.small');
-      self->runCmd(0,'echo hello > $clusterFile.big');
-  }else{
-      self->runCmd($test,$cmd);      
+      self->runCmd(0, "echo test > $clusterFile.small");
+      self->runCmd(0, "echo test > $clusterFile.big");
+  } else {
+      self->runCmd($test,$cmd);
   }
 
 }
