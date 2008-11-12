@@ -21,8 +21,24 @@ sub run {
   if ($test) {
       $self->runCmd(0,"echo test > $outputFile");
   } else {
-      self->runCmd($test,"$filter $seqFile $options > $outputFile"); 
+      self->runCmd($test,"$filter $seqFile $options > $outputFile");
   }
+}
+
+sub getParamDeclaration {
+  return (
+	  'seqFile',
+	  'outputFile',
+	  'filterType',
+	  'options',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['wuBlastPath', "", ""],
+	 );
 }
 
 sub restart {
@@ -32,26 +48,6 @@ sub undo {
 
 }
 
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['wuBlastPath', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     ['seqFile'],
-     ['outputFile'],
-     ['filterType'],
-     ['options'],
-    );
-  return @properties;
-}
-
 sub getDocumentation {
 }
-1
+

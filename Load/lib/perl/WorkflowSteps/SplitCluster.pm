@@ -9,41 +9,38 @@ sub run {
   my ($self, $test) = @_;
 
   my $clusterFile = $self->getParamValue('inputFile');
-
-  my $cmd = "splitClusterFile $clusterFile";
+  my $smallClustersOutputFile = $self->getParamValue('smallClustersOutputFile');
+  my $bigClustersOutputFile = $self->getParamValue('bigClustersOutputFile');
+  my $cmd = "splitClusterFile $clusterFile $smallClustersOutputFile $bigClustersOutputFile";
 
   if ($test){
-      self->runCmd(0, "echo test > $clusterFile.small");
-      self->runCmd(0, "echo test > $clusterFile.big");
+      self->runCmd(0, "echo test > $smallClustersOutputFile");
+      self->runCmd(0, "echo test > $bigClustersOutputFile");
   } else {
-      self->runCmd($test,$cmd);
+      self->runCmd($test, $cmd);
   }
-
 }
 
+
+sub getParamDeclaration {
+  return (
+     'inputFile',
+     'smallClustersOutputFile',
+     'bigClustersOutputFile',
+    );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['inputFile'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {

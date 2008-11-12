@@ -6,24 +6,24 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
- 	my ($self, $test) = @_;
-	
-	my $inputDir = $self->getParamValue('inputDir');
-	my $epiExtDbSpecs = $self->getParamValue('iedbExtDbRlsSpec');
-	my $seqExtDbSpecs = $self->getParamValue('genomeExtDbRlsSpec');
-	
-	my @inputFiles;
-	@inputFiles = &_getInputFiles($inputDir);
+  my ($self, $test) = @_;
 
-	foreach my $file (@inputFiles){
+  my $inputDir = $self->getParamValue('inputDir');
+  my $epiExtDbSpecs = $self->getParamValue('iedbExtDbRlsSpec');
+  my $seqExtDbSpecs = $self->getParamValue('genomeExtDbRlsSpec');
 
-	    my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
+  my @inputFiles;
+  @inputFiles = &_getInputFiles($inputDir);
 
-	    my $baseFileName = $file;
-	    $baseFileName =~ /\/(IEDBExport\S+)\./;
-	    $baseFileName = $1;
-	    
-	    $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
+  foreach my $file (@inputFiles) {
+
+    my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
+
+    my $baseFileName = $file;
+    $baseFileName =~ /\/(IEDBExport\S+)\./;
+    $baseFileName = $1;
+
+    $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
   }
 
 }

@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::FormatncbiBlastFile;
+package ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -6,14 +6,13 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
- 	my ($self, $test) = @_;
-	
-	my $inputFile = $self->getParamValue('inputFile');
-	my $arg = $self->getParamValue('formatterArgs');
-	my $blastBinDir = $self->getConfig('ncbiBlastPath');
-	
-	$self->runcmd($test,"$blastBinDir/formatdb -i $inputFile -p $arg");
-	
+  my ($self, $test) = @_;
+
+  my $inputFile = $self->getParamValue('inputFile');
+  my $formatterArgs = $self->getParamValue('formatterArgs');
+  my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
+
+  $self->runcmd($test,"$ncbiBlastPath/formatdb -i $inputFile -p $formatterArgs");
 }
 
 sub getParamsDeclaration {
@@ -22,12 +21,10 @@ sub getParamsDeclaration {
 	 );
 }
 
-
-
 sub getConfigDeclaration {
   return (
 	  # [name, default, description]
- 	    ['ncbiBlastPath', "", ""],
+	  ['ncbiBlastPath', "", ""],
 	 );
 }
 

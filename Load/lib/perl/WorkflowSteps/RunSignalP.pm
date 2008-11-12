@@ -10,9 +10,7 @@ sub run {
   my ($self, $test) = @_;
 
   my $proteinsFile = $self->getParamValue('proteinsFile');
-
   my $outputFile = $self->getParamValue('outputFile');
-
   my $options = $self->getParamValue('options');
 
   my $binPath = $self->getConfig('path');
@@ -27,8 +25,23 @@ sub run {
 
       $self->runCmd($test,$cmd);
 
-  } 
+  }
 
+}
+
+sub getParamDeclaration {
+  return (
+	  'proteinsFile',
+	  'outputFile',
+	  'options',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['binPath', "", ""],
+	 );
 }
 
 sub restart {
@@ -37,25 +50,6 @@ sub restart {
 sub undo {
 
 }
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['binPath', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my $properties =
-     ['proteinsFile'],
-     ['outputFile'],
-     ['options'],
-  return $properties;
-}
-
-
 
 sub getDocumentation {
 }
