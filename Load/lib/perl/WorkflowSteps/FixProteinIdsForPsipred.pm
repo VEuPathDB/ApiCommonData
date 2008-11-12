@@ -1,43 +1,45 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::FixProteinIdsForPsipred;
+package ApiCommonData::Load::WorkflowSteps::FixProteinIdsForPsipred;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
-  my ($self, $test) = @_;
+ 	my ($self, $test) = @_;
+	
+	my $inputfile = $self->getParamValue('inputProteinsFile');
+	my $outputfile = $self->getParamValue('outputProteinsFile');
+	
+	$outputFile =~ s/(\S+)\.(\S+)/$1/;
+    	$outputFile .= "Psipred.".$2;
 
-  # get parameters
-  my $inputProteinsFile = $self->getParamValue('inputProteinsFile');
-  my $outputProteinsFile = $self->getParamValue('outputProteinsFile');
+    	my $fix = 's/^(\S+)-(\d)/$1_$2/g';
+	
+	my $cmd = "cat $inputfile | perl -pe '$fix' > $outputFile";
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
-
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
-
+	if ($test){
+	      $self->runCmd(0,'echo test > $outputFile');
+	  }else{
+	      $self->runCmd($test,$cmd);
+	  }
 }
+
 
 sub getParamsDeclaration {
-  return (
-          'inputProteinsFile',
-          'outputProteinsFile',
-         );
+  return ('inputProteinsFile',
+	  'outputProteinsFile'
+	 );
 }
+
 
 sub getConfigDeclaration {
   return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+	  # [name, default, description]
+ 	 );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
@@ -45,7 +47,4 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getDocumentation {
 }
