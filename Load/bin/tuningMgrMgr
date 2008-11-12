@@ -8,7 +8,7 @@ use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 
-my ($propFile, $connectName, $password, $instanceNickname, $family, $svn);
+my ($help, $propFile, $connectName, $password, $instanceNickname, $family, $svn);
 
 my $subcommand = $ARGV[0];
 
@@ -22,44 +22,44 @@ GetOptions("propFile=s" => \$propFile,
 
 my $badUsage;
 
-if (!$propFile && !$password) {
-  print STDERR "ERROR: A password must be specified, either with the -password parameter or in a property file specified with the -propFile parameter\n";
-  $badUsage = 1;
-}
-
 if ($subcommand ne "addinstance" && $subcommand ne "removeinstance" && $subcommand ne "list" && $subcommand ne "changesvn") {
-  print STDERR "ERROR: invalid subcommand \"$subcommand\"\n";
+  print STDERR "ERROR: Illegal Subcommand \"$subcommand\".  Should be one of [addinstance|removeinstance|list|changesvn]\n";
   $badUsage = 1;
 }
 
-if ($subcommand ne "list" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
-  print STDERR "ERROR: An instance must be specified, by either the \"-connectName\" or the \"-instanceNickname\" parameter.";
+if ($subcommand && !$propFile && !$password) {
+  print STDERR "ERROR: The \"$subcommand\" subcommand requires either \"propFile\" or \"password\" parameter\n";
+  $badUsage = 1;
+}
+
+if ($subcommand && $subcommand ne "list" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"connectname\" or \"instanceNickname\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand eq "changesvn" && !$svn) {
-  print STDERR "ERROR: Subversion setting (e.g. \"trunk\" or \"branches/api-aug-08\") must be specified with \"-svn\" parameter";
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"svn\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand eq "changesvn" && !$family) {
-  print STDERR "ERROR: Subversion setting must be done by family (with \"-family\" parameter)";
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"family\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand eq "addinstance") {
   if (!$connectName) {
-    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-connectName\" parameter\n";
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-connectName\" parameter\n";
     $badUsage = 1;
   }
 
   if (!$instanceNickname) {
-    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-instanceNickname\" parameter\n";
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-instanceNickname\" parameter\n";
     $badUsage = 1;
   }
 
   if (!$family) {
-    print STDERR "ERROR: the \"addinstance\" subcommand requires the \"-family\" parameter\n";
+    print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-family\" parameter\n";
     $badUsage = 1;
   }
 }
@@ -92,10 +92,10 @@ sub usage {
 q{
 Usage:
 
-tuningMgrMgr addinstance -connectName xxxx {-password xxxx | -propFile xxxx} -instanceNickname xxxx -family xxxx {-svn xxxx}
-tuningMgrMgr removeInstance {-connectName xxxx  | -instanceNickname } {-password xxxx | -propFile xxxx}
-tuningMgrMgr list {-password xxxx | -propFile xxxx}
-tuningMgrMgr changesvn {-connectName xxxx  | -instanceNickname } {-password xxxx | -propFile xxxx} -svn xxxx
+tuningMgrMgr addinstance --connectName=s --instanceNickname=s --family=s [--svn=s] [--password=s | --propFile <FILE>] 
+tuningMgrMgr removeInstance [--connectName=s | --instanceNickname=s] [--password=s | --propFile <FILE>]
+tuningMgrMgr list [--password=s | --propFile <FILE>]
+tuningMgrMgr changesvn --family=s --svn=s [--password=s | --propFile <FILE>]
 
 options:
   propFile         pathname of a file containing database username and password, as with tuningManager
@@ -161,7 +161,7 @@ SQL
   while (my ($nickname, $svn, $family, $lastCheck, $lastUpdate) = $stmt->fetchrow_array()) {
     $instanceCount++;
 
-    print "\n--family---- --instance--------------- --subversion--------------- --checked-------- --updated------\n"
+    print "\n--family---- --instance_nickname------ --subversion--------------- --checked-------- --updated------\n"
       if !$printedSomething;
     $printedSomething = 1;
 
