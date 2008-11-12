@@ -14,51 +14,45 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $taxonId = $self->getTaxonId($self->getParamValue('parentNcbiTaxonId'));
-
-  my $taxonIdList = $self->getTaxonIdList($taxonId,$self->getParamValue('useTaxonHierarchy'));
-  
-  my $sql = $self->getParamValue('predictedTranscriptsSql');
+  my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
+  my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
+  my $predictedTranscriptsSql = $self->getParamValue('predictedTranscriptsSql');
 
   my $repeatFile = $self->getConfig('vectorFile');
-
   my $phrapDir = $self->getConfig('phrapDir');
+
+  my $taxonId = $self->getTaxonId($parentNcbiTaxonId);
+  my $taxonIdList = $self->getTaxonIdList($taxonId, $useTaxonHierarchy);
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $repeatFile --phrapDir $phrapDir";
 
-  $args .= " --idSQL \"$sql\"" if($sql);
+  $args .= " --idSQL \"$predictedTranscriptsSql\"" if ($predictedTranscriptsSql);
 
-  self->runPlugin( "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
+  self->runPlugin($test, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
 
 }
 
+sub getParamsDeclaration {
+  return (
+	  'parentNcbiTaxonId',
+	  'useTaxonHierarchy',
+	  'predictedTranscriptsSql',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	  ['vectorFile', "", ""],
+	  ['phrapDir', "", ""],
+	 );
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['vectorFile', "", ""],
-     ['phrapDir', "", ""],
-    );
-  return @properties;
-}
-
-sub getParamDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['parentNcbiTaxonId'],
-     ['useTaxonHierarchy'],
-     ['predictedTranscriptsSql'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {
