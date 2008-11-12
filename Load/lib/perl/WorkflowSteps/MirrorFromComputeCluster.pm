@@ -1,41 +1,37 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::CopyFilesFromComputeCluster;
+package ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
+use File::Basename;
 
-TEMPLATE
 sub run {
-  my ($self, $test) = @_;
+  my ($self) = @_;
 
-  # get parameters
-  my $fileOrDirToMirror = $self->getParamValue('fileOrDirToMirror');
+  # get param values
+  my $fileOrDirToMirror = $self->getParam('fileOrDirToMirror');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  my $localDataDir = $self->getLocalDataDir();
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
 
-  # get step properties
-  my $ = $self->getConfig('');
+  my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
 
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
-
+  $self->copyFromCluster("$computeClusterDataDir/$relativeDir",
+			 $filename,
+			 "$localDataDir/$relativeDir");
 }
 
-sub getParamsDeclaration {
+sub getParamDeclaration {
   return (
-          'fileOrDirToMirror',
-         );
+	  'fileOrDirToMirror',
+	 );
 }
 
 sub getConfigDeclaration {
   return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+	  # [name, default, description]
+	 );
 }
 
 sub restart {

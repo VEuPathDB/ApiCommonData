@@ -5,63 +5,42 @@ package ApiCommonData::Load::WorkflowSteps::PutUnalignedTranscriptsIntoOneCluste
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-
-## to do
-## API $self->getTaxonId($ncbiTaxId) 
-## API $self->getTaxonIdList($taxonId,$taxonHierarchy)
-
-
 sub run {
   my ($self, $test) = @_;
 
-  my $outputFile = $self->getParamValue('outputFile');
-
-  my $inputFile = $self->getParamValue('inputFile');
-
-  my $queryTaxonId = $self->getTaxonId($self->getParamValue('queryNcbiTaxonId'));
-
-  my $subjectTaxonId = $self->getTaxonId($self->getParamValue('subjectNcbiTaxonId'));
-
-  my $taxonIdList = $self->getTaxonIdList($queryTaxonId,$self->getParamValue('useTaxonHierarchy'));
-  
+  my $allClustersOutputFile = $self->getParamValue('allClustersOutputFile');
+  my $alignedClustersFile = $self->getParamValue('alignedClustersFile');
   my $repeatMaskErrFile = $self->getParamValue('repeatMaskErrFile');
 
-  my $cmd = "getSourceIds --inputFile $inputFile --outputFile $outputFile --blockFile $repeatMaskErrFile";
+  my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $alignedClustersFile --outputFile $allClustersOutputFile --repeatMaskErrFile $repeatMaskErrFile";
 
-  if ($test){
-      self->runCmd(0,'echo hello > $outputFile');
-  }else{
-      self->runCmd($test,$cmd);      
+  if ($test) {
+      self->runCmd(0, 'echo test > $outputFile');
+  } else {
+      self->runCmd($test, $cmd);
   }
 }
 
+
+sub getParamsDeclaration {
+  return (
+     'alignedClustersFile',
+     'allClustersOutputFile',
+     'repeatMaskErrFile',
+    );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
+}
 
 sub restart {
 }
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-    );
-  return @properties;
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     ['inputFile'],
-     ['outputFile'],
-     ['queryNcbiTaxonId'],
-     ['subjectNcbiTaxonId'],
-     ['useTaxonHierarchy'],
-     ['repeatMaskErrFile'],
-    );
-  return @properties;
 }
 
 sub getDocumentation {

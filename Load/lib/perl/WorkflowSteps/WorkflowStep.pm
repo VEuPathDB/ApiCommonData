@@ -105,5 +105,13 @@ sub getTableId {
   return  $tableId;
 }
 
+sub copyToCluster {
+  my ($self, $fromDir, $fromFile, $toDir) = @_;
+}
+
+sub copyFromCluster {
+  my ($self, $fromDir, $fromFile, $toDir) = @_;
+}
+
 1;
 

@@ -10,11 +10,8 @@ sub run {
   my ($self, $test) = @_;
 
   my $seqFile = $self->getParamValue('seqFile');
-
   my $outputFile = $self->getParamValue('outputFile');
-  
-  my $filterType = $self->getParamValue('filterType'); 
-
+  my $filterType = $self->getParamValue('filterType');
   my $options = $self->getParamValue('options');
 
   my $blastDir = $self->getConfig('wuBlastPath');
@@ -22,7 +19,7 @@ sub run {
   my $filter = "$blastDir/filter/$filterType";
 
   if ($test) {
-      $self->runCmd(0,"echo hello > $outputFile");
+      $self->runCmd(0,"echo test > $outputFile");
   } else {
       self->runCmd($test,"$filter $seqFile $options > $outputFile"); 
   }

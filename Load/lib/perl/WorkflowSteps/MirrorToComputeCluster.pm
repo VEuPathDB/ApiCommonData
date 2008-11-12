@@ -1,28 +1,37 @@
-package ApiCommonData::Load::Steps::WorkflowSteps::LoadFastaSequence;
+package ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster;
 
-@ISA = (GUS::Pipeline::WorkflowStep);
+@ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
-use ApiCommonData::Load::MakeTaskDirs;
-
-## copy a file from a directory in our local home dir to the cluster home dir.
-## the directory structures in both locations are assumed to be the same, so the 
+use strict;
+use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
+use File::Basename;
 
 sub run {
   my ($self) = @_;
 
   # get param values
-  my $file = $self->getParam('file');  
-  my $relativeDir = $self->getParam('relativeDir');  # dir name relative to home dir
+  my $fileOrDirToMirror = $self->getParam('fileOrDirToMirror');
 
-  # get global config values
-  my $clusterServer = $self->getGlobalConfig('clusterServer');
-  my $clusterProjectDir = $self->getGlobalConfig('clusterProjectDir');
-  my $dataDir = $self->getGlobalConfig('dataDir');
+  my $localDataDir = $self->getLocalDataDir();
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
 
-  # FIX THIS
-  $self->copyToCluster("$dataDir/$relativeDir",
-		       $file,
-		       "$clusterProjectDir/$dataDir/$relativeDir");
+  my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
+
+  $self->copyToCluster("$localDataDir/$relativeDir",
+		       $filename,
+		       "$computeClusterDataDir/$relativeDir");
+}
+
+sub getParamDeclaration {
+  return (
+	  'fileOrDirToMirror',
+	 );
+}
+
+sub getConfigDeclaration {
+  return (
+	  # [name, default, description]
+	 );
 }
 
 sub restart {
@@ -30,22 +39,6 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getConfigDeclaration {
-  my @properties = 
-    (
-     # [name, default, description]
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['', "", ""],
-     ['' "", ""],
-    );
-  return @properties;
 }
 
 sub getDocumentation {
