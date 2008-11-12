@@ -12,8 +12,8 @@ my ($verbose,$outputFile,$inputFile, $blockFile, $gusConfigFile);
 &GetOptions("verbose!"=> \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "outputFile=s" => \$outputFile,
-            "inputFile=s" => \$inputFile,
-	    "blockFile=s" => \$blockFile);
+            "alignedClustersFile=s" => \$inputFile,
+	    "repeatMaskErrFile=s" => \$blockFile);
 
 print STDERR "Establishing dbi login\n";
 
