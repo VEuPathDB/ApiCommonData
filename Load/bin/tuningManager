@@ -16,8 +16,6 @@ my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
-my $nodename = `uname -n`;
-chomp($nodename);
 ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as "
 					       . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
 					       . " at $timestamp with arguments:\n"
