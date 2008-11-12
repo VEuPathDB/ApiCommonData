@@ -68,6 +68,12 @@ sub undoAll{
   $self->_undoProvidedOrfTranslation();
   $self->_undoRptUnit();
   $self->_undoCommentNterm();
+  $self->_undoPartial();
+  $self->_undoNoteWithAuthor();
+  $self->_undoLiterature();
+  $self->_undoMiscFeatureNote();
+  $self->undoObsoleteProduct();
+
 }
 
 
@@ -173,14 +179,18 @@ sub sourceIdAndTranscriptSeq {
 	  $translatedAaFeature->setTranslationStop($translationStop);
       }
 
-    }
-    $transcriptLoc->setStartMin(1);
-    $transcriptLoc->setStartMax(1);
-    $transcriptLoc->setEndMin($transcriptLength);
-    $transcriptLoc->setEndMax($transcriptLength);
-    $transcriptLoc->setIsReversed(0);
+  }else{
+      $transcriptLoc->setStartMin(1);
+      $transcriptLoc->setStartMax(1);
+      $transcriptLoc->setEndMin($transcriptLength);
+      $transcriptLoc->setEndMax($transcriptLength);
+      $transcriptLoc->setIsReversed(0);
+  }
+
 
   }
+
+
   return [];
 }
 
@@ -250,6 +260,7 @@ sub _setCodingAndTranslationStartAndStop{
       $translatedAAFeat->setTranslationStart($translationStart);
     }
   }
+  
   return [];
 }
 
@@ -468,6 +479,28 @@ sub setPseudo {
 }
 
 sub _undoPseudo{
+    my ($self) = @_;
+}
+
+############### Pseudo  ###############################
+
+sub setPartial {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+  
+  if($bioperlFeature->primary_tag() =~ /gene/){
+      my $transcript = &getGeneTranscript($self->{plugin}, $feature);
+
+      $feature->setIsPartial(1);
+      $transcript->setIsPartial(1);
+  }else{
+      $feature->setIsPartial(1);
+  }
+
+
+  return [];
+}
+
+sub _undoPartial{
     my ($self) = @_;
 }
 
@@ -716,6 +749,181 @@ sub _getTranslationStop{
   }
 
   return $translationStop;
+}
+
+
+
+
+
+
+################ Literature ###############################
+
+sub literature {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @dbRefNaFeatures;
+  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
+    if ($tagValue =~ /^\s*(PMID:\s*\d+)/) {
+      my $pmid = $1;
+      push(@dbRefNaFeatures, 
+	   GUS::Supported::SpecialCaseQualifierHandlers::buildDbXRef($self->{plugin}, $pmid));
+    } else {
+      next;
+    }
+  }
+  return \@dbRefNaFeatures;
+}
+
+# undo handled by undoDbXRef in GUS::Supported::Load::SpecialCaseQualifierHandler
+sub _undoLiterature{
+  my ($self) = @_;
+  GUS::Supported::SpecialCaseQualifierHandlers::_undoDbXRef($self);
+}
+
+###################  obsolete_product  #################
+sub obsoleteProduct {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @notes;
+  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
+    my $note = "Obsolete product name: $tagValue";
+    my $arg = {comment_string => substr($note, 0, 4000)};
+    push(@notes, GUS::Model::DoTS::NAFeatureComment->new($arg));
+
+  }
+  return \@notes;
+}
+
+sub _undoObsoleteProduct {
+  my ($self) = @_;
+  $self->_deleteFromTable('DoTS.NAFeatureComment');
+}
+
+
+
+###################  misc_feature /note  #################
+sub miscFeatureNote {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  return undef if $bioperlFeature->has_tag('algorithm');
+
+  # map contents of note to appropriate go term
+  my @notes;
+  my %note2SO = ('putative centromer' =>'centromere',   # centromere or centromeric
+		 'centromere, putative' => 'centromere',
+		 'GC-rich' => 'GC_rich_promoter_region',
+		 'GC-rcih' => 'GC_rich_promoter_region',
+		 'GC rich' => 'GC_rich_promoter_region',
+		 'tetrad tandem repeat' => 'tandem_repeat',
+		 'Possible exon' => 'exon',
+		 'Could be the last exon' => 'NO_SO_TERM',
+		 'maps at the 3' => 'NO_SO_TERM',
+		);
+  my @keys = keys(%note2SO);
+
+
+  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
+
+    my $found;
+    foreach my $key (@keys) {
+      $found = $key if $tagValue =~ /$key/i;
+      last if $found;
+    }
+#    die "Can't find so term for note '$tagValue'" unless $found;
+
+    my $soTerm = $note2SO{$found};
+
+#    if ($soTerm ne 'NO_SO_TERM') {
+    if ($soTerm && $soTerm ne 'NO_SO_TERM') {
+      my $soId = $self->_getSOPrimaryKey($soTerm);
+      $feature->setSequenceOntologyId($soId);
+    }
+
+    my $arg = {comment_string => substr($tagValue, 0, 4000)};
+    push(@notes, GUS::Model::DoTS::NAFeatureComment->new($arg));
+
+  }
+  return \@notes;
+}
+
+sub _undoMiscFeatureNote{
+  my ($self) = @_;
+  $self->_deleteFromTable('DoTS.NAFeatureComment');
+}
+
+################# Note with Author #################################
+
+sub noteWithAuthor {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  foreach my $controlledCuration ($bioperlFeature->get_tag_values($tag)){
+    my $html = $self->_makeHTML($controlledCuration);
+
+    my $comment = GUS::Model::DoTS::NAFeatureComment->
+                                    new({ COMMENT_STRING => $html });
+
+    $comment->setParent($feature);
+  }
+
+return [];
+}
+
+sub _undoNoteWithAuthor{
+  my ($self) = @_;
+  $self->_deleteFromTable('DoTS.NAFeatureComment');
+}
+
+sub _makeHTML{
+  my($self, $controlledCuration) = @_;
+
+  my @subTags = split(';', $controlledCuration);
+
+  my %curation;
+  my @htmls;
+  my ($url, $text);
+  foreach my $subTag (@subTags){
+    my ($label, $data) = split('=', $subTag);
+    $label =~ s/\s//g;
+
+    $curation{$label} = $data;
+  }
+
+  foreach my $prefix (sort keys %curation) {
+    my $val = $curation{$prefix};
+    my $html;
+
+    if($prefix eq "date"){
+      next;
+    }elsif($prefix eq "URL_display"){
+      $text = $val;
+    }elsif($prefix eq "URL" || $prefix eq "db_xref"){
+
+      $url = $val;
+      $url =~ s/\s//g;
+
+    }elsif($prefix eq "dbxref"){
+
+      ($prefix,$val) = split(":", $val);
+      $html = "<b>$prefix</b>:\t$val<br>" if($val);
+
+    }else{
+      $html = "<b>$prefix</b>:\t$val<br>" if($val);
+    }
+    push(@htmls, $html);
+  }
+
+  if($url && $text){
+    my $html = "<a href=\"$url\">$text</a><br>";
+    push(@htmls, $html);
+  }elsif($url){
+    my $html = "<a href=\"$url\">$url</a><br>";
+    push(@htmls, $html);
+  }
+
+  my $userCommentHtml = join('', @htmls);
+
+  return $userCommentHtml;
+
 }
 
 1;
