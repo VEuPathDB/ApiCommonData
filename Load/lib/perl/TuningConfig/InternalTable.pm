@@ -211,7 +211,7 @@ sub update {
   $self->publish($suffix, $dbh, $purgeObsoletes) or return "broken";
 
   ApiCommonData::Load::TuningConfig::Log::addLog("    " . (time - $startTime) .
-						 " seconds to rebuild tuningTable " .
+						 " seconds to rebuild tuning table " .
 						 $self->{name});
 
   return "neededUpdate"
