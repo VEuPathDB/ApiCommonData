@@ -73,6 +73,7 @@ sub undoAll{
   $self->_undoLiterature();
   $self->_undoMiscFeatureNote();
   $self->undoObsoleteProduct();
+  $self->_undoRptUnit();
 
 }
 
@@ -923,6 +924,24 @@ sub _makeHTML{
   my $userCommentHtml = join('', @htmls);
 
   return $userCommentHtml;
+
+}
+
+################ rpt_unit ################################
+
+# create a comma delimited list of rpt_units
+sub rptUnit {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  my $rptUnit = join(", ", @tagValues);
+  $feature->setRptUnit($rptUnit);
+  return [];
+}
+
+# nothing special to do
+sub _undoRptUnit{
+  my ($self) = @_;
 
 }
 
