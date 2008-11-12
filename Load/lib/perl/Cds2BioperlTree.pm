@@ -21,7 +21,7 @@ sub preprocess {
   # (7) add to transcript
   foreach my $bioperlFeatureTree ($bioperlSeq->get_SeqFeatures()) {
     my $type = $bioperlFeatureTree->primary_tag();
-    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "misc_RNA")) {
+    if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "misc_RNA", "snoRNA")) {
       $type = "coding" if $type eq "CDS";
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
