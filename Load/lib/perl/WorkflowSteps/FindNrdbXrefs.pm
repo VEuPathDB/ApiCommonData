@@ -4,7 +4,6 @@ package GUS::ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -15,17 +14,12 @@ sub run {
   my $nrdbFileRegex = $self->getParamValue('nrdbFileRegex');
   my $outputFile = $self->getParamValue('outputFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
-
+  my $cmd = "dbXRefBySeqIdentity --proteinFile '$proteinsFile' --nrFile '$nrdbFile' --outputFile '$outputFile' --sourceIdRegex \"$nrdbFileRegex\" --protDeflnRegex \"$proteinsFileRegex\" ";
   if ($test) {
+      self -> runCmd(0, "echo test > $outputFile");
   } else {
+      self -> runCmd($test,$cmd);
   }
-
-  $self->runPlugin($test, '', $args);
 
 }
 
