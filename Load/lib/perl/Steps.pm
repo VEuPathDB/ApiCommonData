@@ -3125,7 +3125,7 @@ sub parseBlastForSqlldr {
 }
 
 sub loadBlastWithSqlldr {
-  my ($mgr,$blastName) = @_;
+  my ($mgr,$blastName,$restart) = @_;
 
   my $signal = "sqlldrLoad$blastName";
 
@@ -3142,6 +3142,8 @@ sub loadBlastWithSqlldr {
   my $oracleUserPswd = $propertySet->getProp('oracleUserPswd');
 
   my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile rows=25000 direct=TRUE";
+
+  $cmd .= " SKIP=$restart" if $restart;
 
   $mgr->runCmd($cmd);
 
@@ -3277,7 +3279,7 @@ dbLogin=$login
 dbPassword=$password
 ";
 
-  my $configFile = "orthomclEdges.config";
+  my $configFile = "or-thomclEdges.config";
   open(CONFIG, ">$configFile") || die "Can't open '$configFile' for writing";
   print CONFIG $configString;
   close(CONFIG);
@@ -3290,6 +3292,8 @@ dbPassword=$password
 
   my $outFile = "$mgr->{dataDir}/mcl/orthomclGroups.txt";
   my $cmd = "mclOutput2groupsFile OG21_ 10000 < $tmpFile > $outFile 2>> $logfile";
+
+  $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 
@@ -3778,7 +3782,7 @@ sub startProteinBlastOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $ppn $queue";
+  my $clusterCmdMsg = "runBlastSimilarities $mgr->{clusterDataDir} NUMBER_OF_NODES $queryFile $subjectFile $queue $ppn";
 
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
