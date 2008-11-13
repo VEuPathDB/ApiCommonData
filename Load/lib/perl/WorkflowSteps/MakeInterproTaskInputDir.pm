@@ -4,7 +4,6 @@ package ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -12,42 +11,32 @@ sub run {
   my $taskInputDir = $self->getParamValue('taskInputDir');
   my $proteinsFile = $self->getParamValue('proteinsFile');
 
+  # get global properties
+  my $email = $self->getGlobalConfig('email');
+
   # get properties
   my $taskSize = $self->getGlobalConfig('taskSize');
+  my $applications = $self->getGlobalConfig('applications');
 
   # make controller.prop file
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::BlastMatrixTask");
+				       "DJob::DistribJobTasks::IprscanTask");
 
   # make task.prop file
-  my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
-
-  my $dbFilePath = "$computeClusterDataDir/$subjectFile";
-  my $inputFilePath = "$computeClusterDataDir/$queryFile";
-  my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
-  my $vendorString = $vendor? "blastVendor=$vendor" : "";
 
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
-"blastBinDir=$blastBinPathCluster
-dbFilePath=$dbFilePath
-inputFilePath=$inputFilePath
-dbType=$dbType
-regex='$idRegex'
-blastProgram=$blastType
-blastParamsFile=$ccBlastParamsFile
-$vendorString
+"seqfile=$proteinsFile
+outputfile=iprscan_out.xml
+seqtype=p
+appl=$applications
+email=$email
+crc=false
 ";
-  close(F);
 
-  # make blastParams file
-  my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
-  open(F, $localBlastParamsFile) || die "Can't open blast params file '$localBlastParamsFile' for writing";;
-  print F "$blastArgs\n";
-  close(F);
   #&runCmd("chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }
 
