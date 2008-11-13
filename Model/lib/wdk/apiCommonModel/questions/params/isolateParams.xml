@@ -105,7 +105,8 @@
             queryRef="strainVQ.withIsolates"
             prompt="Strain/Taxon Name"
             multiPick="true"
-            quote="false">
+            quote="false"
+            displayType="treeBox">
                   <help>
                           Strain name for isolate barcodes and 3k Chip data
                         </help>
@@ -379,30 +380,28 @@
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
+      <column name="parentTerm"/>
 
 <sql includeProjects="CryptoDB">
       <![CDATA[
-      SELECT src.organism || '  - (' || count(src.organism) || ' isolates)' AS term,
-             src.organism AS internal
-      FROM   DoTS.IsolateSource src,
-             DoTS.ExternalNASequence etn,
-             SRes.ExternalDatabaseRelease edr,
-             SRes.ExternalDatabase edb
-      WHERE  edr.external_database_id = edb.external_database_id
-         AND edr.external_database_release_id = etn.external_database_release_id
-         AND edb.name = 'Isolates Data'
-         AND edr.version = '2007-12-12'
-         AND src.na_sequence_id = etn.na_sequence_id
-         AND src.organism is not null
-      GROUP BY src.organism
-      ORDER BY src.organism
+select distinct i.organism as term, tn.name as internal, p.name as parentTerm 
+from apidb.isolateattributes i, sres.taxonname tn, 
+     sres.taxon t, sres.TaxonName p
+where i.organism = tn.name
+and tn.taxon_id = t.taxon_id
+and tn.name_class = 'scientific name'
+and t.parent_id = p.taxon_id
+and p.name_class =  'scientific name'
+and i.organism in ('Cryptosporidium parvum Iowa' ,'Cryptosporidium parvum Iowa', 'Cryptosporidium parvum', 'Cryptosporidium')
+union
+select 'Cryptosporidium' as term, 'Cryptosporidium' as internal, '' as parentTerm from dual
      ]]>
       </sql>
 
 
       <sql  includeProjects="PlasmoDB">
       <![CDATA[
-    select 'P.f. ' || new as term, new as internal
+    select 'P.f. ' || new as term, new as internal, 'P.f. ' || new as parentTerm
     from (
       SELECT lower(regexp_replace(src.strain, '[-_/]', '-')) as new
       FROM DoTS.IsolateSource src
