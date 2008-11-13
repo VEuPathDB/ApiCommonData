@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::DumpMixedGenomicSeqs;
+package ApiCommonData::Load::WorkflowSteps::DumpMixedGenomicSeqs;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

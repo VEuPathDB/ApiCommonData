@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::InitUserGroupProject;
+package ApiCommonData::Load::WorkflowSteps::InitUserGroupProject;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

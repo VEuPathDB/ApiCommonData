@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeAlgInv;
+package ApiCommonData::Load::WorkflowSteps::MakeAlgInv;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

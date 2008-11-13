@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir;
+package ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

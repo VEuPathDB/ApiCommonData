@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile;
+package ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

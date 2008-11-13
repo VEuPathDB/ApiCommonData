@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

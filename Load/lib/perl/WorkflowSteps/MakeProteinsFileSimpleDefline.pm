@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeProteinsFileSimpleDefline;
+package ApiCommonData::Load::WorkflowSteps::MakeProteinsFileSimpleDefline;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

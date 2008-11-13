@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir;
+package ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

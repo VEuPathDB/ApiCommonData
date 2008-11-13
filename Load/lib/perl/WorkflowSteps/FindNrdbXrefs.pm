@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs;
+package ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

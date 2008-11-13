@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::CreateExtDbAndDbRls;
+package ApiCommonData::Load::WorkflowSteps::CreateExtDbAndDbRls;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

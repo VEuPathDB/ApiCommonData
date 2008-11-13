@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::StartClusterTask;
+package ApiCommonData::Load::WorkflowSteps::StartClusterTask;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

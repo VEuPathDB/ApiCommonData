@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

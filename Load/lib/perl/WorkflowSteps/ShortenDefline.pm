@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::ShortenDefline;
+package ApiCommonData::Load::WorkflowSteps::ShortenDefline;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

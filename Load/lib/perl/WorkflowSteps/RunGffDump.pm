@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::RunGffDump;
+package ApiCommonData::Load::WorkflowSteps::RunGffDump;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

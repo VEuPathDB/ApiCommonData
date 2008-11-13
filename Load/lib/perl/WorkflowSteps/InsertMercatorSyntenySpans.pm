@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::InsertMercatorSyntenySpans;
+package ApiCommonData::Load::WorkflowSteps::InsertMercatorSyntenySpans;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

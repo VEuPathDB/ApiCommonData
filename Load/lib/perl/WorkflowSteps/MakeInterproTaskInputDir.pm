@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir;
+package ApiCommonData::Load::WorkflowSteps::MakeInterproTaskInputDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
@@ -12,18 +12,43 @@ sub run {
   my $taskInputDir = $self->getParamValue('taskInputDir');
   my $proteinsFile = $self->getParamValue('proteinsFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  # get properties
+  my $taskSize = $self->getGlobalConfig('taskSize');
 
-  # get step properties
-  my $ = $self->getConfig('');
+  # make controller.prop file
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::BlastMatrixTask");
 
-  if ($test) {
-  } else {
-  }
+  # make task.prop file
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
 
-  $self->runPlugin($test, '', $args);
+  my $dbFilePath = "$computeClusterDataDir/$subjectFile";
+  my $inputFilePath = "$computeClusterDataDir/$queryFile";
+  my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
+  my $vendorString = $vendor? "blastVendor=$vendor" : "";
 
+  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+
+  print F
+"blastBinDir=$blastBinPathCluster
+dbFilePath=$dbFilePath
+inputFilePath=$inputFilePath
+dbType=$dbType
+regex='$idRegex'
+blastProgram=$blastType
+blastParamsFile=$ccBlastParamsFile
+$vendorString
+";
+  close(F);
+
+  # make blastParams file
+  my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
+  open(F, $localBlastParamsFile) || die "Can't open blast params file '$localBlastParamsFile' for writing";;
+  print F "$blastArgs\n";
+  close(F);
+  #&runCmd("chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }
 
 sub getParamsDeclaration {

@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir;
+package ApiCommonData::Load::WorkflowSteps::InitClusterHomeDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

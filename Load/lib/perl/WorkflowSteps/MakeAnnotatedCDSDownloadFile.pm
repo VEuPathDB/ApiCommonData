@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

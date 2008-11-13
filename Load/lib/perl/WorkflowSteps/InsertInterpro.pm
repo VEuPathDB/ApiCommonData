@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::InsertInterpro;
+package ApiCommonData::Load::WorkflowSteps::InsertInterpro;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

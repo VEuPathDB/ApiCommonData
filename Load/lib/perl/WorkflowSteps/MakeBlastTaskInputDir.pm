@@ -2,6 +2,7 @@ package ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
+use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
@@ -16,19 +17,18 @@ sub run {
   my $blastType = $self->getParamValue("blastType");
   my $vendor = $self->getParamValue("vendor");
 
-  my $bsTaskSize = $self->getConfig('taskSize');
+  my $taskSize = $self->getConfig('taskSize');
   my $wuBlastBinPathCluster = $self->getConfig('wuBlastBinPathCluster');
   my $ncbiBlastBinPathCluster = $self->getConfig('ncbiBlastBinPathCluster');
 
-  my $wuBlastBinPathCluster = ($vendor eq 'ncbi')?
+  my $blastBinPathCluster = ($vendor eq 'ncbi')?
     $ncbiBlastBinPathCluster : $wuBlastBinPathCluster;
 
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize, $nodePath,
-				       "DJob::DistribJobTasks::BlastMatrixTask",
-				       $nodeClass);
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::BlastMatrixTask");
 
   # make task.prop file
   my $computeClusterDataDir = $self->getComputeClusterDataDir();

@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::RunfullRecordDump;
+package ApiCommonData::Load::WorkflowSteps::RunfullRecordDump;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

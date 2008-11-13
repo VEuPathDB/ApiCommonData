@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures;
+package ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

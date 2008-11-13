@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::CreatePsipredTaskDir;
+package ApiCommonData::Load::WorkflowSteps::CreatePsipredTaskDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

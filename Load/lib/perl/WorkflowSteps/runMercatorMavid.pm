@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::runMercatorMavid;
+package ApiCommonData::Load::WorkflowSteps::runMercatorMavid;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MoveDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::MoveDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

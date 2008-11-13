@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::GrepMercatorGff;
+package ApiCommonData::Load::WorkflowSteps::GrepMercatorGff;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;

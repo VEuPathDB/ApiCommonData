@@ -31,7 +31,10 @@ sub getComputeClusterDataDir {
 }
 
 sub makeControllerPropFile {
-  my ($self, $taskInputDir, $slotsPerNode, $taskSize, $nodePath, $taskClass, $nodeClass) = @_;
+  my ($self, $taskInputDir, $slotsPerNode, $taskSize, $taskClass) = @_;
+
+  my $nodePath = $self->getGlobalConfig('nodePath');
+  my $nodeClass = $self->getGlobalConfig('nodeClass');
 
   # tweak inputs
   my $masterDir = $taskInputDir;

@@ -1,4 +1,4 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::FixPsipredFileNames;
+package ApiCommonData::Load::WorkflowSteps::FixPsipredFileNames;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
