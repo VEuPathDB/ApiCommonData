@@ -9,11 +9,11 @@
     <constant name="dataDir">$$parentDataDir$$/iedb</constant>
     <constant name="proteinsFileSimpleDefline">$$dataDir$$/blastDb/proteinsSimpleDefline.fsa</constant>
 
-    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeBlastDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeBlastDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$/blastDb</paramValue>
       <depends name="makeDataDir"/>
     </step>

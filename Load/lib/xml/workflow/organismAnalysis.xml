@@ -29,15 +29,15 @@
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
-  <constant name="downloadSiteDataDir">/files/cbil/data/cbil/apiSiteFiles/downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
+  <constant name="downloadSiteDataDir">downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
   <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</constant>
 
-  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
 
-  <step name="makedownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-    <paramValue name="dataDir">$$downloadSiteDataDir$$</paramValue>
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
   <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">

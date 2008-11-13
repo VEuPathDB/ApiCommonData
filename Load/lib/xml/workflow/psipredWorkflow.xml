@@ -9,7 +9,7 @@
     <constant name="psipredProteinsFile">$$dataDir$$/proteinsFixedIds.fsa</constant>
     <constant name="psipredNrdbFile">$$dataDir$$/nrdb.pfilt.fsa</constant>
 
-    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
@@ -62,6 +62,7 @@
 
     <step name="makeAlgInv" stepClass="ApiCommonData::Load::Steps::MakeAlgInv">
       <paramValue name="algName">psipred</paramValue>
+      <paramValue name="algVersion">dontcare</paramValue>
       <paramValue name="algDesc">dontcare</paramValue>
       <paramValue name="algResult">dontcare</paramValue>
       <depends name="fixFileNames"/>

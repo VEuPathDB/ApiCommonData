@@ -6,7 +6,7 @@
       <param name="projectDB"/>
       <param name="projectRelease"/>
 
-    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">common</paramValue>
     </step>
 
@@ -18,23 +18,23 @@
           stepClass="ApiCommonData::Load::WorkflowSteps::InitUserGroupProject">
     </step>
 
-    <step name="makeBlastWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
+    <step name="makeBlastWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
     </step>
 
-    <step name="makeTextSearchWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
+    <step name="makeTextSearchWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
     </step>
 
-    <step name="makeMercatorWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
+    <step name="makeMercatorWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
     </step>
 
-    <step name="makeMotifWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
-      <paramValue name="dataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
+    <step name="makeMotifWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
     </step>
 
-    <step name="makeMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">common/mercator</paramValue>
       <depends name="makeDataDir"/>
     </step>

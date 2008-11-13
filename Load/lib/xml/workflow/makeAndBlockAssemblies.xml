@@ -8,7 +8,7 @@
     <param name="dataDir"/>
     <param name="assemblySeqsDataDir"/>
  
-    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
@@ -33,12 +33,12 @@
       <depends name="clusterTranscriptsByGenomeAlignment"/>
     </step>
 
-    <step name="makeAssembliesSmallClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeAssembliesSmallClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$/small</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="makeAssembliesBigClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDir">
+    <step name="makeAssembliesBigClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$/big</paramValue>
       <depends name="makeDataDir"/>
     </step>
