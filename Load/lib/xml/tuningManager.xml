@@ -2085,7 +2085,7 @@ SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
        A.organism, A.strain, A.specific_host, A.isolation_source, A.country,
        A.note, A.description, A.pcr_primers, A.query_name, A.target_name,
        A.min_subject_start, A.max_subject_end, A.map, B.product, A.project_id,
-       A.is_reference, B.product_alias, A.sequence, A.collected_by, A.data_type
+       A.is_reference, B.product_alias, A.collected_by, A.data_type
 FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              substr(etn.source_id, 1, 20) as source_id,
              substr(src.organism, 1, 60) as organism,
@@ -2103,12 +2103,6 @@ FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
              aln.min_subject_start, aln.max_subject_end,
              substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
              src.is_reference,
---           dbms_lob.substr(etn.sequence) as sequence,
-             case
-               when length(etn.sequence) > 4000
-                 then cast(substr(etn.sequence, 1, 3997) || '...'  as varchar2(4000))
-                 else cast(etn.sequence as varchar2(4000))
-             end as sequence,
              src.collected_by,
              'PopSet' data_type
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
@@ -2170,7 +2164,6 @@ SELECT etn.na_sequence_id,
        'PlasmoDB' as project_id,
        src.is_reference,
        CAST (NULL AS VARCHAR2(1)) as product_alias,
-       dbms_lob.substr(etn.sequence),
        src.collected_by,
        'Barcode' as data_type
 FROM   dots.ExternalNaSequence etn,
@@ -2203,7 +2196,6 @@ SELECT etn.na_sequence_id,
        'PlasmoDB' as project_id,
        src.is_reference,
        CAST (NULL AS VARCHAR2(1)) as product_alias,
-       dbms_lob.substr(etn.sequence),
        src.collected_by,
        '3kChip' as data_type
 FROM   dots.ExternalNaSequence etn,
