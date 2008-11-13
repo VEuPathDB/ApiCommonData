@@ -4248,7 +4248,7 @@ sub xdformatDownloadFileForBlastSite {
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  if ($type =~/\-C X/){
+  if ($type =~/p/){
 
         my $tempFile = "$inputFile.temp";
 
