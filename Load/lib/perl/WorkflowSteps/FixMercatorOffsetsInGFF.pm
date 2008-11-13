@@ -1,45 +1,43 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::FixMercatorOffsetsInGFF;
+package ApiCommonData::Load::WorkflowSteps::FixMercatorOffsetsInGFF;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
-  my ($self, $test) = @_;
+	my ($self, $test) = @_;
 
-  # get parameters
-  my $inputFile = $self->getParamValue('inputFile');
-  my $fsaFile = $self->getParamValue('fsaFile');
-  my $outputFile = $self->getParamValue('outputFile');
+	my $inGFFFile = $self->getParamValue('inputFile');
+	my $inFastaFile = $self->getParamValue('fsaFile');
+	my $outFile = $self->getParamValue('outputFile');
+	
+	my $args = "--f $inFastaFile --g $inGFFFile --o $outFile";
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+	 if ($test){
+	      $self->runCmd(0,'echo test > $outFile');
+	  }else{
+	      $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
+	  }
 
-  # get step properties
-  my $ = $self->getConfig('');
-
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
 
 }
 
 sub getParamsDeclaration {
-  return (
-          'inputFile',
-          'fsaFile',
-          'outputFile',
-         );
+  return ('inputFile',
+	  'fsaFile',
+	  'outputFile'
+	 );
 }
+
 
 sub getConfigDeclaration {
   return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+	  # [name, default, description]
+ 	 );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
@@ -47,7 +45,4 @@ sub restart {
 
 sub undo {
 
-}
-
-sub getDocumentation {
 }
