@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ToxoDB,GiardiaDB">
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,CryptoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -20,6 +20,21 @@
                 <![CDATA[
                     SELECT source_id, project_id
                     FROM $$gene_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="CryptoGenes" isCacheable="false" includeProjects="CryptoDB">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT ga.source_id, ga.project_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
+                      AND ga.organism like $$organism$$
                 ]]>
             </sql>
         </sqlQuery>
