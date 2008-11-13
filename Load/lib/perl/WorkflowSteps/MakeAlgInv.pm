@@ -4,32 +4,31 @@ package GUS::ApiCommonData::Load::WorkflowSteps::MakeAlgInv;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $algName = $self->getParamValue('algName');
+  my $algVersion = $self->getParamValue('algVersion');
   my $algDesc = $self->getParamValue('algDesc');
   my $algResult = $self->getParamValue('algResult');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  $algName =~ s/\s//g;
+  $algName =~ s/\///g;
 
-  # get step properties
-  my $ = $self->getConfig('');
+  $algResult =~ s/\s/_/g;
 
-  if ($test) {
-  } else {
-  }
+  my $args = "--AlgorithmName $algName --AlgorithmDescription $algDesc --AlgImpVersion $algVersion  --AlgInvocStart '2000-01-01' --AlgInvocEnd '2000-01-01' --AlgInvocResult $algResult";
 
-  $self->runPlugin($test, '', $args);
-
+  $self->runPlugin($test,
+		   "GUS::Community::Plugin::InsertMinimalAlgorithmInvocation",
+		   $args);
 }
 
 sub getParamsDeclaration {
   return (
           'algName',
+          'algVersion',
           'algDesc',
           'algResult',
          );

@@ -1,28 +1,20 @@
-package GUS::ApiCommonData::Load::WorkflowSteps::MakeDir;
+package GUS::ApiCommonData::Load::WorkflowSteps::MakeDataDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+## make a dir relative to the workflow's data dir
+
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $dataDir = $self->getParamValue('dataDir');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  my $localDataDir = $self->getLocalDataDir();
 
-  # get step properties
-  my $ = $self->getConfig('');
-
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
-
+  $self->runCmd(0, "mkdir $localDataDir/$dataDir");
 }
 
 sub getParamsDeclaration {

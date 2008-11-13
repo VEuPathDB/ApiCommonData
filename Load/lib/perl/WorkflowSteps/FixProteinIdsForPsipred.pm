@@ -6,23 +6,20 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
- 	my ($self, $test) = @_;
-	
-	my $inputfile = $self->getParamValue('inputProteinsFile');
-	my $outputfile = $self->getParamValue('outputProteinsFile');
-	
-	$outputFile =~ s/(\S+)\.(\S+)/$1/;
-    	$outputFile .= "Psipred.".$2;
+  my ($self, $test) = @_;
 
-    	my $fix = 's/^(\S+)-(\d)/$1_$2/g';
-	
-	my $cmd = "cat $inputfile | perl -pe '$fix' > $outputFile";
+  my $inputProteinsFile = $self->getParamValue('inputProteinsFile');
+  my $outputProteinsFile = $self->getParamValue('outputProteinsFile');
 
-	if ($test){
-	      $self->runCmd(0,'echo test > $outputFile');
-	  }else{
-	      $self->runCmd($test,$cmd);
-	  }
+  my $fix = 's/^(\S+)-(\d)/$1_$2/g';
+
+  my $cmd = "cat $inputProteinsFile | perl -pe '$fix' > $outputProteinsFile";
+
+  if ($test){
+    $self->runCmd(0,'echo test > $outputProteinsFile');
+  }else{
+    $self->runCmd($test,$cmd);
+  }
 }
 
 
