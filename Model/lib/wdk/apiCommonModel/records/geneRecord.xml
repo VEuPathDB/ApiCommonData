@@ -122,8 +122,15 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,ApiDB">
+                          includeProjects="ToxoDB,GiardiaDB,CryptoDB,ApiDB">
                   <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB">
+                    <description>
+                        <![CDATA[
+                            All results
+                        ]]>
+                    </description>   
+                </instance>
+                <instance name="all_results" displayName="All Results" default="true" includeProjects="CryptoDB">
                     <description>
                         <![CDATA[
                             All results
@@ -174,7 +181,7 @@
             <answerFilter queryRef="GeneSummaries.CryptoGenes"
                           includeProjects="CryptoDB">
                 
-                <instance name="all_genes" displayName="Cryptosporidium Genes" default="true"> 
+                <instance name="all_genes" displayName="Cryptosporidium Genes"> 
                     <description>
                         <![CDATA[
                             Total number of genes 
