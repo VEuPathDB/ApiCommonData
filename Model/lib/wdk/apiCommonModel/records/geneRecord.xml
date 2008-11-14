@@ -122,8 +122,14 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB">
-                
+                          includeProjects="ToxoDB,GiardiaDB,ApiDB">
+                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB">
+                    <description>
+                        <![CDATA[
+                            All results
+                        ]]>
+                    </description>   
+                </instance>
                 <instance name="all_results" displayName="All Results" default="true" includeProjects="ToxoDB">
                     <description>
                         <![CDATA[
@@ -139,6 +145,28 @@
                     </description>   
                 </instance>
             </answerFilter>
+
+  <answerFilter queryRef="GeneSummaries.ApiDeprecatedGenes"
+                          includeProjects="ApiDB">
+                
+                <instance name="all_genes" displayName="Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> non-deprecated genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="deprecated_genes">genes</paramValue>
+                </instance>
+                <instance name="deprecated_genes" displayName="Deprecated Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> deprecated genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="deprecated_genes">deprecated_genes</paramValue>
+                </instance>
+               
+  </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.DeprecatedGenes"
                           includeProjects="GiardiaDB">
@@ -162,12 +190,12 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
-                          includeProjects="ToxoDB">
+                          includeProjects="ToxoDB,ApiDB">
                 
                 <instance name="toxo_genes" displayName="Toxo Genes">
                     <description>
                         <![CDATA[
-                            Number of <i>T. gondii</i> genes. Representative example for each gene in the result set.  ME49 if it exists, otherwise GT1 if it exists, otherwise VEG.
+                            Number of <i>T. gondii</i> genes, where one gene is representing all strains:  ME49 if it exists, otherwise GT1 if it exists, otherwise VEG.
                         ]]>
                     </description>   
                     <paramValue name="organism">Tg</paramValue>
@@ -175,6 +203,7 @@
                 
             </answerFilter>
 
+ 
             <answerFilter queryRef="GeneSummaries.AllTgResults"
                           includeProjects="ToxoDB">
                 
@@ -190,7 +219,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.NeosporaGenes"
-                          includeProjects="ToxoDB">
+                          includeProjects="ToxoDB,ApiDB">
                 
                 <instance name="neospora_genes" displayName="Neospora Genes">
                     <description>
