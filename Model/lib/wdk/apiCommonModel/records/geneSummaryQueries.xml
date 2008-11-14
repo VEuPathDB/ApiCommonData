@@ -12,7 +12,9 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,CryptoDB">
+
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB">
+
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -54,6 +56,23 @@
             </sql>
         </sqlQuery>
 
+ <sqlQuery name="ApiDeprecatedGenes" isCacheable="false" includeProjects="ApiDB">
+            <paramRef ref="recordParams.deprecated_genes"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id 
+                    and c.project_id = 'GiardiaDB' 
+                    and ga.is_deprecated = $$deprecated_genes$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
         <sqlQuery name="BooleanExpansion" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -68,7 +87,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ToxoGenes" isCacheable="false" includeProjects="ToxoDB">
+        <sqlQuery name="ToxoGenes" isCacheable="false" includeProjects="ApiDB,ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -92,11 +111,13 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="NeosporaGenes" isCacheable="false" includeProjects="ToxoDB">
+
+        <sqlQuery name="NeosporaGenes" isCacheable="false" includeProjects="ApiDB,ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
+
             <sql>
                 <![CDATA[
                     SELECT ga.source_id, ga.project_id
