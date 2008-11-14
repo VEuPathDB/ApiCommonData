@@ -18,25 +18,21 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="makeProteinsFileSimpleDefline" stepClass="ApiCommonData::Load::WorkflowSteps::MakeProteinsFileSimpleDefline">
-      <paramValue name="inputProteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="outputProteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
-      <depends name="makeDataDir"/>
-    </step>
-
     <step name="formatNcbiBlastFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile">
-      <paramValue name="inputFile">$$proteinsFileSimpleDefline$$</paramValue>
+      <paramValue name="inputFile">$$proteinsFile$$</paramValue>
+      <paramValue name="outputBlastDbDir">$$dataDir$$/blastDb</paramValue>
       <paramValue name="formatterArgs">T</paramValue>
-      <depends name="makeProteinsFileSimpleDefline"/>
+      <depends name="makeBlastDir"/>
     </step>
 
     <step name="createEpitopeMapFile" stepClass="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
       <paramValue name="inputDirRelativeToDownloadsDir">IEDB_fixed</paramValue>
       <paramValue name="blastDbDir">$$dataDir$$/blastDb</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-      <paramValue name="proteinsFile">$$proteinsFileSimpleDefline$$</paramValue>
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/results</paramValue>
-      <depends name="makeBlastDir"/>
+      <paramValue name="idRegex">(\S+)</paramValue>
+      <depends name="formatNcbiBlastFile"/>
     </step>
 
     <step name="insertEpitopeMapping" stepClass="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
