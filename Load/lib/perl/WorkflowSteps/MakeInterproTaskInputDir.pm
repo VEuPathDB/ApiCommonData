@@ -15,21 +15,22 @@ sub run {
   my $email = $self->getGlobalConfig('email');
 
   # get properties
-  my $taskSize = $self->getGlobalConfig('taskSize');
-  my $applications = $self->getGlobalConfig('applications');
+  my $taskSize = $self->getConfig('taskSize');
+  my $applications = $self->getConfig('applications');
 
   # make controller.prop file
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::IprscanTask");
 
   # make task.prop file
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
-"seqfile=$proteinsFile
+"seqfile=$computeClusterDataDir/$proteinsFile
 outputfile=iprscan_out.xml
 seqtype=p
 appl=$applications

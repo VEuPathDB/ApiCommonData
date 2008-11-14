@@ -4,24 +4,38 @@ package ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $taskInputDir = $self->getParamValue('taskInputDir');
-
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  my $dangleMax = $self->getParamValue('seqsFile');
+  my $options = $self->getParamValue('options');
+  my $dangleMax = $self->getParamValue('dangleMax');
 
   # get step properties
-  my $ = $self->getConfig('');
+  my $taskSize = $self->getConfig('taskSize');
+  my $rmPath = $self->getConfig('rmPath');
 
-  if ($test) {
-  } else {
-  }
+  # make controller.prop file
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::RepeatMaskerTask");
 
-  $self->runPlugin($test, '', $args);
+  # make task.prop file
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+
+    print F 
+"rmPath=$rmPath
+inputFilePath=$seqFileBasename
+trimDangling=y
+rmOptions=$options
+dangleMax=$dangleMax
+";
+    close(F);
 
 }
 

@@ -4,7 +4,6 @@ package ApiCommonData::Load::WorkflowSteps::CreatePsipredTaskDir;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -13,18 +12,29 @@ sub run {
   my $proteinsFile = $self->getParamValue('proteinsFile');
   my $nrdbFile = $self->getParamValue('nrdbFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
   # get step properties
-  my $ = $self->getConfig('');
+  my $taskSize = $self->getConfig('taskSize');
+  my $psipredPath = $self->getConfig('psipredPath');
+  my $ncbiBinPath = $self->getConfig('ncbiBinPath');
 
-  if ($test) {
-  } else {
-  }
+  # make controller.prop file
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::PsipredTask");
 
-  $self->runPlugin($test, '', $args);
+  # make task.prop file
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
 
+  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+
+  print F
+"psipredDir=$psipredPath
+dbFilePath=$computeClusterDataDir/$nrdbFile
+inputFilePath=$computeClusterDataDir/$proteinsFile
+ncbiBinDir=$ncbiBinPath
+";
+    close(F);
 }
 
 sub getParamsDeclaration {
