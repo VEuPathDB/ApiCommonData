@@ -108,6 +108,28 @@ sub getTableId {
   return  $tableId;
 }
 
+sub getTaxonId {
+  my ($self,$taxId) = @_;
+
+  my $sql = "select taxon_id from sres.taxon where ncbi_tax_id = $taxId";
+
+  my $cmd = "getValueFromTable --idSQL \"$sql\"";
+
+  my $taxonId = $self->runCmd(0, $cmd);
+
+  return $taxonId;
+}
+
+sub getTaxonIdList {
+  my ($self, $taxonId, $hierarchy) = @_;
+
+  if ($hierarchy) {
+    return chomp($self->runCmd(0, "getSubTaxaList --taxon_id $taxonId"));
+  } else {
+    return $taxonId;
+  }
+}
+
 sub copyToCluster {
   my ($self, $fromDir, $fromFile, $toDir) = @_;
 }
