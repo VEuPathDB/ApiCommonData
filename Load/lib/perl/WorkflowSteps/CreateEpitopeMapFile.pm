@@ -6,40 +6,40 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+    my ($self, $test) = @_;
 
-  my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
+    my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
+    my $inputDirRelativeToDownloadsDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
+    my $proteinsFile = $self->getParamValue('proteinsFile');
+    my $blastDbDir = $self->getParamValue('blastDbDir');
+    my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
+    my $outputDir = $self->getParamValue('outputDir');
 
-  my $inputDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
-  my $querydir = $self->getParamValue('proteinsFile');
-  my $blastDir = $self->getParamValue('blastDbDir');
-  my $speciesKey = $self->getParamValue('organismTwoLetterAbbrev');
-  my $outputDir = $self->getParamValue('outputDir');
+    my $localDataDir = $self->getLocalDataDir();
 
-  my $localDataDir = $self->getLocalDataDir();
+    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDirRelativeToDownloadsDir --queryDir $proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir";
+       $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
 
-  my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDir --queryDir $queryDir --outputDir $localDataDir/$outputDir --blastDatabase $blastDir";
-  $cmd .= " --speciesKey $speciesKey" if ($speciesKey);
-
-  $self->runCmd($test,$cmd);
+    $self->runCmd($test,$cmd);
 }
 
 
+
 sub getParamsDeclaration {
-  return ('inputDirRelativeToDownloadsDir',
-	  'blastDbDir',
-	  'organismTwoLetterAbbrev',
-	  'proteinsFile',
-	  'outputDir'
-	 );
+    return ('inputDirRelativeToDownloadsDir',
+            'blastDbDir',
+            'organismTwoLetterAbbrev',
+            'proteinsFile',
+            'outputDir'
+           );
 }
 
 
 sub getConfigDeclaration {
-  return (
-	  # [name, default, description]
- 	    ['ncbiBlastPath', "", ""],
-	 );
+    return (
+            # [name, default, description]
+              ['ncbiBlastPath', "", ""]
+           );
 }
 
 sub getDocumentation {
@@ -49,6 +49,4 @@ sub restart {
 }
 
 sub undo {
-
 }
-
