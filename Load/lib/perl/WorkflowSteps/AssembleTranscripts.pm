@@ -14,10 +14,11 @@ sub run {
 
   my $inputFile = $self->getParamValue('inputFile');
   my $outputDir = $self->getParamValue('outputDir');
-  my $taxonId = $self->getTaxonId($self->getParamValue('ncbiTaxonId'));
+  my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $reassemble = $self->getParamValue('reassemble') eq "yes" ? "--reassemble" :"";
   my $cap4Dir = $self->getConfig('cap4Dir');
 
+  my $taxonId = $self->getTaxonId($ncbiTaxonId);
   my $workingDir = $self->runCmd(0,"pwd");
 
   &splitClusterFile($self,$test,$inputFile);

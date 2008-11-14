@@ -8,23 +8,24 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $targetTaxonId = $self->getTaxonId($self->getParamValue('targetNcbiTaxId'));
+  my $targetNcbiTaxId = $self->getParamValue('targetNcbiTaxId');
   my $targetExtDbRlsSpec = $self->getParamValue('targetExtDbRlsSpec');
-  my $targetTableId = $self->getTableId($self->getParamValue('targetTable'));
-
-  my $queryTaxonId = $self->getTaxonId($self->getParamValue('queryNcbiTaxId'));
+  my $targetTable = $self->getParamValue('targetTable');
+  my $queryNcbiTaxId = $self->getParamValue('queryNcbiTaxId');
   my $queryExtDbRlsSpec = $self->getParamValue('queryExtDbRlsSpec');
   my $queryTable = $self->getParamValue('queryTable');
   my $queryFile = $self->getParamValue('queryFile');
-
   my $regex = $self->getParamValue('regex');
   my $action = $self->getParamValue('action');
   my $percentTop = $self->getParamValue('percentTop');
   my $blatFile = $self->getParamValue('blatFile');
 
+  my $targetTaxonId = $self->getTaxonId($targetNcbiTaxId);
+  my $targetTableId = $self->getTableId($targetTable);
   my $targetExtDbRlsId = $self->getExtDbRlsId($targetExtDbRlsSpec);
-  my $queryExtDbRlsId = $self->getExtDbRlsId($queryExtDbRlsSpec) if $queryExtDbRlsSpec;
+  my $queryTaxonId = $self->getTaxonId($queryNcbiTaxId);
   my $queryTableId = $self->getTableId($queryTable);
+  my $queryExtDbRlsId = $self->getExtDbRlsId($queryExtDbRlsSpec) if $queryExtDbRlsSpec;
 
   my $localDataDir = $self->getLocalDataDir();
 
