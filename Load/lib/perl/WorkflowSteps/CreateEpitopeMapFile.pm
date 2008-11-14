@@ -14,16 +14,15 @@ sub run {
     my $blastDbDir = $self->getParamValue('blastDbDir');
     my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
     my $outputDir = $self->getParamValue('outputDir');
+    my $idRegex = $self->getParamValue('idRegex');
 
     my $localDataDir = $self->getLocalDataDir();
+    my $downloadDir = $self->getGlobalConfig('downloadDir');
 
-    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDirRelativeToDownloadsDir --queryDir $proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir";
-       $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
-
+    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadDir --queryDir $localDataDir/$proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir --idRegex '$idRegex'";
+    $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
     $self->runCmd($test,$cmd);
 }
-
-
 
 sub getParamsDeclaration {
     return ('inputDirRelativeToDownloadsDir',
