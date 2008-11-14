@@ -4,32 +4,27 @@ package ApiCommonData::Load::WorkflowSteps::ShortenDefline;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $fromFile = $self->getParamValue('fromFile');
-  my $toFile = $self->getParamValue('toFile');
+  my $inputFile = $self->getParamValue('inputFile');
+  my $outputFile = $self->getParamValue('outputFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
+  my $localDataDir = $self->getLocalDataDir();
 
   if ($test) {
+      $self->runCmd($test, "echo test > $localDataDir/$outputFile");
   } else {
+      $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
+
   }
-
-  $self->runPlugin($test, '', $args);
-
 }
 
 sub getParamsDeclaration {
   return (
-          'fromFile',
-          'toFile',
+          'inputFile',
+          'outputFile',
          );
 }
 

@@ -10,24 +10,16 @@ sub run {
 	
     my $inputDir = $self->getParamValue('inputDir');
     my $outputDir = $self->getParamValue('outputDir');
-    my @files;
 	
-    $self->runCmd($test,"cp -r $inputDir  $outputDir");
-
-
-    if (-d $inputDir){
-        opendir(DIR, $inputDir) || die "Can't open directory '$inputDir'";
-        my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
-        @files = map { "$inputDir/$_" } @noDotFiles;
-    } else {
-        $files[0] = $inputDir;
-    }
+    $self->runCmd(0,"cp -r $inputDir  $outputDir");
 	
-	
-    foreach my $file (@files){
+    opendir(DIR, $outputDir) || die "Can't open directory '$outputDir'";
+    my @files = readdir(DIR);
+    foreach my $file (@files) {
+	next if /^\.+$/;  # skip . and ..
         my $original = $file;
         $file =~ s/(\S+)_(\d)/$1-$2/g;
-        $self->runCmd($test,"mv $original $file");
+        $self->runCmd(0, "mv $original $file");
     }
 }
 
