@@ -299,6 +299,12 @@ sub product {
   my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
 
   my @tagValues = $bioperlFeature->get_tag_values($tag);
+    if($tagValues[0] =~ />>/){
+	my(@s) = split(/>>/,$tagValues[0]);
+	$s[1] =~ s/\s+//g;
+	$tagValues[0] = $s[1];
+    }
+
   $geneFeature->setProduct($tagValues[0]);
 
   # cascade product name to transcript, translation and AA sequence:
@@ -527,9 +533,16 @@ sub ECNumber {
 
   foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
     if ($tagValue eq ""){
+
       next;
     }
     $tagValue =~ s/^EC: //;
+    if($tagValue =~ />>/){
+	my(@s) = split(/>>/,$tagValue);
+	$s[1] =~ s/\s+//g;
+	$tagValue = $s[1];
+    }
+
     $tagValue =~ s/\_/\-/;
     my $ecId = $self->_getECNumPrimaryKey($tagValue);
     die "Invalid Enzyme Class '$tagValue'" unless $ecId;
