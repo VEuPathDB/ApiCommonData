@@ -9,7 +9,7 @@ sub run {
 
   # get parameters
   my $taskInputDir = $self->getParamValue('taskInputDir');
-  my $dangleMax = $self->getParamValue('seqsFile');
+  my $seqsFile = $self->getParamValue('seqsFile');
   my $options = $self->getParamValue('options');
   my $dangleMax = $self->getParamValue('dangleMax');
 
@@ -30,7 +30,7 @@ sub run {
 
     print F 
 "rmPath=$rmPath
-inputFilePath=$seqFileBasename
+inputFilePath=$computeClusterDataDir/$seqsFile
 trimDangling=y
 rmOptions=$options
 dangleMax=$dangleMax
