@@ -15,9 +15,11 @@ sub run {
   my $taxonId = $self->getTaxonId($parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($taxonId, $useTaxonHierarchy);
 
-  my $args = "--taxon_id_list '$taxonIdList' --outputfile $outputFile --extractonly";
+  my $localDataDir = $self->getLocalDataDir();
 
-  self->runPlugin( $test, "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
+  my $args = "--taxon_id_list '$taxonIdList' --outputfile $localDataDir/$outputFile --extractonly";
+
+  self->runPlugin($test, "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
 
 }
 

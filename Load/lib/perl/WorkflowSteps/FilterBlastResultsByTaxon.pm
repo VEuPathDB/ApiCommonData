@@ -21,12 +21,14 @@ sub run {
 
   my $gi2taxidFile = "$downloadDir/$gi2taxidFileRelativeToDownloadDir";
 
-  $self->runCmd(0,"cp $inputFile $unfilteredOutputFile");
+  my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $inputFile --outputFile $filteredOutputFile";
+  $self->runCmd(0,"cp $localDataDir/$inputFile $localDataDir/$unfilteredOutputFile");
+
+  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$filteredOutputFile";
 
   if ($test) {
-      $self->runCmd(0,"echo test > $filteredOutputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
   } else {
       $self->runCmd($test,$cmd);
   }

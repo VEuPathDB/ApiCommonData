@@ -6,20 +6,21 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-	my ($self, $test) = @_;
+  my ($self, $test) = @_;
 
-	my $inGFFFile = $self->getParamValue('inputFile');
-	my $inFastaFile = $self->getParamValue('fsaFile');
-	my $outFile = $self->getParamValue('outputFile');
-	
-	my $args = "--f $inFastaFile --g $inGFFFile --o $outFile";
+  my $inGFFFile = $self->getParamValue('inputFile');
+  my $inFastaFile = $self->getParamValue('fsaFile');
+  my $outputFile = $self->getParamValue('outputFile');
 
-	 if ($test){
-	      $self->runCmd(0,'echo test > $outFile');
-	  }else{
-	      $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
-	  }
+  my $localDataDir = $self->getLocalDataDir();
 
+  my $args = "--f $localDataDir/$inFastaFile --g $localDataDir/$inGFFFile --o $outFile";
+
+  if ($test){
+    $self->runCmd(0,'echo test > $localDataDir/$outputFile');
+  }else{
+    $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
+  }
 
 }
 

@@ -13,15 +13,16 @@ sub run {
 
   my $taxonId = $self->getTaxonId($ncbiTaxonId);
 
-
   my $sql = "select na_sequence_id,description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
- 
-  my $cmd = "gusExtractSequences --outputFile $outputFile --verbose --idSQL \"$sql\"";
+
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --verbose --idSQL \"$sql\"";
 
   if ($test){
-      self->runCmd(0, "echo test > $outputFile");
+      self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }else{
-      self->runCmd($test,$cmd);
+      self->runCmd($test, $cmd);
   }
 
 }

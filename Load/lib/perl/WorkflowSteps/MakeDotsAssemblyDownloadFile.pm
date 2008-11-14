@@ -19,6 +19,8 @@ sub run {
   # get step properties
   my $ = $self->getConfig('');
 
+  my $localDataDir = $self->getLocalDataDir();
+
   if ($test) {
   } else {
   }

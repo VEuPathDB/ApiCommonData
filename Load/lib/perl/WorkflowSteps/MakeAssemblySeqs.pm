@@ -18,13 +18,13 @@ sub run {
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
   my $predictedTranscriptsSql = $self->getParamValue('predictedTranscriptsSql');
 
-  my $repeatFile = $self->getConfig('vectorFile');
+  my $vectorFile = $self->getConfig('vectorFile');
   my $phrapDir = $self->getConfig('phrapDir');
 
   my $taxonId = $self->getTaxonId($parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($taxonId, $useTaxonHierarchy);
 
-  my $args = "--taxon_id_list '$taxonIdList' --repeatFile $repeatFile --phrapDir $phrapDir";
+  my $args = "--taxon_id_list '$taxonIdList' --repeatFile $vectorFile --phrapDir $phrapDir";
 
   $args .= " --idSQL \"$predictedTranscriptsSql\"" if ($predictedTranscriptsSql);
 

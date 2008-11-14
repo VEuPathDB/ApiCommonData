@@ -7,14 +7,10 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  # get global properties
-  my $projectName = $self->getGlobalConfig('projectName');
-  my $projectVersion = $self->getGlobalConfig('projectVersion');
-  my $clusterDir = $self->getGlobalConfig('clusterDir');
+  my $clusterHomeDir = $self->getComputeClusterHomeDir();
 
-  $self->runCmdOnCluster(0, "mkdir -p $clusterDir/$projectName/$projectVersion/data");
-  $self->runCmdOnCluster(0, "mkdir -p $clusterDir/$projectName/$projectVersion/clusterTaskLogs");
-
+  $self->runCmdOnCluster(0, "mkdir -p $clusterHomeDir/data");
+  $self->runCmdOnCluster(0, "mkdir -p $clusterHomeDir/clusterTaskLogs");
 }
 
 sub getParamsDeclaration {

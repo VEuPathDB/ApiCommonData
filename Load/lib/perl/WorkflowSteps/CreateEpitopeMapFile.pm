@@ -6,22 +6,23 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
- 	my ($self, $test) = @_;
+  my ($self, $test) = @_;
 
-	my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
+  my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-	my $inputDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
-	my $querydir = $self->getParamValue('proteinsFile');
-	my $blastDir = $self->getParamValue('blastDbDir');
-	my $speciesKey = $self->getParamValue('organismTwoLetterAbbrev');
-	my $outputDir = $self->getParamValue('outputDir');
+  my $inputDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
+  my $querydir = $self->getParamValue('proteinsFile');
+  my $blastDir = $self->getParamValue('blastDbDir');
+  my $speciesKey = $self->getParamValue('organismTwoLetterAbbrev');
+  my $outputDir = $self->getParamValue('outputDir');
 
-  	my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $inputDir --queryDir $queryDir --outputDir $outputDir --blastDatabase $blastDir";
-  	$cmd .= " --speciesKey $speciesKey" if ($speciesKey);
+  my $localDataDir = $self->getLocalDataDir();
 
-    	$self->runCmd($test,$cmd);
+  my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDir --queryDir $queryDir --outputDir $localDataDir/$outputDir --blastDatabase $blastDir";
+  $cmd .= " --speciesKey $speciesKey" if ($speciesKey);
+
+  $self->runCmd($test,$cmd);
 }
-
 
 
 sub getParamsDeclaration {

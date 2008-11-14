@@ -13,10 +13,12 @@ sub run {
   my $proteinsFile = $self->getParamValue('proteinsFile');
   my $binPath = $self->getConfig('path');
 
-  my $cmd = "runTMHMM -binPath $binPath -short -seqFile $proteinsFile -outFile $outputFile";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "runTMHMM -binPath $binPath -short -seqFile $localDataDir/$proteinsFile -outFile $localDataDir/$outputFile";
 
   if ($test) {
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   } else {
       $self->runCmd($test,$cmd);
   }

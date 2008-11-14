@@ -20,12 +20,13 @@ sub run {
 
   my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
+  my $localDataDir = $self->getLocalDataDir();
 
   my $args = <<"EOF";
 --extDbName '$extDbName'  \\
 --extDbRlsVer '$extDbRlsVer' \\
 --mapFile $gusHome/$isfMappingFileRelToGusHome \\
---inputFileOrDir $inputFile \\
+--inputFileOrDir $localDataDir/$inputFile \\
 --fileFormat gff3   \\
 --seqSoTerm ORF  \\
 --soCvsVersion $soVersion \\

@@ -19,15 +19,17 @@ sub run {
 
   my $stepDir = $self->getStepDir();
 
-  my $cmd = "${trfPath}/trf400 $seqFile $repeatFinderArgs -d";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "${trfPath}/trf400 $localDataDir/$seqFile $repeatFinderArgs -d";
 
   if ($test) {
 
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   } else {
       $self->runCmd($test, $cmd);
-      $self->runCmd($test, "mv $stepDir/$seqFile.$repeatFinderArgs.dat $outputFile");
+      $self->runCmd($test, "mv $stepDir/$seqFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
   }
 }
 

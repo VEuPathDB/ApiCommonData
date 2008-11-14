@@ -8,14 +8,16 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $clusterFile = $self->getParamValue('inputFile');
-  my $smallClustersOutputFile = $self->getParamValue('smallClustersOutputFile');
-  my $bigClustersOutputFile = $self->getParamValue('bigClustersOutputFile');
-  my $cmd = "splitClusterFile $clusterFile $smallClustersOutputFile $bigClustersOutputFile";
+  my $inputFile = $self->getParamValue('inputFile');
+  my $smallClustersOutputFile = $self->getParamValue('smallClustersOutputFile');  my $bigClustersOutputFile = $self->getParamValue('bigClustersOutputFile');
+
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "splitClusterFile $localDataDir/$inputFile $localDataDir/$smallClustersOutputFile $localDataDir/$bigClustersOutputFile";
 
   if ($test){
-      self->runCmd(0, "echo test > $smallClustersOutputFile");
-      self->runCmd(0, "echo test > $bigClustersOutputFile");
+      self->runCmd(0, "echo test > $localDataDir/$smallClustersOutputFile");
+      self->runCmd(0, "echo test > $localDataDir/$bigClustersOutputFile");
   } else {
       self->runCmd($test, $cmd);
   }

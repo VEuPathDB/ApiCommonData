@@ -15,7 +15,9 @@ sub run {
 
   my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
 
-  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $fastaFile --sourceIdsFile  $idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
 
   $self->runPlugin("GUS::Supported::Plugin::LoadFastaSequences",$args);
 

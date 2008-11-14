@@ -25,20 +25,22 @@ sub run {
              FROM dots.$table
              WHERE external_database_release_id = $dbRlsId";
 
+  my $localDataDir = $self->getLocalDataDir();
+
   if ($separateFastaFiles) {
 
-      my $cmd = "gusExtractIndividualSequences --outputDir $outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
+      my $cmd = "gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
 
       if ($test) {
-	$self->runCmd(0,"mkdir -p $outputDirForSeparateFiles");
+	$self->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
       } else {
 	$self->runCmd($test,$cmd); 
       }
   } else {
 
-      my $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
+      my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
       if ($test) {
-           $self->runCmd(0,"echo test > $outputFile");
+           $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 	 } else {
            $self->runCmd($test,$cmd);
 	 }

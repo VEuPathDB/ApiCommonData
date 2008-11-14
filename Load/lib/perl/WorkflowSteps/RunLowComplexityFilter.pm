@@ -18,10 +18,12 @@ sub run {
 
   my $filter = "$blastDir/filter/$filterType";
 
+  my $localDataDir = $self->getLocalDataDir();
+
   if ($test) {
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   } else {
-      self->runCmd($test,"$filter $seqFile $options > $outputFile");
+      self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
   }
 }
 

@@ -33,11 +33,13 @@ sub run {
                   WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
                   AND vs.external_database_release_id = $virtualDbRlsId)";
 
-  my $cmd = "dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\" --vervbose";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "dumpSequencesFromTable.pl --outputfile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
 
   if ($test) {
 
-      $self->runCmd(0,"echo test $outputFile");
+      $self->runCmd(0,"echo test $localDataDir/$outputFile");
 
   } else {
 

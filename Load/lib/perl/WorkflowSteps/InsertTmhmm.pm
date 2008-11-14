@@ -16,7 +16,9 @@ sub run {
 
   my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
-  my $args = "--data_file $inputFile --algName TMHMM --algDesc 'TMHMM $version' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $args = "--data_file $localDataDir/$inputFile --algName TMHMM --algDesc 'TMHMM $version' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
 
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadTMDomains",$args);
 

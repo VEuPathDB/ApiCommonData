@@ -12,9 +12,9 @@ sub run {
   # get parameters
   my $apiSiteFilesDir = $self->getParamValue('apiSiteFilesDir');
 
-  my $localDataDir = $self->getLocalDataDir();
+  my $baseDir = $self->getGlobalConfig('apiSitesFileDir');
 
-  $self->runCmd(0, "mkdir $localDataDir/$apiSiteFilesDir");
+  $self->runCmd(0, "mkdir $baseDir/$apiSiteFilesDir");
 }
 
 sub getParamsDeclaration {

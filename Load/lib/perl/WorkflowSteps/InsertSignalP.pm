@@ -17,7 +17,9 @@ sub run {
   my $projectName = $self->getGlobalConfig('projectName');
   my $version = $self->getConfig('version');
 
-  my $args = "--data_file $inputFile --algName 'SignalP' --algVer '$version' --algDesc 'SignalP' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --project_name $projectName --useSourceId";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $args = "--data_file $localDataDir/$inputFile --algName 'SignalP' --algVer '$version' --algDesc 'SignalP' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --project_name $projectName --useSourceId";
 
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadSignalP", $args);
 

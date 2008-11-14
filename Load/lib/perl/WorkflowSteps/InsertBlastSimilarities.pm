@@ -17,6 +17,8 @@ sub run {
   my $subjectExtDbRlsSpec = $self->getParamValue('subjectExtDbRlsSpec');
   my $options = $self->getParamValue('options');
 
+  my $localDataDir = $self->getLocalDataDir();
+
   my $queryColArg = "--queryTableSrcIdCol $queryTableSrcIdCol" if $queryTableSrcIdCol;
 
   my $subjectColArg = "--subjectTableSrcIdCol $subjectTableSrcIdCol" if $subjectTableSrcIdCol;
@@ -33,7 +35,7 @@ sub run {
     $subjectExtDbArg = " --subjectExtDbName '$subjectDbName' --subjectExtDbRlsVer '$subjectDbRlsVer'";
   }
 
-  my $args = "--file $inputFile --queryTable $queryTable $queryColArg $queryExtDbArg --subjectTable $subjectTable $subjectColArg $subjectExtDbArg $options";
+  my $args = "--file $localDataDir/$inputFile --queryTable $queryTable $queryColArg $queryExtDbArg --subjectTable $subjectTable $subjectColArg $subjectExtDbArg $options";
 
   $self->runPlugin($test, "GUS::Supported::Plugin::InsertBlastSimilarities", $args);
 }

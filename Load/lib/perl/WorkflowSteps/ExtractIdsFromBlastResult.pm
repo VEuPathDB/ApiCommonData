@@ -16,11 +16,13 @@ sub run {
   # i don't think this is needed, as the cmd handles it -steve
   #  $self->runCmd($test,"gunzip -f $inputFile") if ($inputFile=~ /\.gz/);
 
-  my $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $inputFile --outFile $outputFile";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $localDataDir/$inputFile --outFile $localDataDir/$outputFile";
 
   if ($test) {
 
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   } else {
 

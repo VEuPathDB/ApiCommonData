@@ -13,10 +13,12 @@ sub run {
 
   my $fix = 's/^(\S+)-(\d)/$1_$2/g';
 
-  my $cmd = "cat $inputProteinsFile | perl -pe '$fix' > $outputProteinsFile";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "cat $localDataDir/$inputProteinsFile | perl -pe '$fix' > $localDataDir/$outputProteinsFile";
 
   if ($test){
-    $self->runCmd(0,'echo test > $outputProteinsFile');
+    $self->runCmd(0,'echo test > $localDataDir/$outputProteinsFile');
   }else{
     $self->runCmd($test,$cmd);
   }

@@ -15,18 +15,15 @@ sub run {
 
   my $binPath = $self->getConfig('path');
 
-  my $cmd = "runSignalP --binPath $binPath  --options '$options' --seqFile $proteinsFile --outFile $outputFile";
+  my $localDataDir = $self->getLocalDataDir();
 
-  if ($test){
+  my $cmd = "runSignalP --binPath $binPath  --options '$options' --seqFile $localDataDir/$proteinsFile --outFile $localDataDir/$outputFile";
 
-      $self->runCmd(0,"echo hello >$outputFile");
-
-  }else{
-
+  if ($test) {
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+  } else {
       $self->runCmd($test,$cmd);
-
   }
-
 }
 
 sub getParamDeclaration {

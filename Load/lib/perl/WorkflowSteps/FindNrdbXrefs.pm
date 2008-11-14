@@ -14,9 +14,11 @@ sub run {
   my $nrdbFileRegex = $self->getParamValue('nrdbFileRegex');
   my $outputFile = $self->getParamValue('outputFile');
 
-  my $cmd = "dbXRefBySeqIdentity --proteinFile '$proteinsFile' --nrFile '$nrdbFile' --outputFile '$outputFile' --sourceIdRegex \"$nrdbFileRegex\" --protDeflnRegex \"$proteinsFileRegex\" ";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "dbXRefBySeqIdentity --proteinFile '$localDataDir/$proteinsFile' --nrFile '$localDataDir/$nrdbFile' --outputFile '$localDataDir/$outputFile' --sourceIdRegex \"$nrdbFileRegex\" --protDeflnRegex \"$proteinsFileRegex\" ";
   if ($test) {
-      self -> runCmd(0, "echo test > $outputFile");
+      self -> runCmd(0, "echo test > $localDataDir/$outputFile");
   } else {
       self -> runCmd($test,$cmd);
   }

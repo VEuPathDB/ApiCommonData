@@ -14,7 +14,9 @@ sub run {
 
   my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
 
-  my $args = "--tandemRepeatFile $inputFile --extDbName '$extDbName' --extDbVersion '$extDbRlsVer'";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $args = "--tandemRepeatFile $localDataDir/$inputFile --extDbName '$extDbName' --extDbVersion '$extDbRlsVer'";
 
   $self->runPlugin($test, "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
 }

@@ -12,7 +12,9 @@ sub run {
   my $formatterArgs = $self->getParamValue('formatterArgs');
   my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-  $self->runcmd($test,"$ncbiBlastPath/formatdb -i $inputFile -p $formatterArgs");
+  my $localDataDir = $self->getLocalDataDir();
+
+  $self->runcmd($test,"$ncbiBlastPath/formatdb -i $localDataDir/$inputFile -p $formatterArgs");
 }
 
 sub getParamsDeclaration {

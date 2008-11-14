@@ -12,8 +12,10 @@ sub run {
   my $epiExtDbSpecs = $self->getParamValue('iedbExtDbRlsSpec');
   my $seqExtDbSpecs = $self->getParamValue('genomeExtDbRlsSpec');
 
+  my $localDataDir = $self->getLocalDataDir();
+
   my @inputFiles;
-  @inputFiles = &_getInputFiles($inputDir);
+  @inputFiles = &_getInputFiles($localDataDir/$inputDir);
 
   foreach my $file (@inputFiles) {
 

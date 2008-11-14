@@ -31,11 +31,13 @@ sub run {
                 AND a.aa_sequence_id = t.aa_sequence_id
                 AND a.na_feature_id = tx.na_feature_id";
 
-  my $cmd = "gusExtractSequences --outputFile $outputFile --idSQL \"$sql\" --verbose";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
 
   if ($test) {
 
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   } else {
 

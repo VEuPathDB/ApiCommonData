@@ -13,14 +13,16 @@ sub run {
   my $minPepLength = $self->getParamValue('minPepLength');
   my $outputFile = $self->getParamValue('outputFile');
 
-   my $cmd = <<"EOF";
-orfFinder --dataset  $seqFile \\
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = <<"EOF";
+orfFinder --dataset  $localDataDir/$seqFile \\
 --minPepLength $minPepLength \\
---outFile $outputFile
+--outFile $localDataDir/$outputFile
 EOF
 
   if ($test) {
-      $self->runCmd(0,"echo test > $outputFile");
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   } else {
       $self->runCmd($test,$cmd);
   }

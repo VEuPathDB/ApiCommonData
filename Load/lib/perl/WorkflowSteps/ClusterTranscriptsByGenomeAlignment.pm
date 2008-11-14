@@ -16,8 +16,9 @@ sub run {
   my $taxonId = $self->getTaxonIdFromNcbiTaxonId($ncbiTaxonId);
   my $targetDbRlsId = $self->getExtDbRlsId($genomeExtDbRlsSpec);
 
-  my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs "
-	. "--target_db_rel_id $targetDbRlsId --out $outputFile --sort 1 --distanceBetweenStarts $maxIntronSize";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs --target_db_rel_id $targetDbRlsId --out $localDataDir/$outputFile --sort 1 --distanceBetweenStarts $maxIntronSize";
 
   self->runPlugin($test, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
 

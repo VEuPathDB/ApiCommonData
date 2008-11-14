@@ -7,13 +7,15 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
     my ($self, $test) = @_;
-	
+
     my $inputDir = $self->getParamValue('inputDir');
     my $outputDir = $self->getParamValue('outputDir');
-	
-    $self->runCmd(0,"cp -r $inputDir  $outputDir");
-	
-    opendir(DIR, $outputDir) || die "Can't open directory '$outputDir'";
+
+    my $localDataDir = $self->getLocalDataDir();
+
+    $self->runCmd(0,"cp -r $localDataDir/$inputDir  $localDataDir/$outputDir");
+
+    opendir(DIR, "$localDataDir/$outputDir") || die "Can't open directory '$localDataDir/$outputDir'";
     my @files = readdir(DIR);
     foreach my $file (@files) {
 	next if /^\.+$/;  # skip . and ..

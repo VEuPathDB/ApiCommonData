@@ -12,10 +12,12 @@ sub run {
   my $alignedClustersFile = $self->getParamValue('alignedClustersFile');
   my $repeatMaskErrFile = $self->getParamValue('repeatMaskErrFile');
 
-  my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $alignedClustersFile --outputFile $allClustersOutputFile --repeatMaskErrFile $repeatMaskErrFile";
+  my $localDataDir = $self->getLocalDataDir();
+
+  my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $localDataDir/$alignedClustersFile --outputFile $localDataDir/$allClustersOutputFile --repeatMaskErrFile $localDataDir/$repeatMaskErrFile";
 
   if ($test) {
-      self->runCmd(0, "echo test > $allClustersOutputFile");
+      self->runCmd(0, "echo test > $localDataDir/$allClustersOutputFile");
   } else {
       self->runCmd($test, $cmd);
   }
