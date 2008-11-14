@@ -1,53 +1,58 @@
 package ApiCommonData::Load::WorkflowSteps::InsertInterpro;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
-  my ($self, $test) = @_;
+    my ($self, $test) = @_;
 
-  # get parameters
-  my $ = $self->getParamValue('');
-  my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
-  my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
+    my $proteinsFile = $self->getParamValue('proteinsFile');
+    my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
+    my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
+    
+    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($interproExtDbRlsSpec);
+    my $goVersion = $self->getParamValue('iprscan.goversion');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+    my $localDataDir = $self->getLocalDataDir();
 
-  # get step properties
-  my $ = $self->getConfig('');
+    my $resultFileDir = "$localDataDir/$proteinsFile/master/mainresult/";
 
-  if ($test) {
-  } else {
-  }
+    my $args = <<"EOF";
+--resultFileDir=$resultFileDir \\
+--confFile=$configFileRelativeToDownloadDir \\
+--extDbName='$extDbName' \\
+--extDbRlsVer='$extDbRlsVer' \\
+--goVersion=\'$goVersion\' \\
+EOF
 
-  $self->runPlugin($test, '', $args);
-
+    $self->runPlugin($test, "ApiCommonData::Load::Plugin::InsertInterproscanResults", $args);
+  
 }
+
 
 sub getParamsDeclaration {
-  return (
-          '',
-          'interproExtDbRlsSpec',
-          'configFileRelativeToDownloadDir',
-         );
+    return ('proteinsFile',
+            'interproExtDbRlsSpec',
+            'configFileRelativeToDownloadDir'
+           );
 }
 
+
 sub getConfigDeclaration {
-  return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+    return (
+            # [name, default, description]
+           );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
 }
 
 sub undo {
-
 }
 
-sub getDocumentation {
-}
