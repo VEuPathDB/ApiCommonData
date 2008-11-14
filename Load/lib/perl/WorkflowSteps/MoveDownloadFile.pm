@@ -1,36 +1,28 @@
-package ApiCommonData::Load::WorkflowSteps::MoveDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::CopyResourcesFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $fromFile = $self->getParamValue('fromFile');
+  my $resourcesFile = $self->getParamValue('resourcesFile');
   my $toFile = $self->getParamValue('toFile');
 
   # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
+  my $downloadDir = $self->getGlobalConfig('downloadDir');
 
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
+  $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
 
 }
 
 sub getParamsDeclaration {
   return (
-          'fromFile',
+          'resourcesFile',
           'toFile',
          );
 }
