@@ -1175,7 +1175,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByMassSpecPf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
             isCacheable='true'>
-        <paramRef ref="geneParams.mass_spec_stage_sample_pf"/>
+        <paramRef ref="geneParams.mass_spec_stage_sample_pf" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <wsColumn name="source_id" />
@@ -1312,7 +1312,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByMassSpec4" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
             isCacheable='true'>
-        <paramRef ref="geneParams.ms_assay_4"/>
+        <paramRef ref="geneParams.ms_assay_4" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <wsColumn name="source_id" />
@@ -2164,7 +2164,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.profileSet"/>
-        <paramRef ref="geneParams.minOrMax"/>
+        <paramRef ref="geneParams.minOrMax" quote="false"/>
         <paramRef ref="geneParams.maxExprHour"/>
         <paramRef ref="geneParams.maxPlusMinusHours"/>
         <paramRef ref="geneParams.minExprHour"/>
@@ -2203,10 +2203,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
        <paramRef ref="geneParams.ProfileGeneId"/>
-       <paramRef ref="geneParams.ProfileDistanceMethod"/>
+       <paramRef ref="geneParams.ProfileDistanceMethod" quote="false"/>
        <paramRef ref="geneParams.ProfileNumToReturn"/>
-       <paramRef ref="geneParams.ProfileProfileSet"/>
-       <paramRef ref="geneParams.ProfileSearchGoal"/>
+       <paramRef ref="geneParams.ProfileProfileSet" quote="false"/>
+       <paramRef ref="geneParams.ProfileSearchGoal" quote="false"/>
        <paramRef ref="geneParams.ProfileTimeShift"/>
        <paramRef ref="geneParams.ProfileScaleData"/>
        <paramRef ref="geneParams.ProfileMinShift"/>
@@ -2405,7 +2405,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByDifferentialExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.exprnsample"/>
+       <paramRef ref="geneParams.exprnsample" quote="false"/>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
@@ -2458,8 +2458,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.lineages_a"/>
-       <paramRef ref="geneParams.lineages_b"/>
+       <paramRef ref="geneParams.lineages_a" quote="false"/>
+       <paramRef ref="geneParams.lineages_b" quote="false"/>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
@@ -2505,7 +2505,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GiardiaGenesByDifferentialExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.gl_exprnsample"/>
+       <paramRef ref="geneParams.gl_exprnsample"  quote="false"/>
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
@@ -2549,7 +2549,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         isCacheable='true' 
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">      
  <!--      <paramRef ref="params.tgorganism"/>  -->
-       <paramRef ref="geneParams.sample"/>
+       <paramRef ref="geneParams.sample" quote="false"/>
        <paramRef ref="geneParams.percentile"/>
        <wsColumn name="source_id" width="50" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -2589,7 +2589,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesByIntraerythrocyticExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.synchronization"/>
-        <paramRef ref="geneParams.intraerythrocytic_stages"/>
+        <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -2733,8 +2733,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByDifferentialMeanExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.diffMeanExpr_reference"/>
-       <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
+       <paramRef ref="geneParams.diffMeanExpr_reference" quote="false"/>
+       <paramRef ref="geneParams.diffMeanExpr_comparitor" quote="false"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -2782,7 +2782,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByExpressionPercentileA" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.cowmanSample"/>
+       <paramRef ref="geneParams.cowmanSample" quote="false"/>
        <paramRef ref="geneParams.percentile"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -2855,7 +2855,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByKappeFoldChange" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="geneParams.fold_change"/>
+         <paramRef ref="geneParams.kappeAnalysis" quote="false"/>
+         <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -3008,7 +3009,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="BergheiGenesByExpressionPercentile" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.waters_profilesets"/>
+        <paramRef ref="geneParams.waters_profilesets" quote="false"/>
         <paramRef ref="geneParams.r_min_expression_percentile"/>
         <paramRef ref="geneParams.r_max_expression_percentile"/>
         <paramRef ref="geneParams.yt_min_expression_percentile"/>
@@ -3109,11 +3110,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByProteomicsProfile" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.asexual_blood_stages_value"/>
-        <paramRef ref="geneParams.gametocytes_value"/>
-        <paramRef ref="geneParams.ookinetes_value"/>
-        <paramRef ref="geneParams.oocysts_value"/>
-        <paramRef ref="geneParams.sporozoites_value"/>
+        <paramRef ref="geneParams.asexual_blood_stages_value" quote="false"/>
+        <paramRef ref="geneParams.gametocytes_value" quote="false"/>
+        <paramRef ref="geneParams.ookinetes_value" quote="false"/>
+        <paramRef ref="geneParams.oocysts_value" quote="false"/>
+        <paramRef ref="geneParams.sporozoites_value" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -3502,7 +3503,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByGametocyteExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.day_and_strain"/>
+        <paramRef ref="geneParams.day_and_strain" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile" default="80"/>
         <paramRef ref="geneParams.max_expression_percentile" default="100"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>

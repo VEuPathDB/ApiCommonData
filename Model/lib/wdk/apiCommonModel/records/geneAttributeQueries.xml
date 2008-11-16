@@ -174,17 +174,17 @@
             <column name="winz_max_timing" includeProjects="PlasmoDB"/>
             <column name="winz_max_pct" includeProjects="PlasmoDB"/>
 
-            <column name="type3_type1_fold_change"  includeProjects="ToxoDB"/>
-            <column name="type3_type2_fold_change"  includeProjects="ToxoDB"/>
-            <column name="type2_type1_fold_change"   includeProjects="ToxoDB"/>
+            <column name="type3_type1_fold_change"  includeProjects="ToxoDB,ApiDB"/>
+            <column name="type3_type2_fold_change"  includeProjects="ToxoDB,ApiDB"/>
+            <column name="type2_type1_fold_change"   includeProjects="ToxoDB,ApiDB"/>
 
             <column name="formatted_gene_id"  
-                    sortingColumn="gene_id" includeProjects="ToxoDB"/>
-            <column name="gene_id" includeProjects="ToxoDB"/>
+                    sortingColumn="gene_id" includeProjects="ToxoDB,ApiDB"/>
+            <column name="gene_id" includeProjects="ToxoDB,ApiDB"/>
 
             <column name="is_deprecated"  includeProjects="GiardiaDB"/>
 
-             <sqlParamValue name="toxo_expression" includeProjects="ToxoDB">
+             <sqlParamValue name="toxo_expression" includeProjects="ToxoDB,ApiDB">
                 <![CDATA[
                    bfmv.type3_type1_fold_change, bfmv.type3_type2_fold_change, 
                    bfmv.type2_type1_fold_change, gene_id,
@@ -192,7 +192,7 @@
                         ELSE to_char(bfmv.gene_id) END as formatted_gene_id,
                 ]]>
             </sqlParamValue>
-            <sqlParamValue name="toxo_expression" excludeProjects="ToxoDB">
+            <sqlParamValue name="toxo_expression" excludeProjects="ToxoDB,ApiDB">
                 <![CDATA[
                 ]]>
             </sqlParamValue>
