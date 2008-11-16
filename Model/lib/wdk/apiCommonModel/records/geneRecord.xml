@@ -153,11 +153,102 @@
                 </instance>
             </answerFilter>
 
-
-  <answerFilter queryRef="GeneSummaries.ApiDeprecatedGenes"
+<answerFilter queryRef="GeneSummaries.ApiGenes"
                           includeProjects="ApiDB">
                 
-                <instance name="all_genes" displayName="Genes">
+                <instance name="ch_genes" displayName="Ch Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium hominis</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Ch</paramValue>
+                </instance>
+              
+                <instance name="cp_genes" displayName="Cp Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium parvum</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Cp</paramValue>
+                </instance>
+
+                <instance name="pb_genes" displayName="Pb Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium berghei</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pb</paramValue>
+                </instance>
+ <instance name="pc_genes" displayName="Pc Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium chabaudi</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pc</paramValue>
+                </instance>
+ <instance name="pf_genes" displayName="Pf Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium falciparum</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pf</paramValue>
+                </instance>
+ <instance name="pk_genes" displayName="Pk Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium knowlesi</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pk</paramValue>
+                </instance>
+ <instance name="pv_genes" displayName="Pv Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium vivax</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pv</paramValue>
+                </instance>
+ <instance name="py_genes" displayName="Py Genes">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium yoelii</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Py</paramValue>
+                </instance>
+
+               <instance name="toxo_instances" displayName="Toxo Instances" >
+                    <description>
+                        <![CDATA[
+                            Number of <i>T. gondii</i> genes from all strains (ME49, GT1 and VEG).
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Tg</paramValue>
+                </instance>
+
+               <instance name="tv_genes" displayName="Tv genes" >
+                    <description>
+                        <![CDATA[
+                            Number of <i>T. vag</i> genes.
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Tv</paramValue>
+                </instance>
+
+ </answerFilter>
+
+
+
+  <answerFilter queryRef="GeneSummaries.ApiGiardiaGenes"
+                          includeProjects="ApiDB">
+                
+                <instance name="gl_genes" displayName="Genes">
                     <description>
                         <![CDATA[
                               <i>Giardia lamblia</i> non-deprecated genes.
@@ -177,8 +268,7 @@
   </answerFilter>
 
 
-
-            <answerFilter queryRef="GeneSummaries.CryptoGenes"
+  <answerFilter queryRef="GeneSummaries.CryptoGenes"
                           includeProjects="CryptoDB">
                 
                 <instance name="all_genes" displayName="Cryptosporidium Genes"> 
@@ -255,7 +345,7 @@
                 
             </answerFilter>
 
- 
+  
             <answerFilter queryRef="GeneSummaries.AllTgResults"
                           includeProjects="ToxoDB">
                 
