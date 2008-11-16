@@ -95,6 +95,27 @@
        </sql>
     </sqlQuery>
 
+  <processQuery name="GenesByChIPchip" includeProjects="ApiDB"
+             isCacheable='true'
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="geneParams.chip_strain"  quote="false"/>
+        <paramRef ref="geneParams.chip_antibodies" quote="false"/>
+        <paramRef ref="geneParams.chip_reps"  quote="false"/>
+        <paramRef ref="geneParams.chip_antibody_count"  quote="false"/>
+        <paramRef ref="geneParams.chip_distance"  quote="false"/>
+        <paramRef ref="geneParams.chip_direction"  quote="false"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>   
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="chip_distance" width="32"/>
+        <wsColumn name="chip_total_reps" width="32"/>
+        <wsColumn name="chip_antibodies" width="32"/>
+       
+      
+    </processQuery>
+
+
+
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
