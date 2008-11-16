@@ -1123,7 +1123,17 @@
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
                   AND t.rank = 'species'
-                  AND tn.name = 'Toxoplasma gondii' ) organisms
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms
           ORDER BY organisms.name
         ]]>
       </sql>
