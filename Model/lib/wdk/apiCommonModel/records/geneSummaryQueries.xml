@@ -39,7 +39,23 @@
             </sql>
         </sqlQuery>
 
- <sqlQuery name="ApiDeprecatedGenes" isCacheable="false" includeProjects="ApiDB">
+ <sqlQuery name="ApiGenes" isCacheable="false" includeProjects="ApiDB">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.organism like $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
+ <sqlQuery name="ApiGiardiaGenes" isCacheable="false" includeProjects="ApiDB">
             <paramRef ref="recordParams.deprecated_genes"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
