@@ -1139,16 +1139,20 @@
       </sql>
 
 
- <sql includeProjects="TrichDB,GiardiaDB">
+ <sql includeProjects="GiardiaDB,TrichDB">
         <![CDATA[
-          SELECT organisms.name AS term,
+
+ SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
                                              AS apidb.varchartab), ', ')
                          AS internal
                   FROM sres.taxon
                   CONNECT BY prior taxon_id = parent_id
                   START WITH taxon_id = organisms.internal_taxon) AS internal
-          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+          FROM (SELECT CASE 
+                        WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
+                        else tn.name
+                      END as name, t.taxon_id AS internal_taxon
                 FROM sres.TaxonName tn, sres.taxon t
                 WHERE tn.name_class='scientific name'
                   AND t.taxon_id = tn.taxon_id
@@ -1173,6 +1177,10 @@
                 SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
                  UNION
                 SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                 UNION
+                SELECT 'Toxoplasma gondii' AS name, 6 AS rank FROM dual
+                 UNION
+                SELECT 'Neospora caninum' AS name, 7 AS rank FROM dual
                 ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
