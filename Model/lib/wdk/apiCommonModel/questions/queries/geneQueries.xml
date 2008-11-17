@@ -3267,7 +3267,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
 	    SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
             trim(to_char(LEAST(s.length - l.end_max,l.start_min),'999,999')) as dist_telomere
-	    FROM Dots.GENEFEATURE gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
+	    FROM apidb.GENEattributes gf, dots.NALOCATION l, dots.EXTERNALNASEQUENCE s
 	    WHERE gf.na_sequence_id = s.na_sequence_id
 	     AND l.na_feature_id = gf.na_feature_id
 	     AND s.source_id  in ($$chromosome$$)
