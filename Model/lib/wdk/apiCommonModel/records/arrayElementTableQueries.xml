@@ -25,6 +25,7 @@
                 AND 'Transcript' = ti2.name
                 AND ti2.table_id = s.subject_table_id
                 AND t.na_feature_id = s.subject_id
+                AND ens.source_id = $$source_id$$
              ]]>
            </sql>
         </sqlQuery>
@@ -54,6 +55,7 @@
                    dots.ExternalNaSequence ens2,
                    core.TableInfo ti2
               WHERE ens1.na_sequence_id = s.query_id
+                AND ens1.source_id = $$source_id$$
                 AND 'ExternalNASequence' = ti1.name
                 AND ti1.table_id = s.query_table_id
                 AND ed2.name in ('Sanger P. falciparum chromosomes',

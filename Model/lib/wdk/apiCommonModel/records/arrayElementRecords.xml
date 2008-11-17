@@ -74,12 +74,13 @@
                displayName="Genomic Locations"
                queryRef="ArrayElementTables.GenomicLocations">
             <columnAttribute name="source_id" internal="true"/>
+            <columnAttribute name="genomic_source_id" internal="true"/>
             <linkAttribute name="genomicSequence" displayName="Genomic Sequence">
                  <displayText>
-                    <![CDATA[ $$source_id$$ ]]>
+                    <![CDATA[ $$genomic_source_id$$ ]]>
                  </displayText>
                  <url>
-                    <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$source_id$$]]>
+                    <![CDATA[showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&primary_key=$$genomic_source_id$$]]>
                  </url>
             </linkAttribute>
             <columnAttribute name="min_subject_start" displayName="Start"/>
