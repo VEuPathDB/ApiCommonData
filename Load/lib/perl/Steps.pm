@@ -6287,7 +6287,48 @@ sub blastSimOutput2ApidbSimSequences {
   $mgr->endStep($signal);
 }
 
+
 sub getNotAlignedEstAndAddOneCluster {
+  my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir) = @_;
+
+  my $dataDir = $mgr->{dataDir};
+
+  my $signal = "getNotAlignedEstAndAddOneCluster-$species";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Getting not aligned ESTs and add them into one cluster", $signal);
+
+  $clusterDir = "$dataDir/$clusterDir";
+
+  my $blockFile = "$dataDir/$blockDir/blocked.err";
+ 
+  my $propertySet = $mgr->{propertySet};
+
+  my $taxonId =  &getTaxonId($mgr,$taxId);
+
+  my $targetTaxonId =  &getTaxonId($mgr,$targetTaxId);
+
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
+
+  my $sqlEST = "select distinct e.na_sequence_id from dots.ExternalNASequence e, sres.sequenceontology s where e.taxon_id in($taxonIdList) and s.term_name in ('EST','mRNA') and e.sequence_ontology_id = s.sequence_ontology_id";
+
+  my $sqlBLAT = "select distinct query_na_sequence_id from dots.blatalignment where target_taxon_id=$targetTaxonId and is_best_alignment=1 and query_na_sequence_id=?";
+
+  my $sqlBLOCK = "select distinct assembly_sequence_id from DoTS.assemblysequence where na_sequence_id = ?";
+  
+  my $outputFile ="$clusterDir/AddCluster";
+ 
+  my $cmd = "getSourceIds --idSQLEST \"$sqlEST\" --idSQLBLAT \"$sqlBLAT\" --idSQLBLOCK \"$sqlBLOCK\" --outputFile $outputFile --blockFile $blockFile --clusterDir $clusterDir  2>> $logFile";
+ 
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
+
+sub getNotAlignedEstAndAddOneCluster_new{
   my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir) = @_;
 
   my $dataDir = $mgr->{dataDir};
