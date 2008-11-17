@@ -108,8 +108,8 @@
         </sqlQuery>
 
         <processQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <paramRef ref="recordParams.source_id"/> 
-            <paramRef ref="recordParams.project_id"/>
+            <paramRef ref="recordParams.source_id" quote="false"/> 
+            <paramRef ref="recordParams.project_id" quote="false"/>
             <wsColumn name="source_id"  width="100"/>
             <wsColumn name="project_id"  width="100"/>
             <wsColumn name="accession" width="100" wsName="accession"/>
@@ -651,9 +651,9 @@
 <!--=====================================================================-->
 
     <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.primaryKey" quote="false"/> 
             <paramRef ref="recordParams.project_id"/>
-            <wsColumn name="source_id"  width="100"/>
+        	<wsColumn name="primaryKey"  width="100"/>
             <wsColumn name="project_id"  width="100"/>
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>

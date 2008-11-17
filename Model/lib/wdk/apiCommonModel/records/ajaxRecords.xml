@@ -286,17 +286,15 @@
         <recordClass name="SnpStrainATermClass" doNotTest="true"  type="Ontology" includeProjects="ApiDB">
 
             <!-- primary key definition -->
-            <primaryKeyAttribute name="primary_key"
-                                 displayName="Gene">
-                <columnRef>source_id</columnRef>
+<primaryKeyAttribute name="primary_key" displayName="Gene">
+                <columnRef>primaryKey</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$project_id$$:$$primaryKey$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
-
 
             <table name="SnpStrainATerms" displayName="StrainA Terms" 
                    queryRef="AjaxTables.AjaxQuery">
@@ -310,15 +308,14 @@
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
                                  displayName="Gene">
-                <columnRef>source_id</columnRef>
+                <columnRef>primaryKey</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$project_id$$:$$primaryKey$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
-
 
             <table name="SnpStrainATerms" displayName="StrainA Terms" 
                    queryRef="AjaxTables.AjaxQuery">
@@ -334,7 +331,7 @@
         <recordClass name="ChromosomeTermClass" doNotTest="true"  type="Ontology" includeProjects="ApiDB">
 
             <!-- primary key definition -->
-            <primaryKeyAttribute name="primary_key"
+<!--            <primaryKeyAttribute name="primary_key"
                                  displayName="Gene">
                 <columnRef>source_id</columnRef>
                 <columnRef>project_id</columnRef>
@@ -344,8 +341,17 @@
                     ]]>
                 </text>                
             </primaryKeyAttribute>
-
-
+-->
+<primaryKeyAttribute name="primary_key"
+                     displayName="Gene">
+    <columnRef>primaryKey</columnRef>
+    <columnRef>project_id</columnRef>
+    <text>
+        <![CDATA[
+        $$project_id$$:$$primaryKey$$
+        ]]>
+    </text>                
+</primaryKeyAttribute>
             <table name="Chromosomes" displayName="Chromosome Terms" 
                    queryRef="AjaxTables.AjaxQuery">
                 <columnAttribute name="internal"/>
@@ -362,11 +368,11 @@
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
                                  displayName="Gene">
-                <columnRef>source_id</columnRef>
+                <columnRef>primaryKey</columnRef>
                 <columnRef>project_id</columnRef>
                 <text>
                     <![CDATA[
-                    $$project_id$$:$$source_id$$
+                    $$project_id$$:$$primaryKey$$
                     ]]>
                 </text>                
             </primaryKeyAttribute>
