@@ -9,19 +9,18 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
     my ($self, $test) = @_;
 
-    my $proteinsFile = $self->getParamValue('proteinsFile');
+    my $inputDir = $self->getParamValue('inputDir');
     my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
     my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
     
     my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($interproExtDbRlsSpec);
-    my $goVersion = $self->getParamValue('iprscan.goversion');
+    my $goVersion = $self->getParamValue('goVersion');
 
     my $localDataDir = $self->getLocalDataDir();
 
-    my $resultFileDir = "$localDataDir/$proteinsFile/master/mainresult/";
 
     my $args = <<"EOF";
---resultFileDir=$resultFileDir \\
+--resultFileDir=$localDataDir/$inputDir \\
 --confFile=$configFileRelativeToDownloadDir \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
@@ -34,7 +33,7 @@ EOF
 
 
 sub getParamsDeclaration {
-    return ('proteinsFile',
+    return ('inputDir',
             'interproExtDbRlsSpec',
             'configFileRelativeToDownloadDir'
            );
@@ -55,4 +54,3 @@ sub restart {
 
 sub undo {
 }
-
