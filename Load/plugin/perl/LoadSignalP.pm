@@ -82,10 +82,11 @@ stringArg({name => 'extDbRlsVer',
        isList => 0
       }),
 
+# this parameter is not used.  should be removed.  kept for backward compat, for now.
 stringArg({name => 'project_name',
        descr => 'project this data belongs to - must in entered in GUS',
        constraintFunc=> undef,
-       reqd  => 1,
+       reqd  => 0,
        isList => 0
       }),
 
