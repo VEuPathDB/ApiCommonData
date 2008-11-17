@@ -1,53 +1,45 @@
 package ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
-  my ($self, $test) = @_;
+    my ($self, $test) = @_;
 
-  # get parameters
-  my $algName = $self->getParamValue('algName');
-  my $inputDir = $self->getParamValue('inputDir');
+    my $algName = $self->getParamValue('algName');
+    my $inputDir = $self->getParamValue('inputDir');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+    my $localDataDir = $self->getLocalDataDir();
 
-  # get step properties
-  my $ = $self->getConfig('');
+    my $args = "--predAlgName $algName --directory $localDataDir/$inputDir";
 
-  my $localDataDir = $self->getLocalDataDir();
-
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
+    $self->runPlugin($test,"GUS::Supported::Plugin::InsertSecondaryStructure", $args);
 
 }
+
 
 sub getParamsDeclaration {
-  return (
-          'algName',
-          'inputDir',
-         );
+    return ('algName',
+            'inputDir',
+           );
 }
 
+
 sub getConfigDeclaration {
-  return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+    return (
+            # [name, default, description]
+           );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
 }
 
 sub undo {
-
 }
 
-sub getDocumentation {
-}
