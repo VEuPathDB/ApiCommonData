@@ -4,38 +4,33 @@ package ApiCommonData::Load::WorkflowSteps::CreateExtDbAndDbRls;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
-  my ($self, $test) = @_;
+    my ($self, $test) = @_;
 
-  # get parameters
-  my $syntenyExtDbRlsSpec = $self->getParamValue('syntenyExtDbRlsSpec');
+    # get parameters
+    my $syntenyExtDbRlsSpec = $self->getParamValue('syntenyExtDbRlsSpec');
+    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($syntenyExtDbRlsSpec);
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+    my $dbPluginArgs = "--name '$extDbName' ";
+    
+    $self->runPlugin($test,"GUS::Supported::Plugin::InsertExternalDatabase", $dbPluginArgs);
 
-  # get step properties
-  my $ = $self->getConfig('');
+    my $releasePluginArgs = "--databaseName '$extDbName' --databaseVersion '$extDbRlsVer'";
 
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
-
+    $self->runPlugin($test,"GUS::Supported::Plugin::InsertExternalDatabaseRls", $releasePluginArgs);
 }
 
+
 sub getParamsDeclaration {
-  return (
-          'syntenyExtDbRlsSpec',
-         );
+    return (
+            'syntenyExtDbRlsSpec'
+           );
 }
 
 sub getConfigDeclaration {
-  return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+    return (
+           # [name, default, description]
+           );
 }
 
 sub restart {
@@ -47,3 +42,4 @@ sub undo {
 
 sub getDocumentation {
 }
+
