@@ -168,14 +168,8 @@
       SELECT src.organism || '  - (' || count(src.organism) || ' isolates)' AS term,
              src.organism AS internal
       FROM   DoTS.IsolateSource src,
-             DoTS.ExternalNASequence etn,
-             SRes.ExternalDatabaseRelease edr,
-             SRes.ExternalDatabase edb
-      WHERE  edr.external_database_id = edb.external_database_id
-         AND edr.external_database_release_id = etn.external_database_release_id
-         AND edb.name = 'Isolates Data'
-         AND edr.version = '2007-12-12'
-         AND src.na_sequence_id = etn.na_sequence_id
+             DoTS.ExternalNASequence etn
+      WHERE  src.na_sequence_id = etn.na_sequence_id
          AND src.organism is not null
       GROUP BY src.organism
       ORDER BY src.organism
@@ -199,14 +193,8 @@
     SELECT upper(substr(src.specific_host, 0, 1)) || substr(src.specific_host, 2) || ' - (' || count(src.specific_host) || ' isolates)' AS term,
            replace(src.specific_host, chr(39), ':') AS internal
     FROM   DoTS.IsolateSource src,
-           DoTS.ExternalNASequence etn,
-           SRes.ExternalDatabaseRelease edr,
-           SRes.ExternalDatabase edb
+           DoTS.ExternalNASequence etn
     WHERE  src.specific_host is not null
-       AND edr.external_database_id = edb.external_database_id
-       AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
        AND src.na_sequence_id = etn.na_sequence_id
     GROUP BY src.specific_host
     ORDER BY upper(src.specific_host)
