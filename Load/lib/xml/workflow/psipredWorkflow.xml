@@ -13,18 +13,18 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="runPfilt" stepClass="ApiCommonData::Load::Steps::RunPfilt">
+    <step name="runPfilt" stepClass="ApiCommonData::Load::WorkflowSteps::RunPfilt">
       <paramValue name="inputFile">$$nrdbFileShortDefline$$</paramValue>
       <paramValue name="outputFile">$$psipredNrdbFile$$</paramValue>
     </step>
 
-    <step name="fixProteinIds" stepClass="ApiCommonData::Load::Steps::FixProteinIdsForPsipred">
+    <step name="fixProteinIds" stepClass="ApiCommonData::Load::WorkflowSteps::FixProteinIdsForPsipred">
       <paramValue name="inputProteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputProteinsFile">$$psipredProteinsFile$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="createTaskDir" stepClass="ApiCommonData::Load::Steps::MakePsipredTaskDir">
+    <step name="createTaskDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakePsipredTaskDir">
       <paramValue name="taskInputDir">$$parentDataDir$$/interpro/input</paramValue>
       <paramValue name="proteinsFile">$$psipredProteinsFile$$</paramValue>
       <paramValue name="nrdbFile">$$psipredNrdbFile$$</paramValue>
@@ -49,18 +49,18 @@
       <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="fixFileNames" stepClass="ApiCommonData::Load::Steps::FixPsipredFileNames">
+    <step name="fixFileNames" stepClass="ApiCommonData::Load::WorkflowSteps::FixPsipredFileNames">
       <paramValue name="inputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="makeAlgInv" stepClass="ApiCommonData::Load::Steps::MakeAlgInv">
+    <step name="makeAlgInv" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAlgInv">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="algVersion">dontcare</paramValue>
       <paramValue name="algDesc">dontcare</paramValue>
@@ -68,7 +68,7 @@
       <depends name="fixFileNames"/>
     </step>
 
-    <step name="insertPsipred" stepClass="ApiCommonData::Load::Steps::LoadSecondaryStructures">
+    <step name="insertPsipred" stepClass="ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="inputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
       <depends name="makeAlgInv"/>

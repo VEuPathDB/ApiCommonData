@@ -41,7 +41,7 @@
   <steps>
 
   <step name="extractGenomicSeqs"
-          stepClass="ApiCommonData::Load::Steps::ExtractNaSeqs">
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxId">$$$ncbiTaxonId$$</paramValue>
       <paramValue name="table">ExternalNASequence</paramValue>
@@ -51,14 +51,14 @@
       <paramValue name="separateFastaFiles">false</paramValue>
     </step>
 
-   <step name="copyGenomicSeqsToCluster" stepClass="ApiCommonData::Load::Steps::CopyFilesToComputeCluster">
+   <step name="copyGenomicSeqsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::CopyFilesToComputeCluster">
       <paramValue name="file">$$genomicSeqsFile$$</paramValue>
       <paramValue name="relativeDir">$$genomeName$$/$$seqfilesDir$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
 
     <step name="makeOrfFile"
-          stepClass="ApiCommonData::Load::Steps::MakeOrfFile">
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeOrfFile">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="minPepLength">50</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
@@ -69,7 +69,7 @@
 
 
     <step name="loadOrfFile"
-          stepClass="ApiCommonData::Load::Steps::LoadOrfFile">
+          stepClass="ApiCommonData::Load::WorkflowSteps::LoadOrfFile">
       <paramValue name="orfFile">$$genomeName$$_Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="substepClass">ExternalNASequence</paramValue>
@@ -80,7 +80,7 @@
     </step>
 
     <step name="findTandemRepeats"
-          stepClass="ApiCommonData::Load::Steps::FindTandemRepeats">
+          stepClass="ApiCommonData::Load::WorkflowSteps::FindTandemRepeats">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
@@ -90,7 +90,7 @@
 
 
     <step name="loadTandemRepeats"
-          stepClass="ApiCommonData::Load::Steps::LoadTandemRepeats">
+          stepClass="ApiCommonData::Load::WorkflowSteps::LoadTandemRepeats">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
@@ -101,7 +101,7 @@
   </steps>
 
     <step name="filterGenomicSeqs"
-          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::FilterSequences">
       <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="outputFile">$$genomicSeqsFile$$.dust</paramValue>
@@ -113,7 +113,7 @@
     </step>
 
    <step name="filterproteinsFile"
-          stepClass="ApiCommonData::Load::Steps::FilterSequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::FilterSequences">
 
       <paramValue name="seqFile">$$proteinsFile$$</paramValue>
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
@@ -126,7 +126,7 @@
     </step>
 
     <step name="loadLowComplexityproteinsFile"
-          stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::LoadLowComplexitySequences">
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -138,7 +138,7 @@
     </step>
 
      <step name="loadLowComplexityGenomicSeqs"
-          stepClass="ApiCommonData::Load::Steps::LoadLowComplexitySequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::LoadLowComplexitySequences">
       <paramValue name="seqfilesDir">$$seqfilesDir$$</paramValue>
       <paramValue name="inputFile">$$genomicSeqsFile$$.dust</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>

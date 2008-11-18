@@ -1,6 +1,6 @@
 <workflowGraph name="organismAnalysis">
-  <param name="projectDB"/>
-  <param name="projectRelease"/>
+  <param name="projectName"/>
+  <param name="projectVersion"/>
   <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="organismTwoLetterAbbrev"/>
@@ -29,8 +29,8 @@
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
-  <constant name="downloadSiteDataDir">downloadSite/$$projectDB$$/$$projectRelease$$/$$organismName$$</constant>
-  <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectDB$$/$$projectRelease$$/blast</constant>
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectName$$/$$projectVersion$$/blast</constant>
 
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -91,31 +91,31 @@
     <paramValue name="genomeVirtualSeqExtDbRlsSpec">$$genomeVirtualSeqExtDbRlsSpec$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="genomeSource">$$genomeSource$$</paramValue>
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
+    <paramValue name="projectDB">$$projectName$$</paramValue>
+    <paramValue name="projectRelease">$$projectVersion$$</paramValue>
     <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
     <depends name="proteomeAnalysis"/>
     <depends name="genomeAnalysis"/>
-    <depends name="makedownloadSiteDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="makeGffFile" xmlFile="makeGffFile.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectDB">$$projectName$$</paramValue>
     <depends name="proteomeAnalysis"/>
     <depends name="genomeAnalysis"/>
-    <depends name="makedownloadSiteDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <step name="fullRecordDump" stepClass="ApiCommonData::Load::WorkflowSteps::RunfullRecordDump">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
+    <paramValue name="projectDB">$$projectName$$</paramValue>
     <depends name="proteomeAnalysis"/>
     <depends name="genomeAnalysis"/>
-    <depends name="makedownloadSiteDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </step>
 </workflowGraph>

@@ -35,7 +35,7 @@
       <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends name="waitForClusterTask"/>

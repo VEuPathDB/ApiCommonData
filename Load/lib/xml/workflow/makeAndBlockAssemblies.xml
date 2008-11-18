@@ -27,7 +27,7 @@
     </step>
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
-          stepClass="ApiCommonData::Load::Steps::PutUnalignedTranscriptsIntoOneCluster">
+          stepClass="ApiCommonData::Load::WorkflowSteps::PutUnalignedTranscriptsIntoOneCluster">
       <paramValue name="alignedClustersFile">$$dataDir$$/alignedClusters.out</paramValue>
       <paramValue name="allClustersOutputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
@@ -45,7 +45,7 @@
     </step>
 
    <step name="assembleTranscripts"
-          stepClass="ApiCommonData::Load::Steps::AssembleTranscripts">
+          stepClass="ApiCommonData::Load::WorkflowSteps::AssembleTranscripts">
       <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="outputDir">$$dataDir$$/</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -54,7 +54,7 @@
     </step>
 
    <step name="extractAssemblies"
-          stepClass="ApiCommonData::Load::Steps::ExtractAssemblies">
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAssemblies">
       <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <depends name="assembleTranscripts"/>
@@ -78,7 +78,7 @@
       <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="waitForClusterTask"/>
     </step>

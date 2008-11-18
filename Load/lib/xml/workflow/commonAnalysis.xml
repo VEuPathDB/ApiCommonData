@@ -39,19 +39,19 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="copyPdbFile" stepClass="ApiCommonData::Load::Steps::CopyResourcesFile">
+    <step name="copyPdbFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
       <paramValue name="resourcesFile">PDBProteinSequences/pdb.fsa</paramValue>
       <paramValue name="toFile">$$pdbOutputFile$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="copyNrdbFile" stepClass="ApiCommonData::Load::Steps::CopyResourcesFile">
+    <step name="copyNrdbFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
       <paramValue name="resourcesFile">NRDB/nr.gz</paramValue>
       <paramValue name="toFile">$$nrdbOutputFile$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="shortenNrdbDefline" stepClass="ApiCommonData::Load::Steps::ShortenDefline">
+    <step name="shortenNrdbDefline" stepClass="ApiCommonData::Load::WorkflowSteps::ShortenDefline">
       <paramValue name="inputFile">$$nrdbOutputFile$$</paramValue>
       <paramValue name="outputFile">$$nrdbShortDeflineOutputFile$$</paramValue>
       <depends name="copyNrdbFile"/>

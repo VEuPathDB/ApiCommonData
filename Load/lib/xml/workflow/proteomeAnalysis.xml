@@ -16,27 +16,27 @@
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
 
     <step name="calcTranslatedProteins"
-          stepClass="ApiCommonData::Load::Steps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$">
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="soVersion">$$soVersion$$</paramValue>
     </step>
 
     <step name="molecularWeight"
-          stepClass="ApiCommonData::Load::Steps::CalculateProteinMolWt">
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateProteinMolWt">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends name="calcTranslatedProteins"/>
     </step>
 
     <step name="molecularWeightMinMax"
-          stepClass="ApiCommonData::Load::Steps::InsertAASeqMWMinMax">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertAASeqMWMinMax">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends name="calcTranslatedProteins"/>
     </step>
 
     <step name="isoelectricPoint"
-          stepClass="ApiCommonData::Load::Steps::InsertIsoelectricPoint">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertIsoelectricPoint">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends name="calcTranslatedProteins"/>
@@ -47,7 +47,7 @@
     </step>
 
     <step name="extractProteins"
-          stepClass="ApiCommonData::Load::Steps::ExtractAnnotatedProteinsBySpecies">
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAnnotatedProteinsBySpecies">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$</paramValue>
@@ -55,21 +55,21 @@
     </step>
 
     <step name="runTmhmm"
-          stepClass="ApiCommonData::Load::Steps::RunTmhmm">
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunTmhmm">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$dataDir$$/tmhmm.out</paramValue>
       <depends name="extractProteins"/>
     </step>
 
     <step name="insertTmhmm"
-          stepClass="ApiCommonData::Load::Steps::InsertTmhmm">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTmhmm">
       <paramValue name="inputFile">$$dataDir$$/tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runTmhmm"/>
     </step>
 
     <step name="runSignalP"
-          stepClass="ApiCommonData::Load::Steps::RunSignalP">
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunSignalP">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$dataDir$$/signalP.out</paramValue>
       <paramValue name="options">-t euk -f short -m nn+hmm -q -trunc 70</paramValue>
@@ -77,7 +77,7 @@
     </step>
 
     <step name="insertSignalP"
-          stepClass="ApiCommonData::Load::Steps::InsertSignalP">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertSignalP">
       <paramValue name="inputFile">$$dataDir$$/signalP.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runSignalP"/>
@@ -93,7 +93,7 @@
     </subgraph>
 
    <step name="runLowComplexityFilter"
-          stepClass="ApiCommonData::Load::Steps::RunLowComplexityFilter">
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunLowComplexityFilter">
 
       <paramValue name="seqFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
@@ -103,7 +103,7 @@
     </step>
 
     <step name="loadLowComplexityFile"
-          stepClass="ApiCommonData::Load::Steps::InsertLowComplexitySequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences">
       <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="seqType">protein</paramValue>

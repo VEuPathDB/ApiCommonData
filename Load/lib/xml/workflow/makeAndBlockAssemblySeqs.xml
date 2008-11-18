@@ -17,7 +17,7 @@
     </step>
 
    <step name="extractAssemblySeqs"
-          stepClass="ApiCommonData::Load::Steps::ExtractAssemblySeqs">
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="outputFile">$$dataDir$$/assemblySeqs.fsa</paramValue>
@@ -50,7 +50,7 @@
       <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends name="waitForClusterTask"/>
     </step>

@@ -22,7 +22,7 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeClusterTaskDir" stepClass="ApiCommonData::Load::Steps::MakeBlastTaskInputDir">
+    <step name="makeClusterTaskDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="queryFile">$$queryFile$$</paramValue>
       <paramValue name="subjectFile">$$subjectFile$$</paramValue>
@@ -50,12 +50,12 @@
       <depends name="startClusterTask"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::Steps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <depends name="waitForClusterTask"/>
     </step>
 
-    <step name="filterResultsByTaxon" stepClass="ApiCommonData::Load::Steps::FilterBlastResultsByTaxon" includeIf="$$filterByTaxon$$">
+    <step name="filterResultsByTaxon" stepClass="ApiCommonData::Load::WorkflowSteps::FilterBlastResultsByTaxon" includeIf="$$filterByTaxon$$">
       <paramValue name="taxonHierarchy">$$taxonHierarchyForFilter$$</paramValue>
       <paramValue name="gi2taxidFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
       <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
@@ -64,14 +64,14 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="extractIdsFromBlastResult" stepClass="ApiCommonData::Load::Steps::ExtractIdsFromBlastResult" includeIf="$$loadSubjectSubset$$">
+    <step name="extractIdsFromBlastResult" stepClass="ApiCommonData::Load::WorkflowSteps::ExtractIdsFromBlastResult" includeIf="$$loadSubjectSubset$$">
       <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
       <paramValue name="idType">subject</paramValue>
       <paramValue name="outputFile">$$dataDir$$/blastSimIds.out</paramValue>
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::Steps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$">
+    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">common/nrdb.fsa</paramValue>
       <paramValue name="idsFile">$$dataDir$
@@ -80,7 +80,7 @@ $/blastSimIds.out</paramValue>
       <depends name="extractIdsFromBlastResult"/>
     </step>
 
-    <step name="loadSimilarities" stepClass="ApiCommonData::Load::Steps::InsertBlastSimilarities">
+    <step name="loadSimilarities" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlastSimilarities">
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
       <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="queryTableIdCol">source_id</paramValue>
