@@ -19,8 +19,8 @@ sub getLocalDataDir {
 sub getComputeClusterHomeDir {
     my ($self) = @_;
     my $clusterBase = $self->getGlobalConfig('clusterBaseDir');
-    my $projectName = $self->getGlobalConfig('projectName');
-    my $projectVersion = $self->getGlobalConfig('projectVersion');
+    my $projectName = $self->getWorkflowConfig('name');
+    my $projectVersion = $self->getWorkflowConfig('version');
     return "$clusterBase/$projectName/$projectVersion";
 }
 

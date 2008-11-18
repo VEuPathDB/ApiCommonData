@@ -12,7 +12,7 @@ sub run {
   # get parameters
   my $apiSiteFilesDir = $self->getParamValue('apiSiteFilesDir');
 
-  my $baseDir = $self->getGlobalConfig('apiSitesFileDir');
+  my $baseDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   $self->runCmd(0, "mkdir $baseDir/$apiSiteFilesDir");
 }
