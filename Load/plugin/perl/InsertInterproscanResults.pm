@@ -304,7 +304,7 @@ sub buildDomainFeature {
 	  aa_feature_id => $domainFeat->getId()
 	});
 
-  $dbRefAaFeat->submit();
+  $dbRefAaFeat->submit() if $dbRefId;
 
   return $domainFeat;
 }
