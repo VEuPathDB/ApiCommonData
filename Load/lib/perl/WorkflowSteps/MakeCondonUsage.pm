@@ -1,53 +1,49 @@
 package ApiCommonData::Load::WorkflowSteps::MakeCondonUsage;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
+
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
-  my ($self, $test) = @_;
+    my ($self, $test) = @_;
 
-  # get parameters
-  my $inputFile = $self->getParamValue('inputFile');
-  my $outputFile = $self->getParamValue('outputFile');
+    # get parameters
+    my $inputFile = $self->getParamValue('inputFile');
+    my $outputFile = $self->getParamValue('outputFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+    my $localDataDir = $self->getLocalDataDir();
 
-  # get step properties
-  my $ = $self->getConfig('');
+    my $cmd = "makeCodonUsage --infile $localDataDir/$inputFile --outfile $localDataDir/$outputFile";
 
-  my $localDataDir = $self->getLocalDataDir();
-
-  if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
+    if ($test) {
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    } else {
+      $self->runCmd($test,$cmd);
+    }
 
 }
+
 
 sub getParamsDeclaration {
-  return (
-          'inputFile',
-          'outputFile',
-         );
+    return ('inputFile',
+            'outputFile',
+           );
 }
 
+
 sub getConfigDeclaration {
-  return (
-         # [name, default, description]
-         # ['', '', ''],
-         );
+    return (
+            # [name, default, description]
+           );
+}
+
+sub getDocumentation {
 }
 
 sub restart {
 }
 
 sub undo {
-
-}
-
-sub getDocumentation {
 }
