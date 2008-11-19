@@ -17,8 +17,8 @@
   <param name="goVersion"/>
   <param name="tigrVersion"/>
   <param name="ncbiTaxonVersion"/>
-  <param name="projectDB"/>
-  <param name="projectRelease"/>
+  <param name="projectName"/>
+  <param name="projectVersion"/>
 
   <constant name="pdbFile">common/pdb.fsa</constant>
   <constant name="nrdbFile">common/nrdb.fsa</constant>
@@ -29,13 +29,13 @@
     <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
   </subgraph>
 
   <subgraph name="TcruziAnalysis" xmlFile="organismAnalysis.xml">
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="parentDataDir"></paramValue>
     <paramValue name="organismName">Tcruzi</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tc</paramValue>
@@ -54,7 +54,7 @@
     <paramValue name="ncbiTaxonId">137566</paramValue>    
     <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
-    <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
@@ -66,8 +66,8 @@
   </subgraph>
 
   <subgraph name="TbruceiAnalysis" xmlFile="organismAnalysis.xml">
-    <paramValue name="projectDB">$$projectDB$$</paramValue>
-    <paramValue name="projectRelease">$$projectRelease$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="parentDataDir"></paramValue>
     <paramValue name="organismName">Tbrucei</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tb</paramValue>
@@ -87,10 +87,11 @@
     <paramValue name="tigrVersion">$$tigrVersion$$</paramValue>
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
     <paramValue name="ncbiTaxonId">4339566</paramValue>
+    <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
-    <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
-    <paramValue name="nrdbOutputFile">$$nrdbFile$$</paramValue>
-    <paramValue name="nrdbShortDeflineOutputFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="calculateTranslatedProteins">false</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>

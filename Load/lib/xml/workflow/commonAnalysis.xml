@@ -3,8 +3,8 @@
       <param name="nrdbOutputFile"/>
       <param name="nrdbShortDeflineOutputFile"/>
       <param name="pdbOutputFile"/>
-      <param name="projectDB"/>
-      <param name="projectRelease"/>
+      <param name="projectName"/>
+      <param name="projectVersion"/>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">common</paramValue>
@@ -19,19 +19,19 @@
     </step>
 
     <step name="makeBlastWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/blast</paramValue>
+      <paramValue name="apiSiteFilesDir">webServices/$$projectName$$/$$projectVersion$$/blast</paramValue>
     </step>
 
     <step name="makeTextSearchWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/textSearch</paramValue>
+      <paramValue name="apiSiteFilesDir">webServices/$$projectName$$/$$projectVersion$$/textSearch</paramValue>
     </step>
 
     <step name="makeMercatorWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/mercator</paramValue>
+      <paramValue name="apiSiteFilesDir">webServices/$$projectName$$/$$projectVersion$$/mercator</paramValue>
     </step>
 
     <step name="makeMotifWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-      <paramValue name="apiSiteFilesDir">webServices/$$projectDB$$/$$projectRelease$$/motif</paramValue>
+      <paramValue name="apiSiteFilesDir">webServices/$$projectName$$/$$projectVersion$$/motif</paramValue>
     </step>
 
     <step name="makeMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
