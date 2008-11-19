@@ -30,7 +30,7 @@
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
-  <constant name="webServicesBlastDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectName$$/$$projectVersion$$/blast</constant>
+  <constant name="webServicesDataDir">/files/cbil/data/cbil/apiSiteFiles/webServices/$$projectName$$/$$projectVersion$$</constant>
 
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -84,7 +84,7 @@
 
   <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
-    <paramValue name="webServiceBlastsDataDir">$$webServicesBlastDataDir$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
     <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
     <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</paramValue>
