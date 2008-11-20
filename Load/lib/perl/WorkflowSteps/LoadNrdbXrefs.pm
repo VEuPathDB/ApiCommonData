@@ -11,7 +11,7 @@ sub run {
   # get parameters
   my $xrefsFile = $self->getParamValue('xrefsFile');
   my $dbAbbrevList = $self->getParamValue('dbAbbrevList');
-  my $nrdbVersion = $self->getParamValue('nrdbVersion');
+  my $nrdbExtDbRlsSpec = $self->getParamValue('nrdbExtDbRlsSpec');
 
   # get global properties
   my $ = $self->getGlobalConfig('');

@@ -8,7 +8,7 @@
     <param name="genomicSeqsDir"/>
     <param name="organismTwoLetterAbbrev"/>
     
-    <constant name ="dataDir">$$dataDir$$/mapAssemblies</constant>
+    <constant name ="dataDir">$$parentDataDir$$/mapAssemblies</constant>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -61,7 +61,7 @@
     <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="queryNcbiTaxId">$$parentncbiTaxonId$$</paramValue>
+      <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>

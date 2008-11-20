@@ -43,7 +43,7 @@
 
     <step name="makeAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
@@ -57,7 +57,7 @@
 
     <step name="makeAnnotatedTranscriptsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedTranscripts_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
@@ -71,7 +71,7 @@
 
     <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="organismSource">$$organismSource$$</paramValue>
+      <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>

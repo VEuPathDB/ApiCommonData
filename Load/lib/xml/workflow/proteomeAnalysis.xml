@@ -8,6 +8,7 @@
   <param name="ncbiTaxonId"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>
+  <param name="nrdbExtDbRlsSpec"/>
   <param name="pdbFile"/>
   <param name="calculateTranslatedProteins"/>
   <param name="soVersion"/>
@@ -123,7 +124,7 @@
     <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
       <paramValue name="xrefsFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
-      <paramValue name="nrdbVersion">$$nrdbVersion$$</paramValue>
+      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
     </step>
 
     <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">

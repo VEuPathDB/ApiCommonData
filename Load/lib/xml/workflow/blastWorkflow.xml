@@ -73,10 +73,9 @@
 
     <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
-      <paramValue name="fastaFile">common/nrdb.fsa</paramValue>
-      <paramValue name="idsFile">$$dataDir$
-$/blastSimIds.out</paramValue>
-      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="fastaFile">$$subjectFile$$</paramValue>
+      <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
+      <paramValue name="nrdbExtDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <depends name="extractIdsFromBlastResult"/>
     </step>
 
