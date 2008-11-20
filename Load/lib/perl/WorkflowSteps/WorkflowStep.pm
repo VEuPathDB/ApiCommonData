@@ -7,6 +7,7 @@ package ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 @ISA = (GUS::Workflow::WorkflowStepInvoker);
 
 use strict;
+use Carp;
 
 use GUS::Workflow::WorkflowStepInvoker;
 
@@ -51,8 +52,8 @@ sub makeControllerPropFile {
 
   # print out the file
   my $controllerPropFile = "$localDataDir/$taskInputDir/controller.prop";
-  open(F, $controllerPropFile) 
-      || die "Can't open controller prop file '$controllerPropFile' for writing";
+  open(F, $controllerPropFile)
+      || $self->error("Can't open controller prop file '$controllerPropFile' for writing");
   print F 
 "masterdir=$computeClusterDataDir/$masterDir
 inputdir=$computeClusterDataDir/$taskInputDir
@@ -95,7 +96,7 @@ sub getExtDbInfo {
       my $extDbRlsVer = $2;
       return ($extDbName, $extDbRlsVer);
     } else {
-      die "Database specifier '$extDbRlsSpec' is not in 'name|version' format";
+      $self->error("Database specifier '$extDbRlsSpec' is not in 'name|version' format";
     }
 }
 
