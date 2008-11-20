@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::DumpMixedGenomicSeqs;
+package ApiCommonData::Load::WorkflowSteps::ExtractMixedGenomicSeqs;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
