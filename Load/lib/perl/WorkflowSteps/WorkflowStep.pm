@@ -96,7 +96,7 @@ sub getExtDbInfo {
       my $extDbRlsVer = $2;
       return ($extDbName, $extDbRlsVer);
     } else {
-      $self->error("Database specifier '$extDbRlsSpec' is not in 'name|version' format";
+      $self->error("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
     }
 }
 
