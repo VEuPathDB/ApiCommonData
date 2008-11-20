@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.IsolateVocabulary (
- term                        varchar(50) NOT NULL,
- parent                      varchar(50),
+ term                        varchar(200) NOT NULL,
+ parent                      varchar(200),
  type                        varchar(50) NOT NULL
 );
 
