@@ -24,11 +24,9 @@ sub run {
 
       $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
-  } else {
-
-      $self->runCmd($test,$cmd);
-
   }
+
+  $self->runCmd($test,$cmd);
 
 }
 

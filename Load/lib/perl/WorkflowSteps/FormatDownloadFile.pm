@@ -22,7 +22,6 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   if ($test) {
-  } else {
   }
 
   $self->runPlugin($test, '', $args);

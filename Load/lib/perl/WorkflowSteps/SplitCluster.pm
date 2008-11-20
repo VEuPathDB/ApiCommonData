@@ -18,9 +18,8 @@ sub run {
   if ($test){
       self->runCmd(0, "echo test > $localDataDir/$smallClustersOutputFile");
       self->runCmd(0, "echo test > $localDataDir/$bigClustersOutputFile");
-  } else {
-      self->runCmd($test, $cmd);
   }
+  self->runCmd($test, $cmd);
 }
 
 

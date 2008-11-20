@@ -27,24 +27,23 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
+  my $cmd;
   if ($separateFastaFiles) {
+    $cmd = "gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
 
-      my $cmd = "gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
-
-      if ($test) {
-	$self->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
-      } else {
-	$self->runCmd($test,$cmd); 
-      }
-  } else {
-
-      my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
-      if ($test) {
-           $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-	 } else {
-           $self->runCmd($test,$cmd);
-	 }
+    if ($test) {
+      $self->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
     }
+
+  } else {
+    $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
+
+    if ($test) {
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    }
+  }
+  $self->runCmd($test,$cmd);
+
 }
 
 sub getParamsDeclaration {

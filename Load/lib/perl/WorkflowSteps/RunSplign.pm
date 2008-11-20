@@ -10,11 +10,11 @@ sub run {
   my ($self, $test) = @_;
 
   my $queryFile = $self->getParamValue('queryFile');
-  
+
   my $subjectFile = $self->getParamValue('subjectFile');
 
   my $outputFile = $self->getParamValue('outputFile');
- 
+
   my $splignDir = $self->getParamValue('outputDir');
 
   my $splignPath = $self->getConfig('splignPath');
@@ -25,17 +25,15 @@ sub run {
 
       $self->runCmd(0,"echo hello > $outputFile");
 
-  } else {
-
-      $self->runCmd("${splignPath}/splign -mklds $splignDir");
-
-      $self->runCmd("${ncbiBlastPath}/formatdb -i $subjectFile -p F -o F");
-
-      $self->runCmd("${ncbiBlastPath}/megablast -i $queryFile -d $subjectFile -m 8 | sort -k 2,2 -k 1,1 > $splignDir/test.hit");
-
-      $self->runCmd("${splignPath}/splign -ldsdir $splignDir -hits $splignDir/test.hit > $outputFile");
-
   }
+
+  $self->runCmd($test, "${splignPath}/splign -mklds $splignDir");
+
+  $self->runCmd($test, "${ncbiBlastPath}/formatdb -i $subjectFile -p F -o F");
+
+  $self->runCmd($test, "${ncbiBlastPath}/megablast -i $queryFile -d $subjectFile -m 8 | sort -k 2,2 -k 1,1 > $splignDir/test.hit");
+
+  $self->runCmd($test, "${splignPath}/splign -ldsdir $splignDir -hits $splignDir/test.hit > $outputFile");
 
 }
 

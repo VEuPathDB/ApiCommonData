@@ -19,7 +19,7 @@ sub run {
     my $localDataDir = $self->getLocalDataDir();
     my $downloadDir = $self->getGlobalConfig('downloadDir');
 
-    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadDir --queryDir $localDataDir/$proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir --idRegex '$idRegex'";
+    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir --idRegex '$idRegex'";
     $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
     $self->runCmd($test,$cmd);
 }

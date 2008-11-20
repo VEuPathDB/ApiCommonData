@@ -11,7 +11,7 @@ sub run {
     my $inputFile = $self->getParamValue('inputFile');
     my $fsaFile = $self->getParamValue('fsaFile');
     my $outputFile = $self->getParamValue('outputFile');
-	
+
     my $localDataDir = $self->getLocalDataDir();
 
 
@@ -19,11 +19,8 @@ sub run {
 
     if ($test){
         $self->runCmd(0,'echo test > $localDataDir/$outputFile');
-    }else{
-        $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
     }
-
-
+    $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
 }
 
 sub getParamsDeclaration {

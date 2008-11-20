@@ -19,9 +19,8 @@ sub run {
 
   if ($test) {
     $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  } else {
-    $self->runCmd($test, "$psipredPath/pfilt $localDataDir/$inputFile > $localDataDir/$outputFile");
   }
+  $self->runCmd($test, "$psipredPath/pfilt $localDataDir/$inputFile > $localDataDir/$outputFile");
 }
 
 sub getParamsDeclaration {

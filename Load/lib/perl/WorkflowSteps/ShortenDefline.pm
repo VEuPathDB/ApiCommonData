@@ -15,10 +15,8 @@ sub run {
 
   if ($test) {
       $self->runCmd($test, "echo test > $localDataDir/$outputFile");
-  } else {
-      $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
-
   }
+  $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
 }
 
 sub getParamsDeclaration {
