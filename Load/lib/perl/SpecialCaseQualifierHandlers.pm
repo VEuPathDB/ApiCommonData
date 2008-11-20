@@ -72,7 +72,7 @@ sub undoAll{
   $self->_undoNoteWithAuthor();
   $self->_undoLiterature();
   $self->_undoMiscFeatureNote();
-  $self->undoObsoleteProduct();
+  $self->_undoObsoleteProduct();
   $self->_undoRptUnit();
 
 }
@@ -226,42 +226,44 @@ sub _setCodingAndTranslationStartAndStop{
 
   my ($codingValue) = $bioperlFeature->get_tag_values($tag);
 
-  my $rnaExon = $exonFeature->getChild("DoTS::RNAFeatureExon");
-  my $transcript = $rnaExon->getParent("DoTS::Transcript");
-  my $transcriptLoc = $transcript->getChild("DoTS::NALocation");
-  my $translatedAAFeat = $transcript->getChild("DoTS::TranslatedAAFeature");
-  my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
-  my $exonLoc = $exonFeature->getChild("DoTS::NALocation");
+  if ($codingValue ne '' && $codingValue ne 'null'){
 
-  my $isReversed = $exonLoc->getIsReversed();
+      my $rnaExon = $exonFeature->getChild("DoTS::RNAFeatureExon");
+      my $transcript = $rnaExon->getParent("DoTS::Transcript");
+      my $transcriptLoc = $transcript->getChild("DoTS::NALocation");
+      my $translatedAAFeat = $transcript->getChild("DoTS::TranslatedAAFeature");
+      my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
+      my $exonLoc = $exonFeature->getChild("DoTS::NALocation");
 
-  if($isStop){
-    $exonFeature->setCodingEnd($codingValue);
+      my $isReversed = $exonLoc->getIsReversed();
 
-    my $seq = $transcriptSeq->getSequence();
-    my $transcriptLength = length($seq);
+      if($isStop){
+	  $exonFeature->setCodingEnd($codingValue);
 
-    if(!$translatedAAFeat->{tempCodingStop} || (!$isReversed && $codingValue > $translatedAAFeat->{tempCodingStop}) || ($isReversed && $codingValue < $translatedAAFeat->{tempCodingStop})){
+	  my $seq = $transcriptSeq->getSequence();
+	  my $transcriptLength = length($seq);
 
-      $translatedAAFeat->{tempCodingStop} = $codingValue;
+	  if(!$translatedAAFeat->{tempCodingStop} || (!$isReversed && $codingValue > $translatedAAFeat->{tempCodingStop}) || ($isReversed && $codingValue < $translatedAAFeat->{tempCodingStop})){
 
-      my $translationStop = $self->_getTranslationStop($isReversed, $codingValue, $transcriptLoc, $transcriptLength);
+	      $translatedAAFeat->{tempCodingStop} = $codingValue;
 
-      $translatedAAFeat->setTranslationStop($translationStop);
-    }
-  }else{
-    $exonFeature->setCodingStart($codingValue);
+	      my $translationStop = $self->_getTranslationStop($isReversed, $codingValue, $transcriptLoc, $transcriptLength);
+	      
+	      $translatedAAFeat->setTranslationStop($translationStop);
+	  }
+      }else{
+	  $exonFeature->setCodingStart($codingValue);
 
-    if(!$translatedAAFeat->{tempCodingStart} || (!$isReversed && $codingValue < $translatedAAFeat->{tempCodingStart}) || ($isReversed && $codingValue > $translatedAAFeat->{tempCodingStart})){
+	  if(!$translatedAAFeat->{tempCodingStart} || (!$isReversed && $codingValue < $translatedAAFeat->{tempCodingStart}) || ($isReversed && $codingValue > $translatedAAFeat->{tempCodingStart})){
 
-      $translatedAAFeat->{tempCodingStart} = $codingValue;
+	      $translatedAAFeat->{tempCodingStart} = $codingValue;
 
-      my $translationStart = $self->_getTranslationStart($isReversed, $codingValue, $transcriptLoc);
+	      my $translationStart = $self->_getTranslationStart($isReversed, $codingValue, $transcriptLoc);
 
-      $translatedAAFeat->setTranslationStart($translationStart);
-    }
+	      $translatedAAFeat->setTranslationStart($translationStart);
+	  }
+      }
   }
-  
   return [];
 }
 
