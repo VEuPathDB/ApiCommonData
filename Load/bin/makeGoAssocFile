@@ -14,21 +14,23 @@ my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date)); 
 
 
-my ($verbose, $help, $genbankFile, $outFile, $taxonId, $evidenceCode, $annotBasis, $db);
+my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension);
 
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
-            'genbank_file=s' => \$genbankFile,
+            'fileOrDir=s' => \$inFileDir,
+            'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
 	    'db=s' => \$db,
 	    'taxon_id=i' => \$taxonId,
             'evidence_code=s' => \$evidenceCode,
-	    'annotation_basis=s' => \$annotBasis
+	    'annotation_basis=s' => \$annotBasis,
+             'format=s'         => \$format
            );
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $genbankFile && $outFile && $taxonId && $db);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $taxonId && $db && $format);
 
 if(!($evidenceCode)){
   $evidenceCode = "IEA";
@@ -37,7 +39,11 @@ if(!($evidenceCode)){
 my $goAssocFh = FileHandle->new();
 $goAssocFh->open(">$outFile");
 
-my $in  = Bio::SeqIO->new(-file => $genbankFile , '-format' => 'genbank');
+my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
+
+foreach my $inFile (@inputFiles){
+
+my $in  = Bio::SeqIO->new(-file => $inFile , '-format' => $format) or die("Could not open $inFile for reading\n");;
 
 
 
@@ -46,28 +52,106 @@ while ( my $seq = $in->next_seq() ) {
 	foreach my $feature ($seq->get_SeqFeatures){
 	  if($feature->primary_tag eq "CDS"){
 	    my $sourceId = '';
+	    my $product = '';
 	    if ($feature->has_tag('locus_tag')){
 	      foreach my $value ($feature->get_tag_values('locus_tag')){
 		$sourceId = $value;
 	      }
 	    }
-	    foreach my $qualifier ($feature->get_all_tags){
-	      if ($qualifier eq 'GO_process'){
-		foreach my $value ($feature->get_tag_values($qualifier)){
-		  $value =~ /^(.+)\[\D+(\d+)\]/;
-		  my $product = $1;
-		  $product = &trim($product);
-		  my $goId = "GO:".$2;
-		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tP\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
-		}
+	    if ($feature->has_tag('systematic_id')){
+	      foreach my $value ($feature->get_tag_values('systematic_id')){
+		$sourceId = $value;
 	      }
+	    }
+	    if ($feature->has_tag('temporary_systematic_id')){
+	      foreach my $value ($feature->get_tag_values('temporary_systematic_id')){
+		$sourceId = $value;
+	      }
+	    }
+
+	    if($feature->has_tag('product')){
+		($product) = $feature->get_tag_values('product');
+		$product = &trim($product);
+	    }
+
+	    foreach my $qualifier ($feature->get_all_tags){
+		
+		
+		if ($qualifier eq 'GO'){
+		    
+		    foreach my $fields ($feature->get_tag_values($qualifier)){
+		    
+			my @fields = split(/;/,$fields);
+
+			my($goId,$levidenceCode,$aspect,$ldate,$ldbxref,$with);
+			
+			foreach my $field (@fields){
+			    my($column,$value) = split(/=/,$field);
+			    $column = &trim($column);
+			    if(lc($column) eq 'aspect'){
+				if(lc($value) eq 'component'){
+				    $aspect = 'C';
+				}elsif(lc($value) eq 'process'){
+				    $aspect = 'P';
+				}elsif(lc($value) eq 'function'){
+				    $aspect = 'F';
+				}else{
+				    $aspect = '';
+				}
+			    }
+			    if(lc($column) eq 'evidence'){
+				$levidenceCode = uc(&trim($value));
+			    }
+			    if(lc($column) eq 'goid'){
+				$goId = &trim($value);
+			    }
+			    if(lc($column) eq 'date'){
+				$ldate = &trim($value);
+			    }
+			
+			    if(lc($column) eq 'db_xref'){
+
+				$ldbxref = &trim($value);
+			    }
+			
+			    if(lc($column) eq 'with'){
+				$with = &trim($value);
+			    }
+		    
+			}
+			if(!($levidenceCode)){
+			    $levidenceCode = $evidenceCode;
+			}
+			if(!($ldate)){
+			    $ldate = $date;
+			}
+			if($with){
+			    if($ldbxref){
+				$ldbxref .= "|$with";
+			    }else{
+				$ldbxref = $with;
+			    }
+			}
+				
+			
+			$goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t$ldbxref\t$levidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$ldate\t$annotBasis\n");
+		    }
+		    
+		}
+		if ($qualifier eq 'GO_process'){
+		    foreach my $value ($feature->get_tag_values($qualifier)){
+			$value =~ /^(.+)\[\D+(\d+)\]/;
+
+			my $goId = "GO:".$2;
+			$goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tP\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+		    }
+		}
 
 		  
 	      if ($qualifier eq 'GO_function'){
 		foreach my $value ($feature->get_tag_values($qualifier)){
 		  $value =~ /^(.+)\[\D+(\d+)\]/;
-		  my $product = $1;
-		  $product = &trim($product);
+
 		  my $goId = "GO:".$2;
 		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tF\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		}
@@ -76,8 +160,7 @@ while ( my $seq = $in->next_seq() ) {
 	      if ($qualifier eq 'GO_component'){
 		foreach my $value ($feature->get_tag_values($qualifier)){
 		  $value =~ /^(.+)\[\D+(\d+)\]/;
-		  my $product = $1;
-		  $product = &trim($product);
+
 		  my $goId = "GO:".$2;
 		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tC\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		}
@@ -86,6 +169,7 @@ while ( my $seq = $in->next_seq() ) {
 	  }
 	}
       }
+}
 }
 
 $goAssocFh->close();
@@ -107,7 +191,9 @@ sub usage {
 
   print STDERR "$m\n" if($m);
   my $usage = "usage:  perl makeGoAssocFile \\
---genbank_file <s-genbank file to be parsed> \\
+--format      <format of the annotation file (genbank, embl)>
+--fileOrDir <file or directory to be parsed> \\
+[--fileExt  <extension of file in directory>] \\
 --output_file <output go associations file> \\
 --db <Database name> \\
 --taxon_id <Taxon ID> \\
@@ -122,5 +208,20 @@ sub usage {
 
 #-------------------------------------------------------------------------------
 
+sub getInputFiles {
+  my ($fileOrDir,$seqFileExtension) = @_;
+
+
+  my @inputFiles;
+  if (-d $fileOrDir) {
+    opendir(DIR, $fileOrDir) || die "Can't open directory '$fileOrDir'";
+    my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
+    @inputFiles = map { "$fileOrDir/$_" } @noDotFiles;
+    @inputFiles = grep(/.*\.$seqFileExtension$/, @inputFiles) if $seqFileExtension;
+  } else {
+    $inputFiles[0] = $fileOrDir;
+  }
+  return @inputFiles;
+}
 
 1;
