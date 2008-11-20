@@ -10,7 +10,7 @@ sub run {
   my ($self) = @_;
 
   # get param values
-  my $fileOrDirToMirror = $self->getParam('fileOrDirToMirror');
+  my $fileOrDirToMirror = $self->getParamValue('fileOrDirToMirror');
 
   my $localDataDir = $self->getLocalDataDir();
   my $computeClusterDataDir = $self->getComputeClusterDataDir();

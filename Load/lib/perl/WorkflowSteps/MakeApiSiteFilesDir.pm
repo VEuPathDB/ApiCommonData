@@ -14,7 +14,7 @@ sub run {
 
   my $baseDir = $self->getGlobalConfig('apiSiteFilesDir');
 
-  $self->runCmd(0, "mkdir $baseDir/$apiSiteFilesDir");
+  $self->runCmd(0, "mkdir -p $baseDir/$apiSiteFilesDir");
 }
 
 sub getParamsDeclaration {
