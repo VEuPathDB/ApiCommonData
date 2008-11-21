@@ -1261,14 +1261,12 @@ sub makeDoTSAssemblyDownloadFile {
           a.sequence
        FROM dots.assembly a,
             sres.taxonname tn,
-            sres.taxon t,
-            sres.sequenceontology so
+            sres.taxon t
       WHERE t.ncbi_tax_id = $ncbiTaxId
         AND t.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND t.taxon_id = a.taxon_id
-        AND a.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = '$name'
+     
 EOF
 
     my $fileName = $species . ucfirst($name);
