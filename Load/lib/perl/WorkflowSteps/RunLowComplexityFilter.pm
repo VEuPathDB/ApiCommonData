@@ -23,7 +23,7 @@ sub run {
   if ($test) {
       $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
-  self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
+  $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
 }
 
 sub getParamDeclaration {
