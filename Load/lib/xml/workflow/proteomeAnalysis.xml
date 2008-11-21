@@ -53,6 +53,7 @@
       <paramValue name="ncbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$</paramValue>
       <depends name="calcTranslatedProteins"/>
+      <depends name="makeDataDir"/>
     </step>
 
     <step name="runTmhmm"
@@ -119,6 +120,8 @@
       <paramValue name="proteinsFileRegex">^([\\w\\.]+)</paramValue>
       <paramValue name="nrdbFileRegex">^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|</paramValue>
       <paramValue name="outputFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
+      <depends name="makeDataDir"/>
+
     </step>
 
     <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
