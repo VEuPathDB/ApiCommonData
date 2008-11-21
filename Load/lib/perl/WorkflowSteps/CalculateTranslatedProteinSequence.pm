@@ -11,7 +11,7 @@ sub run {
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $soVersion = $self->getParamValue('soVersion');
 
-  my ($extDbName, $extDbVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
+  my ($extDbName, $extDbVer) = $self->getExtDbInfo($extDbRlsSpec);
 
   my $args = "--sqlVerbose --extDbRlsName '$extDbName' --extDbRlsVer '$extDbVer' --soCvsVersion $soVersion";
 

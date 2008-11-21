@@ -12,7 +12,7 @@ sub run {
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $table = $self->getParamValue('table');
 
-  my ($extDbName, $extDbRlsVer) = $self->getExtDbRlsInfo($extDbRlsSpec);
+  my ($extDbName, $extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
 
   my $args = "--extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --seqTable $table";
 
