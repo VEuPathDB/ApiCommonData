@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::LoadLowComplexitySequences;
+package ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
