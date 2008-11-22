@@ -275,7 +275,7 @@ sub parseData {
    my ($self, $line_in) = @_;
    my @vals = split(/\s+/,$line_in);
 
-   my $aaFeatId = $vals[0];
+   my $aaFeatId = $vals[14];
    $aaFeatId=~s/^\s+//;
    $aaFeatId=~s/\s+$//;
 
