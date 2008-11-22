@@ -356,7 +356,7 @@
     <sqlQuery name="GenesByGeneType" excludeProjects="ApiDB" 
               isCacheable="true">
         <paramRef ref="geneParams.geneType"/>
-        <paramRef ref="geneParams.includePseudogenes" excludeProjects="TrichDB,CryptoDB"/>
+        <paramRef ref="geneParams.includePseudogenes" excludeProjects="TrichDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.toxoForTreeTest" displayType="treeBox"/ -->
         <column name="project_id"/>
