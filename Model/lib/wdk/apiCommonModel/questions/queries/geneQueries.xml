@@ -362,7 +362,7 @@
         <column name="project_id"/>
         <column name="source_id" />
         <column name="is_pseudo" />
-        <sql  excludeProjects="TrichDB">
+        <sql  excludeProjects="CryptoDB,TrichDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
               decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
@@ -375,7 +375,7 @@
               AND ga.project_id = '@PROJECT_ID@'
            ]]>
        </sql>
-<sql  includeProjects="TrichDB">
+<sql  includeProjects="CryptoDB,TrichDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
               decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
