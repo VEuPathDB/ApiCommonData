@@ -15,6 +15,7 @@ sub run {
   my $baseDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   $self->runCmd(0, "mkdir -p $baseDir/$apiSiteFilesDir");
+  $self->runCmd(0, "chmod -R g+w $baseDir/$apiSiteFilesDir");
 }
 
 sub getParamsDeclaration {
