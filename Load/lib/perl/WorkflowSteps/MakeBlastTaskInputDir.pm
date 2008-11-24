@@ -27,7 +27,7 @@ sub run {
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::BlastMatrixTask");
 
   # make task.prop file
