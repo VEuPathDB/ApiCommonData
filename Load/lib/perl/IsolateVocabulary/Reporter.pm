@@ -32,7 +32,7 @@ sub report {
 
   # Check Existing terms have all needed attributes
   foreach my $existingTerm (@$existingTerms) {
-    unless($existingTerm->isValid()) {
+    unless($existingTerm->isValid(1)) {
       print STDERR "had error\n";
       $hadErrors = 1;
     }
