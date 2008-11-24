@@ -18,7 +18,7 @@ sub run {
   my $rmPath = $self->getConfig('rmPath');
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::RepeatMaskerTask");
 
   # make task.prop file
