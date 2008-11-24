@@ -133,10 +133,16 @@
                      queryRef="genomicVQ.sequenceTypes"
                      prompt="Sequence Type"
                      multiPick="true">
-        <help>
-         Type of genomic sequence (chromosome, scaffold, contig, ...)
-        </help>    
-  <useTermOnly value="true" includeProjects="ApiDB"/>
+                     <help>
+                     Type of genomic sequence (chromosome, scaffold, contig, ...)
+                     </help>    
+
+                    <suggest
+                     default= "supercontigs,contigs" 
+                     allowEmpty="true" 
+                     emptyValue="supercontigs,contigs" />
+
+       <useTermOnly value="true" includeProjects="ApiDB"/>
        </flatVocabParam>
 
   </paramSet>
