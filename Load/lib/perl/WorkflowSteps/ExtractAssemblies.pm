@@ -11,7 +11,7 @@ sub run {
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $outputFile = $self->getParamValue('outputFile');
 
-  my $taxonId = $self->getTaxonId($ncbiTaxonId);
+  my $taxonId = $self->getTaxonId($test,$ncbiTaxonId);
 
   my $sql = "select na_sequence_id,description,'('||number_of_contained_sequences||' sequences)','length='||length,sequence from dots.Assembly where taxon_id = $taxonId";
 

@@ -12,8 +12,8 @@ sub run {
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
   my $outputFile = $self->getParamValue('outputFile');
 
-  my $taxonId = $self->getTaxonId($parentNcbiTaxonId);
-  my $taxonIdList = $self->getTaxonIdList($taxonId, $useTaxonHierarchy);
+  my $taxonId = $self->getTaxonId($test,$parentNcbiTaxonId);
+  my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
   my $localDataDir = $self->getLocalDataDir();
 

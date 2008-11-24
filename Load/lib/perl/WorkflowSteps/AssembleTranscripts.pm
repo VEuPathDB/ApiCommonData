@@ -18,7 +18,7 @@ sub run {
   my $reassemble = $self->getParamValue('reassemble') eq "yes" ? "--reassemble" :"";
   my $cap4Dir = $self->getConfig('cap4Dir');
 
-  my $taxonId = $self->getTaxonId($ncbiTaxonId);
+  my $taxonId = $self->getTaxonId($test,$ncbiTaxonId);
   my $workingDir = $self->runCmd(0,"pwd");
 
   &splitClusterFile($self,$test,$inputFile);

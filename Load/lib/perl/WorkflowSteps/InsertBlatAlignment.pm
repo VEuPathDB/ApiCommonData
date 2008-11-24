@@ -20,12 +20,12 @@ sub run {
   my $percentTop = $self->getParamValue('percentTop');
   my $blatFile = $self->getParamValue('blatFile');
 
-  my $targetTaxonId = $self->getTaxonId($targetNcbiTaxId);
+  my $targetTaxonId = $self->getTaxonId($test,$targetNcbiTaxId);
   my $targetTableId = $self->getTableId($targetTable);
-  my $targetExtDbRlsId = $self->getExtDbRlsId($targetExtDbRlsSpec);
-  my $queryTaxonId = $self->getTaxonId($queryNcbiTaxId);
+  my $targetExtDbRlsId = $self->getExtDbRlsId($test, $targetExtDbRlsSpec);
+  my $queryTaxonId = $self->getTaxonId($test,$queryNcbiTaxId);
   my $queryTableId = $self->getTableId($queryTable);
-  my $queryExtDbRlsId = $self->getExtDbRlsId($queryExtDbRlsSpec) if $queryExtDbRlsSpec;
+  my $queryExtDbRlsId = $self->getExtDbRlsId($test, $queryExtDbRlsSpec) if $queryExtDbRlsSpec;
 
   my $localDataDir = $self->getLocalDataDir();
 

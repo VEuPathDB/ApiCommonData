@@ -14,7 +14,7 @@ sub run {
   my $maxIntronSize = $self->getParamValue('maxIntronSize');
 
   my $taxonId = $self->getTaxonIdFromNcbiTaxonId($ncbiTaxonId);
-  my $targetDbRlsId = $self->getExtDbRlsId($genomeExtDbRlsSpec);
+  my $targetDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
 
   my $localDataDir = $self->getLocalDataDir();
 

@@ -15,7 +15,7 @@ sub run {
   my $separateFastaFiles = $self->getParamValue('separateFastaFiles');
   my $outputDirForSeparateFiles = $self->getParamValue('outputDirForSeparateFiles');
 
-  my $dbRlsId = $self->getExtDbRlsId($extDbRlsSpec);
+  my $dbRlsId = $self->getExtDbRlsId($test, $extDbRlsSpec);
 
   my $deflineSelect = $alternateDefline?
     $alternateDefline :

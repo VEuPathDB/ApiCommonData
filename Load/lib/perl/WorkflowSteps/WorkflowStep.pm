@@ -76,16 +76,20 @@ sub runCmdOnCluster {
 # are called from the workflow should take an extDbRlsSpec as an argument,
 # not an internal id
 sub getExtDbRlsId {
-  my ($self, $extDbRlsSpec) = @_;
+  my ($self, $test, $extDbRlsSpec) = @_;
 
   my ($extDbName, $extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
 
   my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
-  my $extDbRlsId = $self->runCmd(0, $cmd);
+  my $extDbRlsId = $self->runCmd($test, $cmd);
 
-  return  $extDbRlsId;
+  if ($test) {
+    return "UNKNOWN_EXT_DB_RLS_ID";
+  } else {
+    return  $extDbRlsId;
+  }
 }
 
 sub getExtDbInfo {
@@ -110,22 +114,31 @@ sub getTableId {
 }
 
 sub getTaxonId {
-  my ($self,$taxId) = @_;
+  my ($self, $test, $taxId) = @_;
 
   my $sql = "select taxon_id from sres.taxon where ncbi_tax_id = $taxId";
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
 
-  my $taxonId = $self->runCmd(0, $cmd);
+  my $taxonId = $self->runCmd($test, $cmd);
 
-  return $taxonId;
+  if ($test) {
+    return "UNKNOWN_TAXON_ID";
+  } else {
+    return  $taxonId;
+  }
 }
 
 sub getTaxonIdList {
-  my ($self, $taxonId, $hierarchy) = @_;
+  my ($self, $test, $taxonId, $hierarchy) = @_;
 
   if ($hierarchy) {
-    return chomp($self->runCmd(0, "getSubTaxaList --taxon_id $taxonId"));
+    my $idList = chomp($self->runCmd($test, "getSubTaxaList --taxon_id $taxonId"));
+    if ($test) {
+      return "UNKNOWN_TAXON_ID_LIST";
+    } else {
+      return  $idList;
+    }
   } else {
     return $taxonId;
   }

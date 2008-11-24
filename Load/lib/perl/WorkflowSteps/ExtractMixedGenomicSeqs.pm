@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 ## to do
-## API $self->getExtDbRlsId($genomeExtDbRlsSpec)
+## API $self->getExtDbRlsId($test, $genomeExtDbRlsSpec)
 
 sub run {
   my ($self, $test) = @_;
@@ -17,8 +17,8 @@ sub run {
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $genomeVirtualSeqsExtDbRlsSpec = $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
 
-  my $genomDbRlsId = $self->getExtDbRlsId($genomeExtDbRlsSpec);
-  my $virtualDbRlsId = $self->getExtDbRlsId($genomeVirtualSeqsExtDbRlsSpec);
+  my $genomDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
+  my $virtualDbRlsId = $self->getExtDbRlsId($test, $genomeVirtualSeqsExtDbRlsSpec);
 
   my $sql = "SELECT source_id, sequence
               FROM Dots.VIRTUALSEQUENCE
