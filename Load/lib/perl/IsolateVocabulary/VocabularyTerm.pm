@@ -30,50 +30,64 @@ sub getMaps {$_[0]->{_maps}}
 sub addMaps {
   my $self = shift;
 
-  push(@{$self->{maps}}, @_);
+  push(@{$self->{_maps}}, @_);
 }
 
 sub isValid {
   my ($self, $isRoot) = @_;
 
-  my @validTables = ('IsolateFeature', 'IsolateSource');
-  my @validFields = ('product', 'country', 'specific_host', 'isolation_source');
+  my @validTables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
+  my @validFields = ('product', 'geographic_location', 'specific_host', 'isolation_source', 'source_id');
 
   my $value = $self->getValue();
   my $field = $self->getField();
   my $table = $self->getTable();
 
+  my $errors;
+
   unless($value) {
     print STDERR "Error.  No Value Provided for Node:  ";
     print STDERR $self->toString();
+    $errors = 1;
   }
   
   unless($self->included(\@validTables, $table)) {
     print STDERR "Error.  Table $table is not valid for Node:  ";
     print STDERR $self->toString();
+    $errors = 1;
   }
   
   unless($self->included(\@validFields, $field)) {
     print STDERR "Error.  Field $field is not valid for Node:  ";
     print STDERR $self->toString();
+    $errors = 1;
   }
 
   my $maps = $self->getMaps();
   if($isRoot && ref($maps) ne 'ARRAY') {
     print STDERR "Error.  No Map found for Root Node: ";
     print STDERR $self->toString();
+    $errors = 1;
   }
   elsif($isRoot) {
     foreach(@$maps) {
-      $self->isValid();
+      unless($_->isValid()) {
+        $errors = 1;
+      }
     }
   }
   elsif(!$isRoot && $maps) {
     print STDERR "Error.  Maps specified for non root node:  ";
     print STDERR $self->toString();
+    $errors = 1;
   }
   else {}
 
+  if($errors) {
+    return 0;
+  }
+
+  return 1;
 }
 
 sub toString { Dumper $_[0]}

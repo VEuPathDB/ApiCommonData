@@ -33,6 +33,7 @@ sub report {
   # Check Existing terms have all needed attributes
   foreach my $existingTerm (@$existingTerms) {
     unless($existingTerm->isValid()) {
+      print STDERR "had error\n";
       $hadErrors = 1;
     }
   }
@@ -48,10 +49,10 @@ sub report {
   }
 
   if($hadErrors) {
-    print STDERR "Please Correct erros and rerun";
+    print STDERR "Please Correct Errors and rerun.  Terms can either be added to an ontology or add an xml map to link term to existing ontology\n";
   }
   else {
-    print STDERR "Complete!";
+    print STDERR "All New Ontology Terms either map to existing term or are handeled in the xml map!\n";
   }
 
 }

@@ -50,15 +50,20 @@ sub extract {
 
   my $dbh = $self->getDbh();
 
-  my $sql;
+  my $queryField = $self->getType() eq 'geographic_location' ? 'country' : $self->getType();
   my $type = $self->getType();
 
-  if($type eq 'product') {
-    $sql = "select distinct $type from dots.isolatefeature where $type is not null";
-  }
-  else {
-    $sql = "select distinct $type from dots.isolatesource where $type is not null";
-  }
+  my $table = $type eq 'product' ? 'IsolateFeature' : 'IsolateSource';
+
+  my $sql = <<SQL;
+select distinct i.original
+from (select $queryField as original, regexp_replace($queryField, ':.*\$', '') as term from dots.$table) i 
+ left join apidb.isolatevocabulary v
+ on i.term = v.term and  v.type = '$type'
+where i.term is not null 
+ and v.term is null
+ order by i.original
+SQL
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();

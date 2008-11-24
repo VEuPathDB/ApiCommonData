@@ -22,7 +22,7 @@ sub createDbh {
 sub isValidType {
   my ($type) = @_;
 
-  my @allowed = ('country',
+  my @allowed = ('geographic_location',
                  'specific_host',
                  'product',
                  'isolation_source'
