@@ -15,7 +15,7 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my @inputFiles;
-  @inputFiles = &_getInputFiles($localDataDir/$inputDir);
+ # @inputFiles = &_getInputFiles($localDataDir/$inputDir);
 
   foreach my $file (@inputFiles) {
 
