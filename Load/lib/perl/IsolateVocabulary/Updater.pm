@@ -81,6 +81,8 @@ sub update {
       my $mapField = $map->getField();
       my $mapValue = $map->getValue();
 
+      $mapValue = s/\'//;
+
       my $updateSql = "update dots.$mapTable set $mapField = '$mapValue', modification_date = sysdate where na_sequence_id = ?";
       my $updateSh = $dbh->prepare($updateSql);
 
@@ -91,7 +93,7 @@ sub update {
         $updateCounts = $updateCounts + $rows;
       }
 
-      $updateSql->finish();
+      $updateSh->finish();
     }
   }
 
@@ -109,7 +111,7 @@ sub queryForExisting {
 select distinct na_sequence_id, product from dots.isolatefeature
 Sql
              'IsolateSource' => <<Sql,
-select distinct na_sequence_id, country as geographic_location, specific_host, isolation_source from dots.isolatesource
+select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
 Sql
              'ExternalNaSequence' => <<Sql,
 select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
@@ -195,6 +197,7 @@ sub getAllOntologies {
   my %res;
 
   while(my ($term, $type) = $sh->fetchrow_array()) {
+    $type = 'country' if($type eq 'geographic_location');
     push @{$res{$term}}, $type;
   }
   $sh->finish();

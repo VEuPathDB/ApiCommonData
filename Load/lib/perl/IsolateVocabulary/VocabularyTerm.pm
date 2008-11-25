@@ -37,7 +37,7 @@ sub isValid {
   my ($self, $isRoot) = @_;
 
   my @validTables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
-  my @validFields = ('product', 'geographic_location', 'specific_host', 'isolation_source', 'source_id');
+  my @validFields = ('product', 'country', 'specific_host', 'isolation_source', 'source_id');
 
   my $value = $self->getValue();
   my $field = $self->getField();
