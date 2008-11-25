@@ -32,7 +32,7 @@ sub run {
   $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
 
   # make controller.prop file
-  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::BlastMatrixTask");
 
   # make task.prop file

@@ -149,7 +149,7 @@ sub copyToCluster {
 }
 
 sub copyFromCluster {
-  my ($self, $fromDir, $fromFile, $toDir) = @_;
+  my ($self, $test, $fromDir, $fromFile, $toDir) = @_;
 }
 
 1;
