@@ -4,7 +4,7 @@ package ApiCommonData::Load::WorkflowSteps::RunPfilt;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
   my ($self, $test) = @_;
 
