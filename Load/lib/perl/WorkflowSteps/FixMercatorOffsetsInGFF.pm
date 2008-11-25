@@ -18,7 +18,7 @@ sub run {
     my $args = "--f $localDataDir/$fsaFile --g $localDataDir/$inputFile --o $localDataDir/$outputFile";
 
     if ($test){
-        $self->runCmd(0,'echo test > $localDataDir/$outputFile');
+        $self->runCmd(0,"echo test > $localDataDir/$outputFile");
     }
     $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
 }
