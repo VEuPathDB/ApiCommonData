@@ -18,7 +18,7 @@ sub run {
   my $cmd = "cat $localDataDir/$inputProteinsFile | perl -pe '$fix' > $localDataDir/$outputProteinsFile";
 
   if ($test){
-    $self->runCmd(0,'echo test > $localDataDir/$outputProteinsFile');
+    $self->runCmd(0,"echo test > $localDataDir/$outputProteinsFile");
   }
   $self->runCmd($test,$cmd);
 }
