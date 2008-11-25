@@ -7,24 +7,33 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 use File::Basename;
 
 sub run {
-  my ($self) = @_;
+  my ($self, $test) = @_;
 
   # get param values
   my $fileOrDirToMirror = $self->getParamValue('fileOrDirToMirror');
+  my $outputDir = $self->getParamValue('outputDir');
+  my $outputFile = $self->getParamValue('outputFile');
 
   my $localDataDir = $self->getLocalDataDir();
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
 
   my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
 
-  $self->copyFromCluster("$computeClusterDataDir/$relativeDir",
+  $self->copyFromCluster($test, "$computeClusterDataDir/$relativeDir",
 			 $filename,
 			 "$localDataDir/$relativeDir");
+
+  if ($test) {
+    $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
+    $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile");
+  }
 }
 
 sub getParamDeclaration {
   return (
 	  'fileOrDirToMirror',
+	  'outputDir',
+	  'outputFile',
 	 );
 }
 

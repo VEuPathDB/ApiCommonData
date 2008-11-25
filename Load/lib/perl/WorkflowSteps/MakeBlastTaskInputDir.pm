@@ -26,20 +26,22 @@ sub run {
 
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
+
+  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
+
   # make controller.prop file
   $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::BlastMatrixTask");
 
   # make task.prop file
-  my $computeClusterDataDir = $self->getComputeClusterDataDir();
-  my $localDataDir = $self->getLocalDataDir();
-
   my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
   my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
   my $vendorString = $vendor? "blastVendor=$vendor" : "";
 
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
 "blastBinDir=$blastBinPathCluster
@@ -54,7 +56,7 @@ $vendorString
   close(F);
 
   # make blastParams file
-  open(F, $localBlastParamsFile) || die "Can't open blast params file '$localBlastParamsFile' for writing";;
+  open(F, ">$localBlastParamsFile") || die "Can't open blast params file '$localBlastParamsFile' for writing";;
   print F "$blastArgs\n";
   close(F);
   #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");

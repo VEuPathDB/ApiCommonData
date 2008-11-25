@@ -4,7 +4,6 @@ package ApiCommonData::Load::WorkflowSteps::StartClusterTask;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -15,16 +14,14 @@ sub run {
   my $cmdArgs = $self->getParamValue('cmdArgs');
 
   # get global properties
-  my $ = $self->getGlobalConfig('');
+#  my $ = $self->getGlobalConfig('');
 
   # get step properties
-  my $ = $self->getConfig('');
+#  my $ = $self->getConfig('');
 
   if ($test) {
   } else {
   }
-
-  $self->runPlugin($test, '', $args);
 
 }
 

@@ -4,7 +4,6 @@ package ApiCommonData::Load::WorkflowSteps::WaitForClusterTask;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -12,16 +11,14 @@ sub run {
   my $taskDir = $self->getParamValue('taskDir');
 
   # get global properties
-  my $ = $self->getGlobalConfig('');
+#  my $ = $self->getGlobalConfig('');
 
   # get step properties
-  my $ = $self->getConfig('');
+#  my $ = $self->getConfig('');
 
   if ($test) {
   } else {
   }
-
-  $self->runPlugin($test, '', $args);
 
 }
 

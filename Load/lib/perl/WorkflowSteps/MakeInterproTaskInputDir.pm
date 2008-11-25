@@ -18,16 +18,18 @@ sub run {
   my $taskSize = $self->getConfig('taskSize');
   my $applications = $self->getConfig('applications');
 
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
+
+  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
+
   # make controller.prop file
   $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::IprscanTask");
 
   # make task.prop file
-  my $computeClusterDataDir = $self->getComputeClusterDataDir();
-  my $localDataDir = $self->getLocalDataDir();
-
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
 "seqfile=$computeClusterDataDir/$proteinsFile

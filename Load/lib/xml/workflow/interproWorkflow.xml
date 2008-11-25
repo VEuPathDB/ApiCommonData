@@ -36,8 +36,9 @@
     </step>
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
-      <paramValue name="parentDir">$$dataDir$$</paramValue>
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult/</paramValue>
+      <paramValue name="outputFile"></paramValue>
       <depends name="waitForClusterTask"/>
     </step>
 
@@ -45,6 +46,7 @@
       <paramValue name="inputDir">$$dataDir$$/master/mainresult/</paramValue>
       <paramValue name="interproExtDbRlsSpec">$$interproExtDbRlsSpec$$</paramValue>
       <paramValue name="configFileRelativeToDownloadDir">InterproscanData/iprscan$$interproVersion$$/iprscan/data/insertInterpro-config.xml</paramValue>
+      <depends name="mirrorFromCluster"/>
     </step>
 
 </workflowGraph>

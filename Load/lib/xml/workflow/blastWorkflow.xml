@@ -52,6 +52,8 @@
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainResult</paramValue>
+      <paramValue name="outputFile">blastSimilarity.out.gz</paramValue>
       <depends name="waitForClusterTask"/>
     </step>
 

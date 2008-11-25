@@ -31,7 +31,7 @@ sub getComputeClusterDataDir {
     return "$home/data";
 }
 
-sub makeControllerPropFile {
+sub makeClusterControllerPropFile {
   my ($self, $taskInputDir, $slotsPerNode, $taskSize, $taskClass) = @_;
 
   my $nodePath = $self->getGlobalConfig('nodePath');
@@ -41,10 +41,10 @@ sub makeControllerPropFile {
   my $masterDir = $taskInputDir;
   $masterDir =~ s/master/input/;
   $nodeClass = 'DJob::DistribJob::BprocNode' unless $nodeClass;
-  
+
   # get configuration values
-  my $nodePath = $self->getConfig('nodePath');
-  my $nodeClass = $self->getConfig('nodeClass');
+  my $nodePath = $self->getGlobalConfig('nodePath');
+  my $nodeClass = $self->getGlobalConfig('nodeClass');
 
   # construct dir paths
   my $localDataDir = $self->getLocalDataDir();
@@ -52,7 +52,7 @@ sub makeControllerPropFile {
 
   # print out the file
   my $controllerPropFile = "$localDataDir/$taskInputDir/controller.prop";
-  open(F, $controllerPropFile)
+  open(F, ">$controllerPropFile")
       || $self->error("Can't open controller prop file '$controllerPropFile' for writing");
   print F 
 "masterdir=$computeClusterDataDir/$masterDir
