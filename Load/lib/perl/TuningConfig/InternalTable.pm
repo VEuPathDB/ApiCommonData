@@ -85,6 +85,12 @@ sub getExternalDependencies {
   return $self->{externalDependencies};
 }
 
+sub getTimestamp {
+  my ($self) = @_;
+
+  return $self->{timestamp};
+}
+
 sub getState {
   my ($self, $doUpdate, $dbh, $purgeObsoletes) = @_;
 
@@ -113,7 +119,7 @@ sub getState {
     my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes);
     ApiCommonData::Load::TuningConfig::Log::decreaseIndent();
 
-    if ($childState eq "neededUpdate") {
+    if ($childState eq "neededUpdate" || $dependency->getTimestamp() gt $self->getTimestamp()) {
       $needUpdate = 1;
     } elsif ($childState eq "broken") {
       ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
