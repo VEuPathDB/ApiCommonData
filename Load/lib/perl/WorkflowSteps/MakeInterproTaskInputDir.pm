@@ -19,7 +19,7 @@ sub run {
   my $applications = $self->getConfig('applications');
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::IprscanTask");
 
   # make task.prop file
