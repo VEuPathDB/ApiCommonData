@@ -24,7 +24,7 @@ sub preprocess {
     if ($bioperlFeatureTree->has_tag('GeneType')) {
 	($type) = $bioperlFeatureTree->get_tag_values('GeneType');
     }
-    if (grep {$type eq $_} ("transcript","CDS", "tRNA", "rRNA", "snRNA","coding","pseudo","coding_gene","rRNA_gene","snRNA_gene","tRNA_gene","miRNA_gene","pseudo_gene","snoRNA_gene")) {
+    if (grep {$type eq $_} ("transcript","CDS", "tRNA", "rRNA", "snRNA","coding","pseudo","coding_gene","rRNA_gene","snRNA_gene","tRNA_gene","miRNA_gene","pseudo_gene","snoRNA_gene","misc_RNA","misc_RNA_gene")) {
       $type = "coding" if ($type eq "CDS" || $type eq "transcript");
       if($type =~ /\_gene/){
 	  $bioperlFeatureTree->primary_tag("$type");
