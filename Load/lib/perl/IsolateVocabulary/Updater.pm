@@ -81,9 +81,20 @@ sub update {
       my $mapField = $map->getField();
       my $mapValue = $map->getValue();
 
-      $mapValue = s/\'//;
+      $mapValue =~ s/\'//g;
 
       my $updateSql = "update dots.$mapTable set $mapField = '$mapValue', modification_date = sysdate where na_sequence_id = ?";
+
+      unless($mapValue) {
+        print STDERR Dumper $term;
+        croak "ERROR.  MAP Value cannot be null";
+      }
+
+      unless(scalar @naSequenceIds > 0) {
+        print STDERR Dumper $term;
+        croak "ERROR.  No NaSequenceIds found for term";
+      }
+
       my $updateSh = $dbh->prepare($updateSql);
 
       foreach my $naSequenceId (@naSequenceIds) {
