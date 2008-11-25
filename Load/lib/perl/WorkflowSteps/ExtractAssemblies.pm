@@ -20,9 +20,9 @@ sub run {
   my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --verbose --idSQL \"$sql\"";
 
   if ($test){
-      self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
-  self->runCmd($test, $cmd);
+  $self->runCmd($test, $cmd);
 
 }
 

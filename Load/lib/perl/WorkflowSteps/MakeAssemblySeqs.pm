@@ -28,7 +28,7 @@ sub run {
 
   $args .= " --idSQL \"$predictedTranscriptsSql\"" if ($predictedTranscriptsSql);
 
-  self->runPlugin($test, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
+  $self->runPlugin($test, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
 
 }
 

@@ -133,11 +133,11 @@ sub getTaxonIdList {
   my ($self, $test, $taxonId, $hierarchy) = @_;
 
   if ($hierarchy) {
-    my $idList = chomp($self->runCmd($test, "getSubTaxaList --taxon_id $taxonId"));
+    my $idList = $self->runCmd($test, "getSubTaxaList --taxon_id $taxonId");
     if ($test) {
       return "UNKNOWN_TAXON_ID_LIST";
     } else {
-      return  $idList;
+      return  chomp($idList);
     }
   } else {
     return $taxonId;

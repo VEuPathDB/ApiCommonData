@@ -16,10 +16,10 @@ sub run {
   my $cmd = "splitClusterFile $localDataDir/$inputFile $localDataDir/$smallClustersOutputFile $localDataDir/$bigClustersOutputFile";
 
   if ($test){
-      self->runCmd(0, "echo test > $localDataDir/$smallClustersOutputFile");
-      self->runCmd(0, "echo test > $localDataDir/$bigClustersOutputFile");
+      $self->runCmd(0, "echo test > $localDataDir/$smallClustersOutputFile");
+      $self->runCmd(0, "echo test > $localDataDir/$bigClustersOutputFile");
   }
-  self->runCmd($test, $cmd);
+  $self->runCmd($test, $cmd);
 }
 
 
