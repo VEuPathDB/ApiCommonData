@@ -14,14 +14,14 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeClusterTaskDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
-      <depends name="makeClusterTaskDir"/>
+      <depends name="makeClusterTaskInputDir"/>
     </step>
 
     <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">

@@ -22,7 +22,7 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeClusterTaskDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir">
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="queryFile">$$queryFile$$</paramValue>
       <paramValue name="subjectFile">$$subjectFile$$</paramValue>
@@ -34,7 +34,7 @@
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/$$nickName$$</paramValue>
-      <depends name="makeClusterTaskDir"/>
+      <depends name="makeClusterTaskInputDir"/>
     </step>
 
     <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
