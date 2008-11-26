@@ -18,7 +18,7 @@ sub run {
   my $ncbiBinPath = $self->getConfig('ncbiBinPath');
 
   # make controller.prop file
-  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::PsipredTask");
 
   # make task.prop file
