@@ -2088,77 +2088,63 @@ ON apidb.Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, 
   <tuningTable name="apidb.IsolateAttributes">
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaSequenceImp"/>
-    <externalDependency name="dots.Similarity"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.IsolateAttributes&1 NOLOGGING AS
-SELECT A.na_sequence_id, A.external_database_release_id, A.source_id,
-       A.organism, A.strain, A.specific_host, A.isolation_source, A.country,
-       A.note, A.description, A.pcr_primers, A.query_name, A.target_name,
-       A.min_subject_start, A.max_subject_end, A.map, B.product, A.project_id,
-       A.is_reference, B.product_alias, A.collected_by, A.data_type
-FROM (SELECT etn.na_sequence_id, etn.external_database_release_id,
-             substr(etn.source_id, 1, 20) as source_id,
-             substr(src.organism, 1, 60) as organism,
-             substr(src.strain || ' ' || src.isolate, 1, 60) as strain,
-             substr(src.specific_host || src.lab_host, 1, 50) as specific_host,
-             decode(src.isolation_source, null, 'Unknown',
-                    substr(upper(substr(src.isolation_source,0,1))
-                    || substr(src.isolation_source,2), 1, 160)) as isolation_source,
-             decode(src.country, null, 'Unknown', substr(src.country, 1, 80)) as country,
-             substr(src.note, 1, 400) as note,
-             substr(etn.description, 1, 400) as description,
-             substr(src.pcr_primers, 1, 100) as pcr_primers,
-             substr(aln.query_name, 1, 20) as query_name,
-             substr(aln.target_name, 1, 20) as target_name,
-             aln.min_subject_start, aln.max_subject_end,
-             substr(aln.map, 1, 60) as map, 'CryptoDB' as project_id,
-             src.is_reference,
-             src.collected_by,
-             'PopSet' data_type
+select na_sequence_id,
+       external_db_version,
+       external_db_name,
+       source_id,
+       decode(organism, null, 'Unknown', substr(organism, 1, 100)) as organism,
+       decode(strain, null, 'Unknown', substr(strain, 1, 100)) as strain,
+       decode(specific_host, null, 'Unknown', substr(specific_host, 1, 100)) as strain,
+       decode(isolation_source, null, 'Unknown', substr(isolation_source, 1, 200)) as strain,
+       decode(country, null, 'Unknown', substr(country, 1, 200)) as country,
+       substr(note, 1, 400) as note,
+       substr(description, 1, 400) as description,
+       substr(pcr_primers, 1, 100) as pcr_primers,       
+       is_reference,
+       collected_by,
+       product,
+       product_alias,
+       project_id,
+       data_type
+FROM (
+select iso.*,
+       prod.product,
+       prod.product_alias,
+       'CryptoDB' as project_id,
+       'PopSet' data_type
+from (SELECT etn.na_sequence_id, 
+        edr.version as external_db_version, 
+        edb.name as external_db_name,
+        etn.source_id as source_id,
+        src.organism as organism,
+        src.strain || ' ' || src.isolate as strain,
+        src.specific_host as specific_host,
+        src.isolation_source as isolation_source,
+        src.country as country,
+        src.note as note,
+        etn.description as description,
+        src.pcr_primers as pcr_primers,
+        src.is_reference,
+        src.collected_by
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
-           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb,
-           (SELECT extq.source_id, extq.source_id query_name,
-                   extt.source_id target_name,
-                   sim.min_subject_start min_subject_start,
-                   sim.max_subject_end max_subject_end,
-                   extt.source_id || ':' || sim.min_subject_start || '..'
-                   || sim.max_subject_end as map
-            FROM dots.Similarity sim, dots.ExternalNaSequence extt,
-                 dots.ExternalNaSequence extq,
-                 sres.ExternalDatabaseRelease edr,
-                 sres.ExternalDatabase edb
-            WHERE edr.external_database_id = edb.external_database_id
-              AND edr.external_database_release_id = extq.external_database_release_id
-              AND edb.name = 'C. parvum isolate data'
-              AND sim.query_id = extq.na_sequence_id
-              AND sim.subject_id = extt.na_sequence_id) aln
-      WHERE aln.source_id(+) = etn.source_id
-        AND etn.na_sequence_id = src.na_sequence_id
-        AND edr.external_database_id = edb.external_database_id
-        AND edr.external_database_release_id = etn.external_database_release_id
-        AND edb.name = 'C. parvum isolate data'
-        ) A,
-     (SELECT etn.source_id,
-             substr(apidb.tab_to_string(cast(collect(distinct if.product)
-                                        as apidb.varchartab), ' | '), 1, 80)
-               as product,
-             substr(apidb.tab_to_string(cast(collect(distinct if.product_alias)
-                                        as apidb.varchartab), ' | '), 1, 400)
-               as product_alias
-      FROM dots.ExternalNaSequence etn, dots.IsolateFeature if,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb
-      WHERE etn.na_sequence_id = if.na_sequence_id
-        AND edr.external_database_id = edb.external_database_id
-        AND edr.external_database_release_id = etn.external_database_release_id
-        AND edb.name = 'C. parvum isolate data'
-      GROUP BY etn.source_id) B
-WHERE A.source_id = B.source_id(+)
+      WHERE etn.na_sequence_id = src.na_sequence_id
+       AND edr.external_database_id = edb.external_database_id
+       AND edr.external_database_release_id = etn.external_database_release_id
+       AND edb.name = 'C. parvum isolate data'
+       AND edr.version = '2007-12-12'
+      ) iso
+       left join (select distinct na_sequence_id, product, product_alias from dots.isolatefeature) prod
+            on prod.na_sequence_id = iso.na_sequence_id
 UNION
 SELECT etn.na_sequence_id, 
-       etn.external_database_release_id,
+       edr.version as external_db_version, 
+       edb.name as external_db_name,
        'BC.' || etn.na_sequence_id as source_id,
        src.organism,
        src.strain,
@@ -2168,16 +2154,11 @@ SELECT etn.na_sequence_id,
        src.note,
        etn.description,
        src.pcr_primers,
-       CAST (NULL AS VARCHAR2(1)) as query_name,
-       CAST (NULL AS VARCHAR2(1)) as target_name,
-       CAST (NULL AS NUMBER) as min_subject_start,
-       CAST (NULL AS NUMBER) as max_subject_end,
-       CAST (NULL AS VARCHAR2(1)) as map,
-       CAST (NULL AS VARCHAR2(1)) as product,
-       'PlasmoDB' as project_id,
        src.is_reference,
-       CAST (NULL AS VARCHAR2(1)) as product_alias,
        src.collected_by,
+       CAST (NULL AS VARCHAR2(1)) as product,
+       CAST (NULL AS VARCHAR2(1)) as product_alias,       
+       'PlasmoDB' as project_id,
        'Barcode' as data_type
 FROM   dots.ExternalNaSequence etn,
        dots.IsolateSource src,
@@ -2190,7 +2171,8 @@ WHERE  etn.na_sequence_id = src.na_sequence_id
    AND edr.version = '2008-06-13'
 UNION
 SELECT etn.na_sequence_id,
-       etn.external_database_release_id,
+       edr.version as external_db_version, 
+       edb.name as external_db_name,
        'CP.' || etn.na_sequence_id as source_id,
        src.organism,
        src.strain,
@@ -2200,16 +2182,11 @@ SELECT etn.na_sequence_id,
        src.note,
        etn.description,
        src.pcr_primers,
-       CAST (NULL AS VARCHAR2(1)) as query_name,
-       CAST (NULL AS VARCHAR2(1)) as target_name,
-       CAST (NULL AS NUMBER) as min_subject_start,
-       CAST (NULL AS NUMBER) as max_subject_end,
-       CAST (NULL AS VARCHAR2(1)) as map,
-       CAST (NULL AS VARCHAR2(1)) as product,
-       'PlasmoDB' as project_id,
        src.is_reference,
+       src.collected_by,       
+       CAST (NULL AS VARCHAR2(1)) as product,
        CAST (NULL AS VARCHAR2(1)) as product_alias,
-       src.collected_by,
+       'PlasmoDB' as project_id,
        '3kChip' as data_type
 FROM   dots.ExternalNaSequence etn,
        dots.IsolateSource src,
@@ -2220,6 +2197,7 @@ WHERE  etn.na_sequence_id = src.na_sequence_id
    AND edr.external_database_release_id = etn.external_database_release_id
    AND edb.name = 'Broad 3K genotyping chip'
    AND edr.version = '2008-06-13'
+)
       ]]>
     </sql>
     <sql>
