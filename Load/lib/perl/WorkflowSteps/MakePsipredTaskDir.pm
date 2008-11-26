@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::CreatePsipredTaskDir;
+package ApiCommonData::Load::WorkflowSteps::MakePsipredTaskDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
@@ -18,7 +18,7 @@ sub run {
   my $ncbiBinPath = $self->getConfig('ncbiBinPath');
 
   # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+  $self->makeControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::PsipredTask");
 
   # make task.prop file
