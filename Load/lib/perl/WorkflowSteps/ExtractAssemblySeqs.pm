@@ -12,7 +12,7 @@ sub run {
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
   my $outputFile = $self->getParamValue('outputFile');
 
-  my $taxonId = $self->getTaxonId($test,$parentNcbiTaxonId);
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
   my $localDataDir = $self->getLocalDataDir();

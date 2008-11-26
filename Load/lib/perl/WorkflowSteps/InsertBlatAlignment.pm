@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::InsertBLatlignment;
+package ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -20,10 +20,10 @@ sub run {
   my $percentTop = $self->getParamValue('percentTop');
   my $blatFile = $self->getParamValue('blatFile');
 
-  my $targetTaxonId = $self->getTaxonId($test,$targetNcbiTaxId);
+  my $targetTaxonId = $self->getTaxonIdFromNcbiTaxId($test,$targetNcbiTaxId);
   my $targetTableId = $self->getTableId($targetTable);
   my $targetExtDbRlsId = $self->getExtDbRlsId($test, $targetExtDbRlsSpec);
-  my $queryTaxonId = $self->getTaxonId($test,$queryNcbiTaxId);
+  my $queryTaxonId = $self->getTaxonIdFromNcbiTaxId($test,$queryNcbiTaxId);
   my $queryTableId = $self->getTableId($queryTable);
   my $queryExtDbRlsId = $self->getExtDbRlsId($test, $queryExtDbRlsSpec) if $queryExtDbRlsSpec;
 

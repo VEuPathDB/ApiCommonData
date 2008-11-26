@@ -113,7 +113,7 @@ sub getTableId {
   return  $tableId;
 }
 
-sub getTaxonId {
+sub getTaxonIdFromNcbiTaxId {
   my ($self, $test, $taxId) = @_;
 
   my $sql = "select taxon_id from sres.taxon where ncbi_tax_id = $taxId";

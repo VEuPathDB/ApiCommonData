@@ -11,7 +11,7 @@ sub run {
 
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
-  my $taxonId = $self->getTaxonId($test,$test, $ncbiTaxonId);
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$test, $ncbiTaxonId);
 
   my $cmd = "updateAssSourceIdFromPK --prefix '${organismTwoLetterAbbrev}DT.' --suffix '.tmp' --TaxonId $taxonId"; 
 

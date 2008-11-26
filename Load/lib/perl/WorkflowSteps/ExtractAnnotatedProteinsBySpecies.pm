@@ -13,7 +13,7 @@ sub run {
   my $outputFile = $self->getParamValue('outputFile');
 
   my $genomeDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
-  my $taxonId = $self->getTaxonId($test,$ncbiTaxonId);
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$ncbiTaxonId);
 
   my $sql = "SELECT tx.source_id,g.product,
                     'length='||length(t.sequence),t.sequence

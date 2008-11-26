@@ -13,7 +13,7 @@ sub run {
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $maxIntronSize = $self->getParamValue('maxIntronSize');
 
-  my $taxonId = $self->getTaxonIdFromNcbiTaxonId($ncbiTaxonId);
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($ncbiTaxonId);
   my $targetDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
 
   my $localDataDir = $self->getLocalDataDir();

@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 ## to do
-## API $self->getTaxonId($test,$ncbiTaxId) 
+## API $self->getTaxonIdFromNcbiTaxId($test,$ncbiTaxId) 
 ## API $self->getTaxonIdList($test, $taxonId,$taxonHierarchy)
 ## define genomeDataDir
 
@@ -21,7 +21,7 @@ sub run {
   my $vectorFile = $self->getConfig('vectorFile');
   my $phrapDir = $self->getConfig('phrapDir');
 
-  my $taxonId = $self->getTaxonId($test,$parentNcbiTaxonId);
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $vectorFile --phrapDir $phrapDir";
