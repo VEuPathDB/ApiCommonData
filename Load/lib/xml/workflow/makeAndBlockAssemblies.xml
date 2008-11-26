@@ -44,20 +44,36 @@
       <depends name="makeDataDir"/>
     </step>
 
-   <step name="assembleTranscripts"
-          stepClass="ApiCommonData::Load::WorkflowSteps::AssembleTranscripts">
+   <step name="splitClusterFile"
+          stepClass="ApiCommonData::Load::WorkflowSteps::SplitClusterFile">
       <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
-      <paramValue name="outputDir">$$dataDir$$/</paramValue>
+      <paramValue name="outputSmallFile">$$dataDir$$/clustersSmall.out</paramValue>
+      <paramValue name="outputBigFile">$$dataDir$$/clustersBig.out</paramValue>
+      <depends name="putUnalignedTranscriptsIntoOneCluster"/>
+    </step>
+
+   <step name="makeAndLoadAssembliesFromSmallClusters"
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies">
+      <paramValue name="inputFile">$$dataDir$$/smallClusters.out</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
-      <depends name="putUnalignedTranscriptsIntoOneCluster"/>
+      <depends name="splitClusterFile"/>
+    </step>
+
+   <step name="makeAndLoadAssembliesFromBigClusters"
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies">
+      <paramValue name="inputFile">$$dataDir$$/bigClusters.out</paramValue>
+      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="reassemble"></paramValue>
+      <depends name="splitClusterFile"/>
     </step>
 
    <step name="extractAssemblies"
           stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAssemblies">
       <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-      <depends name="assembleTranscripts"/>
+      <depends name="makeAndLoadAssembliesFromSmallClusters"/>
+      <depends name="makeAndLoadAssembliesFromBigClusters"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
