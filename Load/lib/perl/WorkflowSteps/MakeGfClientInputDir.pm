@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::MakeBlastTaskInputDir;
+package ApiCommonData::Load::WorkflowSteps::MakeGfClientTaskInputDir;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -64,11 +64,8 @@ sub makeGenomeTargetListFile {
 sub getParamsDeclaration {
   return ('taskInputDir',
 	  'queryFile',
-	  'subjectFile',
-	  'blastArgs',
-	  'idRegex',
-	  'blastType',
-	  'vendor',
+	  'targetDir',
+	  'maxIntronSize',
 	 );
 }
 
@@ -76,8 +73,7 @@ sub getConfigDeclaration {
   return (
 	  # [name, default, description]
 	  ['taskSize', "", ""],
-	  ['wuBlastBinPathCluster', "", ""],
-	  ['ncbiBlastBinPathCluster', "", ""],
+	  ['gaBinPath', "", ""],
 	 );
 }
 
