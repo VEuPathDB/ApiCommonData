@@ -25,7 +25,9 @@ sub run {
 
   if ($test) {
     $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
-    $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile");
+    if ($outputFile) {
+      $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
+    };
   }
 }
 
