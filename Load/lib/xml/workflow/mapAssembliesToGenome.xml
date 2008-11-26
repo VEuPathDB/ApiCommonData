@@ -4,6 +4,7 @@
     <param name="genomeExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
     <param name="ncbiTaxonId"/>
+    <param name="maxIntronSize"/>
     <param name="assembliesDataDir"/>
     <param name="genomicSeqsDir"/>
     <param name="organismTwoLetterAbbrev"/>
@@ -16,6 +17,9 @@
 
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="queryFile">$$assembliesDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="targetDir">$$genomicSeqsDir$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 

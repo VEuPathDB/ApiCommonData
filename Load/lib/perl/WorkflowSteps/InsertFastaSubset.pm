@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::LoadFastaSubset;
+package ApiCommonData::Load::WorkflowSteps::InsertFastaSubset;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 

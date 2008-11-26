@@ -14,7 +14,7 @@ sub run {
 
   my $args = "--filename $xmlFile";
 
-  $self->runPlugin( "GUS::Supported::Plugin::LoadGusXml", $args);
+  $self->runPlugin($test, "GUS::Supported::Plugin::LoadGusXml", $args);
 
 }
 
