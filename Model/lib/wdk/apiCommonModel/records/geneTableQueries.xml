@@ -515,33 +515,18 @@
 
             <sql>
             <![CDATA[
-             select gf.source_id, '@PROJECT_ID@' AS project_id, 
-             sim.similarity_id AS blastp_feature_id,
-             subj.source_id AS blastp_name, sim.query_id AS blastp_parent_id,
-             sim.score AS blastp_score,
-             sim.min_query_start AS blastp_start, sim.max_query_end AS blastp_end,
-             'E() = ' || sim.pvalue_mant || 'e' || sim.pvalue_exp || ', ' || round(100 * sim.number_identical / sim.total_match_length) || '% identity, ' || subj.description AS blastp_description,
-             case when sim.pvalue_mant = 0 then '0' else sim.pvalue_mant || 'e' || sim.pvalue_exp end AS blastp_expect_value,
-             round(sim.number_identical / sim.total_match_length) AS blastp_percent_identity,
-             round(sim.number_positive / sim.total_match_length) AS blastp_percent_positive
-             from
-             dots.genefeature gf,
-             dots.transcript t,
-             dots.translatedaafeature taf,
-             dots.similarity sim,
-             core.tableinfo qti,
-             core.tableinfo sti,
-             dots.externalaasequence subj
-             where gf.source_id = $$source_id$$
-             and gf.na_feature_id = t.parent_id
-             and t.na_feature_id = taf.na_feature_id
-             and taf.aa_sequence_id = sim.query_id
-             and qti.table_id = sim.query_table_id
-             and qti.name = 'TranslatedAASequence'
-             and sti.table_id = sim.subject_table_id
-             and sti.name = 'ExternalAASequence'
-             and subj.aa_sequence_id = sim.subject_id
-             ORDER BY sim.similarity_id
+             select source_id, '@PROJECT_ID@' AS project_id, 
+             similarity_id AS blastp_feature_id,
+             source_id AS blastp_name, query_id AS blastp_parent_id,
+             score AS blastp_score,
+             min_query_start AS blastp_start, max_query_end AS blastp_end,
+             'E() = ' || pvalue_mant || 'e' || pvalue_exp || ', ' || round(100 * number_identical / total_match_length) || '% identity, ' || description AS blastp_description,
+             case when pvalue_mant = 0 then '0' else pvalue_mant || 'e' || pvalue_exp end AS blastp_expect_value,
+             round(number_identical / total_match_length) AS blastp_percent_identity,
+             round(number_positive / total_match_length) AS blastp_percent_positive
+             from apidb.blastp
+             where source_id = $$source_id$$
+             order by pvalue_exp, pvalue_mant
              ]]>
             </sql>
         </sqlQuery>
