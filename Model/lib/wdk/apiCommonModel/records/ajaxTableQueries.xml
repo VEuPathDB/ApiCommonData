@@ -353,7 +353,8 @@
         </sqlQuery>
 
         <!-- AjaxTables.BlastESTOrganismTermList -->
-        <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'> 
+        <sqlQuery name="BlastESTOrganismTermList" isCacheable='true'>
+ 
             <paramRef ref="recordParams.source_id"/> 
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -403,18 +404,18 @@
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
-                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 0 as idx from dual UNION
-                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal, 1 as idx from dual UNION 
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal, 2 as idx from dual UNION 
-                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal, 3 as idx from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal, 4 as idx  from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal , 5 as idx from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal, 6 as idx  from dual UNION
-                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION 
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
-                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal, 8 as idx  from dual UNION 
-                 SELECT 'Other Apicomplexan ESTs' as term, 'Other Apicomplexan ESTs' as internal, 9 as idx from dual
-                ) t order by t.idx
+                 SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
+                 SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal  from dual UNION
+                 SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
+                 SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii' as term, 'T. gondii' as internal from dual UNION
+                 SELECT 'Trichomonas vaginalis' as term, 'Trichomonas vaginalis' as internal from dual UNION 
+                 SELECT 'Other Apicomplexan ESTs' as term, 'Other Apicomplexan ESTs' as internal from dual
+                ) t 
              </sql>
         </sqlQuery>
 
@@ -490,6 +491,9 @@
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+
+                 SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
+
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -631,16 +635,18 @@ SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UN
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
-                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual UNION
-                 SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal, 9 as idx from dual UNION
-                 SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal, 10 as idx from dual UNION
-                 SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal, 11 as idx from dual UNION
-                 SELECT 'Plasmodium berghei' as term, 'Plasmodium berghei' as internal, 8 as idx from dual UNION
-                 SELECT 'Plasmodium falciparum' as term, 'Plasmodium falciparum' as internal, 9 as idx from dual UNION
-                 SELECT 'Plasmodium vivax' as term, 'Plasmodium vivax' as internal, 10 as idx from dual UNION
-                 SELECT 'Plasmodium yoelii' as term, 'Plasmodium yoelii' as internal, 11 as idx from dual UNION 
-                 SELECT 'Sarcocystis neurona' as term, 'Sarcocystis neurona' as internal, 14 as idx from dual UNION
-                 SELECT 'Toxoplasma gondii ME49' as term, 'Toxoplasma gondii ME49' as internal, 15 as idx from dual
+                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                 SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal from dual UNION
+                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal from dual UNION
+                 SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
+                 SELECT 'Plasmodium berghei' as term, 'Plasmodium berghei' as internal from dual UNION
+                 SELECT 'Plasmodium falciparum' as term, 'Plasmodium falciparum' as internal from dual UNION
+                 SELECT 'Plasmodium vivax' as term, 'Plasmodium vivax' as internal from dual UNION
+                 SELECT 'Plasmodium yoelii' as term, 'Plasmodium yoelii' as internal from dual UNION 
+                 SELECT 'Sarcocystis neurona' as term, 'Sarcocystis neurona' as internal from dual UNION
+                 SELECT 'Toxoplasma gondii' as term, 'Toxoplasma gondii' as internal from dual
+                
                  ) t
       </sql>
 
