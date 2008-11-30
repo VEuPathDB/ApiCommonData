@@ -3173,6 +3173,12 @@ create index apidb.bplastp_src_ix&1 on apidb.Blastp&1 (source_id)
 create index apidb.bplastp_query_ix&1 on apidb.Blastp&1 (query_id)
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index apidb.blastp_text_ix on apidb.blastp&1(description) indextype is ctxsys.context
+             parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE');
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
