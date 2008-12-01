@@ -124,8 +124,8 @@
             FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceattributes s
             WHERE &&chroOpt&&
             AND   s.na_sequence_id = b.target_na_sequence_id
-            AND   b.target_start >=  $$start_point$$
-            AND   (b.target_end <= $$end_point$$ OR $$end_point$$ = 0)
+            AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+            AND   (b.target_end <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
             AND   b.is_consistent in ($$high_confidence_only$$)
             AND   b.is_best_alignment in ($$best_alignment_only$$)
             AND   b.percent_identity >= $$min_percent_identity$$
@@ -151,8 +151,8 @@
             WHERE ((sa.chromosome=&&chrParam&& and sa.organism = &&orgParam&&)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
-            AND   b.target_start >=  $$start_point$$
-            AND   (b.target_end <= $$end_point$$ OR $$end_point$$ = 0)
+            AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+            AND   (b.target_end <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
             AND   b.is_consistent in ($$high_confidence_only$$)
             AND   b.is_best_alignment in ($$best_alignment_only$$)
             AND   b.percent_identity >= $$min_percent_identity$$

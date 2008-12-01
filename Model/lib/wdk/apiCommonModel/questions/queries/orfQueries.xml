@@ -90,8 +90,8 @@
             AND sa.na_sequence_id = fl.na_sequence_id
 	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = &&orgParam&&)
                    OR lower(sa.source_id) = lower($$sequenceId$$))
-            AND fl.end_max >=  $$start_point$$ 
-	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            AND fl.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','') 
+	    AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
             AND fl.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
             AND tas.length >= $$min_orf_length$$
@@ -114,8 +114,8 @@
 	    AND m.sequence_ontology_id = so.sequence_ontology_id
 	    AND m.na_feature_id = nal.na_feature_id
 	    AND so.term_name = 'ORF'
-	    AND nal.end_max >= $$start_point$$  
-	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+	    AND nal.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','')  
+	    AND (nal.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
 <!-- should be same as giardia 
@@ -134,8 +134,8 @@
 	    AND m.sequence_ontology_id = so.sequence_ontology_id
 	    AND m.na_feature_id = nal.na_feature_id
 	    AND so.term_name = 'ORF'
-	    AND nal.end_max >= $$start_point$$  
-	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+	    AND nal.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','')  
+	    AND (nal.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
 -->
@@ -147,8 +147,8 @@
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
 	    WHERE fl.feature_type = 'Miscellaneous'
             AND lower(fl.sequence_source_id) = lower($$sequenceId$$)
-            AND fl.end_max >=  $$start_point$$ 
-	    AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+            AND fl.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','') 
+	    AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
             AND fl.na_feature_id = taaf.na_feature_id
 	    AND taaf.aa_sequence_id = tas.aa_sequence_id
             AND tas.length >= $$min_orf_length$$

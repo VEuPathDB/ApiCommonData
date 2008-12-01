@@ -228,8 +228,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                  AND p.strain_a = $$snp_strain_a$$ -- ref
                  AND p.strain_b in ($$snp_strain_m$$) -- comp
                  AND $$snp_strain_a$$ < p.strain_b
-                 AND p.start_min >=  $$start_point$$
-                 AND ($$end_point$$ = 0 OR p.start_min < $$end_point$$)
+                 AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+                 AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    &&providers&&
               UNION
                -- second, when comp strain name < ref strain name
@@ -254,8 +254,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                  AND p.strain_b = $$snp_strain_a$$ -- ref
                  AND p.strain_a in ($$snp_strain_m$$) -- comp
                  AND p.strain_a < $$snp_strain_a$$
-                 AND p.start_min >=  $$start_point$$
-                 AND ($$end_point$$ = 0 OR p.start_min < $$end_point$$)
+                 AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+                 AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                  &&providers&&) snpq
             GROUP BY snpq.source_id,snpq.gene,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product)
            ]]>
@@ -300,8 +300,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND p.strain_a = $$snp_strain_a$$ -- ref
                    AND p.strain_b in ($$snp_strain_m$$) -- comp
                    AND $$snp_strain_a$$ < p.strain_b
-                   AND p.start_min >=  $$start_point$$
-                   AND ($$end_point$$ = 0 OR p.start_min < $$end_point$$)
+                   AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+                   AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    AND p.na_feature_id_b = comp.na_feature_id
                    AND p.na_feature_id_a = ref.na_feature_id
                    AND p.gene_na_feature_id = gene.na_feature_id(+)
@@ -334,8 +334,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND p.strain_b = $$snp_strain_a$$ -- ref
                    AND p.strain_a in ($$snp_strain_m$$) -- comp
                    AND p.strain_a < $$snp_strain_a$$
-                   AND p.start_min >=  $$start_point$$
-                   AND ($$end_point$$ = 0 OR p.start_min < $$end_point$$)
+                   AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+                   AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    AND p.na_feature_id_a = comp.na_feature_id
                    AND p.na_feature_id_b = ref.na_feature_id
                    AND p.gene_na_feature_id = gene.na_feature_id(+)

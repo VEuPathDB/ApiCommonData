@@ -89,8 +89,8 @@
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
             where  &&source&&
               AND  a.feature_type = 'SAGETagFeature'
-              AND  a.end_max >=  $$start_point$$
-              AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
+              AND  a.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+              AND  (a.start_min <=  REGEXP_REPLACE('$$end_point$$', ',| ','') OR  REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
               AND  sta.na_feature_id = a.na_feature_id
               AND (sg.gene_source_id is $$is_within_gene_not$$ null OR sg.gene_source_id is not null)
          ]]>
@@ -104,8 +104,8 @@
             where  satr.chromosome = $$chromosomeOptional$$
               AND  a.na_sequence_id = satr.na_sequence_id
               AND  a.feature_type = 'SAGETagFeature'
-              AND  a.end_max >=  $$start_point$$
-              AND  (a.start_min <=  $$end_point$$ OR  $$end_point$$ = 0)
+              AND  a.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+              AND  (a.start_min <=  REGEXP_REPLACE('$$end_point$$', ',| ','') OR  REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
               AND  sta.na_feature_id = a.na_feature_id
               AND (sg.gene_source_id is $$is_within_gene_not$$ null OR sg.gene_source_id is not null)
          ]]>

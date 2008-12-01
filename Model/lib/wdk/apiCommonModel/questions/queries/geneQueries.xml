@@ -1499,8 +1499,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    OR lower(satr.source_id) = lower($$sequenceId$$))
               AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
               AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID
-              AND fl.end_max >= $$start_point$$
-              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND fl.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','')
+              AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
 
@@ -1515,8 +1515,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    OR lower(satr.source_id) = lower($$sequenceId$$))
               AND fl.feature_type = 'GeneFeature'
               AND fl.na_sequence_id = satr.na_sequence_id
-              AND fl.end_max >= $$start_point$$
-              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND fl.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','')
+              AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
 <!--
@@ -1528,8 +1528,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             WHERE (fl.sequence_source_id = $$chromosomeOptional$$
                    OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
               AND fl.feature_type = 'GeneFeature'
-              AND fl.end_max >= $$start_point$$ 
-              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND fl.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
+              AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
 
@@ -1542,8 +1542,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND (ens.source_id = $$chromosomeOptional$$
                    OR lower(ens.source_id) = lower($$sequenceId$$))
               AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
+              AND (start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
               AND gf.external_database_release_id = edr.external_database_release_id
               AND edr.external_database_id = ed.external_database_id 
               AND ed.name in ('Chromosome Map - David Sibley','Roos Lab T. gondii apicoplast') 
@@ -1558,8 +1558,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             FROM apidb.featurelocation fl
             WHERE lower(fl.sequence_source_id) = lower($$sequenceId$$)
               AND fl.feature_type = 'GeneFeature'
-              AND fl.end_max >= $$start_point$$ 
-              AND (fl.start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND fl.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
+              AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
     </sqlQuery>
@@ -3308,8 +3308,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             WHERE nl.na_feature_id = gf.na_feature_id
               AND ens.source_id IN ($$nonnuclearSequence$$)
               AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= $$start_point$$ 
-              AND (start_min <= $$end_point$$ OR $$end_point$$ = 0)
+              AND end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
+              AND (start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
     </sqlQuery>  
