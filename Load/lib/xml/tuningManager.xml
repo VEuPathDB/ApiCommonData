@@ -3137,7 +3137,7 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
     <sql>
       <![CDATA[
 create table apidb.Blastp&1 as
-select gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
+select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
        sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
        sim.number_identical, sim.total_match_length, subject.description,
        sim.number_positive, ed.name as external_database_name
@@ -3176,7 +3176,7 @@ create index apidb.bplastp_query_ix&1 on apidb.Blastp&1 (query_id)
     <sql>
       <![CDATA[
 create index apidb.blastp_text_ix on apidb.blastp&1(description) indextype is ctxsys.context
-             parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE');
+             parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE')
       ]]>
     </sql>
   </tuningTable>
