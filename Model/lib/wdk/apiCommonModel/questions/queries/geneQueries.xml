@@ -1644,8 +1644,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <processQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <paramRef ref="sharedParams.snp_strain_a"/>
-        <paramRef ref="sharedParams.snp_strain_m" multiPick="false"/>
+        <paramRef ref="sharedParams.snp_strain_a" quote="false"/>
+        <paramRef ref="sharedParams.snp_strain_m" multiPick="false" quote="false"/>
         <paramRef ref="geneParams.snp_stat" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
