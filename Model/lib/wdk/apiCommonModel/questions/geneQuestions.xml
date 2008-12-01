@@ -82,6 +82,15 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
         <summary>
         Find genes that are located in a specified genomic region.
         </summary>
+        <description includeProjects="TrypDB">
+           <![CDATA[
+          Find genes within a given genomic region.<br>
+          Enter a genomic sequence ID for any <i>T. cruzi</I>,<i>T. brucei</I>,<i>L. major</I>,<i>L. infantum</I>,<i>L. braziliensis</I> scaffold/contig.
+          The Start and End locations correspond to the coordinates of 
+          the gene(s) on the sequence.
+          ]]>
+        </description>
+
         <description includeProjects="CryptoDB">
            <![CDATA[
           Find genes within a given genomic region.<br>
@@ -202,7 +211,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         To find genes with a desired number of exons, enter the minimum and maximum number of exons, and select <i>T. gondii</i>, <i>N. caninum</i> or both.
           ]]>
         </description>
-		<description includeProjects="CryptoDB,GiardiaDB,TrichDB,ApiDB">
+		<description includeProjects="CryptoDB,GiardiaDB,TrichDB,TrypDB,ApiDB">
 			<![CDATA[
         To find genes with a desired number of exons, enter the minimum and maximum number of exons, and select an organism and/or species.
           ]]>
@@ -276,7 +285,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
   <!-- Secondary structure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB,TrypDB"
               displayName="Protein Secondary Structure"
               category="Predicted Proteins"
               queryRef="GeneId.GenesBySecondaryStructure"
@@ -342,7 +351,7 @@ Find <i>P. falciparum</i>, <i>P. yoelii</i> and/or <i>P. knowlesi</i> genes by t
 E.C. number annotation for <i>P. falciparum</i> are from Andy Berry, Matt Berriman (Sanger Institute) and Hagai Ginsburg (Hebrew University).
           ]]>
         </description>
-        <description includeProjects="GiardiaDB,TrichDB">
+        <description includeProjects="GiardiaDB,TrichDB,TrypDB">
            <![CDATA[
 Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'.
  For help with obtaining EC numbers, try the
@@ -507,7 +516,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB"
+    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB,TrypDB"
           displayName="Mass Spec. Evidence"
           category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
@@ -550,6 +559,15 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
             in male and female gametocytes.
           ]]>
         </summary>
+
+
+<!--   TODO: Summary and Description for TrypDB mass spec -->
+ <summary includeProjects="TrypDB">
+           <![CDATA[
+             
+          ]]>
+        </summary>
+
 
 
         <propertyList name="organism">
@@ -800,6 +818,13 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
+
+<!--   TODO: Summary and Description for TrypDB mass spec -->
+        <description includeProjects="TrypDB">
+              <![CDATA[
+             ]]>
+             </description>
+
     </question>
 
 
@@ -970,7 +995,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
   <!-- Epitopes -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesWithEpitopes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB" 
+    <question name="GenesWithEpitopes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TrypDB" 
               category="Other Attributes"
               displayName="Epitope Presence"
               queryRef="GeneId.GenesWithEpitopes" 
@@ -1332,7 +1357,9 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
   <!-- Metabolic Pathway -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByMetabolicPathway" excludeProjects="TrichDB,GiardiaDB,CryptoDB"
+
+ <!-- TODO: check that metabolic pathway is excluded for TrypDB -->
+    <question name="GenesByMetabolicPathway" excludeProjects="TrichDB,GiardiaDB,CryptoDB,TrypDB"
          displayName="Metabolic Pathway"
          category="Putative Function"
          queryRef="GeneId.GenesByMetabolicPathway"
@@ -1479,7 +1506,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Orthology profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB,GiardiaDB"
+    <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB,GiardiaDB,TrypDB"
          displayName="Orthology Phylogenetic Profile"
          category="Evolution"
          queryRef="GeneId.GenesByOrthologPattern"
@@ -1577,6 +1604,12 @@ Find genes that are predicted to encode a signal peptide.
             of combinations of possible presence/absence calls (2<sup>87</sup>
             possible combinations, of which 2,723 are associated with a total of
             35,603 genes).
+           ]]>
+        </description>
+
+ <!-- TODO: Fill in description for TrypDB --> 
+        <description includeProjects="TrypDB">
+            <![CDATA[
            ]]>
         </description>
 
@@ -1740,6 +1773,16 @@ Find genes that are predicted to encode a signal peptide.
            or upload a file that contains the list. IDs can be delimited by a comma, 
            a semi colon, or any white spaces. For example, a list can be in the
            following form: "cgd7_220, cgd7_230"
+          ]]>
+        </description>
+
+      <!-- TODO  fill in description -->
+        <description includeProjects="TrypDB">
+           <![CDATA[
+           Find genes by a list of IDs. Either enter the ID list manually, 
+           or upload a file that contains the list. IDs can be delimited by a comma, 
+           a semi colon, or any white spaces. For example, a list can be in the
+           following form: 
           ]]>
         </description>
     </question>
@@ -2032,7 +2075,7 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
         </summary>
-        <description includeProjects="GiardiaDB,TrichDB">
+        <description includeProjects="GiardiaDB,TrichDB,TrypDB">
             <![CDATA[
              Find genes with evidence of expression based on expressed sequence tags (ESTs).
                NOTE: you can visualize the EST alignments by clicking on the "View this sequence in the genome browser" link and turning on the EST Alignments track.
@@ -2159,7 +2202,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Orthologous to a gene -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+    <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB,TrypDB"
               displayName="Orthologs and Paralogs"
               category="Evolution"
               queryRef="GeneId.GenesOrthologousToAGivenGene"
@@ -2455,7 +2498,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- PDB similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB,TrypDB"
          displayName="PDB 3D Structures"
          category="Predicted Proteins"
          queryRef="GeneId.GenesByPdbSimilarity"
@@ -2464,7 +2507,7 @@ Advanced parameters can be modified for a more specific search (please go to the
          summary="location_text,product"
          sorting="location_text asc"
         /> 
-        <summary includeProjects = "PlasmoDB">
+        <summary includeProjects = "PlasmoDB,TrypDB">
             <![CDATA[
             Find genes whose protein product has high BLAST similarity to a chain of a <a href="http://www.rcsb.org/pdb">Protein Data Bank (PDB)</a> structure.
             ]]>
@@ -3642,7 +3685,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
 
     <question name="GenesByMassSpecEvidence" displayName="Mass spectrometry evidence"
-              includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB,GiardiaDB"
+              includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary includeProjects="PlasmoDB">
@@ -3661,7 +3704,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
     <question name="GenesByProteinStructure" displayName="Protein structure"
-              includeProjects="ApiDB,PlasmoDB"
+              includeProjects="ApiDB,PlasmoDB,TrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
  <summary>
@@ -3714,7 +3757,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Internal question for ortholog link on history/results page  -->
   <!--===========================================================================-->
 
-     <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB"
+     <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TrypDB"
          displayName="Orthology to Genes in a Query Result"
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3752,6 +3795,12 @@ The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Databas
 Find the <i>Plasmodium</i> genes that are orthologs (or paralogs) of the genes in a Query History result.
 The typical use of this query is to begin by having an interesting <i>P. falciparum</i> result in My Query History.  Then, come here to find orthologs of those genes in the less well-annotated species.  In general, use this query to transform sets of genes from one species to others.
 Ortholog groups were generated from 61 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the <a href="http://orthomcl.org/">OrthoMCL DB site</a> plus <i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin).  The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
+          ]]>
+        </description>
+
+  <!-- TODO: Description for TrypDB -->
+        <description includeProjects="TrypDB">
+           <![CDATA[
           ]]>
         </description>
 

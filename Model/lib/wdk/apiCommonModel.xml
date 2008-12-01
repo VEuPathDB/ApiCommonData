@@ -13,6 +13,7 @@
   <modelName includeProjects="CryptoDB" displayName="CryptoDB" version="3.7"/>
   <modelName includeProjects="GiardiaDB" displayName="GiardiaDB" version="1.2"/>
   <modelName includeProjects="TrichDB" displayName="TrichDB" version="1.1"/>
+  <modelName includeProjects="TrypDB" displayName="TrypDB" version="1.0"/>
   
   <declaredMacro name="COMMENT_SCHEMA"      usedBy="model" />
   <declaredMacro name="COMMENT_DBLINK"      usedBy="model" />
@@ -26,6 +27,7 @@
   <declaredMacro name="PLASMO_BLAST_PATH"   usedBy="model"       includeProjects="ApiDB, PlasmoDB"/>
   <declaredMacro name="TOXO_BLAST_PATH"     usedBy="model"       includeProjects="ApiDB, ToxoDB"/>
   <declaredMacro name="TRICH_BLAST_PATH"    usedBy="model"       includeProjects="ApiDB, TrichDB"/>
+  <declaredMacro name="TRYP_BLAST_PATH"    usedBy="model"       includeProjects="ApiDB, TrypDB"/>
 
   <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
     <value>P. falciparum</value>
@@ -66,6 +68,14 @@
     <value>T. gondii</value>
   </defaultPropertyList>
 
+  <defaultPropertyList includeProjects="TrypDB" name="organisms">
+    <value>T. cruzi</value>
+    <value>T. brucei</value>
+    <value>L. major</value>
+    <value>L. infantum</value>
+    <value>L. braziliensis</value>
+  </defaultPropertyList>
+
   <defaultPropertyList name="specificAttribution">
      <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
      <value includeProjects="PlasmoDB,ApiDB">P.falciparum_plastid</value>
@@ -87,6 +97,7 @@
      <value includeProjects="CryptoDB,ApiDB">C.muris_scaffoldsGB</value>
      <value includeProjects="GiardiaDB,ApiDB">G.lamblia_contigsGB</value>
      <value includeProjects="TrichDB,ApiDB">T.vaginalis_Annotation</value>
+     <!-- TODO:  defaultPropertyList for TrypDB -->
   </defaultPropertyList>
 
     <!-- shared -->
