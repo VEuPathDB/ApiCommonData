@@ -227,8 +227,8 @@ SQL
   # insert new TuningInstance
   $dbh->do(<<SQL) or die $dbh->errstr;
       insert into apidb.TuningInstance\@apidb.login_comment
-          (instance_nickname, family_name, instance_name, service_name)
-      values ('$instanceNickname', '$family', '$instanceNickname', '$instanceNickname')
+          (instance_nickname, family_name)
+      values ('$instanceNickname', '$family')
 SQL
 }
 
