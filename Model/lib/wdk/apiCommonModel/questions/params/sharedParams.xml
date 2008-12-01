@@ -475,7 +475,10 @@
                       prompt="Chromosome">
              <suggest default="choose one"/>
      </stringParam>
-     <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB"
+
+
+    <!-- TODO:  TrypDB has differing # of Chromosomes / sp. -->
+     <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB,TrypDB"
                       prompt="Chromosome"
                       multiPick="false"
                       default="choose one">
@@ -652,7 +655,8 @@
              <suggest default="choose one"/>
      </stringParam>
 
-     <enumParam name="chromosomeOptionalForEsts" excludeProjects="ApiDB,GiardiaDB,TrichDB"
+    <!-- TODO:  TrypDB has differing # of Chromosomes / sp. -->
+     <enumParam name="chromosomeOptionalForEsts" excludeProjects="ApiDB,GiardiaDB,TrichDB,TrypDB"
                       prompt="Chromosome"
                       multiPick="false"
                       default="choose one">
@@ -1375,11 +1379,11 @@
     <!-- History -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	 
- 
+     <!-- TODO:  TrypDB has differing # of Chromosomes / sp. -->
   <enumParam name="chromosome_with_organelles"
                      prompt="Genomic Sequence"
                      multiPick="false"
-                     excludeProjects="ApiDB,GiardiaDB,TrichDB">
+                     excludeProjects="ApiDB,GiardiaDB,TrichDB,TrypDB">
     <help>
              Results will be sorted ascending or descending orde
     </help>
