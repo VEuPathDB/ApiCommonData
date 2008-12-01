@@ -1239,6 +1239,27 @@
             </sql>
         </sqlQuery>
 
+    
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Product -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="SageTags" isCacheable="false">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="product"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+            <![CDATA[
+               SELECT source_id, product,
+                      '@PROJECT_ID@' as project_id
+               FROM dots.GeneFeature
+               WHERE source_id = $$source_id$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
   <!--===========================================================================-->
   <!--===========================================================================-->
   <!-- GFF data dump tables  -->
