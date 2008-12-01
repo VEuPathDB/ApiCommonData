@@ -71,8 +71,8 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
 
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
         <attributesList  includeProjects="ApiDB"
-         summary="location_text,product"
-         sorting="location_text asc"
+         summary="organism,location_text,product"
+         sorting="project asc,organism asc,location_text asc"
         />
 
         <dynamicAttributes  excludeProjects="ApiDB">
@@ -165,7 +165,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         />
          <attributesList excludeProjects="ToxoDB,GiardiaDB"
               summary="organism,location_text,product,is_pseudo"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         />
         <summary>
            Find genes by type of product made (eg, protein coding, tRNA, pseudogene, etc).
@@ -196,7 +196,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         />
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,exon_count"
-              sorting="organism asc,exon_count desc,location_text asc"
+              sorting="project asc,organism asc,exon_count desc,location_text asc"
         />
         <summary>
         Find genes having a given number of exons.
@@ -233,7 +233,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         /> 
         <attributesList excludeProjects="ToxoDB,GiardiaDB"
          summary="organism,location_text,product,isoelectric_point"
-         sorting="organism asc,isoelectric_point asc, location_text asc"
+         sorting="project asc,organism asc,isoelectric_point asc, location_text asc"
         /> 
         <summary>
           Find genes whose protein product has an isoelectric point in a range that you specify.
@@ -263,7 +263,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,molecular_weight"
-         sorting="organism asc,molecular_weight asc, location_text asc"
+         sorting="project asc,organism asc,molecular_weight asc, location_text asc"
         /> 
         <summary>
           Find genes whose unmodified protein product has a molecular weight in a range that you specify.
@@ -292,7 +292,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="organism,location_text,product,percent_coil,percent_strand,percent_helix"
-              sorting="organism asc, location_text asc"
+              sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
          Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
@@ -333,7 +333,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product"
-         sorting="organism asc, location_text asc"
+         sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
            <![CDATA[
@@ -525,9 +525,13 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
               summary="formatted_gene_id,location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="formatted_gene_id asc,sum_sequence_count desc,sum_spectrum_count desc"
         /> 
-        <attributesList  excludeProjects="ToxoDB"
+        <attributesList excludeProjects="ApiDB,ToxoDB"
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
+        /> 
+        <attributesList includeProjects="ApiDB"
+              summary="organism,location_text,product,sum_sequence_count,sum_spectrum_count"
+              sorting="project asc,organism asc,sum_sequence_count desc,sum_spectrum_count desc"
         /> 
         <summary includeProjects="CryptoDB">
            <![CDATA[
@@ -1007,7 +1011,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         /> 
         <attributesList excludeProjects="ToxoDB"
            summary="product,organism,location_text,count,confidence"
-           sorting="organism desc,location_text desc, count desc, confidence asc"
+           sorting="project asc,organism asc,location_text desc, count desc, confidence asc"
         /> 
 
         <summary>
@@ -1093,8 +1097,9 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,Locations,MatchCount,Sequence"
-         sorting="organism asc,MatchCount desc,location_text asc"
+         sorting="project asc,organism asc,MatchCount desc,location_text asc"
         /> 
+
         <summary>
              <![CDATA[
               Find genes whose protein product contains a motif pattern that you specify, e.g.: two cysteines followed by one or more hydrophobic amino acids, followed by arginine, then lysine.
@@ -1271,7 +1276,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,e_value"
-              sorting="organism asc,e_value asc, location_text asc"
+              sorting="project asc,organism asc,e_value asc, location_text asc"
         /> 
         <attributesList includeProjects="ToxoDB"
               summary="formatted_gene_id,organism,location_text,product,e_value"
@@ -1317,7 +1322,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         /> 
         <attributesList includeProjects="ToxoDB"
               summary="formatted_gene_id,organism,location_text,product"
@@ -1368,9 +1373,13 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          summary="formatted_gene_id,location_text,product,met_pathways"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
-        <attributesList excludeProjects="ToxoDB"
+        <attributesList excludeProjects="ApiDB,ToxoDB"
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
+        /> 
+ <attributesList includeProjects="ApiDB"
+         summary="organism,location_text,product,met_pathways"
+         sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
         Find genes involved in a specific metabolic pathway.
@@ -1444,7 +1453,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         /> 
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,tm_count"
-              sorting="organism asc,tm_count asc,location_text asc"
+              sorting="project asc,organism asc,tm_count asc,location_text asc"
         /> 
         <summary>
            Find genes with at least a given number of transmembrane domains.
@@ -1475,7 +1484,7 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
         />
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,sigp_sum_score,nn_d_score,hmm_signal_probability"
-         sorting="organism asc,sigp_sum_score desc,location_text asc"
+         sorting="project asc,organism asc,sigp_sum_score desc,location_text asc"
         /> 
         <summary>
          Find genes that are predicted to encode a signal peptide containing protein.
@@ -1517,7 +1526,7 @@ Find genes that are predicted to encode a signal peptide.
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism, location_text,product"
-         sorting="organism asc, location_text asc"
+         sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
@@ -1695,7 +1704,7 @@ Find genes that are predicted to encode a signal peptide.
               noSummaryOnSingleRecord="false">
         <attributesList
               summary="organism,location_text,product,gene_type"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -1795,7 +1804,7 @@ Find genes that are predicted to encode a signal peptide.
               noSummaryOnSingleRecord="false">
         <attributesList
               summary="organism,location_text,product,gene_type"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
            Find a gene by its ID.
@@ -1825,7 +1834,7 @@ Find genes that are predicted to encode a signal peptide.
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,text_fields"
-         sorting="organism asc,location_text asc"
+         sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
              Find genes with a text search against their product name, notes, GO, EC, Domains, NRDB, or metabolic pathways.
@@ -1865,7 +1874,7 @@ Find genes that are predicted to encode a signal peptide.
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product"
-         sorting="organism asc,location_text asc"
+         sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
             Find all genes from one or more species.
@@ -1945,7 +1954,7 @@ Contact Kami Kim, kkim@aecom.yu.edu, for further information
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,sense_count,antisense_count"
-         sorting="organism asc,sense_count desc"
+         sorting="project asc,organism asc,sense_count desc"
         /> 
         <summary>
             Find genes with evidence of expression based on SAGE tag experiments.
@@ -2004,7 +2013,7 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
         /> 
         <attributesList excludeProjects="ToxoDB"
          summary="organism,location_text,product,R"
-         sorting="organism asc, R desc"
+         sorting="project asc,organism asc, R desc"
         /> 
         <summary>
             Find genes with evidence of differential expression based on SAGE tag experiments.
@@ -2070,7 +2079,7 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
         /> 
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product,number_of_ests"
-              sorting="organism asc,number_of_ests desc"
+              sorting="project asc,organism asc,number_of_ests desc"
         /> 
         <summary>
             Find genes with evidence of expression based on expressed sequence tags (ESTs)
@@ -2151,7 +2160,7 @@ Advanced parameters can be modified for a more specific search (please go to the
         />
         <attributesList  excludeProjects="ToxoDB"
          summary="organism,location_text,product"
-         sorting="organism asc,location_text asc"
+         sorting="project asc,organism asc,location_text asc"
         />
 
         <propertyList name="organism">
@@ -2213,7 +2222,7 @@ Advanced parameters can be modified for a more specific search (please go to the
         /> 
         <attributesList excludeProjects="ToxoDB"
               summary="organism,location_text,product"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         /> 
         <summary>
           <![CDATA[
@@ -2429,7 +2438,7 @@ Advanced parameters can be modified for a more specific search (please go to the
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList 
               summary="organism,location_text,dist_centromere,product"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         />
         <summary>
           <![CDATA[
@@ -2467,7 +2476,7 @@ Advanced parameters can be modified for a more specific search (please go to the
               recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList
               summary="organism,location_text,dist_telomere,product"
-              sorting="organism asc,location_text asc"
+              sorting="project asc,organism asc,location_text asc"
         />
         <summary>
           <![CDATA[
@@ -2541,7 +2550,7 @@ Advanced parameters can be modified for a more specific search (please go to the
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="organism,location_text,product"
-              sorting="organism asc, location_text asc"
+              sorting="project asc,organism asc, location_text asc"
         /> 
 
         <propertyList name="organism">
@@ -3318,7 +3327,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
          summary="organism,location_text,product,exportpred_score"
-         sorting="organism asc,exportpred_score desc,location_text asc"
+         sorting="project asc,organism asc,exportpred_score desc,location_text asc"
         /> 
         <summary>
           Find genes that are predicted by ExportPred to produce an exported protein.
@@ -3520,7 +3529,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="organism,location_text,product,percent_coil,percent_strand,percent_helix"
-              sorting="organism asc, location_text asc"
+              sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
          Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
@@ -3730,7 +3739,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="organism,location_text,product,percent_coil,percent_strand,percent_helix"
-              sorting="organism asc, location_text asc"
+              sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
          Find genes whose proteins are predicted to have the given secondary-structure content by the PSIPRED program.
