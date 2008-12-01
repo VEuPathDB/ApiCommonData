@@ -1986,11 +1986,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
            <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
 	       <paramRef ref="sharedParams.libraryIdGenes"/>
-	       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
-	       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.bp_overlap_gte" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.best_alignment_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.max_number_best_alignments" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.high_confidence_only" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_identity" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="geneParams.min_number_est_aligned" groupRef="paramGroups.advancedParams"/>
 	       <wsColumn name="source_id" width="32" wsName="source_id"/>
 	     <wsColumn name="project_id" width="32" wsName="project_id"/>
 	<wsColumn name="number_of_ests" width="32" wsName="number_of_ests"/>
