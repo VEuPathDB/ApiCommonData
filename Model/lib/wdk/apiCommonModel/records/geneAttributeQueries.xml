@@ -146,6 +146,7 @@
             <column name="genus_species"  sortingColumn="organism"/>
             <column name="organism_full"  sortingColumn="organism" excludeProjects="CryptoDB"/>
             <column name="organism"  sortingColumn="organism"/>
+            <column name="project"/>
             <column name="exon_count" />
             <column name="strand" />
             <column name="ec_numbers_string"/>
@@ -245,7 +246,7 @@
 
             <sql>
             <![CDATA[
-            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
+            SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,bfmv.project_id as project,
                    start_min, end_max,
                    trim(to_char(bfmv.start_min,'999,999,999')) as start_min_text,
                    trim(to_char(bfmv.end_max,'999,999,999')) as end_max_text,
