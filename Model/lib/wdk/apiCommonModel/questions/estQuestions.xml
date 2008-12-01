@@ -70,6 +70,13 @@
           ]]>
         </description>
 
+<!-- TODO add description -->
+      <description includeProjects="TrypDB">
+             <![CDATA[
+
+          ]]>
+        </description>
+
        <propertyList name="genomeAttribution">
           <value/>
        </propertyList>
@@ -178,7 +185,7 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB,GiardiaDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB,GiardiaDB,TrypDB"
               summary="formatted_organism,dbest_name,est_location"
               sorting="formatted_organism asc, est_location asc"
         /> 
@@ -188,7 +195,7 @@
         />
 
 
-        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrypDB"
               summary="formatted_organism,dbest_name,est_location,assembly_link,assembly_est_count"
               sorting="formatted_organism asc, est_location asc"
         /> 
@@ -246,6 +253,12 @@
           the EST(s) on the sequence.
           ]]>
         </description>
+  <!-- TODO:  description -->
+        <description includeProjects="TrypDB">
+          <![CDATA[
+
+          ]]>
+        </description>
         <description includeProjects="ToxoDB">
               <![CDATA[
           Find ESTs that are located in a specified genomic region.<br><br>
@@ -285,11 +298,11 @@
         <summary>Find ESTs by Library Name</summary>
         <description>Find ESTs by Library Name</description>
 
-        <attributesList excludeProjects="CryptoDB,ToxoDB,GiardiaDB"
+        <attributesList excludeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc"
         /> 
-        <attributesList includeProjects="CryptoDB,ToxoDB,GiardiaDB"
+        <attributesList includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"
               summary="formatted_organism,dbest_name,assembly_link,assembly_est_count"
               sorting="formatted_organism asc,dbest_name asc,assembly_link asc,assembly_est_count desc"
         /> 
@@ -329,7 +342,7 @@
               sorting="formatted_organism asc"
         />
 
-        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrypDB"
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_link,assembly_est_count"
            sorting="formatted_organism asc,est_locations asc"
         /> 

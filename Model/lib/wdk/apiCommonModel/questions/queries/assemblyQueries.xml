@@ -6,7 +6,7 @@
     <!-- EST Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -35,7 +35,7 @@
     <!-- Library  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB" 
+    <sqlQuery name="ByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB" 
              isCacheable='true'>
 
         <testParamValues includeProjects="CryptoDB">
@@ -79,7 +79,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <sqlQuery name="ByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
           isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
@@ -225,7 +225,7 @@
     <!-- Gene Overlap  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="withGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="withGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
             isCacheable='true'>
        <paramRef ref="organismParams.organismWithAssemblies" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
@@ -359,7 +359,7 @@
     <!-- Gene ID  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB"
+    <sqlQuery name="ByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
             isCacheable='true'>
       
       <paramRef ref="assemblyParams.single_gene_id"/>

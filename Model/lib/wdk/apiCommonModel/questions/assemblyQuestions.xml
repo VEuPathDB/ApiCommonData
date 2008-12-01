@@ -9,7 +9,7 @@
               displayName="ID"
               queryRef="AssemblyIds.ByEstAccession"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
+              noSummaryOnSingleRecord="true" includeProjects="TrypDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
 
         <attributesList
            summary="formatted_organism,est_count,length"
@@ -85,7 +85,7 @@
               displayName="Library"
               queryRef="AssemblyIds.ByLibrary"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
 
         <summary>Find EST Assemblies by Library Name</summary>
         <description>Find EST Assemblies by Library Name</description>
@@ -125,7 +125,7 @@
               displayName="Chromosomal Location"
               queryRef="AssemblyIds.ByLocation"
               recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
 
         <attributesList 
               summary="formatted_organism, est_count, length, assembly_location,est_count"
@@ -169,6 +169,13 @@
           ]]>
         </description>
 
+  <!-- TODO:  description -->
+        <description includeProjects="TrypDB">
+           <![CDATA[
+
+          ]]>
+        </description>
+
        <propertyList name="specificAttribution">
            <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
            <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
@@ -190,15 +197,15 @@
          displayName="Extent of Gene Overlap"
          queryRef="AssemblyIds.withGeneOverlap"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
 
       
-        <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB,TrypDB"
            summary="formatted_organism,assembly_locations,genes,est_count, length"
            sorting="formatted_organism asc,assembly_locations asc"
         /> 
 <summary>Find EST assemblies that do or do not overlap with a gene.</summary>
-        <description includeProjects="ApiDB,ToxoDB,GiardiaDB">Find EST assemblies that Overlap a Gene.</description>
+        <description includeProjects="ApiDB,ToxoDB,GiardiaDB,TrypDB">Find EST assemblies that Overlap a Gene.</description>
         <description includeProjects="CryptoDB">
        <![CDATA[
         Find EST assemblies that overlap a <i>C. parvum</i> gene.
@@ -210,7 +217,7 @@
         ]]>
         </description>
 
-        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
+        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,TrypDB">
             <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
@@ -235,15 +242,15 @@
          displayName="Gene ID"
          queryRef="AssemblyIds.ByGeneIDs"
          recordClassRef="AssemblyRecordClasses.AssemblyRecordClass"
-              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB">
+              includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
 
       
-        <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB"
+        <attributesList includeProjects="ApiDB,ToxoDB,CryptoDB,GiardiaDB,TrypDB"
            summary="formatted_organism,assembly_locations,genes,est_count, length"
            sorting="formatted_organism asc,assembly_locations asc"
         /> 
         <summary>Find EST assemblies by gene id(s).</summary>
-        <description includeProjects="ToxoDB,GiardiaDB">Find EST assemblies by Gene ID(s).</description>
+        <description includeProjects="ToxoDB,GiardiaDB,TrypDB">Find EST assemblies by Gene ID(s).</description>
  <description includeProjects="ApiDB">Find EST assemblies by Gene ID(s). Currently only available for genes in GiardiaDB.</description>
         <description includeProjects="CryptoDB">
        <![CDATA[
@@ -251,7 +258,7 @@
         ]]>
         </description>
 
-        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB">
+        <dynamicAttributes includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,TrypDB">
             <columnAttribute name="assembly_locations" displayName="Assembly location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
