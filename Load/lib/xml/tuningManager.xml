@@ -3152,62 +3152,6 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
     </sql>
   </tuningTable>
 
-  <tuningTable name="apidb.Blastp">
-    <externalDependency name="dots.Similarity"/>
-    <externalDependency name="dots.ExternalAaSequence"/>
-    <externalDependency name="dots.GeneFeature"/>
-    <externalDependency name="dots.Transcript"/>
-    <externalDependency name="dots.TranslatedAaFeature"/>
-    <externalDependency name="sres.ExternalDatabase"/>
-    <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <externalDependency name="core.TableInfo"/>
-    <sql>
-      <![CDATA[
-create table apidb.Blastp&1 as
-select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
-       sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
-       sim.number_identical, sim.total_match_length, subject.description,
-       sim.number_positive, ed.name as external_database_name
-from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
-     dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
-     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-where qti.table_id = sim.query_table_id
-  and qti.name = 'TranslatedAASequence'
-  and sti.table_id = sim.subject_table_id
-  and sti.name = 'ExternalAASequence'
-  and subject.aa_sequence_id = sim.subject_id
-  and gf.na_feature_id = t.parent_id
-  and t.na_feature_id = taf.na_feature_id
-  and taf.aa_sequence_id = sim.query_id
-  and subject.external_database_release_id = edr.external_database_release_id
-  and edr.external_database_id = ed.external_database_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-update apidb.Blastp&1
-set pvalue_exp = (select min(pvalue_exp) from apidb.Blastp&1)
-where pvalue_mant = 0
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index apidb.bplastp_src_ix&1 on apidb.Blastp&1 (source_id)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index apidb.bplastp_query_ix&1 on apidb.Blastp&1 (query_id)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index apidb.blastp_text_ix&1 on apidb.blastp&1(description) indextype is ctxsys.context
-             parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE')
-      ]]>
-    </sql>
-  </tuningTable>
-
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
