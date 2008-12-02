@@ -27,6 +27,11 @@
          <paramValue name="source_id">DS164731-2-86-799</paramValue>
          <paramValue name="project_id">TrichDB</paramValue>
       </testParamValues>
+      <!-- TODO revisit source ID-->
+      <testParamValues includeProjects="TrypDB">
+         <paramValue name="source_id">Lbr.chr26-1-799135-799317</paramValue>
+         <paramValue name="project_id">TrypDB</paramValue>
+      </testParamValues>
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
@@ -112,8 +117,8 @@
            </textAttribute>
 
           <textAttribute name="gbrowseTracks" inReportMaker="false" internal="true" 
-                         includeProjects="GiardiaDB,CryptoDB,TrichDB,PlasmoDB,ToxoDB">
-            <text includeProjects="GiardiaDB,CryptoDB,TrichDB">
+                         includeProjects="GiardiaDB,CryptoDB,TrichDB,PlasmoDB,ToxoDB,TrypDB">
+            <text includeProjects="GiardiaDB,CryptoDB,TrichDB,TrypDB">
                 <![CDATA[
                   ORF+Gene
                 ]]>
@@ -130,7 +135,7 @@
         <!-- orf Tables++++++++-->
         <!-- =================================================================== -->
 
-        <table name="Locations" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,GiardiaDB"
+        <table name="Locations" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,GiardiaDB,TrypDB"
                  displayName="Orf Location"
                  queryRef="OrfTables.Locations">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
