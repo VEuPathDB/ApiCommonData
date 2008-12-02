@@ -284,6 +284,19 @@
                  ) t
              </sql>
 
+
+           <sql includeProjects="TrypDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Trypanosoma cruzi' as term, 'T. cruzi' as internal from dual union
+                 SELECT 'Trypanosoma brucei' as term, 'T. brucei' as internal from dual union
+                 SELECT 'Leishmania major' as term, 'L. major' as internal from dual union
+                 SELECT 'Leishmania infantum' as term, 'L. infantum' as internal from dual union
+                 SELECT 'Leishmania braziliensis' as term, 'L. braziliensis' as internal from dual
+                 ) t
+             </sql>
+
              <sql  includeProjects="ApiDB">
 
             SELECT t.term, t.internal, 
@@ -400,6 +413,18 @@
                  ) t
              </sql>
 
+           <sql includeProjects="TrypDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Trypanosoma cruzi' as term, 'T. cruzi' as internal from dual union
+                 SELECT 'Trypanosoma brucei' as term, 'T. brucei' as internal from dual union
+                 SELECT 'Leishmania major' as term, 'L. major' as internal from dual union
+                 SELECT 'Leishmania infantum' as term, 'L. infantum' as internal from dual union
+                 SELECT 'Leishmania braziliensis' as term, 'L. braziliensis' as internal from dual
+                 ) t
+             </sql>
+
             <sql  includeProjects="ApiDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
@@ -477,6 +502,18 @@
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'P. vivax mitocondrial' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
+                 ) t
+             </sql>
+
+           <sql includeProjects="TrypDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Trypanosoma cruzi' as term, 'T. cruzi' as internal from dual union
+                 SELECT 'Trypanosoma brucei' as term, 'T. brucei' as internal from dual union
+                 SELECT 'Leishmania major' as term, 'L. major' as internal from dual union
+                 SELECT 'Leishmania infantum' as term, 'L. infantum' as internal from dual union
+                 SELECT 'Leishmania braziliensis' as term, 'L. braziliensis' as internal from dual
                  ) t
              </sql>
 
@@ -571,6 +608,20 @@
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual
                  ) t
              </sql>
+
+
+           <sql includeProjects="TrypDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Trypanosoma cruzi' as term, 'T. cruzi' as internal from dual union
+                 SELECT 'Trypanosoma brucei' as term, 'T. brucei' as internal from dual union
+                 SELECT 'Leishmania major' as term, 'L. major' as internal from dual union
+                 SELECT 'Leishmania infantum' as term, 'L. infantum' as internal from dual union
+                 SELECT 'Leishmania braziliensis' as term, 'L. braziliensis' as internal from dual
+                 ) t
+             </sql>
+
             <sql  includeProjects="ApiDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
@@ -649,6 +700,18 @@ SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UN
                 
                  ) t
       </sql>
+
+           <sql includeProjects="TrypDB">
+            SELECT t.term, t.internal, 
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                 SELECT 'Trypanosoma cruzi' as term, 'T. cruzi' as internal from dual union
+                 SELECT 'Trypanosoma brucei' as term, 'T. brucei' as internal from dual union
+                 SELECT 'Leishmania major' as term, 'L. major' as internal from dual union
+                 SELECT 'Leishmania infantum' as term, 'L. infantum' as internal from dual union
+                 SELECT 'Leishmania braziliensis' as term, 'L. braziliensis' as internal from dual
+                 ) t
+             </sql>
 
       <sql includeProjects="PlasmoDB">
             SELECT t.term, t.internal, 

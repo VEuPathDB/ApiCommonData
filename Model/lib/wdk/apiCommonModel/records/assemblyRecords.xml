@@ -133,7 +133,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- AlignmentInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="AlignmentInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB"
+        <table name="AlignmentInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
             <columnAttribute name="id"            internal="true" />
@@ -201,6 +201,12 @@
                      @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=AnnotatedGenes;label=DoTSAssemblies;h_feat=$$id$$
                     ]]>
                  </url>
+                 <url includeProjects="TrypDB">
+                    <![CDATA[
+                     @CGI_URL@/gbrowse/trypdb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=AnnotatedGenes;label=DoTSAssemblies;h_feat=$$id$$
+                    ]]>
+                 </url>
+
             </linkAttribute>
 
         </table>  
@@ -208,7 +214,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- LibraryInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB"
+        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
                displayName="Libraries"
                queryRef="AssemblyTables.LibraryInfo">
             <columnAttribute displayName="Library"  name="library"/>
@@ -220,7 +226,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- EstInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB"
+        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
                displayName="ESTs in Assembly"
                queryRef="AssemblyTables.EstInfo">
             <columnAttribute displayName="EST" name="est"  internal="true" />

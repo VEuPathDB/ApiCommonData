@@ -71,7 +71,7 @@
                 <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
 
                 <columnAttribute name="assembly_source_id" displayName="Assembly Source Id" internal="true" />
-                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" includeProjects="CryptoDB,ToxoDB,GiardiaDB">
+                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB">
                     <displayText>
                         <![CDATA[ $$assembly_source_id$$ ]]>
                     </displayText>
@@ -216,11 +216,16 @@
                         /cgi-bin/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
                         ]]>
                      </url>
+                     <url includeProjects="TrypDB">
+                        <![CDATA[
+                        /cgi-bin/gbrowse/trypdb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
+                        ]]>
+                     </url>
                 </linkAttribute>
             </table>
 
 
-            <table name="ClusterMates" excludeProjects="ApiDB,PlasmoDB,TrichDB" 
+            <table name="ClusterMates" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"
                    displayName="Other ESTs that Cluster with this EST:" 
                    queryRef="EstTables.ClusterMates">
                 <columnAttribute displayName="ID" name="mate_id" internal="true" />
@@ -238,7 +243,7 @@
             </table>
             
 
-            <table name="AssemblyInfo" excludeProjects="ApiDB,TrichDB" 
+            <table name="AssemblyInfo" includeProjects="PlasmoDB,CryptoDB,ToxoDB,GiardiaDB,TrypDB"
                    displayName="Assembly for this EST" 
                    queryRef="EstTables.AssemblyInfo">
                 <columnAttribute displayName="Assembly" name="assembly_source_id" internal="true" />

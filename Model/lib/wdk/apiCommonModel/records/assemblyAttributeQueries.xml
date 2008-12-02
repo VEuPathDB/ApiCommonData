@@ -1,6 +1,6 @@
 <wdkModel>
 
-    <querySet name="AssemblyAttributes" queryType="attribute" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB,PlasmoDB">
+    <querySet name="AssemblyAttributes" queryType="attribute" includeProjects="CryptoDB,ToxoDB,GiardiaDB,ApiDB,PlasmoDB,TrypDB">
 
       <defaultTestParamValues includeProjects="PlasmoDB">
          <paramValue name="source_id">PfDT.379332.tmp</paramValue>
@@ -51,7 +51,7 @@
      ]]>
     </sql>
 -->
-     <sql includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrichDB,ApiDB,PlasmoDB">
+     <sql>
       <![CDATA[ 
       SELECT aa.source_id, aa.project_id,
       REPLACE(
@@ -78,7 +78,7 @@
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="sequence"/>
-     <sql includeProjects="ToxoDB,CryptoDB,GiardiaDB,TrichDB,PlasmoDB">
+     <sql>
       <![CDATA[ 
         select a.source_id, '@PROJECT_ID@' as project_id, 
                a.sequence 
