@@ -25,11 +25,17 @@
                <paramValue name="source_id">DS113177</paramValue>
                <paramValue name="project_id">TrichDB</paramValue>
             </defaultTestParamValues>
+            <!-- TODO revisit source_id --> 
+            <defaultTestParamValues includeProjects="TrypDB">
+               <paramValue name="source_id">AAHK01032731</paramValue>
+               <paramValue name="project_id">TrypDB</paramValue>
+            </defaultTestParamValues>
+
 
         <sqlQuery name="SequencePieces"
                isCacheable="false">
 
-            <testParamValues minRows="0" includeProjects="TrichDB,CryptoDB"/>
+            <testParamValues minRows="0" includeProjects="TrichDB,CryptoDB,TrypDB"/>
             <testParamValues includeProjects="PlasmoDB">
                 <paramValue name="source_id">CM000442</paramValue>
             </testParamValues>
@@ -71,7 +77,7 @@
            <testParamValues includeProjects="PlasmoDB">
                <paramValue name="source_id">MAL5</paramValue>
             </testParamValues>
-            <testParamValues minRows="0" includeProjects="ToxoDB,TrichDB,GiardiaDB,CryptoDB"/>
+            <testParamValues minRows="0" includeProjects="ToxoDB,TrichDB,GiardiaDB,CryptoDB,TrypDB"/>
 
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -97,7 +103,7 @@
         <sqlQuery name="SequenceComments"  excludeProjects="ApiDB"
                isCacheable="false">
 
-            <testParamValues minRows="0" includeProjects="GiardiaDB,TrichDB,ToxoDB,CryptoDB"/>
+            <testParamValues minRows="0" includeProjects="GiardiaDB,TrichDB,ToxoDB,CryptoDB,TrypDB"/>
             <testParamValues includeProjects="PlasmoDB">
               <paramValue name="source_id">MAL9</paramValue>
             </testParamValues>
@@ -145,7 +151,7 @@
         <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="ToxoDB">ApiDB_ToxoDB</sqlParamValue>
-        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB">ApiDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB,TrypDB">ApiDB</sqlParamValue>
         <sql>
           <![CDATA[
             SELECT ens.source_id, '@PROJECT_ID@' AS project_id,
