@@ -41,6 +41,11 @@
                <paramValue name="source_id">DS113177</paramValue>
                <paramValue name="project_id">TrichDB</paramValue>
             </testParamValues>
+            <!-- TODO revisit source_id --> 
+            <defaultTestParamValues includeProjects="TrypDB">
+               <paramValue name="source_id">AAHK01032731</paramValue>
+               <paramValue name="project_id">TrypDB</paramValue>
+            </defaultTestParamValues>
 
             <!-- primary key definition -->
             <primaryKeyAttribute name="primary_key"
@@ -395,6 +400,11 @@
                GeneDensity+SyntenySpanGT1+SyntenySpanME49+SyntenySpanVEG+SyntenySpanNeospora
               ]]>
            </text>
+           <text includeProjects="TrypDB">
+              <![CDATA[
+               AnnotationDensity
+              ]]>
+           </text>
          </textAttribute>
 
 
@@ -402,7 +412,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB"
                        displayName="Features" internal="true"
                        inReportMaker="false">
            <text includeProjects="PlasmoDB">
@@ -420,7 +430,7 @@
                 @CGI_URL@/gbrowse_img/giardiadb/?name=$$source_id$$;embed=1;type=Contigs;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
-           <text includeProjects="TrichDB">
+           <text includeProjects="TrichDB,TrypDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/trichdb/?name=$$source_id$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
@@ -466,7 +476,7 @@
             </text>
          </textAttribute>
 
-         <textAttribute name="GBrowse"  includeProjects="TrichDB"
+         <textAttribute name="GBrowse"  includeProjects="TrichDB,TrypDB"
             displayName="Genome Browser" align="center" inReportMaker="false">
             <text>
                  <![CDATA[
@@ -478,7 +488,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB"
+         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB,TrypDB"
             displayName="Retrieve Sequence" inReportMaker="false">
            <text excludeProjects="ToxoDB">
                 <![CDATA[
