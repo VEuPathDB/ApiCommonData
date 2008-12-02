@@ -55,11 +55,19 @@
                  prompt="Gene Answer"
                  readonly="true" />
 
+ <answerParam name="genomic_answer"
+                 recordClassRef="SequenceRecordClasses.SequenceRecordClass"
+                 prompt="Genomic Sequence Answer"
+                 readonly="true" />
 
     <enumParam name="organism"
                prompt="organism" excludeProjects="GiardiaDB,TrypDB">
         <enumList>
-             <enumValue includeProjects="ApiDB,CryptoDB">
+             <enumValue includeProjects="ApiDB">
+                <term>Gl</term>
+                <internal>%lamblia%</internal>
+            </enumValue>
+ <enumValue includeProjects="ApiDB,CryptoDB">
                 <term>Ch</term>
                 <internal>%hominis%</internal>
             </enumValue>

@@ -2,14 +2,7 @@
 
   <!--
 
-   - CryptoDB is gonna have to change to "SequenceRecordClasses.SequenceRecordClass" 
-     from "ContigRecordClasses.ContigRecordClass"
- 
-   - crypto column names changed:
-      * cryptocyc_db  ->  cyc_db
-      * extdbname -> externalDbName
-
-   - the bfmv should only include shared attributes so its sql can be identical across projects.
+     - the bfmv should only include shared attributes so its sql can be identical across projects.
      the rest can be factored into associated attribute queries
 
   -->
@@ -82,6 +75,131 @@
                 filterQueryRef="SequenceSubTypes.SequenceTypeFilter"
                 termToSkip="scaffolds and contigs"/>
 -->
+
+
+ <!-- =============================================================== -->
+      <!--   Filters -->  
+      <!-- =============================================================== -->
+
+ <answerFilter queryRef="GenomicSummaries.AllResults"   includeProjects="ApiDB">
+                  <instance name="all_results" displayName="All Results" default="true">
+                    <description>
+                        <![CDATA[
+                            All results
+                        ]]>
+                    </description>   
+                </instance>
+
+  </answerFilter>
+
+
+<answerFilter queryRef="GenomicSummaries.ApiGenomics"
+                          includeProjects="ApiDB">
+                
+                <instance name="ch_genomics" displayName="Ch Gen.Seq.">
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium hominis</i> genomic sequences.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Ch</paramValue>
+                </instance>
+              
+                <instance name="cp_genomics" displayName="Cp Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium parvum</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Cp</paramValue>
+                </instance>
+                <instance name="gl_genomics" displayName="Gl Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Gl</paramValue>
+                </instance>
+
+                <instance name="pb_genomics" displayName="Pb Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium berghei</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pb</paramValue>
+                </instance>
+ <instance name="pc_genomics" displayName="Pc Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium chabaudi</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pc</paramValue>
+                </instance>
+ <instance name="pf_genomics" displayName="Pf Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium falciparum</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pf</paramValue>
+                </instance>
+ <instance name="pk_genomics" displayName="Pk Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium knowlesi</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pk</paramValue>
+                </instance>
+ <instance name="pv_genomics" displayName="Pv Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium vivax</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Pv</paramValue>
+                </instance>
+ <instance name="py_genomics" displayName="Py Genomics">
+                    <description>
+                        <![CDATA[
+                              <i>Plasmodium yoelii</i> genomics.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Py</paramValue>
+                </instance>
+
+               <instance name="toxo_genomics" displayName="Tg genomics" >
+                    <description>
+                        <![CDATA[
+                            Number of <i>T. gondii</i> genomics from all strains (ME49, GT1 and VEG).
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Tg</paramValue>
+                </instance>
+
+ <instance name="neospora_genomics" displayName="Nc genomics" >
+                    <description>
+                        <![CDATA[
+                            Number of <i>N. caninum</i> genomics.
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Nc</paramValue>
+                </instance>
+
+               <instance name="tv_genomics" displayName="Tv genomics" >
+                    <description>
+                        <![CDATA[
+                            Number of <i>T. vag</i> genomics.
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Tv</paramValue>
+                </instance>
+
+ </answerFilter>
+
 
 
        <!-- =================================================================== -->
