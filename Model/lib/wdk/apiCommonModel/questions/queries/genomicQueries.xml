@@ -33,7 +33,7 @@
             AND so.term_name in ('contig', 'supercontig')
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB">
         <![CDATA[
             SELECT distinct sequence as source_id, '@PROJECT_ID@' as project_id
             FROM apidb.SequenceId si, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
@@ -65,7 +65,7 @@
         <paramRef ref="genomicParams.sequenceTypes" includeProjects="GiardiaDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,TrypDB">
             <![CDATA[
             SELECT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens,apidb.sequenceattributes atr
@@ -127,6 +127,11 @@
         <testParamValues includeProjects="TrichDB">
             <paramValue name="BlastQuerySequence">GAAAAATGATATTTCAAAAGAATGGGAATATATTAGAAAGCAAATGGAAAGGTTGAATGATGTTAAACGTGAACAAATTAATTCGGGGCTCATGAATTTTAAACAAGGGGATAAAGTTT</paramValue>
             <paramValue name="BlastDatabaseOrganism">Trichomonas vaginalis</paramValue>
+            <paramValue name="BlastDatabaseType">Genome</paramValue>
+        </testParamValues>
+        <! -- TODO copied from Toxo -->
+         <testParamValues includeProjects="TrypDB">
+            <paramValue name="BlastQuerySequence">TGTCGCAAAAAAGCGCAACAACAGCCATTCAGCGCTGCACGTCTCCCCCGCGTCTCCAAGGAA</paramValue>
             <paramValue name="BlastDatabaseType">Genome</paramValue>
         </testParamValues>
 
