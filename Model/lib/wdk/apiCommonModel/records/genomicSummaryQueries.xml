@@ -1,0 +1,45 @@
+<wdkModel>
+    <querySet name="GenomicSummaries" queryType="summary">
+
+     <!-- notes
+
+      
+
+     -->
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Genomic summary-->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB">
+            <paramRef ref="recordParams.genomic_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$genomic_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+      
+<sqlQuery name="ApiGenomics" isCacheable="false" includeProjects="ApiDB">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.genomic_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$genomic_answer$$ c, apidb.sequenceattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.organism like $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
+ </querySet>
+
+</wdkModel>
