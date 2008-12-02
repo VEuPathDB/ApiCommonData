@@ -74,9 +74,13 @@
       queryRef="SequenceIds.SequencesByTaxon"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass">
       
-      <attributesList 
+      <attributesList excludeProjects="ApiDB" 
         summary="formatted_organism,formatted_length,chromosome"
         sorting="formatted_length desc"
+      />
+       <attributesList includeProjects="ApiDB" 
+        summary="formatted_organism,formatted_length,chromosome"
+        sorting="organism asc,formatted_length desc"
       />
       
       <summary>
