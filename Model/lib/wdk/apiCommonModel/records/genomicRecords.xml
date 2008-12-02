@@ -430,11 +430,18 @@
                 @CGI_URL@/gbrowse_img/giardiadb/?name=$$source_id$$;embed=1;type=Contigs;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
-           <text includeProjects="TrichDB,TrypDB">
+           <text includeProjects="TrichDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/trichdb/?name=$$source_id$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
            </text>
+           <!--TODO revisit url -->
+           <text includeProjects="TrypDB">
+                <![CDATA[
+                @CGI_URL@/gbrowse_img/trypdb/?name=$$source_id$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
+                ]]>
+           </text>
+
         </textAttribute>
 
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -476,7 +483,7 @@
             </text>
          </textAttribute>
 
-         <textAttribute name="GBrowse"  includeProjects="TrichDB,TrypDB"
+         <textAttribute name="GBrowse"  includeProjects="TrichDB"
             displayName="Genome Browser" align="center" inReportMaker="false">
             <text>
                  <![CDATA[
@@ -484,6 +491,16 @@
                  ]]>
             </text>
          </textAttribute>
+         <!-- TODO revisit url -->
+         <textAttribute name="GBrowse"  includeProjects="TrypDB"
+            displayName="Genome Browser" align="center" inReportMaker="false">
+            <text>
+                 <![CDATA[
+                 <a href="@CGI_URL@/gbrowse/trypdb/?name=$$source_id$$:1-$$length$$;enable=Gene">view</a>
+                 ]]>
+            </text>
+         </textAttribute>
+
 
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
