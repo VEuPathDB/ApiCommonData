@@ -3133,7 +3133,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByProteomicsProfile" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.asexual_blood_stages_value" quote="false"/>
+        <paramRef ref="organismParams.organismSite" default="Plasmodium berghei"  quote="false"/>
+         <paramRef ref="geneParams.asexual_blood_stages_value" quote="false"/>
         <paramRef ref="geneParams.gametocytes_value" quote="false"/>
         <paramRef ref="geneParams.ookinetes_value" quote="false"/>
         <paramRef ref="geneParams.oocysts_value" quote="false"/>
