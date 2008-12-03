@@ -2135,8 +2135,8 @@ select na_sequence_id,
        substr(pcr_primers, 1, 100) as pcr_primers,       
        is_reference,
        collected_by,
-       product,
-       product_alias,
+       decode(product, null, 'Unknown', substr(product, 1, 500)) as product,
+       decode(product_alias, null, 'Unknown', substr(product_alias, 1, 500)) as product_alias,
        project_id,
        data_type
 FROM (
