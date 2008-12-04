@@ -1482,9 +1482,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrII</paramValue>
         </testParamValues>
-
+<!--
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,CryptoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" multiPick="false" includeProjects="ToxoDB"/>
+-->
+         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB"//>
+
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -1498,7 +1501,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             FROM apidb.featurelocation fl,apidb.SEQUENCEATTRIBUTES satr,apidb.GENEATTRIBUTES gatr
-            WHERE ((satr.ORGANISM =  $$organismWithChromosomes$$ AND satr.CHROMOSOME like $$chromosomeOptional$$ )
+            WHERE ((satr.ORGANISM =  $$organism$$ AND satr.CHROMOSOME like $$chromosomeOptional$$ )
                    OR lower(satr.source_id) = lower($$sequenceId$$))
               AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
               AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID
@@ -1522,37 +1525,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
            ]]>
        </sql>
-<!--
-        <sql includeProjects="CryptoDB,ToxoDB">
-            <![CDATA[
-            SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
-              fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
-            FROM apidb.featurelocation fl
-            WHERE (fl.sequence_source_id = $$chromosomeOptional$$
-                   OR lower(fl.sequence_source_id) = lower($$sequenceId$$))
-              AND fl.feature_type = 'GeneFeature'
-              AND fl.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
-              AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
-           ]]>
-       </sql>
 
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens,
-                 sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-            WHERE nl.na_feature_id = gf.na_feature_id
-              AND (ens.source_id = $$chromosomeOptional$$
-                   OR lower(ens.source_id) = lower($$sequenceId$$))
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
-              AND (start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
-              AND gf.external_database_release_id = edr.external_database_release_id
-              AND edr.external_database_id = ed.external_database_id 
-              AND ed.name in ('Chromosome Map - David Sibley','Roos Lab T. gondii apicoplast') 
-           ]]>
-       </sql>
--->
 
         <sql includeProjects="TrichDB,GiardiaDB,TrypDB">
             <![CDATA[
@@ -1572,12 +1545,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                        <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
                        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-	               <paramRef ref="sharedParams.chromosomeOptional"/>
-	               <paramRef ref="sharedParams.sequenceId"/>
+	               <paramRef ref="sharedParams.chromosomeOptional" quote="false"/>
+	               <paramRef ref="sharedParams.sequenceId" quote="false"/>
                        <paramRef ref="sharedParams.start_point"/>
                        <paramRef ref="sharedParams.end_point"/>
 	               <wsColumn name="source_id" width="32" wsName="source_id"/>
 	               <wsColumn name="project_id" width="32" wsName="project_id"/>
+                       <wsColumn name="dynamic_location" width="100" wsName="dynamic_location"/>
                 
 	</processQuery>
 
