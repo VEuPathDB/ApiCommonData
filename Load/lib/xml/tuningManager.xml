@@ -27,7 +27,7 @@ SELECT DISTINCT pairs.alias, pairs.gene FROM
   SELECT lower(source_id) AS alias, source_id AS gene
   FROM dots.GeneFeature
  UNION -- changed P. vivax source IDs
-  SELECT lower(dr.primary_identifier) as alias, gf.source_id as gene
+  SELECT dr.primary_identifier as alias, gf.source_id as gene
   FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
        sres.DbRef dr, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
