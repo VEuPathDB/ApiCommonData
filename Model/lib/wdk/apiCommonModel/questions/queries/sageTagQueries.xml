@@ -63,12 +63,13 @@
               isCacheable="true">
 
         <testParamValues includeProjects="ToxoDB">
-          <paramValue name="chromosomeOptional">V</paramValue>
+          <paramValue name="chromosomeOptional2">V</paramValue>
         </testParamValues>
 
         <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId"/>
-        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
+ <!--       <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome"/>
+       <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>  -->
+      <paramRef ref="sharedParams.chromosomeOptional2" includeProjects="PlasmoDB,ToxoDB"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sageTagParams.is_within_gene_not"/>
@@ -79,7 +80,7 @@
           <![CDATA[ lower(a.sequence_source_id) = lower($$sequenceId$$) ]]>
         </sqlParamValue>
         <sqlParamValue name="source" includeProjects="PlasmoDB">
-          <![CDATA[ a.sequence_source_id in ($$chromosome$$) ]]>
+          <![CDATA[ a.sequence_source_id in ($$chromosomeOptional2$$) ]]>
         </sqlParamValue>
        <sql includeProjects="GiardiaDB,PlasmoDB">
          <![CDATA[
@@ -101,7 +102,7 @@
               a.sequence_source_id || ': ' || trim(to_char(a.start_min,'999,999,999')) || ' - ' || trim(to_char(a.end_max,'999,999,999')) || decode(a.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             from apidb.sequenceattributes satr, apidb.sagetagattributes sta, apidb.featurelocation a left join apidb.SAGETAGGENE sg
                   on a.na_feature_id = sg.tag_feature_id and sg.distance = 0 and sg.antisense = 0
-            where  satr.chromosome = $$chromosomeOptional$$
+            where  satr.chromosome = $$chromosomeOptional2$$
               AND  a.na_sequence_id = satr.na_sequence_id
               AND  a.feature_type = 'SAGETagFeature'
               AND  a.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
@@ -115,11 +116,11 @@
 <processQuery name="ByLocation" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
-        <paramRef includeProjects="GiardiaDB" ref="sharedParams.sequenceId" default="CH991779"/>
-        <paramRef includeProjects="PlasmoDB" ref="sharedParams.chromosome" default="P.f. chromosome 1"/>
+        <paramRef ref="sharedParams.sequenceId" default="(Example: CH991779)"  quote="false"/>
+        <paramRef ref="sharedParams.chromosomeOptional2"  quote="false"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
-        <paramRef ref="sageTagParams.is_within_gene_not"/>
+        <paramRef ref="sageTagParams.is_within_gene_not"  quote="false"/>
 
        <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="project_id" width="32" wsName="project_id"/>
