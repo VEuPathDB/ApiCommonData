@@ -2013,6 +2013,20 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             where source_id = 'life_is_sweet' 
         </sql>
     </sqlQuery>
+
+    <sqlQuery name="DontCarePlasmoExpression" doNotTest="true" includeProjects="PlasmoDB" isCacheable="true">
+        <paramRef ref="geneParams.extraerythrocytic_stages"/>
+        <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
+        <paramRef ref="geneParams.min_expression_percentile"/>
+        <paramRef ref="geneParams.max_expression_percentile"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_percentile"/>
+        <column name="min_percentile"/>
+        <sql>
+            select '' as source_id, '' as project_id, '' as max_percentile, '' as min_percentile from dual
+        </sql>
+    </sqlQuery>
     
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
