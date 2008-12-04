@@ -1831,10 +1831,11 @@ ON apidb.ArrayElementAttributes&1 (source_id)
                is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
                is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
                tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
-               sp.strand_orientation, virtualseq.length, vti.table_id as virtual_target_table_id
-        from dots.BlatAlignment ba, apidb.SequencePieceClosure sp, dots.NaSequence virtualseq,
-             core.TableInfo vti
+               sp.strand_orientation, piece.length, vti.table_id as virtual_target_table_id
+        from dots.BlatAlignment ba, apidb.SequencePieceClosure sp, dots.NaSequence piece,
+             dots.NaSequence virtualseq, core.TableInfo vti
         where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
+          and sp.piece_na_sequence_id = piece.na_sequence_id
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
           and virtualseq.subclass_view = vti.name
 SQL
