@@ -354,12 +354,12 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         </testParamValues>
 
           <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>-->
-          <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>
-          <paramRef ref="sharedParams.chromosomeOptional" />
+          <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesSNPs"/>
+          <paramRef ref="sharedParams.chromosomeOptional" quote="false"/ />
           <paramRef ref="sharedParams.start_point"/>
           <paramRef ref="sharedParams.end_point"/>
-          <paramRef ref="sharedParams.snp_strain_a"/>
-          <paramRef ref="sharedParams.snp_strain_m"/>
+          <paramRef ref="sharedParams.snp_strain_a" quote="false"//>
+          <paramRef ref="sharedParams.snp_strain_m" quote="false"//>
           <wsColumn name="source_id" width="50" wsName="source_id"/>
           <wsColumn name="project_id" width="32" wsName="project_id"/>
           <wsColumn name="gene" width="32"/>
