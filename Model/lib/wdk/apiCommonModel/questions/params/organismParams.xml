@@ -380,6 +380,51 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+
+<!--===================================================================-->
+    <!-- with chromosomes and SNPs -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withChromosomesSNPs" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+            <sql  includeProjects="CryptoDB">
+            SELECT * FROM (
+               SELECT 'Cryptosporidium parvum' as term,
+                       '''' ||'Cryptosporidium parvum'|| '''' as internal 
+               FROM dual
+            )
+            </sql>          
+
+            <sql  includeProjects="ToxoDB">
+            SELECT * FROM (
+                SELECT 'Toxoplasma gondii' as term,
+                        '''' ||'Toxoplasma gondii'|| ''''  as internal 
+                FROM dual
+            )
+            </sql>
+ 
+            <sql  includeProjects="PlasmoDB">
+            SELECT * FROM (
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+
+            )
+            </sql>
+
+        </sqlQuery>
+
+
+
+    <processQuery name="withChromosomesSNPs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
+
     <!--===================================================================-->
     <!-- with genomic seq
 
