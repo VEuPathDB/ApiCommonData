@@ -60,7 +60,7 @@
           <paramValue name="sequenceId">TGME49_chrV</paramValue>
         </testParamValues>
 
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,PlasmoDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
 
 <!--
@@ -108,6 +108,8 @@
             AND oa.source_id = fl.feature_source_id
            ]]>
        </sql>
+
+
         <sql includeProjects="CryptoDB"> 
             <![CDATA[
 	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
@@ -128,6 +130,7 @@
 	    AND (nal.start_min <= $$end_point$$ OR $$end_point$$ = 0)
            ]]>
        </sql>
+
 <!-- should be same as giardia 
         <sql includeProjects="TrichDB"> 
             <![CDATA[
