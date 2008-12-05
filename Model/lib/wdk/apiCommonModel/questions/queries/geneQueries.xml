@@ -1990,7 +1990,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </sql>
     </sqlQuery>
     
-    <sqlQuery name="DontCarePlasmoExpression" doNotTest="true" includeProjects="PlasmoDB" isCacheable="true">
+    <sqlQuery name="DontCarePlasmoExpression" doNotTest="true" includeProjects="ApiDB,PlasmoDB" isCacheable="true">
         <paramRef ref="geneParams.extraerythrocytic_stages"/>
         <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
@@ -2003,6 +2003,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             select '' as source_id, '' as project_id, '' as max_percentile, '' as min_percentile from dual
         </sql>
     </sqlQuery>
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Query that retrieves all genes by organism -->
