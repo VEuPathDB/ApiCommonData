@@ -33,7 +33,7 @@ sub getParamsDeclaration {
 sub getConfigDeclaration {
   return (
          # [name, default, description]
-         # ['', '', ''],
+          ['psipredPath', '', ''],
          );
 }
 

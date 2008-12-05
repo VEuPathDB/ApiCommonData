@@ -13,7 +13,7 @@ sub run {
   my $outputFile = $self->getParamValue('outputFile');
   my $options = $self->getParamValue('options');
 
-  my $binPath = $self->getConfig('path');
+  my $binPath = $self->getConfig('binPath');
 
   my $localDataDir = $self->getLocalDataDir();
 
