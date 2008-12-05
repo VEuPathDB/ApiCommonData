@@ -31,6 +31,12 @@ sub getComputeClusterDataDir {
     return "$home/data";
 }
 
+sub getComputeClusterTaskLogsDir {
+    my ($self) = @_;
+    my $home = $self->getComputeClusterHomeDir();
+    return "$home/taskLogs";
+}
+
 sub makeClusterControllerPropFile {
   my ($self, $taskInputDir, $slotsPerNode, $taskSize, $taskClass) = @_;
 
@@ -68,10 +74,11 @@ restart=no
 }
 
 sub testFiles {
-    my @files = @_;
-    foreach my $file (@files) {
-	$self->error("Input file '$file' for step '$self->{name}' does not exist") unless -e $file;
-    }
+  my $self = shift(@_);
+  my @files = @_;
+  foreach my $file (@files) {
+    $self->error("Input file '$file' for step '$self->{name}' does not exist") unless -e $file;
+  }
 }
 
 # avoid using this subroutine!
