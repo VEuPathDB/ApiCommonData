@@ -67,8 +67,11 @@ restart=no
     close(F);
 }
 
-sub runCmdOnCluster {
-  my ($self, $test, $cmd) = @_;
+sub testFiles {
+    my @files = @_;
+    foreach my $file (@files) {
+	$self->error("Input file '$file' for step '$self->{name}' does not exist") unless -e $file;
+    }
 }
 
 # avoid using this subroutine!
@@ -142,14 +145,6 @@ sub getTaxonIdList {
   } else {
     return $taxonId;
   }
-}
-
-sub copyToCluster {
-  my ($self, $fromDir, $fromFile, $toDir) = @_;
-}
-
-sub copyFromCluster {
-  my ($self, $test, $fromDir, $fromFile, $toDir) = @_;
 }
 
 1;
