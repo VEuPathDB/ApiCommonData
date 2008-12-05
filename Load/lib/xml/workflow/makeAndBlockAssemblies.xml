@@ -81,24 +81,18 @@
       <depends name="makeClusterTaskInputDir"/>
     </step>
 
-    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="queue">apidb</paramValue>
-      <paramValue name="cmdName">runRepeatMask</paramValue>
-      <paramValue name="cmdArgs">$$dataDir$$/assemblies.fsa</paramValue>
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="numNodes">NUM_NODES</paramValue>
+      <paramValue name="processorsPerNode"></paramValue>
       <depends name="mirrorToCluster"/>
-    </step>
-
-    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
-      <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends name="startClusterTask"/>
     </step>
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFile">blocked.seq</paramValue>
-      <depends name="waitForClusterTask"/>
+      <depends name="runClusterTask"/>
     </step>
 
 </workflowGraph>

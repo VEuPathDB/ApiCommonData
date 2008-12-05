@@ -25,7 +25,7 @@
     </step>
 
     <step name="createTaskDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakePsipredTaskDir">
-      <paramValue name="taskInputDir">$$parentDataDir$$/psipred/input</paramValue>
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="proteinsFile">$$psipredProteinsFile$$</paramValue>
       <paramValue name="nrdbFile">$$psipredNrdbFile$$</paramValue>
       <depends name="fixProteinIds"/>
@@ -36,24 +36,18 @@
       <depends name="createTaskDir"/>
     </step>
 
-    <step name="startClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::StartClusterTask">
-      <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <paramValue name="queue">apidb</paramValue>
-      <paramValue name="cmdName">runPsipred</paramValue>
-      <paramValue name="cmdArgs">$$psipredProteinsFile$$ $$psipredNrdbFile$$</paramValue>
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="numNodes">NUM_NODES</paramValue>
+      <paramValue name="processorsPerNode"></paramValue>
       <depends name="mirrorToCluster"/>
-    </step>
-
-    <step name="waitForClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::WaitForClusterTask">
-      <paramValue name="taskDir">$$dataDir$$</paramValue>
-      <depends name="startClusterTask"/>
     </step>
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFile"></paramValue>
-      <depends name="waitForClusterTask"/>
+      <depends name="runClusterTask"/>
     </step>
 
     <step name="fixFileNames" stepClass="ApiCommonData::Load::WorkflowSteps::FixPsipredFileNames">
