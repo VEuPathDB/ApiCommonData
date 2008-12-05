@@ -6115,7 +6115,54 @@ EOF
          "Loading $dir Iprscan output");
 }
 
+###############################################
+# Isolate Vocabulary Steps
+##############################################
 
+# Insert ontology terms
+sub insertIsolateVocabulary{
+
+my ($mgr, $inFile) = @_;
+
+my $signal = "insertIsolateVocab";
+
+return if $mgr->startStep("Inserting Isolate Vocabulary", $signal);
+
+my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+my $propertySet = $mgr->{propertySet};
+
+my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+my $cmd = "updateIsolateVocabulary --gus_config_file $gus_config_file --inFile $inFile";
+
+$mgr->runCmd($cmd);
+
+$mgr->endStep($signal);
+}
+
+# Create vocabulary reports or update DB, check invocation params
+sub isolateVocabulary{
+
+my ($mgr, $output, $fileType, $xmlFile, $outFile) = @_;
+
+my $signal = "isolateVocab_${fileType}-$output";
+
+return if $mgr->startStep("Running Isolate Vocabulary_$fileType: $output", $signal);
+
+my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+my $propertySet = $mgr->{propertySet};
+
+my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+my $cmd = "isolateVocabulary.pl $output --gus_config_file $gus_config_file --type $fileType --xml_file $xmlFile > $outFile 2>> $logFile";
+
+$mgr->runCmd($cmd);
+
+$mgr->endStep($signal);
+}
+  
 ################################################################################
 # OrthoMCL steps
 ################################################################################
