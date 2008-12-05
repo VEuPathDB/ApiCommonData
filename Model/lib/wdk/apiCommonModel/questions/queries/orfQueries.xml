@@ -60,8 +60,13 @@
           <paramValue name="sequenceId">TGME49_chrV</paramValue>
         </testParamValues>
 
+ <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,PlasmoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
+
+<!--
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
+-->
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -70,6 +75,7 @@
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dynamic_location"/>
+<!-- sqlParamValues not needed now because we use the same organism parameter 
         <sqlParamValue name="orgParam" includeProjects="ToxoDB">
             <![CDATA[
               $$sequence_organism_text$$
@@ -80,6 +86,8 @@
               $$organismWithChromosomes$$
             ]]>
         </sqlParamValue>
+-->
+
         <sql includeProjects="ToxoDB,PlasmoDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
@@ -88,7 +96,7 @@
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
 	    WHERE fl.feature_type = 'Miscellaneous'
             AND sa.na_sequence_id = fl.na_sequence_id
-	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = &&orgParam&&)
+	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = $$organism$$)
                    OR lower(sa.source_id) = lower($$sequenceId$$))
             AND fl.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','') 
 	    AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
@@ -164,14 +172,14 @@
      <processQuery name="OrfsByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <paramRef ref="sharedParams.chromosomeOptional" default="chromosome 1"/>
-        <paramRef ref="sharedParams.sequenceId"/>
+        <paramRef ref="sharedParams.chromosomeOptional"   quote="false"/>
+        <paramRef ref="sharedParams.sequenceId"   quote="false"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="orfParams.min_orf_length"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-        <wsColumn name="dynamic_location" width="32" wsName="dynamic_location"/>
+        <wsColumn name="dynamic_location" width="100" wsName="dynamic_location"/>
     </processQuery>
 
 
