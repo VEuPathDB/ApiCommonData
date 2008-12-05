@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::StartClusterTask;
+package ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
@@ -8,29 +8,29 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $taskDir = $self->getParamValue('taskDir');
-  my $queue = $self->getParamValue('queue');
-  my $cmdName = $self->getParamValue('cmdName');
-  my $cmdArgs = $self->getParamValue('cmdArgs');
+  my $taskInputDir = $self->getParamValue('taskInputDir');
+  my $numNodes = $self->getParamValue('numNodes');
+  my $processorsPerNode = $self->getParamValue('processorsPerNode');
 
   # get global properties
-#  my $ = $self->getGlobalConfig('');
+  my $clusterServer = $self->getGlobalConfig('clusterServer');
+  my $clusterQueue = $self->getGlobalConfig('clusterQueue');
 
-  # get step properties
-#  my $ = $self->getConfig('');
+  my $clusterTaskLogsDir = $self->getComputeClusterTaskLogsDir();
+  my $clusterDataDir = $self->getComputeClusterDataDir();
 
-  if ($test) {
-  } else {
-  }
+  my $userName = caller(0)[3];  # perl trick to get user name
 
+  my $propFile = "$clusterDataDir/$taskInputDir/task.prop";
+  my $logFile = "$clusterTaskLogsDir/" . $self->getFullName() . ".log";
+
+  $self->runAndMonitorClusterTask($test, $userName, $clusterServer, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
 }
 
 sub getParamsDeclaration {
   return (
-          'taskDir',
-          'queue',
-          'cmdName',
-          'cmdArgs',
+          'taskInputDir',
+          'numNodes',
          );
 }
 
