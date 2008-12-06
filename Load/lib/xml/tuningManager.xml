@@ -3214,6 +3214,38 @@ create index apidb.blastp_text_ix&1 on apidb.blastp&1(description) indextype is 
     </sql>
   </tuningTable>
 
+
+  <tuningTable name="apidb.GeneIsolateOverlap">
+    <internalDependency name="apidb.IsolateAttributes"/>
+    <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="dots.Similarity"/>
+    <sql>
+      <![CDATA[
+create table apidb.GeneIsolateOverlap&1 as
+select substr(ia.source_id, 1, 30) as isolate_source_id,
+       fl.feature_source_id as gene_source_id,
+       min(pvalue_exp) as min_pvalue_exp
+from apidb.IsolateAttributes ia, dots.Similarity sim, apidb.FeatureLocation fl
+where fl.feature_type = 'GeneFeature'
+  and fl.na_sequence_id = sim.subject_id
+  and fl.start_min < sim.max_subject_end
+  and fl.end_max > sim.min_subject_start
+  and sim.query_id = ia.na_sequence_id
+group by ia.source_id, fl.feature_source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.gi_i_ix&1 on apidb.GeneIsolateOverlap&1 (isolate_source_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.gi_g_ix&1 on apidb.GeneIsolateOverlap&1 (gene_source_id)
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
