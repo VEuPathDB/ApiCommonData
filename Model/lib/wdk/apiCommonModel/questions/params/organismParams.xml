@@ -269,6 +269,11 @@
       </sql>
     </sqlQuery>
 
+ <processQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
     <!--===================================================================-->
     <!-- for tree test -->  
     <!--===================================================================-->
@@ -294,10 +299,7 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-      <wsColumn name="internal" width="32" wsName="internal"/>
-      <wsColumn name="term" width="32" wsName="term"/>
-    </processQuery>
+   
     <!--===================================================================-->
     <!-- with chromosomes -->  
     <!--===================================================================-->
@@ -381,19 +383,25 @@
     </processQuery>
 
 
+    <!--===================================================================-->
+    <!-- with chromosomes and ORFs for orfs by location,  -->
+    <!--===================================================================-->
+
+
 <sqlQuery name="withChromosomesORFs" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
 
-            <sql  includeProjects="CryptoDB">
+ 
+           <sql  includeProjects="CryptoDB">
             SELECT * FROM (
-               SELECT 'Cryptosporidium parvum' as term,
+               SELECT 'Cryptosporidium parvum Iowa II' as term,
                        '''' ||'Cryptosporidium parvum Iowa II'|| '''' as internal 
                FROM dual
             )
-            </sql>          
+            </sql>           
 
-            <sql  includeProjects="ToxoDB">
+             <sql  includeProjects="ToxoDB">
             SELECT * FROM (
                 SELECT 'Toxoplasma gondii ME49' as term,
                         '''' ||'Toxoplasma gondii ME49'|| '''' as internal 
@@ -437,6 +445,69 @@
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
+
+
+   <!--===================================================================-->
+    <!-- with chromosomes and ORFs, used in orfs by location for PORTAL VALIDATION 
+         internal values NOT USED, only term values     
+         (1) consistent with term values provided by orgVQ used in location.js...
+                which we try to be the param used above by the component sites.
+         (2) consistent with term values harcoded in ApiDB_...js 
+                (used to access all sites when sequenceID is used)             -->        
+    <!--===================================================================-->
+
+
+<sqlQuery name="withChromosomesORFsValid" includeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+        <sql>
+            SELECT * FROM (
+               SELECT 'Giardia lamblia' as term,
+                       '''' ||'Giardia lamblia'|| '''' as internal 
+               FROM dual
+ UNION 
+               SELECT 'Trichomonas vaginalis' as term,
+                       '''' ||'Trichomonas vaginalis'|| '''' as internal 
+               FROM dual
+UNION 
+               SELECT 'Cryptosporidium parvum Iowa II' as term,
+                       '''' ||'Cryptosporidium parvum'|| '''' as internal 
+               FROM dual
+UNION 
+              SELECT 'Toxoplasma gondii ME49' as term,
+                        '''' ||'Toxoplasma gondii ME49'|| '''' as internal 
+                FROM dual 
+             UNION
+              SELECT 'Toxoplasma gondii GT1' as term,
+                        '''' ||'Toxoplasma gondii GT1'|| '''' as internal 
+                FROM dual 
+             UNION
+              SELECT 'Toxoplasma gondii VEG' as term,
+                        '''' ||'Toxoplasma gondii VEG'|| '''' as internal 
+                FROM dual 
+             UNION
+                SELECT 'Neospora caninum' as term,
+                        '''' ||'Neospora caninum'|| '''' as internal 
+                FROM dual
+UNION
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+            UNION
+                SELECT 'Plasmodium knowlesi' as term,
+                       '108360, 108361, 108362'   as internal 
+                FROM dual
+            UNION
+                SELECT 'Plasmodium vivax' as term,
+                       '108360, 108361, 108362'   as internal 
+                FROM dual
+            )
+            </sql>
+
+        </sqlQuery>
+
+
 
 <!--===================================================================-->
     <!-- with chromosomes and SNPs -->  

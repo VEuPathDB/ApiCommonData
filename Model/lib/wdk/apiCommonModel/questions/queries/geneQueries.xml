@@ -2626,7 +2626,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByIntraerythrocyticExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.synchronization"/>
+        <paramRef ref="geneParams.synchronization" quote="false"/>
         <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
@@ -2667,7 +2667,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByExtraerythrocyticExpression" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.extraerythrocytic_stages"/>
+        <paramRef ref="geneParams.extraerythrocytic_stages" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>

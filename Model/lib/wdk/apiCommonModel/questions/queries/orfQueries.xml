@@ -170,13 +170,17 @@
        </sql>
      </sqlQuery>
 
- <!--===================================================================-->
-    <!-- use withGenes so we access all sites -->  
-    <!--===================================================================-->
+ <!--===========================================================================-->
+  <!--   (In all portal  location queries) Use a parameter below with term values:
+         (1) consistent with term values provided by orgVQ used in location.js...
+                which we try to be the param used above by the component sites.
+         (2) consistent with term values harcoded in ApiDB_...js 
+                (used to access all sites when sequenceID is used)             -->  
+    <!--========================================================================-->
 
      <processQuery name="OrfsByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
         <paramRef ref="sharedParams.chromosomeOptional"   quote="false"/>
         <paramRef ref="sharedParams.sequenceId"   quote="false"/>
         <paramRef ref="sharedParams.start_point"/>
