@@ -74,6 +74,10 @@
           <useTermOnly value="true"/>
       </flatVocabParam>
 
+ <!--=====================================================================-->
+  <!-- organismWithChromosomes: I think it is not being used     -->
+  <!--=====================================================================-->
+
 
     <enumParam name="organismWithChromosomes"
                      prompt="Organism"
@@ -120,6 +124,11 @@
 
     </enumParam>
 
+
+ <!--=====================================================================-->
+  <!-- organismWithEstsInChromosomes: I think it is not being used     -->
+  <!--=====================================================================-->
+
     <enumParam name="organismWithEstsInChromosomes"
                      prompt="Organism"
                      multiPick="false"
@@ -138,12 +147,25 @@
       </enumList>   
     </enumParam>
 
+
+<!--=====================================================================-->
+  <!-- organismWithAssemblies: used in Assem by gene Overlap     -->
+  <!--=====================================================================-->
+
     <enumParam name="organismWithAssemblies"
                      prompt="Organism"
-                     multiPick="false"
-                     includeProjects="PlasmoDB,ApiDB" >
+                     multiPick="true"
+                     excludeProjects="TrichDB" >
       <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>   
+  <enumValue includeProjects="CryptoDB,ApiDB">
+          <term>Cryptosporidium parvum</term>
+          <internal>Cryptosporidium parvum Iowa II</internal>
+        </enumValue>
+  <enumValue includeProjects="GiardiaDB,ApiDB">
+          <term>Giardia lamblia</term>
+          <internal>Giardia lamblia</internal>
+        </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Plasmodium falciparum</term>
           <internal>Plasmodium falciparum 3D7</internal>
@@ -160,8 +182,30 @@
           <term>Plasmodium yoelii</term>
           <internal>Plasmodium yoelii yoelii str. 17XNL</internal>
         </enumValue>
+
+ <enumValue includeProjects="ToxoDB,ApiDB">
+          <term>Toxoplasma gondii ME49</term>
+          <internal>Toxoplasma gondii ME49</internal>
+        </enumValue>
+        <enumValue includeProjects="ToxoDB,ApiDB">
+          <term>Toxoplasma gondii GT1</term>
+          <internal>Toxoplasma gondii GT1</internal>
+        </enumValue>
+        <enumValue includeProjects="ToxoDB,ApiDB">
+          <term>Toxoplasma gondii VEG</term>
+          <internal>Toxoplasma gondii VEG</internal>
+        </enumValue>
+        <enumValue includeProjects="ToxoDB,ApiDB">
+          <term>Neospora caninum</term>
+          <internal>Neospora caninum</internal>
+        </enumValue>
+
       </enumList>   
+
+
     </enumParam>
+
+
 
   </paramSet> 
 
@@ -379,6 +423,136 @@
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
+
+
+
+<!--===================================================================-->
+    <!-- with chromosomes and ESTs -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withChromosomesESTs" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+    <sql  includeProjects="CryptoDB">
+            SELECT * FROM (
+               SELECT 'Cryptosporidium parvum Iowa II' as term,
+                       '''' ||'Cryptosporidium parvum Iowa II'|| '''' as internal 
+               FROM dual
+            )
+            </sql>           
+
+             <sql  includeProjects="ToxoDB">
+            SELECT * FROM (
+                SELECT 'Toxoplasma gondii ME49' as term,
+                        '''' ||'Toxoplasma gondii ME49'|| '''' as internal 
+                FROM dual 
+             UNION
+ SELECT 'Toxoplasma gondii GT1' as term,
+                        '''' ||'Toxoplasma gondii GT1'|| '''' as internal 
+                FROM dual 
+             UNION
+ SELECT 'Toxoplasma gondii VEG' as term,
+                        '''' ||'Toxoplasma gondii VEG'|| '''' as internal 
+                FROM dual 
+             UNION
+                SELECT 'Neospora caninum' as term,
+                        '''' ||'Neospora caninum'|| '''' as internal 
+                FROM dual
+            )
+            </sql>
+ 
+            <sql  includeProjects="PlasmoDB">
+            SELECT * FROM (
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+            UNION
+                SELECT 'Plasmodium vivax' as term,
+                       '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
+                FROM dual
+            )
+            </sql>
+
+
+        </sqlQuery>
+
+
+
+    <processQuery name="withChromosomesESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
+
+<!--===================================================================-->
+    <!-- with chromosomes and Assemblies, used in assembies by location -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withChromosomesAssems" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+      <column name="internal"/>
+      <column name="term"/>
+
+    <sql  includeProjects="CryptoDB">
+            SELECT * FROM (
+               SELECT 'Cryptosporidium parvum Iowa II' as term,
+                       '''' ||'Cryptosporidium parvum Iowa II'|| '''' as internal 
+               FROM dual
+            )
+            </sql>       
+
+             <sql  includeProjects="ToxoDB">
+            SELECT * FROM (
+                SELECT 'Toxoplasma gondii ME49' as term,
+                        '''' ||'Toxoplasma gondii ME49'|| '''' as internal 
+                FROM dual 
+             UNION
+ SELECT 'Toxoplasma gondii GT1' as term,
+                        '''' ||'Toxoplasma gondii GT1'|| '''' as internal 
+                FROM dual 
+             UNION
+ SELECT 'Toxoplasma gondii VEG' as term,
+                        '''' ||'Toxoplasma gondii VEG'|| '''' as internal 
+                FROM dual 
+             UNION
+                SELECT 'Neospora caninum' as term,
+                        '''' ||'Neospora caninum'|| '''' as internal 
+                FROM dual
+            )
+            </sql>
+ 
+            <sql  includeProjects="PlasmoDB">
+            SELECT * FROM (
+               SELECT 'Plasmodium falciparum' as term,
+                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
+               FROM dual
+            UNION
+                SELECT 'Plasmodium vivax' as term,
+                       '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
+                FROM dual
+ UNION
+                SELECT 'Plasmodium berghei' as term,
+                       '''' ||'Plasmodium berghei strain ANKA'|| ''''   as internal 
+                FROM dual
+ UNION
+                SELECT 'Plasmodium yoelii' as term,
+                       '''' ||'Plasmodium yoelii yoelii str. 17XNL'|| ''''   as internal 
+                FROM dual
+            )
+            </sql>
+
+
+        </sqlQuery>
+
+
+
+    <processQuery name="withChromosomesAssems" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
 
 
 <!--===================================================================-->

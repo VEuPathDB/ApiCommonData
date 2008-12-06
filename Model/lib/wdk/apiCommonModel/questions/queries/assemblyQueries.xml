@@ -95,9 +95,11 @@
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrV</paramValue>
         </testParamValues>
-
+<!--
        <paramRef ref="organismParams.organismWithAssemblies" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
+-->
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -110,6 +112,7 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="assembly_location"/>
+<!--
         <sqlParamValue name="orgParam" includeProjects="ToxoDB">
             <![CDATA[
               $$sequence_organism_text$$
@@ -120,6 +123,7 @@
               $$organismWithAssemblies$$
             ]]>
         </sqlParamValue>
+-->
         <sqlParamValue name="chrParam" includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               $$chromosomeOptional$$
@@ -181,7 +185,7 @@
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS assembly_location
 	    FROM  apidb.ASMALIGNMENTGENESUMMARY eags, apidb.blatalignmentlocation b, apidb.sequenceAttributes sa
-            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = &&orgParam&&)
+            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = $$organism$$)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
@@ -198,15 +202,14 @@
     </sqlQuery>
 
    
-<!-- while these queries only exist in Giardia we use a hidden organism param to go only there -->
-<!-- Once other sites have assembly queries, we will use the regular organism param instead -->
-
  <processQuery name="ByLocation" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
-        <paramRef ref="organismParams.hiddenOrganismGiardia"/>
-       
-        <paramRef ref="sharedParams.sequenceId" default="CH991779"/>
+         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
+         <paramRef ref="sharedParams.chromosomeOptional"  quote="false"/>
+  
+
+        <paramRef ref="sharedParams.sequenceId"  quote="false"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
@@ -217,7 +220,7 @@
 
         <wsColumn name="source_id" width="50" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
-        <wsColumn name="assembly_location"  width="32"/>
+        <wsColumn name="assembly_location"  width="100"/>
      </processQuery>
 
 
@@ -227,8 +230,8 @@
 
     <sqlQuery name="withGeneOverlap" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
             isCacheable='true'>
-       <paramRef ref="organismParams.organismWithAssemblies" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
+       <paramRef ref="organismParams.organismWithAssemblies"/>
+<!--        <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>  -->
        <paramRef ref="sharedParams.bp_overlap_gte"/>
        <paramRef ref="assemblyParams.overlapOrNot"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
@@ -244,6 +247,7 @@
        <column name="project_id"/>
        <column name="assembly_locations"/>
        <column name="genes"/>
+<!--
         <sqlParamValue name="orgParam" includeProjects="ToxoDB">
             <![CDATA[
               $$sequence_organism_text$$
@@ -254,6 +258,7 @@
               $$organismWithAssemblies$$
             ]]>
         </sqlParamValue>
+-->
        <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
               select * from (
@@ -306,7 +311,7 @@
                 SELECT i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ASMALIGNMENTGENESUMMARY i, apidb.SEQUENCEATTRIBUTES sa
                 WHERE 
-                sa.organism in (&&orgParam&&)
+                sa.organism in ($$organismWithAssemblies$$)
                 AND sa.na_sequence_id = i.target_na_sequence_id
                 AND i.is_consistent in ($$high_confidence_only$$)
                 AND i.is_best_alignment in ($$best_alignment_only$$)
@@ -317,7 +322,7 @@
                SELECT i.source_id,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
                 FROM apidb.ASMALIGNMENTGENESUMMARY i, apidb.SEQUENCEATTRIBUTES sa
                 WHERE 
-                sa.organism in (&&orgParam&&)
+                sa.organism in ($$organismWithAssemblies$$)
                 AND sa.na_sequence_id = i.target_na_sequence_id
                 AND i.assembly_gene_overlap_length >= $$bp_overlap_gte$$
                 AND i.is_consistent in ($$high_confidence_only$$)
@@ -336,9 +341,9 @@
 
  <processQuery name="withGeneOverlap" includeProjects="ApiDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-       <paramRef ref="organismParams.hiddenOrganismGiardia"/>
+       <paramRef ref="organismParams.organismWithAssemblies" quote="false"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
-       <paramRef ref="assemblyParams.overlapOrNot"/>
+       <paramRef ref="assemblyParams.overlapOrNot" quote="false"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
        <paramRef ref="assemblyParams.best_alignment_only" 
              groupRef="paramGroups.advancedParams"/>
