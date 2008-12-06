@@ -36,7 +36,7 @@ GRANT insert, select, update, delete ON ApiDB.WdkIsolateTable TO gus_w;
 GRANT select ON ApiDB.WdkIsolateTable TO gus_r;
 
 ------------------------------------------------------------------------------
-CREATE SEQUENCE apidb.wdkTable_sq;
+CREATE SEQUENCE apidb.wdkTable_pkseq;
 
 ------------------------------------------------------------------------------
 exit;
