@@ -59,13 +59,15 @@
           <paramValue name="sequenceId">Neo_chrIII</paramValue>
           <paramValue name="libraryId">Nc-1 Tachyzoite cDNA Library 2</paramValue> 
         </testParamValues>
-
+<!--
         <paramRef ref="organismParams.organismWithEstsInChromosomes" 
                   includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
-        <paramRef ref="sharedParams.chromosomeOptionalForEsts" 
-                  includeProjects="PlasmoDB,CryptoDB"/>
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>
+-->
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" 
+                  includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
+ <!--       <paramRef ref="sharedParams.chromosomeOptional" includeProjects="ToxoDB"/>  -->
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -81,12 +83,15 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="est_location"/>
+
         <sqlParamValue name="chroOpt" includeProjects="CryptoDB">
             <![CDATA[
-              (s.source_id IN ($$chromosomeOptionalForEsts$$)
+              (s.source_id IN ($$chromosomeOptional$$)
                OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
+
+<!-- not needed when we unify parameters
         <sqlParamValue name="orgParam" includeProjects="ToxoDB">
             <![CDATA[
               $$sequence_organism_text$$
@@ -107,9 +112,11 @@
               $$chromosomeOptionalForEsts$$
             ]]>
         </sqlParamValue>
+-->
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
+
         <sql excludeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
             select * from (
@@ -148,7 +155,7 @@
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS est_location
             FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceAttributes sa
-            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = &&orgParam&&)
+            WHERE ((sa.chromosome=$$chromosomeOptional$$ and sa.organism = $$organism$$)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  $$start_point$$
@@ -166,10 +173,10 @@
 
     <processQuery name="EstsByLocation" includeProjects="ApiDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <paramRef ref="sharedParams.chromosomeOptionalForEsts"/>
-        <paramRef ref="sharedParams.sequenceId"/>
+        <!--  <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>  -->
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
+        <paramRef ref="sharedParams.chromosomeOptional" quote="false"/>
+        <paramRef ref="sharedParams.sequenceId"  quote="false"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
         <paramRef ref="sharedParams.libraryId"/>
@@ -179,6 +186,7 @@
         <paramRef ref="sharedParams.min_percent_est_aligned" groupRef="paramGroups.advancedParams"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="est_location" width="100" wsName="est_location"/>
     </processQuery>
 
 
