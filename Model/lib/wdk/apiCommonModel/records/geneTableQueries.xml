@@ -1036,13 +1036,14 @@
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
-            <column name="isolate"/>
-            <column name="pvalue_exp"/>
+            <column name="total"/>
             <sql>
             <![CDATA[
-            SELECT gio.gene_source_id as source_id, '@PROJECT_ID@' as project_id, gio.isolate_source_id as isolate, gio.min_pvalue_exp as pvalue_exp
-            FROM apidb.GeneIsolateOverlap gio            
-            WHERE gio.gene_source_id = $$source_id$$
+            SELECT source_id, '@PROJECT_ID@' as project_id, count(*) as total
+            FROM (SELECT DISTINCT gio.gene_source_id as source_id, gio.isolate_source_id as isolate
+                  FROM apidb.GeneIsolateOverlap gio            
+                  WHERE gio.gene_source_id = $$source_id$$) isolates
+            GROUP BY source_id
             ]]>
            </sql>
        </sqlQuery>
