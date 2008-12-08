@@ -25,18 +25,11 @@
             <column name="isolation_source" /> 
             <column name="pcr_primers"/> 
             <column name="country"/> 
-            <column name="query_name"/> 
-            <column name="target_name"/> 
             <column name="data_type"/> 
-            <column name="min_subject_start"/> 
-            <column name="max_subject_end"/> 
-            <column name="length"/> 
             <column name="note"/> 
-            <column name="sequence"/> 
             <column name="product"/> 
             <column name="collected_by"/> 
             <column name="is_reference"/> 
-            <column name="map" /> 
             <sql>
                SELECT iso.source_id, 
                       iso.project_id, 
@@ -47,18 +40,11 @@
                       iso.description,
                       iso.pcr_primers,
                       iso.country,
-                      iso.query_name, 
-                      iso.target_name, 
-                      iso.min_subject_start,
-                      iso.max_subject_end,
                       iso.note,
                       iso.collected_by,
                       iso.product,
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
-                      iso.map, 
-                      iso.data_type,
-                      length(iso.sequence) length,
-                      iso.sequence
+                      iso.data_type
                 FROM   ApiDB.IsolateAttributes iso
            </sql>
       </sqlQuery>
@@ -159,26 +145,8 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="GeneOverlap" includeProjects="CryptoDB,ApiDB">
-            <column name="project_id"/>
-            <column name="source_id"/> 
-            <column name="gene"/>
-            <column name="gene_product"/>
-            <sql>
-            <![CDATA[
-            select ia.source_id, '@PROJECT_ID@' as project_id,
-                   gene.gene_product, gene.gene
-             from (select ia.source_id, 
-                          ga.product as gene_product, ga.source_id as gene
-                   from apidb.geneattributes ga, apidb.isolateattributes ia
-                   where ia.target_name = ga.sequence_id
-                   and ga.start_min <= ia.max_subject_end
-                   and ga.end_max >= ia.min_subject_start
-                  ) gene, apidb.isolateattributes ia
-             where ia.source_id = gene.source_id (+)
-            ]]>
-           </sql>
-      </sqlQuery>
+
+
 
     </querySet>
 </wdkModel>

@@ -153,23 +153,13 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.IsolateSource src, 
-                   DoTS.ExternalNASequence etn,
-                   SRes.ExternalDatabaseRelease edr,
-                   SRes.ExternalDatabase edb
-            WHERE etn.na_sequence_id IN
-                  (SELECT sc.na_sequence_id
-                   FROM DoTS.IsolateSource sc
-                   WHERE replace(sc.specific_host, chr(39), ':') in ($$specific_host$$)
-                   )
-                AND etn.source_id IS NOT NULL
-                AND etn.na_sequence_id = src.na_sequence_id
-                AND edr.external_database_id = edb.external_database_id
-                AND edr.external_database_release_id = etn.external_database_release_id
-                AND edb.name = 'Isolates Data'
-                AND edr.version = '2007-12-12'
-            ORDER BY etn.source_id
+           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+            from apidb.isolatevocabulary v, 
+                 (select source_id, data_type, regexp_replace(specific_host, ':.*') as short from apidb.isolateattributes) i
+            where i.short = v.term
+            and v.term in ($$specific_host$$)
+            and v.type = 'specific_host'
+            ORDER BY i.source_id
             ]]>
          </sql>
     </sqlQuery>
@@ -191,10 +181,13 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id
-            FROM   ApiDB.IsolateAttributes src 
-            WHERE  src.isolation_source in ($$isolation_source$$)
-            ORDER BY src.source_id
+           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+            from apidb.isolatevocabulary v, 
+                 (select source_id, data_type, regexp_replace(isolation_source, ':.*') as short from apidb.isolateattributes) i
+            where i.short = v.term
+            and v.term in ($$isolation_source$$)
+            and v.type = 'isolation_source'
+            ORDER BY i.source_id
             ]]>
          </sql>
     </sqlQuery>
@@ -215,11 +208,13 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM ApiDB.IsolateAttributes gf
-            WHERE gf.product IN ($$product$$)
-              AND gf.product IS NOT NULL
-            ORDER BY gf.source_id
+           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+            from apidb.isolatevocabulary v, 
+                 (select source_id, data_type, regexp_replace(product, ':.*') as short from apidb.isolateattributes) i
+            where i.short = v.term
+            and v.term in ($$product$$)
+            and v.type = 'product'
+            ORDER BY i.source_id
             ]]>
          </sql>
     </sqlQuery>
@@ -278,42 +273,25 @@
         </testParamValues>     
 
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
-        <sql includeProjects="PlasmoDB">
-          <![CDATA[
-            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-                               src.data_type
-            FROM   ApiDB.IsolateAttributes src
-            WHERE  replace(src.country, ',', ';') IN ($$country$$)
-                    AND  src.data_type in ($$type$$)
-            UNION
-            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-                   src.data_type
-            FROM   ApiDB.IsolateAttributes src,
-                   ApiDB.Continents cnt
-            WHERE  cnt.continent IN ($$continent$$) 
-              AND  src.data_type in ($$type$$) 
-              AND  src.country = cnt.country
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
+        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB">
+            <![CDATA[
+             AND  src.data_type in ($$type$$) 
             ]]>
-         </sql>
-
-        <sql includeProjects="CryptoDB">
+        </sqlParamValue>
+        <sql>
           <![CDATA[
-            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-						       src.data_type
-            FROM   ApiDB.IsolateAttributes src
-            WHERE  replace(src.country, ',', ';') IN ($$country$$)
-						UNION
-            SELECT DISTINCT src.source_id, '@PROJECT_ID@' as project_id,
-						       src.data_type
-            FROM   ApiDB.IsolateAttributes src,
-						       ApiDB.Continents cnt
-            WHERE  cnt.continent IN ($$continent$$)
-							AND  src.country = cnt.country
+           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+            from apidb.isolatevocabulary v, 
+                 (select source_id, data_type, regexp_replace(country, ':.*') as short from apidb.isolateattributes) i
+            where i.short = v.term
+            and v.term in ($$country$$)
+            and v.type = 'geographic_location'
+            &&dataTypeOptional&&
             ]]>
          </sql>
     </sqlQuery>

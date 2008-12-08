@@ -166,5 +166,51 @@
             </sql>
         </sqlQuery>
 
+
+<!-- THIS SHOULD BE A TABLE QUERY -->
+      <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="gene"/>
+            <column name="gene_product"/>
+            <column name="pvalue_mant"/>
+            <column name="pvalue_exp"/>
+            <column name="start_min"/>
+            <column name="end_max"/>
+            <column name="sequence_source_id"/>
+            <sqlParamValue name="pvalueCutoff">-5</sqlParamValue>
+            <sql>
+            <![CDATA[
+            select sim.*, gene.gene, gene.gene_product, '@PROJECT_ID@' as project_id
+            from (select i.source_id, s.pvalue_mant , s.pvalue_exp, 
+                   s.min_subject_start as start_min, s.max_subject_end as end_max, nas.source_id as sequence_source_id
+                  from dots.similarity s, apidb.isolateattributes i, 
+                       core.tableinfo t, dots.nasequence nas
+                  where s.query_id = i.na_sequence_id
+                  and nas.na_sequence_id = s.subject_id
+                   and t.table_id = s.subject_table_id
+                   and t.table_id = s.query_table_id
+                   and t.name = 'ExternalNASequence'
+                 ) sim left join
+                (select i.source_id, g.sequence_id, g.source_id as gene, g.product as gene_product
+                 from  dots.similarity s, apidb.isolateattributes i,
+                       apidb.geneattributes g, core.tableinfo t
+                 where s.query_id = i.na_sequence_id
+                  and s.subject_id = g.na_sequence_id
+                  and t.table_id = s.subject_table_id
+                  and t.table_id = s.query_table_id
+                  and s.min_subject_start >= g.start_min
+                  and s.max_subject_end <= g.end_max
+                  and t.name = 'ExternalNASequence'
+                  ) gene
+                  on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id
+            where sim.source_id = $$sourceId$$ 
+             and pvalue_exp <= &&pvalueCutoff&&
+             order by sim.source_id;
+            order by sim.pvalue_exp, pvalue_mant
+            ]]>
+           </sql>
+      </sqlQuery>
+
    </querySet>
 </wdkModel>

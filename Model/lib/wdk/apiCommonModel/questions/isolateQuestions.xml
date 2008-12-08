@@ -15,11 +15,11 @@
               noSummaryOnSingleRecord="false" includeProjects="CryptoDB,PlasmoDB,ApiDB">
 
              <attributesList includeProjects="CryptoDB"
-               summary="organism, strain, product, specific_host, map"/>
+               summary="organism, strain, product, specific_host"/>
               <attributesList includeProjects="PlasmoDB"
                  summary="strain, country, data_type, length" /> 
  <attributesList includeProjects="ApiDB"
-               summary="organism, strain, country, data_type, product, length, specific_host, map"/>
+               summary="organism, strain, country, data_type, product, length, specific_host"/>
              <summary>
                Find Isolates by ID.
              </summary>
@@ -57,6 +57,7 @@
     <!-- With Gene Overlap -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+<!--
     <question name="IsolateWithGeneOverlap"
               category="Other Attributes"
               displayName="Extent of Gene Overlap"
@@ -65,7 +66,7 @@
               noSummaryOnSingleRecord="false" includeProjects="CryptoDB,ApiDB">
 
       <attributesList includeProjects="CryptoDB,ApiDB"
-           summary="organism, product, map, gene, gene_product" />
+           summary="organism, product, gene, gene_product" />
 
       <summary>
          Find Isolates that overlap or not with a gene.
@@ -82,6 +83,7 @@
 
     </question>
 
+-->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Taxon -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -93,11 +95,11 @@
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               includeProjects="CryptoDB,PlasmoDB,ApiDB">
               <attributesList includeProjects="CryptoDB"
-                 summary="organism, strain, product, specific_host, map" /> 
+                 summary="organism, strain, product, specific_host" /> 
               <attributesList includeProjects="PlasmoDB"
                  summary="strain, country, data_type, length" />
               <attributesList includeProjects="ApiDB"
-                 summary="organism, strain, country, product, data_type, length, specific_host, map" /> 
+                 summary="organism, strain, country, product, data_type, length, specific_host" /> 
         <summary>
           Find isolates from one or more species.
         </summary> 
@@ -129,7 +131,7 @@
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               includeProjects="CryptoDB,ApiDB">
           <attributesList
-              summary="organism, strain, product, specific_host, map"
+              summary="organism, strain, product, specific_host"
           /> 
       <summary> 
         Find isolates by host name.
@@ -185,7 +187,7 @@
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               includeProjects="CryptoDB,ApiDB">
             <attributesList
-                 summary="organism, strain, product, specific_host, map"
+                 summary="organism, strain, product, specific_host"
             /> 
         <summary> 
            Find isolates by product name.
@@ -213,7 +215,7 @@
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               includeProjects="CryptoDB,ApiDB">
          <attributesList
-              summary="organism, strain, product, specific_host, map"
+              summary="organism, strain, product, specific_host"
          /> 
       <summary> 
         Find isolates by study name.
@@ -275,7 +277,7 @@
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               noSummaryOnSingleRecord="true" includeProjects="CryptoDB">
-       <attributesList summary="organism, strain, product, specific_host, map" /> 
+       <attributesList summary="organism, strain, product, specific_host" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
          Find isolates by author/submitter name. Asterisks ("*") can be used as a wildcard, matching any sequence of characters.
@@ -293,7 +295,7 @@
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
               noSummaryOnSingleRecord="false" includeProjects="ApiDB">
-       <attributesList summary="organism, strain, product, specific_host, map" /> 
+       <attributesList summary="organism, strain, product, specific_host" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
          Find Isolates by author name. Asterisks ("*") can be used as a wildcard, matching any sequence of characters.

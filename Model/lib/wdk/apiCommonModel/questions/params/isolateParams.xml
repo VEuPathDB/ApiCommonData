@@ -54,7 +54,8 @@
              queryRef="hostVQ.withIsolates"
              prompt="Host Name"
              multiPick="true"
-             quote="false">
+             quote="false"
+             displayType="treeBox">
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
@@ -71,7 +72,8 @@
             prompt="Product Name"
              default="--None--" 
             multiPick="true"
-            quote="false">
+            quote="false"
+            displayType="treeBox">
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
@@ -88,7 +90,8 @@
             prompt="Country Name"
             default="--None--"
             multiPick="true"
-            quote="false">
+            quote="false"
+            displayType="treeBox">
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
@@ -188,16 +191,30 @@
     <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
+    <column name="parentTerm"/>
     <sql>
     <![CDATA[
-    SELECT upper(substr(src.specific_host, 0, 1)) || substr(src.specific_host, 2) || ' - (' || count(src.specific_host) || ' isolates)' AS term,
-           replace(src.specific_host, chr(39), ':') AS internal
-    FROM   DoTS.IsolateSource src,
-           DoTS.ExternalNASequence etn
-    WHERE  src.specific_host is not null
-       AND src.na_sequence_id = etn.na_sequence_id
-    GROUP BY src.specific_host
-    ORDER BY upper(src.specific_host)
+ select v.term, v.term as internal, v.parent as parentTerm
+ from apidb.isolatevocabulary v, 
+      (select distinct regexp_replace(specific_host, ':.*') term from apidb.isolateattributes) c
+ where v.term = c.term
+ and v.type = 'specific_host'
+ union
+ select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
+ union
+ select 'non human' as term, 'non human' as internal, 'Mammals' as parentterm from dual
+ union
+ select 'Amphibians' as term, 'Amphibians' as internal, '' as parentterm from dual
+ union
+ select 'Mollusks' as term, 'Mollusks' as internal, '' as parentterm from dual
+ union
+ select 'Mammals' as term, 'Mammals' as internal, '' as parentterm from dual
+ union
+ select 'Birds' as term, 'Birds' as internal, '' as parentterm from dual
+ union
+ select 'marsupial' as term, 'marsupial' as internal, 'Mammals' as parentterm from dual
+ union
+ select 'rodent' as term, 'rodent' as internal, 'Mammals' as parentterm from dual
     ]]>
     </sql>
     </sqlQuery>
@@ -211,18 +228,16 @@
 
   <querySet name="isolationSourceVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="CryptoDB">
-    <column name="internal"/>
     <column name="term"/>
+    <column name="internal"/>
     <sql>
     <![CDATA[
-    SELECT term, internal FROM (
-    SELECT upper(substr(src.isolation_source, 0, 1)) || substr(src.isolation_source, 2) || ' (' || count(src.isolation_source) || ' isolates)' AS term,
-           src.isolation_source      AS internal
-    FROM   ApiDB.IsolateAttributes src
-    WHERE  src.isolation_source is not null
-    GROUP BY src.isolation_source
-    )
-    ORDER BY term
+select initcap(v.term) as term, v.term as internal
+from apidb.isolatevocabulary v, 
+     (select distinct regexp_replace(isolation_source, ':.*') term from apidb.isolateattributes) c
+where v.term = c.term
+and v.type = 'isolation_source'
+order by term asc
     ]]>
     </sql>
     </sqlQuery>
@@ -238,13 +253,16 @@
     <sqlQuery name="withIsolates" includeProjects="CryptoDB">
     <column name="internal"/>
     <column name="term"/>
+    <column name="parentTerm"/>
     <sql>
     <![CDATA[
-          SELECT decode(gf.product, '18S small subunit ribosomal RNA | 5.8S ribosomal RNA | internal transcribed spac', '5.8S rRNA | ITS1 | 18S rRNA', gf.product) || ' (' || count(gf.product) || ' isolates)' as term,
-                 gf.product as internal
-          FROM  ApiDB.IsolateAttributes gf
-          GROUP BY gf.product
-          ORDER BY gf.product
+select v.term, v.term as internal, v.parent as parentTerm
+from apidb.isolatevocabulary v, 
+     (select distinct regexp_replace(product, ':.*') term from apidb.isolateattributes) c
+where v.term = c.term
+and v.type = 'product'
+union
+select 'others' as term, 'others' as internal, '' as parentterm from dual
     ]]>
     </sql>
     </sqlQuery>
@@ -290,20 +308,20 @@
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
- <column name="display"/>
+      <column name="parentTerm"/>
+
       <sql>
       <![CDATA[
-      SELECT replace(src.country, ',', ';') || ' - (' || count(src.country) || ' isolates)' AS display,
-             replace(src.country, ',', ';') || ' - (' || count(src.country) || ' isolates) - @PROJECT_ID@' AS term,
-             replace(src.country, ',', ';') AS internal
-      FROM   ApiDB.IsolateAttributes src
-      WHERE  src.country is not null
-      GROUP BY src.country
-    UNION
-      SELECT '--None--' AS display,
-             '--None--' AS term,
-             '0' AS internal
-      FROM   dual
+select v.term, v.term as internal, initcap(v.parent) as parentTerm
+from apidb.isolatevocabulary v, 
+     (select distinct regexp_replace(country, ':.*') term from apidb.isolateattributes) c
+where v.term = c.term
+and v.type = 'geographic_location'
+union 
+select distinct initcap(parent) as term, initcap(parent) as internal, '' as parentterm 
+from apidb.isolatevocabulary where type = 'geographic_location'
+union 
+select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       ]]>
       </sql>
     </sqlQuery>
@@ -380,9 +398,12 @@ and tn.taxon_id = t.taxon_id
 and tn.name_class = 'scientific name'
 and t.parent_id = p.taxon_id
 and p.name_class =  'scientific name'
-and i.organism in ('Cryptosporidium parvum Iowa' ,'Cryptosporidium parvum Iowa', 'Cryptosporidium parvum', 'Cryptosporidium')
 union
 select 'Cryptosporidium' as term, 'Cryptosporidium' as internal, '' as parentTerm from dual
+union
+select 'unclassified Cryptosporidium' as term, 'unclassified Cryptosporidium' as internal, 'Cryptosporidium' as parentTerm from dual
+union
+select 'environmental samples' as term, 'environmental samples' as internal, 'Cryptosporidium' as parentTerm from dual
      ]]>
       </sql>
 
