@@ -391,4 +391,27 @@
 
   </questionSet>
 
+
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+  <!-- Isolate Data Dump questions (internal)  -->
+  <!--===========================================================================-->
+  <!--===========================================================================-->
+
+  <questionSet name="IsolateDumpQuestions" excludeProjects="ApiDB"
+             displayName="Isolate Data Dump Questions"
+             internal="true">
+
+  <!--===========================================================================-->
+  <!-- question that retrieves all isolates by organism  -->
+  <!--===========================================================================-->
+    <question name="IsolateDumpQuestion" excludeProjects="ApiDB"
+         displayName="Find isolates to dump"
+              queryRef="IsolateIds.IsolateDump"
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+        <description>Find all isolates by organism</description>
+    </question>
+
+  </questionSet>
+
 </wdkModel>
