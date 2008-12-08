@@ -195,7 +195,7 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+           select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
             from apidb.isolatevocabulary v, 
                  (select source_id, data_type, regexp_replace(product, ':.*') as short from apidb.isolateattributes) i
             where i.short = v.term
