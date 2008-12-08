@@ -154,16 +154,6 @@ sub getTaxonIdList {
   }
 }
 
-sub runCmdOnCluster {
-  my ($self, $test, $cmd) = @_;
-
-  my $clusterServer = $self->getGlobalConfig('clusterServer');
-
-  my $userName = (caller(0))[3];  # perl trick to get user name
-
-  $self->runCmd($test, "ssh -2 $userName\@$clusterServer '$cmd'");
-}
-
 
 1;
 
