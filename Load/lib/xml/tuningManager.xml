@@ -2122,7 +2122,7 @@ ON apidb.Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, 
     <sql>
       <![CDATA[
 CREATE TABLE apidb.IsolateAttributes&1 NOLOGGING AS
-select na_sequence_id,
+select na_sequence_id, taxon_id,
        external_db_version,
        external_db_name,
        source_id,
@@ -2146,7 +2146,7 @@ select iso.*,
        prod.product_alias,
        'CryptoDB' as project_id,
        'PopSet' data_type
-from (SELECT etn.na_sequence_id, 
+from (SELECT etn.na_sequence_id, etn.taxon_id,
         edr.version as external_db_version, 
         edb.name as external_db_name,
         etn.source_id as source_id,
@@ -2171,7 +2171,7 @@ from (SELECT etn.na_sequence_id,
        left join (select distinct na_sequence_id, product, product_alias from dots.isolatefeature) prod
             on prod.na_sequence_id = iso.na_sequence_id
 UNION
-SELECT etn.na_sequence_id, 
+SELECT etn.na_sequence_id, etn.taxon_id,
        edr.version as external_db_version, 
        edb.name as external_db_name,
        'BC.' || etn.na_sequence_id as source_id,
@@ -2199,7 +2199,7 @@ WHERE  etn.na_sequence_id = src.na_sequence_id
    AND edb.name = 'Isolate barcode data from Broad'
    AND edr.version = '2008-06-13'
 UNION
-SELECT etn.na_sequence_id,
+SELECT etn.na_sequence_id, etn.taxon_id,
        edr.version as external_db_version, 
        edb.name as external_db_name,
        'CP.' || etn.na_sequence_id as source_id,
@@ -2997,7 +2997,7 @@ select sim.similarity_id, sim.query_id, sim.subject_id, sim.query_table_id,
        simp.score as span_score, simp.query_start, simp.query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'direct' as location_mapping
+       'direct' as location_mapping, 1 as is_top_level
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti
 where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
@@ -3037,7 +3037,7 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        end as query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'virtual' as location_mapping
+       'virtual' as location_mapping, 1 as is_top_level
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
      dots.NaSequence contig, dots.SequencePiece sp, dots.NaSequence scaffold
 where sim.similarity_id = simp.similarity_id
@@ -3046,6 +3046,20 @@ where sim.similarity_id = simp.similarity_id
   and sim.query_id = sp.piece_na_sequence_id
   and sp.piece_na_sequence_id = contig.na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+update apidb.SimilaritySpanLocation&1
+set is_top_level = 0
+where subject_id in (select piece_na_sequence_id from dots.SequencePiece)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+update apidb.SimilaritySpanLocation&1
+set pvalue_exp = (select min(pvalue_exp) from apidb.SimilaritySpanLocation&1)
+where pvalue_mant = 0
       ]]>
     </sql>
     <sql>
