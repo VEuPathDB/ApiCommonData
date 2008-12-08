@@ -398,8 +398,8 @@ and tn.taxon_id = t.taxon_id
 and tn.name_class = 'scientific name'
 and t.parent_id = p.taxon_id
 and p.name_class =  'scientific name'
-union
-select 'Cryptosporidium' as term, 'Cryptosporidium' as internal, '' as parentTerm from dual
+--union
+--select 'Cryptosporidium' as term, 'Cryptosporidium' as internal, '' as parentTerm from dual
 union
 select 'unclassified Cryptosporidium' as term, 'unclassified Cryptosporidium' as internal, 'Cryptosporidium' as parentTerm from dual
 union

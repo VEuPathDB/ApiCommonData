@@ -103,23 +103,10 @@
         <column name="data_type" includeProjects="PlasmoDB"/>
         <sql includeProjects="CryptoDB">
           <![CDATA[
-            SELECT DISTINCT etn.source_id, '@PROJECT_ID@' as project_id
-            FROM   DoTS.IsolateSource src, 
-                   DoTS.ExternalNASequence etn,
-                   SRes.ExternalDatabaseRelease edr,
-                   SRes.ExternalDatabase edb
-            WHERE  etn.na_sequence_id IN
-                   (SELECT sc.na_sequence_id
-                    FROM DoTS.IsolateSource sc
-                    WHERE sc.organism in ($$strain$$)
-                   )
-               AND etn.source_id IS NOT NULL
-               AND etn.na_sequence_id = src.na_sequence_id
-               AND edr.external_database_id = edb.external_database_id
-               AND edr.external_database_release_id = etn.external_database_release_id
-               AND edb.name = 'Isolates Data'
-               AND edr.version = '2007-12-12'
-            ORDER BY etn.source_id
+           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+            from apidb.isolateattributes i
+            where i.organism in ($$strain$$)
+            ORDER BY i.source_id
             ]]>
          </sql>
 
