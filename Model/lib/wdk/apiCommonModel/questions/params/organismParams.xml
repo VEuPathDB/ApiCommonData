@@ -155,7 +155,7 @@
     <enumParam name="organismWithAssemblies"
                      prompt="Organism"
                      multiPick="true"
-                     excludeProjects="TrichDB" >
+                     excludeProjects="TrichDB,TrypDB" >
       <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>   
   <enumValue includeProjects="CryptoDB,ApiDB">
@@ -1236,7 +1236,7 @@ UNION
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="cp-tg" excludeProjects="ApiDB,TrypDB" isCacheable="true">
 
       <testParamValues excludeProjects="CryptoDB,ToxoDB" minRows="0"/>
 
