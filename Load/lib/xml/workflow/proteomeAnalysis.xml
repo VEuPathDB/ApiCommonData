@@ -56,6 +56,11 @@
       <depends name="makeDataDir"/>
     </step>
 
+    <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="extractProteins"/>
+    </step>
+
     <step name="runTmhmm"
           stepClass="ApiCommonData::Load::WorkflowSteps::RunTmhmm">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
@@ -129,12 +134,6 @@
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
       <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <depends name="findNrdbXrefs"/>
-    </step>
-
-    <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
-      <paramValue name="parentDir">seqfiles</paramValue>
-      <paramValue name="fileOrDirToMirror">AnnotatedProteins.fsa</paramValue>
-      <depends name="extractProteins"/>
     </step>
 
     <subgraph name="interpro" xmlFile="interproWorkflow.xml">

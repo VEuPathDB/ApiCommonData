@@ -37,6 +37,11 @@
     <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
 
+   <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
   <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
   </step>
