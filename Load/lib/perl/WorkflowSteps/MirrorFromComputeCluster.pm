@@ -19,15 +19,15 @@ sub run {
 
   my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
 
-  $self->copyFromCluster($test, "$computeClusterDataDir/$relativeDir",
-			 $filename,
-			 "$localDataDir/$relativeDir");
-
   if ($test) {
     $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
     if ($outputFile) {
       $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
     };
+  } else {
+    $self->copyFromCluster("$computeClusterDataDir/$relativeDir",
+			   $filename,
+			   "$localDataDir/$relativeDir");
   }
 }
 

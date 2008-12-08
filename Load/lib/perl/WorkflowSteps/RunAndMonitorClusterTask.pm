@@ -13,7 +13,7 @@ sub run {
   my $processorsPerNode = $self->getParamValue('processorsPerNode');
 
   # get global properties
-  my $clusterServer = $self->getGlobalConfig('clusterServer');
+  my $clusterServer = $self->getWorkflowConfig('clusterServer');
   my $clusterQueue = $self->getGlobalConfig('clusterQueue');
 
   my $clusterTaskLogsDir = $self->getComputeClusterTaskLogsDir();
@@ -22,7 +22,7 @@ sub run {
   my $userName = (caller(0))[3];  # perl trick to get user name
 
   my $propFile = "$clusterDataDir/$taskInputDir/task.prop";
-  my $logFile = "$clusterTaskLogsDir/" . $self->getFullName() . ".log";
+  my $logFile = "$clusterTaskLogsDir/" . $self->getName() . ".log";
 
   $self->runAndMonitorClusterTask($test, $userName, $clusterServer, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
 }
