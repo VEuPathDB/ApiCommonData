@@ -320,7 +320,7 @@ where v.term = c.term
 and v.type = 'geographic_location'
 union 
 select distinct initcap(parent) as term, initcap(parent) as internal, '' as parentterm 
-from apidb.isolatevocabulary where type = 'geographic_location'
+from apidb.isolatevocabulary where type = 'geographic_location' and parent is not null
 union 
 select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       ]]>
