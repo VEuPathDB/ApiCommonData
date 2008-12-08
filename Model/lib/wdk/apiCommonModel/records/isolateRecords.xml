@@ -42,6 +42,15 @@
       <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
                   implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
 
+          <!-- the report maker used on commandline to generate detailed download files -->
+          <reporter name="fullRecordDump" displayName="Detailed - text" 
+                    inReportMaker="false"
+                    implementation="org.gusdb.wdk.model.report.FullRecordReporter">
+              <property name="table_cache">apidb.WdkIsolateTable</property>
+              <property name="project_id_column">project_id</property>
+              <property name="record_id_column">source_id</property>
+          </reporter>
+
 
       <!-- =================================================================== -->
       <!--  Attributes  ++++++++-->
@@ -172,7 +181,7 @@
         <columnAttribute name="source_id" internal="true"/>
         <columnAttribute  name="project_id" internal="true"/>
         <columnAttribute  name="gene" internal="true"/>
-        <columnAttribute  displayName="Gene Product" name="gene_project" internal="false"/>
+        <columnAttribute  displayName="Gene Product" name="gene_product" internal="false"/>
         <columnAttribute  name="pvalue_mant" internal="true"/>
         <columnAttribute  name="pvalue_exp" internal="true"/>
 

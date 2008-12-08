@@ -204,9 +204,8 @@
                   and t.name = 'ExternalNASequence'
                   ) gene
                   on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id
-            where sim.source_id = $$sourceId$$ 
+            where sim.source_id = $$source_id$$ 
              and pvalue_exp <= &&pvalueCutoff&&
-             order by sim.source_id;
             order by sim.pvalue_exp, pvalue_mant
             ]]>
            </sql>
