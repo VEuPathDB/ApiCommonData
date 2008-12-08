@@ -391,6 +391,23 @@
  <wsColumn name="Counter" width="30" columnType="number"/>
     </processQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- dump all isolates -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="IsolateDump"
+              isCacheable='true'>
+      <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
+      <column name="source_id" />
+      <column name="project_id"/>
+      <sql>
+         <![CDATA[
+         select ia.source_id, '@PROJECT_ID@' as project_id
+         from apidb.IsolateAttributes ia
+        ]]>
+      </sql> 
+    </sqlQuery> 
+
   </querySet>
 
 </wdkModel>
