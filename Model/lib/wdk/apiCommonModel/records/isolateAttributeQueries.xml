@@ -49,104 +49,42 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,ApiDB">
+      <sqlQuery name="ProteinSequenceCount" includeProjects="CryptoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
-            <column name="gene_description"/>
-            <column name="protein_sequence"/>
+            <column name="protein_sequence_count"/>
             <sql>
-            select ia.source_id, p.gene_description,
-                   p.protein_sequence, '@PROJECT_ID@' as project_id
-            from  (SELECT etn.source_id, 
-                      tas.description as gene_description,
-                      tas.sequence as protein_sequence
-               FROM   DoTS.TranslatedAAFeature taf,
-                      DoTS.TranslatedAASequence tas,
-                      DoTS.Transcript trp, 
-                      DoTS.IsolateFeature gf,
-                      DoTS.ExternalNASequence etn,
-                      SRes.ExternalDatabaseRelease edr,
-                      SRes.ExternalDatabase edb
-               WHERE  edr.external_database_id = edb.external_database_id
-                  AND edr.external_database_release_id = etn.external_database_release_id
-                  AND edb.name = 'Isolates Data'
-                  AND trp.na_feature_id = taf.na_feature_id
-                  AND tas.aa_sequence_id = taf.aa_sequence_id
-                  AND trp.parent_id = gf.na_feature_id
-                  AND etn.na_sequence_id = gf.na_sequence_id
-                  ) p, apidb.isolateattributes ia
-            where ia.source_id = p.source_id (+)
-           </sql>
-      </sqlQuery>
-
-      <sqlQuery name="Reference" includeProjects="CryptoDB,ApiDB">
-            <column name="project_id"/>
-            <column name="source_id"/> 
-            <column name="title"/>
-            <column name="author"/>
-            <column name="year"/>
-            <column name="journal_or_book_name"/>
-            <column name="journal_vol"/>
-            <column name="journal_page"/>
-            <sql>
-            select ia.source_id, '@PROJECT_ID@' as project_id,
-                   r.title, r.author, r.year, r.journal_or_book_name, 
-                   r.journal_vol, r.journal_page
-            from ( SELECT rownum as row_number, 
-                      etn.source_id, 
-                      ref.title,
-                      ref.author,
-                      ref.year,
-                      ref.journal_or_book_name,
-                      ref.journal_vol,
-                      ref.journal_page
-               FROM   DoTS.NASequence etn,
-                      DoTS.NASequenceRef nasr,
-                      SRES.Reference ref,
-                      SRes.ExternalDatabaseRelease edr,
-                      SRes.ExternalDatabase edb
-               WHERE  edr.external_database_id = edb.external_database_id
-                  AND edr.external_database_release_id = etn.external_database_release_id
-                  AND edb.name = 'Isolates Data'
-                  AND edr.version = '2007-12-12'
-                  AND nasr.reference_id = ref.reference_id
-                  AND etn.na_sequence_id = nasr.na_sequence_id
-                  and rownum = 1
-               ORDER BY ref.reference_id asc
-               ) r, apidb.isolateattributes ia
-            where ia.source_id = r.source_id (+)
-           </sql>
-      </sqlQuery>
-
-      <sqlQuery name="UniqueReference" includeProjects="CryptoDB,ApiDB">
-            <column name="project_id"/>
-            <column name="source_id"/> 
-            <column name="unique_title"/>
-            <column name="unique_author"/>
-            <column name="unique_year"/>
-            <sql>
-            SELECT distinct etn.source_id, 
-                   ref.title unique_title, 
-                   ref.author unique_author, 
-                   ref.year unique_year,
-                   '@PROJECT_ID@' as project_id
-            FROM   DoTS.NASequence etn,
-                   DoTS.NASequenceRef nasr,
-                   SRES.Reference ref,
-                   SRes.ExternalDatabaseRelease edr,
-                   SRes.ExternalDatabase edb
-            WHERE  edr.external_database_id = edb.external_database_id
-               AND edr.external_database_release_id = etn.external_database_release_id
-               AND edb.name = 'Isolates Data'
-               AND edr.version = '2007-12-12'
-               AND nasr.reference_id = ref.reference_id
-               AND etn.na_sequence_id = nasr.na_sequence_id
-               AND ref.title != 'Direct Submission'
+            select a.source_id, a.project_id, count(*) as protein_sequence_count
+            from (SELECT i.source_id, '@PROJECT_ID' as project_id
+                  From (select etn.source_id, tas.sequence as protein_sequence
+                        FROM   DoTS.TranslatedAAFeature taf, DoTS.Transcript trp, 
+                               DoTS.TranslatedAASequence tas, DoTS.IsolateFeature gf,
+                               DOTS.NALocation l, DoTS.ExternalNASequence etn
+                        WHERE trp.na_feature_id = taf.na_feature_id
+                        AND tas.aa_sequence_id = taf.aa_sequence_id
+                        AND trp.parent_id = gf.na_feature_id
+                        AND etn.na_sequence_id = gf.na_sequence_id
+                        AND l.na_feature_id = gf.na_feature_id
+                        ) p right join apidb.isolateattributes i
+                        on i.source_id = p.source_id
+                  ) a
+            group by a.source_id, a.project_id
            </sql>
       </sqlQuery>
 
 
-
+      <sqlQuery name="NucleicAcidSequence" includeProjects="CryptoDB,ApiDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="sequence"/>
+            <column name="length"/>
+            <sql>
+           select i.source_id, '@PROJECT_ID@' as project_id,
+                  s.sequence, length(s.sequence) as length
+           from apidb.isolateattributes i, dots.nasequence s
+            where i.source_id = s.source_id
+           </sql>
+      </sqlQuery>
 
     </querySet>
 </wdkModel>

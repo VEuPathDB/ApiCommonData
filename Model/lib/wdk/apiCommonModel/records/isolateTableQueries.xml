@@ -24,6 +24,8 @@
        <!-- Isolate Publication -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+<!--
+
        <sqlQuery name="Reference" isCacheable="true" includeProjects="CryptoDB,ApiDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -56,9 +58,13 @@
             </sql>
         </sqlQuery>
 
+-->
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolates in the same study -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+<!-- Replace with link to summary page using the Study Question
 
        <sqlQuery name="IsoStudy" isCacheable="true" includeProjects="CryptoDB,ApiDB">
 
@@ -118,6 +124,8 @@
             </sql>
         </sqlQuery>
 
+-->
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolate Barcode SNPs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -167,7 +175,6 @@
         </sqlQuery>
 
 
-<!-- THIS SHOULD BE A TABLE QUERY -->
       <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
@@ -207,6 +214,60 @@
             where sim.source_id = $$source_id$$ 
              and pvalue_exp <= &&pvalueCutoff&&
             order by sim.pvalue_exp, pvalue_mant
+            ]]>
+           </sql>
+      </sqlQuery>
+
+
+      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,ApiDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="protein_sequence"/>
+            <sql>
+            <![CDATA[
+            SELECT etn.source_id, '@PROJECT_ID' as project_id
+                      tas.sequence as protein_sequence
+               FROM   DoTS.TranslatedAAFeature taf,
+                      DoTS.Transcript trp, 
+                      DoTS.TranslatedAASequence tas,
+                      DoTS.IsolateFeature gf,
+                      DOTS.NALocation l,
+                      DoTS.ExternalNASequence etn
+               WHERE trp.na_feature_id = taf.na_feature_id
+                  AND tas.aa_sequence_id = taf.aa_sequence_id
+                  AND trp.parent_id = gf.na_feature_id
+                  AND etn.na_sequence_id = gf.na_sequence_id
+                  AND l.na_feature_id = gf.na_feature_id
+                  ORDER by etn.source_id, l.start_min
+            ]]>
+           </sql>
+      </sqlQuery>
+
+
+      <sqlQuery name="Reference" includeProjects="CryptoDB,ApiDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="title"/>
+            <column name="author"/>
+            <column name="journal"/>
+            <column name="studyLink"/>
+            <sql>
+            <![CDATA[
+            SELECT distinct ia.source_id, 
+                   ref.title,
+                   ref.author,
+                   ref.journal_or_book_name as journal,
+                   '@PROJECT_ID@' as project_id,
+                   case when title is null then null
+                   else '/showSummary.do?questionFullName=IsolateQuestions.IsolateByStudyt&' || 'myProp(study)=' || title end as studyLink
+            FROM   DoTS.NASequence etn,
+                   DoTS.NASequenceRef nasr,
+                   SRES.Reference ref,
+                   apidb.isolateattributes ia
+            WHERE   nasr.reference_id = ref.reference_id
+               AND etn.na_sequence_id = nasr.na_sequence_id
+               AND ia.source_id = etn.source_id (+)
+               AND ref.title != 'Direct Submission'
             ]]>
            </sql>
       </sqlQuery>

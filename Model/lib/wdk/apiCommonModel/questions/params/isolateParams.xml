@@ -281,18 +281,10 @@ select 'others' as term, 'others' as internal, '' as parentterm from dual
     <column name="term"/>
     <sql>
     <![CDATA[
-    SELECT distinct term, internal from (
-    SELECT replace(ref.title, ',', ';') as term,
-           replace(ref.title, ',', ';') as internal
-    FROM   SRES.Reference ref,
-           SRes.ExternalDatabaseRelease edr,
-           SRes.ExternalDatabase edb
+    SELECT distinct replace(ref.title, ',', ';') as term,
+                    replace(ref.title, ',', ';') as internal
+    FROM   SRES.Reference ref
     WHERE  ref.title IS NOT NULL
-       AND edr.external_database_id = edb.external_database_id
-       AND edb.name = 'Isolates Data'
-       AND edr.version = '2007-12-12'
-    )
-    ORDER BY term
     ]]>
     </sql>
     </sqlQuery>

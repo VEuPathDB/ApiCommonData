@@ -17,33 +17,18 @@
         <paramRef ref="isolateParams.isolate_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql includeProjects="CryptoDB">
+        <sql>
             <![CDATA[
-                SELECT distinct etn.source_id as source_id, 
+                SELECT distinct i.source_id as source_id, 
                        '@PROJECT_ID@' as project_id
-                FROM   DoTS.ExternalNASequence etn,
-                       SRes.ExternalDatabaseRelease edr,
-                       SRes.ExternalDatabase edb, 
+                FROM   apidb.isolateattributes i,
                        @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
                  WHERE ds.dataset_id = $$isolate_id$$
-                   AND lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
-                                                       '*', '%'), '[[:space:]]', '')
-                   AND edr.external_database_id = edb.external_database_id
-                   AND edr.external_database_release_id = etn.external_database_release_id
-                   AND edb.name = 'Isolates Data'
-                   AND edr.version = '2007-12-12'
-            ]]>
-        </sql>
-        <sql includeProjects="PlasmoDB">
-            <![CDATA[
-            SELECT source_id, '@PROJECT_ID@' as project_id
-            FROM   ApiDB.IsolateAttributes, 
-                   @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
-            WHERE  ds.dataset_id = $$isolate_id$$
-            AND    lower(source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
+                   AND lower(i.source_id) LIKE REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),
                                                        '*', '%'), '[[:space:]]', '')
             ]]>
         </sql>
+
     </sqlQuery>
 
     <processQuery name="IsolateByIsolateId" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
@@ -228,17 +213,12 @@
             FROM DoTS.ExternalNASequence etn, 
                  DoTS.NASequenceRef nasr,
                  SRES.Reference ref,
-                 SRes.ExternalDatabaseRelease edr,
-                 SRes.ExternalDatabase edb
+                 apidb.isolateattributes ia
             WHERE nasr.reference_id = ref.reference_id
             AND nasr.na_sequence_id = etn.na_sequence_id
+            and ia.source_id = etn.source_id
             AND replace(ref.title, ',', ';') IN ($$study$$)
-            AND ref.title IS NOT NULL
-            AND edr.external_database_id = edb.external_database_id
-            AND edr.external_database_release_id = etn.external_database_release_id
-            AND edb.name = 'Isolates Data'
-            AND edr.version = '2007-12-12'
-            ORDER BY etn.source_id
+
             ]]>
          </sql>
     </sqlQuery>

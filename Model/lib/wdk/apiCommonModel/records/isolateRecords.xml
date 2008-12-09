@@ -92,10 +92,19 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Protein Sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
+<!--
       <attributeQueryRef ref="IsolateAttributes.ProteinSequence" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="protein_sequence" displayName="Protein Sequence" internal="true" includeProjects="CryptoDB"/>
          <columnAttribute name="gene_description" displayName="Gene Description" internal="true" includeProjects="CryptoDB,ApiDB"/>
+      </attributeQueryRef>
+-->
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      <!-- Isolate DNA Sequence attributes -->  
+      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,ApiDB">
+         <columnAttribute name="sequence" displayName="DNA Sequence" internal="true" includeProjects="CryptoDB"/>
+         <columnAttribute name="length" displayName="Length" internal="true" includeProjects="CryptoDB"/>
       </attributeQueryRef>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -113,7 +122,7 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Reference attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
+<!--
       <attributeQueryRef ref="IsolateAttributes.Reference" includeProjects="CryptoDB,ApiDB">
          <columnAttribute name="title" displayName="Title" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
@@ -122,15 +131,13 @@
          <columnAttribute name="journal_vol" displayName="Volume" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
          <columnAttribute name="journal_page" displayName="Page" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
       </attributeQueryRef>
-
+-->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <!-- Reference attributes -->  
+      <!-- Protein Sequence Count ie. number of protein sequence for this isolate -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.UniqueReference" includeProjects="CryptoDB,ApiDB">
-         <columnAttribute name="unique_title" displayName="Study Name" internal="false" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="unique_author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="unique_year" displayName="Year" internal="true"  inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequenceCount" includeProjects="CryptoDB,ApiDB">
+         <columnAttribute name="protein_sequence_count"  internal="true"  inReportMaker="false" includeProjects="CryptoDB,ApiDB"/>
      </attributeQueryRef>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -143,11 +150,24 @@
         <columnAttribute displayName="Title" name="title"/>
         <columnAttribute displayName="Author" name="author"/>
         <columnAttribute displayName="Journal" name="journal_or_book_name"/>
+        <columnAttribute internal="true" name="studyLink"/>
+       <linkAttribute displayName="Other Isolates" name="other_isolates" inReportMaker="false" internal="false" >
+           <displayText>
+            <![CDATA[ view ]]>
+              </displayText>
+              <url>
+              <![CDATA[                       
+               $$studyLink$$
+              ]]>
+              </url>
+        </linkAttribute>
      </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Other Isolates in this Study -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+<!--
 
      <table name="IsoStudy" includeProjects="CryptoDB,ApiDB"
             displayName="All the isolate in the study"
@@ -170,6 +190,8 @@
 
      </table>
 
+
+-->
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Gene Overlap -->
@@ -220,6 +242,18 @@
             </textAttribute>
 
      </table>
+
+
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+     <!-- Protein Sequence -->
+     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <table name="ProteinSequence" includeProjects="CryptoDB,ApiDB"
+            displayName="Protein Sequence"
+            queryRef="IsolateTables.ProteinSequence">
+        <columnAttribute name="protein_sequence" internal="true"/>
+     </table>
+
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Isolates Barcode SNP table -->
