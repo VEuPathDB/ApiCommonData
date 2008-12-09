@@ -28,13 +28,12 @@
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="seqsFile">$$dataDir$$/assemblySeqs.fsa</paramValue>
-      <depends name="makeDataDir"/>
+      <depends name="extractAssemblySeqs"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
-      <depends name="makeAssemblySeqs"/>
     </step>
 
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
@@ -47,7 +46,7 @@
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
-      <paramValue name="outputFile">blocked.seq</paramValue>
+      <paramValue name="outputFiles">blocked.err,blocked.seq</paramValue>
       <depends name="runClusterTask"/>
     </step>
 

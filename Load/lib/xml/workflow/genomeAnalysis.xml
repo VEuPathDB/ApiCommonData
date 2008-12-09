@@ -27,7 +27,6 @@
   <constant name="assemblySeqsDataDir">$$dataDir$$/makeAssemblySeqs</constant>
   <constant name="mapAssemblySeqsDataDir">$$dataDir$$/mapAssemblySeqs</constant>
   <constant name="assembliesDataDir">$$dataDir$$/makeAssemblies</constant>
-  <constant name="virtualSeqsDataDir">$$dataDir$$/mixedGenomicSeqs</constant>
 
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -45,7 +44,7 @@
     </step>
 
     <subgraph name="dumpAndBlockMixedGenomicSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
-      <paramValue name="dataDir">$$virtualSeqsDataDir$$</paramValue>
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismName">$$organismName$$</paramValue>

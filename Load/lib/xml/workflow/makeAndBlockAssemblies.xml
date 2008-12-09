@@ -12,12 +12,6 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
-      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <paramValue name="seqsFile">$$dataDir$$/assemblies.fsa</paramValue>
-      <depends name="makeDataDir"/>
-    </step>
-
     <step name="clusterTranscriptsByGenomeAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
       <paramValue name="outputFile">$$dataDir$$/alignedClusters.out</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -47,8 +41,8 @@
    <step name="splitClusterFile"
           stepClass="ApiCommonData::Load::WorkflowSteps::SplitClusterFile">
       <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
-      <paramValue name="outputSmallFile">$$dataDir$$/clustersSmall.out</paramValue>
-      <paramValue name="outputBigFile">$$dataDir$$/clustersBig.out</paramValue>
+      <paramValue name="outputSmallFile">$$dataDir$$/smallClusters.out</paramValue>
+      <paramValue name="outputBigFile">$$dataDir$$/bigClusters.out</paramValue>
       <depends name="putUnalignedTranscriptsIntoOneCluster"/>
     </step>
 
@@ -76,6 +70,12 @@
       <depends name="makeAndLoadAssembliesFromBigClusters"/>
     </step>
 
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="seqsFile">$$dataDir$$/assemblies.fsa</paramValue>
+      <depends name="extractAssemblies"/>
+    </step>
+
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
@@ -91,7 +91,7 @@
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
-      <paramValue name="outputFile">blocked.seq</paramValue>
+      <paramValue name="outputFiles">blocked.seq</paramValue>
       <depends name="runClusterTask"/>
     </step>
 

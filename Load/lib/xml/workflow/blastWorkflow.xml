@@ -47,22 +47,22 @@
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
-      <paramValue name="outputDir">$$dataDir$$/master/mainResult</paramValue>
-      <paramValue name="outputFile">blastSimilarity.out.gz</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
+      <paramValue name="outputFiles">blastSimilarity.out.gz</paramValue>
       <depends name="runClusterTask"/>
     </step>
 
     <step name="filterResultsByTaxon" stepClass="ApiCommonData::Load::WorkflowSteps::FilterBlastResultsByTaxon" includeIf="$$filterByTaxon$$">
       <paramValue name="taxonHierarchy">$$taxonHierarchyForFilter$$</paramValue>
       <paramValue name="gi2taxidFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
-      <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
-      <paramValue name="unfilteredOutputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.orig.gz</paramValue>
-      <paramValue name="filteredOutputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
+      <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
+      <paramValue name="unfilteredOutputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.orig.gz</paramValue>
+      <paramValue name="filteredOutputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
       <depends name="mirrorFromCluster"/>
      </step>
 
     <step name="extractIdsFromBlastResult" stepClass="ApiCommonData::Load::WorkflowSteps::ExtractIdsFromBlastResult" includeIf="$$loadSubjectSubset$$">
-      <paramValue name="inputFile">$$dataDir$$/master/mainResult/blastSimilarity.out.gz</paramValue>
+      <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out.gz</paramValue>
       <paramValue name="idType">subject</paramValue>
       <paramValue name="outputFile">$$dataDir$$/blastSimIds.out</paramValue>
       <depends name="mirrorFromCluster"/>
