@@ -6120,11 +6120,11 @@ EOF
 ##############################################
 
 # Insert ontology terms
-sub insertIsolateVocabulary{
+sub isolateVocabulary{
 
 my ($mgr, $inFile) = @_;
 
-my $signal = "insertIsolateVocab";
+my $signal = "isolateVocabInsertTerms";
 
 return if $mgr->startStep("Inserting Isolate Vocabulary", $signal);
 
@@ -6140,15 +6140,16 @@ $mgr->runCmd($cmd);
 
 $mgr->endStep($signal);
 }
+################################
 
-# Create vocabulary reports or update DB, check invocation params
-sub isolateVocabulary{
+# Create vocabulary reports
+sub isolateVocabularyReport{
 
-my ($mgr, $output, $fileType, $xmlFile, $outFile) = @_;
+my ($mgr,  $fileType, $xmlFile, $outFile) = @_;
+ 
+my $signal = "isolateVocabReport_$fileType";
 
-my $signal = "isolateVocab_${fileType}-$output";
-
-return if $mgr->startStep("Running Isolate Vocabulary_$fileType: $output", $signal);
+return if $mgr->startStep("Running Isolate Vocabulary Report_$fileType", $signal);
 
 my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
@@ -6156,12 +6157,36 @@ my $propertySet = $mgr->{propertySet};
 
 my $gus_config_file = $propertySet->getProp('gusConfigFile');
 
-my $cmd = "isolateVocabulary.pl $output --gus_config_file $gus_config_file --type $fileType --xml_file $xmlFile > $outFile 2>> $logFile";
+my $cmd = "isolateVocabulary.pl report --gus_config_file $gus_config_file --type $fileType --xml_file $xmlFile > $outFile 2>> $logFile";
 
 $mgr->runCmd($cmd);
 
 $mgr->endStep($signal);
 }
+#################################
+
+# Update Database
+sub isolateVocabularyUpdate{
+
+my ($mgr, $fileType, $xmlFile) = @_;
+	
+my $signal = updateIsolateVocab_$fileType;
+
+return if $mgr->startStep("Updating $fileType Isolate Vocabulary", $signal);
+
+my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+my $propertySet = $mgr->{propertySet};
+
+my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+my $cmd = "isolateVocabulary.pl update --gus_config_file $gus_config_file --type $fileType --xml_file $xmlFile 2>> $logFile";
+
+$mgr->runCmd($cmd);
+
+$mgr->endStep($signal);
+}
+
   
 ################################################################################
 # OrthoMCL steps
