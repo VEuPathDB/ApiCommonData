@@ -145,22 +145,20 @@
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <table name="Reference" includeProjects="CryptoDB,ApiDB"
-            displayName="Isolates Publication"
+            displayName="Reference"
             queryRef="IsolateTables.Reference">
-        <columnAttribute displayName="Title" name="title"/>
-        <columnAttribute displayName="Author" name="author"/>
-        <columnAttribute displayName="Journal" name="journal"/>
-        <columnAttribute internal="true" name="studyLink"/>
-       <linkAttribute displayName="Other Isolates" name="other_isolates" inReportMaker="false" internal="false" >
-           <displayText>
-            <![CDATA[ view ]]>
-              </displayText>
-              <url>
-              <![CDATA[                       
-               $$studyLink$$
-              ]]>
-              </url>
-        </linkAttribute>
+        <columnAttribute internal="true" name="title"/>
+        <columnAttribute internal="true" name="author"/>
+        <columnAttribute internal="true" name="journal"/>
+        <textAttribute inReportMaker="true" name="reference" displayName="Reference">
+             <text>
+              <![CDATA[
+                   $$author$$  <u>$$title$$</u>.  $$journal$$
+                    ]]>
+                  </text>
+            </textAttribute>
+        <columnAttribute displayName="All Other Isolates in this Study"  name="studyLink"/>
+
      </table>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -198,18 +196,40 @@
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <table name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB"
-            displayName="Overlapping Genes based on blast similarity"
+            displayName="Blast Similarity Alignments and Overlapping Genes"
             queryRef="IsolateTables.GeneOverlap">
         <columnAttribute name="source_id" internal="true"/>
         <columnAttribute  name="project_id" internal="true"/>
         <columnAttribute  name="gene" internal="true"/>
-        <columnAttribute  displayName="Gene Product" name="gene_product" internal="false"/>
         <columnAttribute  name="pvalue_mant" internal="true"/>
         <columnAttribute  name="pvalue_exp" internal="true"/>
 
         <columnAttribute  name="sequence_source_id" internal="true"/>
 
-        <linkAttribute displayName="Gene" name="gene_link" inReportMaker="false" internal="false" >
+        <columnAttribute  displayName="Organism" name="organism" internal="false"/>
+
+        <linkAttribute displayName="Genomic Sequence" name="sequence_link" inReportMaker="false" internal="false" >
+           <displayText>
+            <![CDATA[ $$sequence_source_id$$  ]]>
+           </displayText>
+           <url>
+            <![CDATA[                       
+              showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&source_id=$$sequence_source_id$$
+              ]]>
+            </url>
+        </linkAttribute>
+        <columnAttribute  displayName="Alignment Start" name="start_min" internal="false"/>
+        <columnAttribute  displayName="Alignment End" name="end_max" internal="false"/>
+
+        <textAttribute inReportMaker="false" name="pvalue" displayName="P Value">
+             <text>
+              <![CDATA[
+                 $$pvalue_mant$$ * 10<sup>^$$pvalue_exp$$</sup>
+                    ]]>
+                  </text>
+            </textAttribute>
+
+        <linkAttribute displayName="Overlapping Gene" name="gene_link" inReportMaker="false" internal="false" >
            <displayText>
             <![CDATA[ $$gene$$  ]]>
            </displayText>
@@ -219,28 +239,7 @@
               ]]>
             </url>
         </linkAttribute>
-
-        <linkAttribute displayName="Gene" name="sequence_link" inReportMaker="false" internal="false" >
-           <displayText>
-            <![CDATA[ $$gene$$  ]]>
-           </displayText>
-           <url>
-            <![CDATA[                       
-              showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&source_id=$$sequence_source_id$$
-              ]]>
-            </url>
-        </linkAttribute>
-        <columnAttribute  displayName="Start" name="start_min" internal="false"/>
-        <columnAttribute  displayName="End" name="end_max" internal="false"/>
-
-        <textAttribute inReportMaker="false" name="pvalue" displayName="P Value">
-             <text>
-              <![CDATA[
-                 $$pvalue_mant$$ * 10<sup>^$$pvlaue_exp$$</sup>
-                    ]]>
-                  </text>
-            </textAttribute>
-
+        <columnAttribute  displayName="Gene Product" name="gene_product" internal="false"/>
      </table>
 
 
@@ -287,42 +286,46 @@
           internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB">
           <text>
           <![CDATA[
-           <table>
+           <table width="100%">
              <tr>
-              <td width=18%>Isolate ID:</td>
-              <td>$$source_id$$ <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=$$source_id$$" target=_blank><font size="-1">click here to Genbank</font></a></td>
+              <td width="20%" nowrap>Genbank Accession</td>
+              <td><a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=$$source_id$$" target=_blank><font size="-1">$$source_id$$</font></a></td>
              </tr>
              <tr>
-              <td>Description:</td>
-              <td>$$description$$</td>
-             </tr>
-             <tr>
-              <td>Organism:</td>
+              <td nowrap>Organism:</td>
               <td><i>$$organism$$</i></td>
              </tr>
              <tr>
-              <td>Strain:</td>
-              <td>$$strain$$</td>
+              <td nowrap>Description:</td>
+              <td>$$description$$</td>
              </tr>
              <tr>
-              <td>Host:</td>
-              <td>$$specific_host$$</td>
-             </tr>
-             <tr>
-              <td>Product:</td>
+              <td nowrap>Product:</td>
               <td>$$product$$</td>
              </tr>
              <tr>
-              <td>Note:</td>
+              <td nowrap>Strain:</td>
+              <td>$$strain$$</td>
+             </tr>
+             <tr>
+              <td nowrap>Host:</td>
+              <td>$$specific_host$$</td>
+             </tr>
+             <tr>
+              <td nowrap>Note:</td>
               <td>$$note$$</td>
              </tr>
              <tr>
-              <td>PCR Primer:</td>
+              <td nowrap>PCR Primer:</td>
               <td>$$pcr_primers$$</td>
              </tr>
              <tr>
-              <td>Isolation Source:</td>
+              <td nowrap>Isolation Source:</td>
               <td>$$isolation_source$$</td>
+             </tr>
+             <tr>
+              <td nowrap>Geographic Location:</td>
+              <td>$$country$$</td>
              </tr>
            </table>
           ]]>
