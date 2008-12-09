@@ -35,7 +35,7 @@ sub getParamDeclaration {
 sub getConfigDeclaration {
   return (
 	  # [name, default, description]
-	  ['path', "", ""],
+	  ['binPath', "", ""],
 	 );
 }
 
