@@ -243,7 +243,7 @@ sub createDataDir {
 
   &_createDir($mgr, $dataDir);
 
-  my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite',
+  my @dataSubDirs = ('seqfiles', 'misc', 'downloadSite', 'blastSite', 'isolateVocabulary',
 		     'sage', 'analysis', 'similarity', 'assembly', 'cluster', 'microarray','mercator');
 
   foreach my $subDir (@dataSubDirs) {
