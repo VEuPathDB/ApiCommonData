@@ -26,13 +26,18 @@ sub run {
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::GenomeAlignWithGfClientTask");
 
+  if ($test) {
+    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+    $self->testInputFile('targetDir', "$localDataDir/$targetDir");
+  }
+
   # make task.prop file
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
 "gaBinPath=$gaBinPath
-targetListPath=$computeClusterDataDir/targetList
+targetListPath=$computeClusterDataDir/$targetDir
 queryPath=$computeClusterDataDir/$queryFile
 ";
   close(F);

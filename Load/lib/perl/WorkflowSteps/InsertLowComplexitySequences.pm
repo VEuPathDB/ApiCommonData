@@ -10,7 +10,7 @@ sub run {
   my ($self, $test) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
-  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec'); 
+  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $seqType = $self->getParamValue('seqType');
   my $mask = $self->getParamValue('mask');
   my $options = $self->getParamValue('options');
@@ -20,6 +20,10 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $args = "--seqFile $localDataDir/$inputFile --fileFormat 'fasta' --extDbName '$extDbName' --extDbVersion '$extDbRlsVer' --seqType $seqType --maskChar $mask $options";
+
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
 
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::InsertLowComplexityFeature", $args);
 }

@@ -38,9 +38,7 @@ sub run {
   my $cmd = "dumpSequencesFromTable.pl --outputfile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
 
   if ($test) {
-
-      $self->runCmd(0,"echo test $localDataDir/$outputFile");
-
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
 
   $self->runCmd($test,$cmd);

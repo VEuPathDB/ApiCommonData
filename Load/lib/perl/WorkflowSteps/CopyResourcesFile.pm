@@ -16,6 +16,10 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
+  if ($test) {
+      $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
+  }
+
   $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
 
 }

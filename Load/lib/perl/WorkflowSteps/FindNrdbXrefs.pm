@@ -18,7 +18,9 @@ sub run {
 
   my $cmd = "dbXRefBySeqIdentity --proteinFile '$localDataDir/$proteinsFile' --nrFile '$localDataDir/$nrdbFile' --outputFile '$localDataDir/$outputFile' --sourceIdRegex \"$nrdbFileRegex\" --protDeflnRegex \"$proteinsFileRegex\" ";
   if ($test) {
-      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+    $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
+    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
     }
   $self->runCmd($test,$cmd);
 

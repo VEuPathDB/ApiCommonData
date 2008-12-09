@@ -25,6 +25,10 @@ sub run {
     $self->runcmd(0,"ln -s $localDataDir/$inputFile $fileToFormat");
   }
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
   $self->runcmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
 }
 

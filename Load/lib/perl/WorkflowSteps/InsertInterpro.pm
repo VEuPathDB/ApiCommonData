@@ -12,7 +12,7 @@ sub run {
     my $inputDir = $self->getParamValue('inputDir');
     my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
     my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
-    
+
     my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($interproExtDbRlsSpec);
     my $goVersion = $self->getParamValue('goVersion');
 
@@ -27,8 +27,12 @@ sub run {
 --goVersion=\'$goVersion\' \\
 EOF
 
+  if ($test) {
+    $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+  }
+
     $self->runPlugin($test, "ApiCommonData::Load::Plugin::InsertInterproscanResults", $args);
-  
+
 }
 
 

@@ -12,7 +12,7 @@ sub run {
   # get param values
   my $fileOrDirToMirror = $self->getParamValue('fileOrDirToMirror');
   my $outputDir = $self->getParamValue('outputDir');
-  my $outputFile = $self->getParamValue('outputFile');
+  my $outputFiles = $self->getParamValue('outputFiles');
 
   my $localDataDir = $self->getLocalDataDir();
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
@@ -21,8 +21,11 @@ sub run {
 
   if ($test) {
     $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
-    if ($outputFile) {
-      $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
+    if ($outputFiles) {
+      my @outputFiles = split(/\,\s*/,$outputFiles);
+      foreach my $outputFile (@outputFiles) {
+	$self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
+      }
     };
   } else {
     $self->copyFromCluster("$computeClusterDataDir/$relativeDir",

@@ -14,7 +14,8 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   if ($test) {
-      $self->runCmd($test, "echo test > $localDataDir/$outputFile");
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
   $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
 }

@@ -21,8 +21,9 @@ sub run {
   my $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $localDataDir/$inputFile --outFile $localDataDir/$outputFile";
 
   if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
 
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   }
 

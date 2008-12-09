@@ -25,6 +25,11 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
+  if ($test) {
+    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+    $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
+  }
+
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
 

@@ -19,6 +19,10 @@ sub run {
 
   my $args = "--taxon_id_list '$taxonIdList' --outputfile $localDataDir/$outputFile --extractonly";
 
+  if ($test) {
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+  }
+
   $self->runPlugin($test, "DoTS::DotsBuild::Plugin::ExtractAndBlockAssemblySequences", $args);
 
 }

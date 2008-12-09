@@ -73,12 +73,10 @@ restart=no
     close(F);
 }
 
-sub testFiles {
-  my $self = shift(@_);
-  my @files = @_;
-  foreach my $file (@files) {
-    $self->error("Input file '$file' for step '$self->{name}' does not exist") unless -e $file;
-  }
+sub testInputFile {
+  my ($self, $paramName, $fileName) = @_;
+
+  $self->error("Input file '$fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $fileName;
 }
 
 # avoid using this subroutine!

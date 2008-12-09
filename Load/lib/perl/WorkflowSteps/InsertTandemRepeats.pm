@@ -18,6 +18,11 @@ sub run {
 
   my $args = "--tandemRepeatFile $localDataDir/$inputFile --extDbName '$extDbName' --extDbVersion '$extDbRlsVer'";
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
+
   $self->runPlugin($test, "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
 }
 

@@ -20,6 +20,10 @@ sub run {
 
   my $args = "--data_file $localDataDir/$inputFile --algName TMHMM --algDesc 'TMHMM $version' --useSourceId --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer'";
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadTMDomains",$args);
 
 }

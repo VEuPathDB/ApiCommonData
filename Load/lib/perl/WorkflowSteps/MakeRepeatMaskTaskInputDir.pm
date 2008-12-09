@@ -26,6 +26,10 @@ sub run {
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::RepeatMaskerTask");
 
+  if ($test) {
+    $self->testInputFile('seqsFile', "$localDataDir/$seqsFile");
+  }
+
   # make task.prop file
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";

@@ -22,7 +22,8 @@ orfFinder --dataset  $localDataDir/$seqFile \\
 EOF
 
   if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    $self->testInputFile('seqFile', "$localDataDir/$seqFile");
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
   $self->runCmd($test,$cmd);
 }

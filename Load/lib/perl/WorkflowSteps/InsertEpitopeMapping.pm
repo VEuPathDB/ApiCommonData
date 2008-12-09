@@ -21,6 +21,10 @@ sub run {
 
     my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
 
+    if ($test) {
+      $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+    }
+
     $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
   }
 

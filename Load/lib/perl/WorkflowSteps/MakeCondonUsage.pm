@@ -18,6 +18,7 @@ sub run {
     my $cmd = "makeCodonUsage --infile $localDataDir/$inputFile --outfile $localDataDir/$outputFile";
 
     if ($test) {
+      $self->testInputFile('inputFile', "$localDataDir/$inputFile");
       $self->runCmd(0,"echo test > $localDataDir/$outputFile");
     }
     $self->runCmd($test, $cmd);

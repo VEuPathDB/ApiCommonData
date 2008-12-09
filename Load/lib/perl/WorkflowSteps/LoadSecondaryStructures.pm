@@ -16,7 +16,11 @@ sub run {
 
     my $args = "--predAlgName $algName --directory $localDataDir/$inputDir";
 
-    $self->runPlugin($test,"GUS::Supported::Plugin::InsertSecondaryStructure", $args);
+    if ($test) {
+      $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+    }
+
+   $self->runPlugin($test,"GUS::Supported::Plugin::InsertSecondaryStructure", $args);
 
 }
 

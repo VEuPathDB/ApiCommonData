@@ -19,6 +19,11 @@ sub run {
 
   my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
 
+  if ($test) {
+    $self->testInputFile('fastaFile', "$localDataDir/$fastaFile");
+    $self->testInputFile('idsFile', "$localDataDir/$idsFile");
+  }
+
   $self->runPlugin("GUS::Supported::Plugin::LoadFastaSequences",$args);
 
 }

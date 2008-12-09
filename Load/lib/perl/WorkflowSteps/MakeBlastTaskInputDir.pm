@@ -35,6 +35,11 @@ sub run {
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::BlastMatrixTask");
 
+  if ($test) {
+    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+    $self->testInputFile('subjectFile', "$localDataDir/$subjectFile");
+  }
+
   # make task.prop file
   my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
   my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";

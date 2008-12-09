@@ -9,7 +9,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $seqFile = $self->getParamValue('seqsFile');
+  my $seqsFile = $self->getParamValue('seqsFile');
   my $repeatFinderArgs = $self->getParamValue('repeatFinderArgs');
   my $outputFile = $self->getParamValue('outputFile');
 
@@ -21,15 +21,16 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "${trfPath}/trf400 $localDataDir/$seqFile $repeatFinderArgs -d";
+  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d";
 
   if ($test) {
+    $self->testInputFile('seqsFile', "$localDataDir/$seqsFile");
 
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   }
   $self->runCmd($test, $cmd);
-  $self->runCmd($test, "mv $stepDir/$seqFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
+  $self->runCmd($test, "mv $stepDir/$seqsFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
 }
 
 sub getParamsDeclaration {

@@ -21,6 +21,11 @@ sub run {
 
     my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir --idRegex '$idRegex'";
     $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
+    if ($test) {
+      $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+      $self->testInputFile('inputDirRelativeToDownloadsDir', "$downloadDir/$inputDirRelativeToDownloadsDir");
+    }
+
     $self->runCmd($test,$cmd);
 }
 

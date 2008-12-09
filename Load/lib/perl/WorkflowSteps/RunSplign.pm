@@ -10,20 +10,20 @@ sub run {
   my ($self, $test) = @_;
 
   my $queryFile = $self->getParamValue('queryFile');
-
   my $subjectFile = $self->getParamValue('subjectFile');
-
   my $outputFile = $self->getParamValue('outputFile');
-
   my $splignDir = $self->getParamValue('outputDir');
 
   my $splignPath = $self->getConfig('splignPath');
-
   my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-  if ($test) {
+  my $localDataDir = $self->getLocalDataDir();
 
-      $self->runCmd(0,"echo hello > $outputFile");
+  if ($test) {
+    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+    $self->testInputFile('subjectFile', "$localDataDir/$subjectFile");
+
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   }
 

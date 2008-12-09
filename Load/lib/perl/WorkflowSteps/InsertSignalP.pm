@@ -20,6 +20,10 @@ sub run {
 
   my $args = "--data_file $localDataDir/$inputFile --algName 'SignalP' --algVer '$version' --algDesc 'SignalP' --extDbName '$extDbName' --extDbRlsVer '$extDbRlsVer' --useSourceId";
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadSignalP", $args);
 
 }

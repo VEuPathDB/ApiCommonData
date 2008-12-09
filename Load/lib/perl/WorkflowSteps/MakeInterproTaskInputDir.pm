@@ -27,6 +27,10 @@ sub run {
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::IprscanTask");
 
+  if ($test) {
+    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+  }
+
   # make task.prop file
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
   open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";

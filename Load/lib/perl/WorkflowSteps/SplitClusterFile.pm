@@ -17,8 +17,9 @@ sub run {
   my $cmd = "splitClusterFile $localDataDir/$inputFile $localDataDir/$outputSmallFile $localDataDir/$outputBigFile";
 
   if ($test){
-      $self->runCmd(0,"echo hello > $localDataDir/$outputSmallFile");
-      $self->runCmd(0,"echo hello > $localDataDir/$outputBigFile");
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+    $self->runCmd(0,"echo hello > $localDataDir/$outputSmallFile");
+    $self->runCmd(0,"echo hello > $localDataDir/$outputBigFile");
   }
   $self->runCmd($test,$cmd);
 }

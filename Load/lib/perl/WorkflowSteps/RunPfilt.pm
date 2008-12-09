@@ -18,6 +18,7 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
   $self->runCmd($test, "$psipredPath/pfilt $localDataDir/$inputFile > $localDataDir/$outputFile");

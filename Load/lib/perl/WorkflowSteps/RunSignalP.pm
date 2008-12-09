@@ -20,7 +20,8 @@ sub run {
   my $cmd = "runSignalP --binPath $binPath  --options '$options' --seqFile $localDataDir/$proteinsFile --outFile $localDataDir/$outputFile";
 
   if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
   $self->runCmd($test,$cmd);
 }

@@ -35,6 +35,10 @@ sub run {
     $subjectExtDbArg = " --subjectExtDbName '$subjectDbName' --subjectExtDbRlsVer '$subjectDbRlsVer'";
   }
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
   my $args = "--file $localDataDir/$inputFile --queryTable $queryTable $queryColArg $queryExtDbArg --subjectTable $subjectTable $subjectColArg $subjectExtDbArg $options";
 
   $self->runPlugin($test, "GUS::Supported::Plugin::InsertBlastSimilarities", $args);

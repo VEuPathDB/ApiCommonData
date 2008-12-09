@@ -36,6 +36,10 @@ EOF
     $args .= "--defaultOrganism '$defaultOrg'";
   }
 
+  if ($test) {
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+  }
+
   $self->runPlugin($test, "GUS::Supported::Plugin::InsertSequenceFeatures", $args);
 }
 

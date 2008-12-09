@@ -28,7 +28,7 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $cmd;
-  if ($separateFastaFiles) {
+  if ($separateFastaFiles eq 'true') {
     $cmd = "gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
 
     if ($test) {

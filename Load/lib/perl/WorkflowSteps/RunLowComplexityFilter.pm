@@ -21,7 +21,8 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+    $self->testInputFile('seqFile', "$localDataDir/$seqFile");
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
   $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
 }

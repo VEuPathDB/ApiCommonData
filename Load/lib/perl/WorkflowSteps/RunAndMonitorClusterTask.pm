@@ -19,7 +19,7 @@ sub run {
   my $clusterTaskLogsDir = $self->getComputeClusterTaskLogsDir();
   my $clusterDataDir = $self->getComputeClusterDataDir();
 
-  my $userName = (caller(0))[3];  # perl trick to get user name
+  my $userName = $ENV{USER};  # perl trick to get user name
 
   my $propFile = "$clusterDataDir/$taskInputDir/task.prop";
   my $logFile = "$clusterTaskLogsDir/" . $self->getName() . ".log";

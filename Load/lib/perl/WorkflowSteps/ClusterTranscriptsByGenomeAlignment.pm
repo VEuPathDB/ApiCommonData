@@ -20,6 +20,10 @@ sub run {
 
   my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs --target_db_rel_id $targetDbRlsId --out $localDataDir/$outputFile --sort 1 --distanceBetweenStarts $maxIntronSize";
 
+  if ($test) {
+    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+  }
+
   $self->runPlugin($test, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
 
 }

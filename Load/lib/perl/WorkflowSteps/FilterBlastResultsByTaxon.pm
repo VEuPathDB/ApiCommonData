@@ -28,7 +28,8 @@ sub run {
   my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$filteredOutputFile";
 
   if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
+    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+    $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
   }
   $self->runCmd($test,$cmd);
 }

@@ -35,6 +35,11 @@ sub run {
 
   $args .= " --percentTop $percentTop" if $percentTop;
 
+  if ($test) {
+    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+    $self->testInputFile('blatFile', "$localDataDir/$blatFile");
+  }
+
   $self->runPlugin($test, "GUS::Community::Plugin::LoadBLATAlignments", $args);
 }
 
