@@ -1,17 +1,172 @@
 <wdkModel>
 
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Gene Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
     <categories recordClassRef="GeneRecordClasses.GeneRecordClass">
+    
+    	<category name="other_attributes" displayName="Text, IDs, Species">
+            <questionRef>GeneQuestions.GenesByTextSearch</questionRef>
+            <questionRef>GeneQuestions.GeneBySingleLocusTag</questionRef>
+            <questionRef>GeneQuestions.GeneByLocusTag</questionRef>
+            <questionRef>GeneQuestions.GenesByTaxon</questionRef>
+       <!--     <questionRef>GeneQuestions.GenesByMr4Reagents</questionRef> -->
+        </category>
 
-        <category name="genomic-position" displayName="Genomic Position">
+        <category name="genomic_position" displayName="Genomic Position">
             <questionRef>GeneQuestions.GenesByLocation</questionRef>
-            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByCentromereProximity</questionRef>
-            <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByTelomereProximity</questionRef>
-            <questionRef includeProjects="PlasmoDB,ToxoDB">GeneQuestions.GenesByNonnuclearLocation</questionRef>
+      <!--      <questionRef>GeneQuestions.GenesByCentromereProximity</questionRef>
+            <questionRef>GeneQuestions.GenesByTelomereProximity</questionRef>
+            <questionRef>GeneQuestions.GenesByNonnuclearLocation</questionRef> -->
         </category>
 
         <category name="gene_attributes" displayName="Gene Attributes">
             <questionRef>GeneQuestions.GenesByGeneType</questionRef>
             <questionRef>GeneQuestions.GenesByExonCount</questionRef>
+        </category>
+
+        <category name="protein_attributes" displayName="Protein Attributes">
+            <questionRef>GeneQuestions.GenesByMolecularWeight</questionRef>
+            <questionRef>GeneQuestions.GenesByIsoelectricPoint</questionRef>
+            <questionRef>GeneQuestions.GenesBySecondaryStructure</questionRef>
+            <questionRef>GeneQuestions.GenesByPdbSimilarity</questionRef>
+        </category>
+        
+        <category name="protein_features" displayName="Protein Features">
+            <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
+            <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
+            <questionRef>GeneQuestions.GenesWithEpitopes</questionRef>
+        </category>
+        
+        <category name="similarity_pattern" displayName="Similarity/Pattern">
+            <questionRef>GeneQuestions.GenesByMotifSearch</questionRef>
+            <questionRef>GeneQuestions.GenesByInterproDomain</questionRef>
+            <questionRef>GeneQuestions.GenesBySimilarity</questionRef>
+        </category>
+        
+        <category name="transcript_expression" displayName="Transcript Expression">
+            <questionRef>GeneQuestions.GenesByESTOverlap</questionRef>
+<!--            <questionRef>GeneQuestions.GenesBySageTag</questionRef> 
+            <questionRef>GeneQuestions.GenesByExpression</questionRef>    -->
+        </category>
+        
+        <category name="protein_expression" displayName="Protein Expression">
+            <questionRef>InternalQuestions.GenesByMassSpecEvidence</questionRef>
+        </category>
+
+        <category name="cellular_location" displayName="Cellular Location">
+            <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
+            <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
+<!--            <questionRef>GeneQuestions.GenesBySubcellularLocalization</questionRef>
+            <questionRef>GeneQuestions.GenesByExportPrediction</questionRef>  -->
+        </category>
+        
+        <category name="putative_function" displayName="Putative Function">
+            <questionRef>GeneQuestions.GenesByGoTerm</questionRef>
+            <questionRef>GeneQuestions.GenesByEcNumber</questionRef>
+   <!--         <questionRef>GeneQuestions.GenesByMetabolicPathway</questionRef>
+            <questionRef>GeneQuestions.GenesByProteinProteinInteraction</questionRef>
+            <questionRef>GeneQuestions.GenesByFunctionalInteraction</questionRef> -->
+        </category>
+        
+        <category name="evolution" displayName="Evolution">
+            <questionRef>GeneQuestions.GenesOrthologousToAGivenGene</questionRef>
+            <questionRef>GeneQuestions.GenesByOrthologPattern</questionRef>
+      <!--      <questionRef>GeneQuestions.GenesByPhyleticProfile</questionRef>
+            <questionRef>GeneQuestions.GenesByPhylogeneticTree</questionRef>  -->
+        </category>
+        
+        <category name="population_biology" displayName="Population Biology">
+   <!--         <questionRef>GeneQuestions.GenesBySnps</questionRef>  -->
+        </category>
+
+     </categories>
+     
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Isolate Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+<!--   
+      <categories recordClassRef="IsolateRecordClasses.IsolateRecordClass">
+     
+     	<category name="isolates" displayName="Isolates">
+            <questionRef>IsolateQuestions.IsolateByIsolateId</questionRef>
+            <questionRef>IsolateQuestions.IsolateByProduct</questionRef>
+            <questionRef>IsolateQuestions.IsolateWithGeneOverlap</questionRef>
+            <questionRef>IsolateQuestions.IsolateByTaxon</questionRef>
+            <questionRef>IsolateQuestions.IsolateByHost</questionRef>
+            <questionRef>IsolateQuestions.IsolateByIsolationSource</questionRef>
+            <questionRef>IsolateQuestions.IsolateByAuthor</questionRef>
+            <questionRef>IsolateQuestions.IsolateByStudy</questionRef>
+            <questionRef>IsolateQuestions.IsolateByCountry</questionRef>
+        </category>
+        
+     </categories>
+     
+-->
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Genomic Sequence Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+     <categories recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+     
+     	<category name="genomic" displayName="Genomic">
+     		<questionRef>GenomicSequenceQuestions.SequenceBySourceId</questionRef>
+            <questionRef>GenomicSequenceQuestions.SequencesByTaxon</questionRef>
+            <questionRef>GenomicSequenceQuestions.SequencesBySimilarity</questionRef>
+        </category>
+     
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- SNP Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
+<!--
+     <categories recordClassRef="SnpRecordClasses.SnpRecordClass">
+     
+     	<category name="snp" displayName="SNP">
+            <questionRef>SnpQuestions.SnpBySourceId</questionRef>
+            <questionRef>SnpQuestions.SnpsByGeneId</questionRef>
+            <questionRef>SnpQuestions.SnpsByAlleleFrequency</questionRef>
+            <questionRef>SnpQuestions.SnpsByLocation</questionRef>
+        </category>
+        
+     </categories>
+     
+-->
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- EST Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  
+     <categories recordClassRef="EstRecordClasses.EstRecordClass">
+     
+     	<category name="est" displayName="EST">
+            <questionRef>EstQuestions.EstBySourceId</questionRef>
+            <questionRef>EstQuestions.EstsBySimilarity</questionRef>
+            <questionRef>EstQuestions.EstsByLocation</questionRef>
+            <questionRef>EstQuestions.EstsWithGeneOverlap</questionRef>
+            <questionRef>EstQuestions.EstsByLibrary</questionRef>
+        </category>
+        
+     </categories>
+     
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- ORF Questions  -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+     
+     <categories recordClassRef="OrfRecordClasses.OrfRecordClass">
+     
+     	<category name="orf" displayName="ORF">
+            <questionRef>OrfQuestions.OrfByOrfId</questionRef>
+ <!--           <questionRef>OrfQuestions.OrfsByMassSpec</questionRef>  -->
+            <questionRef>OrfQuestions.OrfsByMotifSearch</questionRef>
+            <questionRef>OrfQuestions.OrfsBySimilarity</questionRef>
+            <questionRef>OrfQuestions.OrfsByLocation</questionRef>
         </category>
         
      </categories>
