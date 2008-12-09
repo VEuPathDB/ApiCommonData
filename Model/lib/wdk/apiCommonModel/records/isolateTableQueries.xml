@@ -225,7 +225,7 @@
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT etn.source_id, '@PROJECT_ID' as project_id
+            SELECT etn.source_id, '@PROJECT_ID' as project_id,
                       tas.sequence as protein_sequence
                FROM   DoTS.TranslatedAAFeature taf,
                       DoTS.Transcript trp, 
