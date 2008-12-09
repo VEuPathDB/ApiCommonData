@@ -125,8 +125,7 @@
       <paramValue name="proteinsFileRegex">^([\\w\\.]+)</paramValue>
       <paramValue name="nrdbFileRegex">^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|</paramValue>
       <paramValue name="outputFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
-      <depends name="makeDataDir"/>
-
+       <depends name="extractProteins"/>
     </step>
 
     <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
@@ -134,6 +133,7 @@
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
       <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <depends name="findNrdbXrefs"/>
+ 
     </step>
 
     <subgraph name="interpro" xmlFile="interproWorkflow.xml">

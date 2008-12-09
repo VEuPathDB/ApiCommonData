@@ -30,7 +30,8 @@ use Bio::SeqFeature::Tools::Unflattener;
 
 sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
-    my ($geneFeature);
+    my ($geneFeature, $source);
+    my  $primerPair = '';
     my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
     if(!($bioperlSeq->molecule =~ /rna/i)){
 	$unflattener->unflatten_seq(-seq=>$bioperlSeq,
@@ -76,6 +77,40 @@ sub preprocess {
 
 	    
 	    }else{
+    if ($type eq 'source'){
+	$source = $bioperlFeatureTree;
+	if($source->has_tag('PCR_primers')){
+	    my $primerpair = '';
+	    my (@primerPairs) = $source->get_tag_values('PCR_primers');
+	    $primerpair .= join(",",@primerPairs);
+	    $source->remove_tag('PCR_primers');
+	    $source->add_tag_value('PCR_primers',$primerpair);
+	}
+	next;
+    }
+
+    if($type eq 'primer_bind') {
+
+	my ($primerSeq, $primerName);
+	if($bioperlFeatureTree->strand() == -1){
+	    $primerSeq = 'rev_seq:';
+	}else{
+	    $primerSeq = 'fwd_seq:';
+	}
+
+
+	if($bioperlFeatureTree->has_tag('note')){
+	    ($primerName) = $bioperlFeatureTree->get_tag_values('note');
+	    if($primerSeq eq 'rev_seq:'){
+		$primerName = 'rev_name: '.$primerName;
+
+	    }else{
+		$primerName = 'fwd_name: '.$primerName;
+	    }
+
+	}
+
+
 		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 		
 
@@ -83,8 +118,30 @@ sub preprocess {
 	}
 
     }
-}
+	if($source->has_tag('primer_bind')){
+	    $source->remove_tag('primer_bind');
+	}else{
+	    if($primerPair){
+		my $primerpair = '';
+		if($source->has_tag('PCR_primers')){
+		    # my ($primerpair) .= $source->get_tag_values('PCR_primers');
+		    # $primerpair .= ',';
+		    # $source->remove_tag('PCR_primers');	      
+		}
+		else{
+		    $primerpair .= $primerPair;
 
+
+		    $source->add_tag_value('PCR_primers',$primerpair);
+		}
+	    }
+	}
+  
+	$bioperlSeq->add_SeqFeature($source);
+	undef $source;
+	undef $primerPair;
+    }
+}
 
 sub traverseSeqFeatures {
     my ($geneFeature, $bioperlSeq) = @_;
@@ -170,11 +227,11 @@ sub traverseSeqFeatures {
 			    }
 			}
 
-			$exon->add_tag_value('coding_start', $codingStart);
-			$exon->add_tag_value('coding_end', $codingEnd);
+			$exon->add_tag_value('CodingStart', $codingStart);
+			$exon->add_tag_value('CodingEnd', $codingEnd);
 		    }else{
-			$exon->add_tag_value('coding_start', '');
-			$exon->add_tag_value('coding_end', '');
+			$exon->add_tag_value('CodingStart', '');
+			$exon->add_tag_value('CodingEnd', '');
 		    }
 		    $transcript->add_SeqFeature($exon);
 		}
@@ -187,8 +244,8 @@ sub traverseSeqFeatures {
 		    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
 		    $transcript->add_SeqFeature($exon);
 		    if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
-			$exon->add_tag_value('coding_start', '');
-			$exon->add_tag_value('coding_end', '');	
+			$exon->add_tag_value('CodingStart', '');
+			$exon->add_tag_value('CodingEnd', '');	
 		    }
 
 		}

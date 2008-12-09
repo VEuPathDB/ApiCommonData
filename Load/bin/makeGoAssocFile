@@ -8,13 +8,14 @@ use File::Basename;
 use FileHandle;
 use Data::Dumper;
 use HTTP::Date;
+use DBI;
 
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 
 $date = join("",split(/-/,$date)); 
 
 
-my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension);
+my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension, $dbInstance, $username, $passwd, $extDb, $dbh, $dsn);
 
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
@@ -25,12 +26,28 @@ my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis,
 	    'taxon_id=i' => \$taxonId,
             'evidence_code=s' => \$evidenceCode,
 	    'annotation_basis=s' => \$annotBasis,
-             'format=s'         => \$format
+             'format=s'         => \$format,
+	    'dbInstance=s'      => \$dbInstance,
+	    'username=s'        =>  \$username,
+	    'passwd=s'          =>  \$passwd,
+	    'ext_db=s'         =>   \$extDb
+            
            );
 
 
 &usage() if($help);
 &usage("Missing Argument") unless(defined $inFileDir && $outFile && $taxonId && $db && $format);
+
+################################################################
+
+if($dbInstance){
+    $dsn = "dbi:Oracle:$dbInstance";
+    $dbh = DBI->connect($dsn, $username, $passwd) or die DBI->errstr;
+    $dbh->{RaiseError} = 1;
+    $dbh->{AutoCommit} = 0;
+}
+
+################################################################
 
 if(!($evidenceCode)){
   $evidenceCode = "IEA";
@@ -53,6 +70,7 @@ while ( my $seq = $in->next_seq() ) {
 	  if($feature->primary_tag eq "CDS"){
 	    my $sourceId = '';
 	    my $product = '';
+	    my $goId;
 	    if ($feature->has_tag('locus_tag')){
 	      foreach my $value ($feature->get_tag_values('locus_tag')){
 		$sourceId = $value;
@@ -83,7 +101,7 @@ while ( my $seq = $in->next_seq() ) {
 		    
 			my @fields = split(/;/,$fields);
 
-			my($goId,$levidenceCode,$aspect,$ldate,$ldbxref,$with);
+			my($levidenceCode,$aspect,$ldate,$ldbxref,$with);
 			
 			foreach my $field (@fields){
 			    my($column,$value) = split(/=/,$field);
@@ -133,8 +151,10 @@ while ( my $seq = $in->next_seq() ) {
 			    }
 			}
 				
-			
+
 			$goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t$ldbxref\t$levidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$ldate\t$annotBasis\n");
+
+		      
 		    }
 		    
 		}
@@ -142,17 +162,15 @@ while ( my $seq = $in->next_seq() ) {
 		    foreach my $value ($feature->get_tag_values($qualifier)){
 			$value =~ /^(.+)\[\D+(\d+)\]/;
 
-			my $goId = "GO:".$2;
+			$goId = "GO:".$2;
 			$goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tP\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		    }
 		}
-
-		  
-	      if ($qualifier eq 'GO_function'){
+		if ($qualifier eq 'GO_function'){
 		foreach my $value ($feature->get_tag_values($qualifier)){
 		  $value =~ /^(.+)\[\D+(\d+)\]/;
 
-		  my $goId = "GO:".$2;
+		  $goId = "GO:".$2;
 		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tF\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		}
 	      }
@@ -161,18 +179,60 @@ while ( my $seq = $in->next_seq() ) {
 		foreach my $value ($feature->get_tag_values($qualifier)){
 		  $value =~ /^(.+)\[\D+(\d+)\]/;
 
-		  my $goId = "GO:".$2;
+		  $goId = "GO:".$2;
 		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tC\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		}
 	      }
 	    }
-	  }
+	    if(!($goId)){
+		if($feature->has_tag('note')){
+		    foreach my $value($feature->get_tag_values('note')){
+			if($value =~ /GO/){
+			    my @notes = split(/;/,$value);
+			    foreach my $note (@notes){
+				$note = &trim($note);
+				
+				if($note =~ /^GO/){
+				    my($goType,@values) = split(/:/,$note);
+				    my $value = join(":",@values);
+				    $value = &trim($value);
+				    my $aspect = 'C';
+				    
+				    if($goType eq 'GO_component'){
+					$aspect = 'C';
+				    }elsif($goType eq 'GO_function'){
+					$aspect = 'F';
+				    }elsif($goType eq 'GO_process'){
+					$aspect = 'P';
+				    }
+
+				    $value =~ s/\'/\'\'/g;
+				    if($value ne 'cellular component unknown' && $value ne 'molecular function unknown' && $value ne 'biological process unknown'){
+
+					$goId = &getGoId($value,$dbh,$extDb);
+					if(!($goId)){
+					    print STDERR "$sourceId:$value:$aspect\n";
+					}else{
+					    $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+					}
+				    }
+				}
+			    }
+			}
+		    }
+		}
+	    }
 	}
       }
+    }
 }
 }
 
 $goAssocFh->close();
+
+if($dbInstance){
+    $dbh->disconnect();
+}
 
 #-------------------------------------------------------------------------------
 
@@ -199,6 +259,10 @@ sub usage {
 --taxon_id <Taxon ID> \\
 [--evidence_code <evidence code for the GO associations, if same for all. default (IEA)] \\
 [--annotation_basis <basis for annotation>] \\
+[--dbInstance <database instance to get GO IDs>] \\
+[--username   <username for database instance>] \\
+[--passwd <password for database instance>] \\
+[--ext_db <extDbName|extDbVer for Gene Ontology>] \\
 [--verbose <boolean-a little extra STDERR out>] \\
 --help|h
 ";
@@ -222,6 +286,43 @@ sub getInputFiles {
     $inputFiles[0] = $fileOrDir;
   }
   return @inputFiles;
+}
+
+#-------------------------------------------------------------------------------
+
+sub getGoId {
+    my($goName, $dbh, $extDb) = @_;
+
+    my %translateName = { 'N-linked glycosylation' => 'protein amino acid N-linked glycosylation',
+			  'katanin' => 'katanin complex',
+			  'acetyl-CoA biosynthesis from pyruvate' => 'acetyl-CoA biosynthetic process from pyruvate',
+			  'aldehyde dehydrogenase activity' => 'aldehyde dehydrogenase (NAD) activity',
+			  'alpha DNA polymerase' => 'alpha DNA polymerase:primase complex',
+			  'cation transporter activity' => 'cation transmembrane transporter activity',
+			  'copper ion transporter activity' => 'copper ion transmembrane transporter activity',
+			  'double-strand break repair via nonhomologous end-joining' => 'double-strand break repair via nonhomologous end joining',
+			  'eukaryotic elongation factor-2 kinase activity' => 'eukaryotic elongation factor 2 kinase activity',
+			  'glucose transporter activity' =>  'glucose transmembrane transporter activity ',
+			  'glycine betaine biosynthetis from choline' => 'glycine betaine biosynthetic process from choline',
+			  'hexose transporter activity' => 'hexose transmembrane transporter activity',
+			  'hydrogen-transporting ATP synthase activity, rotational mechanism' => 'hydrogen ion transporting ATP synthase activity, rotational mechanism',
+			  'hydrogen-transporting ATPase activity, rotational mechanism' => 'hydrogen ion transporting ATPase activity, rotational mechanism',
+			  
+
+		      };
+    
+    my($edName,$edVersion) = split(/\|/,$extDb);
+    my $sql = "SELECT go.go_id FROM sres.goterm go,sres.externaldatabase ed, sres.externaldatabaserelease edr where go.name = '$goName' and ed.external_database_id = edr.external_database_id and ed.name = '$edName' and edr.version = '$edVersion' and edr.external_database_release_id = go.external_database_release_id
+UNION
+SELECT go.go_id FROM sres.goterm go, sres.gosynonym gs, sres.externaldatabase ed, sres.externaldatabaserelease edr where gs.text = '$goName' and gs.go_term_id = go.go_term_id and ed.external_database_id = edr.external_database_id and ed.name = '$edName' and edr.version = '$edVersion' and edr.external_database_release_id = go.external_database_release_id";
+    my $sth = $dbh->prepare($sql);
+    $sth->execute() or die("Could not execute $sql\n");
+    
+    my ($goId) = $sth->fetchrow_array();
+
+    return $goId;
+    
+    
 }
 
 1;
