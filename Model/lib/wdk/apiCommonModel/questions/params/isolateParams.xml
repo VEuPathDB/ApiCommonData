@@ -52,7 +52,7 @@
 
         <flatVocabParam name="specific_host" includeProjects="CryptoDB,ApiDB"
              queryRef="hostVQ.withIsolates"
-             prompt="Host Name"
+             prompt="Host"
              multiPick="true"
              quote="false"
              displayType="treeBox">
@@ -103,7 +103,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam> 
 
-        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+        <flatVocabParam name="strain" includeProjects="PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
             prompt="Strain/Taxon Name"
             multiPick="true"
@@ -113,6 +113,17 @@
                           Strain name for isolate barcodes and 3k Chip data
                         </help>
             <useTermOnly value="true" includeProjects="ApiDB"/>
+       </flatVocabParam>
+
+        <flatVocabParam name="strain" includeProjects="CryptoDB"
+            queryRef="strainVQ.withIsolates"
+            prompt="Species Name"
+            multiPick="true"
+            quote="false"
+            displayType="treeBox">
+                  <help>
+                         Species Name
+                        </help>
        </flatVocabParam>
 
 
@@ -403,7 +414,7 @@ select 'environmental samples' as term, 'environmental samples' as internal, 'Cr
 
       <sql  includeProjects="PlasmoDB">
       <![CDATA[
-    select 'P.f. ' || new as term, new as internal, 'P.f. ' || new as parentTerm
+    select 'P.f. ' || new as term, new as internal, '' as parentTerm
     from (
       SELECT lower(regexp_replace(src.strain, '[-_/]', '-')) as new
       FROM DoTS.IsolateSource src
