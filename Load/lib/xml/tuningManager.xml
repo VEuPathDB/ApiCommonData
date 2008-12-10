@@ -1167,6 +1167,7 @@ SELECT CASE
        ToxoExpn.type3_type2_fold_change,
        ToxoExpn.type2_type1_fold_change,
        nvl(deprecated.is_deprecated, 0) as is_deprecated, gi.gene_id,
+       orthologs.name as orthomcl_name,
        nvl(totsnps.total_snps,0) as total_snps, 
        nvl(nssnps.nonsyn_snps,0) as nonsynonymous_snps,
        nvl(synsnps.syn_snps,0) as synonymous_snps,
@@ -1225,7 +1226,14 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
        and sf.parent_id is not null
        and sf.has_nonsynonymous_allele is null
        and sf.is_coding = 1
-       group by sf.parent_id) synsnps
+       group by sf.parent_id) synsnps,
+       (select gf.na_feature_id, sg.name
+        from dots.genefeature gf, dots.sequencesequencegroup ssg, 
+             dots.sequencegroup sg, Core.tableinfo ti
+        where gf.na_feature_id = ssg.sequence_id
+         and ssg.sequence_group_id = sg.sequence_group_id
+         and ssg.source_table_id = ti.table_id
+         and ti.name = 'GeneFeature') orthologs
 WHERE gf.source_id is not null
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
@@ -1247,6 +1255,7 @@ WHERE gf.source_id is not null
        = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
   AND gf.na_feature_id = exons.parent_id(+)
+  AND gf.na_feature_id = orthologs.na_feature_id(+)
   AND gf.na_feature_id = first_exon.parent_id(+)
   AND exons.parent_id = last_exon.parent_id(+)
   AND exons.exon_count = last_exon.order_number(+)
