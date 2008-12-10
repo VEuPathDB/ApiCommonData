@@ -3002,8 +3002,8 @@ select sim.similarity_id, sim.query_id, sim.subject_id, sim.query_table_id,
        sim.pvalue_mant, sim.pvalue_exp,
        round(100 * sim.number_identical / sim.total_match_length,1) as percent_identical,
        round(100 * sim.number_positive / sim.total_match_length,1) as percent_positive,
-       sim.min_subject_start, sim.max_subject_end, simp.similarity_span_id,
-       simp.score as span_score, simp.query_start, simp.query_end,
+       sim.min_subject_start, sim.max_subject_end, sim.total_match_length,
+       simp.similarity_span_id, simp.score as span_score, simp.query_start, simp.query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
        'direct' as location_mapping, 1 as is_top_level
@@ -3030,8 +3030,8 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        sim.is_reversed, sim.pvalue_mant, sim.pvalue_exp,
        round(100 * sim.number_identical / sim.total_match_length,1) as percent_identical,
        round(100 * sim.number_positive / sim.total_match_length,1) as percent_positive,
-       sim.min_subject_start, sim.max_subject_end, simp.similarity_span_id,
-       simp.score as span_score,
+       sim.min_subject_start, sim.max_subject_end, sim.total_match_length, 
+       simp.similarity_span_id, simp.score as span_score,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
