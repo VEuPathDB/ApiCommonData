@@ -150,6 +150,7 @@
             <column name="exon_count" />
             <column name="strand" />
             <column name="ec_numbers_string"/>
+            <column name="orthomcl_name"/>
             <column name="total_snps_all_strains"/>
             <column name="nonsynonymous_snps_all_strains"/>
             <column name="synonymous_snps_all_strains"/>
@@ -272,7 +273,7 @@
                    &&genedb_organism&&
                    &&toxo_expression&&
                    UPPER(bfmv.source_id) AS cyc_gene_id,
-                   bfmv.strand,bfmv.ec_numbers as ec_numbers_string,
+                   bfmv.strand,bfmv.ec_numbers as ec_numbers_string, bfmv.orthomcl_name,
                    bfmv.annotated_go_component as ann_go_component,
                    bfmv.annotated_go_function as ann_go_function,
                    bfmv.annotated_go_process as ann_go_process,
