@@ -820,7 +820,7 @@ sub getAllTranscriptLocations {
 
   my $sql = "SELECT gf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
              FROM dots.TRANSCRIPT tf, dots.NaLocation nl, DoTS.SplicedNASequence ens, Dots.GeneFeature gf
-             WHERE tf.na_feature_id = nl.na_feature_id
+             WHERE gf.na_feature_id = nl.na_feature_id
              and gf.na_feature_id = tf.parent_id
               AND tf.na_sequence_id = ens.na_sequence_id
               AND ens.external_database_release_id = $naExtDbRls
