@@ -2010,7 +2010,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GeneDumpQuery" isCacheable="true" excludeProjects="ApiDB">
-        <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
+        <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.nameWithGenesGFF"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
