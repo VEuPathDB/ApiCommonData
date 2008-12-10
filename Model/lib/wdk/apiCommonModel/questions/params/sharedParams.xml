@@ -1962,16 +1962,7 @@ by the sequence generator.</help>
         <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
-            <sql  includeProjects="CryptoDB">
-                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
-                       l.library_id AS internal
-                FROM apidb.estattributes att, dots.library l
-                WHERE att.dbest_name = l.dbest_name
-                AND att.ncbi_tax_id = '5807'
-                AND att.project_id = '@PROJECT_ID@'
-                ORDER BY term
-            </sql>
-             <sql excludeProjects="CryptoDB">
+             <sql>
                 SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
                        l.library_id AS internal
                 FROM apidb.estattributes att, dots.library l
