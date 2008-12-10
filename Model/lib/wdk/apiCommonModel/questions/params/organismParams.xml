@@ -22,8 +22,16 @@
           <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
     
-           <flatVocabParam name="gff_organism"
+      <flatVocabParam name="gff_organism"
                      queryRef="organismVQ.withGenesGFF"
+                     prompt="Organism"
+                     multiPick="true"
+                     quote="false">
+          <useTermOnly value="true" includeProjects="ApiDB"/>
+      </flatVocabParam>
+
+      <flatVocabParam name="gff_organism_name"
+                     queryRef="organismVQ.nameWithGenesGFF"
                      prompt="Organism"
                      multiPick="true"
                      quote="false">
@@ -1014,7 +1022,6 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
@@ -1062,6 +1069,45 @@ UNION
                 ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+      <sql includeProjects="ToxoDB,CryptoDB">
+        <![CDATA[
+           SELECT distinct ga.organism as term,ns.taxon_id as internal
+           FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+           WHERE gf.na_sequence_id = ns.na_sequence_id
+           AND ga.source_id = gf.source_id
+           AND ga.project_id = '@PROJECT_ID@'
+           ORDER BY organism asc
+        ]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery name="nameWithGenesGFF" excludeProjects="ApiDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql excludeProjects="ToxoDB,CryptoDB">
+        <![CDATA[
+          select geneOrgs.organism as term, geneOrgs.organism as internal
+          from (select distinct organism from apidb.GeneAttributes) geneOrgs,
+               (select 'Cryptosporidium parvum' AS name, 1 AS rank from dual
+                 union
+                select 'Cryptosporidium hominis' as name, 2 as rank from dual
+                 union
+                select 'Cryptosporidium muris as name, 2 as rank from dual
+                 union
+                select 'Plasmodium falciparum' as name, 4 as rank from dual
+                 union
+                select 'Plasmodium vivax' as name, 4 as rank from dual
+                 union
+                select 'Plasmodium yoelii' as name, 5 as rank from dual
+                 union
+                select 'Toxoplasma gondii' as name, 6 as rank from dual
+                 union
+                select 'Neospora caninum' as name, 7 as rank from dual
+                ) partial_ordering
+          where geneOrgs.organism = partial_ordering.name(+)
+          order by nvl(partial_ordering.rank, 9999), geneOrgs.organism
         ]]>
       </sql>
       <sql includeProjects="ToxoDB,CryptoDB">
