@@ -1739,6 +1739,8 @@ CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source
   </tuningTable>
 
   <tuningTable name="apidb.AssemblyAttributes">
+    <externalDependency name="dots.Assembly"/>
+    <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.AssemblyAttributes&1 NOLOGGING AS
