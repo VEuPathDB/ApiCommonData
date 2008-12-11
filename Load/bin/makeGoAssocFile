@@ -293,7 +293,7 @@ sub getInputFiles {
 sub getGoId {
     my($goName, $dbh, $extDb) = @_;
 
-    my %translateName = { 'N-linked glycosylation' => 'protein amino acid N-linked glycosylation',
+    my %translateName = ( 'N-linked glycosylation' => 'protein amino acid N-linked glycosylation',
 			  'katanin' => 'katanin complex',
 			  'acetyl-CoA biosynthesis from pyruvate' => 'acetyl-CoA biosynthetic process from pyruvate',
 			  'aldehyde dehydrogenase activity' => 'aldehyde dehydrogenase (NAD) activity',
@@ -302,15 +302,48 @@ sub getGoId {
 			  'copper ion transporter activity' => 'copper ion transmembrane transporter activity',
 			  'double-strand break repair via nonhomologous end-joining' => 'double-strand break repair via nonhomologous end joining',
 			  'eukaryotic elongation factor-2 kinase activity' => 'eukaryotic elongation factor 2 kinase activity',
-			  'glucose transporter activity' =>  'glucose transmembrane transporter activity ',
-			  'glycine betaine biosynthetis from choline' => 'glycine betaine biosynthetic process from choline',
+			  'glucose transporter activity' =>  'glucose transmembrane transporter activity',
+			  'glycine betaine biosynthesis from choline' => 'glycine betaine biosynthetic process from choline',
 			  'hexose transporter activity' => 'hexose transmembrane transporter activity',
 			  'hydrogen-transporting ATP synthase activity, rotational mechanism' => 'hydrogen ion transporting ATP synthase activity, rotational mechanism',
 			  'hydrogen-transporting ATPase activity, rotational mechanism' => 'hydrogen ion transporting ATPase activity, rotational mechanism',
+			  'intracellular transporter activity' => 'SNAP receptor activity',
+			  'metal ion transporter activity' => 'metal ion transmembrane transporter activity',
+                          'UDP-glucose' => 'UDP-glucose transmembrane transporter activity',
+                          'UDP-galactose transporter activity' => 'UDP-galactose transmembrane transporter activity',
+                          'tyrosyl-DNA phosophodiesterase activity' => 'tyrosyl-DNA phosphodiesterase activity',
+                          'tRNA splicing' => 'tRNA splicing, via endonucleolytic cleavage and ligation',
+                          'tRNA specific adenosine deaminase activity' => 'tRNA-specific adenosine deaminase activity',
+                          'tRNA ligase activity' => 'ligase activity, forming aminoacyl-tRNA and related compounds',  
+                          'transcription factor TFIIH complex' => 'transcription factor TFIIE complex',
+                          'sugar transporter activity' => 'sugar transmembrane transporter activity',
+                          'signalosome complex' => 'signalosome',
+			  'regulation of cell motility' => 'regulation of cell motion',
+                          'protein-nucleus import' => 'protein import into nucleus',
+                          'protein modification' => 'protein modification process',
+                          'phosphate transporter activity' => 'phosphate transmembrane transporter activity',
+                          'peroxisome targeting signal-2 receptor activity' => 'peroxisome matrix targeting signal-2 binding',
+                          'peroxisome targeting signal-1 receptor activity' => 'peroxisome matrix targeting signal-1 binding',
+			  'peptidyl-diphthamide biosynthesis from peptidyl-histidine' => 'peptidyl-diphthamide biosynthetic process from peptidyl-histidine',
+			  'nucleotide excision repair factor 4 complex' => 'nucleotide-excision repair factor 4 complex',
+			  'nucleoside transporter activity' => 'nucleoside transmembrane transporter activity',
+			  'nucleobase transporter activity' => 'nucleobase transmembrane transporter activity',
+			  'nuclear mRNA trans splicing, splice leader addition' => 'nuclear mRNA trans splicing, SL addition',
+			  'myosin' => 'myosin complex',
+			  'hypusine biosynthesis from peptidyl-lysine' => 'peptidyl-lysine modification to hypusine',
+			  'mRNA catabolism, nonsense-mediated decay' => 'nuclear-transcribed mRNA catabolic process, nonsense-mediated decay',
+			  'mRNA catabolism, exonucleolytic' => 'nuclear-transcribed mRNA catabolic process',
+			  'proteolysis and peptidolysis' => 'proteolysis',
+			  'amino acid-polyamine transporter activity' => 'amine transmembrane transporter activity',
+			  'regulation of proteolysis and peptidolysis' => 'regulation of proteolysis'
+			  
 			  
 
-		      };
+		      );
     
+    if($translateName{$goName}){
+	$goName = $translateName{$goName};
+    }
     my($edName,$edVersion) = split(/\|/,$extDb);
     my $sql = "SELECT go.go_id FROM sres.goterm go,sres.externaldatabase ed, sres.externaldatabaserelease edr where go.name = '$goName' and ed.external_database_id = edr.external_database_id and ed.name = '$edName' and edr.version = '$edVersion' and edr.external_database_release_id = go.external_database_release_id
 UNION
