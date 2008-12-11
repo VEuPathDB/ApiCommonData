@@ -43,7 +43,7 @@
     <!-- Isolate Author -->
     <!-- ************************************************************ -->
 
-    <sqlQuery name="IsolateByAuthor" includeProjects="CryptoDB"
+    <sqlQuery name="IsolateByAuthor" doNotTest="true"  includeProjects="CryptoDB"
               displayName="Author" isCacheable="true">
       <paramRef ref="isolateParams.author"/>
       <column name="source_id"/>
@@ -120,6 +120,12 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="IsolateByHost" includeProjects="CryptoDB">
+
+        <testParamValues includeProjects="CryptoDB">
+            <paramValue name="specific_host">human</paramValue>
+        </testParamValues>     
+
+
         <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -236,7 +242,7 @@
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB">
 
         <testParamValues includeProjects="CryptoDB,PlasmoDB">
-            <paramValue name="continent">Africa</paramValue>
+            <paramValue name="country">USA</paramValue>
         </testParamValues>     
 
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>

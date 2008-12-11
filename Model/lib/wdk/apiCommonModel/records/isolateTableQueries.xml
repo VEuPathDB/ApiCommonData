@@ -225,6 +225,10 @@
 
 
       <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,ApiDB">
+         <testParamValues includeProjects="CryptoDB">
+            <paramValue name="source_id">AB089288</paramValue>
+         </testParamValues>
+
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
@@ -232,7 +236,7 @@
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT etn.source_id, '@PROJECT_ID' as project_id,
+            SELECT etn.source_id, '@PROJECT_ID@' as project_id,
                       tas.sequence as protein_sequence
                FROM   DoTS.TranslatedAAFeature taf,
                       DoTS.Transcript trp, 

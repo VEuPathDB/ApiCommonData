@@ -153,7 +153,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
  
         <testParamValues includeProjects="CryptoDB">
             <paramValue name="snp_strain_m">Cp-MD</paramValue>
-            <paramValue name="chromosomeOptional">C.p. AAEE01000005 (Chromosome 2)</paramValue>
+            <paramValue name="chromosomeOptional">chromosome 2</paramValue>
         </testParamValues>
         <testParamValues includeProjects="ToxoDB">
             <paramValue name="snp_strain_m">Tg-VEG (type III)</paramValue>
@@ -287,7 +287,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                   ref.product AS ref_product, comp.product AS comp_product,
                   snp.position_in_protein as prot_pos,
                   ref.allele as allele_a, comp.allele as allele_b, p.strain_b, gene.source_id as gene
-                 FROM apidb.Polymorphism p, dots.SnpFeature snp, dots.NaSequence seq,
+                 FROM apidb.Polymorphism p, dots.SnpFeature snp, apidb.sequenceattributes seq,
                       dots.SeqVariation ref, dots.SeqVariation comp,
                       dots.NaLocation gene_loc, sres.ExternalDatabaseRelease edr,
                       sres.ExternalDatabase ed, dots.GeneFeature gene
@@ -296,7 +296,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND p.external_database_release_id = edr.external_database_release_id
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
-                   AND seq.source_id = $$chromosomeOptional$$
+                   AND seq.chromosome = $$chromosomeOptional$$
                    AND p.strain_a = $$snp_strain_a$$ -- ref
                    AND p.strain_b in ($$snp_strain_m$$) -- comp
                    AND $$snp_strain_a$$ < p.strain_b
@@ -321,16 +321,16 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                   ref.product AS ref_product, comp.product AS comp_product,
                   snp.position_in_protein as prot_pos,
                   ref.allele as allele_a, comp.allele as allele_b, p.strain_b, gene.source_id as gene
-                 FROM apidb.Polymorphism p, dots.SnpFeature snp, dots.NaSequence seq,
+                 FROM apidb.Polymorphism p, dots.SnpFeature snp, apidb.sequenceattributes seq,
                       dots.SeqVariation ref, dots.SeqVariation comp,
                       dots.NaLocation gene_loc, sres.ExternalDatabaseRelease edr,
-                      sres.ExternalDatabase ed, dots.GeneFeature gene
+                      sres.ExternalDatabase ed, dots.GeneFeature gene, apidb.featurelocation fl
                  WHERE seq.na_sequence_id = p.na_sequence_id
                    AND p.gene_na_feature_id = gene_loc.na_feature_id(+)
                    AND p.external_database_release_id = edr.external_database_release_id
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
-                   AND seq.source_id = $$chromosomeOptional$$
+                   AND seq.chromosome = $$chromosomeOptional$$
                    AND p.strain_b = $$snp_strain_a$$ -- ref
                    AND p.strain_a in ($$snp_strain_m$$) -- comp
                    AND p.strain_a < $$snp_strain_a$$

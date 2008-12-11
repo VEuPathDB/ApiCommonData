@@ -55,7 +55,7 @@
             <column name="protein_sequence_count"/>
             <sql>
             select a.source_id, a.project_id, count(*) as protein_sequence_count
-            from (SELECT i.source_id, '@PROJECT_ID' as project_id
+            from (SELECT i.source_id, '@PROJECT_ID@' as project_id
                   From (select etn.source_id, tas.sequence as protein_sequence
                         FROM   DoTS.TranslatedAAFeature taf, DoTS.Transcript trp, 
                                DoTS.TranslatedAASequence tas, DoTS.IsolateFeature gf,
