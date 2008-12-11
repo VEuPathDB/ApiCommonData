@@ -36,7 +36,10 @@ create table WorkflowStep (
   state_handled       number(1),
   off_line            number(1),
   start_time          date,
-  end_time            date
+  end_time            date,
+  step_class          varchar(200),
+  params_digest       varchar(100),
+  depth_first_order   number(5)
 );
 
 ALTER TABLE apidb.WorkflowStep
