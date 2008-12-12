@@ -88,7 +88,7 @@
         </sqlParamValue>
 -->
 
-        <sql includeProjects="ToxoDB,PlasmoDB"> 
+        <sql includeProjects="ToxoDB,PlasmoDB,CryptoDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -106,26 +106,7 @@
             AND oa.source_id = fl.feature_source_id
            ]]>
        </sql>
-        <sql includeProjects="CryptoDB"> 
-            <![CDATA[
-	    SELECT distinct m.source_id, '@PROJECT_ID@' as project_id,'dynamic location' as dynamic_location
-	    FROM dots.NASequence vs, dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
-	         dots.TranslatedAaSequence tas, sres.SequenceOntology so, dots.NaLocation nal,
-                 apidb.GenomicSequence gs
-	    WHERE m.na_feature_id = taaf.na_feature_id
-	    AND taaf.aa_sequence_id = tas.aa_sequence_id
-            AND tas.length >= $$min_orf_length$$
-	    AND vs.na_sequence_id = m.na_sequence_id
-	    AND vs.source_id = gs.source_id
-	    AND (gs.source_id = $$chromosomeOptional$$
-                   OR gs.lowercase_source_id = lower($$sequenceId$$))
-	    AND m.sequence_ontology_id = so.sequence_ontology_id
-	    AND m.na_feature_id = nal.na_feature_id
-	    AND so.term_name = 'ORF'
-	    AND nal.end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','')  
-	    AND (nal.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
-           ]]>
-       </sql>
+
 <!-- should be same as giardia 
         <sql includeProjects="TrichDB"> 
             <![CDATA[
