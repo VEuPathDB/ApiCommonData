@@ -57,6 +57,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
     <question name="GenesByLocation"
          category="Genomic Position"
          displayName="Chromosomal Location"
+         shortDisplayName="Chromo Loc"
          queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
@@ -153,6 +154,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
     <question name="GenesByGeneType"
          category="Gene Attributes"
          displayName="Gene Type"
+         shortDisplayName="Gene Type"
               queryRef="GeneId.GenesByGeneType"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList includeProjects="GiardiaDB"
@@ -187,6 +189,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
     <question name="GenesByExonCount"
               category="Gene Attributes"
               displayName="Exon Count"
+              shortDisplayName="Exon Count"
               queryRef="GeneId.GenesByExonCount"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
@@ -224,6 +227,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
 
     <question name="GenesByIsoelectricPoint" excludeProjects="CryptoDB"
          displayName="Isoelectric Point"
+         shortDisplayName="Isoelec Pt"
          category="Predicted Proteins"
          queryRef="GeneId.GenesByIsoelectricPoint"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -254,6 +258,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
 
     <question name="GenesByMolecularWeight"
          displayName="Molecular Weight"
+         shortDisplayName="Molecular Wt"
          category="Predicted Proteins"
          queryRef="GeneId.GenesByMolecularWeight"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -287,6 +292,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
 
     <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB,TrypDB"
               displayName="Protein Secondary Structure"
+              shortDisplayName="2D Struct"
               category="Predicted Proteins"
               queryRef="GeneId.GenesBySecondaryStructure"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -325,6 +331,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
     <question name="GenesByEcNumber"
          category="Putative Function"
          displayName="EC Number"
+         shortDisplayName="EC Number"
               queryRef="GeneId.GenesByEcNumber"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
@@ -419,6 +426,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
     <question name="GenesBySnps" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Population Biology"
               displayName="SNP Characteristics"
+              shortDisplayName="SNPs"
               queryRef="GeneId.GenesBySnps"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
@@ -517,8 +525,9 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
 
 <!-- TODO: add Mass spec query for Trypdb -->
     <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB"
-          displayName="Mass Spec. Evidence"
-          category="Protein Expression"
+         displayName="Mass Spec. Evidence"
+         shortDisplayName="Mass Spec"
+         category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList  includeProjects="ToxoDB"
@@ -835,6 +844,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 <!--
     <question name="GenesByMassSpec2" includeProjects="PlasmoDB,ApiDB"
          displayName="P.f. Mass Spec. Evidence (life cycle)"
+         shortDisplayName="Pf Mass Spec"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec2"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1002,6 +1012,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
     <question name="GenesWithEpitopes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TrypDB" 
               category="Other Attributes"
               displayName="Epitope Presence"
+              shortDisplayName="Epitopes"
               queryRef="GeneId.GenesWithEpitopes" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
@@ -1050,6 +1061,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
     <question name="GenesBySimilarity"
          displayName="BLAST"
+         shortDisplayName="BLAST"
          category="Similarity/Pattern"
          queryRef="GeneId.GenesBySimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
@@ -1088,6 +1100,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
     <question name="GenesByMotifSearch"
          displayName="Protein Motif Pattern"
+         shortDisplayName="Prot Motif"
          category="Similarity/Pattern"
          queryRef="GeneId.GenesByMotifSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1272,6 +1285,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
     <question name="GenesByInterproDomain"
               category="Similarity/Pattern"
               displayName="Interpro Domain"
+              shortDisplayName="Interpro Dom"
               queryRef="GeneId.GenesByInterproDomain"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList excludeProjects="ToxoDB"
@@ -1318,6 +1332,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
     <question name="GenesByGoTerm"
          category="Putative Function"
          displayName="GO Term"
+         shortDisplayName="GO Term"
               queryRef="GeneId.GenesByGoTerm"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList excludeProjects="ToxoDB"
@@ -1366,6 +1381,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
  <!-- TODO: check that metabolic pathway is excluded for TrypDB -->
     <question name="GenesByMetabolicPathway" excludeProjects="TrichDB,GiardiaDB,CryptoDB,TrypDB"
          displayName="Metabolic Pathway"
+         shortDisplayName="Metabol Path"
          category="Putative Function"
          queryRef="GeneId.GenesByMetabolicPathway"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1430,6 +1446,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          question page directing users to CryptoCyc -->
     <question name="GenesByMetabolicPathway" includeProjects="CryptoDB"
          displayName="Metabolic Pathway"
+         shortDisplayName="Metabol Path"
          category="Putative Function"
          queryRef="GeneId.GenesByExonCount"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1445,6 +1462,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
     <question name="GenesByTransmembraneDomains"
          category="Cellular Location"
          displayName="Transmembrane Domain Count"
+         shortDisplayName="Transmb Dom"
               queryRef="GeneId.GenesByTransmembraneDomains"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
@@ -1475,6 +1493,7 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
 
     <question name="GenesWithSignalPeptide"
          displayName="Predicted Signal Peptide"
+         shortDisplayName="Signal Pep"
          category="Cellular Location"
          queryRef="GeneId.GenesWithSignalPeptide"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1517,6 +1536,7 @@ Find genes that are predicted to encode a signal peptide.
 
     <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB,GiardiaDB,TrypDB"
          displayName="Orthology Phylogenetic Profile"
+         shortDisplayName="Ortho Ph Pro"
          category="Evolution"
          queryRef="GeneId.GenesByOrthologPattern"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1640,6 +1660,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GenesByPhylogeneticTree" includeProjects="GiardiaDB"
          category="Evolution"
          displayName="Phylogenetic Tree"
+         shortDisplayName="Phylo Tree"
          queryRef="GeneId.GenesByPhylogeneticTree"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -1668,6 +1689,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GeneBySingleLocusTag" excludeProjects="ApiDB"
          category="Other Attributes"
          displayName="ID"
+         shortDisplayName="ID"
               queryRef="GeneId.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="true"
@@ -1699,6 +1721,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GeneBySingleLocusTag" includeProjects="ApiDB"
          category="Other Attributes"
          displayName="ID"
+         shortDisplayName="ID"
               queryRef="GeneId.GeneBySingleLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="false">
@@ -1728,6 +1751,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GeneByLocusTag" excludeProjects="ApiDB"
          category="Other Attributes"
          displayName="List of IDs"
+         shortDisplayName="IDs List"
               queryRef="GeneId.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="true"
@@ -1799,6 +1823,7 @@ Find genes that are predicted to encode a signal peptide.
      <question name="GeneByLocusTag" includeProjects="ApiDB"
          category="Other Attributes"
          displayName="List of IDs"
+         shortDisplayName="IDs List"
               queryRef="GeneId.GeneByLocusTag"
               recordClassRef="GeneRecordClasses.GeneRecordClass"
               noSummaryOnSingleRecord="false">
@@ -1824,7 +1849,8 @@ Find genes that are predicted to encode a signal peptide.
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByTextSearch"
-         displayName="Keyword (search product name, notes, etc.)"
+         displayName="Text (search product name, notes, etc.)"
+         shortDisplayName="Text"
          category="Other Attributes"
          queryRef="GeneId.GenesByTextSearch"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -1866,6 +1892,7 @@ Find genes that are predicted to encode a signal peptide.
     <question name="GenesByTaxon"
          category="Other Attributes"
          displayName="Species"
+         shortDisplayName="Species"
          queryRef="GeneId.GenesByTaxon"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
@@ -1944,7 +1971,8 @@ Contact Kami Kim, kkim@aecom.yu.edu, for further information
 
     <question name="GenesBySageTag"
          category="Transcript Expression"
-         displayName="SAGE Tag evidence"
+         displayName="Sage Tag Evidence"
+         shortDisplayName="Sage Tags"
          queryRef="GeneId.GenesBySageTag"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
@@ -2003,7 +2031,8 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
 
     <question name="GenesBySageTagRStat"
          category="Transcript Expression"
-         displayName="Differential Expression By SAGE Tag evidence"
+         displayName="Differential Expression By SAGE Tag Evidence"
+         shortDisplayName="SAGE Diff Ex"
          queryRef="GeneId.GenesBySageTagRStat"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
@@ -2070,7 +2099,8 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
 
     <question name="GenesByESTOverlap"
               category="Transcript Expression"
-              displayName="EST evidence"
+              displayName="EST Evidence"
+              shortDisplayName="EST Evidence"
               queryRef="GeneId.GenesByESTOverlap"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
@@ -2151,6 +2181,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     <question name="GenesByNonnuclearLocation"  includeProjects="PlasmoDB,ToxoDB,ApiDB"
          category="Genomic Position"
          displayName="Non-nuclear Chromosomal Location"
+         shortDisplayName="Exnuc Chr Lo"
          queryRef="GeneId.GenesByNonnuclearGenomicRegion"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
 
@@ -2213,6 +2244,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB,TrypDB"
               displayName="Orthologs and Paralogs"
+              shortDisplayName="Orthol/Paral"
               category="Evolution"
               queryRef="GeneId.GenesOrthologousToAGivenGene"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2305,7 +2337,8 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
-              displayName="Differential Expression across 3 archetypal lineages(T.g.)"
+              displayName="Differential Expression across 3 archetypal lineages (T.g.)"
+              shortDisplayName="Tg Diff Expr"
               queryRef="GeneId.GenesByDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -2392,6 +2425,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     <question name="ToxoGenesByExpressionPercentile" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
               displayName="Expression Percentile (T.g.)"
+              shortDisplayName="Tg Expr %ile"
               queryRef="GeneId.ToxoGenesByExpressionPercentile" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -2433,6 +2467,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="GenesByCentromereProximity" includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Centromeres"
+              shortDisplayName="Centromeric"
               category="Genomic Position"
               queryRef="GeneId.GenesByCentromereProximity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2471,6 +2506,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     <question name="GenesByTelomereProximity"
               includeProjects="PlasmoDB, ApiDB"
               displayName="Proximity to Telomeres"
+              shortDisplayName="Telomeric"
               category="Genomic Position"
               queryRef="GeneId.GenesByTelomereProximity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2508,7 +2544,8 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB,TrypDB"
-         displayName="PDB 3D Structures"
+         displayName="PDB 3-D Structures"
+         shortDisplayName="PDB 3D Struc"
          category="Predicted Proteins"
          queryRef="GeneId.GenesByPdbSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2545,6 +2582,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="GenesWithStructurePrediction" includeProjects="PlasmoDB,ApiDB"
               displayName="Predicted 3D Structure"
+              shortDisplayName="3D Structure"
               category="Predicted Proteins"
               queryRef="GeneId.GenesWithStructurePrediction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2586,6 +2624,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="GenesWithProteinLowComplexity"  includeProjects="PlasmoDB,ApiDB"
               displayName="Low Complexity Proteins"
+              shortDisplayName="Low Complex"
               category="Predicted Proteins"
               queryRef="GeneId.GenesWithProteinLowComplexity"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2616,6 +2655,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 
     <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,ApiDB"
               displayName="Y2H Protein Interaction"
+              shortDisplayName="Y2H Interact"
               category="Putative Function"
               queryRef="GeneId.GenesByProteinProteinInteraction"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2694,6 +2734,7 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
 
     <question name="GenesByFunctionalInteraction" includeProjects="PlasmoDB,ApiDB"
          displayName="Predicted Functional Interaction"
+         shortDisplayName="Func Interac"
          category="Putative Function"
          queryRef="GeneId.GenesByFunctionalInteraction"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -2830,6 +2871,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
     <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Diff. expression in DOZI mutant vs. WT (P.b.)"
+              shortDisplayName="PbDOZI vs WT"
               queryRef="GeneId.GenesByWatersDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2873,6 +2915,7 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
     <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Diff. expression (fold-change) in KO vs. WT (P.f.)"
+              shortDisplayName="PfKO v WT Df"
               queryRef="GeneId.GenesByDifferentialMeanExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2930,6 +2973,7 @@ References:
     <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="Expression percentile in KO and WT (P.f.)"
+              shortDisplayName="PfKO WT %ile"
               queryRef="GeneId.GenesByExpressionPercentileA" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2990,6 +3034,7 @@ References:
 
     <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Timing (P.f.)"
+         shortDisplayName="Pf Expr Time"
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3037,6 +3082,7 @@ References:
 
     <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Profile Similarity (P.f.)"
+         shortDisplayName="Pf Expr Sim"
          category="Transcript Expression"
          queryRef="GeneId.GenesByProfileSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3092,6 +3138,7 @@ References:
 
     <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Percentile (P.f.)"
+         shortDisplayName="Pf Expr %ile"
          category="Transcript Expression"
          queryRef="GeneId.DontCarePlasmoExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3155,6 +3202,7 @@ References:
 
     <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,ApiDB"
          displayName="Gametocyte Expression (P.f.)"
+         shortDisplayName="Pf Gam Expr"
          category="Transcript Expression"
          queryRef="GeneId.GenesByGametocyteExpression"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3212,6 +3260,7 @@ References:
 
     <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Percentile (P.b)"
+         shortDisplayName="Pb Expr %ile"
          category="Transcript Expression"
          queryRef="GeneId.BergheiGenesByExpressionPercentile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3248,7 +3297,8 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
-         displayName="Mass Spec. Evidence (life cycle)"
+         displayName="P.b. Mass Spec. Evidence (life cycle)"
+         shortDisplayName="Pb Mass Spec"
          category="Protein Expression"
          queryRef="GeneId.GenesByProteomicsProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3283,6 +3333,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,ApiDB"
          category="Cellular Location"
          displayName="Subcellular Localization (P.f.)"
+         shortDisplayName="Subcell Loc"
               queryRef="GeneId.GenesBySubcellularLocalization"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -3322,6 +3373,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByExportPrediction" includeProjects="PlasmoDB,ApiDB"
          displayName="Exported Protein"
+         shortDisplayName="Export Prot"
          category="Cellular Location"
          queryRef="GeneId.GenesByExportPrediction"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3352,6 +3404,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,ApiDB"
          displayName="Homology Phylogenetic Profile"
+         shortDisplayName="Homol Phy Pr"
          category="Evolution"
          queryRef="GeneId.GenesByPhyleticProfile"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3414,6 +3467,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,ApiDB"
               displayName="Protein Accession"
+              shortDisplayName="Protein Acc"
               category="Other Attributes"
               queryRef="GeneId.GenesByProteinDbAccession"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3442,6 +3496,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB"
          displayName="MR4 Reagents Availability"
+         shortDisplayName="MR4 Reagent"
          category="Other Attributes"
          queryRef="GeneId.GenesByMr4Reagents"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3482,6 +3537,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByPlasmoDbDataset" includeProjects="PlasmoDB"
          displayName="Genes imported from PlasmoDB 4.4"
+         shortDisplayName="PlasmoDB 4.4"
               queryRef="GeneId.GenesByPlasmoDbDataset"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -3500,6 +3556,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 <!--  I believe this is a mistake and should be deleted. -sf 9/28/07
     <question name="GenesByProteinStructure" includeProjects="PlasmoDB"
                displayName="Protein structure"
+               shortDisplayName="Protein struct"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
@@ -3515,6 +3572,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 <!--
     <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="Expression Percentile (P.f.)"
+              shortDisplayName="Pf Expr %ile"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
@@ -3524,6 +3582,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 -->
    <question name="GenesByProteinStructure" includeProjects="ApiDB,GiardiaDB,TrichDB"
               displayName="Protein Secondary Structure"
+              shortDisplayName="2D Structure"
               category="Predicted Proteins"
               queryRef="GeneId.GenesBySecondaryStructure"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3640,7 +3699,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Internal questions that are place holders in the query grid  -->
   <!--===========================================================================-->
 
-   <question name="GenesByMicroarrayEvidence" displayName="Microarray evidence"
+   <question name="GenesByMicroarrayEvidence" 
+              displayName="Microarray Evidence"
+              shortDisplayName="Microarray"
               includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3671,7 +3732,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
 
-   <question name="GenesBySageTagEvidence" displayName="SAGE Tag evidence"
+   <question name="GenesBySageTagEvidence"
+              displayName="Sage Tag Evidence"
+              shortDisplayName="Sage Tag"
               includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3693,7 +3756,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
 
 
-    <question name="GenesByMassSpecEvidence" displayName="Mass spectrometry evidence"
+    <question name="GenesByMassSpecEvidence"
+              displayName="Mass Spectrometry Evidence"
+              shortDisplayName="Mass Spec"
               includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3712,7 +3777,9 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         </propertyList>
     </question>
 
-    <question name="GenesByProteinStructure" displayName="Protein structure"
+    <question name="GenesByProteinStructure"
+              displayName="Protein Structure"
+              shortDisplayName="Prot Struct"
               includeProjects="ApiDB,PlasmoDB,TrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3734,6 +3801,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByProteinStructure" includeProjects="GiardiaDB,TrichDB"
               displayName="Protein Secondary Structure"
+              shortDisplayName="2D Struct"
               category="Predicted Proteins"
               queryRef="GeneId.GenesBySecondaryStructure"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
@@ -3768,6 +3836,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
      <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TrypDB"
          displayName="Orthology to Genes in a Query Result"
+         shortDisplayName="Orthologous"
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ApiDB"
