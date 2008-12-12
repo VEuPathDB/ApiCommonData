@@ -1359,7 +1359,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </testParamValues>
 
 
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" excludeProjects="ApiDB"/>
+ <paramRef ref="organismParams.localorganism"  includeProjects="ApiDB"/>
         <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
         <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="TGME49_053730" />
         <column name="project_id"/>
@@ -1442,6 +1443,32 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 <sql includeProjects="ApiDB">
+
+<![CDATA[
+                SELECT DISTINCT snas2.source_id, ext.name as project_id 
+                FROM dots.splicednasequence snas1, dots.SequenceSequenceGroup ssg1,
+                     dots.SequenceSequenceGroup ssg2, dots.splicednasequence snas2,
+                     core.TableInfo ti,apidb.GeneId gi, 
+                     sres.ExternalDatabaseRelease extr, 
+                     sres.ExternalDatabase ext
+                WHERE gi.id = lower($$single_gene_id$$) 
+                  AND snas1.source_id = gi.gene 
+                  AND snas1.na_sequence_id = ssg1.sequence_id
+                  AND ssg1.source_table_id = ti.table_id
+                  AND ssg1.sequence_group_id = ssg2.sequence_group_id
+                  AND ssg2.source_table_id = ti.table_id
+                  AND ssg2.sequence_id = snas2.na_sequence_id
+                  AND ti.name = 'SplicedNASequence'
+                  AND snas2.source_id != snas1.source_id 
+                  AND snas2.taxon_id IN ($$localorganism$$)
+                  AND snas2.external_database_release_id=extr.external_database_release_id
+                  AND extr.external_database_id=ext.external_database_id
+                 ORDER by project_id,snas2.source_id
+
+           ]]>
+
+
+<!--
             <![CDATA[
                 SELECT DISTINCT snas2.source_id, ext.name as project_id 
                 FROM dots.splicednasequence snas1, dots.SequenceSequenceGroup ssg1,
@@ -1462,6 +1489,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                  order by project_id,snas2.source_id
 
            ]]>
+-->
        </sql>
     </sqlQuery>
 
