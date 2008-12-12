@@ -426,19 +426,16 @@
        <!-- protein sequence  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="Chromosome" displayName="Chromosome" includeProjects="CryptoDB">
+        <sqlQuery name="ChromosomeMappingText" displayName="Chromosome" includeProjects="CryptoDB">
             <column name="source_id"/>
             <column name="project_id"/>
-            <column name="chromosome"/>
+            <column name="chromosomemappingtext"/>
             <sql>
-            <![CDATA[SELECT g.source_id,
-                            src.chromosome as chromosome,
-                            '@PROJECT_ID@' as project_id
-                     FROM dots.genefeature g,
-                          dots.externalnasequence enas,
-                          dots.source src
-                     WHERE g.na_sequence_id= enas.na_sequence_id
-                     AND  enas.na_sequence_id = src.na_sequence_id
+            <![CDATA[SELECT ga.source_id,'@PROJECT_ID@' as project_id,
+                            CASE WHEN ga.chromosome IS NOT NULL
+			    THEN '( ' || ga.chromosome || ' )'
+			    ELSE '' END AS chromosomemappingtext
+                     FROM apidb.geneAttributes ga
             ]]>
             </sql>
         </sqlQuery>
