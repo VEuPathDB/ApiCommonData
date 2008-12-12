@@ -37,6 +37,8 @@ my $value = $sth->fetchrow_array();
 
 $sth->finish();
 
+$dbh->disconnect();
+
 die "there is no value returned for the query:\n\t$idSQL\n" unless $value;
 
 print $value;
