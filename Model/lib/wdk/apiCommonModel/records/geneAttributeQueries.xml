@@ -852,8 +852,6 @@
             <column name="source_id" />
             <column name="project_id"/>
             <column name="translation" />
-            <column name="molecular_weight" />
-            <column name="molecular_weight_note" />
             <sql>
             <!-- UPPER(source_id) is a workaround to some unresolved bug where
                  the translation doesn't get returned via webservices
@@ -863,14 +861,7 @@
                  non-protein coding genes) - the WDK doesn't allow an empty result.    -->
             <![CDATA[  
               SELECT g.source_id, '@PROJECT_ID@' as project_id,
-                          tas.sequence as translation, tas.molecular_weight,
-                          DECODE (
-                            tas.molecular_weight, null,
-                            '',
-                            'Approximate protein mol. wt. (Daltons): <b>'  ||
-                            tas.molecular_weight  ||
-                            '</b><font size=''-1''><i> [computed from raw translation]</i></font>'
-                          ) as molecular_weight_note
+                          tas.sequence as translation
               FROM    apidb.geneattributes g,
                     dots.translatedaasequence tas, 
                     dots.translatedaafeature taf, 
