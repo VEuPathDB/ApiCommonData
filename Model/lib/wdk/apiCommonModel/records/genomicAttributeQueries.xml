@@ -126,8 +126,13 @@
                     bfmv.genbank_accession, bfmv.database_name,
                     bfmv.database_version as externalDbVersion, database_name as externalDbName,
                     bfmv.chromosome, bfmv.chromosome_order_num,
-                    DECODE(bfmv.chromosome, NULL, 'This contig has not been mapped to a chromosome.', 
-                           'This contig has been mapped to chromosome ' || bfmv.chromosome || '.') as chromosomemappingtext,
+                    CASE WHEN (bfmv.chromosome is NOT NULL) THEN 'This is ' || bfmv.chromosome || '.'
+                         WHEN (is_top_level=1 AND bfmv.chromosome is NULL) THEN 'This contig has not been mapped to a chromosome.' 
+                         ELSE (SELECT 'This contig has been mapped to ' || virtual_source_id||' ( '|| sattr.chromosome || ' ).'
+                                 FROM   apidb.scaffold_map sm, apidb.sequenceAttributes sattr
+                                 WHERE  bfmv.source_id = sm.piece_source_id
+                                 AND    sm.virtual_source_id = sattr.source_id )
+                    END as chromosomemappingtext,
                     bfmv.source_id as secondary_identifier,
                     DECODE(
                     substr(bfmv.organism, 
