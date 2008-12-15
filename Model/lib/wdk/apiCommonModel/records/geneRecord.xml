@@ -276,38 +276,27 @@
                           includeProjects="CryptoDB">
                 
                 <instance name="all_genes" displayName="Cryptosporidium Genes"> 
-                    <description>
-                        <![CDATA[
-                            Total number of genes 
-                        ]]>
-                    </description>   
+                    <description>genes</description>   
                     <paramValue name="organism">Cryptosporidium</paramValue>
                 </instance>
 
                 <instance name="parvum_genes" displayName="Parvum Genes">
-                    <description>
-                        <![CDATA[
-                            Number of parvum genes 
-                        ]]>
-                    </description>   
+                    <description>genes</description>   
+                    <paramValue name="organism">Cryptosporidium parvum Iowa II</paramValue>
+                </instance>
+
+                <instance name="parvum_chr6_genes" displayName="Parvum Chromosome 6 Genes">
+                    <description>genes</description>   
                     <paramValue name="organism">Cryptosporidium parvum</paramValue>
                 </instance>
                 
                 <instance name="hominis_genes" displayName="Hominis Genes">
-                    <description>
-                        <![CDATA[
-                            Number of hominis genes 
-                        ]]>
-                    </description>   
+                    <description>genes</description>   
                     <paramValue name="organism">Cryptosporidium hominis</paramValue>
                 </instance>
                 
                 <instance name="muris_genes" displayName="Muris Genes">
-                    <description>
-                        <![CDATA[
-                            Number of muris genes 
-                        ]]>
-                    </description>   
+                    <description>genes</description>   
                     <paramValue name="organism">Cryptosporidium muris</paramValue>
                 </instance>
                 
@@ -345,6 +334,20 @@
                         ]]>
                     </description>   
                     <paramValue name="organism">Tg</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.CryptoDistinctGenes"
+                          includeProjects="CryptoDB,ApiDB">
+                
+                <instance name="crypto_distinct_genes" displayName="Crypto Distinct Genes">
+                    <description>
+                        <![CDATA[
+                            Number of non-redundant <i>Cryptosporidium</i> genes, with hits in any strain (the representative gene is:  <i>C.parvum</i> if it exists, otherwise <i>C.hominis</i> if it exists, otherwise <i>C.muris</i> if it exists, otherwise <i>C.parvum</i> chromosome 6.
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Cryptosporidium</paramValue>
                 </instance>
                 
             </answerFilter>
