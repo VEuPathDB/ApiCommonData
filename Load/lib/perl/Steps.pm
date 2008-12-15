@@ -1275,6 +1275,26 @@ EOF
 
 }
 
+sub makeRefIsolateDownloadFile {
+  my ($mgr, $species, $name, $project) = @_;
+
+  my $sql = <<"EOF";
+  SELECT  x.source_id
+                ||' | description='||
+          x.description as defline,
+          x.sequence
+       FROM dots.isolatesource i,
+            dots.externalnasequence x
+      WHERE x.na_sequence_id = i.na_sequence_id 
+            and i.is_reference=1
+EOF
+
+    my $fileName = $species . ucfirst($name);
+
+    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
+
+}
+
 sub makeESTDownloadFile {
   my ($mgr, $species, $name, $ncbiTaxId, $dbName, $dbVer, $taxonHierarchy,$project) = @_;
 
@@ -2354,7 +2374,7 @@ EOF
 }
 
 sub makeIsolateDownloadFile {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $seqTable) =@_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $seqTable,$isRef) =@_;
 
   my $sql = <<"EOF";
         SELECT
