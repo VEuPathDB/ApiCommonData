@@ -1172,7 +1172,13 @@ UNION
             <column name="internal"/>
             <column name="term"/>
              <sql>
-                SELECT orgs.term, orgs.internal
+                SELECT orgs.term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = orgs.internal) AS internal
                 FROM (SELECT CASE 
                          WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
                          ELSE tn.name END as term,
