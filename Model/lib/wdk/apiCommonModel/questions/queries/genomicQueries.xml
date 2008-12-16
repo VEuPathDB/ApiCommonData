@@ -22,18 +22,7 @@
         <paramRef ref="genomicParams.sequenceId" excludeProjects="ToxoDB,PlasmoDB"/> 
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql includeProjects="CryptoDB">
-             <![CDATA[
-            SELECT distinct enas.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.nasequence enas,
-                 sres.sequenceontology so, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
-            WHERE  ds.dataset_id = $$sequenceId$$
-            AND LOWER(enas.source_id) LIKE TRIM(REGEXP_REPLACE(REPLACE(LOWER(ds.dataset_value),'*', '%'),'[[:space:]]', ''))
-            AND enas.sequence_ontology_id = so.sequence_ontology_id
-            AND so.term_name in ('contig', 'supercontig','chromosome')
-           ]]>
-        </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB">
+        <sql>
         <![CDATA[
             SELECT distinct sequence as source_id, '@PROJECT_ID@' as project_id
             FROM apidb.SequenceId si, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
