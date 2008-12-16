@@ -1145,7 +1145,7 @@
        <!--Gene Location -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="Genbank" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,ApiDB">
+     <sqlQuery name="Genbank" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,CryptoDB,ApiDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1163,6 +1163,9 @@
             </sqlParamValue>
             <sqlParamValue name="top_level" includeProjects="ToxoDB">
               CASE WHEN fl.sequence_source_id like 'TG%' THEN 'Chromosome' ELSE 'Scaffold' END
+            </sqlParamValue>
+            <sqlParamValue name="top_level" includeProjects="CryptoDB">
+              Decode(fl.is_top_level,0, 'Contig', 1, 'Chromosome')
             </sqlParamValue>
             <sql>
             <![CDATA[

@@ -1169,7 +1169,7 @@
           <!-- Gene Location table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Genbank" includeProjects="ToxoDB,GiardiaDB,ApiDB"
+          <table name="Genbank" includeProjects="ToxoDB,GiardiaDB,CryptoDB,ApiDB"
                  displayName="Gene Location"
                  queryRef="GeneTables.Genbank">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -1183,7 +1183,7 @@
             </textAttribute>
 
             <linkAttribute displayName="Genome Browser" name="view_link" inReportMaker="false" 
-                           internal="false" includeProjects="ToxoDB,GiardiaDB" >
+                           internal="false" includeProjects="ToxoDB,GiardiaDB,CryptoDB" >
                  <displayText>
                     <![CDATA[
                     View
@@ -1197,6 +1197,11 @@
                    <url includeProjects="GiardiaDB">
                     <![CDATA[
                       /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
+                        ]]>
+                   </url>
+                   <url includeProjects="CryptoDB">
+                    <![CDATA[
+                       @CGI_URL@/gbrowse/cryptodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;h_feat=$$feature_source_id$$@thistle
                         ]]>
                    </url>
             </linkAttribute>
