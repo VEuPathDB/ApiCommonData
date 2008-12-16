@@ -16,12 +16,14 @@ sub run {
     $self->runCmd(0,"cp -r $localDataDir/$inputDir  $localDataDir/$outputDir");
 
     opendir(DIR, "$localDataDir/$outputDir") || die "Can't open directory '$localDataDir/$outputDir'";
+    
+    
     my @files = readdir(DIR);
     foreach my $file (@files) {
 	next if /^\.+$/;  # skip . and ..
         my $original = $file;
         $file =~ s/(\S+)_(\d)/$1-$2/g;
-        $self->runCmd(0, "mv $original $file");
+        $self->runCmd($test, "mv $original $file");
     }
 }
 
