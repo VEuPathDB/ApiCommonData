@@ -17,21 +17,27 @@ sub run {
   my $psipredPath = $self->getConfig('psipredPath');
   my $ncbiBinPath = $self->getConfig('ncbiBinPath');
 
+  my $computeClusterDataDir = $self->getComputeClusterDataDir();
+  my $localDataDir = $self->getLocalDataDir();
+
+  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
+
   # make controller.prop file
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::PsipredTask");
 
-  # make task.prop file
-  my $computeClusterDataDir = $self->getComputeClusterDataDir();
-  my $localDataDir = $self->getLocalDataDir();
+ 
+
+
 
   if ($test) {
     $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
     $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
   }
 
+ # make task.prop file
   my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, $taskPropFile) || die "Can't open task prop file '$taskPropFile' for writing";
+  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
 "psipredDir=$psipredPath
@@ -53,7 +59,9 @@ sub getParamsDeclaration {
 sub getConfigDeclaration {
   return (
          # [name, default, description]
-         # ['', '', ''],
+           ['ncbiBinPath', '', ''],
+           ['psipredPath', '', ''],
+           ['taskSize', '', ''],
          );
 }
 
