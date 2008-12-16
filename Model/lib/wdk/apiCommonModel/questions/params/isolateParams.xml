@@ -52,6 +52,7 @@
 
         <flatVocabParam name="specific_host" includeProjects="CryptoDB,ApiDB"
              queryRef="hostVQ.withIsolates"
+             default="Mammals - human"
              prompt="Host"
              multiPick="true"
              quote="false"
@@ -212,19 +213,19 @@
  union
  select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
  union
- select 'non human' as term, 'non human' as internal, 'Mammals' as parentterm from dual
+ select 'Mammals - non human' as term, 'Mammals - non human' as internal, '' as parentterm from dual
+ union
+ select 'Mammals - human' as term, 'Mammals - human' as internal, '' as parentterm from dual
  union
  select 'Amphibians' as term, 'Amphibians' as internal, '' as parentterm from dual
  union
  select 'Mollusks' as term, 'Mollusks' as internal, '' as parentterm from dual
  union
- select 'Mammals' as term, 'Mammals' as internal, '' as parentterm from dual
- union
  select 'Birds' as term, 'Birds' as internal, '' as parentterm from dual
  union
- select 'marsupial' as term, 'marsupial' as internal, 'Mammals' as parentterm from dual
+ select 'marsupial' as term, 'marsupial' as internal, 'Mammals - non human' as parentterm from dual
  union
- select 'rodent' as term, 'rodent' as internal, 'non human' as parentterm from dual
+ select 'rodent' as term, 'rodent' as internal, 'Mammals - non human' as parentterm from dual
  union
  select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
     ]]>
