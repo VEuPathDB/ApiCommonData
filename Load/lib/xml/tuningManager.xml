@@ -286,13 +286,13 @@ select -- virtual feature locations mapped through SequencePiece
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
            else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as start_min,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
          else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as end_max,
        case
@@ -306,13 +306,13 @@ select -- virtual feature locations mapped through SequencePiece
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - coding_start
+                - coding_start + 1
            else sp.distance_from_left + ef.coding_start
        end as coding_start,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - coding_end
+                - coding_end + 1
          else sp.distance_from_left + coding_end
        end as coding_end, nf.external_database_release_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
@@ -1877,8 +1877,8 @@ SQL
 
         if ($virtual_na_sequence_id) {
           if ($strand_orientation eq '-') {
-            $virtual_target_start = $distance_from_left + $length - $target_end;
-            $virtual_target_end = $distance_from_left + $length - $target_start;
+            $virtual_target_start = $distance_from_left + $length - $target_end + 1;
+            $virtual_target_end = $distance_from_left + $length - $target_start + 1;
             $virtual_tstarts = &getReversedTstarts($distance_from_left,$length,$tstarts,$blocksizes);
           } else {
             $virtual_target_start = $target_start + $distance_from_left;
@@ -3004,13 +3004,13 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - greatest(sim.min_query_start, sim.max_query_end)
+                - greatest(sim.min_query_start, sim.max_query_end) + 1
            else least(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
        end as min_query_start,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - least(sim.min_query_start, sim.max_query_end)
+                - least(sim.min_query_start, sim.max_query_end) + 1
            else greatest(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
        end as max_query_end,
        sim.is_reversed, sim.pvalue_mant, sim.pvalue_exp,
@@ -3021,13 +3021,13 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - greatest(simp.query_start, simp.query_end)
+                - greatest(simp.query_start, simp.query_end) + 1
            else least(simp.query_start, simp.query_end) + sp.distance_from_left
        end as query_start,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - least(simp.query_start, simp.query_end)
+                - least(simp.query_start, simp.query_end) + 1
            else greatest(simp.query_start, simp.query_end) + sp.distance_from_left
        end as query_end,
        simp.subject_start, simp.subject_end,
