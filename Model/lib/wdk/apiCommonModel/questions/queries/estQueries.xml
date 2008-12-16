@@ -115,7 +115,7 @@
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB,TrypDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB,ToxoDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
             select * from (
             SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
@@ -141,7 +141,7 @@
            ]]>
         </sql>
 
-        <sql includeProjects="PlasmoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
             select * from (
             SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
