@@ -286,13 +286,13 @@ select -- virtual feature locations mapped through SequencePiece
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)+ 1
            else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as start_min,
        case
          when sp.strand_orientation in ('-', '-1')
            then sp.distance_from_left + contig.length
-                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
          else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
        end as end_max,
        case
