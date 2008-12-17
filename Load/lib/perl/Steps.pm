@@ -648,7 +648,6 @@ sub fixPsipredFileNames{
     my $propertySet = $mgr->{propertySet};
 
     my $signal = "fixPsipredFileNamesIn${fileDir}";
-    $signal =~ s/\//_/;
 
     return if $mgr->startStep("Fixing protein IDs in psipred result files for $fileDir", $signal);
 
@@ -664,6 +663,26 @@ sub fixPsipredFileNames{
 
   $mgr->endStep($signal);
 }
+sub fixIndividualNaSeqFileNames{
+    my ($mgr,$fileDir) = @_;
+
+    my $propertySet = $mgr->{propertySet};
+
+    my $signal = "fixIndividualNaSeqFileNamesIn${fileDir}";
+
+    return if $mgr->startStep("Fixing file names in $fileDir", $signal);
+
+    my @files = &_getInputFiles("$mgr->{dataDir}/${fileDir}");
+
+    foreach my $file (@files){
+      my $original = $file;
+      $file =~ s/\.chr/\_chr/g;
+      $mgr->runCmd("mv $original $file");
+    }
+
+  $mgr->endStep($signal);
+}
+
 
 sub startPsipredOnComputeCluster {
   my ($mgr,$query,$subject,$queue) = @_;
@@ -4266,11 +4285,11 @@ sub xdformatDownloadFileForBlastSite {
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  if ($type =~/p/){
+  if ($type =~/\-p/){
 
         my $tempFile = "$inputFile.temp";
 
-        $mgr->runCmd("perl -e 'while(<>){if ($_ !~ /^>/){ $_ =~ s/J/X/g;}print $_;}' $inputFile > $tempFile");
+        $mgr->runCmd("cat $inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
 
         $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $tempFile 2>> $logFile");
  
@@ -6452,7 +6471,19 @@ sub getNotAlignedEstAndAddOneCluster_new{
 
 }
 
+sub updateChromosomeNumberFromMap{
+  my ($mgr,$map_file, $sequence_table) = @_;
 
+  my $signal = "updateChromosomeNumberfrom $map_file for $sequence_table";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Updating Chromosome Number from $map_file for $sequence_table", $signal);
+
+  $mgr->runCmd("updateChromosomeNumberFromMap.pl --map_file $map_file --sequence_table $sequence_table 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
 
 ## these are the old "steps specific" property
 ## declarations.  we intend to incorporate them into the steps that need them
