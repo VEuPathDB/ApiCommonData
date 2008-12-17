@@ -4148,6 +4148,49 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
+    <enumParam name="text_search_fields"
+                     prompt="Fields"
+                     multiPick="true">
+      <help>
+             Choose which text fields to search.
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>GO terms and definitions</term>
+          <internal>GoTerms</internal>
+        </enumValue>
+        <enumValue>
+          <term>Gene product</term>
+          <internal>Product</internal>
+        </enumValue>
+        <enumValue>
+          <term>Gene notes</term>
+          <internal>Notes</internal>
+        </enumValue>
+        <enumValue>
+          <term>User comments</term>
+          <internal>Comments</internal>
+        </enumValue>
+        <enumValue>
+          <term>Protein domain names and descriptions</term>
+          <internal>InterPro</internal>
+        </enumValue>
+        <enumValue>
+          <term>Similar proteins (BLAST hits v. NRDB)</term>
+          <internal>Blastp</internal>
+        </enumValue>
+        <enumValue>
+          <term>EC descriptions</term>
+          <internal>EcNumber</internal>
+        </enumValue>
+        <enumValue excludeProjects="CryptoDB,GiardiaDB,TrichDB">
+          <term>Metabolic pathway names and descriptions</term>
+          <internal>MetabolicPathways</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
         <stringParam name="max_pvalue"
                      prompt="Max p-value exponent (BLAST Hits v. NRDB)"
                      quote="false">
