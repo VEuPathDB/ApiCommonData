@@ -601,7 +601,7 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_string"/>
-            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB,TrypDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB,TriTrypDB">
             <![CDATA[
             SELECT nfc.comment_string, 
             nf.source_id, '@PROJECT_ID@' as project_id
@@ -746,7 +746,7 @@
               AND  asec.enzyme_class_id = ec.enzyme_class_id
             ]]>
             </sql>
-            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,TrypDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,TriTrypDB">
             <![CDATA[
             SELECT distinct asec.evidence_code AS source, ec.ec_number,
                    ec.description as ec_description,
@@ -1082,7 +1082,7 @@
             ]]>
             </sql>
         </sqlQuery>
-        <sqlQuery name="MassSpec" includeProjects="GiardiaDB,ToxoDB,CryptoDB,TrypDB"
+        <sqlQuery name="MassSpec" includeProjects="GiardiaDB,ToxoDB,CryptoDB,TriTrypDB"
                   isCacheable="false">
 
        <testParamValues includeProjects="GiardiaDB">
@@ -1311,7 +1311,7 @@
         <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="ToxoDB">ApiDB_ToxoDB</sqlParamValue>
-        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB,ApiDB,TrypDB">ApiDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB,ApiDB,TriTrypDB">ApiDB</sqlParamValue>
         <sql>
           <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,

@@ -28,9 +28,9 @@
       </defaultTestParamValues>
 
       <!--TODO revisit the source_id, its correct but is a random source_id-->
-      <defaultTestParamValues includeProjects="TrypDB">
+      <defaultTestParamValues includeProjects="TriTrypDB">
          <paramValue name="source_id">CF890597</paramValue>
-         <paramValue name="project_id">TrypDB</paramValue>
+         <paramValue name="project_id">TriTrypDB</paramValue>
       </defaultTestParamValues>
 
       <testRowCountSql>
@@ -58,7 +58,7 @@
             <column name="formatted_organism"  sortingColumn="organism" ignoreCase="true"/>
             <column name="ncbi_tax_id"  ignoreCase="true"/>
             <column name="external_db_name"  ignoreCase="true"/>
-            <column name="assembly_est_count"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"/>
+            <column name="assembly_est_count"  includeProjects="CryptoDB,ToxoDB,GiardiaDB,TriTrypDB"/>
             <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
@@ -75,7 +75,7 @@
             ]]>
            </sql>
 
-            <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB">
+            <sql includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrichDB,TriTrypDB">
             <![CDATA[
            SELECT bfmv.source_id, bfmv.project_id, bfmv.primer, bfmv.a_count,  bfmv.c_count, 
                   bfmv.g_count, bfmv.t_count, bfmv.other_count, bfmv.length, 

@@ -52,7 +52,7 @@
       <!-- =================================================================== -->
       <!--  Text Attributes  ++++++++-->
       <!-- =================================================================== -->
-       <attributeQueryRef ref="AssemblyAttributes.Bfmv" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
+       <attributeQueryRef ref="AssemblyAttributes.Bfmv" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB">
         <columnAttribute name="project_id" internal="true" inReportMaker="false"/>
         <columnAttribute name="source_id" internal="true" inReportMaker="false"/>
         <columnAttribute name="organism" internal="true" inReportMaker="true"/>
@@ -66,7 +66,7 @@
         <columnAttribute name="length" displayName="Length" inReportMaker="true" align="center"/>
        </attributeQueryRef>
 
-       <attributeQueryRef ref="AssemblyAttributes.Sequence" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB">
+       <attributeQueryRef ref="AssemblyAttributes.Sequence" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB">
         <columnAttribute name="sequence" displayName="Sequence" internal="true" inReportMaker="true"/>
        </attributeQueryRef>
 
@@ -74,7 +74,7 @@
         <!-- Overview -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <textAttribute name="overview" displayName="Overview" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
+          <textAttribute name="overview" displayName="Overview" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB"
                          internal="true" inReportMaker="false">
 
              <text>
@@ -133,7 +133,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- AlignmentInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="AlignmentInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
+        <table name="AlignmentInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB"
                displayName="Alignments to genomic sequence"
                queryRef="AssemblyTables.AlignmentInfo">
             <columnAttribute name="id"            internal="true" />
@@ -201,7 +201,7 @@
                      @CGI_URL@/gbrowse/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=AnnotatedGenes;label=DoTSAssemblies;h_feat=$$id$$
                     ]]>
                  </url>
-                 <url includeProjects="TrypDB">
+                 <url includeProjects="TriTrypDB">
                     <![CDATA[
                      @CGI_URL@/gbrowse/trypdb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;label=AnnotatedGenes;label=DoTSAssemblies;h_feat=$$id$$
                     ]]>
@@ -214,7 +214,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- LibraryInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
+        <table name="LibraryInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB"
                displayName="Libraries"
                queryRef="AssemblyTables.LibraryInfo">
             <columnAttribute displayName="Library"  name="library"/>
@@ -226,7 +226,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- EstInfo -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TrypDB"
+        <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB"
                displayName="ESTs in Assembly"
                queryRef="AssemblyTables.EstInfo">
             <columnAttribute displayName="EST" name="est"  internal="true" />

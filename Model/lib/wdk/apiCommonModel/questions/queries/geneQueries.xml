@@ -286,7 +286,7 @@
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="predicted_helices" includeProjects="CryptoDB"/>
-        <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,TrypDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,TriTrypDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id
             from dots.genefeature gf, dots.nasequence nas, apidb.geneattributes ga
@@ -538,7 +538,7 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TrypDB"
+    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB"
               isCacheable="true">
         <paramRef ref="sharedParams.geneHistoryId"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
@@ -547,7 +547,7 @@
         <column name="project_id" />
         <column name="orthologs"/>
 
-        <sql includeProjects="CryptoDB,PlasmoDB,TrypDB">
+        <sql includeProjects="CryptoDB,PlasmoDB,TriTrypDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
@@ -829,7 +829,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Ortholog pattern -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologPattern" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB,TrypDB"
+    <sqlQuery name="GenesByOrthologPattern" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
               isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
@@ -999,7 +999,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Epitopes -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithEpitopes" includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TrypDB"
+    <sqlQuery name="GenesWithEpitopes" includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
            isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEpitopes"/>
         <paramRef ref="geneParams.epitope_confidence"/>
@@ -1060,7 +1060,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 <!-- TODO: add Mass spec query for Trypdb -->
-    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB,TrypDB" 
+    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB,TriTrypDB" 
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay"/>
@@ -1366,7 +1366,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesOrthologousToAGivenGene   COULD HAVE SQL ERRORS FOR APIDB -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TrypDB,ApiDB"
+    <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB,ApiDB"
               isCacheable="true">
 
         <testParamValues includeProjects="PlasmoDB">
@@ -1440,8 +1440,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            ]]>
        </sql>
 
-<!-- TODO: Check TrypDB for this query -->
-        <sql includeProjects="PlasmoDB,CryptoDB,TrypDB">
+<!-- TODO: Check TriTrypDB for this query -->
+        <sql includeProjects="PlasmoDB,CryptoDB,TriTrypDB">
             <![CDATA[
                 SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
@@ -1574,7 +1574,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
 
 
-        <sql includeProjects="TrichDB,GiardiaDB,TrypDB">
+        <sql includeProjects="TrichDB,GiardiaDB,TriTrypDB">
             <![CDATA[
             SELECT distinct fl.feature_source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -1690,7 +1690,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- SecondaryStructure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySecondaryStructure" includeProjects="PlasmoDB,TrypDB"
+    <sqlQuery name="GenesBySecondaryStructure" includeProjects="PlasmoDB,TriTrypDB"
             isCacheable="true">
         <paramRef ref="geneParams.min_coil"/>
         <paramRef ref="geneParams.max_coil"/>
@@ -3400,7 +3400,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByPdbSimilarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TrypDB"
+    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB"
               isCacheable="true">
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>

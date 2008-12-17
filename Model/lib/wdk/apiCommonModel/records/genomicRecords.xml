@@ -42,9 +42,9 @@
                <paramValue name="project_id">TrichDB</paramValue>
             </testParamValues>
             <!-- TODO revisit source_id --> 
-            <testParamValues includeProjects="TrypDB">
+            <testParamValues includeProjects="TriTrypDB">
                <paramValue name="source_id">AAHK01032731</paramValue>
-               <paramValue name="project_id">TrypDB</paramValue>
+               <paramValue name="project_id">TriTrypDB</paramValue>
             </testParamValues>
 
             <!-- primary key definition -->
@@ -353,7 +353,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="overview" displayName="Overview"
                          inReportMaker="false" internal="true">
-           <text includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB">
+           <text includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TriTrypDB">
               <![CDATA[
                   Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$,
                   <b>C</b>:$$c_count$$, <b>G</b>:$$g_count$$,
@@ -402,7 +402,7 @@
                GeneDensity+SyntenySpanGT1+SyntenySpanME49+SyntenySpanVEG+SyntenySpanNeospora
               ]]>
            </text>
-           <text includeProjects="TrypDB">
+           <text includeProjects="TriTrypDB">
               <![CDATA[
                AnnotationDensity
               ]]>
@@ -414,7 +414,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- DNA Context -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TrypDB"
+        <textAttribute name="dnaContext" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TriTrypDB"
                        displayName="Features" internal="true"
                        inReportMaker="false">
            <text includeProjects="PlasmoDB">
@@ -438,7 +438,7 @@
                 ]]>
            </text>
            <!--TODO revisit url -->
-           <text includeProjects="TrypDB">
+           <text includeProjects="TriTrypDB">
                 <![CDATA[
                 @CGI_URL@/gbrowse_img/trypdb/?name=$$source_id$$;embed=1;type=AnnotationDensity;width=600;base=@CGI_URL@/gbrowse
                 ]]>
@@ -494,7 +494,7 @@
             </text>
          </textAttribute>
          <!-- TODO revisit url -->
-         <textAttribute name="GBrowse"  includeProjects="TrypDB"
+         <textAttribute name="GBrowse"  includeProjects="TriTrypDB"
             displayName="Genome Browser" align="center" inReportMaker="false">
             <text>
                  <![CDATA[
@@ -507,7 +507,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB,TrypDB"
+         <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB,TriTrypDB"
             displayName="Retrieve Sequence" inReportMaker="false">
            <text excludeProjects="ToxoDB">
                 <![CDATA[

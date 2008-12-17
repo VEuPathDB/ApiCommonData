@@ -128,7 +128,7 @@
            ]]>
        </sql>
 -->
-        <sql includeProjects="TrichDB,GiardiaDB,TrypDB"> 
+        <sql includeProjects="TrichDB,GiardiaDB,TriTrypDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -237,7 +237,7 @@
             <paramValue name="BlastAlgorithm">blastp</paramValue>
         </testParamValues>
         <!-- TODO copied from Trich -->
-        <testParamValues includeProjects="TrypDB">
+        <testParamValues includeProjects="TriTrypDB">
             <paramValue name="BlastQuerySequence">ILGLIVCFFFVLFNSSFKEWPTKWENQRPTRGAIMWKAHFFILGIYAFFWGLSESVAPNDGSGLRALLALRMV</paramValue>
             <paramValue name="BlastDatabaseType">ORF</paramValue>
             <paramValue name="BlastAlgorithm">blastp</paramValue>

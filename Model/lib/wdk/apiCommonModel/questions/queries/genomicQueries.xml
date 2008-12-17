@@ -54,7 +54,7 @@
         <paramRef ref="genomicParams.sequenceTypes" includeProjects="GiardiaDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,TrypDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,TriTrypDB">
             <![CDATA[
             SELECT ens.source_id, '@PROJECT_ID@' as project_id
             FROM dots.NaSequence ens,apidb.sequenceattributes atr
@@ -119,7 +119,7 @@
             <paramValue name="BlastDatabaseType">Genome</paramValue>
         </testParamValues>
         <!-- TODO copied from Toxo -->
-         <testParamValues includeProjects="TrypDB">
+         <testParamValues includeProjects="TriTrypDB">
             <paramValue name="BlastQuerySequence">TGTCGCAAAAAAGCGCAACAACAGCCATTCAGCGCTGCACGTCTCCCCCGCGTCTCCAAGGAA</paramValue>
             <paramValue name="BlastDatabaseType">Genome</paramValue>
         </testParamValues>

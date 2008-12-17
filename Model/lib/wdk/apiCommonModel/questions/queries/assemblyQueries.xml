@@ -6,7 +6,7 @@
     <!-- EST Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
+    <sqlQuery name="ByEstAccession" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -35,7 +35,7 @@
     <!-- Library  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB" 
+    <sqlQuery name="ByLibrary" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB" 
              isCacheable='true'>
 
         <testParamValues includeProjects="CryptoDB">
@@ -79,7 +79,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <sqlQuery name="ByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
+    <sqlQuery name="ByLocation" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB"
           isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
@@ -135,7 +135,7 @@
                OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
-        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB,TrypDB">
+        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB,TriTrypDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
         <sql excludeProjects="PlasmoDB,ToxoDB">
@@ -364,7 +364,7 @@
     <!-- Gene ID  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TrypDB"
+    <sqlQuery name="ByGeneIDs" doNotTest="true" includeProjects="CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB"
             isCacheable='true'>
       
       <paramRef ref="assemblyParams.single_gene_id"/>

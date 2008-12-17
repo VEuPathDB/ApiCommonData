@@ -71,7 +71,7 @@
                 <columnAttribute name="dbest_name"  displayName="Library" internal="false"/>
 
                 <columnAttribute name="assembly_source_id" displayName="Assembly Source Id" internal="true" />
-                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB">
+                <linkAttribute displayName="Assembly" inReportMaker="false" name="assembly_link" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TriTrypDB">
                     <displayText>
                         <![CDATA[ $$assembly_source_id$$ ]]>
                     </displayText>
@@ -80,7 +80,7 @@
                      </url>
                 </linkAttribute>
                 <columnAttribute name="assembly_est_count"  displayName="# ESTs in Assembly" internal="false" 
-                    align="center" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"/>
+                    align="center" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TriTrypDB"/>
 
                 <columnAttribute name="vector"      displayName="Vector" internal="false"/>
                 <columnAttribute name="stage"       displayName="Stage" internal="false"/>
@@ -216,7 +216,7 @@
                         /cgi-bin/gbrowse/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
                         ]]>
                      </url>
-                     <url includeProjects="TrypDB">
+                     <url includeProjects="TriTrypDB">
                         <![CDATA[
                         /cgi-bin/gbrowse/trypdb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;width=550;label=Gene;label=EST;h_feat=$$accession$$
                         ]]>
@@ -225,7 +225,7 @@
             </table>
 
 
-            <table name="ClusterMates" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TrypDB"
+            <table name="ClusterMates" includeProjects="CryptoDB,ToxoDB,GiardiaDB,TriTrypDB"
                    displayName="Other ESTs that Cluster with this EST:" 
                    queryRef="EstTables.ClusterMates">
                 <columnAttribute displayName="ID" name="mate_id" internal="true" />
@@ -243,7 +243,7 @@
             </table>
             
 
-            <table name="AssemblyInfo" includeProjects="PlasmoDB,CryptoDB,ToxoDB,GiardiaDB,TrypDB"
+            <table name="AssemblyInfo" includeProjects="PlasmoDB,CryptoDB,ToxoDB,GiardiaDB,TriTrypDB"
                    displayName="Assembly for this EST" 
                    queryRef="EstTables.AssemblyInfo">
                 <columnAttribute displayName="Assembly" name="assembly_source_id" internal="true" />
