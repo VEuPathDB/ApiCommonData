@@ -19,7 +19,7 @@ my ($help, $fn, $gusConfigFile, $sequenceTable);
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
-unless(-e $gusConfigFile && -e $fn && $sequenceTable) {
+unless(-e $fn && -e $fn && $sequenceTable) {
   print STDERR "usage --map_file map_file --sequence_table 'ExternalNaSequence|VirtualSequence' [--gus_config_file]\n";
   exit;
 }
