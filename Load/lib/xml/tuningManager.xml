@@ -3303,6 +3303,11 @@ union
   select cast ('GeneOverlap' as varchar2(80)) as table_name, 1 as weight from dual
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+        create unique index apidb.weight_ix&1 on apidb.TableWeight&1(table_name)
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
