@@ -381,18 +381,17 @@
     <!-- keyword search (based on Oracle Text) -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="IsolatesByKeywordSearch" excludeProjects="ApiDB"
+    <processQuery name="IsolatesByTextSearch" includeProjects="CryptoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin">
        <paramRef ref="sharedParams.wdk_record_type" default="isolate"/>
        <paramRef ref="sharedParams.project_id" default="CryptoDB" includeProjects="CryptoDB"/>
-       <paramRef ref="geneParams.text_expression"/>
-       <paramRef ref="geneParams.text_search_fields"/>
-       <paramRef ref="organismParams.text_search_organism"/>
+       <paramRef ref="sharedParams.text_expression"/>
+       <paramRef ref="isolateParams.text_search_fields"/>
        <wsColumn name="source_id" width="32" wsName="RecordID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="max_score" width="10" wsName="MaxScore"/>
        <wsColumn name="fields_matched" width="64" wsName="Datasets"/>
-       <wsColumn name="snippet" width="10" wsName="Snippet"/>
+       <wsColumn name="snippet" width="200" wsName="Snippet"/>
     </processQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

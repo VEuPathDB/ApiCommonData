@@ -492,7 +492,7 @@
 
     <processQuery name="GenesByTextSearch" excludeProjects="ApiDB,CryptoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
-       <paramRef ref="geneParams.text_expression"/>
+       <paramRef ref="sharedParams.text_expression"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.text_fields"/>
@@ -506,7 +506,7 @@
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.text_search_organism"/>
             <paramRef ref="geneParams.text_fields" quote="false"/>
-            <paramRef ref="geneParams.text_expression" quote="false"/>
+            <paramRef ref="sharedParams.text_expression" quote="false"/>
             <paramRef ref="geneParams.max_pvalue"  quote="false" groupRef="paramGroups.advancedParams"/>
             <paramRef ref="geneParams.whole_words" quote="false" groupRef="paramGroups.advancedParams"/>
             <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -523,7 +523,7 @@
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin">
        <paramRef ref="sharedParams.wdk_record_type" default="gene"/>
        <paramRef ref="sharedParams.project_id" default="CryptoDB" includeProjects="CryptoDB"/>
-       <paramRef ref="geneParams.text_expression"/>
+       <paramRef ref="sharedParams.text_expression"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.text_search_fields"/>
        <paramRef ref="organismParams.text_search_organism"/>
