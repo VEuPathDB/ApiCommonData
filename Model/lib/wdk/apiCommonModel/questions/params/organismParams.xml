@@ -383,7 +383,7 @@
 
 -->
 
-<sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
+<sqlQuery name="withChromosomes" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB">
       <column name="internal"/>
       <column name="term"/>
 
@@ -391,6 +391,30 @@
             SELECT * FROM (
                SELECT 'Cryptosporidium parvum' as term,
                        '''' ||'Cryptosporidium parvum Iowa II'|| '''' as internal 
+               FROM dual
+            )
+            </sql>          
+
+            <sql  includeProjects="TriTrypDB">
+            SELECT * FROM (
+               SELECT 'Leishmania infantum' as term,
+                       '''' ||'Leishmania infantum'|| '''' as internal 
+               FROM dual
+             UNION
+               SELECT 'Leishmania major' as term,
+                       '''' ||'Leishmania major'|| '''' as internal 
+               FROM dual
+             UNION
+               SELECT 'Trypanosoma cruzi' as term,
+                       '''' ||'Trypanosoma cruzi strain CL Brener'|| '''' as internal 
+               FROM dual
+             UNION
+               SELECT 'Trypanosoma brucei' as term,
+                       '''' ||'Trypanosoma brucei TREU927'|| '''' as internal 
+               FROM dual
+             UNION
+               SELECT 'Leishmania braziliensis' as term,
+                       '''' ||'Leishmania braziliensis'|| '''' as internal 
                FROM dual
             )
             </sql>          
