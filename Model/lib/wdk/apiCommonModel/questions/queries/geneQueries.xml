@@ -487,10 +487,10 @@
     </processQuery>
                                                     
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- Text Search (needs to be better unified) -->
+  <!-- old Text Search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByTextSearch" excludeProjects="ApiDB"
+    <processQuery name="GenesByTextSearch" excludeProjects="ApiDB,CryptoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="geneParams.text_expression"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
@@ -516,22 +516,22 @@
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- keyword search (based on Oracle Text) -->
+  <!-- text search (based on Oracle Text) -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByKeywordSearch" excludeProjects="ApiDB"
+    <processQuery name="GenesByTextSearch" includeProjects="CryptoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin">
        <paramRef ref="sharedParams.wdk_record_type" default="gene"/>
+       <paramRef ref="sharedParams.project_id" default="CryptoDB" includeProjects="CryptoDB"/>
        <paramRef ref="geneParams.text_expression"/>
-       <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.text_search_fields"/>
        <paramRef ref="organismParams.text_search_organism"/>
-       <wsColumn name="source_id" width="32" wsName="GeneID"/>
+       <wsColumn name="source_id" width="32" wsName="RecordID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="max_score" width="10" wsName="MaxScore"/>
        <wsColumn name="fields_matched" width="64" wsName="Datasets"/>
-       <wsColumn name="snippet" width="10" wsName="Snippet"/>
+       <wsColumn name="snippet" width="300" wsName="Snippet"/>
     </processQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

@@ -171,6 +171,25 @@
             <useTermOnly value="true" includeProjects="ApiDB"/> 
        </flatVocabParam>
 
+       <enumParam name="text_search_fields"
+                  prompt="Fields"
+                  multiPick="true">
+         <help>
+             Choose which text fields to search.
+         </help>
+         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <enumList>
+           <enumValue>
+             <term>Reference</term>
+             <internal>Reference</internal>
+           </enumValue>
+           <enumValue>
+             <term>Gene overlap</term>
+             <internal>GeneOverlap</internal>
+           </enumValue>
+         </enumList>
+       </enumParam>
+
     </paramSet>
 
     <querySet name="organismIQ" queryType="vocab">
