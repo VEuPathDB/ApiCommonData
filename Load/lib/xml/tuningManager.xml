@@ -3276,6 +3276,35 @@ create index apidb.gi_g_ix&1 on apidb.GeneIsolateOverlap&1 (gene_source_id)
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.TableWeight">
+    <sql>
+      <![CDATA[
+create table TableWeight&1 as
+-- genes
+  select cast ('GoTerms' as varchar2(80)) as table_name, 1 as weight from dual
+union
+  select cast ('Product' as varchar2(80)) as table_name, 2 as weight from dual
+union
+  select cast ('Notes' as varchar2(80)) as table_name, 2 as weight from dual
+union
+  select cast ('Comments' as varchar2(80)) as table_name, 5 as weight from dual
+union
+  select cast ('InterPro' as varchar2(80)) as table_name, 1 as weight from dual
+union
+  select cast ('BlastP' as varchar2(80)) as table_name, 1 as weight from dual
+union
+  select cast ('EcNumber' as varchar2(80)) as table_name, 1 as weight from dual
+-- isolates
+union
+  select cast ('Reference' as varchar2(80)) as table_name, 1 as weight from dual
+union
+  select cast ('ProteinSequence' as varchar2(80)) as table_name, 1 as weight from dual
+union
+  select cast ('GeneOverlap' as varchar2(80)) as table_name, 1 as weight from dual
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
