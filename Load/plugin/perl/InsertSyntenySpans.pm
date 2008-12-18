@@ -59,7 +59,7 @@ my $argsDeclaration =
               constraintFunc=> undef,
               reqd  => 1,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp",
              }),
 
   ];
@@ -414,7 +414,7 @@ sub findOrthologGroups {
 
 my $sql;
 
-  if ($self->getArg('organism') eq 'Plasmodium'){
+  if ($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' ){
     $sql = "select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
     from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
     where t.name = 'GeneFeature'
