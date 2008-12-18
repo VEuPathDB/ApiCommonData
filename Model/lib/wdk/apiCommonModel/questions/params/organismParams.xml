@@ -1027,6 +1027,18 @@ UNION
       </sql>
     </sqlQuery>
 
+    <sqlQuery name="withPhenotype" includeProjects="TriTrypDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+          select distinct ga.organism as term, ga.organism as internal
+          from apidb.GENEATTRIBUTES ga, apidb.SIRNA si
+          where si.gene = ga.SOURCE_ID
+        ]]>
+      </sql>
+    </sqlQuery>
+
     <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">
       <column name="internal"/>
       <column name="term"/>

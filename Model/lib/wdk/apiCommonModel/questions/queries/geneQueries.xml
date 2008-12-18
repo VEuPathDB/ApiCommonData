@@ -57,6 +57,22 @@
            ]]>
        </sql>
     </sqlQuery>
+
+    <sqlQuery name="GenesByPhenotype" includeProjects="TriTrypDB"
+              isCacheable="true">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPhenotype"/>
+        <paramRef ref="geneParams.phenotype"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+       <sql>
+             <![CDATA[
+               select si.gene as source_id,'@PROJECT_ID@' as project_id
+               from apidb.sirna si
+               where si.go_term || si.pato_term in ($$phenotype$$)
+           ]]>
+       </sql>
+    </sqlQuery>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ChIP chip chromatin marks -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -1533,9 +1549,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB,CryptoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" multiPick="false" includeProjects="ToxoDB"/>
 -->
-         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB" />
+         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB" />
 
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -1543,12 +1559,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="source_id"/>
         <column name="dynamic_location"/>
 
-        <sql includeProjects="PlasmoDB,CryptoDB,TriTrypDB">
+        <sql includeProjects="PlasmoDB,CryptoDB">
             <![CDATA[
             SELECT distinct gatr.source_id as source_id, '@PROJECT_ID@' as project_id,
               fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
             FROM apidb.featurelocation fl,apidb.SEQUENCEATTRIBUTES satr,apidb.GENEATTRIBUTES gatr
-            WHERE ((satr.ORGANISM like  $$organism$$ AND (satr.CHROMOSOME = $$chromosomeOptional$$ or satr.CHROMOSOME_order_num = $$chromosomeOptional$$) )
+            WHERE ((satr.ORGANISM like  $$organism$$ AND satr.CHROMOSOME like $$chromosomeOptional$$ )
                    OR lower(satr.source_id) = lower($$sequenceId$$))
               AND fl.NA_SEQUENCE_ID = satr.NA_SEQUENCE_ID
               AND fl.NA_FEATURE_ID = gatr.NA_FEATURE_ID

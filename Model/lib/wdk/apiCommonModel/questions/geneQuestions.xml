@@ -181,6 +181,29 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
           <columnAttribute name="is_pseudo" displayName="Pseudogene" align="center"/>
         </dynamicAttributes>
     </question>
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Phenotype -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesByPhenotype" includeProjects="TriTrypDB"
+         category="Putative Function"
+         displayName="Phenotype"
+         shortDisplayName="Phenotype"
+         queryRef="GeneId.GenesByPhenotype"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList 
+              summary="organism,location_text,product"
+              sorting="project asc,organism asc,location_text asc"
+        />
+        <summary>
+           Find genes based on phenotype.
+        </summary>
+        <description>
+           <![CDATA[
+          Find genes by phenotype based on RNAi knockdown and insufficiency studies.
+          ]]>
+        </description>
+    </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Exon count -->

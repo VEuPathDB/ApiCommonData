@@ -2892,6 +2892,16 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
+        <flatVocabParam name="phenotype" includeProjects="TriTrypDB,ApiDB"
+             queryRef="GeneVQ.phenotype"
+             default=""
+             prompt="Phenotype"
+             multiPick="true"
+             quote="true"
+             displayType="treeBox">
+             <useTermOnly value="true" includeProjects="ApiDB"/>
+        </flatVocabParam>
+
       <flatVocabParam name="mr4_reagent_type" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.Mr4Reagents"
                      prompt="Reagent Type"
@@ -4814,6 +4824,29 @@ SELECT distinct lg.name AS term,
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
        </processQuery>
+
+    <sqlQuery name="phenotype" includeProjects="TriTrypDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <column name="parentTerm"/>
+    <sql>
+    <![CDATA[
+    ]]>
+       select display,term,internal,parentTerm from (
+       select go_term || ' (' || count(*) || ')' as display, go_term as term, go_term as internal,'' as parentTerm,count(*) as order_num
+       from apidb.SIRNA group by go_term
+       union
+       select distinct  pato_term as display,pato_term as term, go_term || pato_term as internal,go_term as parentTerm, 0 as order_num 
+       from apidb.SIRNA)
+       order by order_num desc
+    </sql>
+    </sqlQuery>
+
+    <processQuery name="phenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="100" wsName="internal"/>
+      <wsColumn name="term" width="100" wsName="term"/>
+    </processQuery>
+
      </querySet>
 
 </wdkModel>
