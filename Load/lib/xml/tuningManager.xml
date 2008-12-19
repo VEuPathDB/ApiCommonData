@@ -1838,6 +1838,24 @@ ON apidb.ArrayElementAttributes&1 (source_id)
 
   <tuningTable name="apidb.BlatAlignmentLocation">
     <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="dots.blatalignment"/>
+
+    <sql>
+      <![CDATA[ 
+     delete from dots.blatalignment 
+           where query_na_sequence_id in 
+                (select s.na_sequence_id
+                from sres.externaldatabase d, sres.externaldatabaserelease r, dots.externalnasequence s
+                where d.external_database_id = r.external_database_id
+                 and s.external_database_release_id = r.external_database_release_id
+                 and d.name in ('T.cruzi CHORI105 BAC End',
+                                'T.brucei RPCI93 BAC Ends',
+                                'L.major BAC Ends from Sanger',
+                                'L.major PAC Ends from Sanger',
+                                'L.major Cosmid Ends from Sanger')
+            ) and is_best_alignment != 1;
+      ]]> 
+    </sql>
     <sql>
       <![CDATA[ 
       CREATE TABLE apidb.BlatAlignmentLocation&1 NOLOGGING AS
