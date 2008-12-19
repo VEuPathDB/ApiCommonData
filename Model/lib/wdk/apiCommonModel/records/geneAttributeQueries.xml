@@ -504,6 +504,21 @@
             </sql>
         </sqlQuery>
 
+
+        <sqlQuery name="NaSequenceDatabaseName">
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="sequence_database_name"/>
+            <sql>
+            <![CDATA[
+            select ga.source_id, sa.database_name as sequence_database_name, '@PROJECT_ID@' as project_id
+            from apidb.geneattributes ga, apidb.sequenceattributes sa
+            where ga.sequence_id = sa.source_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- phylogenetic trees -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
