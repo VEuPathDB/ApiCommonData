@@ -173,6 +173,27 @@
         </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Phenotype -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="PhenotypeTable" isCacheable="false" includeProjects="TriTrypDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="phenotype"/>
+            <column name="evidence"/>
+            <column name="pubmed_id"/>
+            <sql>
+            SELECT distinct ga.source_id, '@PROJECT_ID@' AS project_id,
+            si.pato_term||' '||CASE WHEN si.pato_term = 'lethal' THEN '' ELSE go_term||' ' END||si.rel_time||' '||plo_term as phenotype, evid_desc as evidence, db_xref as pubmed_id
+            from apidb.GENEATTRIBUTES ga, apidb.SIRNA si
+            where si.gene = $$source_id$$
+            and ga.source_id = si.gene
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- SNPs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

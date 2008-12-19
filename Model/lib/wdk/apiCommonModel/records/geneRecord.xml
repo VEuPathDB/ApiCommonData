@@ -1465,6 +1465,30 @@
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- phenotype table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="Phenotype"
+                 displayName="Phenotype"
+                 queryRef="GeneTables.PhenotypeTable" includeProjects="TriTrypDB,ApiDB">
+            <columnAttribute displayName="Phenotype" name="phenotype"/>
+            <columnAttribute displayName="Evidence" name="evidence"/>
+            <columnAttribute name="pubmed_id" internal="true"/>
+            <linkAttribute name="geneLink" displayName="Gene">
+               <displayText>
+                  <![CDATA[
+                    PMID:$$pubmed_id$$
+                  ]]>
+               </displayText>
+                 <url>
+                    <![CDATA[
+                      http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=$$pubmed_id$$
+                    ]]>
+                 </url>
+            </linkAttribute>
+          </table>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Y2H interactions table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
