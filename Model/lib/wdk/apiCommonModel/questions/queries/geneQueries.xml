@@ -1076,9 +1076,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 <!-- TODO: add Mass spec query for Trypdb -->
-    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB,TriTrypDB" 
+    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB" 
             isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB"/>
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
@@ -1086,13 +1086,20 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="project_id" />
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" columnType="number" width="12" />
-        <sqlParamValue name="externalDatabase" includeProjects="GiardiaDB">G. lamblia contigs from Genbank</sqlParamValue>
-        <sqlParamValue name="externalDatabase" includeProjects="ToxoDB">T.gondii ME49 contigs from Genbank</sqlParamValue>
-        <sql includeProjects="CryptoDB,PlasmoDB">
+         
+        <sqlParamValue name="restrainOrganism" excludeProjects="TriTrypDB">
+                <![CDATA[
+                   and nas.taxon_id in ($$organism$$)
+                ]]>
+       </sqlParamValue>
+       <sqlParamValue name="restrainOrganism" includeProjects="TriTrypDB" />
+
+
+        <sql>
             <![CDATA[
-            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
+            select distinct ga.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
             from apidb.massspecsummary mss, 
-                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
+                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,apidb.geneattributes ga,
 		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
             (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
               from (select mss.aa_sequence_id, count(*) as sum_seq_ct
@@ -1125,56 +1132,14 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             and taaf.na_feature_id = t.na_feature_id
             and t.parent_id = gf.na_feature_id
             and gf.na_sequence_id = nas.na_sequence_id
-            and nas.taxon_id in ($$organism$$)
+            &&restrainOrganism&&
+            and gf.source_id = ga.source_id
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
        </sql>
  
     
-        <sql includeProjects="ToxoDB,GiardiaDB">
-            <![CDATA[
-            select distinct gf.source_id,'@PROJECT_ID@' as project_id, seq.sum_sequence_count, spec.sum_spectrum_count
-            from apidb.massspecsummary mss, 
-                 dots.translatedaafeature taaf, dots.transcript t, dots.genefeature gf,
-		 sres.externalDatabase ed, sres.externalDatabaseRelease edr,
-            (select intseq.aa_sequence_id,count(*) as sum_sequence_count 
-              from (select mss.aa_sequence_id, count(*) as sum_seq_ct
-                from apidb.massspecsummary mss,
-                     dots.massspecfeature msf,
-                     dots.aalocation aal,
-                     sres.externaldatabase ed,
-                     sres.externaldatabaserelease edr
-                where mss.mass_spec_summary_id = msf.source_id
-                  and msf.aa_feature_id = aal.aa_feature_id
-                  and msf.external_database_release_id = edr.external_database_release_id
-                  and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$ms_assay$$)
-                group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
-                group by intseq.aa_sequence_id
-                having count(*) >= $$min_sequence_count$$
-            ) seq,
-            (select mss.aa_sequence_id, sum(spectrum_count) as sum_spectrum_count
-                from apidb.massspecsummary mss,
-                     sres.externaldatabase ed,
-                     sres.externaldatabaserelease edr
-                where mss.external_database_release_id = edr.external_database_release_id
-                  and edr.external_database_id = ed.external_database_id
-                  and ed.name in ($$ms_assay$$)
-                group by mss.aa_sequence_id
-                having sum(spectrum_count) >= $$min_spectrum_count$$
-            ) spec
-            where mss.aa_sequence_id = taaf.aa_sequence_id
-            and taaf.na_feature_id = t.na_feature_id
-            and t.parent_id = gf.na_feature_id
-	    and gf.external_database_release_id = edr.external_database_release_id
-	    and edr.external_database_id = ed.external_database_id
-	    and ed.name = '&&externalDatabase&&'
-            and mss.aa_sequence_id = seq.aa_sequence_id
-            and mss.aa_sequence_id = spec.aa_sequence_id
-           ]]>
-       </sql>
-       
 
 
     </sqlQuery>   
