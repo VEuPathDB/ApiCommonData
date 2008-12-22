@@ -106,6 +106,12 @@ sub run {
     foreach my $member (@members) {
       # pfa|PF11_0987
       my ($taxonCode, $sourceId) = split(/\|/, $member);
+
+      if ($sourceId =~ /\//){#tbr|Tb927.8.1510/Tb08.29O9.160
+	   my @temp = split(/\//,$sourceId);
+	   $sourceId = $temp[0];
+       }
+
       $taxaInThisGroup->{$taxonCode} = 1;
       $allTaxa->{$taxonCode} = 1;
       $geneProfiles->{$sourceId} = $taxaInThisGroup if $ourTaxa{$taxonCode};
