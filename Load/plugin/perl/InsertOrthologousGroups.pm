@@ -160,7 +160,12 @@ sub run {
       ('DoTS::GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
        'DoTS::SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId);
     foreach my $sourceId (@foundIds) {
-      my $geneFeatureId = $sourceid_method{$sourceIdTable}->($self, $sourceId);
+
+      my @allIds = split(/\//, $sourceId);
+      my @geneFeatureIds = map {$sourceid_method{$sourceIdTable}->($self, $_)} @allIds;
+
+      my $geneFeatureId = $self->getSingleGeneFeatureId(\@geneFeatureIds, $sourceId);
+
       if ($geneFeatureId) {
 	my $seqSeqGroup = GUS::Model::DoTS::SequenceSequenceGroup->
 	  new({sequence_id => $geneFeatureId,
@@ -178,6 +183,28 @@ sub run {
   }
   return("Inserted $expLoaded OrthologExperiment, $seqGroupLoaded SequenceGroups, and $seqSeqGroupLoaded SequenceSequenceGroups.  Skipped $skipped lines");
 }
+
+
+sub getSingleGeneFeatureId {
+  my ($self, $geneFeatureIds, $sourceId) = @_;
+
+  my %geneFeatures;
+  my $geneFeature;
+
+  foreach(@$geneFeatureIds) {
+    next unless $_;
+
+    $geneFeatures{$_} = 1;
+    $geneFeature = $_;
+  }
+
+  if(scalar keys %geneFeatures > 1) {
+    $self->error("More than one gene feature Id idenfied for sourceId $sourceId");
+  }
+  return $geneFeature;
+}
+
+
 
 # ----------------------------------------------------------------------
 
