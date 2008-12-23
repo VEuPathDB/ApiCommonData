@@ -132,22 +132,8 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,CryptoDB,ApiDB">
-                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB">
-                    <description>
-                        <![CDATA[
-                            All results
-                        ]]>
-                    </description>   
-                </instance>
-                <instance name="all_results" displayName="All Results" default="true" includeProjects="CryptoDB">
-                    <description>
-                        <![CDATA[
-                            All results
-                        ]]>
-                    </description>   
-                </instance>
-                <instance name="all_results" displayName="All Results" default="true" includeProjects="ToxoDB">
+                          includeProjects="ToxoDB,GiardiaDB,CryptoDB,TriTrypDB,ApiDB">
+                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB,CryptoDB,ToxoDB,TriTrypDB">
                     <description>
                         <![CDATA[
                             All results
@@ -326,6 +312,71 @@
                     <paramValue name="organism">Cryptosporidium muris</paramValue>
                 </instance>
                 
+            </answerFilter>
+
+
+  <answerFilter queryRef="GeneSummaries.TriTrypGenes"
+                          includeProjects="TriTrypDB">
+                
+
+                <instance name="lbr_genes" displayName="L. brazillensis Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania braziliensis</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania braziliensis</paramValue>
+                    <paramValue name="sequenceId">any</paramValue>
+                </instance>
+                <instance name="lin_genes" displayName="L. infantum Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania infantum</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania infantum</paramValue>
+                    <paramValue name="sequenceId">any</paramValue>
+                </instance>
+                <instance name="lma_genes" displayName="L. major Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania major</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania major</paramValue>
+                    <paramValue name="sequenceId">any</paramValue>
+                </instance>
+                <instance name="tbr_genes" displayName="T. brucei Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma brucei</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma brucei</paramValue>
+                    <paramValue name="sequenceId">any</paramValue>
+                </instance>
+
+                <instance name="tce_genes" displayName="T. cruzi esmeralda Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma cruzi</i> esmeralda results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma cruzi</paramValue>
+                    <paramValue name="sequenceId">S</paramValue>
+                </instance>
+                
+                <instance name="tcne_genes" displayName="T. cruzi non-esmeralda-like Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma cruzi</i> non-esmeralda-like results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma cruzi</paramValue>
+                    <paramValue name="sequenceId">P</paramValue>
+                </instance>
+                
+
             </answerFilter>
 
 

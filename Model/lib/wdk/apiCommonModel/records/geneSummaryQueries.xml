@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB">
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB,TriTrypDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -97,6 +97,24 @@
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="TriTrypGenes" isCacheable="false" includeProjects="TriTrypDB">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <paramRef ref="recordParams.sequenceId"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT ga.source_id, ga.project_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
+                      AND ga.organism like $$organism$$
+                      AND ga.sequence_id like $$sequenceId$$
                 ]]>
             </sql>
         </sqlQuery>

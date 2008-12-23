@@ -61,7 +61,7 @@
                  readonly="true" />
 
     <enumParam name="organism"
-               prompt="organism" excludeProjects="GiardiaDB,TriTrypDB">
+               prompt="organism" excludeProjects="GiardiaDB">
         <enumList>
              <enumValue includeProjects="ApiDB">
                 <term>Gl</term>
@@ -148,6 +148,27 @@
                 <term>Cryptosporidium muris</term>
                 <internal>Cryptosporidium muris</internal>
             </enumValue>
+            <enumValue includeProjects="TriTrypDB,ApiDB">
+                <term>Leishmania braziliensis</term>
+                <internal>Leishmania braziliensis</internal>
+            </enumValue>
+            <enumValue includeProjects="TriTrypDB,ApiDB">
+                <term>Leishmania infantum</term>
+                <internal>Leishmania infantum</internal>
+            </enumValue>
+            <enumValue includeProjects="TriTrypDB,ApiDB">
+                <term>Leishmania major</term>
+                <internal>Leishmania major</internal>
+            </enumValue>
+            <enumValue includeProjects="TriTrypDB,ApiDB">
+                <term>Trypanosoma brucei</term>
+                <internal>Trypanosoma brucei%</internal>
+            </enumValue>
+            <enumValue includeProjects="TriTrypDB,ApiDB">
+                <term>Trypanosoma cruzi</term>
+                <internal>Trypanosoma cruzi%</internal>
+            </enumValue>
+
         </enumList>
     </enumParam>
 
@@ -183,6 +204,24 @@
             <enumValue>
                 <term>veg</term>
                 <internal>Toxoplasma gondii VEG</internal>
+            </enumValue>
+        </enumList>
+    </enumParam>
+
+    <enumParam name="sequenceId" includeProjects="TriTrypDB"
+               prompt="T or P or any">
+        <enumList>
+            <enumValue>
+                <term>P</term>
+                <internal>%-P</internal>
+            </enumValue>
+            <enumValue>
+                <term>S</term>
+                <internal>%-S</internal>
+            </enumValue>
+            <enumValue>
+                <term>any</term>
+                <internal>%</internal>
             </enumValue>
         </enumList>
     </enumParam>
