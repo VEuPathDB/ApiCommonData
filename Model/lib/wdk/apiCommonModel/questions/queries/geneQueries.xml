@@ -557,7 +557,7 @@
     <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB"
               isCacheable="true">
         <paramRef ref="sharedParams.geneHistoryId"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB,TriTrypDB"/>
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
