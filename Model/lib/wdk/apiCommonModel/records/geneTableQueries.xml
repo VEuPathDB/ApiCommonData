@@ -1166,7 +1166,7 @@
        <!--Gene Location -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="Genbank" isCacheable="false" includeProjects="ToxoDB,GiardiaDB,CryptoDB,ApiDB">
+     <sqlQuery name="Genbank" isCacheable="false" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,ApiDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
@@ -1179,6 +1179,9 @@
             <column name="start_context"/>
             <column name="end_context"/>
             <column name="feature_source_id"/>
+            <sqlParamValue name="top_level" includeProjects="TriTrypDB">
+              Decode(fl.is_top_level,0, 'Contig', 1, 'Chromosome')
+            </sqlParamValue>
             <sqlParamValue name="top_level" includeProjects="GiardiaDB,ApiDB">
               Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold')
             </sqlParamValue>
