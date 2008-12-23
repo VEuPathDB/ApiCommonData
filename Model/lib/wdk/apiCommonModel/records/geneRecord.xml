@@ -117,6 +117,42 @@
       <!-- =============================================================== -->
       <!--   Filters -->  
       <!-- =============================================================== -->
+
+        <answerFilterLayout name="gene_layout" visible="true"
+                            displayName="Genes By Species" includeProjects="CryptoDB">
+
+            <instanceRef ref="all_genes" />
+            <instanceRef ref="parvum_genes" />
+            <instanceRef ref="parvum_chr6_genes" />
+            <instanceRef ref="hominis_genes" />
+            <instanceRef ref="muris_genes" />
+            
+            <layout>
+                <![CDATA[
+                    <table>
+                        <tr>
+                            <th>Cryptosporidium</th>
+                            <th>Parvum</th>
+                            <th>Parvum Chromosome 6</th>
+                            <th>Hominis</th>
+                            <th>Muris</th>
+                        </tr>
+                        <tr>
+                            <td>$$all_genes$$</td>
+                            <td>$$parvum_genes$$</td>
+                            <td>$$parvum_chr6_genes$$</td>
+                            <td>$$hominis_genes$$</td>
+                            <td>$$muris_genes$$</td>
+                        </tr>
+                    </table>
+                ]]>
+            </layout>
+        </answerFilterLayout>
+        
+        
+      <!-- =============================================================== -->
+      <!--   Filters -->  
+      <!-- =============================================================== -->
             
             <answerFilter queryRef="GeneSummaries.BooleanExpansion"
                           includeProjects="ToxoDB">
