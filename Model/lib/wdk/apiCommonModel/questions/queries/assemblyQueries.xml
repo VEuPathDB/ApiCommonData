@@ -99,8 +99,8 @@
        <paramRef ref="organismParams.organismWithAssemblies" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -126,7 +126,12 @@
 -->
         <sqlParamValue name="chrParam" includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
-              $$chromosomeOptional$$
+              sa.chromosome=$$chromosomeOptional$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="TriTrypDB">
+            <![CDATA[
+              sa.chromosome_order_num=$$chromosomeOptional$$
             ]]>
         </sqlParamValue>
         <sqlParamValue name="chroOpt" includeProjects="CryptoDB">
@@ -135,10 +140,10 @@
                OR lower(s.source_id) = lower($$sequenceId$$))
             ]]>
         </sqlParamValue>
-        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB,TriTrypDB">
+        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB,ToxoDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB,TriTrypDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
@@ -173,7 +178,7 @@
             ) */
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
@@ -185,7 +190,7 @@
                        || '(' || decode(b.is_reversed,0,'+',1,'-',null)
                        || ')') AS apidb.varchartab), ', ') AS assembly_location
 	    FROM  apidb.ASMALIGNMENTGENESUMMARY eags, apidb.blatalignmentlocation b, apidb.sequenceAttributes sa
-            WHERE ((sa.chromosome=&&chrParam&& and sa.organism = $$organism$$)
+            WHERE ((&&chrParam&& and sa.organism = $$organism$$)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')

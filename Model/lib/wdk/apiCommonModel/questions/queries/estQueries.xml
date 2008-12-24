@@ -64,9 +64,9 @@
                   includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
 
-        <paramRef ref="sharedParams.chromosomeOptional"  includeProjects="PlasmoDB,CryptoDB,ToxoDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional"  includeProjects="PlasmoDB,CryptoDB,ToxoDB,TriTrypDB"/>
   
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
@@ -112,10 +112,10 @@
             ]]>
         </sqlParamValue>
 -->
-        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB,TriTrypDB">
+        <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB,ToxoDB,CryptoDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB">
             <![CDATA[
             select * from (
             SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
@@ -154,6 +154,33 @@
                        || ')') AS apidb.varchartab), ', ') AS est_location
             FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceAttributes sa
             WHERE ((sa.chromosome=$$chromosomeOptional$$ and sa.organism = $$organism$$)
+               OR lower(sa.source_id) = lower($$sequenceId$$))
+            AND   sa.na_sequence_id = b.target_na_sequence_id
+            AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
+            AND   (b.target_end <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
+            AND   b.is_consistent in ($$high_confidence_only$$)
+            AND   b.is_best_alignment in ($$best_alignment_only$$)
+            AND   b.percent_identity >= $$min_percent_identity$$
+            AND   b.blat_alignment_id = eags.BLAT_ALIGNMENT_ID
+            AND   eags.percent_est_bases_aligned >= $$min_percent_est_aligned$$
+            AND   eags.library_id in ($$libraryId$$)
+            GROUP BY eags.accession)
+           ]]>
+        </sql>
+
+        <sql includeProjects="TriTrypDB">
+            <![CDATA[
+            select * from (
+            SELECT eags.accession as source_id, '@PROJECT_ID@' as project_id,
+                   apidb.tab_to_string(
+                     CAST(
+                       COLLECT(sa.source_id || ':'
+                       || trim(to_char(b.target_start,'999,999,999'))
+                       || '-' || trim(to_char(b.target_end,'999,999,999'))
+                       || '(' || decode(b.is_reversed,0,'+',1,'-',null)
+                       || ')') AS apidb.varchartab), ', ') AS est_location
+            FROM  apidb.blatalignmentlocation b, apidb.ESTALIGNMENTGENESUMMARY eags, apidb.sequenceAttributes sa
+            WHERE ((sa.chromosome_order_num=$$chromosomeOptional$$ and sa.organism = $$organism$$)
                OR lower(sa.source_id) = lower($$sequenceId$$))
             AND   sa.na_sequence_id = b.target_na_sequence_id
             AND   b.target_start >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
