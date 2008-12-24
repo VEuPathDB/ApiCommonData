@@ -437,6 +437,11 @@
         <testParamValues includeProjects="TrichDB">
            <paramValue name="BlastQuerySequence">AAGACACTCGCTGAATTAAGAAAGCGCAAATTAGAGGGTGTTGTTCTCATCTACGGCTTCCCAGAGCCAACACGCGCCCACTGCGACTTCGAACCAGTCTTCCGCCAGGAATCCTGCTTC</paramValue>
         </testParamValues>
+        <!--TODO revisit the BLAST sequence..it was picked from Sanger-->
+        <testParamValues includeProjects="TriTrypDB">
+           <paramValue name="BlastQuerySequence">ATGCAACTCCAAAGGTTGGGTGCTCCACTACTTAAAAGGCTTGTGGGGGGATGCATACGC</paramValue>
+            <paramValue name="BlastDatabaseOrganism">Trypanosoma brucei</paramValue>
+        </testParamValues>
 
        <paramRef ref="sharedParams.BlastDatabaseType" quote="false" />
        <paramRef ref="sharedParams.BlastAlgorithm" quote="false" />
@@ -1131,8 +1136,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             where mss.aa_sequence_id = taaf.aa_sequence_id
             and taaf.na_feature_id = t.na_feature_id
             and t.parent_id = gf.na_feature_id
-            and gf.na_sequence_id = nas.na_sequence_id
-            &&restrainOrganism&&
+            and gf.na_sequence_id = nas.na_sequence_id  &&restrainOrganism&&
             and gf.source_id = ga.source_id
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
@@ -1752,7 +1756,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
         <testParamValues includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
            <paramValue name="domain_database">PRODOM</paramValue>
-           <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY"</paramValue>
+           <paramValue name="domain_accession">PD001005: ISOMERASE TRIOSEPHOSPHATE TIM BIOSYNTHESIS GLUCONEOGENESIS PENTOSE GLYCOLYSIS SHUNT ACID FATTY</paramValue>
+        </testParamValues>
+        <!--TODO-domain accession value is not defined here for PD000018-->
+        <testParamValues includeProjects="TriTrypDB">
+           <paramValue name="domain_database">PRODOM</paramValue>
+           <paramValue name="domain_accession">PD000018:</paramValue>
         </testParamValues>
 
         <paramRef ref="geneParams.domain_database"/>
@@ -1934,6 +1943,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
         <testParamValues includeProjects="ToxoDB">
            <paramValue name="libraryIdGenes">TgME49 3 day invitro bradyzoite</paramValue>
+        </testParamValues>
+        <testParamValues includeProjects="TriTrypDB">
+           <paramValue name="libraryIdGenes">TcAM</paramValue>
         </testParamValues>
 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes" excludeProjects="ToxoDB"/>
