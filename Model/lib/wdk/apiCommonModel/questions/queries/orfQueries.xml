@@ -60,14 +60,14 @@
           <paramValue name="sequenceId">TGME49_chrV</paramValue>
         </testParamValues>
 
- <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB"/>
+ <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB"/>
 <!--
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>
 
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,TriTrypDB,ApiDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -87,8 +87,18 @@
             ]]>
         </sqlParamValue>
 -->
+        <sqlParamValue name="chrParam" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
+            <![CDATA[
+              sa.chromosome=$$chromosomeOptional$$
+            ]]>
+        </sqlParamValue>
+        <sqlParamValue name="chrParam" includeProjects="TriTrypDB">
+            <![CDATA[
+              sa.chromosome_order_num=$$chromosomeOptional$$
+            ]]>
+        </sqlParamValue>
 
-        <sql includeProjects="ToxoDB,PlasmoDB,CryptoDB"> 
+        <sql includeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
@@ -96,7 +106,7 @@
 	         dots.TranslatedAaSequence tas, apidb.FeatureLocation fl
 	    WHERE fl.feature_type = 'Miscellaneous'
             AND sa.na_sequence_id = fl.na_sequence_id
-	    AND ((sa.chromosome = $$chromosomeOptional$$ AND sa.organism = $$organism$$)
+	    AND ((&&chrParam&& AND sa.organism = $$organism$$)
                    OR lower(sa.source_id) = lower($$sequenceId$$))
             AND fl.end_max >=  REGEXP_REPLACE('$$start_point$$', ',| ','') 
 	    AND (fl.start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
@@ -128,7 +138,7 @@
            ]]>
        </sql>
 -->
-        <sql includeProjects="TrichDB,GiardiaDB,TriTrypDB"> 
+        <sql includeProjects="TrichDB,GiardiaDB"> 
             <![CDATA[
             SELECT distinct oa.source_id, '@PROJECT_ID@' as project_id,
             fl.sequence_source_id || ': ' || trim(to_char(fl.start_min,'999,999,999')) || ' - ' || trim(to_char(fl.end_max,'999,999,999')) || decode(fl.is_reversed, 1, ' (-)', ' (+)') as dynamic_location
