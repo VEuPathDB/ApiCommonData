@@ -342,10 +342,19 @@
             <column name="term"/>
             <column name="internal"/>
             <sql includeProjects="CryptoDB">
-              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+              SELECT t.term, t.internal,
+                     $$source_id$$ AS source_id, $$project_id$$ AS project_id
+                FROM (
+                    SELECT
                      'All Cryptosporidium Isolates' as term, 
-			         'All Cryptosporidium Isolates' as internal 
-			  FROM dual 
+                     'All Cryptosporidium Isolates' as internal
+                    FROM dual
+                    UNION
+                    SELECT
+                     'Cryptosporidium Reference Isolates' as term, 
+                     'Cryptosporidium Reference Isolates' as internal 
+                    FROM dual
+                    ) t
             </sql>
             <sql includeProjects="PlasmoDB">
               SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
@@ -573,8 +582,8 @@
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-                 SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
-                 SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual 
+                SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
+                SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual 
                  ) t
             </sql>
             <sql includeProjects="GiardiaDB">
@@ -649,8 +658,8 @@
                  SELECT 'Plasmodium vivax' as term, 'P. vivax' as internal from dual UNION
                  SELECT 'Plasmodium vivax mitochondrial' as term, 'P. vivax mitochondrial' as internal from dual UNION
                  SELECT 'Plasmodium yoelii' as term, 'P. yoelii' as internal from dual UNION
-                
-SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
+
+                 SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UNION
                  SELECT 'Toxoplasma gondii ME49' as term, 'T. gondii ME49' as internal from dual UNION
                  SELECT 'Toxoplasma gondii VEG' as term, 'T. gondii VEG' as internal from dual UNION
                  SELECT 'Toxoplasma gondii apicoplast' as term, 'T. gondii apicoplast' as internal from dual UNION
@@ -737,7 +746,7 @@ SELECT 'Toxoplasma gondii GT1' as term, 'T. gondii GT1' as internal from dual UN
     <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <paramRef ref="recordParams.primaryKey" quote="false"/> 
             <paramRef ref="recordParams.project_id"/>
-        	<wsColumn name="primaryKey"  width="100"/>
+            <wsColumn name="primaryKey"  width="100"/>
             <wsColumn name="project_id"  width="100"/>
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
