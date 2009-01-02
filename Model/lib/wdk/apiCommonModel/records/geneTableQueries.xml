@@ -1995,6 +1995,33 @@
             </sql>
         </sqlQuery>
 
+       <sqlQuery name="gene_dbrefs" 
+                  isCacheable="false" includeProjects="TriTrypDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="dataset"/>
+            <column name="link_url"/>
+            <sql>
+            <![CDATA[
+               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               'GeneDB' as dataset,
+               DECODE(organism,
+                      'Leishmania major', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=leish&desc=yes&wildcard=yes',
+                      'Leishmania braziliensis', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=lbraziliensis&desc=yes&wildcard=yes',
+                      'Leishmania infantum', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=linfantum&desc=yes&wildcard=yes',
+                      'Trypanosoma brucei TREU927', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=tryp&desc=yes&wildcard=yes',
+                      'Trypanosoma cruzi strain CL Brener', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=tcruzi&desc=yes&wildcard=yes'
+                      ) AS link_url
+                FROM apidb.geneattributes 
+                where project_id = $$project_id$$
+                and source_id = $$source_id$$
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- protein database links -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
