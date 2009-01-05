@@ -30,63 +30,61 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $sqldbref = "select df.db_ref_na_feature_id,r.db_ref_id from dots.genefeature official, dots.dbrefnafeature df, dots.genefeature other, sres.dbref r where official.na_feature_id = df.na_feature_id and other.source_id = r.primary_identifier and df.db_ref_id = r.db_ref_id";
+my $sqldbref = "select distinct r.db_ref_id
+from dots.genefeature official, dots.dbrefnafeature df, dots.genefeature other, sres.dbref r 
+where official.na_feature_id = df.na_feature_id 
+and other.source_id = r.primary_identifier 
+and df.db_ref_id = r.db_ref_id";
 
-my $sqldbrefnafeaturedelete = "delete from dots.dbrefnafeature where db_ref_na_feature_id= ?";
-
-my $sqldbrefdelete = "delete from sres.dbref where sres.dbref= ?";
+my $sqldbrefnafeaturedelete = "delete from dots.dbrefnafeature where db_ref_id= ?";
+my $sqldbrefdelete = "delete from sres.dbref where db_ref_id = ?";
 
 my $select = $dbh->prepare($sqldbref);
-
 my $delete1 = $dbh->prepare($sqldbrefnafeaturedelete);
-
 my $delete2 = $dbh->prepare($sqldbrefdelete);
 
 $select ->execute();
 
-my (%db_ref_na_feature_ids, %db_ref_ids);
+my $dbrefNaFeatureCount;
+my $dbrefCount;
+my $error;
 
-while (my ($db_ref_na_feature_id, $db_ref_id) = $select->fetchrow_array()){
+my @dbRefIds;
 
-    $db_ref_na_feature_ids{$db_ref_na_feature_id}=1;
-    $db_ref_ids{$db_ref_id}=1;
+while (my ($db_ref_id) = $select->fetchrow_array()){
+  push @dbRefIds, $db_ref_id;
+}
+
+foreach(@dbRefIds) {
+
+  #There may be many dbrefnafeature for a given db_ref_id
+  $delete1 ->execute($_);
+  $dbrefNaFeatureCount = $dbrefNaFeatureCount + $delete1->rows;
+
+  $delete2 ->execute($_);
+  my $delete2Rows = $delete2->rows;
+  $dbrefCount = $dbrefCount + $delete2Rows;
+
+  # using the primary key should only be able to delete one row
+  unless($delete2Rows == 1) {
+    print STDERR "ERROR:   db_ref_id [$_] deleted $delete2Rows rows from sres.dbref !!!\n";
+    $error = 1;
+  }
 }
 
 $select->finish();
-my $error;
-foreach(keys %db_ref_na_feature_ids) {
-    next unless $_;
-    $delete1 ->execute($_);
-    my $rowCount = $delete1->rows;
-
-    unless($rowCount == 1) {
-	print STDERR "ERROR:   $_ deleted $rowCount rows !!!\n";
-	$error = 1;
-   }
-}
+$delete1->finish();
+$delete2->finish();
 
 if($error) {
   $dbh->rollback();
   print STDERR "Errors!  Rolled back database\n";
 }
-
-foreach(keys %db_ref_ids) {
-    next unless $_;
-    $delete2 ->execute($_);
-    my $rowCount = $delete2->rows;
-
-    unless($rowCount == 1) {
-	print STDERR "ERROR:   $_ deleted $rowCount rows !!!\n";
-	$error = 1;
-   }
+else {
+  $dbh->commit;
+  print "Deleted $dbrefNaFeatureCount from Dots.DbrefNaFeature and $dbrefCount from SRes.DbRef\n";
 }
 
-if($error) {
-  $dbh->rollback();
-  print STDERR "Errors!  Rolled back database\n";
-}
-
-$dbh->commit;
-
+$dbh->disconnect();
 
 1;
