@@ -3215,7 +3215,7 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
 create table apidb.Blastp&1 as
 select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
        sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
-       sim.number_identical, sim.total_match_length, subject.description,
+       sim.number_identical, sim.total_match_length, replace(subject.description, chr(1), '') as description,
        sim.number_positive, ed.name as external_database_name
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
@@ -3301,11 +3301,11 @@ create table TableWeight&1 as
 -- genes
   select cast ('GoTerms' as varchar2(80)) as table_name, 1 as weight from dual
 union
-  select cast ('Product' as varchar2(80)) as table_name, 2 as weight from dual
+  select cast ('Product' as varchar2(80)) as table_name, 5 as weight from dual
 union
   select cast ('Notes' as varchar2(80)) as table_name, 2 as weight from dual
 union
-  select cast ('Comments' as varchar2(80)) as table_name, 5 as weight from dual
+  select cast ('Comments' as varchar2(80)) as table_name, 2 as weight from dual
 union
   select cast ('InterPro' as varchar2(80)) as table_name, 1 as weight from dual
 union
