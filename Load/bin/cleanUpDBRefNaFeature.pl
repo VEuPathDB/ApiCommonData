@@ -2,14 +2,17 @@
 
 use strict;
 
-use CBIL::Util::PropertySet;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use Getopt::Long;
-use DBI;
-use DBD::Oracle;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+use Data::Dumper;
 
-my ($help, $fn, $gusConfigFile, $sequenceTable);
 
-&GetOptions('help|h' => \$help,
+my ($verbose,$gusConfigFile);
+
+&GetOptions("verbose!"=> \$verbose,
             'gus_config_file=s' => \$gusConfigFile,
             );
 
@@ -17,17 +20,14 @@ my ($help, $fn, $gusConfigFile, $sequenceTable);
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my @properties = ();
-my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
-
-my $u = $gusconfig->{props}->{databaseLogin};
-my $pw = $gusconfig->{props}->{databasePassword};
-my $dsn = $gusconfig->{props}->{dbiDsn};
-
-my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
-$dbh->{RaiseError} = 1;
-$dbh->{AutoCommit} = 0;
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my $dbh = $db->getQueryHandle(0);
 
 my $sqldbref = "select df.db_ref_na_feature_id,r.db_ref_id from dots.genefeature official, dots.dbrefnafeature df, dots.genefeature other, sres.dbref r where official.na_feature_id = df.na_feature_id and other.source_id = r.primary_identifier and df.db_ref_id = r.db_ref_id";
 
@@ -35,10 +35,10 @@ my $stmt1 = $dbh->prepareAndExecute($sqldbref);
 
 my (%db_ref_na_feature_ids, %db_ref_ids);
 
-while (my ($db_ref_na_feature_id, $db_ref_id) = stmt1 -> getchrow_array()){
+while (my ($db_ref_na_feature_id, $db_ref_id) = $stmt1->fetchrow_array()){
 
     $db_ref_na_feature_ids{$db_ref_na_feature_id}=1;
-    $db_ref_ids($db_ref_id)=1;
+    $db_ref_ids{$db_ref_id}=1;
 }
 $stmt1->finish();
 
