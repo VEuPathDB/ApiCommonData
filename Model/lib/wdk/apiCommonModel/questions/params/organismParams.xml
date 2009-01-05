@@ -1192,7 +1192,7 @@ UNION
     <sqlQuery name="nameWithGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql excludeProjects="ToxoDB,CryptoDB">
+      <sql excludeProjects="ToxoDB,CryptoDB,TriTrypDB">
         <![CDATA[
           select geneOrgs.organism as term, geneOrgs.organism as internal
           from (select distinct organism from apidb.GeneAttributes) geneOrgs,
@@ -1216,7 +1216,7 @@ UNION
           order by nvl(partial_ordering.rank, 9999), geneOrgs.organism
         ]]>
       </sql>
-      <sql includeProjects="ToxoDB,CryptoDB">
+      <sql includeProjects="ToxoDB,CryptoDB,TriTrypDB">
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
            FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
@@ -1578,6 +1578,49 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+    <!--===================================================================-->
+    <!-- TriTrypWithGenes  -->  
+    <!--===================================================================-->
+
+    <sqlQuery name="withTriTrypGenes" includeProjects="TriTrypDB" isCacheable="true">
+
+      <testParamValues excludeProjects="TriTrypDB" minRows="0"/>
+
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+        <![CDATA[
+         SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT tn.name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND (tn.name like 'Trypanosoma %'
+                  OR tn.name like 'Leishmania %')
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf
+                              WHERE gf.na_sequence_id = ns.na_sequence_id))) organisms
+          ORDER BY  organisms.name
+        ]]>
+      </sql>
+    </sqlQuery>
+
+    <processQuery name="withPlasmoGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
 
 
 <!--====================================================================-->
