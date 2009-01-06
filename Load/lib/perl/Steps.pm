@@ -6484,6 +6484,33 @@ sub updateChromosomeNumberFromMap{
   $mgr->endStep($signal);
 }
 
+sub cleanUpDBRefNaFeature{
+  my ($mgr) = @_;
+
+  my $signal = "cleanUpDBRefNaFeature";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Cleaned Up DBRefNaFeature", $signal);
+
+  $mgr->runCmd("cleanUpDBRefNaFeature.pl 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
+sub cleanUpNaFeatureNaGene{
+  my ($mgr) = @_;
+
+  my $signal = "cleanUpNaFeatureNaGene";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Cleaned Up NaFeatureNaGene", $signal);
+
+  $mgr->runCmd("cleanUpNaFeatureNaGene.pl 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
 ## these are the old "steps specific" property
 ## declarations.  we intend to incorporate them into the steps that need them
 
