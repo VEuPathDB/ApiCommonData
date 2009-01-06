@@ -244,7 +244,7 @@
             <columnAttribute  name="secondary_identifier" includeProjects="CryptoDB"
                  inReportMaker="false"   internal="true" />
 
-            <columnAttribute name="chromosomemappingtext" includeProjects="CryptoDB" 
+            <columnAttribute name="chromosomemappingtext" includeProjects="CryptoDB,TriTrypDB" 
                  inReportMaker="false"    internal="true" />
 
             <columnAttribute name="at_percent"
@@ -353,7 +353,7 @@
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="overview" displayName="Overview"
                          inReportMaker="false" internal="true">
-           <text includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB,TriTrypDB">
+           <text includeProjects="PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
               <![CDATA[
                   Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$,
                   <b>C</b>:$$c_count$$, <b>G</b>:$$g_count$$,
@@ -371,6 +371,15 @@
                 Length: $$length$$<br>
 
                 <a href="http://apicyc.apidb.org/$$cyc_db$$/new-image?object=$$source_id$$">CryptoCyc Metabolic Pathway Database</a><br>
+              ]]>
+           </text>
+           <text includeProjects="TriTrypDB">
+                <![CDATA[
+                $$chromosomemappingtext$$<br>
+                Residue counts: <b>A</b>:$$a_count$$, <b>T</b>:$$t_count$$, <b>C</b>:$$c_count$$, 
+                <b>G</b>:$$g_count$$, <b>other</b>:$$other_count$$<br>
+                AT content: $$at_percent$$ percent<br>
+                Length: $$length$$<br>
               ]]>
            </text>
          </textAttribute>
