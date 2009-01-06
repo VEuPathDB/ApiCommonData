@@ -2169,20 +2169,20 @@
           <!-- Text  attributes -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <attributeQueryRef ref="GeneAttributes.ChromosomeMappingText" includeProjects="CryptoDB">
+          <attributeQueryRef ref="GeneAttributes.ChromosomeMappingText" includeProjects="CryptoDB,TriTrypDB">
                 <columnAttribute name="chromosomemappingtext" displayName="Chromosome" internal="false" />
           </attributeQueryRef>
 
           <textAttribute name="overview" displayName="Overview" excludeProjects="ApiDB"
                          internal="true" inReportMaker="false">
 
-             <text excludeProjects="CryptoDB">
+             <text excludeProjects="CryptoDB,TriTrypDB">
                   <![CDATA[
                      $$organism$$ $$gene_type$$ on <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&project_id=@PROJECT_ID@&primary_key=$$sequence_id$$">$$sequence_id$$</a> from $$start_min_text$$ to $$end_max_text$$
                   ]]>
              </text>
 
-            <text includeProjects="CryptoDB">
+            <text includeProjects="CryptoDB,TriTrypDB">
                  <![CDATA[
                    <b><i>$$organism$$</i></b> $$gene_type$$ gene on 
                  <a href="showRecord.do?name=SequenceRecordClasses.SequenceRecordClass&id=$$sequence_id$$"><b>$$sequence_id$$</b></a> 
