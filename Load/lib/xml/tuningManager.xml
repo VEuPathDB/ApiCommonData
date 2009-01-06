@@ -1306,6 +1306,19 @@ CREATE INDEX apidb.GeneAttr_geneid_ix&1
        ON apidb.GeneAttributes&1 (gene_id)
       ]]>
     </sql>
+    <sql>
+  update apidb.geneattributes 
+  set exon_count = 1
+  where exon_count > 1
+   and project_id = 'TriTrypDB' 
+   and source_id not in ('LmjF29.2600',
+                         'LinJ29_V3.2710',
+                         'Tb927.3.3160',
+                         'Tb927.8.1510',
+                         'Tc00.1047053508153.440',
+                         'Tc00.1047053508547.110',
+                         'Tc00.1047053508973.50')
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.GenomicSequence">
