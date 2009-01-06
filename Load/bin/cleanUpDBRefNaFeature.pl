@@ -39,9 +39,14 @@ and df.db_ref_id = r.db_ref_id";
 my $sqldbrefnafeaturedelete = "delete from dots.dbrefnafeature where db_ref_id= ?";
 my $sqldbrefdelete = "delete from sres.dbref where db_ref_id = ?";
 
+my $sqldateupdate1="update dots.dbrefnafeature set modification_date=sysdate";
+my $sqldateupdate2="update sres.dbref set modification_date=sysdate";
+
 my $select = $dbh->prepare($sqldbref);
 my $delete1 = $dbh->prepare($sqldbrefnafeaturedelete);
 my $delete2 = $dbh->prepare($sqldbrefdelete);
+my $update1 = $dbh->prepare($sqldateupdate1);
+my $update2 = $dbh->prepare($sqldateupdate2);
 
 $select ->execute();
 
@@ -72,9 +77,14 @@ foreach(@dbRefIds) {
   }
 }
 
+$update1->execute();
+$update2->execute();
+
 $select->finish();
 $delete1->finish();
 $delete2->finish();
+$update1->finish();
+$update2->finish();
 
 if($error) {
   $dbh->rollback();

@@ -37,14 +37,14 @@ $dbh->{AutoCommit} = 0;
 
 open(FILE, $fn) or die "Cannot open file $fn for reading:$!";
 
-my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ? where source_id = ?";
+my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ?, modification_date=sysdate where source_id = ?";
 my $sh = $dbh->prepare($sql);
 
 my $error;
 
 while(<FILE>) {
   chomp;
-
+  print "$_\n";
   my ($sourceId, $chr) = split(/\t/, $_);
 
   next unless($chr);
@@ -53,7 +53,7 @@ while(<FILE>) {
 
   $sh->execute($chrom, $chr, $sourceId);
   my $rowCount = $sh->rows;
-
+  print "$rowCount\n";
   unless($rowCount == 1) {
     print STDERR "ERROR:  Chrom $sourceId updated $rowCount rows !!!\n";
     $error = 1;

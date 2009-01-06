@@ -38,11 +38,15 @@ WHERE nfng.na_gene_id = nag.na_gene_id";
 my $sqlnafeaturenagenedel = "delete from dots.nafeaturenagene where na_feature_na_gene_id = ?";
 my $sqlnafeaturedel = "delete from dots.nagene where na_gene_id = ?";
 
+my $sqldateupdate1="update dots.nafeaturenagene set modification_date=sysdate";
+my $sqldateupdate2="update dots.nagene set modification_date=sysdate";
+
 my $select1 = $dbh->prepare($sqlgenefeature);
 my $select2 = $dbh->prepare($sqlnafeaturenagene);
 my $delete1 = $dbh->prepare($sqlnafeaturenagenedel);
 my $delete2 = $dbh->prepare($sqlnafeaturedel);
-
+my $update1 = $dbh->prepare($sqldateupdate1);
+my $update2 = $dbh->prepare($sqldateupdate2);
 
 my %sourceId2NaFeatureId;
 $select1 ->execute();
@@ -91,10 +95,15 @@ foreach my $dup (@pretenderAliases) {
   }
 }
 
+$update1->execute();
+$update2->execute();
+
 $select1->finish();
 $select2->finish();
 $delete1->finish();
 $delete2->finish();
+$update1->finish();
+$update2->finish();
 
 if($error) {
   $dbh->rollback();
