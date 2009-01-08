@@ -952,6 +952,8 @@ UNION
                 SELECT 'Toxoplasma gondii' AS name, 6 AS rank FROM dual
                  UNION
                 SELECT 'Neospora caninum' AS name, 7 AS rank FROM dual
+                 UNION
+                SELECT 'Trypanosoma cruzi' AS name, 8 AS rank FROM dual
                 ) partial_ordering
           WHERE organisms.name = partial_ordering.name(+)
           ORDER BY partial_ordering.rank, organisms.name
