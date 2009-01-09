@@ -175,6 +175,10 @@
         </sqlQuery>
 
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- GeneOverlap -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
       <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
@@ -223,6 +227,135 @@
            </sql>
       </sqlQuery>
 
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Attributes as tables (to feed text search)  -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="organism"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.organism
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="description"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.description
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="product"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.product
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="strain"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.strain
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="host"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.specific_host as host
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="note"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.note
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="isolation_source"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.isolation_source
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+      <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="geographic_location"/>
+            <sql>
+            <![CDATA[
+            select ia.source_id, '@PROJECT_ID@' as project_id, ia.country as geographic_location
+            from apidb.IsolateAttributes ia
+            where ia.source_id = $$source_id$$ 
+            ]]>
+           </sql>
+      </sqlQuery>
+
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- ProteinSequence -->
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,ApiDB">
          <testParamValues includeProjects="CryptoDB">
