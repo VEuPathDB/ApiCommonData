@@ -1294,25 +1294,6 @@ EOF
 
 }
 
-sub makeRefIsolateDownloadFile {
-  my ($mgr, $species, $name, $project) = @_;
-
-  my $sql = <<"EOF";
-  SELECT  x.source_id
-                ||' | description='||
-          x.description as defline,
-          x.sequence
-       FROM dots.isolatesource i,
-            dots.externalnasequence x
-      WHERE x.na_sequence_id = i.na_sequence_id 
-            and i.is_reference=1
-EOF
-
-    my $fileName = $species . ucfirst($name);
-
-    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
-
-}
 
 sub makeESTDownloadFile {
   my ($mgr, $species, $name, $ncbiTaxId, $dbName, $dbVer, $taxonHierarchy,$project) = @_;
@@ -2397,24 +2378,29 @@ sub makeIsolateDownloadFile {
 
   my $sql = <<"EOF";
         SELECT
-        '$name'
-        ||'|'||
         enas.source_id
-        ||'|'||
+        ||' | organism='|| 
+        replace(tn.name, ' ', '_')
+        ||' | description='||
         enas.description
-        ||'|'||
-        tn.name,
+        ||' | length='||
+        enas.length
+        as defline,
         enas.sequence
         From dots.$seqTable enas,
              sres.taxonname tn,
              sres.externaldatabase ed,
-             sres.externaldatabaserelease edr
+             sres.externaldatabaserelease edr,
+             dots.isolatesource i
         Where enas.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'
-        AND enas.external_database_release_id = edr.external_database_release_id
+            AND enas.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
             AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+            AND enas.na_sequence_id = i.na_sequence_id
 EOF
+
+  $sql .= " and i.is_reference=1" if $isRef;
 
   makeDownloadFile($mgr, $species, $name, $sql);
 
@@ -4292,7 +4278,7 @@ sub xdformatDownloadFileForBlastSite {
         $mgr->runCmd("cat $inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
 
         $mgr->runCmd("$blastPath/xdformat $type -o $formattedFile $tempFile 2>> $logFile");
- 
+
         $mgr->runCmd("rm -fr $tempFile");
 
   }else {
