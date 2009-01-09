@@ -13,7 +13,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $sql = <<"EOF";
+  my $sql = "
       SELECT  a.source_id
                 ||' | organism='||
           replace(tn.name, ' ', '_')
@@ -28,9 +28,7 @@ sub run {
       WHERE t.ncbi_tax_id = $ncbiTaxonId
         AND t.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND t.taxon_id = a.taxon_id
-     
-    EOF
+        AND t.taxon_id = a.taxon_id";
 
   my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
 
