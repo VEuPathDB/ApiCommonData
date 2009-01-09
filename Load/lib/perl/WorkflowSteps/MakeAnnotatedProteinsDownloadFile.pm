@@ -17,8 +17,7 @@ sub run {
   my $extDbRls = join(",", @extDbRlss);
   my $localDataDir = $self->getLocalDataDir();
 
-  my $sql = <<"EOF";
-     SELECT '$dataSource'
+  my $sql = "SELECT '$dataSource'
                 ||'|'||
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
@@ -49,12 +48,11 @@ sub run {
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
-        AND gf.external_db_name in ($extDbName) AND gf.external_db_version in ($extDbRlsVer)
+        AND gf.external_db_name in ($extDbName) AND gf.external_db_version in ($extDbRls)
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND fl.is_top_level = 1
-        AND gf.is_deprecated = $deprecated
-EOF
+        AND gf.is_deprecated = $deprecated";
 
   my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
 
@@ -69,7 +67,7 @@ sub getParamsDeclaration {
   return (
           'outputFile',
           'extDbName',
-          'extDbRlsVer',
+          'extDbRls',
           'deprecated',
          );
 }
