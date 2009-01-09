@@ -4,38 +4,51 @@ package ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $outputFile = $self->getParamValue('outputFile');
-  my $dbESTExtDbRlsSpec = $self->getParamValue('dbESTExtDbRlsSpec');
-  my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
-  my $projectDB = $self->getParamValue('projectDB');
+  my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
+  my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
+  my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
   my $localDataDir = $self->getLocalDataDir();
 
+  my $sql = <<"EOF";
+    SELECT x.source_id
+           ||' | organism='||
+           replace(tn.name, ' ', '_')
+           ||' | length='||
+           x.length as defline,
+           x.sequence
+           FROM dots.externalnasequence x,
+                sres.taxonname tn,
+                sres.taxon t,
+                sres.sequenceontology so
+           WHERE t.taxon_id in ($taxonIdList)
+            AND t.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND t.taxon_id = x.taxon_id
+            AND x.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = 'EST'
+EOF
+
+  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+
   if ($test) {
-  } else {
-  }
-
-  $self->runPlugin($test, '', $args);
-
+      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+  } 
+  $self->runCmd($test, $cmd);
 }
 
 sub getParamsDeclaration {
   return (
           'outputFile',
-          'dbESTExtDbRlsSpec',
-          'ncbiTaxonId',
-          'projectDB',
+          'parentNcbiTaxonId',
+          'useTaxonHierarchy',
          );
 }
 

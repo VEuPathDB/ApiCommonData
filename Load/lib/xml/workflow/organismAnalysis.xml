@@ -87,12 +87,24 @@
   </subgraph>
 
 
+
+
+  <param name="genomeExtDb"/>
+  <param name="genomeExtDbRls"/>
+  <param name="genomeVirtualSeqsExtDb"/>
+  <param name="genomeVirtualSeqsExtDbRls"/>
+
+
+
   <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
     <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDb$$|$$genomeExtDbRls$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</paramValue>
+    <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+    <paramValue name="genomeExtDb">$$genomeExtDb$$</paramValue>
+    <paramValue name="genomeExtDbRls">$$genomeExtDbRls$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDb">$$genomeVirtualSeqsExtDb$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRls">$$genomeVirtualSeqsExtDbRls$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="genomeSource">$$genomeSource$$</paramValue>
     <paramValue name="projectName">$$projectName$$</paramValue>

@@ -3,8 +3,11 @@
     <param name="downloadSiteDataDir"/>
     <param name="organismName"/>
     <param name="ncbiTaxonId"/>
-    <param name="genomeExtDbRlsSpec"/>
-    <param name="genomeVirtualSeqsExtDbRlsSpec"/>
+    <param name="parentNcbiTaxonId"/>
+    <param name="genomeExtDb"/>
+    <param name="genomeExtDbRls"/>
+    <param name="genomeVirtualSeqsExtDb"/>
+    <param name="genomeVirtualSeqsExtDbRls"/>
     <param name="interproVersion"/>
     <param name="genomeSource"/>
     <param name="projectName"/>
@@ -14,9 +17,8 @@
 
     <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="dbESTExtDbRlsSpec">$$dbESTExtDbRlsSpec$$</paramValue>
-      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="projectDB">$$projectName$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
     </step>
 
     <step name="formatESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -30,7 +32,6 @@
     <step name="makeDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
 
 
@@ -71,9 +72,9 @@
 
     <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="organismSource">$$genomeSource$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="projectDB">$$projectName$$</paramValue>
+      <paramValue name="deprecated">false</paramValue>
+      <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
+      <paramValue name="ExtDbRls">,$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
     </step>
 
     <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">

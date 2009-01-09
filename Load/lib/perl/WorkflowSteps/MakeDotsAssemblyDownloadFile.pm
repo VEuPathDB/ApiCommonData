@@ -4,28 +4,40 @@ package ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $outputFile = $self->getParamValue('outputFile');
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
-  my $projectDB = $self->getParamValue('projectDB');
-
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
 
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-  } else {
-  }
+  my $sql = <<"EOF";
+      SELECT  a.source_id
+                ||' | organism='||
+          replace(tn.name, ' ', '_')
+                ||' | number of sequences='||
+          a.number_of_contained_sequences
+                ||' | length='||
+          a.length as defline,
+          a.sequence
+       FROM dots.assembly a,
+            sres.taxonname tn,
+            sres.taxon t
+      WHERE t.ncbi_tax_id = $ncbiTaxonId
+        AND t.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND t.taxon_id = a.taxon_id
+     
+    EOF
 
-  $self->runPlugin($test, '', $args);
+  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+
+  if ($test) {
+      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+  } 
+  $self->runCmd($test, $cmd);
 
 }
 
@@ -33,7 +45,6 @@ sub getParamsDeclaration {
   return (
           'outputFile',
           'ncbiTaxonId',
-          'projectDB',
          );
 }
 
