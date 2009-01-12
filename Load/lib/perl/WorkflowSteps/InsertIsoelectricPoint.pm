@@ -16,7 +16,7 @@ sub run {
 
   my $args = "--extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --seqTable $table";
 
-  $self->runPlugin($test, "GUS::Supported::Plugin::CalculateAASequenceIsoelectricPoint",$args);
+  $self->runPlugin($test, "ApiCommonData::Load::Plugin::CalculateAASequenceIsoelectricPoint",$args);
 
 }
 
