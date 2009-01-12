@@ -4,36 +4,37 @@ package ApiCommonData::Load::WorkflowSteps::RunfullRecordDump;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
   my $downloadSiteDataDir = $self->getParamValue('downloadSiteDataDir');
-  my $organismName = $self->getParamValue('organismName');
   my $organismFullName = $self->getParamValue('organismFullName');
   my $projectDB = $self->getParamValue('projectDB');
-
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
-
+  my $recordType = $self->getParamValue('recordType');
+  my $outputGeneFile = $self->getParamValue('outputGeneFile');
+  my $outputSeqFile = $self->getParamValue('outputSeqFile');
+  my $cmd ="fullRecordDump  -model $projectDB  -organism \"$organismFullName\"  -type \"$recordType\"  -dir $downloadSiteDataDir";
+  
   if ($test) {
-  } else {
+      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputGeneFile");
+      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputSeqFile");
+  }else{
+  
+      $self->runCmd($test, $cmd);
   }
-
-  $self->runPlugin($test, '', $args);
 
 }
 
 sub getParamsDeclaration {
   return (
           'downloadSiteDataDir',
-          'organismName',
+          'recordType',
           'organismFullName',
           'projectDB',
+	  'outputGeneFile',
+	  'outputSeqFile',
          );
 }
 

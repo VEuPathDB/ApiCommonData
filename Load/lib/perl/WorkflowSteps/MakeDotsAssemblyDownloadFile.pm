@@ -34,8 +34,9 @@ sub run {
 
   if ($test) {
       $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  } 
-  $self->runCmd($test, $cmd);
+  } else{
+      $self->runCmd($test, $cmd);
+  }
 
 }
 

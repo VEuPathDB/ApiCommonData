@@ -4,29 +4,23 @@ package ApiCommonData::Load::WorkflowSteps::RunGffDump;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
   my ($self, $test) = @_;
 
   # get parameters
+  my $downloadSiteDataDir = $self->getParamValue('downloadSiteDataDir');
   my $outputFile = $self->getParamValue('outputFile');
   my $organismName = $self->getParamValue('organismName');
   my $organismFullName = $self->getParamValue('organismFullName');
   my $projectDB = $self->getParamValue('projectDB');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
-
-  my $localDataDir = $self->getLocalDataDir();
-
+  my $cmd = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $downloadSiteDataDir";
   if ($test) {
+      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputFile");
   } else {
+      $self->runCmd($test, $cmd);
   }
-
-  $self->runPlugin($test, '', $args);
 
 }
 
@@ -36,6 +30,7 @@ sub getParamsDeclaration {
           'organismName',
           'organismFullName',
           'projectDB',
+	  'downloadSiteDataDir',
          );
 }
 
