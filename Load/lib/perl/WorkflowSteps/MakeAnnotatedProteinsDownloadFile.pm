@@ -12,6 +12,7 @@ sub run {
   my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
+  my $dataSource = $self->getParamValue('DataSource');
 
   my $extDbName = join(",", @extDbNames);
   my $extDbRls = join(",", @extDbRlss);

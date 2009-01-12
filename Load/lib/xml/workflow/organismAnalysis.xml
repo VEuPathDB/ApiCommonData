@@ -27,6 +27,7 @@
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
   <param name="nrdbExtDbRlsSpec"/>
+  <param name="DataSource"/>
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
@@ -87,15 +88,6 @@
   </subgraph>
 
 
-
-
-  <param name="genomeExtDb"/>
-  <param name="genomeExtDbRls"/>
-  <param name="genomeVirtualSeqsExtDb"/>
-  <param name="genomeVirtualSeqsExtDbRls"/>
-
-
-
   <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$ncbiTaxonId$$</paramValue>
@@ -111,6 +103,7 @@
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
     <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="DataSource">$$DataSource$$</paramValue>
     <depends name="proteomeAnalysis"/>
     <depends name="genomeAnalysis"/>
     <depends name="makeDownloadSiteDataDir"/>

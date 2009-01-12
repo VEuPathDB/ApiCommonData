@@ -14,7 +14,9 @@
     <param name="projectVersion"/>
     <param name="dbESTExtDbRlsSpec"/>
     <param name="webServicesDataDir"/>
+    <param name="DataSource"/>
 
+    <constant name="genomeExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</constant>
     <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
@@ -72,6 +74,7 @@
 
     <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
+      <paramValue name="DataSource">$$DataSource$$</paramValue>
       <paramValue name="deprecated">false</paramValue>
       <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
       <paramValue name="ExtDbRls">,$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
