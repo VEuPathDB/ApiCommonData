@@ -15,13 +15,16 @@ sub run {
 
   my $blastPath = $self->getConfig('wuBlastPath');
 
-  my $cmd = "$blastPath/xdformat $args -o $outputDir/$formattedFileName $inputFile"
+  my $cmd = "$blastPath/xdformat $args -o $outputDir/$formattedFileName $inputFile";
 
   
-  if ($test) {
+  if($test){
+
       $self->runCmd(0, "echo test > $outputDir/$formattedFileName.test");
+
   }else{
-      if ($args =~/\-p/){
+      
+      if($args =~/\-p/){
 
 	  my $tempFile = "$inputFile.temp";
 
