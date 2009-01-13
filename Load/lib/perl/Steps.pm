@@ -1203,7 +1203,7 @@ sub createEpitopeMapFiles {
 }
 
 sub extractNaSeq {
-  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy) = @_;
 
   my $type = ucfirst($seqType);
 
@@ -1223,7 +1223,9 @@ sub extractNaSeq {
 
   my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
 
-  $sql .= " and taxon_id = $taxonId" if $taxonId;
+  $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
+
+  $sql .= " and taxon_id in ($taxonId)" if $taxonId;
 
   $sql = $altSql if $altSql;
 
@@ -2009,7 +2011,7 @@ EOF
 }
 
 sub makeOrfProteinDownloadFile {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB,$ncbiTaxId) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB,$ncbiTaxId,$taxonHierarchy) = @_;
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
 
@@ -2054,7 +2056,11 @@ EOF
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project, $ncbiTaxId, $taxonHierarchy) = @_;
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
+
+  $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
 
   my $sql = <<"EOF";
     SELECT
@@ -2094,6 +2100,8 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
+
+  $sql .= " and enas.taxon_id in ($taxonId)";
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
