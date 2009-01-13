@@ -517,7 +517,7 @@
         <!-- Other info -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
          <textAttribute name="otherInfo" includeProjects="ToxoDB,PlasmoDB,GiardiaDB,TrichDB,TriTrypDB"
-            displayName="Retrieve Sequence" inReportMaker="false">
+            displayName="Retrieve Sequence" inReportMaker="false" truncateTo='1500'>
            <text excludeProjects="ToxoDB">
                 <![CDATA[
                     <!-- a href="@GENE_BY_CONTIG_URL@">Lookup Genes on this Contig</a><br -->
@@ -525,15 +525,14 @@
                     <table border="0" cellpadding="5" cellspacing="1">
                       <tr class="secondary3"><td>
                         <table border="0" cellpadding="0">
-                        <tr><td colspan="2"><h3>Retrieve this sequence</h3>
+                        <!-- tr><td colspan="2"><h3>Retrieve this sequence</h3></td></tr -->
+                        <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
                                 <input name='project_id' value=@PROJECT_ID@ size='20' type='hidden' />
                                 <input name='ids' value='$$source_id$$' size='20' type='hidden' />
-                            </td></tr>
-                        <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
-                                   <input type="text" name="start" value="1" maxlength="7" size="8"/>
-                                to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                       <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
+                                <input type="text" name="start" value="1" maxlength="7" size="8"/>
+                             to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
                            <tr><td align="left"><input type="submit" name='go' value='Get Sequence' /></td></tr>
                     </table>
                     </td></tr></table>
@@ -547,14 +546,12 @@
                     <table border="0" cellpadding="5" cellspacing="1">
                       <tr class="secondary3"><td>
                         <table border="0" cellpadding="0">
-                        <tr><td colspan="2"><h3>Retrieve this sequence</h3>
+                        <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
                                 <input name='project_id' value=@PROJECT_ID@ size='20' type='hidden' />
                                 <input name='ids' value='$$source_id$$' size='20' type='hidden' />
-                            </td></tr>
-                        <tr><td colspan="2"><b>Nucleotide positions:</b>&nbsp;&nbsp;
-                                   <input type="text" name="start" value="1" maxlength="7" size="8"/>
-                                to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="text" name="start" value="1" maxlength="7" size="8"/>
+                             to <input type="text" name="end" value="$$length$$" maxlength="7" size="8"/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
                        <input type="checkbox" name="revComp">Reverse & Complement</td></tr>
                            <tr><td align="left"><input type="submit" name='go' value='Get Sequence' /></td></tr>
                     </table>
