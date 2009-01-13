@@ -4,7 +4,6 @@ package ApiCommonData::Load::WorkflowSteps::formatDownloadFile;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
@@ -12,19 +11,31 @@ sub run {
   my $inputFile = $self->getParamValue('inputFile');
   my $outputDir = $self->getParamValue('outputDir');
   my $args = $self->getParamValue('args');
+  my $formattedFileName = $self->getParamValue('formattedFileName');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  my $blastPath = $self->getConfig('wuBlastPath');
 
-  # get step properties
-  my $ = $self->getConfig('');
+  my $cmd = "$blastPath/xdformat $args -o $outputDir/$formattedFileName $inputFile"
 
-  my $localDataDir = $self->getLocalDataDir();
-
+  
   if ($test) {
-  }
+      $self->runCmd(0, "echo test > $outputDir/$formattedFileName.test");
+  }else{
+      if ($args =~/\-p/){
 
-  $self->runPlugin($test, '', $args);
+	  my $tempFile = "$inputFile.temp";
+
+	  $self->runCmd($test,"cat $inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
+
+	  $self->runCmd($test,"$blastPath/xdformat $args -o $outputDir/$formattedFileName $tempFile");
+
+	  $self->runCmd($test,"rm -fr $tempFile");
+
+      }else {
+	  $self->runCmd($test, $cmd);
+      }
+
+  }
 
 }
 
@@ -33,6 +44,7 @@ sub getParamsDeclaration {
           'inputFile',
           'outputDir',
           'args',
+          'formattedFileName',
          );
 }
 

@@ -17,6 +17,7 @@
     <param name="DataSource"/>
 
     <constant name="genomeExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</constant>
+
     <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
@@ -26,7 +27,8 @@
     <step name="formatESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-n</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$EST</paramValue>
+      <paramValue name="args">-n -t $$projectName$$_$$organismName$$_ESTs</paramValue>
     <depends name="makeESTDownloadFile"/>
     </step>
 
@@ -40,7 +42,8 @@
     <step name="formatDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-n</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$Asseblies</paramValue>
+      <paramValue name="args">-n -t $$projectName$$_$$organismName$$_Asseblies</paramValue>
     <depends name="makeDotsAssemblyDownloadFile"/>
     </step>
 
@@ -54,7 +57,8 @@
     <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-n</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$CDS</paramValue>
+      <paramValue name="args">-n -t $$projectName$$_$$organismName$$_CDS</paramValue>
     <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
 
@@ -68,7 +72,8 @@
     <step name="formatAnnotatedTranscriptDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-n</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$Transcripts</paramValue>
+      <paramValue name="args">-n -t $$projectName$$_$$organismName$$_Transcripts</paramValue>
     <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
 
@@ -77,14 +82,31 @@
       <paramValue name="DataSource">$$DataSource$$</paramValue>
       <paramValue name="deprecated">false</paramValue>
       <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
-      <paramValue name="ExtDbRls">,$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
+      <paramValue name="ExtDbRls">$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
     </step>
 
     <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-p -C X</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$Proteins</paramValue>
+      <paramValue name="args">-p -C X -t $$projectName$$_$$organismName$$_Proteins</paramValue>
     <depends name="makeAnnotatedProteinsDownloadFile"/>
+    </step>
+
+
+    <step name="makeMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeMixedGenomicDownloadFile">
+      <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
+      <paramValue name="DataSource">$$DataSource$$</paramValue>
+      <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
+      <paramValue name="ExtDbRls">$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
+    </step>
+
+    <step name="formatMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
+      <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$Genomics</paramValue>
+      <paramValue name="args">-n -t $$projectName$$_$$organismName$$_Genomics</paramValue>
+    <depends name="makeMixedGenomicDownloadFile"/>
     </step>
 
 
@@ -97,7 +119,8 @@
     <step name="formatOrfDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$Orfs_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="outputDir">$$webServicesDataDir$$/blast</paramValue>
-      <paramValue name="args">-p -C X</paramValue>
+      <paramValue name="formattedFileName">$$organismName$$ORF</paramValue>
+      <paramValue name="args">-p -C X -t $$projectName$$_$$organismName$$_Orfs</paramValue>
     <depends name="makeOrfDownloadFile"/>
     </step>
 

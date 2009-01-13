@@ -15,8 +15,6 @@ sub run {
   my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
-  my $localDataDir = $self->getLocalDataDir();
-
   my $sql = <<"EOF";
     SELECT x.source_id
            ||' | organism='||
@@ -39,7 +37,7 @@ EOF
   my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      $self->runCmd(0, "echo test > $outputFile");
   }else{
       $self->runCmd($test, $cmd);
   }

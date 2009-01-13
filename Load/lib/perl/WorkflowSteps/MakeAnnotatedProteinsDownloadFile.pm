@@ -16,7 +16,6 @@ sub run {
 
   my $extDbName = join(",", @extDbNames);
   my $extDbRls = join(",", @extDbRlss);
-  my $localDataDir = $self->getLocalDataDir();
 
   my $sql = "SELECT '$dataSource'
                 ||'|'||
@@ -58,7 +57,7 @@ sub run {
   my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      $self->runCmd(0, "echo test > $outputFile");
   }else{
        $self->runCmd($test, $cmd);
    }
