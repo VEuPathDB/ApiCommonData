@@ -2009,7 +2009,11 @@ EOF
 }
 
 sub makeOrfProteinDownloadFile {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB,$ncbiTaxId) = @_;
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+
+  my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
   my $sql = <<"EOF";
     SELECT
