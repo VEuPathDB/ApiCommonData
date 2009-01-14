@@ -14,7 +14,6 @@
     <param name="projectVersion"/>
     <param name="dbESTExtDbRlsSpec"/>
     <param name="webServicesDataDir"/>
-    <param name="DataSource"/>
 
     <constant name="genomeExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</constant>
 
@@ -79,7 +78,7 @@
 
     <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="DataSource">$$DataSource$$</paramValue>
+      <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="deprecated">false</paramValue>
       <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
       <paramValue name="ExtDbRls">$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
@@ -96,7 +95,7 @@
 
     <step name="makeMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeMixedGenomicDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="DataSource">$$DataSource$$</paramValue>
+      <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
       <paramValue name="ExtDbRls">$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
     </step>
@@ -140,6 +139,7 @@
     <step name="makeCondonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCondonUsage">
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>     
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$CondonUsage_$$projectName$$-$$projectVersion$$.txt</paramValue>
+    <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
 
 </workflowGraph>

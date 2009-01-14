@@ -12,7 +12,6 @@
       <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="organismFullName">$$organismFullName$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
-      <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     </step>
 
     <step name="copyGffFileToMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MoveDownloadFile">
@@ -30,7 +29,7 @@
 
     <step name="correctReadingFrameInGff" stepClass="ApiCommonData::Load::WorkflowSteps::FixMercatorOffsetsInGFF">
       <paramValue name="inputFile">common/mercator/$$organismName$$_$$projectName$$-$$projectVersion$$.gff.in</paramValue>
-      <paramValue name="fsaFile">common/mercator/$$organismName$$MixedGenomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
+      <paramValue name="fsaFile">common/mercator/$$organismName$$BlockedMixedGenomicSeq.fsa</paramValue>
       <paramValue name="outputFile">common/mercator/$$organismName$$_$$projectName$$-$$projectVersion$$.gff</paramValue>
     <depends name="grepExonAndCDSFromGff"/>
     </step>
