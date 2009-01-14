@@ -3,19 +3,16 @@
     <param name="downloadSiteDataDir"/>
     <param name="organismName"/>
     <param name="ncbiTaxonId"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="genomeVirtualSeqsExtDbRlsSpec"/>
     <param name="parentNcbiTaxonId"/>
-    <param name="genomeExtDb"/>
-    <param name="genomeExtDbRls"/>
-    <param name="genomeVirtualSeqsExtDb"/>
-    <param name="genomeVirtualSeqsExtDbRls"/>
     <param name="interproVersion"/>
     <param name="genomeSource"/>
     <param name="projectName"/>
     <param name="projectVersion"/>
     <param name="dbESTExtDbRlsSpec"/>
     <param name="webServicesDataDir"/>
-
-    <constant name="genomeExtDbRlsSpec">$$genomeVirtualSeqsExtDb$$|$$genomeVirtualSeqsExtDbRls$$</constant>
+    <param name="minOrfLength"/>
 
     <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
@@ -125,8 +122,8 @@
 
     <step name="makeOrfNADownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$OrfNAs_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="projectDB">$$projectName$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpecs">$$genomeExtDbRlsSpecs$$</paramValue>
+      <paramValue name="minOrfLength">$$minOrfLength$$</paramValue>
     </step>
 
     <step name="makeInterproDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile">
