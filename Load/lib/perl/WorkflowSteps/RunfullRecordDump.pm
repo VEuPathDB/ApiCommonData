@@ -15,11 +15,14 @@ sub run {
   my $recordType = $self->getParamValue('recordType');
   my $outputGeneFile = $self->getParamValue('outputGeneFile');
   my $outputSeqFile = $self->getParamValue('outputSeqFile');
-  my $cmd ="fullRecordDump  -model $projectDB  -organism \"$organismFullName\"  -type \"$recordType\"  -dir $downloadSiteDataDir";
+
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
+
+  my $cmd ="fullRecordDump  -model $projectDB  -organism \"$organismFullName\"  -type \"$recordType\"  -dir $apiSiteFilesDir/$downloadSiteDataDir";
   
   if ($test) {
-      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputGeneFile");
-      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputSeqFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputGeneFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputSeqFile");
   }else{
   
       $self->runCmd($test, $cmd);

@@ -12,12 +12,13 @@ sub run {
   my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
-  my $dataSource = $self->getParamValue('DataSource');
+  my $organismSource = $self->getParamValue('DataSource');
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   my $extDbName = join(",", @extDbNames);
   my $extDbRls = join(",", @extDbRlss);
 
-  my $sql = "SELECT '$dataSource'
+  my $sql = "SELECT '$organismSource'
                 ||'|'||
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
@@ -54,10 +55,10 @@ sub run {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated";
 
-  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+  my $cmd = " gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\"";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $outputFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   }else{
        $self->runCmd($test, $cmd);
    }
@@ -70,6 +71,8 @@ sub getParamsDeclaration {
           'extDbName',
           'extDbRls',
           'deprecated',
+          'apiSiteFilesDir',
+	  'organismSource',
          );
 }
 

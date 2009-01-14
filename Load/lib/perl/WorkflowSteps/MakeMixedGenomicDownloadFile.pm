@@ -11,12 +11,14 @@ sub run {
   my @extDbNames = map{"'$_'"} split (/,/,$self->getParamValue('extDbName'));
   my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
   my $outputFile = $self->getParamValue('outputFile');
-  my $dataSource = $self->getParamValue('DataSource');
+  my $organismSource = $self->getParamValue('DataSource');
+  
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   my $extDbName = join(",", @extDbNames);
   my $extDbRls = join(",", @extDbRlss);
 
-  my $sql = " SELECT '$dataSource'
+  my $sql = " SELECT '$organismSource'
                 ||'|'||
                sa.source_id
                 ||' | organism='||
@@ -31,12 +33,12 @@ sub run {
                 apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.database_name in ($extDbName) AND sa.database_version in ($extDbRls)
-            AND sa.is_top_level = 1;
+            AND sa.is_top_level = 1";
 
-  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+  my $cmd = "gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\" ";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $outputFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   }else{
        $self->runCmd($test, $cmd);
    }
@@ -48,6 +50,7 @@ sub getParamsDeclaration {
           'outputFile',
           'extDbName',
           'extDbRls',
+	  'organismSource',
          );
 }
 

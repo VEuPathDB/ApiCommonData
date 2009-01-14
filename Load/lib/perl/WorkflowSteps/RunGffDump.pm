@@ -9,15 +9,16 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $downloadSiteDataDir = $self->getParamValue('downloadSiteDataDir');
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
+
   my $outputFile = $self->getParamValue('outputFile');
   my $organismName = $self->getParamValue('organismName');
   my $organismFullName = $self->getParamValue('organismFullName');
   my $projectDB = $self->getParamValue('projectDB');
 
-  my $cmd = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $downloadSiteDataDir";
+  my $cmd = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $apiSiteFilesDir/$outputFile";
   if ($test) {
-      $self->runCmd(0, "echo test > $downloadSiteDataDir/$outputFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   } else {
       $self->runCmd($test, $cmd);
   }

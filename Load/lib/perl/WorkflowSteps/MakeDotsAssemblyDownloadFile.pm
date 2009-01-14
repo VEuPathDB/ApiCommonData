@@ -11,6 +11,8 @@ sub run {
   my $outputFile = $self->getParamValue('outputFile');
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
 
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
+
   my $sql = "
       SELECT  a.source_id
                 ||' | organism='||
@@ -28,10 +30,10 @@ sub run {
         AND tn.name_class = 'scientific name'
         AND t.taxon_id = a.taxon_id";
 
-  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+  my $cmd = " gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\"";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $outputFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   } else{
       $self->runCmd($test, $cmd);
   }

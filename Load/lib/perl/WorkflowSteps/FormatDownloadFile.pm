@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::formatDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::FormatDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
@@ -12,15 +12,16 @@ sub run {
   my $outputDir = $self->getParamValue('outputDir');
   my $args = $self->getParamValue('args');
   my $formattedFileName = $self->getParamValue('formattedFileName');
-
+  
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
   my $blastPath = $self->getConfig('wuBlastPath');
 
-  my $cmd = "$blastPath/xdformat $args -o $outputDir/$formattedFileName $inputFile";
+  my $cmd = "$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $inputFile";
 
   
   if($test){
 
-      $self->runCmd(0, "echo test > $outputDir/$formattedFileName.test");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.test");
 
   }else{
       

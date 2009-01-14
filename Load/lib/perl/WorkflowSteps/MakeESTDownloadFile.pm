@@ -12,6 +12,8 @@ sub run {
   my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
 
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
+
   my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
   my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
 
@@ -34,10 +36,10 @@ sub run {
             AND so.term_name = 'EST'
 EOF
 
-  my $cmd = " gusExtractSequences --outputFile $outputFile  --idSQL \"$sql\"";
+  my $cmd = " gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\"";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $outputFile");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   }else{
       $self->runCmd($test, $cmd);
   }

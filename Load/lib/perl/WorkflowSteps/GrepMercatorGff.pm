@@ -4,7 +4,7 @@ package ApiCommonData::Load::WorkflowSteps::GrepMercatorGff;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
+
 sub run {
   my ($self, $test) = @_;
 
@@ -12,19 +12,15 @@ sub run {
   my $inputFile = $self->getParamValue('inputFile');
   my $outputFile = $self->getParamValue('outputFile');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
-
-  # get step properties
-  my $ = $self->getConfig('');
-
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-  } else {
-  }
+  my $cmd = "grep -P '\texon\t' ${localDataDir}/$inputFile |sed 's/apidb|//'  > ${localDataDir}/$outputFile; grep -P '\tCDS\t' ${localDataDir}/$inputFile |sed 's/apidb|//'  > ${localDataDir}/$outputFile";
 
-  $self->runPlugin($test, '', $args);
+  if ($test) {
+      $self->runCmd(0, "echo test > ${localDataDir}/$outputFile");
+  } else {
+      $self->runCmd($test, $cmd);
+  }
 
 }
 
