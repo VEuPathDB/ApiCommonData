@@ -11,7 +11,7 @@ sub run {
   my @extDbNames = map{"'$_'"} split (/,/,$self->getParamValue('extDbName'));
   my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
   my $outputFile = $self->getParamValue('outputFile');
-  my $organismSource = $self->getParamValue('DataSource');
+  my $organismSource = $self->getParamValue('organismSource');
   
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
