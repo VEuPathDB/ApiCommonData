@@ -1202,12 +1202,19 @@ sub createEpitopeMapFiles {
 
 }
 
+
 sub extractNaSeq {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy) = @_;
 
   my $type = ucfirst($seqType);
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
+
+  my $dbVer = join(",", @dbVers);
 
   my $signal = "extract${name}$type";
 
@@ -1216,10 +1223,20 @@ sub extractNaSeq {
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
-  my $sql = "select x.$identifier, x.description,
-            'length='||x.length,x.sequence
-             from dots.$table x
-             where x.external_database_release_id = $dbRlsId";
+  my $sql = <<"EOF";
+     SELECT 
+        x.$identifier,
+        x.description,
+        'length='||x.length,
+        x.sequence
+        FROM dots.$table x, 
+             sres.externaldatbase d, 
+             sres.externaldatabaserelease dr
+        WHERE x.external_database_release_id = dr.external_database_release_id 
+              AND dr.external_database_id = d.external_database_id
+              AND d.name in ($dbName) 
+              AND dr.version in ($dbVer)
+EOF
 
   my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
 
