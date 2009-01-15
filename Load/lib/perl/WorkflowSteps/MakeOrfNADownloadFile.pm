@@ -4,43 +4,81 @@ package ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-TEMPLATE
 sub run {
   my ($self, $test) = @_;
 
-  # get parameters
+  # get params
   my $outputFile = $self->getParamValue('outputFile');
-  my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
-  my $projectDB = $self->getParamValue('projectDB');
+  my @extDbRlsIds;
+  push(@extDbRlsIds,$self->getExtDbRlsId($test, $self->getParamValue('genomeExtDbRlsSpec'))) if $self->getParamValue('genomeExtDbRlsSpec');
+  push(@extDbRlsIds,$self->getExtDbRlsId($test, $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec'))) if $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
+  my $length = $self->getParamValue('minOrfLength');
 
-  # get global properties
-  my $ = $self->getGlobalConfig('');
+  my $dbRlsIds = join(",", @extDbRlsIds);
 
-  # get step properties
-  my $ = $self->getConfig('');
+  my $sql = <<"EOF";
+    SELECT
+       m.source_id
+        ||' | organism='||
+       replace(tn.name, ' ', '_')
+        ||' | location='||
+       fl.sequence_source_id
+        ||':'||
+       fl.start_min
+        ||'-'||
+       fl.end_max
+        ||'('||
+       decode(fl.is_reversed, 1, '-', '+')
+        ||') | length='||
+       (fl.end_max - fl.start_min + 1 ) as defline,
+       decode(fl.is_reversed,1, apidb.reverse_complement_clob(SUBSTR(enas.sequence,fl.start_min,fl.end_max - fl.start_min +1)),SUBSTR(enas.sequence,fl.start_min,fl.end_max - fl.start_min + 1))
+       FROM dots.miscellaneous m,
+            dots.translatedaafeature taaf,
+            dots.translatedaasequence taas,
+            sres.taxonname tn,
+            sres.sequenceontology so,
+            apidb.featurelocation fl,
+            dots.nasequence enas
+      WHERE m.na_feature_id = taaf.na_feature_id
+        AND taaf.aa_sequence_id = taas.aa_sequence_id
+        AND m.na_feature_id = fl.na_feature_id
+        AND fl.is_top_level = 1
+        AND enas.na_sequence_id = fl.na_sequence_id 
+        AND enas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
+        AND taas.length >= $length
+        AND m.external_database_release_id in ($dbRlsIds)
+EOF
 
   my $localDataDir = $self->getLocalDataDir();
 
+   my $cmd = <<"EOF";
+      gusExtractSequences --outputFile $localDataDir/$outputFile \\
+      --idSQL \"$sql\" \\
+      --verbose
+EOF
+
   if ($test) {
-  } else {
+      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
 
-  $self->runPlugin($test, '', $args);
-
+  $self->runCmd($test,$cmd);
 }
 
 sub getParamsDeclaration {
-  return (
-          'outputFile',
-          'genomeExtDbRlsSpec',
-          'projectDB',
-         );
+   my @properties =
+     ('outputFile',
+      'genomeExtDbRlsSpecs'
+     );
+     return @properties;
 }
 
 sub getConfigDeclaration {
-  return (
+   my @properties = 
+        (
          # [name, default, description]
-         # ['', '', ''],
          );
 }
 
