@@ -1407,7 +1407,7 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir) = @_;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1454,7 +1454,7 @@ EOF
 
 $sql .= " AND organism = '$organism'" if $organism;
 
-  makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 }
 
 
@@ -1697,7 +1697,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
 
    my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1747,7 +1747,7 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-  makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
 
@@ -1919,7 +1919,7 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir) = @_;
 
    my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1968,7 +1968,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-  makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
 
@@ -2126,7 +2126,7 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2176,13 +2176,13 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
-  makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2232,7 +2232,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
-  makeDownloadFile($mgr, $species, $name, $sql,$project);
+  makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
 
@@ -2436,7 +2436,7 @@ EOF
 }
 
 sub makeDownloadFile {
-  my ($mgr, $species, $name, $sql, $project) = @_;
+  my ($mgr, $species, $name, $sql, $project, $tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2447,7 +2447,7 @@ sub makeDownloadFile {
   my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
-  my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
+  my $dlDir = $tmpDir ? "$tmpDir" : "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
   $mgr->runCmd("mkdir -p $dlDir");
 
