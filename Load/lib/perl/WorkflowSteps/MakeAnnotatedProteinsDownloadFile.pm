@@ -8,7 +8,7 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my @extDbRlsSpecs = map{"'$_'"} split (/,/,$self->getParamValue('extDbRlsSpec'));
+  my @extDbRlsSpecs = map{"'$_'"} split (/,/,$self->getParamValue('genomeExtDbSpecList'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
   my $organismSource = $self->getParamValue('organismSource');
@@ -19,7 +19,7 @@ sub run {
   my @extDbNames;
 
   foreach ( @extDbRlsSpecs ){
-      my ($extDbName,$extDbRlsVer)=$self->getExtDbRlsId($_);
+      my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($_);
       push (@extDbNames,$extDbName);
       push (@extDbRlsVers,$extDbRlsVer);
   }
@@ -55,7 +55,7 @@ sub run {
                 dots.translatedaafeature taaf,
                 dots.translatedaasequence taas
       WHERE gf.na_feature_id = t.parent_id
-        AND t.na_sequence_id = snas.na_sequence_id3
+        AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
