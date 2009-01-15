@@ -55,8 +55,6 @@ sub run {
         AND m.external_database_release_id in ($dbRlsIds)
 EOF
 
-  my $localDataDir = $self->getLocalDataDir();
-
    my $cmd = <<"EOF";
       gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile \\
       --idSQL \"$sql\" \\
