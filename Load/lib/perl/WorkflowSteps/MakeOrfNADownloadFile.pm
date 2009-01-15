@@ -7,12 +7,15 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  # get params
   my $outputFile = $self->getParamValue('outputFile');
+
   my @extDbRlsIds;
   push(@extDbRlsIds,$self->getExtDbRlsId($test, $self->getParamValue('genomeExtDbRlsSpec'))) if $self->getParamValue('genomeExtDbRlsSpec');
   push(@extDbRlsIds,$self->getExtDbRlsId($test, $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec'))) if $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
+
   my $length = $self->getParamValue('minOrfLength');
+
+  my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   my $dbRlsIds = join(",", @extDbRlsIds);
 
@@ -55,13 +58,13 @@ EOF
   my $localDataDir = $self->getLocalDataDir();
 
    my $cmd = <<"EOF";
-      gusExtractSequences --outputFile $localDataDir/$outputFile \\
+      gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile \\
       --idSQL \"$sql\" \\
       --verbose
 EOF
 
   if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
   }
 
   $self->runCmd($test,$cmd);
