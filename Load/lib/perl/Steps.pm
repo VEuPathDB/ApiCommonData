@@ -1212,7 +1212,7 @@ sub extractNaSeq {
 
   my $dbName = join(",", @dbNames);
 
-  my @dbVers = map{"'$_'"} split (/,/,$extDbVers);
+  my @dbVers = map{"'$_'"} split (/,/,$extDbVer);
 
   my $dbVer = join(",", @dbVers);
 
