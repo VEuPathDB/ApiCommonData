@@ -1,16 +1,10 @@
 <workflowGraph name="trypWorkflow">
-  <param name="tcruziExtDb"/>
-  <param name="tcruziExtDbRls"/>
+  <param name="tcruziExtDbRlsSpec"/>
+  <param name="tcruziVirtualSeqsExtDbRlsSpec"/>
   <param name="tcruziGenomeSource"/>
-  <param name="tcruziVirtualSeqsExtDb"/>
-  <param name="tcruziVirtualSeqsExtDbRls"/>
-  <param name="tcruziDataSource"/>
-  <param name="tbruceiExtDb"/>
-  <param name="tbruceiExtDbRls"/>
+  <param name="tbruceiExtDbRlsSpec"/>
   <param name="tbruceiGenomeSource"/>
-  <param name="tbruceiVirtualSeqsExtDb"/>
-  <param name="tbruceiVirtualSeqsExtDbRls"/>
-  <param name="tbruceiDataSource"/>
+  <param name="tbruceiVirtualSeqsExtDbRlsSpec"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
   <param name="nrdbVersion"/>
@@ -42,10 +36,8 @@
     <paramValue name="organismName">Tcruzi</paramValue>
     <paramValue name="organismFullName">Trypanosoma cruzi</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tc</paramValue>
-    <paramValue name="genomeExtDb">$$tcruziExtDb$$</paramValue>
-    <paramValue name="genomeExtDbRls">$$tcruziExtDbRls$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDb">$$tcruziVirtualSeqsExtDb$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRls">$$tcruziVirtualSeqsExtDbRls$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$tcruziExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$tcruziVirtualSeqsExtDbRlsSpec$$</paramValue>
     <paramValue name="genomeSource">$$tcruziGenomeSource$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
@@ -65,7 +57,6 @@
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
     <paramValue name="runSplign">true</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
-    <paramValue name="DataSource">$$tcruziDataSource$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -76,13 +67,8 @@
     <paramValue name="organismName">Tbrucei</paramValue>
     <paramValue name="organismFullName">Trypanosoma brucei</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Tb</paramValue>
-    <paramValue name="genomeExtDb">$$tbruceiExtDb$$</paramValue>
-    <paramValue name="genomeExtDbRls">$$tbruceiExtDbRls$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDb">$$tbruceiVirtualSeqsExtDb$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRls">$$tbruceiVirtualSeqsExtDbRls$$</paramValue>
-    <paramValue name="genomeSource">$$tbruceiGenomeSource$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDb">$$tbruceiVirtualSeqsExtDb$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRls">$$tbruceiVirtualSeqsExtDbRls$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$tbruceiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$tbruceiVirtualSeqsExtDbRlsSpec$$</paramValue>
     <paramValue name="genomeSource">$$tbruceiGenomeSource$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="iedbVersion">$$interproVersion$$</paramValue>
@@ -102,7 +88,6 @@
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
     <paramValue name="runSplign">true</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">nrdb|$$nrdbVersion$$</paramValue>
-    <paramValue name="DataSource">$$tbruceiDataSource$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
