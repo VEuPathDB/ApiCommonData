@@ -8,15 +8,25 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my @extDbNames = map{"'$_'"} split (/,/,$self->getParamValue('extDbName'));
-  my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
+  my @extDbRlsSpecs = map{"'$_'"} split (/,/,$self->getParamValue('extDbRlsSpec'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
-  my $organismSource = $self->getParamValue('DataSource');
+  my $organismSource = $self->getParamValue('organismSource');
+
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
+  my @extDbRlsVers; 
+  my @extDbNames;
+
+  foreach ( @extDbRlsSpecs ){
+      my ($extDbName,$extDbRlsVer)=$self->getExtDbRlsId($_);
+      push (@extDbNames,$extDbName);
+      push (@extDbRlsVers,$extDbRlsVer);
+  }
+
   my $extDbName = join(",", @extDbNames);
-  my $extDbRls = join(",", @extDbRlss);
+  my $extDbRlsVer = join(",", @extDbRlsVers);
+
 
   my $sql = "SELECT '$organismSource'
                 ||'|'||
@@ -45,11 +55,11 @@ sub run {
                 dots.translatedaafeature taaf,
                 dots.translatedaasequence taas
       WHERE gf.na_feature_id = t.parent_id
-        AND t.na_sequence_id = snas.na_sequence_id
+        AND t.na_sequence_id = snas.na_sequence_id3
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
-        AND gf.external_db_name in ($extDbName) AND gf.external_db_version in ($extDbRls)
+        AND gf.external_db_name in ($extDbName) AND gf.external_db_version in ($extDbRlsVer)
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND fl.is_top_level = 1
