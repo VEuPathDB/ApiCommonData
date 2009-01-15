@@ -65,8 +65,7 @@ sub getParamsDeclaration {
   return (
           'outputFile',
           'genomeExtDbRlsSpec',
-          'interproExtDbRlsSpec',
-          'projectDB',
+          'interproExtDbRlsSpec'
          );
 }
 
