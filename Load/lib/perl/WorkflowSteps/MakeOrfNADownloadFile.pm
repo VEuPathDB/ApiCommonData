@@ -71,7 +71,8 @@ EOF
 sub getParamsDeclaration {
    my @properties =
      ('outputFile',
-      'genomeExtDbRlsSpecs'
+      'genomeExtDbRlsSpec',
+      'genomeVirtualSeqsExtDbRlsSpec'
      );
      return @properties;
 }
