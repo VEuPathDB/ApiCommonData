@@ -1208,7 +1208,7 @@ sub extractNaSeq {
 
   my $type = ucfirst($seqType);
 
-  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+  my @dbNames = map{"'$_'"} split (/,/,$dbName);
 
   my $dbName = join(",", @dbNames);
 
