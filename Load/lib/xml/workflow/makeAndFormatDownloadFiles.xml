@@ -77,7 +77,7 @@
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="deprecated">false</paramValue>
-      <paramValue name="extDbRlsSpec">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbSpecList">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
     </step>
 
     <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -92,8 +92,7 @@
     <step name="makeMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeMixedGenomicDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
-      <paramValue name="ExtDb">$$genomeExtDb$$,$$genomeVirtualSeqsExtDb$$</paramValue>
-      <paramValue name="ExtDbRls">$$genomeExtDbRls$$,$$genomeVirtualSeqsExtDbRls$$</paramValue>
+      <paramValue name="genomeExtDbSpecList">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
     </step>
 
     <step name="formatMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -121,7 +120,7 @@
 
     <step name="makeOrfNADownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeOrfNADownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$OrfNAs_$$projectName$$-$$projectVersion$$.fasta</paramValue>
-      <paramValue name="genomeExtDbRlsSpecs">$$genomeExtDbRlsSpecs$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="minOrfLength">$$minOrfLength$$</paramValue>
     </step>
 
