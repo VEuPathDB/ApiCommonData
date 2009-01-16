@@ -13,6 +13,7 @@
     <param name="dbESTExtDbRlsSpec"/>
     <param name="webServicesDataDir"/>
     <param name="minOrfLength"/>
+    <param name="deprecated"/>
 
     <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
@@ -47,7 +48,8 @@
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="projectDB">$$projectName$$</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
     </step>
 
     <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -127,7 +129,7 @@
     <step name="makeInterproDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Interpro_$$projectName$$-$$projectVersion$$.txt</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="interproExtDbRlsSpec">INTERPRO|$$interproVersion$$</paramValue>
+      <paramValue name="interproExtDbRlsSpec">$$interproVersion$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
 
