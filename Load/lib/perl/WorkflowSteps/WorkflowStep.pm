@@ -101,9 +101,11 @@ sub getExtDbRlsId {
 }
 
 sub getExtDbInfo {
-    my ($self, $extDbRlsSpec) = @_;
+    my ($self,$test, $extDbRlsSpec) = @_;
 
-    if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
+    if ($test) {
+      return ("UNKNOWN_DbName","UNKNOWN_DbVer");
+    } elsif ($extDbRlsSpec =~ /(.+)\|(.+)/) {
       my $extDbName = $1;
       my $extDbRlsVer = $2;
       return ($extDbName, $extDbRlsVer);
