@@ -84,7 +84,8 @@ sub getParamsDeclaration {
           'outputFile',
           'organismSource',
           'genomeExtDbRlsSpec',
-          'genomeVirtualSeqsExtDbRlsSpec'
+          'genomeVirtualSeqsExtDbRlsSpec',
+	  'deprecated'
          );
 }
 
