@@ -390,6 +390,16 @@
                     <paramValue name="organism">Trypanosoma cruzi</paramValue>
                     <paramValue name="sequenceId">P</paramValue>
                 </instance>
+
+                <instance name="tcu_genes" displayName="T. cruzi unassigned Genes">
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma cruzi</i> results which were not designated "esmeraldo" or "non-esmeraldo"
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma cruzi</paramValue>
+                    <paramValue name="sequenceId">AA</paramValue>
+                </instance>
                 
 
             </answerFilter>
@@ -440,6 +450,34 @@
                         ]]>
                     </description>   
                     <paramValue name="organism">Cryptosporidium</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+            <answerFilter queryRef="GeneSummaries.TCruziDistinctGenes"
+                          includeProjects="TriTrypDB,ApiDB">
+                
+                <instance name="tc_distinct_genes" displayName="T.cruzi Distinct Genes">
+                    <description>
+                        <![CDATA[
+                            Number of non-redundant <i>T.cruzi</i> genes (the representative gene is:  <i>T.cruzi esmeraldo</i> if it exists, otherwise <i>T.cruzi non-esmeraldo-like</i> if it exists, otherwise <i>T.cruzi unassigned</i>.
+                        ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma cruzi</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+
+            <answerFilter queryRef="GeneSummaries.TriTrypDistinctGenes"
+                          includeProjects="TriTrypDB,ApiDB">
+                
+                <instance name="tritryp_distinct_genes" displayName="T.cruzi Distinct Genes">
+                    <description>
+                        <![CDATA[
+                            Number of non-redundant genes across available species (the representative gene is:  <i>T.brucei</i> if it exists, otherwise <i>L.braziliensis</i> if it exists, otherwise <i>L.infantum</i> if it exists, otherwise <i>L.major</i> if it exists, otherwise <i>T.cruzi</i>.
+                        ]]>
+                    </description>   
                 </instance>
                 
             </answerFilter>
