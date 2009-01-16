@@ -9,8 +9,9 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $outputFile = $self->getParamValue('outputFile');
+  my $outputFile = $self->getParamValue('outputFile');x
   my $organismSource = $self->getParamValue('organismSource');
+  my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
 
   my (@dbnames,@dbvers);
   my ($name,$ver) = $self->getExtDbInfo($test, $self->getParamValue('genomeExtDbRlsSpec')) if $self->getParamValue('genomeExtDbRlsSpec');
@@ -28,8 +29,9 @@ sub run {
      SELECT '$organismSource'
                 ||'|'||
             gf.source_id
+                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
                  ||' | organism='||
-           replace( gf.organism, ' ', '_') 
+           replace( gf.organism, ' ', '_')
                 ||' | product='||
             gf.product
                 ||' | location='||
@@ -60,6 +62,7 @@ sub run {
         AND gf.external_db_version in ($vers)
         AND t.na_feature_id = taaf.na_feature_id
         AND fl.is_top_level = 1
+        AND gf.is_deprecated = $deprecated
 EOF
 
 
