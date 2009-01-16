@@ -97,13 +97,13 @@
             <column name="source_id" />
             <column name="project_id" />
             <column name="cache_count" />
-            <column name="first_time" />
-            <column name="last_time" />
            <sql> 
             <![CDATA[           
-            SELECT $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
-            count(*) as cache_count
-            FROM queryinstance
+            SELECT $$source_id$$ AS source_id, 
+                   '@PROJECT_ID@' AS project_id,
+                   count(table_name) as cache_count
+            FROM user_tables
+            WHERE table_name like 'QUERYRESULT%'
              ]]>
            </sql>
         </sqlQuery>
