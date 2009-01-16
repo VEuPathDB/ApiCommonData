@@ -133,8 +133,8 @@
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
 
-    <step name="makeCondonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCondonUsage">
-      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>     
+    <step name="makeCodonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCodonUsage">
+      <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>    
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$CondonUsage_$$projectName$$-$$projectVersion$$.txt</paramValue>
     <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
