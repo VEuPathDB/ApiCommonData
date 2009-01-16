@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::MakeCondonUsage;
+package ApiCommonData::Load::WorkflowSteps::MakeCodonUsage;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
