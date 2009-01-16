@@ -10,8 +10,7 @@ sub run {
 
   # get parameters
   my $outputFile = $self->getParamValue('outputFile');
-  my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
-  my $dataSource = $self->getParamValue('dataSource');
+  my $organismSource = $self->getParamValue('organismSource');
 
   my (@dbnames,@dbvers);
   my ($name,$ver) = $self->getExtDbInfo($test, $self->getParamValue('genomeExtDbRlsSpec')) if $self->getParamValue('genomeExtDbRlsSpec');
@@ -26,11 +25,10 @@ sub run {
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
  my $sql = <<"EOF";
-     SELECT '$dataSource'
+     SELECT '$organismSource'
                 ||'|'||
             gf.source_id
-                || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
-                ||' | organism='||
+                 ||' | organism='||
            replace( gf.organism, ' ', '_') 
                 ||' | product='||
             gf.product
@@ -62,7 +60,6 @@ sub run {
         AND gf.external_db_version in ($vers)
         AND t.na_feature_id = taaf.na_feature_id
         AND fl.is_top_level = 1
-        AND gf.is_deprecated = $deprecated
 EOF
 
 
@@ -82,9 +79,8 @@ EOF
 sub getParamsDeclaration {
   return (
           'outputFile',
-          'dataSource',
+          'organismSource',
           'genomeExtDbRlsSpec',
-          'deprecated',
           'genomeVirtualSeqsExtDbRlsSpec'
          );
 }
