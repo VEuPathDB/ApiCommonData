@@ -9,7 +9,7 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my $outputFile = $self->getParamValue('outputFile');x
+  my $outputFile = $self->getParamValue('outputFile');
   my $organismSource = $self->getParamValue('organismSource');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
 
