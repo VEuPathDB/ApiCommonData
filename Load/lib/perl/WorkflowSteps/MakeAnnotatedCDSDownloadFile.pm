@@ -82,9 +82,10 @@ EOF
 sub getParamsDeclaration {
   return (
           'outputFile',
-          'organismSource',
+          'dataSource',
           'genomeExtDbRlsSpec',
-          'projectDB',
+          'deprecated',
+          'genomeVirtualSeqsExtDbRlsSpec'
          );
 }
 
