@@ -14,7 +14,7 @@ sub run {
   my $formattedFileName = $self->getParamValue('formattedFileName');
   
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
-  my $blastPath = $self->getGlobalConfig('wuBlastPath');
+  my $blastPath = $self->getConfig('wuBlastPath');
 
   my $cmd = "$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $inputFile";
 
