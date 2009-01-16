@@ -13,13 +13,19 @@ sub run {
     my $inputFile = $self->getParamValue('inputFile');
     my $outputFile = $self->getParamValue('outputFile');
 
-    my $localDataDir = $self->getLocalDataDir();
+    my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
-    my $cmd = "makeCodonUsage --infile $localDataDir/$inputFile --outfile $localDataDir/$outputFile";
+    my $cmd = <<"EOF";
+      makeCodonUsage 
+        --outputFile $apiSiteFilesDir/$outputFile \\
+        --inputFile  $apiSiteFilesDir/$inputFile \\
+        --verbose
+EOF
+
 
     if ($test) {
-      $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      $self->testInputFile('inputFile', "$apiSiteFilesDir/$inputFile");
+      $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
     }
     $self->runCmd($test,$cmd);
 }
