@@ -5,6 +5,7 @@
     <param name="ncbiTaxonId"/>
     <param name="predictedTranscriptsSql"/>
     <param name="dataDir"/>
+    <param name="repeatMaskSpecies"/>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -28,6 +29,8 @@
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="seqsFile">$$dataDir$$/assemblySeqs.fsa</paramValue>
+      <paramValue name="dangleMax">30</paramValue>
+      <paramValue name="options">$$repeatMaskSpecies$$</paramValue>
       <depends name="extractAssemblySeqs"/>
     </step>
 

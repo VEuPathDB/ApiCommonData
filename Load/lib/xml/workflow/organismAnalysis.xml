@@ -23,8 +23,10 @@
   <param name="calculateTranslatedProteins"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="runSplign"/>
-  <param name="nrdbExtDbRlsSpec"/>
- 
+  <param name="nrdbExtDbRlsSpec"/>  
+  <param name="repeatMaskSpecies"/>
+  <param name="maxIntronSize"/>
+
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
@@ -59,7 +61,8 @@
     <paramValue name="runSplign">$$runSplign$$</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-
+    <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+    <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
 

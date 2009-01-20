@@ -16,6 +16,8 @@
   <param name="runSplign"/>
   <param name="nrdbExtDbRlsSpec"/>
   <param name="organismTwoLetterAbbrev"/>
+  <param name="repeatMaskSpecies"/>
+  <param name="maxIntronSize"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
@@ -43,6 +45,7 @@
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismName">$$organismName$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
       <depends name="makeDataDir"/> 
     </subgraph>
 
@@ -131,6 +134,7 @@
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
       <paramValue name="dataDir">$$assemblySeqsDataDir$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </subgraph>
 
@@ -142,6 +146,7 @@
       <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
       <paramValue name="dataDir">$$mapAssemblySeqsDataDir$$</paramValue>
       <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <depends name="makeAndBlockAssemblySeqs"/>
     </subgraph>
 
@@ -153,6 +158,7 @@
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="dataDir">$$assembliesDataDir$$</paramValue>
       <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
       <depends name="mapAssemblySeqsToGenome"/>
     </subgraph>
 

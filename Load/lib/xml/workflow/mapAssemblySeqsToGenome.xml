@@ -7,6 +7,7 @@
     <param name="assemblySeqsDataDir"/>
     <param name="dataDir"/>
     <param name="genomicSeqsDir"/>
+    <param name="maxIntronSize"/>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -25,6 +26,9 @@
 
     <step name="makeTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="targetDir">$$genomicSeqsDir$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 

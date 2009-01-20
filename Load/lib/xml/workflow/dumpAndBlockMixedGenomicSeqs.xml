@@ -4,6 +4,7 @@
     <param name="genomeVirtualSeqsExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="organismName"/>
+    <param name="repeatMaskSpecies"/>
 
     <constant name="dataDir">$$parentDataDir$$/mixedGenomicSeqs</constant>
 
@@ -21,6 +22,8 @@
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="seqsFile">$$dataDir$$/mixedGenomic.fsa</paramValue>
+      <paramValue name="dangleMax">30</paramValue>
+      <paramValue name="options">$$repeatMaskSpecies$$</paramValue>
       <depends name="dumpMixedGenomicSeqs"/>
     </step>
 

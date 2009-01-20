@@ -7,7 +7,8 @@
     <param name="maxIntronSize"/>
     <param name="dataDir"/>
     <param name="assemblySeqsDataDir"/>
- 
+    <param name="repeatMaskSpecies"/>
+
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
@@ -73,6 +74,9 @@
     <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="seqsFile">$$dataDir$$/assemblies.fsa</paramValue>
+      <paramValue name="dangleMax">30</paramValue>
+      <paramValue name="options">$$repeatMaskSpecies$$</paramValue>
+
       <depends name="extractAssemblies"/>
     </step>
 
