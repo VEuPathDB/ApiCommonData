@@ -33,6 +33,7 @@ sub run {
 
     if ($test) {
       $self->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
+      $self->runCmd(0,"echo test > $localDataDir/$outputDirForSeparateFiles/IndividualSeqTest.out");
     }
 
   } else {

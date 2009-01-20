@@ -21,8 +21,7 @@ sub run {
   my $wuBlastBinPathCluster = $self->getConfig('wuBlastBinPathCluster');
   my $ncbiBlastBinPathCluster = $self->getConfig('ncbiBlastBinPathCluster');
 
-  my $blastBinPathCluster = ($vendor eq 'ncbi')?
-    $ncbiBlastBinPathCluster : $wuBlastBinPathCluster;
+  my $blastBinPathCluster = ($vendor eq 'ncbi')?  $ncbiBlastBinPathCluster : $wuBlastBinPathCluster;
 
   my $dbType = ($blastType =~ m/blastn|tblastx/i) ? 'n' : 'p';
 
@@ -33,7 +32,7 @@ sub run {
 
   # make controller.prop file
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::BlastMatrixTask");
+				       "DJob::DistribJobTasks::BlastSimilarityTask");
 
   if ($test) {
     $self->testInputFile('queryFile', "$localDataDir/$queryFile");

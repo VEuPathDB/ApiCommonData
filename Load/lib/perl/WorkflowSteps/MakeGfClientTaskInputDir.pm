@@ -37,8 +37,10 @@ sub run {
 
   print F
 "gaBinPath=$gaBinPath
-targetListPath=$computeClusterDataDir/$targetDir
+targetDirPath=$computeClusterDataDir/$targetDir/nib
 queryPath=$computeClusterDataDir/$queryFile
+nodePort=5550
+maxIntron=$maxIntronSize
 ";
   close(F);
 

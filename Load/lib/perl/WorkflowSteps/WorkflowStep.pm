@@ -45,7 +45,7 @@ sub makeClusterControllerPropFile {
 
   # tweak inputs
   my $masterDir = $taskInputDir;
-  $masterDir =~ s/master/input/;
+  $masterDir =~ s/input/master/;
   $nodeClass = 'DJob::DistribJob::BprocNode' unless $nodeClass;
 
   # get configuration values

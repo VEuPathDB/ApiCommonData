@@ -16,6 +16,8 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
+  $self->runCmd(0, "gunzip $downloadDir/$resourcesFile.gz") if (-e "$downloadDir/$resourcesFile.gz");
+
   if ($test) {
       $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
   }

@@ -17,11 +17,11 @@ sub run {
     my $goVersion = $self->getParamValue('goVersion');
 
     my $localDataDir = $self->getLocalDataDir();
-
-
+    my $downloadDir = $self->getGlobalConfig('downloadDir');
+  
     my $args = <<"EOF";
 --resultFileDir=$localDataDir/$inputDir \\
---confFile=$configFileRelativeToDownloadDir \\
+--confFile=$downloadDir/$configFileRelativeToDownloadDir \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
 --goVersion=\'$goVersion\' \\
