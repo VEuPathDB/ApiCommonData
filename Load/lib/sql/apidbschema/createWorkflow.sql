@@ -5,7 +5,7 @@ create table apidb.Workflow (
   state                 varchar(30),
   process_id            number(10),
   metaconfig            clob,
-  allowed_running_steps number(3)
+  xml_file_digest    	varchar(100)
 );
 
 ALTER TABLE apidb.Workflow
