@@ -77,12 +77,13 @@
       <paramValue name="dangleMax">30</paramValue>
       <paramValue name="options">$$repeatMaskSpecies$$</paramValue>
 
-      <depends name="extractAssemblies"/>
+      <depends name="makeDataDir"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
+      <depends name="extractAssemblies"/>
     </step>
 
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">

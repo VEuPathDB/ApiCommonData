@@ -14,6 +14,7 @@
   <param name="ncbiTaxonVersion"/>
   <param name="projectName"/>
   <param name="projectVersion"/>
+  <param name="pdbExtDbRlsSpec"/>
 
 
   <constant name="pdbFile">common/pdb.fsa</constant>
@@ -45,18 +46,19 @@
     <paramValue name="goVersion">$$goVersion$$</paramValue>
     <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
-    <paramValue name="ncbiTaxonId">137566</paramValue>    
-    <paramValue name="parentNcbiTaxonId">5691</paramValue>
+    <paramValue name="ncbiTaxonId">353153</paramValue>    
+    <paramValue name="parentNcbiTaxonId">5693</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="calculateTranslatedProteins">false</paramValue>
-    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Trypanosoma</paramValue>
     <paramValue name="runSplign">false</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
     <paramValue name="repeatMaskSpecies">-species Trypanosoma</paramValue>
+    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -76,19 +78,33 @@
     <paramValue name="goVersion">$$goVersion$$</paramValue>
     <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
-    <paramValue name="ncbiTaxonId">4339566</paramValue>
+    <paramValue name="ncbiTaxonId">185431</paramValue>
     <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="predictedTranscriptsSql"></paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
-    <paramValue name="calculateTranslatedProteins">false</paramValue>
-    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Hexamitidae, Trypanosoma</paramValue>
+    <paramValue name="calculateTranslatedProteins">true</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Trypanosoma</paramValue>
     <paramValue name="runSplign">false</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
     <paramValue name="repeatMaskSpecies">-species Trypanosoma</paramValue>
+    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
     <depends name="common"/>
+  </subgraph>
+
+  <subgraph name="MercatorAnalysis" xmlFile="mercatorAnalysis.xml">
+    <paramValue name="mercator_genomes"></paramValue>
+    <paramValue name="mercator_reference_genome"></paramValue>
+    <paramValue name="mercator_draft_genomes"></paramValue>
+    <paramValue name="mercator_nondraft_genomes"></paramValue>
+    <paramValue name="mercator_tree"></paramValue>
+    <paramValue name="syntenyExtDbRlsSpec"></paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="genomeExtDbRlsSpec"></paramValue>
+    <depends name="TcruziAnalysis"/>
+    <depends name="TbruceiAnalysis"/>
   </subgraph>
 
 </workflowGraph>

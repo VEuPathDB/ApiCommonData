@@ -13,7 +13,6 @@
   <param name="nrdbShortDeflineFile"/>
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
-  <param name="runSplign"/>
   <param name="nrdbExtDbRlsSpec"/>
   <param name="organismTwoLetterAbbrev"/>
   <param name="repeatMaskSpecies"/>
@@ -28,6 +27,11 @@
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
+
+   <step name="calcACGT"
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateACGT">
+     <paramValue name="nullsOnly">true</paramValue>
+   </step>
 
   <step name="extractGenomicSeqs"
           stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
