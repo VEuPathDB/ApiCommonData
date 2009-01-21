@@ -3939,7 +3939,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Internal question for ortholog link on history/results page  -->
   <!--===========================================================================-->
 
-     <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB"
+     <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
          displayName="Orthology to Genes in a Query Result"
          shortDisplayName="Orthologous"
               queryRef="GeneId.GenesByOrthologs"
@@ -3947,8 +3947,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList includeProjects="ApiDB"
               summary="organism,product,orthologs"
         />
-        <attributesList excludeProjects="ApiDB"
+        <attributesList includeProjects="CryptoDB,PlasmoDB,TriTrypDB"
               summary="organism,product"
+        /> 
+        <attributesList includeProjects="ToxoDB"
+              summary="formatted_gene_id,organism,product"
+              sorting="formatted_gene_id asc,location_text asc"
         /> 
         <description includeProjects="ApiDB">
            <![CDATA[
@@ -3986,26 +3990,15 @@ Ortholog groups were generated from 61 species using OrthoMCL as described in   
            <![CDATA[
           ]]>
         </description>
-
-<dynamicAttributes>
-             <columnAttribute name="orthologs" displayName="Matching Input" align="center" inReportMaker="false"/>
-         </dynamicAttributes>
-
-    </question>
-
-     <question name="GenesByOrthologTransform" includeProjects="ToxoDB"
-         displayName="Orthologs"
-              queryRef="GeneTransforms.GenesByOrthologTransform"
-              recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
-              summary="formatted_gene_id,organism,product"
-              sorting="formatted_gene_id asc,location_text asc"
-        /> 
-        <description>
+        <description includeProjects="ToxoDB">
            <![CDATA[
             Find the <i>Toxoplasma</i> reference genes in other strains that are related to the genes in a Query History result.
           ]]>
         </description>
+
+<dynamicAttributes>
+             <columnAttribute name="orthologs" displayName="Matching Input" align="center" inReportMaker="false"/>
+         </dynamicAttributes>
 
     </question>
 
