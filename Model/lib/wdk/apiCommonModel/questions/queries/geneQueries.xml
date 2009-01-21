@@ -560,10 +560,17 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB"
+    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
               isCacheable="true">
-        <paramRef ref="sharedParams.geneHistoryId"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB,PlasmoDB,TriTrypDB"/>
+        <paramRef ref="geneParams.gene_result"/>
+        <paramRef ref="organismParams.organism" 
+                  queryRef="organismVQ.withGenes" 
+                  includeProjects="CryptoDB,PlasmoDB,TriTrypDB"/>
+        <paramRef ref="organismParams.organism" 
+                  queryRef="organismVQ.withStrains"
+                  includeProjects="ToxoDB"
+                  default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
+                  allowEmpty="true"/>
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
@@ -573,7 +580,7 @@
             <![CDATA[
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
-            FROM $$geneHistoryId$$ qr, dots.GeneFeature gf1,
+            FROM $$gene_result$$ qr, dots.GeneFeature gf1,
                  dots.SequenceSequenceGroup ssg1, dots.SequenceSequenceGroup ssg2,
                  dots.GeneFeature gf2, dots.NaSequence ens,
                  core.TableInfo ti
@@ -593,14 +600,12 @@
 
        <sql includeProjects="ApiDB">
             <![CDATA[
-
-
 SELECT DISTINCT subq.source_id, subq.project_id,
        apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
 apidb.varchartab),',') as orthologs
 FROM (SELECT distinct sns2.source_id, ext.name as project_id,
             qr.source_id AS ortholog_id
-     FROM $$geneHistoryId$$ qr,
+     FROM $$gene_result$$ qr,
            dots.splicednasequence sns1,
            dots.sequencesequencegroup ssg1,
            dots.splicednasequence sns2,
@@ -624,10 +629,58 @@ sns2.external_database_release_id=extr.external_database_release_id
      AND extr.external_database_id=ext.external_database_id) subq
      group by subq.source_id, subq.project_id
      order by project_id, subq.source_id 
-
-
-
            ]]>
+       </sql>
+       
+        <sql includeProjects="ToxoDB">
+            <![CDATA[
+            SELECT ga.source_id, '@PROJECT_ID@' AS project_id
+            FROM apidb.GeneAttributes ga
+            WHERE ga.gene_id IN
+                    (SELECT ga.gene_id
+                     FROM apidb.GeneAttributes ga, $$gene_result$$ c
+                     WHERE ga.source_id = c.source_id
+                     AND ga.gene_id is NOT NULL)
+              AND ga.ncbi_tax_id IN ($$organism$$)
+             UNION
+             SELECT
+             DISTINCT gf.source_id, '@PROJECT_ID@' AS project_id
+             FROM 
+             apidb.GeneAttributes ga,
+             apidb.GeneAttributes gb,
+             dots.SequenceSequenceGroup ssg,
+             dots.SequenceSequenceGroup ossg,
+             dots.GeneFeature gf,
+             $$gene_result$$ c,
+              dots.NaSequence ns,
+             sres.taxon tn
+             WHERE ga.source_id = c.source_id
+             AND  ga.gene_id = gb.gene_id
+             AND  ssg.sequence_id = gb.na_feature_id
+             AND  ossg.sequence_group_id = ssg.sequence_group_id
+             AND ossg.sequence_id != ssg.sequence_id
+             AND  gf.na_feature_id = ossg.sequence_id
+             AND gf.na_sequence_id = ns.na_sequence_id
+             AND ns.taxon_id = tn.taxon_id
+             AND tn.ncbi_tax_id IN ($$organism$$)
+             UNION
+             SELECT
+             DISTINCT gb.source_id, '@PROJECT_ID@' as project_id
+             FROM 
+             apidb.geneattributes ga,
+             apidb.geneattributes gb,
+             dots.SequenceSequenceGroup ssg,
+             dots.SequenceSequenceGroup ossg,
+             dots.GeneFeature gf,
+             $$gene_result$$ c
+             WHERE gf.source_id = c.source_id
+             AND  ssg.sequence_id = gf.na_feature_id
+             AND  ossg.sequence_group_id = ssg.sequence_group_id
+             AND  ossg.sequence_id != ssg.sequence_id
+             AND  ga.na_feature_id = ossg.sequence_id
+             AND  gb.gene_id = ga.gene_id
+             AND gb.ncbi_tax_id IN ($$organism$$)
+            ]]>
        </sql>
     </sqlQuery>
 
@@ -3587,68 +3640,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
   <querySet name="GeneTransforms" queryType="transform" doNotTest="true">
 
-    <sqlQuery name="GenesByOrthologTransform" includeProjects="ToxoDB"
-              isCacheable="true">
-        <paramRef ref="geneParams.gene_result"/>
-        <paramRef ref="organismParams.organism" 
-                  queryRef="organismVQ.withStrains"
-                  default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
-                  allowEmpty="true"/>
-        <column name="project_id"/>
-        <column name="source_id"/>
-        <sql>
-            <![CDATA[
-            SELECT ga.source_id, '@PROJECT_ID@' AS project_id
-            FROM apidb.GeneAttributes ga
-            WHERE ga.gene_id IN
-                    (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, $$gene_result$$ c
-                     WHERE ga.source_id = c.source_id
-                     AND ga.gene_id is NOT NULL)
-              AND ga.ncbi_tax_id IN ($$organism$$)
-             UNION
-             SELECT
-             DISTINCT gf.source_id, '@PROJECT_ID@' AS project_id
-             FROM 
-             apidb.GeneAttributes ga,
-             apidb.GeneAttributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             $$gene_result$$ c,
-              dots.NaSequence ns,
-             sres.taxon tn
-             WHERE ga.source_id = c.source_id
-             AND  ga.gene_id = gb.gene_id
-             AND  ssg.sequence_id = gb.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND ossg.sequence_id != ssg.sequence_id
-             AND  gf.na_feature_id = ossg.sequence_id
-             AND gf.na_sequence_id = ns.na_sequence_id
-             AND ns.taxon_id = tn.taxon_id
-             AND tn.ncbi_tax_id IN ($$organism$$)
-             UNION
-             SELECT
-             DISTINCT gb.source_id, '@PROJECT_ID@' as project_id
-             FROM 
-             apidb.geneattributes ga,
-             apidb.geneattributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             $$gene_result$$ c
-             WHERE gf.source_id = c.source_id
-             AND  ssg.sequence_id = gf.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND  ossg.sequence_id != ssg.sequence_id
-             AND  ga.na_feature_id = ossg.sequence_id
-             AND  gb.gene_id = ga.gene_id
-             AND gb.ncbi_tax_id IN ($$organism$$)
-     
-         
-            ]]>
-       </sql>
-    </sqlQuery>  
 
     <sqlQuery name="GenesByExpandResult" includeProjects="ToxoDB"
               isCacheable="true">
