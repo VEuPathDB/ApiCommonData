@@ -36,13 +36,13 @@
     </step>
 
     <step name="copyPdbFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
-      <paramValue name="resourcesFile">PDBProteinSequences/pdb_seqres.txt</paramValue>
+      <paramValue name="resourcesFile">PDBProteinSequences/pdb.fsa</paramValue>
       <paramValue name="toFile">$$pdbOutputFile$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
     <step name="copyNrdbFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
-      <paramValue name="resourcesFile">NRDB/teeny_fake_nr.fsa</paramValue>
+      <paramValue name="resourcesFile">NRDB/nr</paramValue>
       <paramValue name="toFile">$$nrdbOutputFile$$</paramValue>
       <depends name="makeDataDir"/>
     </step>
