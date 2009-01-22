@@ -3230,11 +3230,14 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
 create table apidb.Blastp&1 as
 select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
        sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
-       sim.number_identical, sim.total_match_length, replace(subject.description, chr(1), '') as description,
-       sim.number_positive, ed.name as external_database_name
+       sim.number_identical, sim.total_match_length,
+       substr(replace(subject.description, chr(1), ''), 1, 300) as description,
+       sim.number_positive, ed.name as external_database_name,
+       substr(tn.name, 1, 50) as query_organism
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
-     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NaSequence ns, sres.TaxonName tn
 where qti.table_id = sim.query_table_id
   and qti.name = 'TranslatedAASequence'
   and sti.table_id = sim.subject_table_id
@@ -3245,6 +3248,9 @@ where qti.table_id = sim.query_table_id
   and taf.aa_sequence_id = sim.query_id
   and subject.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
+  and gf.na_sequence_id = ns.na_sequence_id
+  and ns.taxon_id = tn.taxon_id
+  and tn.name_class = 'scientific name'
       ]]>
     </sql>
     <sql>
