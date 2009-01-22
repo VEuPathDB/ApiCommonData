@@ -636,7 +636,7 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_string"/>
-            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB,TriTrypDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB">
             <![CDATA[
             SELECT nfc.comment_string, 
             nf.source_id, '@PROJECT_ID@' as project_id
@@ -644,6 +644,22 @@
             WHERE nf.source_id=$$source_id$$
               AND nf.na_feature_id = nfc.na_feature_id
               AND NOT to_char(comment_string) = 'NULL;'
+            ]]>
+            </sql>
+            <sql includeProjects="TriTrypDB">
+            <![CDATA[
+            SELECT nfc.comment_string, nf.source_id, '@PROJECT_ID@' as project_id
+            FROM dots.naFeatureComment nfc, dots.GeneFeature nf
+            WHERE nf.source_id = 'Tb927.6.940'
+              AND nf.na_feature_id = nfc.na_feature_id
+              AND NOT to_char(comment_string) = 'NULL;'
+              and nfc.na_feature_comment_id not in (
+                 select c.na_feature_comment_id 
+                 from dots.NAFEATURECOMMENT c, apidb.SIRNA s, dots.GENEFEATURE f
+                 where s.gene = 'Tb927.6.940'
+                 and f.source_id = 'Tb927.6.940'
+                 and c.na_feature_id = f.na_feature_id
+                 and to_char(c.comment_string) like '%'||s.db_xref||'%')
             ]]>
             </sql>
             <sql includeProjects="CryptoDB"> 

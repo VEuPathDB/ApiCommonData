@@ -64,11 +64,15 @@
         <paramRef ref="geneParams.phenotype"/>
         <column name="source_id"/>
         <column name="project_id"/>
+        <column name="phenotype_loi"/>
        <sql>
              <![CDATA[
-               select si.gene as source_id,'@PROJECT_ID@' as project_id
-               from apidb.sirna si
+               select si.gene as source_id,'@PROJECT_ID@' as project_id,
+                 count(distinct db_xref) as phenotype_loi
+               from apidb.sirna si, apidb.geneattributes ga
                where si.go_term || si.pato_term in ($$phenotype$$)
+               and ga.source_id = si.gene
+               group by si.gene,'@PROJECT_ID@'
            ]]>
        </sql>
     </sqlQuery>

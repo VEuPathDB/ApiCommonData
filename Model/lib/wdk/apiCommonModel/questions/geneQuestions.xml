@@ -192,8 +192,8 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
          queryRef="GeneId.GenesByPhenotype"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList 
-              summary="organism,location_text,product"
-              sorting="project asc,organism asc,location_text asc"
+              summary="organism,location_text,product,phenotype_loi"
+              sorting="project asc,phenotype_loi desc, organism asc"
         />
         <summary>
            Find genes based on phenotype.
@@ -203,6 +203,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
           Find genes by phenotype based on RNAi knockdown and insufficiency studies.
           ]]>
         </description>
+
+        <dynamicAttributes>
+             <columnAttribute name="phenotype_loi" displayName="Lines of Evidence" align="center"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
