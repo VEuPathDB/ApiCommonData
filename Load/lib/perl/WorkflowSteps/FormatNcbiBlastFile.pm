@@ -29,7 +29,7 @@ sub run {
 
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0,"echo test > $outputBlastDbDir/format.test");
+    $self->runCmd(0,"echo test > $localDataDir/$outputBlastDbDir/format.test");
   }
 
   $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");

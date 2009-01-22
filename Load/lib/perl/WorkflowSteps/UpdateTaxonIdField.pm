@@ -20,7 +20,7 @@ sub run {
 
   my $mappingFile = "$downloadDir/$mappingFileRelativeToDownloadDir";
 
-  my $args = "--fileName '$mappingFile' --sourceIdRegex  \"$sourceIdRegex\" $taxonRegex --idSql '$idSql' --extDbRelSpec '$extDbRelSpec'  --tableName '$tableName'";
+  my $args = "--fileName '$mappingFile' --sourceIdRegex  \"$sourceIdRegex\" $taxonRegex --idSql '$idSql' --extDbRelSpec '$extDbRlsSpec'  --tableName '$tableName'";
 
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile", $args);
 
