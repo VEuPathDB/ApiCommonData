@@ -5012,8 +5012,9 @@ SELECT distinct lg.name AS term,
        select go_term || ' (' || count(*) || ')' as display, go_term as term, go_term as internal,'' as parentTerm,count(*) as order_num
        from apidb.SIRNA group by go_term
        union
-       select distinct  pato_term as display,go_term || pato_term as term, go_term || pato_term as internal,go_term as parentTerm, 0 as order_num 
-       from apidb.SIRNA)
+       select pato_term || ' (' || count(*) || ')' as display,go_term || pato_term as term, go_term || pato_term as internal,go_term as parentTerm, count(*) as order_num 
+       from apidb.SIRNA
+       group by pato_term, go_term)
        order by order_num desc
     </sql>
     </sqlQuery>
