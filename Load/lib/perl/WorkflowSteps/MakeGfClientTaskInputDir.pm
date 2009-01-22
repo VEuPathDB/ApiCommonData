@@ -20,7 +20,7 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
+  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
   # make controller.prop file
   $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,

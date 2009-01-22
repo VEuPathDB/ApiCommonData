@@ -30,6 +30,7 @@
       <paramValue name="queryFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.seq</paramValue>
       <paramValue name="targetDir">$$genomicSeqsDir$$</paramValue>
       <depends name="makeDataDir"/>
+      <depends name="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">

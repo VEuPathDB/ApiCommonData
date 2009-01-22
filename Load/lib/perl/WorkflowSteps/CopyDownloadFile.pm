@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::MoveDownloadFile;
+package ApiCommonData::Load::WorkflowSteps::CopyDownloadFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
@@ -16,7 +16,11 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $cmd = "cp $apiSiteFilesDir/$fromFile $localDataDir/$toFile";
-  
+
+  if ($test) {
+    $self->testInputFile('fromFile', "$apiSiteFilesDir/$fromFile");
+  }
+
   $self->runCmd(0, $cmd);
 
 }

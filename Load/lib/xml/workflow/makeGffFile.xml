@@ -14,7 +14,7 @@
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
 
-    <step name="copyGffFileToMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MoveDownloadFile">
+    <step name="copyGffFileToMercatorDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::CopyDownloadFile">
       <paramValue name="fromFile">$$downloadSiteDataDir$$/$$organismName$$_$$projectName$$-$$projectVersion$$.gff</paramValue>
       <paramValue name="toFile">common/mercator/$$organismName$$_$$projectName$$-$$projectVersion$$.gff</paramValue>
     <depends name="makeGffFile"/>

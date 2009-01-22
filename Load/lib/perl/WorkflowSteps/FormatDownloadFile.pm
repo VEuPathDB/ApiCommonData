@@ -16,11 +16,13 @@ sub run {
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
   my $blastPath = $self->getConfig('wuBlastPath');
 
-  my $cmd = "$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $inputFile";
+  my $cmd = "$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $apiSiteFilesDir/$inputFile";
 
   
   if($test){
 
+      $self->testInputFile('inputFile', "$apiSiteFilesDir/$inputFile");
+      $self->testInputFile('outputDir', "$apiSiteFilesDir/$outputDir");
       $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.test");
 
   }else{

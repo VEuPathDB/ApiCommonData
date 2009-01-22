@@ -22,6 +22,10 @@ sub run {
 
   my $args = "--fileName '$mappingFile' --sourceIdRegex  \"$sourceIdRegex\" $taxonRegex --idSql '$idSql' --extDbRelSpec '$extDbRlsSpec'  --tableName '$tableName'";
 
+  if ($test) {
+    $self->testInputFile('mappingFile', "$mappingFile");
+  }
+
   $self->runPlugin($test, "ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile", $args);
 
 }
