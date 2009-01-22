@@ -546,12 +546,10 @@
 
     <processQuery name="GenesByTextSearch" includeProjects="CryptoDB,TriTrypDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin">
-       <paramRef ref="sharedParams.wdk_record_type" default="gene"/>
-       <paramRef ref="sharedParams.project_id" default="CryptoDB" includeProjects="CryptoDB"/>
-       <paramRef ref="sharedParams.project_id" default="TriTrypDB" includeProjects="TriTrypDB"/>
-       <paramRef ref="sharedParams.text_expression"/>
+       <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
        <paramRef ref="geneParams.max_pvalue" groupRef="paramGroups.advancedParams"/>
-       <paramRef ref="geneParams.text_search_fields"/>
+       <paramRef ref="geneParams.text_fields"/>
+       <paramRef ref="sharedParams.text_expression"/>
        <paramRef ref="organismParams.text_search_organism"/>
        <wsColumn name="source_id" width="32" wsName="RecordID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>

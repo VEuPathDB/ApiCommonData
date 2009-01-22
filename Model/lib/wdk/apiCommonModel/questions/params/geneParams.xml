@@ -694,7 +694,27 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <enumParam name="whole_words"
+    <enumParam name="whole_words" excludeProjects="CryptoDB,TriTrypDB"
+                     prompt="Match only whole words?"
+                     multiPick="false">
+      <help>
+             Select whether to reject text matches that start or end in the middle of a word
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>yes</term>
+          <internal>true</internal>
+        </enumValue>
+        <enumValue default="true">
+          <term>no</term>
+          <internal>false</internal>
+        
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+    <enumParam name="whole_words" includeProjects="CryptoDB,TriTrypDB" visible="false"
                      prompt="Match only whole words?"
                      multiPick="false">
       <help>
@@ -4272,7 +4292,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!-- text fields -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <enumParam name="text_fields"
+    <enumParam name="text_fields" excludeProjects="CryptoDB,TriTrypDB"
                      prompt="Fields"
                      multiPick="true">
       <help>
@@ -4320,7 +4340,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
-    <enumParam name="text_search_fields"
+    <enumParam name="text_fields" includeProjects="CryptoDB,TriTrypDB"
                      prompt="Fields"
                      multiPick="true">
       <help>
