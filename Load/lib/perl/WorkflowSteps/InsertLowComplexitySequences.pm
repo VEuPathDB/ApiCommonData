@@ -15,7 +15,7 @@ sub run {
   my $mask = $self->getParamValue('mask');
   my $options = $self->getParamValue('options');
 
-  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$genomeExtDbRlsSpec);
 
   my $localDataDir = $self->getLocalDataDir();
 

@@ -13,7 +13,7 @@ sub run {
     my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
     my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
 
-    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($interproExtDbRlsSpec);
+    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$interproExtDbRlsSpec);
     my $goVersion = $self->getParamValue('goVersion');
 
     my $localDataDir = $self->getLocalDataDir();

@@ -13,7 +13,7 @@ sub run {
   my $fastaFile = $self->getParamValue('fastaFile');
   my $idsFile = $self->getParamValue('idsFile');
 
-  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$extDbRlsSpec);
 
   my $localDataDir = $self->getLocalDataDir();
 

@@ -18,7 +18,7 @@ sub run {
 
   my $gusHome = $self->getGlobalConfig('gusHome');
 
-  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($genomeExtDbRlsSpec);
+  my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$genomeExtDbRlsSpec);
 
   my $localDataDir = $self->getLocalDataDir();
 

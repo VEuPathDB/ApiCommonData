@@ -25,13 +25,13 @@ sub run {
 
   my $queryExtDbArg = "";
   if ($queryExtDbRlsSpec) {
-    my ($queryDbName, $queryDbRlsVer) = $self->getExtDbInfo($queryExtDbRlsSpec);
+    my ($queryDbName, $queryDbRlsVer) = $self->getExtDbInfo($test,$queryExtDbRlsSpec);
     $queryExtDbArg = " --queryExtDbName '$queryDbName' --queryExtDbRlsVer '$queryDbRlsVer'";
   }
 
   my $subjectExtDbArg = "";
   if ($subjectExtDbRlsSpec) {
-    my ($subjectDbName, $subjectDbRlsVer) = $self->getExtDbInfo($subjectExtDbRlsSpec);
+    my ($subjectDbName, $subjectDbRlsVer) = $self->getExtDbInfo($test,$subjectExtDbRlsSpec);
     $subjectExtDbArg = " --subjectExtDbName '$subjectDbName' --subjectExtDbRlsVer '$subjectDbRlsVer'";
   }
 

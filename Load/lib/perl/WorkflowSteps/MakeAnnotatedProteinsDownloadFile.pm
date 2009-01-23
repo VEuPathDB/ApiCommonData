@@ -19,7 +19,7 @@ sub run {
   my @extDbNames;
 
   foreach ( @extDbRlsSpecs ){
-      my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($_);
+      my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($test,$_);
       push (@extDbNames,$extDbName);
       push (@extDbRlsVers,$extDbRlsVer);
   }

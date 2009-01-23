@@ -86,7 +86,7 @@ sub testInputFile {
 sub getExtDbRlsId {
   my ($self, $test, $extDbRlsSpec) = @_;
 
-  my ($extDbName, $extDbRlsVer) = $self->getExtDbInfo($extDbRlsSpec);
+  my ($extDbName, $extDbRlsVer) = $self->getExtDbInfo($test,$extDbRlsSpec);
 
   my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
 

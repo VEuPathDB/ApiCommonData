@@ -15,13 +15,13 @@ sub run {
 
   my $trfPath = $self->getConfig('trfPath');
 
-  $repeatFinderArgs =~ s/\s+/\./g;
-
   my $stepDir = $self->getStepDir();
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d";
+  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d 2>> $stepDir/command.log";
+ 
+  $repeatFinderArgs =~ s/\s+/\./g;
 
   if ($test) {
     $self->testInputFile('seqsFile', "$localDataDir/$seqsFile");

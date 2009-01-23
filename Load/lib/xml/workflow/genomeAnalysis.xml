@@ -17,6 +17,7 @@
   <param name="organismTwoLetterAbbrev"/>
   <param name="repeatMaskSpecies"/>
   <param name="maxIntronSize"/>
+  <param name="organismFullName"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
@@ -91,8 +92,8 @@
       <paramValue name="inputFile">$$dataDir$$/Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="substepClass">ExternalNASequence</paramValue>
-      <paramValue name="defaultOrg">$$organismName$$</paramValue>
-      <paramValue name="isfMappingFileRelToGusHome">lib/xml/orf2gus.xml</paramValue>
+      <paramValue name="defaultOrg">$$organismFullName$$</paramValue>
+      <paramValue name="isfMappingFileRelToGusHome">config/orf2gus.xml</paramValue>
       <paramValue name="soVersion">$$soVersion$$</paramValue>
       <depends name="makeOrfFile"/>
     </step>

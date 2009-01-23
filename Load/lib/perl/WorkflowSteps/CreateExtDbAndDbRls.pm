@@ -9,7 +9,7 @@ sub run {
 
     # get parameters
     my $syntenyExtDbRlsSpec = $self->getParamValue('syntenyExtDbRlsSpec');
-    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($syntenyExtDbRlsSpec);
+    my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$syntenyExtDbRlsSpec);
 
     my $dbPluginArgs = "--name '$extDbName' ";
     
