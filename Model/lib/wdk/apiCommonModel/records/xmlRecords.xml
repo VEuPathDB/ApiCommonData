@@ -132,7 +132,7 @@
   <!-- About -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <xmlRecordClass  includeProjects="PlasmoDB,ToxoDB"
+        <xmlRecordClass  includeProjects="PlasmoDB,ToxoDB,TriTrypDB"
         	name="AboutRecord"
         	type="About"
         	idPrefix="ABOUT."
@@ -263,6 +263,19 @@
                <xmlAttribute name="title"/>
                <xmlAttribute name="url"/>
             </xmlTable>
+         </xmlRecordClass>
+
+
+ <xmlRecordClass includeProjects="TriTrypDB"
+        	name="ExternalLinksRecord"
+        	type="ExternalLinks"
+        	idPrefix="EL."
+        	delimiter="@">
+            <xmlTable name="communityLinks" displayName="Community Links">
+               <xmlAttribute name="title"/>
+               <xmlAttribute name="url"/>
+            </xmlTable>
+
          </xmlRecordClass>
 
     </xmlRecordClassSet>
