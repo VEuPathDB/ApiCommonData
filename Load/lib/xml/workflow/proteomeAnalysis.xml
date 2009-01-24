@@ -27,7 +27,7 @@
           stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField">
       <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
       <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
-      <paramValue name="taxonRegex">--ncbiTaxIdRegex \'^\\d+\\s(\\d+)\'</paramValue>
+      <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
       <paramValue name="idSql">select source_id, aa_sequence_id from dots.externalaasequence</paramValue>
       <paramValue name="extDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
@@ -37,7 +37,7 @@
           stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField">
       <paramValue name="mappingFileRelativeToDownloadDir">FetchPDBidx/source.idx.processed</paramValue>
       <paramValue name="sourceIdRegex">^(\\w+)</paramValue>
-      <paramValue name="taxonRegex">--taxonNameRegex \'^\\w+\\s+(.+)\'</paramValue>
+      <paramValue name="taxonRegex">--taxonNameRegex "^\\w+\\s+(.+)"</paramValue>
       <paramValue name="idSql">select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence</paramValue>
       <paramValue name="extDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
       <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
