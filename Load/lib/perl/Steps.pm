@@ -1258,11 +1258,11 @@ sub extractAnnotatedAndPredictedTranscriptSeq {
 
   my $type = ucfirst($seqType);
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
-
   my $signal = "extract${name}$type";
 
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
@@ -1355,6 +1355,10 @@ EOF
 sub makeTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$genomeExtDb, $genomeExtDbVer,$project) = @_;
 
+    my $signal = "${name}DownloadFile";
+
+    return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
     my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
@@ -1408,6 +1412,10 @@ EOF
 
 sub makeTranscriptDownloadFileTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir) = @_;
+
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1466,6 +1474,10 @@ $sql .= " AND organism = '$organism'" if $organism;
 sub makeRGTranscriptDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$dataType,$genomeExtDb, $genomeExtDbVer,$project) = @_;
     
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
   my $sql = <<"EOF";
      SELECT '$dataSource'
                 ||'|'||
@@ -1699,7 +1711,11 @@ EOF
 sub makeDerivedCdsDownloadFileTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
 
-   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
@@ -1753,6 +1769,11 @@ EOF
 
 sub makeRGDerivedCdsDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
+
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
 
   my $sql = <<"EOF";
      SELECT '$dataSource'
@@ -1921,7 +1942,11 @@ EOF
 sub makeAnnotatedProteinDownloadFileTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir) = @_;
 
-   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
 
@@ -2128,6 +2153,10 @@ EOF
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
 
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
@@ -2183,6 +2212,10 @@ EOF
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
   my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
+
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2368,6 +2401,10 @@ EOF
 
 sub makeMixedGenomicDownloadFile {
   my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels) = @_;
+
+  my $signal = "${name}DownloadFile";
+
+  return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2597,11 +2634,11 @@ sub extractAnnotatedTranscriptSeq {
 
   my $type = ucfirst($seqType);
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
-
   my $signal = "extract${name}$type";
 
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
@@ -2622,8 +2659,6 @@ sub extractAnnotatedTranscriptSeq {
 sub extractESTs {
   my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database, $source) = @_;
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
-
   my $signal = "extract${genus}${species}${dbName}ESTs";
 
   $signal =~ s/\s//g;
@@ -2631,6 +2666,8 @@ sub extractESTs {
   $signal =~ s/\//_/g;
 
   return if $mgr->startStep("Extracting $genus $species $dbName ESTs from GUS", $signal);
+
+   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
 
@@ -2694,8 +2731,6 @@ EOF
 sub extractIndividualNaSeq {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
-
   my $type = ucfirst($seqType);
 
   my $signal = "extract${name}$type";
@@ -2703,6 +2738,8 @@ sub extractIndividualNaSeq {
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
   return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $ouputDir = "$mgr->{dataDir}/seqfiles/${name}$type";
 
@@ -2724,11 +2761,11 @@ sub extractNaSeqAltDefLine {
 
   my $type = ucfirst($seqType);
 
-  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
-
   my $signal = "extract${name}$type";
 
   return if $mgr->startStep("Extracting $name $seqType from GUS", $signal);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
   my $outFile = "$mgr->{dataDir}/seqfiles/${name}${type}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
@@ -4716,6 +4753,10 @@ sub extractAnnotatedProteinsBySpecies {
 
   my $propertySet = $mgr->{propertySet};
 
+  my $signal = "${fname}Extract";
+
+  return if $mgr->startStep("Extracting $fname protein sequences from GUS", $signal);
+
   my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;  
 
   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
@@ -4911,22 +4952,41 @@ sub documentBLATAlignment {
 
 sub loadContigAlignments {
   my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop,$queryNcbiTaxId) = @_;
+
   my $propertySet = $mgr->{propertySet};
+
   my $dataDir = $mgr->{'dataDir'};
+
+  my $signal = "${action}${queryName}${targetName}BLATAlignments";
+
+  return if $mgr->startStep("Begin $signal", $signal);
+
   my $genomeDbRlsId = &getDbRlsId($mgr,$tDbName,$tDbRlsVer);
+
   my $queryDbRlsId = &getDbRlsId($mgr,$qDbName,$qDbRlsVer) if ($qDbName && $qDbRlsVer);
+
   my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
+
   my $queryTaxonId = $queryNcbiTaxId ? &getTaxonId($mgr, $queryNcbiTaxId) : $taxonId;
+
   my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
+
   my $qFile = "$dataDir/repeatmask/$queryName/master/mainresult/blocked.seq";
+
   $qFile =  "$dataDir/seqfiles/$querySeqFile" if $querySeqFile;
+
   my $tmpFile;
+
   my $qDir = "/tmp/" . $queryName;
+
   my $qTabId = ($queryName =~ /FinalTranscript/i) ? 
     &getTableId($mgr, "Assembly") :
       &getTableId($mgr, "AssemblySequence");
+
   $tmpFile = $qDir . "/blocked.seq";
+
   $qTabId = &getTableId($mgr, "$table") if $table;
+
 # copy qFile to /tmp directory to work around a bug in the
 # LoadBLATAlignments plugin's call to FastaIndex
   $mgr->runCmd("mkdir $qDir") if ! -d $qDir;
@@ -4961,6 +5021,10 @@ sub clusterByContigAlign {
 
     my $dataDir = $mgr->{'dataDir'};
     #my $taxonId = $mgr->{taxonId};
+
+    my $signal = "Cluster${species}${name}ByContig";
+
+    return if $mgr->startStep("Begin $signal", $signal);
     
     my $taxonId = &getTaxonId($mgr,$ncbiTaxId);
  
@@ -4979,7 +5043,7 @@ sub clusterByContigAlign {
 	. "--target_db_rel_id $extDbRelId --out $outputFile --sort 1";
     # $args .= " --test_chr 5";
 
-    $mgr->runPlugin("Cluster${species}${name}ByContig", 
+    $mgr->runPlugin($signal, 
 		    "DoTS::DotsBuild::Plugin::ClusterByGenome",
 		    $args, "$name clustering by contig alignment");
 
@@ -4991,6 +5055,10 @@ sub clusterMultiEstSourcesByAlign {
     my $propertySet = $mgr->{propertySet};
 
     my $dataDir = $mgr->{'dataDir'};
+
+    my $signal = "Cluster${species}${name}ByContigWithAltSql";
+
+    return if $mgr->startStep("Begin $signal", $signal);
  
     my $tDbRlsId=  &getDbRlsId($mgr,$tExtDbName,$tExtDbRlsVer);
 
@@ -5005,7 +5073,7 @@ sub clusterMultiEstSourcesByAlign {
     my $args = "--taxon_id $taxonId --target_table_name  $targetTable --mixedESTs "
 	. "--target_db_rel_id $tDbRlsId --out $outputFile --sort 1 --distanceBetweenStarts $distance";
 
-    $mgr->runPlugin("Cluster${species}${name}ByContigWithAltSql", 
+    $mgr->runPlugin($signal, 
 		    "DoTS::DotsBuild::Plugin::ClusterByGenome",
 		    $args, "$species $name clustering by contig alignment");
 
@@ -6223,7 +6291,7 @@ sub isolateVocabularyUpdate{
 
 my ($mgr, $fileType, $xmlFile) = @_;
 	
-my $signal = updateIsolateVocab_$fileType;
+my $signal = "updateIsolateVocab_$fileType";
 
 return if $mgr->startStep("Updating $fileType Isolate Vocabulary", $signal);
 
