@@ -1945,6 +1945,30 @@
             </sql>
         </sqlQuery>
 
+
+
+       <sqlQuery name="gene_dbrefs" 
+                  isCacheable="false" includeProjects="ToxoDB">
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="dataset"/>
+            <column name="link_url"/>
+            <sql>
+            <![CDATA[
+               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               'GeneDB' as dataset,
+               'http://www.genedb.org/genedb/Search?name='||source_id||'&organism=ncaninum&desc=yes&searchId=Search' AS link_url
+                FROM apidb.geneattributes 
+                where project_id = $$project_id$$
+                and source_id = $$source_id$$
+                and organism = 'Neospora caninum'
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- protein database links -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
