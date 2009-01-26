@@ -8,8 +8,9 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
     my ($self, $test) = @_;
 
-    my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
+
     my $inputDirRelativeToDownloadsDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
+    my $queryDir = $self->getParamValue('queryDir');
     my $proteinsFile = $self->getParamValue('proteinsFile');
     my $blastDbDir = $self->getParamValue('blastDbDir');
     my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
@@ -18,8 +19,9 @@ sub run {
 
     my $localDataDir = $self->getLocalDataDir();
     my $downloadDir = $self->getGlobalConfig('downloadDir');
+    my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$proteinsFile --outputDir $localDataDir/$outputDir --blastDatabase $blastDbDir --idRegex '$idRegex'";
+    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
     $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
     if ($test) {
       $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
