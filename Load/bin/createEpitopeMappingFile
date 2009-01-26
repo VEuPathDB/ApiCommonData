@@ -6,7 +6,7 @@ use Switch;
 use strict;
 
 my ($inputDir, $queryDir, $outputDir, $blastDatabase, 
-    $subjectPath, $idRegex, $verbose, $speciesKey, $ncbiBlastPath);
+    $subjectFile, $idRegex, $verbose, $speciesKey, $ncbiBlastPath);
 
 my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 
@@ -15,7 +15,7 @@ my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 	    "outputDir=s" => \$outputDir,
         "ncbiBlastPath=s" => \$ncbiBlastPath,
 	    "blastDatabase=s" => \$blastDatabase,
-	    "subjectPath=s" => \$subjectPath,
+	    "subjectFile=s" => \$subjectFile,
 	    "speciesRegex=s" => \$speciesRegex,
 	    "speciesKey=s" => \$speciesKey, # lookup database name in runBlast()
 	    "idRegex=s" => \$idRegex,
@@ -23,13 +23,13 @@ my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 	   );
 
 if (!$inputDir || !$queryDir || !$outputDir || !$blastDatabase) {
-  die "usage: createEpitopeMappingFile.pl --inputDir <DIRPATH> --queryDir <DIRPATH> --outputDir <DIRPATH> --blastDatabase <PATH> --subjectPath <DIRPATH> [--speciesRegex <STRING>] [--speciesKey <STRING>] [--idRegex <STRING>] [--verbose]\n";
+  die "usage: createEpitopeMappingFile.pl --inputDir <DIRPATH> --queryDir <DIRPATH> --outputDir <DIRPATH> --blastDatabase <PATH> --subjectFile <subjectFile> [--speciesRegex <STRING>] [--speciesKey <STRING>] [--idRegex <STRING>] [--verbose]\n";
 }
 
 
 &getGenPetSeqs($inputDir, $queryDir);
 &runBlast($outputDir, $queryDir, $inputDir, $blastDatabase, $speciesRegex, $idRegex, $verbose, $ncbiBlastPath);
-&exactMapEpitopes($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose);
+&exactMapEpitopes($outputDir, $inputDir, $subjectFile, $speciesRegex, $verbose);
 print STDERR "Mapping Complete\n";
 
 sub getGenPetSeqs{
@@ -150,7 +150,7 @@ sub runBlast{
 
 
 sub exactMapEpitopes{
-  my ($outputDir, $inputDir, $subjectPath, $speciesRegex, $verbose) = @_;
+  my ($outputDir, $inputDir, $proteinsFile, $speciesRegex, $verbose) = @_;
 
 #TODO: Make sure we don't get exact matches for epitope:sequence pairs that we have matches on BLAST hits for
 
@@ -179,28 +179,6 @@ sub exactMapEpitopes{
         $species =~ s/$speciesRegex/$1/;
     }
 
-    my $subjectFile;
-    switch ($species) {
-
-      case "Pb"  { $subjectFile = "PbergheiAnnotatedProteins.fsa"; }
-      case "Pc"  { $subjectFile = "PchabaudiAnnotatedProteins.fsa"; }
-      case "Pf"  { $subjectFile = "PfalciparumAnnotatedProteins.fsa"; }
-      case "Pk"  { $subjectFile = "PknowlesiAnnotatedProteins.fsa"; }
-      case "Pv"  { $subjectFile = "PvivaxAnnotatedProteins.fsa"; }
-      case "Py"  { $subjectFile = "PyoeliiAnnotatedProteins.fsa"; }
-      case "Tg"  { $subjectFile = "TgondiiAnnotatedProteins.fsa"; }
-      case "Cp"  { $subjectFile = "CparvumAnnotatedProteins.fsa";}
-      case "Cp6" { $subjectFile = "CparvumChr6AnnotatedProteins.fsa";}
-      case "Ch"  { $subjectFile = "ChominisAnnotatedProteins.fsa";}
-      case "Gl"  { $subjectFile = "GlambliaAnnotatedProteins.fsa";}
-      case "Lb"  { $subjectFile = "LbraziliensisAnnotatedProteins.fsa";}
-      case "Li"  { $subjectFile = "LinfantumAnnotatedProteins.fsa";}
-      case "Lm"  { $subjectFile = "LmajorAnnotatedProteins.fsa";}
-      case "Tb"  { $subjectFile = "TbruceiAnnotatedProteins.fsa";}
-      case "Tc"  { $subjectFile = "TcruziAnnotatedProteins.fsa";}
-      else       { print "$species does not match a known database." }
-    }
-
     my $indivOutDir = "$outputDir/$species";
 
     unless (-d $indivOutDir){
@@ -209,8 +187,6 @@ sub exactMapEpitopes{
     }
 
     my $outFile = "$indivOutDir/$baseFileName.out";
-
-    $subjectFile = "$subjectPath/$subjectFile";
 
     print STDERR "SPECIES: $species\t" if $verbose;
     print STDERR "DATABASE: $subjectFile\n" if $verbose;
