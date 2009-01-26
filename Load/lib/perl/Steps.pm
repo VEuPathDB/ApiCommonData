@@ -1230,7 +1230,7 @@ sub extractNaSeq {
         'length='||x.length,
         x.sequence
         FROM dots.$table x, 
-             sres.externaldatbase d, 
+             sres.externaldatabase d, 
              sres.externaldatabaserelease dr
         WHERE x.external_database_release_id = dr.external_database_release_id 
               AND dr.external_database_id = d.external_database_id
