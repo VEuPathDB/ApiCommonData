@@ -3225,10 +3225,12 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <externalDependency name="core.TableInfo"/>
+    <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
 create table apidb.Blastp&1 as
-select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id as subject_source_id, sim.score score, sim.query_id, 
+select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
+       subject.source_id as subject_source_id, sim.score score, sim.query_id, 
        sim.min_query_start, sim.max_query_end, sim.pvalue_mant, sim.pvalue_exp,
        sim.number_identical, sim.total_match_length,
        substr(replace(subject.description, chr(1), ''), 1, 300) as description,
@@ -3237,12 +3239,13 @@ select rownum as blastp_id, gf.source_id, sim.similarity_id, subject.source_id a
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-     dots.NaSequence ns, sres.TaxonName tn
+     dots.NaSequence ns, sres.TaxonName tn, apidb.GeneAttributes ga
 where qti.table_id = sim.query_table_id
   and qti.name = 'TranslatedAASequence'
   and sti.table_id = sim.subject_table_id
   and sti.name = 'ExternalAASequence'
   and subject.aa_sequence_id = sim.subject_id
+  and ga.source_id = gf.source_id
   and gf.na_feature_id = t.parent_id
   and t.na_feature_id = taf.na_feature_id
   and taf.aa_sequence_id = sim.query_id
