@@ -21,7 +21,7 @@ sub run {
     my $downloadDir = $self->getGlobalConfig('downloadDir');
     my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-    my $cmd = "createEpitopeMappingFile  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
+    my $cmd = "createEpitopeMappingFileWorkflow  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
     $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
     if ($test) {
       $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
