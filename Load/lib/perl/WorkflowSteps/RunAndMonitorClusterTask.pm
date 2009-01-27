@@ -22,9 +22,10 @@ sub run {
   my $userName = $ENV{USER};  # perl trick to get user name
 
   my $propFile = "$clusterDataDir/$taskInputDir/task.prop";
+  my $processIdFile = "$clusterDataDir/$taskInputDir/task.id";
   my $logFile = "$clusterTaskLogsDir/" . $self->getName() . ".log";
 
-  $self->runAndMonitorClusterTask($test, $userName, $clusterServer, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
+  $self->runAndMonitorClusterTask($test, $userName, $clusterServer, $processIdFile, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
 }
 
 sub getParamsDeclaration {
