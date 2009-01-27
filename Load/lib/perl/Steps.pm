@@ -2104,6 +2104,15 @@ sub makeOrfDownloadFileWithAbrevDefline {
 
   $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
 
+  my @extDbs = map{"'$_'"} split (/,/,$extDb);
+
+  my $extDb = join(",", @extDbs);
+
+  my @extDbVers = map{"'$_'"} split (/,/,$extDbVer);
+
+  my $extDbVer = join(",", @extDbVers);
+ 
+
   my $sql = <<"EOF";
     SELECT
        m.source_id
@@ -2140,7 +2149,7 @@ sub makeOrfDownloadFileWithAbrevDefline {
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND ed.name = '$extDb' AND edr.version = '$extDbVer'
+        AND ed.name in ($extDb) AND edr.version in ($extDbVer)
 EOF
 
   $sql .= " and enas.taxon_id in ($taxonId)";
