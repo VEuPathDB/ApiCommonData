@@ -4591,6 +4591,26 @@ sub modifyFile {
   $mgr->endStep($signal);
 }
 
+
+sub documentMercatorAndMavid {
+  my ($mgr,$version) = @_;
+  my $description = "Mercator and Mavid are used for comparative genome analysis. Mercator uses genomes and exon coordinates to create exon translations for protein BLAT alignments and outputs orthology maps. The orthology maps are used as a guide for Mavid which also uses a phylogentic newick tree to generate gene alignments.";
+  my $documentation =    { name => "MercatorAndMavid",
+                         input => "genomes, exon coordinates, and a phylogentic newick tree",
+			   output => "file of pairwise synteny alignments with defined spans",
+			   descrip => $description,
+                           tools => [{ name => "MercatorAndMavid",
+				       version => $version,
+				       params => "",
+				       url => "",
+				       pubmedIds => "17993677",
+				       credits => " Dewey CN.
+                                                    Aligning multiple whole genomes with Mercator and MAVID. 
+                                                    Methods in Molecular Biology. 395:221-36, 2007."}]};
+
+ $mgr->documentStep("MercatorAndMavid", $documentation);
+}
+
 sub fixMercatorOffsetsInGFF {
     my($mgr, $inFastaFile, $inGFFFile, $outFile, $fileDir,$fastaRegex,$gffRegex) = @_;
     
@@ -5056,6 +5076,45 @@ sub clusterByContigAlign {
 		    "DoTS::DotsBuild::Plugin::ClusterByGenome",
 		    $args, "$name clustering by contig alignment");
 
+}
+
+sub documentCAP4 {
+  my ($mgr) = @_;
+  my $description = "CAP4 is used to generate predicted, alternatively-spliced transcripts. CAP4 aligns and assembles clustered sequence reads and produces consensus sequences";
+  my $documentation =    { name => "CAP4",
+                         input => "clusters of EST and mRNA sequences"
+			   output => "assembled consensus sequence and quality values",
+			   descrip => $description,
+                           tools => [{ name => "CAP4",
+				       version =>"",
+				       params => "",
+				       url => "",
+				       pubmedIds => "10508846",
+				       credits => " Huang, X. and Madan, A.
+                                                    (1999) CAP3: A DNA sequence assembly program. 
+                                                    Genome Res., 9, 868-877."}]};
+
+ $mgr->documentStep("CAP4", $documentation);
+}
+
+sub documentRepeatMasker {
+  my ($mgr,$version) = @_;
+
+  my $description = "RepeatMasker uses cross-match and a RepBase repeat library to screen DNA sequences for interspersed repeats and low complexity DNA sequences and outputs a modified version of the query sequence in which all the repeats have been masked.";
+  my $documentation =    { name => "RepeatMasker",
+                         input => "Fasta file of nucleic acid sequences and RepBase "
+			   output => "Fasta file of masked nucleic acid sequences",
+			   descrip => $description,
+                           tools => [{ name => "RepeatMasker",
+				       version => $version,
+				       params => "",
+				       url => "http://www.repeatmasker.org",
+				       pubmedIds => "",
+				       credits => "Smit, AFA, Hubley, R & Green, P. 
+                                                   RepeatMasker Open-3.0.
+                                                   1996-2004"}]};
+
+ $mgr->documentStep("RepeatMasker", $documentation);
 }
 
 ### subroutine used when the aligned transcripts are from multiple sources with different external_database_release_ids
