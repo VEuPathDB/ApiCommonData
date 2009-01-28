@@ -156,5 +156,20 @@ sub getTaxonIdList {
 }
 
 
+sub getInputFiles{
+  my ($self, $test, $fileOrDir, $seqFileExtension) = @_;
+  my @inputFiles;
+
+  if (-d $fileOrDir) {
+    opendir(DIR, $fileOrDir) || die "Can't open directory '$fileOrDir'";
+    my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
+    @inputFiles = map { "$fileOrDir/$_" } @noDotFiles;
+    @inputFiles = grep(/.*\.$seqFileExtension$/, @inputFiles) if $seqFileExtension;
+  } else {
+    $inputFiles[0] = $fileOrDir;
+  }
+  return @inputFiles;
+}
+
 1;
 

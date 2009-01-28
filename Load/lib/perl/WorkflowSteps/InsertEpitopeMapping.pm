@@ -13,13 +13,15 @@ sub run {
   my $seqExtDbSpecs = $self->getParamValue('genomeExtDbRlsSpec');
 
   my $localDataDir = $self->getLocalDataDir();
+  $inputDir="$localDataDir/$inputDir";
 
   my @inputFiles;
- # @inputFiles = &_getInputFiles($localDataDir/$inputDir);
+  
+  my @inputFiles = $self->getInputFiles($test,$inputDir);
 
   foreach my $file (@inputFiles) {
 
-    my $args = " --inputFile $file --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
+    my $args = " --inputFile '$file' --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
 
     if ($test) {
       $self->testInputFile('inputDir', "$localDataDir/$inputDir");
