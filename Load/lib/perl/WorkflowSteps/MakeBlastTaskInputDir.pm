@@ -40,7 +40,7 @@ sub run {
   }
 
   # make task.prop file
-  my $ccBlastParamsFile = "$computeClusterDataDir/$taskInputDir/blastParams";
+  my $ccBlastParamsFile = "blastParams";
   my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
   my $vendorString = $vendor? "blastVendor=$vendor" : "";
 

@@ -147,7 +147,8 @@ sub getTaxonIdList {
     if ($test) {
       return "UNKNOWN_TAXON_ID_LIST";
     } else {
-      return  chomp($idList);
+      chomp($idList);
+      return  $idList;
     }
   } else {
     return $taxonId;
