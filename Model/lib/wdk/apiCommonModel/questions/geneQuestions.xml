@@ -1959,11 +1959,11 @@ Find genes that are predicted to encode a signal peptide.
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="CryptoDB,TriTrypDB">
         <attributesList includeProjects="ToxoDB"
-         summary="formatted_gene_id,organism,location_text,product,fields_matched,snippet,max_score"
+         summary="formatted_gene_id,organism,location_text,product,fields_matched,max_score"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
         <attributesList excludeProjects="ToxoDB"
-         summary="organism,location_text,product,fields_matched,snippet,max_score"
+         summary="organism,location_text,product,fields_matched,max_score"
          sorting="max_score asc,organism asc,location_text asc"
         /> 
         <summary>
@@ -1980,8 +1980,6 @@ Find genes that are predicted to encode a signal peptide.
  <dynamicAttributes>
             <columnAttribute name="fields_matched"
                        displayName="Found in" align="center"/>
-            <columnAttribute name="snippet"
-                       displayName="Context" align="center"/>
             <columnAttribute name="max_score"
                        displayName="Score" align="center"/>
         </dynamicAttributes>
