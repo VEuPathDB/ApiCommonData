@@ -3470,9 +3470,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
         <column name="project_id"/>
         <column name="source_id"/>
+        <column name="pvalue"/>
         <sql>
             <![CDATA[
-            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
+            SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
+                 to_binary_double(pvalue_mant || 'e' || pvalue_exp) pvalue,
                  MAX(ens.taxon_id) AS gene_taxon_id
             FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  /*  join to TranslatedAaSequence seems unneccessary */
@@ -3501,7 +3503,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    CONNECT BY parent_id = PRIOR taxon_id
                    START WITH taxon_id IN ($$clades$$))
               AND ens.taxon_id IN ($$organism$$)
-            GROUP BY gf.source_id
+            GROUP BY gf.source_id, s.pvalue_exp, s.pvalue_mant
             ORDER BY MAX(ens.taxon_id), gf.source_id
             ]]>
        </sql>

@@ -2659,7 +2659,7 @@ Advanced parameters can be modified for a more specific search (please go to the
          queryRef="GeneId.GenesByPdbSimilarity"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
-         summary="location_text,product"
+         summary="location_text,product,pvalue"
          sorting="location_text asc"
         /> 
         <summary includeProjects = "PlasmoDB,TriTrypDB">
@@ -2680,6 +2680,9 @@ Advanced parameters can be modified for a more specific search (please go to the
             p-value exponent cutoff.
             ]]>
         </description>
+        <dynamicAttributes>
+            <columnAttribute name="pvalue" displayName="P-value" align="center"/>
+        </dynamicAttributes>
        <propertyList name="specificAttribution">
          <value includeProjects="PlasmoDB,ApiDB">PDBProteinSequences</value>
        </propertyList>
