@@ -14,7 +14,7 @@ sub run {
 
   # get step properties
   my $taskSize = $self->getConfig('taskSize');
-  my $psipredPath = $self->getConfig('psipredPath');
+  my $psipredPath = $self->getConfig('clusterpath');
   my $ncbiBinPath = $self->getConfig('ncbiBinPath');
 
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
