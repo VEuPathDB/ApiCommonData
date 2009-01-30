@@ -39,11 +39,17 @@
       <depends name="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
+    <step name="runNibOnCluster" stepClass="ApiCommonData::Load::WorkflowSteps::RunNibOnCluster">
+      <paramValue name="inputFile">$$dataDir$$/input/targetList</paramValue>
+      <paramValue name="outputDir">$$genomicSeqsDir$$</paramValue>
+      <depends name="mirrorToCluster"/>
+    </step>
+
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <paramValue name="numNodes">NUM_NODES</paramValue>
-      <paramValue name="processorsPerNode"></paramValue>
-      <depends name="mirrorToCluster"/>
+      <paramValue name="numNodes">1</paramValue>
+      <paramValue name="processorsPerNode">1</paramValue>
+      <depends name="runNibOnCluster"/>
     </step>
 
     <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
@@ -54,7 +60,7 @@
     </step>
 
     <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
-      <paramValue name="xmlFileRelativeToProjectHomeDir">ApiCommonData/Load/config/blatalignmentquality.xml</paramValue>
+      <paramValue name="xmlFileRelativeToGusHomeDir">/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
     </step>
 

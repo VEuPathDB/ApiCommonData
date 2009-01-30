@@ -13,6 +13,7 @@
   <param name="calculateTranslatedProteins"/>
   <param name="soVersion"/>
   <param name="pdbExtDbRlsSpec"/>
+  <param name="goVersion"/>
 
   <constant name="dataDir">$$parentDataDir$$/proteome</constant>
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
@@ -162,6 +163,7 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">INTERPRO|$$interproVersion$$</paramValue>
       <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+      <paramValue name="goVersion">$$goVersion$$</paramValue>
       <depends name="mirrorProteinsToCluster"/>
     </subgraph>
 
@@ -176,10 +178,10 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="nickName">blastpNrdb</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
-      <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="queryTable">DoTS::TranslatedAASequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subjectFile">$$nrdbFile$$</paramValue>
-      <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000</paramValue>
       <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
@@ -196,11 +198,11 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="nickName">blastpPdb</paramValue>
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
-      <paramValue name="queryTable">Dots.ExternalAaSequence</paramValue>
+      <paramValue name="queryTable">DoTS::TranslatedAASequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="subjectFile">$$pdbFile$$</paramValue>
-      <paramValue name="subjectTable">Dots.ExternalAaSequence</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
       <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1</paramValue>
       <paramValue name="idRegex">(\\w+)\\s+mol:protein</paramValue>
       <paramValue name="blastType">blastp</paramValue>
