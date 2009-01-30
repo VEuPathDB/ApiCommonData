@@ -4,6 +4,7 @@ create table apidb.Workflow (
   version               varchar(30),
   state                 varchar(30),
   process_id            number(10),
+  undo_step_id          number(10),
   metaconfig            clob,
   xml_file_digest    	varchar(100)
 );
@@ -34,6 +35,8 @@ create table WorkflowStep (
   process_id          number(10),
   state               varchar(30),
   state_handled       number(1),
+  undo_state          varchar(30),
+  undo_state_handled  number(1),
   off_line            number(1),
   start_time          date,
   end_time            date,
@@ -52,6 +55,10 @@ REFERENCES apidb.Workflow (workflow_id);
 ALTER TABLE apidb.WorkflowStep
 ADD CONSTRAINT workflow_step_uniq
 UNIQUE (name, workflow_id);
+
+ALTER TABLE apidb.Workflow
+ADD CONSTRAINT workflow_fk1 FOREIGN KEY (undo_step_id)
+REFERENCES apidb.WorkflowStep (workflow_step_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStep TO gus_w;
 GRANT SELECT ON apidb.WorkflowStep TO gus_r;
