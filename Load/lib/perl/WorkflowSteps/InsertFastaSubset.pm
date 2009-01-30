@@ -24,7 +24,7 @@ sub run {
     $self->testInputFile('idsFile', "$localDataDir/$idsFile");
   }
 
-  $self->runPlugin("GUS::Supported::Plugin::LoadFastaSequences",$args);
+  $self->runPlugin($test,"GUS::Supported::Plugin::LoadFastaSequences",$args);
 
 }
 

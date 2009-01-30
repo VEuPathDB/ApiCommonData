@@ -20,12 +20,16 @@ sub run {
   $taxonList =~ s/\"//g if $taxonList;
 
   my $gi2taxidFile = "$downloadDir/$gi2taxidFileRelativeToDownloadDir";
+  $self->runCmd(0, "gunzip $gi2taxidFile.gz") if (-e "$gi2taxidFile.gz");
 
   my $localDataDir = $self->getLocalDataDir();
 
+  $self->runCmd(0, "gunzip $localDataDir/$inputFile.gz") if (-e "$localDataDir/$inputFile.gz");
+
+
   $self->runCmd(0,"cp $localDataDir/$inputFile $localDataDir/$unfilteredOutputFile");
 
-  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$filteredOutputFile";
+  my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $localDataDir/$unfilteredOutputFile --outputFile $localDataDir/$filteredOutputFile";
 
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");

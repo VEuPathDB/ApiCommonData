@@ -9,10 +9,12 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $xmlFile = $self->getParamValue('xmlFileRelativeToProjectHomeDir');
+  my $xmlFile = $self->getParamValue('xmlFileRelativeToGusHomeDir');
   my $gusTable = $self->getParamValue('gusTable');
 
-  my $args = "--filename $xmlFile";
+  my $gusHome = $self->getGlobalConfig('gusHome');
+
+  my $args = "--filename $gusHome/$xmlFile";
 
   $self->runPlugin($test, "GUS::Supported::Plugin::LoadGusXml", $args);
 

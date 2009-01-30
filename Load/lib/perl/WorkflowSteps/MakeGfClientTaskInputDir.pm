@@ -46,7 +46,7 @@ maxIntron=$maxIntronSize
 
   $self->makeGenomeTargetListFile("$localDataDir/$targetDir",
 				  "$localDataDir/$taskInputDir/targetList",
-				  "$computeClusterDataDir/$taskInputDir/targetList");
+				  "$computeClusterDataDir/$targetDir");
 
   #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
 }

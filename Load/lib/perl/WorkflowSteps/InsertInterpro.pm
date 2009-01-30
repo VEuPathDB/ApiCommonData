@@ -12,9 +12,10 @@ sub run {
     my $inputDir = $self->getParamValue('inputDir');
     my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
     my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
+    my $goVersion = $self->getParamValue('goVersion');
 
     my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$interproExtDbRlsSpec);
-    my $goVersion = $self->getParamValue('goVersion');
+    my $aaSeqTable = 'TranslatedAASequence';
 
     my $localDataDir = $self->getLocalDataDir();
     my $downloadDir = $self->getGlobalConfig('downloadDir');
@@ -22,6 +23,7 @@ sub run {
     my $args = <<"EOF";
 --resultFileDir=$localDataDir/$inputDir \\
 --confFile=$downloadDir/$configFileRelativeToDownloadDir \\
+--aaSeqTable=$aaSeqTable \\
 --extDbName='$extDbName' \\
 --extDbRlsVer='$extDbRlsVer' \\
 --goVersion=\'$goVersion\' \\

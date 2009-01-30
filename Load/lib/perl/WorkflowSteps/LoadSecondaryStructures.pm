@@ -14,7 +14,10 @@ sub run {
 
     my $localDataDir = $self->getLocalDataDir();
 
-    my $args = "--predAlgName $algName --directory $localDataDir/$inputDir";
+    my $algImpVer = "dontcare";
+    my $algInvStart = "2000-01-01";
+    my $algInvEnd = "2000-01-01";
+    my $args = "--predAlgName $algName  --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --predAlgInvEnd $algInvEnd --directory $localDataDir/$inputDir";
 
     if ($test) {
       $self->testInputFile('inputDir', "$localDataDir/$inputDir");
