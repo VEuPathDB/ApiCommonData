@@ -56,3 +56,17 @@ begin
   where comment_id not in (select comment_id from comments2.comments);
 end;
 /
+
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB(
+job_name => 'optimize_index',
+job_type => 'PLSQL_BLOCK',
+job_action => 'begin CTX_DDL.OPTIMIZE_INDEX(''comments_text_ix'',''FULL''); end',
+start_date => sysdate+ 1/(24*60*12), -- five seconds
+repeat_interval => 'FREQ=DAILY'
+);
+
+DBMS_SCHEDULER.ENABLE('optimize_index');
+END;
+/
+
