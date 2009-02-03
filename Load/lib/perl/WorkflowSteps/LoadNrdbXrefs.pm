@@ -9,38 +9,22 @@ sub run {
 
   # get parameters
   my $xrefsFile = $self->getParamValue('xrefsFile');
-  my $dbAbbrevList = $self->getParamValue('dbAbbrevList');
-  my $nrdbExtDbRlsSpec = $self->getParamValue('nrdbExtDbRlsSpec');
 
   my $localDataDir = $self->getLocalDataDir();
-  my $stepDir = $self->getStepDir();
 
-  my $cmd = "filterDbXRefOutput --file '$localDataDir/$xrefsFile' 2>>$stepDir/command.log";
-   $self->runCmd($test,$cmd);
-  my @db = split(/,/, $dbAbbrevList);
+  my $args = "--DbRefMappingFile '$localDataDir/$xrefsFile' --columnSpec \"secondary_identifier,primary_identifier\"";
 
-  foreach my $db (@db) {
-    my $dbType = $db =~ /gb|emb|dbj/ ? "gb" : $db;
-
-    my $dbName = "NRDB_${dbType}_dbXRefBySeqIdentity";
-
-    unless (-e "$localDataDir/${xrefsFile}_$db"){
-      my $log = "$stepDir/command.err";
-      open(LOG,">>$log") or die "Can't open log file $log. Reason: $!\n";
-      print LOG "$localDataDir/${xrefsFile}_$db does not exist. Skipping...\n";
-      close(LOG);
-      next;
+    if ($test) {
+      $self->testInputFile('xrefsFile', "$localDataDir/$xrefsFile");
     }
 
+   $self->runPlugin($test,"ApiCommonData::Load::Plugin::InsertNrdbXrefs", $args);
 
-}
-    die "test here";
+
 }
 sub getParamsDeclaration {
   return (
           'xrefsFile',
-          'dbAbbrevList',
-          'nrdbVersion',
          );
 }
 

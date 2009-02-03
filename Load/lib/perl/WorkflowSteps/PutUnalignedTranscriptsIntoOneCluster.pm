@@ -11,10 +11,17 @@ sub run {
   my $allClustersOutputFile = $self->getParamValue('allClustersOutputFile');
   my $alignedClustersFile = $self->getParamValue('alignedClustersFile');
   my $repeatMaskErrFile = $self->getParamValue('repeatMaskErrFile');
+  my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
+  my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
+  my $targetNcbiTaxId = $self->getParamValue('targetNcbiTaxId');
 
   my $localDataDir = $self->getLocalDataDir();
+  
+  my $taxonId = $self->getTaxonIdFromNcbiTaxId($test,$parentNcbiTaxonId);
+  my $taxonIdList = $self->getTaxonIdList($test, $taxonId, $useTaxonHierarchy);
+  my $targetTaxonId = $self->getTaxonIdFromNcbiTaxId($test,$targetNcbiTaxId);
 
-  my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $localDataDir/$alignedClustersFile --outputFile $localDataDir/$allClustersOutputFile --repeatMaskErrFile $localDataDir/$repeatMaskErrFile";
+  my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $localDataDir/$alignedClustersFile --outputFile $localDataDir/$allClustersOutputFile --repeatMaskErrFile $localDataDir/$repeatMaskErrFile --taxonIdList $taxonIdList --targetTaxonId $targetTaxonId";
 
   if ($test) {
     $self->testInputFile('alignedClustersFile', "$localDataDir/$alignedClustersFile");
