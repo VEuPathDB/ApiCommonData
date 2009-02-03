@@ -118,7 +118,7 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
 
-        <answerFilterLayout name="crypto_species" visible="true"
+        <answerFilterLayout name="crypto_species" visible="false"
                             displayName="Filter results by species" includeProjects="CryptoDB">
 
             <instanceRef ref="all_genes" />
@@ -147,8 +147,8 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,CryptoDB,TriTrypDB,ApiDB">
-                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB,CryptoDB,ToxoDB,TriTrypDB">
+                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB">
+                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB">
                     <description>
                         <![CDATA[
                             All results
@@ -282,7 +282,7 @@
   <answerFilter queryRef="GeneSummaries.CryptoGenes"
                           includeProjects="CryptoDB">
                 
-                <instance name="all_genes" displayName="Cryptosporidium Genes"> 
+                <instance name="all_genes" displayName="Cryptosporidium Genes" default="true"> 
                     <description>
                      <![CDATA[
                        All <i>Cryptosporidium</i> results
