@@ -23,12 +23,12 @@ GRANT CREATE VIEW TO uploads;
 /* ***************************************************** */
 
 Begin  
-  execute immediate 'drop sequence uploads.UserFileId_pkseq'; 
+  execute immediate 'drop sequence uploads.UserFile_pkseq'; 
   Exception when others then null;
 End;
 /
 Begin  
-  execute immediate 'drop sequence uploads.TagId_pkseq'; 
+  execute immediate 'drop sequence uploads.Tag_pkseq'; 
   Exception when others then null;
 End;
 /
@@ -75,9 +75,9 @@ CREATE TABLE uploads.UserFile
 GRANT insert, update, delete on uploads.UserFile to GUS_W;
 GRANT select on uploads.UserFile to GUS_R;
 
-CREATE SEQUENCE uploads.UserFileId_pkseq START WITH 1 INCREMENT BY 1;
-GRANT select on uploads.UserFileId_pkseq to GUS_W;
-GRANT select on uploads.UserFileId_pkseq to GUS_R;
+CREATE SEQUENCE uploads.UserFile_pkseq START WITH 1 INCREMENT BY 1;
+GRANT select on uploads.UserFile_pkseq to GUS_W;
+GRANT select on uploads.UserFile_pkseq to GUS_R;
 
 
 
@@ -93,9 +93,9 @@ CREATE TABLE uploads.Tag
 GRANT insert, update, delete on uploads.Tag to GUS_W;
 GRANT select on uploads.Tag to GUS_R;
 
-CREATE SEQUENCE uploads.TagId_pkseq START WITH 1 INCREMENT BY 1;
-GRANT select on uploads.TagId_pkseq to GUS_W;
-GRANT select on uploads.TagId_pkseq to GUS_R;
+CREATE SEQUENCE uploads.Tag_pkseq START WITH 1 INCREMENT BY 1;
+GRANT select on uploads.Tag_pkseq to GUS_W;
+GRANT select on uploads.Tag_pkseq to GUS_R;
 
 
 CREATE TABLE uploads.UserFileTag
