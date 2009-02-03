@@ -26,18 +26,12 @@
       <paramValue name="alignedClustersFile">$$dataDir$$/alignedClusters.out</paramValue>
       <paramValue name="allClustersOutputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="useTaxonHierarchy">true</paramValue>
       <depends name="clusterTranscriptsByGenomeAlignment"/>
     </step>
 
-    <step name="makeAssembliesSmallClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
-      <paramValue name="dataDir">$$dataDir$$/small</paramValue>
-      <depends name="makeDataDir"/>
-    </step>
-
-    <step name="makeAssembliesBigClusterDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
-      <paramValue name="dataDir">$$dataDir$$/big</paramValue>
-      <depends name="makeDataDir"/>
-    </step>
 
    <step name="splitClusterFile"
           stepClass="ApiCommonData::Load::WorkflowSteps::SplitClusterFile">
@@ -58,7 +52,7 @@
    <step name="makeAndLoadAssembliesFromBigClusters"
           stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies">
       <paramValue name="inputFile">$$dataDir$$/bigClusters.out</paramValue>
-      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
       <depends name="splitClusterFile"/>
     </step>
@@ -66,7 +60,7 @@
    <step name="extractAssemblies"
           stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAssemblies">
       <paramValue name="outputFile">$$dataDir$$/assemblies.fsa</paramValue>
-      <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <depends name="makeAndLoadAssembliesFromSmallClusters"/>
       <depends name="makeAndLoadAssembliesFromBigClusters"/>
     </step>
@@ -89,8 +83,8 @@
 
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <paramValue name="numNodes">NUM_NODES</paramValue>
-      <paramValue name="processorsPerNode"></paramValue>
+      <paramValue name="numNodes">1</paramValue>
+      <paramValue name="processorsPerNode">1</paramValue>
       <depends name="mirrorToCluster"/>
     </step>
 
