@@ -58,6 +58,17 @@ end;
 /
 
 BEGIN
+  dbms_ddl.set_trigger_firing_property('comments2', 'comments_insert', FALSE);
+  dbms_ddl.set_trigger_firing_property('comments2', 'comments_update', FALSE);
+  dbms_ddl.set_trigger_firing_property('comments2', 'comments_delete', FALSE);
+END;
+/
+
+BEGIN
+DBMS_SCHEDULER.DROP_JOB(
+  job_name => 'optimize_index'
+);
+
 DBMS_SCHEDULER.CREATE_JOB(
 job_name => 'optimize_index',
 job_type => 'PLSQL_BLOCK',
