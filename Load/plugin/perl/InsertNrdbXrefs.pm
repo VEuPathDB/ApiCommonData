@@ -86,7 +86,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 26447 $', # cvs fills this in!
+		       cvsRevision => '$Revision: 26448 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -159,7 +159,7 @@ sub InsertExternalDatabaseRls{
     my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
 
     if ($extDbRlsId){
-	Print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
+	print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
     }
 
     else{
