@@ -113,7 +113,7 @@ sub runBlast{
     my $cmd = "runAndParseBlast --ncbiBlastPath $ncbiBlastPath --queryFile $queryFile --database $blastDatabase --epitopeFile $epitopeFile --outputFile $outFile";
 
     if ($idRegex){
-      $cmd .= " --regex $idRegex";
+      $cmd .= " --regex '$idRegex'";
     }
 
     print STDERR "CMD: $cmd\n" if $verbose;

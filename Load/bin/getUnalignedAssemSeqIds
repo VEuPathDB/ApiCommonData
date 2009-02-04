@@ -8,12 +8,14 @@ use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 use Data::Dumper;
 
-my ($verbose,$outputFile,$inputFile, $blockFile, $gusConfigFile);
+my ($verbose,$outputFile,$inputFile, $blockFile, $gusConfigFile,$taxonIdList,$targetTaxonId);
 &GetOptions("verbose!"=> \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "outputFile=s" => \$outputFile,
             "alignedClustersFile=s" => \$inputFile,
-	    "repeatMaskErrFile=s" => \$blockFile);
+	    "repeatMaskErrFile=s" => \$blockFile,
+	    "taxonIdList=s" => \$taxonIdList,
+	    "targetTaxonId=s" => \$targetTaxonId);
 
 print STDERR "Establishing dbi login\n";
 
