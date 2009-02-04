@@ -1131,6 +1131,7 @@ SELECT CASE
               nl.is_reversed) AS strand,
        SUBSTR(sequence.source_id, 1, 50) AS sequence_id,
        SUBSTR(tn.name, 1, 40) AS organism,
+       SUBSTR(species_name.name, 1, 40) AS species,
        taxon.ncbi_tax_id,
        so_id, SUBSTR(so.term_name, 1, 150) AS so_term_name,
        SUBSTR(so.definition, 1, 150) AS so_term_definition,
@@ -1181,7 +1182,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      apidb.GeneProteinAttributes protein, apidb.GeneGoAttributes go,
      apidb.DerisiExpn DerisiExpn, apidb.WinzelerExpn WinzelerExpn,
      apidb.ToxoExpn ToxoExpn, apidb.GenomicSequence sequence,
-     dots.geneinstance gi,
+     dots.geneinstance gi, apidb.TaxonSpecies ts, sres.TaxonName species_name,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
@@ -1265,6 +1266,9 @@ WHERE gf.source_id is not null
   AND gf.na_feature_id = totsnps.parent_id(+)
   AND gf.na_feature_id = nssnps.parent_id(+)
   AND gf.na_feature_id = synsnps.parent_id(+)
+  AND sequence.taxon_id = ts.taxon_id(+)
+  AND ts.species_taxon_id = species_name.taxon_id
+  AND species_name.name_class = 'scientific name'
   -- skip toxo predictions (except tRNAs)
   -- skip new plasmo annotation
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
@@ -3239,7 +3243,7 @@ select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-     dots.NaSequence ns, sres.TaxonName tn, apidb.GeneAttributes ga
+     dots.NaSequence ns, apidb.SpeciesTaxon st, sres.TaxonName tn, apidb.GeneAttributes ga
 where qti.table_id = sim.query_table_id
   and qti.name = 'TranslatedAASequence'
   and sti.table_id = sim.subject_table_id
@@ -3252,7 +3256,8 @@ where qti.table_id = sim.query_table_id
   and subject.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
   and gf.na_sequence_id = ns.na_sequence_id
-  and ns.taxon_id = tn.taxon_id
+  and ns.taxon_id = st.taxon_id
+  and st.species_taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
       ]]>
     </sql>
