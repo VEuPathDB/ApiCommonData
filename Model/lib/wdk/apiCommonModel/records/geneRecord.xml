@@ -1928,7 +1928,7 @@
           <table name="PdbSimilarities"
                  displayName="Similarities to Protein Data Bank (PDB) Chains"
                  queryRef="GeneTables.PdbSimilarities"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="TriTrypDB,PlasmoDB,ApiDB">
             <columnAttribute name="pdb_chain" internal="true"/>
             <columnAttribute name="pdb_id" internal="true"/>
             <columnAttribute name="pvalue_mant" internal="true"/>
@@ -1952,9 +1952,9 @@
                     ]]>
                 </text>
             </textAttribute>
-            <columnAttribute name="percent_plasmo_coverage" displayName="% of PlasmoDB Protein Covered"/>
-            <columnAttribute name="percent_identity" displayName="% Identity"/>
-            <textAttribute name="Pvalue" displayName="P-value">
+            <columnAttribute name="percent_plasmo_coverage" displayName="% of PlasmoDB Protein Covered" align="center"/>
+            <columnAttribute name="percent_identity" displayName="% Identity" align="center"/>
+            <textAttribute name="Pvalue" displayName="P-value" align="center">
                 <text>
                     <![CDATA[
                     $$pvalue_mant$$ x 10<sup>$$pvalue_exp$$</sup>
