@@ -8,7 +8,7 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my @extDbRlsSpecs = map{"'$_'"} split (/,/,$self->getParamValue('genomeExtDbSpecList'));
+  my @genomeExtDbSpecList = map{"'$_'"} split (/,/,$self->getParamValue('genomeExtDbSpecList'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
   my $organismSource = $self->getParamValue('organismSource');
@@ -18,7 +18,7 @@ sub run {
   my @extDbRlsVers; 
   my @extDbNames;
 
-  foreach ( @extDbRlsSpecs ){
+  foreach ( @genomeExtDbSpecList ){
       my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($test,$_);
       push (@extDbNames,$extDbName);
       push (@extDbRlsVers,$extDbRlsVer);
