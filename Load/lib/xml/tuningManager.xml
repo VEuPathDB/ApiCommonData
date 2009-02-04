@@ -795,6 +795,7 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <internalDependency name="apidb.GeneAlias"/>
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GenomicSequence"/>
+    <internalDependency name="apidb.SpeciesTaxon"/>
     <externalDependency name="apidb.AaSequenceAttribute"/>
     <externalDependency name="apidb.DeprecatedGenes"/>
     <externalDependency name="apidb.Profile"/>
@@ -3230,6 +3231,7 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <externalDependency name="core.TableInfo"/>
     <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.SpeciesTaxon"/>
     <sql>
       <![CDATA[
 create table apidb.Blastp&1 as
