@@ -29,11 +29,11 @@ sub run {
       
       if($args =~/\-p/){
 
-	  my $tempFile = "$inputFile.temp";
+	  my $tempFile = "$apiSiteFilesDir/$inputFile.temp";
 
-	  $self->runCmd($test,"cat $inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
+	  $self->runCmd($test,"cat $apiSiteFilesDir/$inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
 
-	  $self->runCmd($test,"$blastPath/xdformat $args -o $outputDir/$formattedFileName $tempFile");
+	  $self->runCmd($test,"$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $tempFile");
 
 	  $self->runCmd($test,"rm -fr $tempFile");
 

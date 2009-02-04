@@ -17,11 +17,11 @@ sub run {
   my ($name,$ver) = $self->getExtDbInfo($test, $self->getParamValue('genomeExtDbRlsSpec')) if $self->getParamValue('genomeExtDbRlsSpec');
   push (@dbnames,$name);
   push (@dbvers,$ver);
-  ($name,$ver) = $self->getExtDbRlsId($test, $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec')) if $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
+  ($name,$ver) = $self->getExtDbInfo($test, $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec')) if $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
   push (@dbnames,$name);
   push (@dbvers,$ver);
-  my $names = join (",", @dbnames);
-  my $vers = join (",", @dbvers);
+  my $names = join (",", map{"'$_'"} @dbnames);
+  my $vers = join (",", map{"'$_'"} @dbvers);
 
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
@@ -66,11 +66,7 @@ sub run {
 EOF
 
 
-   my $cmd = <<"EOF";
-      gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile \\
-      --idSQL \"$sql\" \\
-      --verbose
-EOF
+  my $cmd = "gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\"  --verbose";
 
   if ($test) {
       $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");

@@ -8,15 +8,23 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my @extDbNames = map{"'$_'"} split (/,/,$self->getParamValue('extDbName'));
-  my @extDbRlss = map{"'$_'"} split (/,/,$self->getParamValue('extDbRls'));
+  my @genomeExtDbSpecList = split (/,/,$self->getParamValue('genomeExtDbSpecList'));
   my $outputFile = $self->getParamValue('outputFile');
   my $organismSource = $self->getParamValue('organismSource');
   
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
-  my $extDbName = join(",", @extDbNames);
-  my $extDbRls = join(",", @extDbRlss);
+  my (@extDbRlsVers,@extDbNames);
+
+  foreach ( @genomeExtDbSpecList ){
+      my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($test,$_);
+      push (@extDbNames,$extDbName);
+      push (@extDbRlsVers,$extDbRlsVer);
+  }
+
+  my $extDbNameList = join(",", map{"'$_'"} @extDbNames);
+  my $extDbRlsVerList = join(",",map{"'$_'"} @extDbRlsVers);
+
 
   my $sql = " SELECT '$organismSource'
                 ||'|'||
@@ -32,7 +40,7 @@ sub run {
            FROM dots.nasequence ns,
                 apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
-            AND sa.database_name in ($extDbName) AND sa.database_version in ($extDbRls)
+            AND sa.database_name in ($extDbNameList) AND sa.database_version in ($extDbRlsVerList)
             AND sa.is_top_level = 1";
 
   my $cmd = "gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\" ";

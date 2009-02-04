@@ -16,6 +16,9 @@ sub run {
 
   my $args = "--filename $gusHome/$xmlFile";
 
+  if ($test) {
+      $self->testInputFile('xmlFile', "$gusHome/$xmlFile");
+  }
   $self->runPlugin($test, "GUS::Supported::Plugin::LoadGusXml", $args);
 
 }

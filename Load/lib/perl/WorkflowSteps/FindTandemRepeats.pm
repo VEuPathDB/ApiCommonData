@@ -15,11 +15,9 @@ sub run {
 
   my $trfPath = $self->getConfig('trfPath');
 
-  my $stepDir = $self->getStepDir();
-
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d 2>> $stepDir/command.log";
+  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d 2>> command.log";
  
   $repeatFinderArgs =~ s/\s+/\./g;
 

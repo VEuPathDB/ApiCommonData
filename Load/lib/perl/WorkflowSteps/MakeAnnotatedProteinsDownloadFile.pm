@@ -8,24 +8,24 @@ sub run {
   my ($self, $test) = @_;
 
   # get parameters
-  my @genomeExtDbSpecList = map{"'$_'"} split (/,/,$self->getParamValue('genomeExtDbSpecList'));
+  my @genomeExtDbSpecList = split(/,/,$self->getParamValue('genomeExtDbSpecList'));
   my $outputFile = $self->getParamValue('outputFile');
   my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
   my $organismSource = $self->getParamValue('organismSource');
 
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
-  my @extDbRlsVers; 
-  my @extDbNames;
+  my (@extDbRlsVers,@extDbNames);
 
   foreach ( @genomeExtDbSpecList ){
       my ($extDbName,$extDbRlsVer)=$self->getExtDbInfo($test,$_);
       push (@extDbNames,$extDbName);
       push (@extDbRlsVers,$extDbRlsVer);
+
   }
 
-  my $extDbName = join(",", @extDbNames);
-  my $extDbRlsVer = join(",", @extDbRlsVers);
+  my $extDbNameList = join(",", map{"'$_'"} @extDbNames);
+  my $extDbRlsVerList = join(",",map{"'$_'"} @extDbRlsVers);
 
 
   my $sql = "SELECT '$organismSource'
@@ -59,7 +59,7 @@ sub run {
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
-        AND gf.external_db_name in ($extDbName) AND gf.external_db_version in ($extDbRlsVer)
+        AND gf.external_db_name in ($extDbNameList) AND gf.external_db_version in ($extDbRlsVerList)
         AND t.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND fl.is_top_level = 1

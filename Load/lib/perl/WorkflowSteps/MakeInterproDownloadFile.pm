@@ -35,7 +35,9 @@ sub run {
     dots.genefeature gf,
     dots.transcript t, 
     dots.translatedaafeature taf,
-    dots.translatedaasequence tas 
+    dots.translatedaasequence tas,
+    sres.externaldatabase xd1,
+    sres.externaldatabaserelease xdr1
   WHERE
    gf.external_database_release_id = $genomeDbRlsId
      AND gf.na_feature_id = t.parent_id 
@@ -46,13 +48,12 @@ sub run {
      AND draf.db_ref_id = dr.db_ref_id 
      AND df.aa_feature_id = al.aa_feature_id 
      AND df.external_database_release_id =  $interproDbRlsId
+     AND xdr1.external_database_id = xd1.external_database_id 
+     AND xdr1.external_database_release_id =  $interproDbRlsId
 EOF
 
 
-  my $cmd = <<"EOF";
-     makeFileWithSql --outFile $apiSiteFilesDir/$outputFile \\
-     --sql \"$sql\"
-EOF
+my $cmd = " makeFileWithSql --outFile $apiSiteFilesDir/$outputFile --sql \"$sql\" ";
 
   if ($test) {
       $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
