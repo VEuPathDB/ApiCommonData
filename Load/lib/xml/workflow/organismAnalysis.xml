@@ -87,11 +87,17 @@
     <depends name="mirrorToCluster"/>
   </subgraph>
 
+    <step name="runTuningManager"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunTuningManager">
+      <paramValue name="configFileRelativeToGusHomeDir">/lib/xml/tuningManager.xml</paramValue>
+      <depends name="genomeAnalysis"/>
+      <depends name="proteomeAnalysis"/>
+    </step>
 
   <subgraph name="makeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
-    <paramValue name="ncbiTaxonId">$$organismTwoLetterAbbrev$$</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
     <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="genomeSource">$$genomeSource$$</paramValue>
@@ -102,8 +108,7 @@
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
     <paramValue name="minOrfLength">50</paramValue>
-    <depends name="proteomeAnalysis"/>
-    <depends name="genomeAnalysis"/>
+    <depends name="runTuningManager"/>
     <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
@@ -113,8 +118,7 @@
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
     <paramValue name="projectName">$$projectName$$</paramValue>
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
-    <depends name="proteomeAnalysis"/>
-    <depends name="genomeAnalysis"/>
+    <depends name="runTuningManager"/>
     <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
@@ -127,8 +131,7 @@
     <paramValue name="outputGeneFile">$$organismName$$Gene_$$projectName$$-$$projectVersion$$.txt</paramValue>
     <paramValue name="outputSeqFile">$$organismName$$Sequence_$$projectName$$-$$projectVersion$$.txt</paramValue>
 
-    <depends name="proteomeAnalysis"/>
-    <depends name="genomeAnalysis"/>
+    <depends name="runTuningManager"/>
     <depends name="makeDownloadSiteDataDir"/>
   </step>
 </workflowGraph>
