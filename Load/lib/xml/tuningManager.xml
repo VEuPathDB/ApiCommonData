@@ -3352,6 +3352,24 @@ union
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.TaxonSpecies">
+    <externalDependency name="sres.Taxon"/>
+    <sql>
+      <![CDATA[
+create table TaxonSpecies&1 as
+select t.taxon_id, species.taxon_id as species_taxon_id
+from sres.Taxon t, sres.Taxon species
+where t.taxon_id in (select ns.taxon_id
+                     from dots.NaSequence ns, dots.NaFeature nf
+                     where ns.na_sequence_id = nf.na_sequence_id)
+  and species.taxon_id in (select taxon_id from sres.taxon
+                           connect by taxon_id = prior parent_id
+                           start with taxon_id = t.taxon_id)
+  and species.rank = 'species'
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
