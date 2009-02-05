@@ -2924,8 +2924,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-      <flatVocabParam name="mr4_reagent_type" includeProjects="PlasmoDB,ApiDB"
-                     queryRef="GeneVQ.Mr4Reagents"
+      <flatVocabParam name="reagent_type" includeProjects="PlasmoDB,ApiDB,CryptoDB"
+                     queryRef="GeneVQ.Reagents"
                      prompt="Reagent Type"
                      multiPick="false">
         <help>
@@ -4796,7 +4796,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <wsColumn name="term" width="32"/>
         </processQuery>
        
-        <sqlQuery name="Mr4Reagents" includeProjects="PlasmoDB">
+        <sqlQuery name="Reagents" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -4812,7 +4812,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                       WHERE dr.external_database_release_id
                             = edr.external_database_release_id
                         AND edr.external_database_id = ed.external_database_id
-                        AND ed.name = 'MR4DBxRefs'
+                        AND ed.name in ('MR4DBxRefs','AntibodyDBxRefs')
                       ORDER BY lower(dr.secondary_identifier))
                       UNION SELECT 'any' AS term, 'any' AS internal, 0 AS ord
                             FROM dual)

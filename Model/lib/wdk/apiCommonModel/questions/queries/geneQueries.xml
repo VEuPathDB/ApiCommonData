@@ -788,7 +788,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- IsoElectric Point -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByIsoelectricPoint" excludeProjects="ApiDB,CryptoDB"
+    <sqlQuery name="GenesByIsoelectricPoint" excludeProjects="ApiDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_isoelectric_point"/>
@@ -3243,13 +3243,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </processQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- GenesByMr4Reagents -->
+  <!-- GenesByReagents -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMr4Reagents" includeProjects="PlasmoDB"
+    <sqlQuery name="GenesByReagents" includeProjects="PlasmoDB,CryptoDB,ToxoDB"
               isCacheable="true">
 
-        <paramRef ref="geneParams.mr4_reagent_type"/>
+        <paramRef ref="geneParams.reagent_type"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <sql>
@@ -3260,11 +3260,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
                 sres.ExternalDatabase ed, dots.TranslatedAAFeature taf,
                 dots.Transcript t
-               WHERE ed.name = 'MR4DBxRefs'
+               WHERE ed.name in ('MR4DBxRefs','AntibodyDBxRefs')
                  AND edr.external_database_id = ed.external_database_id
                  AND dbr.external_database_release_id = edr.external_database_release_id
-                 AND (LOWER(dbr.secondary_identifier) = $$mr4_reagent_type$$
-                      OR $$mr4_reagent_type$$ = 'any')
+                 AND (LOWER(dbr.secondary_identifier) = $$reagent_type$$
+                      OR $$reagent_type$$ = 'any')
                  AND df.db_ref_id = dbr.db_ref_id
                  AND taf.aa_feature_id = df.aa_feature_id
                  AND t.na_feature_id = taf.na_feature_id

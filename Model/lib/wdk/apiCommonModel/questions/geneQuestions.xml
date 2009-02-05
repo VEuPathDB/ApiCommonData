@@ -253,7 +253,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
   <!-- Isoelectric point -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByIsoelectricPoint" excludeProjects="CryptoDB"
+    <question name="GenesByIsoelectricPoint" 
          displayName="Isoelectric Point"
          shortDisplayName="Isoelec Pt"
          category="Predicted Proteins"
@@ -3606,11 +3606,11 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- MR4 reagents  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB"
-         displayName="MR4 Reagents Availability"
-         shortDisplayName="MR4 Reagent"
+    <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB,CryptoDB,ToxoDB"
+         displayName="Reagents Availability"
+         shortDisplayName="Reagents"
          category="Other Attributes"
-         queryRef="GeneId.GenesByMr4Reagents"
+         queryRef="GeneId.GenesByReagents"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
          summary="location_text,product"
@@ -3623,10 +3623,10 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
         <summary>
             <![CDATA[
-                Find genes that have MR4 reagents.
+                Find genes that have available reagents.
            ]]>
         </summary>
-        <description>
+        <description includeProjects="PlasmoDB">
             <![CDATA[
                 Find <i>Plasmodium falciparum</i> genes that have
                 <a href="http://www.malaria.atcc.org/">MR4</a> reagents.
@@ -3638,8 +3638,14 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
                 to function with either gene.
            ]]>
         </description>
+        <description includeProjects="ToxoDB,CryptoDB">
+            <![CDATA[
+                Find genes that have antibodies available from the <a href="http://www.beiresources.org">Biodefense and Emerging Infections Research Resources Repository</a>.
+           ]]>
+        </description>
        <propertyList name="specificAttribution">
-         <value>MR4Reagents</value>
+         <value includeProjects="PlasmoDB">MR4Reagents</value>
+         <value includeProjects="CryptoDB,ToxoDB">Antibody</value>
        </propertyList>
     </question>
 
