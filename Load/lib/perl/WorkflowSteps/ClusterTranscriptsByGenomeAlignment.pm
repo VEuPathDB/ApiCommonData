@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $outputFile = $self->getParamValue('outputFile');
   my $ncbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
@@ -24,7 +24,13 @@ sub run {
     $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
 
-  $self->runPlugin($test, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
+  #plugin does not modify db, only makes output file
+
+  if ($undo) {
+      $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runPlugin($test, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
+  }
 
 }
 
@@ -39,19 +45,8 @@ sub getParamDeclaration {
 }
 
 sub getConfigDeclaration {
-  my @properties =
-    (
+return (
      # [name, default, description]
-    );
-  return @properties;
+       );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
