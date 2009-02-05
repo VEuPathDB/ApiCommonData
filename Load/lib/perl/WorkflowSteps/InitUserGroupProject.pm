@@ -5,13 +5,15 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get global properties
   my $projectVersion = $self->getGlobalConfig('projectVersion');
 
-  $self->runCmd($test, "insertUserProjectGroup --firstName dontcare --lastName dontcare --projectRelease $projectVersion --commit");
-
+  if ($undo) {
+  } else {
+      $self->runCmd($test, "insertUserProjectGroup --firstName dontcare --lastName dontcare --projectRelease $projectVersion --commit");
+  }
 }
 
 sub getParamsDeclaration {
@@ -24,12 +26,3 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

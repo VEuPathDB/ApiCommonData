@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
@@ -24,7 +24,7 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self->runPlugin($test, "ApiCommonData::Load::Plugin::LoadTMDomains",$args);
+  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::LoadTMDomains", $args);
 
 }
 
@@ -42,12 +42,3 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

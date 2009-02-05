@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $resourcesFile = $self->getParamValue('resourcesFile');
@@ -22,8 +22,11 @@ sub run {
       $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
   }
 
-  $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
-
+  if ($undo) {
+      $self->runCmd(0, "rm $localDataDir/$toFile");
+  } else {
+      $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
+  }
 }
 
 sub getParamsDeclaration {
@@ -40,12 +43,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
