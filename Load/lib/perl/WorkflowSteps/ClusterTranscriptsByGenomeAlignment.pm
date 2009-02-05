@@ -29,7 +29,7 @@ sub run {
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runPlugin($test, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
+    $self->runPlugin($test,0, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
   }
 
 }
