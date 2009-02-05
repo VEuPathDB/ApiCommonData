@@ -385,10 +385,7 @@
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
             and misc.na_sequence_id = nas.na_sequence_id
-            and nas.taxon_id in 
-            (select taxon_id from sres.taxon
-             connect by parent_id = prior taxon_id
-             start with taxon_id in ($$organism$$))
+            and nas.taxon_id in ($$organism$$)
             and misc.source_id not in 
             ('AAEE01000003-2-916100-917650',
              'AAEE01000002-1-148078-149013',
