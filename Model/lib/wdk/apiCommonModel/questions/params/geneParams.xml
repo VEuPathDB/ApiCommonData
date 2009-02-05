@@ -3693,7 +3693,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <suggest default="-20"/>
         </stringParam>
 
-      <flatVocabParam name="clades" includeProjects="PlasmoDB,ApiDB,TriTrypDB"
+      <flatVocabParam name="clades" includeProjects="PlasmoDB,ApiDB,TriTrypDB,CryptoDB"
                      queryRef="GeneVQ.Clades"
                      prompt="With similarity to PDB Proteins from"
                      multiPick="true">
@@ -4825,7 +4825,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <wsColumn name="term" width="32"/>
         </processQuery>
 
-        <sqlQuery name="Clades" includeProjects="PlasmoDB">
+        <sqlQuery name="Clades" includeProjects="PlasmoDB,CryptoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>

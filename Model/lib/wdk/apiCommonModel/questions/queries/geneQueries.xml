@@ -1743,7 +1743,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- SecondaryStructure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySecondaryStructure" includeProjects="PlasmoDB,TriTrypDB"
+    <sqlQuery name="GenesBySecondaryStructure" includeProjects="PlasmoDB,TriTrypDB,CryptoDB"
             isCacheable="true">
         <paramRef ref="geneParams.min_coil"/>
         <paramRef ref="geneParams.max_coil"/>
@@ -3462,8 +3462,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByPdbSimilarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB"
+    <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB,CryptoDB"
               isCacheable="true">
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
         <paramRef ref="geneParams.clades"/>
