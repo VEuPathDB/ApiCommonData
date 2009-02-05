@@ -23,7 +23,7 @@ sub run {
   }
 
   if ($undo) {
-      $self->runCmd(0, "rm $localDataDir/$toFile");
+      $self->runCmd(0, "rm -f $localDataDir/$toFile");
   } else {
       $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
   }
