@@ -3464,18 +3464,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB"
               isCacheable="true">
-        <paramRef ref="geneParams.clades"/>
-        <paramRef ref="geneParams.pvalue_cutoff"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="geneParams.clades"/>
+        <paramRef ref="geneParams.pvalue_cutoff"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="pvalue"/>
         <sql>
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
-                 to_binary_double(pvalue_mant || 'e' || pvalue_exp) pvalue,
-                 MAX(ens.taxon_id) AS gene_taxon_id
+                 min(to_binary_double(pvalue_mant || 'e' || pvalue_exp)) pvalue
             FROM dots.TranslatedAaFeature taf, dots.TranslatedAaSequence tas,
                  /*  join to TranslatedAaSequence seems unneccessary */
                  core.TableInfo tas_ti, dots.Similarity s,
@@ -3503,8 +3502,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    CONNECT BY parent_id = PRIOR taxon_id
                    START WITH taxon_id IN ($$clades$$))
               AND ens.taxon_id IN ($$organism$$)
-            GROUP BY gf.source_id, s.pvalue_exp, s.pvalue_mant
-            ORDER BY MAX(ens.taxon_id), gf.source_id
+            GROUP BY gf.source_id
             ]]>
        </sql>
     </sqlQuery>  

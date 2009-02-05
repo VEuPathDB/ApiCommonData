@@ -3695,7 +3695,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
       <flatVocabParam name="clades" includeProjects="PlasmoDB,ApiDB,TriTrypDB"
                      queryRef="GeneVQ.Clades"
-                     prompt="PDB Proteins from"
+                     prompt="With similarity to PDB Proteins from"
                      multiPick="true">
         <help>
              Select one or more clades.
@@ -4825,7 +4825,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <wsColumn name="term" width="32"/>
         </processQuery>
 
-        <sqlQuery name="Clades" includeProjects="PlasmoDB,TriTrypDB">
+        <sqlQuery name="Clades" includeProjects="PlasmoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -4833,7 +4833,19 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                 FROM sres.taxonname tn
                 WHERE tn.name IN
                       ('Archaea', 'Eukaryota', 'Apicomplexa', 'Chordata',
-                       'Bacteria', 'Kinetoplastida')
+                       'Bacteria')
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="Clades" includeProjects="TriTrypDB">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+                SELECT tn.name AS term, taxon_id AS internal
+                FROM sres.taxonname tn
+                WHERE tn.name IN
+                      ('Archaea', 'Eukaryota', 'Bacteria', 'Kinetoplastida')
+                ORDER by tn.name desc
             </sql>
         </sqlQuery>
 
