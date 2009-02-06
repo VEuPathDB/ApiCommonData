@@ -6,7 +6,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $downloadSiteDataDir = $self->getParamValue('downloadSiteDataDir');
