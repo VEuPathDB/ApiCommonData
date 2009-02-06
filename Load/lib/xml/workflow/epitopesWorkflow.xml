@@ -5,6 +5,7 @@
     <param name="iedbExtDbRlsSpec"/>
     <param name="genomeExtDbRlsSpec"/>
     <param name="organismTwoLetterAbbrev"/>
+    <param name="organismName"/>
 
     <constant name="dataDir">$$parentDataDir$$/iedb</constant>
     <constant name="proteinsFileSimpleDefline">$$dataDir$$/blastDb/proteinsSimpleDefline.fsa</constant>
@@ -18,6 +19,18 @@
       <depends name="makeDataDir"/>
     </step>
 
+    <step name="makeInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$/input</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="copyAndCatIedbFiles" stepClass="ApiCommonData::Load::WorkflowSteps::CopyAndCatIedbFiles">
+      <paramValue name="inputDirRelativeToDownloadsDir">IEDB_Epitopes_fixed</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="organismName">$$organismName$$</paramValue>
+      <depends name="makeInputDir"/>
+    </step>
+
     <step name="formatNcbiBlastFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile">
       <paramValue name="inputFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputBlastDbDir">$$dataDir$$/blastDb</paramValue>
@@ -27,18 +40,17 @@
 
 
     <step name="createEpitopeMapFile" stepClass="ApiCommonData::Load::WorkflowSteps::CreateEpitopeMapFile">
-      <paramValue name="inputDirRelativeToDownloadsDir">IEDB_Epitopes_fixed</paramValue>
+      <paramValue name="inputDir">$$dataDir$$/input</paramValue>
       <paramValue name="blastDbDir">$$dataDir$$/blastDb</paramValue>
       <paramValue name="queryDir">$$dataDir$$/fsa</paramValue>
-      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/results</paramValue>
-      <paramValue name="idRegex">\\>(\\S+)\\-\\d</paramValue>
+      <paramValue name="idRegex">(\\S+)</paramValue>
       <depends name="formatNcbiBlastFile"/>
     </step>
 
     <step name="insertEpitopeMapping" stepClass="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
-      <paramValue name="inputDir">$$dataDir$$/results/$$organismTwoLetterAbbrev$$</paramValue>
+      <paramValue name="inputFile">$$dataDir$$/results/IEDBExport.out</paramValue>
       <paramValue name="iedbExtDbRlsSpec">$$iedbExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="createEpitopeMapFile"/>
