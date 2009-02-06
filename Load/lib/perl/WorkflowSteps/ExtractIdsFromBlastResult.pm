@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $idType = $self->getParamValue('idType');
@@ -27,7 +27,11 @@ sub run {
 
   }
 
-  $self->runCmd($test,$cmd);
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test,$cmd);
+  }
 
 }
 
@@ -45,12 +49,3 @@ sub getConfigDeclaration {
     );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
