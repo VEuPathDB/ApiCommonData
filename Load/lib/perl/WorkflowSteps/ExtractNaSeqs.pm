@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $table = $self->getParamValue('table');
   my $extDbRlsSpec = $self->getParamValue('extDbRlsSpec');
@@ -27,26 +27,31 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd;
   if ($separateFastaFiles eq 'true') {
-    
-      $self ->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
-    $cmd = "gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";
+
+    $self ->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
 
     if ($test) {
-      $self->runCmd(0,"mkdir -p $localDataDir/$outputDirForSeparateFiles");
       $self->runCmd(0,"echo test > $localDataDir/$outputDirForSeparateFiles/IndividualSeqTest.out");
     }
 
+    if ($undo) {
+      $self->runCmd(0, "rm -rf $localDataDir/$outputDirForSeparateFiles");
+    } else {
+      $self->runCmd($test,"gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";);
+    }
+
   } else {
-    $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose";
 
     if ($test) {
       $self->runCmd(0,"echo test > $localDataDir/$outputFile");
     }
-  }
-  $self->runCmd($test,$cmd);
 
+    if ($undo) {
+      $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+    } else {
+      $self->runCmd($test,"gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose");
+    }
 }
 
 sub getParamsDeclaration {
