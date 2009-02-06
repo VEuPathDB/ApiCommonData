@@ -1,14 +1,22 @@
 #!/usr/bin/perl
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
 
-my $trfPath = $ARGV[0];
-my $inputFile = $ARGV[1];
-my $args =  $ARGV[2];
-my $logFile =  $ARGV[3];
+my ($trfPath,$inputFile,$args);
+&GetOptions("trfPath=s"=> \$trfPath,
+            "inputFile=s"=> \$inputFile,
+            "args=s"=> \$args);
 
-system("$trfPath/trf400 $inputFile $args -d 2>> $logFile");
+die "usage:trfWrap --trfPath --inputFile --args \n" 
+  unless ($trfPath && $inputFile &&$args);
 
 my $seqCount = `grep -c '>' $inputFile`;
 
+system("$trfPath/trf400 $inputFile $args -d");
+
 my $status = $? >> 8;
+
+print STDERR "status=$status\n";
 
 die "Failed with trf400 running." unless ($status == $seqCount); 
