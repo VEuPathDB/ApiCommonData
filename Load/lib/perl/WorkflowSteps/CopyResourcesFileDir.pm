@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $resourcesFileDir = $self->getParamValue('resourcesFileDir');
@@ -20,7 +20,11 @@ sub run {
   
   unless (-e $resourcesFileDir) { die "$resourcesFileDir doesn't exist\n";};
 
-  $self->runCmd(0, "cp -ar  $resourcesFileDir $toDir");
+  if ($undo) {
+    $self->runCmd(0, "rm -rf $toDir");
+  } else {
+    $self->runCmd(0, "cp -ar  $resourcesFileDir $toDir");
+  }
 
 }
 
