@@ -1,4 +1,4 @@
-package ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile;
+ package ApiCommonData::Load::WorkflowSteps::FormatNcbiBlastFile;
 
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 
@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 use File::Basename;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $outputBlastDbDir = $self->getParamValue('outputBlastDbDir');
@@ -32,7 +32,11 @@ sub run {
     $self->runCmd(0,"echo test > $localDataDir/$outputBlastDbDir/format.test");
   }
 
-  $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
+  if ($undo) {
+    $self->runCmd(0, "rm -f ${fileToFormat}.p*");
+  } else {
+    $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
+  }
 }
 
 sub getParamsDeclaration {
@@ -48,12 +52,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
