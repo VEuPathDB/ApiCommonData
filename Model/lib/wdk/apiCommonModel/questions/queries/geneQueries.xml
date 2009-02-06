@@ -305,8 +305,7 @@
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <column name="predicted_helices" includeProjects="CryptoDB"/>
-        <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,TriTrypDB">
+        <sql>
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id
             from dots.genefeature gf, dots.nasequence nas, apidb.geneattributes ga
@@ -317,27 +316,6 @@
             AND nas.taxon_id IN ($$organism$$)
            ]]>
         </sql>
-        <sql includeProjects="CryptoDB">
-            <![CDATA[
-            SELECT g.source_id, '@PROJECT_ID@' as project_id, tmf.predicted_helices
-            FROM dots.genefeature g,
-                 dots.transcript t,
-                 dots.translatedaafeature taaf,
-                 dots.TransmembraneAAFeature tmf,
-                 dots.NAsequence enas,
-                 core.algorithm alg
-            WHERE g.na_feature_id = t.parent_id
-              AND t.na_feature_id = taaf.na_feature_id
-              AND taaf.aa_sequence_id = tmf.aa_sequence_id
-              AND tmf.predicted_helices >= $$min_tm$$
-              AND tmf.predicted_helices <= $$max_tm$$
-              AND enas.taxon_id IN ($$organism$$)
-              AND t.na_sequence_id = enas.na_sequence_id
-              AND tmf.prediction_algorithm_id = alg.algorithm_id
-              AND alg.name = 'TMHMM'
-            ORDER BY tmf.predicted_helices 
-            ]]>
-          </sql>
     </sqlQuery>
 
     <processQuery name="GenesByTransmembraneDomains" includeProjects="ApiDB"
