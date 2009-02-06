@@ -6,7 +6,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $inputFile = $self->getParamValue('inputFile');
@@ -21,7 +21,12 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
-  $self->runCmd($test, "$psipredPath/pfilt $localDataDir/$inputFile > $localDataDir/$outputFile");
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test, "$psipredPath/pfilt $localDataDir/$inputFile > $localDataDir/$outputFile");
+  }
 }
 
 sub getParamsDeclaration {
@@ -38,12 +43,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
