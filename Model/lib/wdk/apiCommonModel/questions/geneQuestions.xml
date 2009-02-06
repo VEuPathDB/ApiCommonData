@@ -363,11 +363,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               queryRef="GeneId.GenesByEcNumber"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ToxoDB"
-         summary="formatted_gene_id,organism,location_text,product"
+         summary="formatted_gene_id,organism,location_text,product,ec_numbers_string"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
         <attributesList excludeProjects="ToxoDB"
-         summary="organism,location_text,product"
+         summary="organism,location_text,product,ec_numbers_string"
          sorting="project asc,organism asc, location_text asc"
         /> 
         <summary>
@@ -1403,11 +1403,11 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
               queryRef="GeneId.GenesByGoTerm"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList excludeProjects="ToxoDB"
-              summary="organism,location_text,product"
+              summary="organism,location_text,product,ann_go_function,pred_go_function"
               sorting="project asc,organism asc,location_text asc"
         /> 
         <attributesList includeProjects="ToxoDB"
-              summary="formatted_gene_id,organism,location_text,product"
+              summary="formatted_gene_id,organism,location_text,product,ann_go_function,pred_go_function"
               sorting="formatted_gene_id asc,location_text asc"
         /> 
         <summary>

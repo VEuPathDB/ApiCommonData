@@ -504,11 +504,23 @@
 
 
 
-     <stringParam name="chromosomeOptional" includeProjects="ApiDB,TriTrypDB"
-                      prompt="Chromosome">
-             <suggest default="1" includeProjects="ApiDB"/>
-             <suggest default="" allowEmpty='true' emptyValue="" includeProjects="TriTrypDB"/>
-     </stringParam>
+     <flatVocabParam name="chromosomeOptional" includeProjects="ApiDB,TriTrypDB"
+                     prompt="Chromosome"
+                     queryRef="SharedVQ.TrypChromosome"
+                     multiPick="false">
+             <help>
+                <![CDATA[
+                Select chromosome.  <B>NOTE:</B> Not all organisms have the same number of chromosomes.  
+                <TABLE>
+                    <tr><td><i>T. brucei</i>:</td><td>11</td></tr>
+                    <tr><td><i>L. braziliensis</i>:</td><td>35 </td></tr>
+                    <tr><td><i>L. infantum</i>:</td><td>36 </td></tr>
+                    <tr><td><i>L. major</i>:</td><td>36</td></tr>
+                    <tr><td><i>T. cruzi</i>:</td><td>41</td></tr>
+                </TABLE>
+                ]]>
+              </help>
+     </flatVocabParam>
 
 
     <!-- TODO:  TriTrypDB has differing # of Chromosomes / sp. -->
@@ -1786,6 +1798,20 @@ by the sequence generator.</help>
 
   <querySet name="SharedVQ" queryType="vocab">
 
+        <sqlQuery name="TrypChromosome" includeProjects="TriTrypDB" isCacheable="true">
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+              select * from (
+              select distinct chromosome as term, chromosome_order_num as internal
+              from apidb.SEQUENCEATTRIBUTES
+              where organism = 'Trypanosoma cruzi strain CL Brener'
+              and chromosome is not null
+              union 
+              select 'Choose chromosome' as term,0 as internal from dual)
+              order by internal asc
+            </sql>
+        </sqlQuery>
 
         <sqlQuery name="SnpStrainA" includeProjects="PlasmoDB,ToxoDB">
           <column name="internal"/>
