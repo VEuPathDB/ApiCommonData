@@ -410,6 +410,20 @@
       </sql> 
     </sqlQuery> 
 
-  </querySet>
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Dont Care - fake query for internal use -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="DontCare" doNotTest="true" isCacheable="true">
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <sql>
+            select source_id, project_id
+            from apidb.isolateattributes
+            where source_id = 'life_is_sweet'
+        </sql>
+    </sqlQuery>
+
+    </querySet>
 
 </wdkModel>
