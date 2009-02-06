@@ -49,4 +49,3 @@ sub getConfigDeclaration {
            );
 }
 
-
