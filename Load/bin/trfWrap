@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+
+my $trfPath = $ARGV[0];
+my $inputFile = $ARGV[1];
+my $args =  $ARGV[2];
+my $logFile =  $ARGV[3];
+
+system("$trfPath/trf400 $inputFile $args -d 2>> $logFile");
+
+my $seqCount = `grep -c '>' $inputFile`;
+
+my $status = $? >> 8;
+
+die "Failed with trf400 running." unless ($status == $seqCount); 
