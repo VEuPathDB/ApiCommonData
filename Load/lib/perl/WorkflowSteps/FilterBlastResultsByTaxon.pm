@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $taxonList = $self->getParamValue('taxonHierarchy');
   my $inputFile = $self->getParamValue('inputFile');
