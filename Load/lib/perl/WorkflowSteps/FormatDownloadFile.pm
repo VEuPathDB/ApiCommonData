@@ -27,7 +27,7 @@ sub run {
 
   }elsif($undo) {
 
-    $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputDir/$formattedFileName.x*");
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputDir/${formattedFileName}.x*");
   }
   else{
 
