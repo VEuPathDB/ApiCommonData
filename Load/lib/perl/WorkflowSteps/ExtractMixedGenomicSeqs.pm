@@ -10,7 +10,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 ## API $self->getExtDbRlsId($test, $genomeExtDbRlsSpec)
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get params
   my $outputFile = $self->getParamValue('outputFile');
@@ -35,8 +35,12 @@ sub run {
       $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
 
-  $self->runCmd($test,$cmd1);
-  $self->runCmd($test,$cmd2);
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test,$cmd1);
+    $self->runCmd($test,$cmd2);
+  }
 
 
 }
@@ -58,13 +62,5 @@ sub getConfigDeclaration {
   return @properties;
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
 
