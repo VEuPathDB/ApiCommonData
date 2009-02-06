@@ -19,13 +19,16 @@ sub run {
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   my $cmd ="fullRecordDump  -model $projectDB  -organism \"$organismFullName\"  -type \"$recordType\"  -dir $apiSiteFilesDir/$downloadSiteDataDir";
-  
+
   if ($test) {
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputGeneFile");
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputSeqFile");
-  }else{
-  
-      $self->runCmd($test, $cmd);
+    $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputGeneFile");
+    $self->runCmd(0, "echo test > $apiSiteFilesDir/$downloadSiteDataDir/$outputSeqFile");
+  }elsif($undo) {
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$downloadSiteDataDir/$outputGeneFile");
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$downloadSiteDataDir/$outputSeqFile");
+  }
+  else{
+    $self->runCmd($test, $cmd);
   }
 
 }
@@ -48,12 +51,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
