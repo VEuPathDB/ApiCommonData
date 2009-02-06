@@ -13,6 +13,11 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
+
+  if ($test) {
+    $self->testInputFile('fromFile', "$localDataDir/$fromFile");
+  }
+
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$toFile");
   } else {
