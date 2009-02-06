@@ -35,7 +35,13 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
   }
-  $self->runCmd($test,$cmd);
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$unfilteredOutputFile");
+    $self->runCmd(0, "rm -f $localDataDir/$filteredOutputFile");
+  } else {
+    $self->runCmd($test,$cmd);
+  }
 }
 
 sub getParamsDeclaration {
@@ -55,13 +61,5 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
 
