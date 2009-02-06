@@ -11,14 +11,7 @@ sub run {
   my $fromFile = $self->getParamValue('fromFile');
   my $toFile = $self->getParamValue('toFile');
 
-  # get global properties
-  my $downloadDir = $self->getGlobalConfig('downloadDir');
-
   my $localDataDir = $self->getLocalDataDir();
-
-  if ($test) {
-      $self->testInputFile('fromFile', "$downloadDir/$fromFile");
-  }
 
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$toFile");
