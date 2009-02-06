@@ -71,12 +71,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
