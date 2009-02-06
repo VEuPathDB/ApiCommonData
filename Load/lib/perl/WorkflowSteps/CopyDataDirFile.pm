@@ -5,15 +5,26 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test,$undo) = @_;
 
   # get parameters
   my $fromFile = $self->getParamValue('fromFile');
   my $toFile = $self->getParamValue('toFile');
 
+  # get global properties
+  my $downloadDir = $self->getGlobalConfig('downloadDir');
+
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
+  if ($test) {
+      $self->testInputFile('fromFile', "$downloadDir/$fromFile");
+  }
+
+  if ($undo) {
+      $self->runCmd(0, "rm -f $localDataDir/$toFile");
+  } else {
+      $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
+  }
 
 }
 
@@ -31,12 +42,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
