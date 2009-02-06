@@ -6,7 +6,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $outputFile = $self->getParamValue('outputFile');
   my $genomeDbRlsId = $self->getExtDbRlsId($test,$self->getParamValue('genomeExtDbRlsSpec'));
@@ -59,7 +59,11 @@ my $cmd = " makeFileWithSql --outFile $apiSiteFilesDir/$outputFile --sql \"$sql\
       $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
   }
 
-  $self->runCmd($test,$cmd);
+  if ($undo) {
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputFile");
+  } else {
+    $self->runCmd($test,$cmd);
+  }
 }
 
 sub getParamsDeclaration {
@@ -77,12 +81,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
