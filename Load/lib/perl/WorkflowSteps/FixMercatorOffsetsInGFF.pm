@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-    my ($self, $test) = @_;
+    my ($self, $test, $undo) = @_;
 
     my $inputFile = $self->getParamValue('inputFile');
     my $fsaFile = $self->getParamValue('fsaFile');
@@ -22,7 +22,11 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
         $self->runCmd(0,"echo test > $localDataDir/$outputFile");
     }
-    $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
+    if ($undo) {
+      $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+    } else {
+      $self->runCmd($test,"fixMercatorOffsetsInGFF.pl $args");
+    }
 }
 
 sub getParamsDeclaration {
@@ -39,12 +43,3 @@ sub getConfigDeclaration {
            );
 }
 
-sub getDocumentation {
-}
-
-sub restart {
-}
-
-sub undo {
-
-}
