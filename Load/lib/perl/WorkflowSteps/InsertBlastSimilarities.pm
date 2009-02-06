@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $queryTable = $self->getParamValue('queryTable');
@@ -43,7 +43,7 @@ sub run {
 
   my $args = "--file $localDataDir/$inputFile --queryTable $queryTable $queryColArg $queryExtDbArg --subjectTable $subjectTable $subjectColArg $subjectExtDbArg $options";
 
-  $self->runPlugin($test, "GUS::Supported::Plugin::InsertBlastSimilarities", $args);
+  $self->runPlugin($test,$undo, "GUS::Supported::Plugin::InsertBlastSimilarities", $args);
 }
 
 sub getParamsDeclaration {
@@ -63,12 +63,3 @@ sub getConfigurationDeclaration {
   return ();
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
