@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $seqsFile = $self->getParamValue('seqsFile');
   my $repeatFinderArgs = $self->getParamValue('repeatFinderArgs');
@@ -27,8 +27,14 @@ sub run {
     $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   }
-  $self->runCmd($test, $cmd);
-  $self->runCmd($test, "mv $stepDir/$seqsFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test, $cmd);
+    $self->runCmd($test, "mv $stepDir/$seqsFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
+  }
+
 }
 
 sub getParamsDeclaration {
@@ -46,12 +52,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
