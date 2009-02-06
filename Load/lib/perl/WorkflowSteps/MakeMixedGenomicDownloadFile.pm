@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my @genomeExtDbSpecList = split (/,/,$self->getParamValue('genomeExtDbSpecList'));
@@ -46,10 +46,12 @@ sub run {
   my $cmd = "gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\" ";
 
   if ($test) {
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
+    $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
+  }elsif($undo){
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputFile");
   }else{
-       $self->runCmd($test, $cmd);
-   }
+    $self->runCmd($test, $cmd);
+  }
 
 }
 
@@ -69,12 +71,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
