@@ -85,9 +85,18 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
         </summary>
         <description includeProjects="TriTrypDB">
            <![CDATA[
-          Find genes within a given genomic region.<br>
-          You can either select a chromosome number from the drop-down menu (note that not all species have the same chromosome number:  <i>L. braziliensis</I> 35; <i>L. infantum</I> 36; <i>L. major</I> 36; <i>T. brucei</I> 11; <i>T. cruzi</I> 41), OR you can enter a genomic sequence ID (i.e. chromosome, scaffold or contig IDs) for any of the organisms in TriTrypDB.<br> 
-The Start and End locations correspond to the coordinates of the gene(s) on the sequence.
+          Find genes within a given genomic region.
+          <p><B>NOTE:</B> Not all organisms have the same number of chromosomes so if you choose an organism and chromosome combination that exceeds the number of chromosomes for that organism, you will get no results.  Following are the number of chromosomes for each TriTrypDB organism:  
+                <TABLE>
+                    <tr><td><i>T. brucei</i>:</td><td>11</td></tr>
+                    <tr><td><i>L. braziliensis</i>:</td><td>35 </td></tr>
+                    <tr><td><i>L. infantum</i>:</td><td>36 </td></tr>
+                    <tr><td><i>L. major</i>:</td><td>36</td></tr>
+                    <tr><td><i>T. cruzi</i>:</td><td>41</td></tr>
+                </TABLE>
+          <p>Alternatively, you may enter a genomic sequence ID for any <i>T. cruzi</I>, <i>T. brucei</I>, <i>L. major</I>, <i>L. infantum</I>, or<i> L. braziliensis</I> scaffold/contig/chromosome.<p>
+          The Start and End locations correspond to the coordinates of 
+          the gene(s) on the sequence.
           ]]>
         </description>
 
@@ -550,7 +559,6 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-<!-- TODO: add Mass spec query for Trypdb -->
     <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB,TriTrypDB"
          displayName="Mass Spec. Evidence"
          shortDisplayName="Mass Spec"
@@ -599,12 +607,6 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
             in male and female gametocytes.
           ]]>
         </summary>
-
-
-<!--   TODO: Summary and Description for TriTrypDB mass spec -->
- 
-
-
 
         <propertyList name="organism">
            <value includeProjects="PlasmoDB,ApiDB">P. berghei</value>
@@ -893,7 +895,6 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
 
-<!--   TODO: Summary and Description for TriTrypDB mass spec -->
         <description includeProjects="TriTrypDB">
            <![CDATA[
           <h1>Find genes that have evidence of protein expression</h1><br><br>
@@ -1444,7 +1445,6 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
- <!-- TODO: check that metabolic pathway is excluded for TriTrypDB -->
     <question name="GenesByMetabolicPathway" excludeProjects="TrichDB,GiardiaDB,CryptoDB,TriTrypDB"
          displayName="Metabolic Pathway"
          shortDisplayName="Metabol Path"
@@ -1617,35 +1617,7 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
         </summary>
-        <description includeProjects="PlasmoDB,ApiDB">
-            <![CDATA[
-            Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
-           <br><br>
-
-           An <a href="http://orthomcl.org/">OrthoMCL</a> analysis of the proteins of 87 species, including Plasmodia, placed each protein in an ortholog group. 
-           From a Plasmodium gene perspective, the other species that are included in that gene's ortholog group can be thought of as a phylogenetic profile.
-            <br><br>
-            Use this query to define a pattern
-            across those ortholog groups, and find genes that match that pattern.  The pattern is a
-            specification, for each species, of "include", "exclude", or "don't care."  Click on the
-            radio button next to a species to toggle through the three states.  (A
-            <img src="images/yes.gif"> means
-            "include", an <img src="images/no.gif"> means "exclude"
-            and <img src="images/dc.gif"> means "don't care".)
-            <br> <br>
-            For example, to find genes
-            that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
-            a <img src="images/yes.gif"> and click on <i>Homo
-            sapiens</i> until you see an
-            <img src="images/no.gif">.
-            <br> <br>
-            Note that this query can take some time because of the large number
-            of combinations of possible presence/absence calls (2<sup>87</sup>
-            possible combinations, of which 2,723 are associated with a total of
-            35,603 genes).
-           ]]>
-        </description>
-        <description includeProjects="CryptoDB">
+        <description includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,ApiDB">
             <![CDATA[
             Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
            <br><br>
@@ -1666,14 +1638,9 @@ Find genes that are predicted to encode a signal peptide.
             a <img src="images/yes.gif"> and click on <i>Homo
             sapiens</i> until you see an
             <img src="images/no.gif">.
-            <br> <br>
-            Note that this query can take some time because of the large number
-            of combinations of possible presence/absence calls (2<sup>87</sup>
-            possible combinations, of which 2,723 are associated with a total of
-            35,603 genes).
            ]]>
         </description>
-        <description includeProjects="ToxoDB">
+        <description includeProjects="TriTrypDB">
             <![CDATA[
             Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
            <br><br>
@@ -1690,24 +1657,12 @@ Find genes that are predicted to encode a signal peptide.
             and <img src="images/dc.gif"> means "don't care".)
             <br> <br>
             For example, to find genes
-            that are present in Apicomplexa but not in humans, click on Apicomplexa until you see
+            that are present in Kinetoplastida but not in humans, click on Kinetoplastida until you see
             a <img src="images/yes.gif"> and click on <i>Homo
             sapiens</i> until you see an
             <img src="images/no.gif">.
-            <br> <br>
-            Note that this query can take some time because of the large number
-            of combinations of possible presence/absence calls (2<sup>87</sup>
-            possible combinations, of which 2,723 are associated with a total of
-            35,603 genes).
            ]]>
         </description>
-
- <!-- TODO: Fill in description for TriTrypDB --> 
-        <description includeProjects="TriTrypDB">
-            <![CDATA[
-           ]]>
-        </description>
-
 
        <propertyList name="specificAttribution" excludeProjects="GiardiaDB">
            <value>OrthoMCL_Phyletic</value>
@@ -1873,7 +1828,6 @@ Find genes that are predicted to encode a signal peptide.
           ]]>
         </description>
 
-      <!-- TODO  fill in description -->
         <description includeProjects="TriTrypDB">
            <![CDATA[
            Find genes by a list of IDs. Either enter the ID list manually, 
@@ -3967,45 +3921,12 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               summary="formatted_gene_id,organism,product"
               sorting="formatted_gene_id asc,location_text asc"
         /> 
-        <description includeProjects="ApiDB">
-           <![CDATA[
-Find the <i>Cryptosporidium, Giardia, Plasmodium, Toxoplasma</i> genes that are orthologs (or paralogs) of the genes in a Query History result.
-The typical use of this query is to begin by having an interesting <i>P. falciparum</i> result in My Query History.  
-Then, come here to find orthologs of those genes in the less well-annotated species.  
-In general, use this query to transform sets of genes from one species to others.
-Ortholog groups were generated from 61 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the <a href="http://orthomcl.org/">OrthoMCL DB site</a> plus <i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin).  The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
-          ]]>
-        </description>
-        <description includeProjects="CryptoDB">
-           <![CDATA[
-Find the <i>Cryptosporidium</i> genes that are orthologs (or paralogs) of the genes in a Query History result.
-An example use of this query is to begin by having an interesting <i>C. parvum</i> result in My Query History.  
-Then, come here to find orthologs of those genes in <i>C. hominis</i>.  In general, use this query to 
-transform sets of genes from one species to others.
-Ortholog groups were generated from 61 species using OrthoMCL as described in  
-Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic 
-genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the 
-<a href="http://orthomcl.org/">OrthoMCL DB site</a> plus 
-<i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin). 
-The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
-          ]]>
-        </description>
-        <description includeProjects="PlasmoDB">
-           <![CDATA[
-Find the <i>Plasmodium</i> genes that are orthologs (or paralogs) of the genes in a Query History result.
-The typical use of this query is to begin by having an interesting <i>P. falciparum</i> result in My Query History.  Then, come here to find orthologs of those genes in the less well-annotated species.  In general, use this query to transform sets of genes from one species to others.
-Ortholog groups were generated from 61 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. Genome Res. 2003 13:2178-89. These species include the 55 used to generate orthologs groups at the <a href="http://orthomcl.org/">OrthoMCL DB site</a> plus <i>P. vivax, Leishmania major, T. brucei, T. cruzi, Apis mellifera</i> (honeybee) and <i>S. purpatus</i> (sea urchin).  The OrthoMCL DB site is described in Feng et al. Nucleic Acids Res. 2006 Database Issue.
-          ]]>
-        </description>
 
-  <!-- TODO: Description for TriTrypDB -->
-        <description includeProjects="TriTrypDB">
+        <description>
            <![CDATA[
-          ]]>
-        </description>
-        <description includeProjects="ToxoDB">
-           <![CDATA[
-            Find the <i>Toxoplasma</i> reference genes in other strains that are related to the genes in a Query History result.
+Find the @PROJECT_ID@ genes that are orthologs (or paralogs) of the genes in a Query History result.
+The typical use of this query is to begin by having an interesting result in My Query History.  Then, use this query to find orthologs of those genes in a species that may not be annotated with the data from your query.  In general, use this query to transform sets of genes from one species to others. <br><br>
+Ortholog groups were generated from more than 100 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=12952885">Genome Res. 2003 13:2178-89</a>.   The OrthoMCL DB site is described in Chen F. Mackey AJ. Stoeckert CJ Jr. Roos DS. OrthoMCL-DB: querying a comprehensive multi-species collection of ortholog groups. <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=16381887">NAR. 34(Database issue):D363-8</a>.
           ]]>
         </description>
 
