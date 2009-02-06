@@ -17,8 +17,8 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "${trfPath}/trf400 $localDataDir/$seqsFile $repeatFinderArgs -d 2>> command.log";
- 
+  my $cmd = "trfWrap $localDataDir/$seqsFile $repeatFinderArgs command.log";
+
   $repeatFinderArgs =~ s/\s+/\./g;
 
   if ($test) {
