@@ -160,7 +160,8 @@ sub runBlast{
 
 sub validateHit{
   my ($queryLength, $subject, $seqId) = @_;
-  my $subId = $subject->getID()."-1";
+  my $subId = $subject->getID();
+  $subId .= "-1" unless ($subId =~/\-/);
   my $subjSeq;
 
   my $msg = "Query ID: $seqId Query Length: $queryLength\tBLAST Result: $subId Subject Length: ".$subject->getLength().".";

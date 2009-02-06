@@ -88,27 +88,10 @@ sub runBlast{
 
     my $queryFile = "$queryDir/$baseFileName.fsa";
 
-    my $species;
-    if ($speciesKey) {
-        $species = $speciesKey;
-    } else {
-        $species = $baseFileName;
-        $species =~ s/$speciesRegex/$1/;
-    }
+    my $outFile = "$outputDir/$baseFileName.out";
 
-    my $indivOutDir = "$outputDir/$species";
-
-    unless (-d $indivOutDir){
-      my $cmd = "mkdir -p $indivOutDir";
-      &exeCmd($cmd);
-    }
-
-    my $outFile = "$indivOutDir/$baseFileName.out";
-
-    print STDERR "SPECIES: $species\t" if $verbose;
     print STDERR "DATABASE: $blastDatabase\n" if $verbose;
     print STDERR "OUTDIR: $outputDir\n" if $verbose;
-    print STDERR "INDIVIDUAL OUT DIR: $indivOutDir\n" if $verbose;
 
     my $cmd = "runAndParseBlast --ncbiBlastPath $ncbiBlastPath --queryFile $queryFile --database $blastDatabase --epitopeFile $epitopeFile --outputFile $outFile";
 
@@ -147,26 +130,9 @@ sub exactMapEpitopes{
     #get the files and database that go together
     my $epitopeFile = "$inputDir/$file";
 
-    my $species;
-    if ($speciesKey) {
-        $species = $speciesKey;
-    } else {
-        $species = $baseFileName;
-        $species =~ s/$speciesRegex/$1/;
-    }
+    my $outFile = "$outputDir/$baseFileName.out";
 
-    my $indivOutDir = "$outputDir/$species";
-
-    unless (-d $indivOutDir){
-      my $cmd = "mkdir -p $indivOutDir";
-      &exeCmd($cmd);
-    }
-
-    my $outFile = "$indivOutDir/$baseFileName.out";
-
-    print STDERR "SPECIES: $species\t" if $verbose;
     print STDERR "DATABASE: $subjectFile\n" if $verbose;
-    print STDERR "INDIVIDUAL OUT DIR: $indivOutDir\n" if $verbose;
 
     my $cmd = "exactMapEpitopes --subjectFile $subjectFile --epitopeFile $epitopeFile --outputFile $outFile --rejectDuplicates";
 
