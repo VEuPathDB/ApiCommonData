@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $inputFile = $self->getParamValue('inputFile');
@@ -25,22 +25,25 @@ sub run {
       $self->testInputFile('outputDir', "$apiSiteFilesDir/$outputDir");
       $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.test");
 
-  }else{
-      
-      if($args =~/\-p/){
+  }elsif($undo) {
 
-	  my $tempFile = "$apiSiteFilesDir/$inputFile.temp";
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputDir/$formattedFileName");
+  }
+  else{
 
-	  $self->runCmd($test,"cat $apiSiteFilesDir/$inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
+    if($args =~/\-p/){
 
-	  $self->runCmd($test,"$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $tempFile");
+      my $tempFile = "$apiSiteFilesDir/$inputFile.temp";
 
-	  $self->runCmd($test,"rm -fr $tempFile");
+      $self->runCmd($test,"cat $apiSiteFilesDir/$inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
 
-      }else {
-	  $self->runCmd($test, $cmd);
-      }
+      $self->runCmd($test,"$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $tempFile");
 
+      $self->runCmd($test,"rm -fr $tempFile");
+
+    }else {
+      $self->runCmd($test, $cmd);
+    }
   }
 
 }
@@ -61,12 +64,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
