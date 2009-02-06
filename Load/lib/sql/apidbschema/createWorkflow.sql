@@ -101,4 +101,36 @@ CREATE SEQUENCE apidb.WorkflowStepDependency_sq;
 GRANT SELECT ON apidb.WorkflowStepDependency_sq TO gus_r;
 GRANT SELECT ON apidb.WorkflowStepDependency_sq TO gus_w;
 
+---------------------------------------------------------------------------
+
+create table apidb.WorkflowStepAlgorithmInvocation (
+  workflow_step_alg_inv_id number(10),
+  workflow_step_id number(10),
+  alg_invocation_id number(10)
+);
+
+ALTER TABLE apidb.WorkflowStepAlgorithmInvocation
+ADD CONSTRAINT workflow_step_alg_inv_pk PRIMARY KEY (workflow_step_alg_inv_id);
+
+ALTER TABLE apidb.WorkflowStepAlgorithmInvocation
+ADD CONSTRAINT workflow_step_alg_inv_fk1 FOREIGN KEY (workflow_step_id)
+REFERENCES apidb.WorkflowStep (workflow_step_id);
+
+ALTER TABLE apidb.WorkflowStepAlgorithmInvocation
+ADD CONSTRAINT workflow_step_alg_inv_fk2 FOREIGN KEY (alg_invocation_id)
+REFERENCES core.AlgorithmInvocation (algorithm_invocation_id);
+
+ALTER TABLE apidb.WorkflowStepAlgorithmInvocation
+ADD CONSTRAINT workflow_step_alg_inv_uniq
+UNIQUE (workflow_step_id, alg_invocation_id);
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStepAlgorithmInvocation TO gus_w;
+GRANT SELECT ON apidb.WorkflowStepAlgorithmInvocation TO gus_r;
+
+CREATE SEQUENCE apidb.WorkflowStepAlgorithmInvocation_sq;
+
+GRANT SELECT ON apidb.WorkflowStepAlgorithmInvocation_sq TO gus_r;
+GRANT SELECT ON apidb.WorkflowStepAlgorithmInvocation_sq TO gus_w;
+
+
 exit;
