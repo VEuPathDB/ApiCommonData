@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $seqFile = $self->getParamValue('seqFile');
   my $outputFile = $self->getParamValue('outputFile');
@@ -24,7 +24,12 @@ sub run {
     $self->testInputFile('seqFile', "$localDataDir/$seqFile");
     $self->runCmd(0,"echo test > $localDataDir/$outputFile");
   }
-  $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
+  }
 }
 
 sub getParamDeclaration {
@@ -43,13 +48,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
 
