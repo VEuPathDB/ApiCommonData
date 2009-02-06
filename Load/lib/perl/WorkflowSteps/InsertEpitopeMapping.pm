@@ -8,33 +8,26 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test) = @_;
 
-  my $inputDir = $self->getParamValue('inputDir');
+  my $inputFile = $self->getParamValue('inputFile');
   my $epiExtDbSpecs = $self->getParamValue('iedbExtDbRlsSpec');
   my $seqExtDbSpecs = $self->getParamValue('genomeExtDbRlsSpec');
 
   my $localDataDir = $self->getLocalDataDir();
-  $inputDir="$localDataDir/$inputDir";
 
-  my @inputFiles;
-  
-  my @inputFiles = $self->getInputFiles($test,$inputDir);
-
-  foreach my $file (@inputFiles) {
-
-    my $args = " --inputFile '$file' --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
+  my $args =" --inputFile $localDataDir/$inputFile --extDbRelSpec '$epiExtDbSpecs' --seqExtDbRelSpec '$seqExtDbSpecs'";
 
     if ($test) {
-      $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+      $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     }
 
     $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
-  }
+
 
 }
 
 
 sub getParamsDeclaration {
-  return ('inputDir',
+  return ('inputFile',
 	  'iedbExtDbRlsSpec',
 	  'genomeExtDbRlsSpec'
 	 );

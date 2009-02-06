@@ -16,8 +16,9 @@ sub run {
   my $trfPath = $self->getConfig('trfPath');
 
   my $localDataDir = $self->getLocalDataDir();
+  my $stepDir = $self->getStepDir();
 
-  my $cmd = "trfWrap $localDataDir/$seqsFile $repeatFinderArgs command.log";
+  my $cmd = "trfWrap --trfPath $trfPath --inputFile $localDataDir/$seqsFile --args '$repeatFinderArgs' 2>>command.log";
 
   $repeatFinderArgs =~ s/\s+/\./g;
 
@@ -32,7 +33,7 @@ sub run {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
     $self->runCmd($test, $cmd);
-    $self->runCmd($test, "mv $stepDir/$seqsFile.$repeatFinderArgs.dat $localDataDir/$outputFile");
+    $self->runCmd($test, "mv $stepDir/genomicSeqs.fsa.$repeatFinderArgs.dat $localDataDir/$outputFile");
   }
 
 }

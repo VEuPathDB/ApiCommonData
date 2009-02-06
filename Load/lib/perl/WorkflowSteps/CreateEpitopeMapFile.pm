@@ -9,11 +9,10 @@ sub run {
     my ($self, $test) = @_;
 
 
-    my $inputDirRelativeToDownloadsDir = $self->getParamValue('inputDirRelativeToDownloadsDir');
+    my $inputDir = $self->getParamValue('inputDir');
     my $queryDir = $self->getParamValue('queryDir');
     my $proteinsFile = $self->getParamValue('proteinsFile');
     my $blastDbDir = $self->getParamValue('blastDbDir');
-    my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
     my $outputDir = $self->getParamValue('outputDir');
     my $idRegex = $self->getParamValue('idRegex');
 
@@ -21,20 +20,19 @@ sub run {
     my $downloadDir = $self->getGlobalConfig('downloadDir');
     my $ncbiBlastPath = $self->getConfig('ncbiBlastPath');
 
-    my $cmd = "createEpitopeMappingFileWorkflow  --ncbiBlastPath $ncbiBlastPath --inputDir $downloadDir/$inputDirRelativeToDownloadsDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
-    $cmd .= " --speciesKey $organismTwoLetterAbbrev" if ($organismTwoLetterAbbrev);
+    my $cmd = "createEpitopeMappingFileWorkflow  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
+
     if ($test) {
       $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
-      $self->testInputFile('inputDirRelativeToDownloadsDir', "$downloadDir/$inputDirRelativeToDownloadsDir");
+      $self->testInputFile('inputDir', "$localDataDir/$inputDir");
     }
 
     $self->runCmd($test,$cmd);
 }
 
 sub getParamsDeclaration {
-    return ('inputDirRelativeToDownloadsDir',
+    return ('inputDir',
             'blastDbDir',
-            'organismTwoLetterAbbrev',
             'proteinsFile',
             'outputDir'
            );
