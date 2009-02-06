@@ -22,7 +22,12 @@ sub run {
     $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
     $self->runCmd(0, "echo test > $localDataDir/$outputFile");
     }
-  $self->runCmd($test,$cmd);
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test,$cmd);
+  }
 
 }
 
@@ -43,12 +48,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
