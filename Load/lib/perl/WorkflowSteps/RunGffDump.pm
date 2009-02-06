@@ -6,7 +6,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
@@ -19,7 +19,9 @@ sub run {
   my $cmd = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $apiSiteFilesDir/$outputFile";
   if ($test) {
       $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
-  } else {
+  } elsif($undo) {
+    $self->runCmd(0, "rm -f $apiSiteFilesDir/$downloadSiteDataDir/$outputFile");
+  }else {
       $self->runCmd($test, $cmd);
   }
 
@@ -42,12 +44,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
