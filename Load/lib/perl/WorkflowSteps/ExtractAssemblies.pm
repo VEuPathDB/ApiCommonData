@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $outputFile = $self->getParamValue('outputFile');
@@ -22,7 +22,12 @@ sub run {
   if ($test){
       $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
-  $self->runCmd($test, $cmd);
+
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
+    $self->runCmd($test, $cmd);
+  }
 
 }
 
