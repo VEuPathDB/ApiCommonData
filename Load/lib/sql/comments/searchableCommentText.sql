@@ -27,14 +27,23 @@ on apidb.TextSearchableComment(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
 
-create or replace trigger comments2.comments_insert
-after insert on comments2.comments
+create or replace procedure apidb.move_comments
+is
 begin
   insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
   select comment_id, stable_id, project_name, organism,
           apidb.searchable_comment_text(comment_id)
   from comments2.comments
   where comment_id not in (select comment_id from apidb.TextSearchableComment);
+end;
+/
+
+grant execute on apidb.move_comments to public;
+
+create or replace trigger comments2.comments_insert
+after insert on comments2.comments
+begin
+  apidb.move_comments;
 end;
 /
 
@@ -65,14 +74,33 @@ END;
 /
 
 BEGIN
-DBMS_SCHEDULER.DROP_JOB(
-  job_name => 'optimize_index'
-);
+DBMS_SCHEDULER.DROP_JOB(job_name => 'apidb.comment_mover');
+END;
+/
 
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB(
+job_name => 'apidb.comment_mover',
+job_type => 'PLSQL_BLOCK',
+job_action => 'begin apidb.move_comments(); end',
+start_date => sysdate+ 1/(24*60*12), -- five seconds
+repeat_interval => 'FREQ=DAILY'
+);
+END;
+/
+
+BEGIN
+DBMS_SCHEDULER.DROP_JOB(
+  job_name => 'apidb.optimize_index'
+);
+END;
+/
+
+BEGIN
 DBMS_SCHEDULER.CREATE_JOB(
 job_name => 'optimize_index',
 job_type => 'PLSQL_BLOCK',
-job_action => 'begin CTX_DDL.OPTIMIZE_INDEX(''comments_text_ix'',''FULL''); end',
+job_action => 'begin CTX_DDL.OPTIMIZE_INDEX(''comments_text_ix'',''FULL''); apidb.move_comments; end',
 start_date => sysdate+ 1/(24*60*12), -- five seconds
 repeat_interval => 'FREQ=DAILY'
 );
