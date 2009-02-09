@@ -95,7 +95,7 @@ sub mailLog {
 
   my $subject = "$instance_name - ";
 
-  if (!getUpdateNeededFlag()) {
+  if (!getUpdateNeededFlag() && !getErrorsEncounteredFlag()) {
     $subject .= 'ok';
   } elsif (getUpdateNeededFlag() && !getUpdatePerformedFlag()) {
     $subject .= 'NEEDS UPDATE';
