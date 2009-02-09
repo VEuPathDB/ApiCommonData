@@ -27,7 +27,7 @@ GRANT SELECT ON apidb.Workflow_sq TO gus_w;
 
 -----------------------------------------------------------
 
-create table WorkflowStep (
+create table apidb.WorkflowStep (
   workflow_step_id    number(10),
   workflow_id         number(10),
   name                varchar(200),
