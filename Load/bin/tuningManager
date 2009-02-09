@@ -12,6 +12,7 @@ use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
 
+my $configDir;
 my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
@@ -226,12 +227,6 @@ if (!$indexesConfigured) {
 
 releaseLockForUpdate();
 
-my $elapsed = time - $startTime;
-my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
-
-ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
-					       " seconds to run tuningManager ($hms)");
-
 # set last update/r in registry if we did a successful full update (and made changes)
 $tuningRegistry->setLastUpdate()
   if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
@@ -240,9 +235,25 @@ $tuningRegistry->setLastUpdate()
 $tuningRegistry->setLastCheck()
   if !$tables && !$neededUpdateCount;
 
+# if a temporary config-file dir was checked out from svn, delete it now
+if ($configDir) {
+  my @cmdLine = ("rm", "-rf", $configDir);
+  system(@cmdLine) == 0
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
+}
+
+my $elapsed = time - $startTime;
+my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
+
+ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+					       " seconds to run tuningManager ($hms)");
+
 $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
 my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
+
+
+die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 
 ###############################################################################
 
@@ -332,7 +343,7 @@ sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
   if (!$configFile) {
-    my $configDir = "/tmp/tMan." . $$ . "." . time . "/";
+    $configDir = "/tmp/tMan." . $$ . "." . time . "/";
     my $subversionUrl = $tuningRegistry->getSubversionUrl();
     my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
     ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
