@@ -18,6 +18,7 @@
   <param name="repeatMaskSpecies"/>
   <param name="maxIntronSize"/>
   <param name="organismFullName"/>
+  <param name="genomeSize"/>
 
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
@@ -69,7 +70,7 @@
       <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1</paramValue>
+      <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1 Y=$$genomeSize$$</paramValue>
       <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
       <paramValue name="blastType">blastx</paramValue>
       <paramValue name="vendor">wu</paramValue>
