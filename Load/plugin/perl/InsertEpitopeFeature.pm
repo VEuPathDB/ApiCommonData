@@ -11,6 +11,7 @@ use GUS::Model::DoTS::MotifAASequence;
 use GUS::PluginMgr::Plugin;
 
 
+
 my $purposeBrief = <<PURPOSEBRIEF;
 Inserts epitope data from a tab delimited file.
 PURPOSEBRIEF
