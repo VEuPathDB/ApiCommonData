@@ -16,7 +16,7 @@ sub run {
 
   my $args = "--extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --seqTable $table";
 
-  $self->runPlugin($test, "ApiCommonData::Load::Plugin::CalculateAASequenceIsoelectricPoint",$args);
+  $self->runPlugin($test,0, "ApiCommonData::Load::Plugin::CalculateAASequenceIsoelectricPoint",$args);
 
 }
 
@@ -33,12 +33,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
