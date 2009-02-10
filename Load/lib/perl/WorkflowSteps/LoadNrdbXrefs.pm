@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $xrefsFile = $self->getParamValue('xrefsFile');
@@ -18,7 +18,7 @@ sub run {
       $self->testInputFile('xrefsFile', "$localDataDir/$xrefsFile");
     }
 
-   $self->runPlugin($test,"ApiCommonData::Load::Plugin::InsertNrdbXrefs", $args);
+   $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertNrdbXrefs", $args);
 
 
 }
@@ -35,12 +35,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
