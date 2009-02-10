@@ -13,11 +13,11 @@ sub run {
 
     my $dbPluginArgs = "--name '$extDbName' ";
     
-    $self->runPlugin($test,"GUS::Supported::Plugin::InsertExternalDatabase", $dbPluginArgs);
+    $self->runPlugin($test, 0, "GUS::Supported::Plugin::InsertExternalDatabase", $dbPluginArgs);
 
     my $releasePluginArgs = "--databaseName '$extDbName' --databaseVersion '$extDbRlsVer'";
 
-    $self->runPlugin($test,"GUS::Supported::Plugin::InsertExternalDatabaseRls", $releasePluginArgs);
+    $self->runPlugin($test, 0, "GUS::Supported::Plugin::InsertExternalDatabaseRls", $releasePluginArgs);
 }
 
 
@@ -33,13 +33,5 @@ sub getConfigDeclaration {
            );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
 
