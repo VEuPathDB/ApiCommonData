@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $extDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $soVersion = $self->getParamValue('soVersion');
@@ -15,7 +15,7 @@ sub run {
 
   my $args = "--sqlVerbose --extDbRlsName '$extDbName' --extDbRlsVer '$extDbVer' --soCvsVersion $soVersion";
 
-  $self->runPlugin($test, "GUS::Supported::Plugin::CalculateTranslatedAASequences", $args);
+  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::CalculateTranslatedAASequences", $args);
 
 }
 
@@ -30,13 +30,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
-
-sub restart {
-}
-
-sub undo {
-
-}
 
