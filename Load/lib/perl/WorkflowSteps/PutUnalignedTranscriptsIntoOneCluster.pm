@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $allClustersOutputFile = $self->getParamValue('allClustersOutputFile');
   my $alignedClustersFile = $self->getParamValue('alignedClustersFile');
@@ -46,12 +46,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
