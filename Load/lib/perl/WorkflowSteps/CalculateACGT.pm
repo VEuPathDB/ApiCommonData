@@ -7,13 +7,13 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $nullsOnly = $self->getParamValue('nullsOnly') ? "--nullsOnly" : "";
 
   my $args = "--sqlVerbose $nullsOnly";
 
-  $self->runPlugin($test, "ApiCommonData::Load::Plugin::CalculateACGTContent", $args);
+  $self->runPlugin($test, $undo,  "ApiCommonData::Load::Plugin::CalculateACGTContent", $args);
 
 }
 
@@ -28,14 +28,5 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
-
-sub restart {
-}
-
-sub undo {
-
-}
 
 
