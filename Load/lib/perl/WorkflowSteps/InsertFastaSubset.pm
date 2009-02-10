@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $extDbRlsSpec = $self->getParamValue('extDbRlsSpec');
   my $fastaFile = $self->getParamValue('fastaFile');
@@ -24,7 +24,7 @@ sub run {
     $self->testInputFile('idsFile', "$localDataDir/$idsFile");
   }
 
-  $self->runPlugin($test,"GUS::Supported::Plugin::LoadFastaSequences",$args);
+  $self->runPlugin($test,$undo, "GUS::Supported::Plugin::LoadFastaSequences",$args);
 
 }
 
@@ -38,16 +38,7 @@ sub getParamDeclaration {
 
 
 sub getConfigDeclaration {
-  return (
-	 );
+  return ();
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
