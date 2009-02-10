@@ -343,6 +343,14 @@ sub handleFailure {
   exit;
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.AALocation',
+	  'DoTS.AAFeature','Core.Algorithm'
+	 );
+}
+
 
 1;
 
