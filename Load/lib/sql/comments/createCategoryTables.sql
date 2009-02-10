@@ -37,10 +37,10 @@ GRANT select on comments2.CommentTargetCategory to GUS_R;
 
 CREATE TABLE comments2.CommentBibliographicReference
 (
-  comment_bibliographic_reference_id NUMBER(10) NOT NULL,
+  comment_bibliographic_ref_id NUMBER(10) NOT NULL,
 	bibliographic_reference_id VARCHAR2(15) NOT NULL,
   comment_id NUMBER(10) NOT NULL,
-	CONSTRAINT comment_bibliographic_reference_key PRIMARY KEY (comment_bibliographic_reference_id),
+	CONSTRAINT comment_bibliographic_ref_key PRIMARY KEY (comment_bibliographic_ref_id),
 	CONSTRAINT comment_id_fkey FOREIGN KEY (comment_id)
 	   REFERENCES comments2.comments (comment_id)
 );
