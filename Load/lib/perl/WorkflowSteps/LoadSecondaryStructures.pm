@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-    my ($self, $test) = @_;
+    my ($self, $test, $undo) = @_;
 
     my $algName = $self->getParamValue('algName');
     my $inputDir = $self->getParamValue('inputDir');
@@ -23,7 +23,7 @@ sub run {
       $self->testInputFile('inputDir', "$localDataDir/$inputDir");
     }
 
-   $self->runPlugin($test,"GUS::Supported::Plugin::InsertSecondaryStructure", $args);
+   $self->runPlugin($test,$undo, "GUS::Supported::Plugin::InsertSecondaryStructure", $args);
 
 }
 
@@ -41,12 +41,5 @@ sub getConfigDeclaration {
            );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-}
 
