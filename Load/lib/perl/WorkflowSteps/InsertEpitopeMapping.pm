@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $epiExtDbSpecs = $self->getParamValue('iedbExtDbRlsSpec');
@@ -20,7 +20,7 @@ sub run {
       $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     }
 
-    $self->runPlugin ($test,"ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
+    $self->runPlugin ($test,$undo, "ApiCommonData::Load::Plugin::InsertEpitopeFeature","$args");
 
 
 }
@@ -40,13 +40,5 @@ sub getConfigDeclaration {
  	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
 
