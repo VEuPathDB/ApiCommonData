@@ -68,12 +68,23 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$">
+    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="nrdbSubject">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">$$subjectFile$$</paramValue>
       <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
       <paramValue name="nrdbExtDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <depends name="extractIdsFromBlastResult"/>
+    </step>
+
+    <step name="updateNrdbTaxonIdField"
+          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$">
+      <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
+      <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
+      <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
+      <paramValue name="idSql">select source_id, aa_sequence_id from dots.externalaasequence</paramValue>
+      <paramValue name="extDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
+      <depends name="loadSubjectSubset"/>
     </step>
 
     <step name="loadSimilarities" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlastSimilarities">

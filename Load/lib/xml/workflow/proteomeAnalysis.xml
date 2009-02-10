@@ -25,16 +25,6 @@
       <paramValue name="soVersion">$$soVersion$$</paramValue>
     </step>
 
-    <step name="updateNrdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField">
-      <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
-      <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
-      <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
-      <paramValue name="idSql">select source_id, aa_sequence_id from dots.externalaasequence</paramValue>
-      <paramValue name="extDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
-    </step>
-
     <step name="updatePdbTaxonIdField"
           stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField">
       <paramValue name="mappingFileRelativeToDownloadDir">FetchPDBidx/source.idx.processed</paramValue>
