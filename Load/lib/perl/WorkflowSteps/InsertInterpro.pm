@@ -7,13 +7,12 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-    my ($self, $test) = @_;
+    my ($self, $test, $undo) = @_;
 
     my $inputDir = $self->getParamValue('inputDir');
     my $interproExtDbRlsSpec = $self->getParamValue('interproExtDbRlsSpec');
     my $configFileRelativeToDownloadDir = $self->getParamValue('configFileRelativeToDownloadDir');
     my $goVersion = $self->getParamValue('goVersion');
-
     my ($extDbName,$extDbRlsVer) = $self->getExtDbInfo($test,$interproExtDbRlsSpec);
     my $aaSeqTable = 'TranslatedAASequence';
 
@@ -33,7 +32,7 @@ EOF
     $self->testInputFile('inputDir', "$localDataDir/$inputDir");
   }
 
-    $self->runPlugin($test, "ApiCommonData::Load::Plugin::InsertInterproscanResults", $args);
+    $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertInterproscanResults", $args);
 
 }
 
@@ -52,11 +51,4 @@ sub getConfigDeclaration {
            );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-}
