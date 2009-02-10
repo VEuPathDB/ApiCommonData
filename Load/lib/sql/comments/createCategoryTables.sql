@@ -34,3 +34,7 @@ CREATE TABLE comments2.CommentTargetCategory
 GRANT insert, update, delete on comments2.CommentTargetCategory to GUS_W;
 GRANT select on comments2.CommentTargetCategory to GUS_R;
 
+CREATE SEQUENCE comments2.commentTargetCategory_pkseq START WITH 1 INCREMENT BY 1;
+
+GRANT select on comments2.commentTargetCategory_pkseq to GUS_W;
+GRANT select on comments2.commentTargetCategory_pkseq to GUS_R;
