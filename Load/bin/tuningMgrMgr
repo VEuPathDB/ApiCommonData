@@ -145,8 +145,20 @@ sub list {
       select ti.instance_nickname,
              replace(replace(tf.subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', ''),
              ti.family_name,
-             to_char(last_check, 'yy-mon-dd hh24:mi'),
-             to_char(last_update, 'yy-mon-dd hh24:mi')
+             case
+               when last_check is null
+                 then '(null)'
+               when sysdate - last_check < 1
+                 then to_char(last_check, 'yy-mon-dd hh24:mi') || ' (' || round( (sysdate - last_check) * 24) || ' hours ago)'
+                 else to_char(last_check, 'yy-mon-dd hh24:mi') || ' (' || round(sysdate - last_check) || ' days ago)'
+             end as last_check,
+             case
+               when last_update is null
+                 then '(null)'
+               when sysdate - last_update < 1
+                 then to_char(last_update, 'yy-mon-dd hh24:mi') || ' (' || round( (sysdate - last_update) * 24) || ' hours ago)'
+                 else to_char(last_update, 'yy-mon-dd hh24:mi') || ' (' || round(sysdate - last_update) || ' days ago)'
+             end as last_update
       from apidb.TuningInstance$dblink ti, apidb.TuningFamily$dblink tf
       where ti.family_name = tf.family_name(+)
       order by ti.family_name, ti.instance_nickname
@@ -161,18 +173,19 @@ SQL
   while (my ($nickname, $svn, $family, $lastCheck, $lastUpdate) = $stmt->fetchrow_array()) {
     $instanceCount++;
 
-    print "\n--family---- --instance_nickname------ --subversion--------------- --checked-------- --updated------\n"
+    print "\n---family--- ---instance_nickname----- ---subversion------------ ---checked---------------------- ---updated--------------------\n"
       if !$printedSomething;
+
     $printedSomething = 1;
 
     if ($family eq $lastFamily) {
-      $family = "";
-      $svn = "";
+      $family = "   \"     ";
+      $svn = "   \"     ";
     } else {
       $lastFamily = $family;
     }
 
-    printf "%-12s %-25s %-25s %17s %17s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
+    printf "%-12s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
   }
   $stmt->finish();
 
