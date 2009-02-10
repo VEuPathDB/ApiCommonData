@@ -121,7 +121,8 @@
         <answerFilterLayout name="crypto_species" visible="true"
                             displayName="Filter results by species" includeProjects="CryptoDB">
 
-            <instanceRef ref="all_genes" />
+            <instanceRef ref="all_results" />
+            <instanceRef ref="crypto_distinct_genes" />
             <instanceRef ref="parvum_genes" />
             <instanceRef ref="parvum_chr6_genes" />
             <instanceRef ref="hominis_genes" />
@@ -136,8 +137,9 @@
             <answerFilter queryRef="GeneSummaries.BooleanExpansion"
                           includeProjects="ToxoDB">
                 
-                <instance name="boolean_expansion" displayName="Expand"
+                <instance name="boolean_expansion" 
                        booleanExpansion="true"> 
+                    <displayName>Expand</displayName>
                     <description>
                         <![CDATA[
                             All instances from all genes in result
@@ -147,15 +149,17 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB">
-                  <instance name="all_results" displayName="All Results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB">
+                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB,CryptoDB">
+                  <instance name="all_results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB,CryptoDB">
+                    <displayName>All Results</displayName>
                     <description>
                         <![CDATA[
                             All results
                         ]]>
                     </description>   
                 </instance>
-                <instance name="all_results" displayName="All Results" includeProjects="GiardiaDB">
+                <instance name="all_results" includeProjects="GiardiaDB">
+                    <displayName>All Results</displayName>
                     <description>
                         <![CDATA[
                             All results
@@ -167,7 +171,8 @@
 <answerFilter queryRef="GeneSummaries.ApiGenes"
                           includeProjects="ApiDB">
                 
-                <instance name="ch_genes" displayName="Ch Genes">
+                <instance name="ch_genes">
+                    <displayName>Ch Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Cryptosporidium hominis</i> genes.
@@ -176,7 +181,8 @@
                     <paramValue name="organism">Ch</paramValue>
                 </instance>
               
-                <instance name="cp_genes" displayName="Cp Genes">
+                <instance name="cp_genes">
+                    <displayName>Cp Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Cryptosporidium parvum</i> genes.
@@ -185,7 +191,8 @@
                     <paramValue name="organism">Cp</paramValue>
                 </instance>
 
-                <instance name="pb_genes" displayName="Pb Genes">
+                <instance name="pb_genes">
+                    <displayName>Pb Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium berghei</i> genes.
@@ -193,7 +200,8 @@
                     </description>   
                     <paramValue name="organism">Pb</paramValue>
                 </instance>
- <instance name="pc_genes" displayName="Pc Genes">
+                <instance name="pc_genes">
+                    <displayName>Pc Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium chabaudi</i> genes.
@@ -201,7 +209,8 @@
                     </description>   
                     <paramValue name="organism">Pc</paramValue>
                 </instance>
- <instance name="pf_genes" displayName="Pf Genes">
+                <instance name="pf_genes">
+                    <displayName>Pf Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium falciparum</i> genes.
@@ -209,7 +218,8 @@
                     </description>   
                     <paramValue name="organism">Pf</paramValue>
                 </instance>
- <instance name="pk_genes" displayName="Pk Genes">
+                <instance name="pk_genes">
+                    <displayName>Pk Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium knowlesi</i> genes.
@@ -217,7 +227,8 @@
                     </description>   
                     <paramValue name="organism">Pk</paramValue>
                 </instance>
- <instance name="pv_genes" displayName="Pv Genes">
+                <instance name="pv_genes">
+                    <displayName>Pv genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium vivax</i> genes.
@@ -225,7 +236,8 @@
                     </description>   
                     <paramValue name="organism">Pv</paramValue>
                 </instance>
- <instance name="py_genes" displayName="Py Genes">
+                <instance name="py_genes">
+                    <displayName>Py Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Plasmodium yoelii</i> genes.
@@ -234,7 +246,8 @@
                     <paramValue name="organism">Py</paramValue>
                 </instance>
 
-               <instance name="toxo_instances" displayName="Toxo Instances" >
+               <instance name="toxo_instances">
+                    <displayName>Toxo Instances</displayName>
                     <description>
                         <![CDATA[
                            Cumulative number of <i>T. gondii</i> hits in all strains (note: likely to be redundant).
@@ -243,7 +256,8 @@
                     <paramValue name="organism">Tg</paramValue>
                 </instance>
 
-               <instance name="tv_genes" displayName="Tv genes" >
+               <instance name="tv_genes" >
+                    <displayName>Tv genes</displayName>
                     <description>
                         <![CDATA[
                             Number of <i>T. vag</i> genes.
@@ -259,7 +273,8 @@
   <answerFilter queryRef="GeneSummaries.ApiGiardiaGenes"
                           includeProjects="ApiDB">
                 
-                <instance name="gl_genes" displayName="Genes">
+                <instance name="gl_genes">
+                    <displayName>Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Giardia lamblia</i> non-deprecated genes.
@@ -267,7 +282,8 @@
                     </description>   
                     <paramValue name="deprecated_genes">genes</paramValue>
                 </instance>
-                <instance name="deprecated_genes" displayName="Deprecated Genes">
+                <instance name="deprecated_genes">
+                    <displayName>Deprecated Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Giardia lamblia</i> deprecated genes.
@@ -282,7 +298,8 @@
   <answerFilter queryRef="GeneSummaries.CryptoGenes"
                           includeProjects="CryptoDB">
                 
-                <instance name="all_genes" displayName="Cryptosporidium Genes" default="true"> 
+                <instance name="all_genes"> 
+                    <displayName><![CDATA[<i>Cryptosporidium</i> Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>Cryptosporidium</i> results
@@ -291,7 +308,8 @@
                     <paramValue name="organism">Cryptosporidium</paramValue>
                 </instance>
 
-                <instance name="parvum_genes" displayName="Parvum Genes">
+                <instance name="parvum_genes"> 
+                    <displayName> <![CDATA[<i>C. parvum</i> Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>C. parvum</i> results
@@ -300,7 +318,8 @@
                     <paramValue name="organism">Cryptosporidium parvum Iowa II</paramValue>
                 </instance>
 
-                <instance name="parvum_chr6_genes" displayName="Parvum Chromosome 6 Genes">
+                <instance name="parvum_chr6_genes">
+                    <displayName> <![CDATA[<i>C. parvum</i> Chromosome 6 Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>C. parvum</i> (chromosome 6) results
@@ -309,7 +328,8 @@
                     <paramValue name="organism">Cryptosporidium parvum</paramValue>
                 </instance>
                 
-                <instance name="hominis_genes" displayName="Hominis Genes">
+                <instance name="hominis_genes">
+                    <displayName> <![CDATA[<i>C. hominus</i> Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>C. hominis</i> results
@@ -318,7 +338,8 @@
                     <paramValue name="organism">Cryptosporidium hominis</paramValue>
                 </instance>
                 
-                <instance name="muris_genes" displayName="Muris Genes">
+                <instance name="muris_genes">
+                    <displayName> <![CDATA[<i>C. muris</i> Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>C. muris</i> results
@@ -334,7 +355,8 @@
                           includeProjects="TriTrypDB">
                 
 
-                <instance name="lbr_genes" displayName="L. brazillensis Genes">
+                <instance name="lbr_genes">
+                    <displayName>L. brazillensis Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Leishmania braziliensis</i> results
@@ -343,7 +365,8 @@
                     <paramValue name="organism">Leishmania braziliensis</paramValue>
                     <paramValue name="sequenceId">any</paramValue>
                 </instance>
-                <instance name="lin_genes" displayName="L. infantum Genes">
+                <instance name="lin_genes">
+                    <displayName>L. infantum Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Leishmania infantum</i> results
@@ -352,7 +375,8 @@
                     <paramValue name="organism">Leishmania infantum</paramValue>
                     <paramValue name="sequenceId">any</paramValue>
                 </instance>
-                <instance name="lma_genes" displayName="L. major Genes">
+                <instance name="lma_genes">
+                    <displayName>L. major Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Leishmania major</i> results
@@ -361,7 +385,8 @@
                     <paramValue name="organism">Leishmania major</paramValue>
                     <paramValue name="sequenceId">any</paramValue>
                 </instance>
-                <instance name="tbr_genes" displayName="T. brucei Genes">
+                <instance name="tbr_genes">
+                    <displayName>T. brucei Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Trypanosoma brucei</i> results
@@ -371,7 +396,8 @@
                     <paramValue name="sequenceId">any</paramValue>
                 </instance>
 
-                <instance name="tce_genes" displayName="T. cruzi esmeraldo Genes">
+                <instance name="tce_genes">
+                    <displayName>T. cruzi esmeraldo Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Trypanosoma cruzi</i> esmeraldo results
@@ -381,7 +407,8 @@
                     <paramValue name="sequenceId">S</paramValue>
                 </instance>
                 
-                <instance name="tcne_genes" displayName="T. cruzi non-esmeraldo Genes">
+                <instance name="tcne_genes">
+                    <displayName>T. cruzi non-esmeraldo Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Trypanosoma cruzi</i> non-esmeraldo results
@@ -391,7 +418,8 @@
                     <paramValue name="sequenceId">P</paramValue>
                 </instance>
 
-                <instance name="tcu_genes" displayName="T. cruzi unassigned Genes">
+                <instance name="tcu_genes">
+                    <displayName>T. cruzi unassigned Genes</displayName>
                     <description>
                      <![CDATA[
                        All <i>Trypanosoma cruzi</i> results which were not designated "esmeraldo" or "non-esmeraldo"
@@ -408,7 +436,8 @@
             <answerFilter queryRef="GeneSummaries.DeprecatedGenes"
                           includeProjects="GiardiaDB">
                 
-                <instance name="all_genes" displayName="Genes" default="true">
+                <instance name="all_genes" default="true">
+                    <displayName>Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Giardia lamblia</i> genes.
@@ -416,7 +445,8 @@
                     </description>   
                     <paramValue name="deprecated_genes">genes</paramValue>
                 </instance>
-                <instance name="deprecated_genes" displayName="Deprecated Genes">
+                <instance name="deprecated_genes">
+                    <displayName>Deprecated Genes</displayName>
                     <description>
                         <![CDATA[
                               <i>Giardia lamblia</i> deprecated genes.
@@ -429,7 +459,8 @@
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
                           includeProjects="ToxoDB,ApiDB">
                 
-                <instance name="toxo_genes" displayName="Toxo Genes">
+                <instance name="toxo_genes">
+                    <displayName>Toxo Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of non-redundant <i>T. gondii</i> genes, with hits in any strain (the representative gene is:  ME49 if it exists, otherwise GT1 if it exists, otherwise VEG.
@@ -443,10 +474,11 @@
             <answerFilter queryRef="GeneSummaries.CryptoDistinctGenes"
                           includeProjects="CryptoDB,ApiDB">
                 
-                <instance name="crypto_distinct_genes" displayName="Crypto Distinct Genes">
+                <instance name="crypto_distinct_genes">
+                    <displayName>Ortholog Groups</displayName>
                     <description>
                         <![CDATA[
-                            Number of non-redundant <i>Cryptosporidium</i> genes, with hits in any strain (the representative gene is:  <i>C.parvum</i> if it exists, otherwise <i>C.hominis</i> if it exists, otherwise <i>C.muris</i> if it exists, otherwise <i>C.parvum</i> chromosome 6.
+                            Number of <i>Cryptosporidium</i> ortholog groups with hits in any species: the representative gene result is:  <i>C.parvum</i> if it exists, otherwise <i>C.hominis</i> if it exists, otherwise <i>C.muris</i> if it exists, otherwise <i>C.parvum</i> chromosome 6.
                         ]]>
                     </description>   
                     <paramValue name="organism">Cryptosporidium</paramValue>
@@ -457,7 +489,8 @@
             <answerFilter queryRef="GeneSummaries.TCruziDistinctGenes"
                           includeProjects="TriTrypDB,ApiDB">
                 
-                <instance name="tc_distinct_genes" displayName="T.cruzi Distinct Genes">
+                <instance name="tc_distinct_genes">
+                    <displayName>T.cruzi Distinct Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of non-redundant <i>T.cruzi</i> genes (the representative gene is:  <i>T.cruzi</i> esmeraldo if it exists, otherwise <i>T.cruzi</i> non-esmeraldo if it exists, otherwise <i>T.cruzi</i> unassigned.
@@ -472,7 +505,8 @@
             <answerFilter queryRef="GeneSummaries.TriTrypDistinctGenes"
                           includeProjects="TriTrypDB,ApiDB">
                 
-                <instance name="tritryp_distinct_genes" displayName="T.cruzi Distinct Genes">
+                <instance name="tritryp_distinct_genes">
+                    <displayName>T.cruzi Distinct Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of ortholog groups across available species (the representative gene is:  <i>T.brucei</i> if it exists, otherwise <i>L.braziliensis</i> if it exists, otherwise <i>L.infantum</i> if it exists, otherwise <i>L.major</i> if it exists, otherwise <i>T.cruzi</i>.
@@ -486,7 +520,8 @@
             <answerFilter queryRef="GeneSummaries.AllTgResults"
                           includeProjects="ToxoDB">
                 
-                <instance name="all_tg_results" displayName="Toxo Genes">
+                <instance name="all_tg_results">
+                    <displayName>Toxo Genes</displayName>
                     <description>
                         <![CDATA[
                             All <i>T. gondii</i> results
@@ -500,7 +535,8 @@
             <answerFilter queryRef="GeneSummaries.NeosporaGenes"
                           includeProjects="ToxoDB,ApiDB">
                 
-                <instance name="neospora_genes" displayName="Neospora Genes">
+                <instance name="neospora_genes">
+                    <displayName>Neospora Genes</displayName>
                     <description>
                         <![CDATA[
                             All <i>Neospora</i> genes
@@ -514,7 +550,8 @@
             <answerFilter queryRef="GeneSummaries.OneToOneToOneTgGenes"
                           includeProjects="ToxoDB">
                 
-                <instance name="each_tg_instance" displayName="All Tg Instances">
+                <instance name="each_tg_instance">
+                    <displayName>All Tg Instances</displayName>
                     <description>
                         <![CDATA[
                             Number of <i>T.gondii</i> genes in the result that have exactly one instance from each strain.
@@ -527,7 +564,8 @@
             <answerFilter queryRef="GeneSummaries.StrainInstances"
                           includeProjects="ToxoDB">
                 
-                <instance name="gt1_instances" displayName="GT1 Instances">
+                <instance name="gt1_instances">
+                    <displayName>GT1 Instances</displayName>
                     <description>
                         <![CDATA[
                             Number of GT1 results
@@ -536,7 +574,8 @@
                     <paramValue name="strain_a">gt1</paramValue>
                 </instance>
                 
-                <instance name="me49_instances" displayName="ME49 Instances">
+                <instance name="me49_instances">
+                    <displayName>ME49 Instances</displayName>
                     <description>
                         <![CDATA[
                             Number of ME49 results
@@ -545,7 +584,8 @@
                     <paramValue name="strain_a">me49</paramValue>
                 </instance>
                 
-                <instance name="veg_instances" displayName="VEG Instances">
+                <instance name="veg_instances">
+                    <displayName>VEG Instances</displayName>
                     <description>
                         <![CDATA[
                             Number of VEG results
@@ -559,7 +599,8 @@
             <answerFilter queryRef="GeneSummaries.TgStrainGenes"
                           includeProjects="ToxoDB">
                 
-                <instance name="gt1_genes" displayName="GT1 Genes">
+                <instance name="gt1_genes">
+                    <displayName>GT1 Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of GT1 genes 
@@ -568,7 +609,8 @@
                     <paramValue name="strain_a">gt1</paramValue>
                 </instance>
                 
-                <instance name="me49_genes" displayName="ME49 Genes">
+                <instance name="me49_genes">
+                    <displayName>ME49 Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of ME49 genes 
@@ -577,7 +619,8 @@
                     <paramValue name="strain_a">me49</paramValue>
                 </instance>
                 
-                <instance name="veg_genes" displayName="VEG Genes">
+                <instance name="veg_genes">
+                    <displayName>VEG Genes</displayName>
                     <description>
                         <![CDATA[
                             Number of VEG genes 
@@ -591,7 +634,8 @@
             <answerFilter queryRef="GeneSummaries.DetailsTgAllMinus"
                           includeProjects="ToxoDB">
                 
-                <instance name="all_min_gt1" displayName="All Minus GT1">
+                <instance name="all_min_gt1">
+                    <displayName>All Minus GT1</displayName>
                       <paramValue name="strain_a">gt1</paramValue>
                     <description>
                         <![CDATA[
@@ -599,7 +643,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="all_min_me49" displayName="All Minus ME49">
+                <instance name="all_min_me49">
+                    <displayName>All Minus ME49</displayName>
                       <paramValue name="strain_a">me49</paramValue>
                     <description>
                         <![CDATA[
@@ -607,7 +652,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="all_min_veg" displayName="All Minus VEG">
+                <instance name="all_min_veg">
+                    <displayName>All Minus VEG</displayName>
                       <paramValue name="strain_a">veg</paramValue>
                     <description>
                         <![CDATA[
@@ -621,7 +667,8 @@
             <answerFilter queryRef="GeneSummaries.DetailsTgStrainMinus"
                           includeProjects="ToxoDB">
                 
-                <instance name="gt1_min_me49" displayName="GT1 Minus ME49">
+                <instance name="gt1_min_me49">
+                    <displayName>GT1 Minus ME49</displayName>
                       <paramValue name="strain_a">gt1</paramValue>
                       <paramValue name="strain_b">me49</paramValue>
                     <description>
@@ -630,7 +677,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="gt1_min_veg" displayName="GT1 Minus VEG">
+                <instance name="gt1_min_veg">
+                    <displayName>GT1 Minus VEG</displayName>
                       <paramValue name="strain_a">gt1</paramValue>
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
@@ -639,7 +687,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="me49_min_gt1" displayName="ME49 Minus GT1">
+                <instance name="me49_min_gt1">
+                    <displayName>ME49 Minus GT1</displayName>
                       <paramValue name="strain_a">me49</paramValue>
                       <paramValue name="strain_b">gt1</paramValue>
                     <description>
@@ -648,7 +697,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="me49_min_veg" displayName="ME49 Minus VEG">
+                <instance name="me49_min_veg">
+                    <displayName>ME49 Minus VEG</displayName>
                       <paramValue name="strain_a">me49</paramValue>
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
@@ -657,7 +707,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="veg_min_gt1" displayName="VEG Minus GT1">
+                <instance name="veg_min_gt1">
+                    <displayName>VEG Minus GT1</displayName>
                       <paramValue name="strain_a">veg</paramValue>
                       <paramValue name="strain_b">gt1</paramValue>
                     <description>
@@ -666,7 +717,8 @@
                         ]]>
                     </description>      
                 </instance>
-                <instance name="veg_min_me49" displayName="VEG Minus ME49">
+                <instance name="veg_min_me49">
+                    <displayName>VEG Minus ME49</displayName>
                       <paramValue name="strain_a">veg</paramValue>
                       <paramValue name="strain_b">me49</paramValue>
                     <description>
@@ -681,7 +733,8 @@
             <answerFilter queryRef="GeneSummaries.DetailsTgStrainIntersect"
                           includeProjects="ToxoDB">
                 
-                <instance name="gt1_int_me49" displayName="GT1 Intersect ME49">
+                <instance name="gt1_int_me49">
+                    <displayName>GT1 Intersect ME49</displayName>
                       <paramValue name="strain_a">gt1</paramValue>
                       <paramValue name="strain_b">me49</paramValue>
                     <description>
@@ -692,7 +745,8 @@
                 </instance>
 
 
-                <instance name="gt1_int_veg" displayName="GT1 Intersect VEG">
+                <instance name="gt1_int_veg">
+                    <displayName>GT1 Intersect VEG</displayName>
                       <paramValue name="strain_a">gt1</paramValue>
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
@@ -703,7 +757,8 @@
                 </instance>
 
 
-                <instance name="me49_int_veg" displayName="ME49 Intersect VEG">
+                <instance name="me49_int_veg">
+                    <displayName>ME49 Intersect VEG</displayName>
                       <paramValue name="strain_a">me49</paramValue>
                       <paramValue name="strain_b">veg</paramValue>
                     <description>
