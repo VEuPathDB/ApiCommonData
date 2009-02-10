@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
@@ -25,7 +25,7 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self->runPlugin($test, "ApiCommonData::Load::Plugin::InsertLowComplexityFeature", $args);
+  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertLowComplexityFeature", $args);
 }
 
 sub getConfigDeclaration {
@@ -44,13 +44,5 @@ sub getParamDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
 
