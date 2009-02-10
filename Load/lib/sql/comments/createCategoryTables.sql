@@ -1,5 +1,6 @@
 DROP TABLE comments2.CommentTargetCategory;
 DROP TABLE comments2.TargetCategory;
+DROP TABLE comments2.CommentBibliographicReference;
 
 CREATE TABLE comments2.TargetCategory
 (
@@ -31,10 +32,23 @@ CREATE TABLE comments2.CommentTargetCategory
 	   REFERENCES comments2.TargetCategory (target_category_id)
 );
 
+CREATE TABLE comments2.CommentBibliographicReference
+(
+  comment_bibliographic_reference_id NUMBER(10) NOT NULL,
+	bibliographic_reference_id VARCHAR2(15) NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+	CONSTRAINT comment_bibliographic_reference_key PRIMARY KEY (comment_bibliographic_reference_id),
+	CONSTRAINT comment_id_fkey FOREIGN KEY (comment_id)
+	   REFERENCES comments2.comments (comment_id)
+);
+
 GRANT insert, update, delete on comments2.CommentTargetCategory to GUS_W;
 GRANT select on comments2.CommentTargetCategory to GUS_R;
 
 CREATE SEQUENCE comments2.commentTargetCategory_pkseq START WITH 1 INCREMENT BY 1;
-
 GRANT select on comments2.commentTargetCategory_pkseq to GUS_W;
 GRANT select on comments2.commentTargetCategory_pkseq to GUS_R;
+
+CREATE SEQUENCE comments2.commentBibliographicReference_pkseq START WITH 1 INCREMENT BY 1;
+GRANT select on comments2.commentBibliographicReference_pkseq to GUS_W;
+GRANT select on comments2.commentBibliographicReference_pkseq to GUS_R;
