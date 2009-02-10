@@ -797,7 +797,6 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <internalDependency name="apidb.GenomicSequence"/>
     <internalDependency name="apidb.TaxonSpecies"/>
     <externalDependency name="apidb.AaSequenceAttribute"/>
-    <externalDependency name="apidb.DeprecatedGenes"/>
     <externalDependency name="apidb.Profile"/>
     <externalDependency name="apidb.ProfileSet"/>
     <externalDependency name="core.TableInfo"/>
@@ -805,6 +804,7 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <externalDependency name="dots.AaLocation"/>
     <externalDependency name="dots.AaSequenceEnzymeClass"/>
     <externalDependency name="dots.AaSequenceImp"/>
+    <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.GeneInstance"/>
     <externalDependency name="dots.GoAssociation"/>
     <externalDependency name="dots.GoAssociationInstance"/>
@@ -819,6 +819,7 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
     <externalDependency name="rad.CompositeElementImp"/>
     <externalDependency name="rad.LogicalGroup"/>
     <externalDependency name="rad.Protocol"/>
+    <externalDependency name="sres.DbRef"/>
     <externalDependency name="sres.EnzymeClass"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
@@ -1201,7 +1202,13 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
                AS comment_string
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
-     (SELECT distinct source_id, 1 as is_deprecated from apidb.DeprecatedGenes) deprecated,
+     (select distinct gf.source_id, 1 as is_deprecated
+      from dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+      where gf.na_feature_id = drnf.na_feature_id
+        and drnf.db_ref_id = dr.db_ref_id
+        and dr.external_database_release_id = edr.external_database_release_id
+        and edr.external_database_id = ed.external_database_id
+        and ed.name = 'deprecated genes') deprecated,
      (select sf.parent_id,count(*) as total_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
