@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
@@ -23,7 +23,7 @@ sub run {
   }
 
 
-  $self->runPlugin($test, "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
+  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::InsertTandemRepeatFeatures", $args);
 }
 
 sub getParamsDeclaration {
@@ -38,13 +38,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
 
