@@ -32,6 +32,9 @@ CREATE TABLE comments2.CommentTargetCategory
 	   REFERENCES comments2.TargetCategory (target_category_id)
 );
 
+GRANT insert, update, delete on comments2.CommentTargetCategory to GUS_W;
+GRANT select on comments2.CommentTargetCategory to GUS_R;
+
 CREATE TABLE comments2.CommentBibliographicReference
 (
   comment_bibliographic_reference_id NUMBER(10) NOT NULL,
@@ -42,8 +45,8 @@ CREATE TABLE comments2.CommentBibliographicReference
 	   REFERENCES comments2.comments (comment_id)
 );
 
-GRANT insert, update, delete on comments2.CommentTargetCategory to GUS_W;
-GRANT select on comments2.CommentTargetCategory to GUS_R;
+GRANT insert, update, delete on comments2.CommentBibliographicReference to GUS_W;
+GRANT select on comments2.CommentBibliographicReference to GUS_R;
 
 CREATE SEQUENCE comments2.commentTargetCategory_pkseq START WITH 1 INCREMENT BY 1;
 GRANT select on comments2.commentTargetCategory_pkseq to GUS_W;
