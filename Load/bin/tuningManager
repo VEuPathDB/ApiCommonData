@@ -170,60 +170,67 @@ if ($tables) {
   @tableList = keys(%tuningTables);
 }
 
-foreach my $table (@tableList) {
-  if (!$tuningTables{$table}) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
-    next;
+eval {
+  foreach my $table (@tableList) {
+    if (!$tuningTables{$table}) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
+      next;
+    }
+
+    $tableCount++;
+    my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
+
+    if ($state eq "broken") {
+      $brokenCount++;
+    } elsif ($state eq "neededUpdate") {
+      $neededUpdateCount++;
+    } elsif ($state eq "up-to-date") {
+      $upToDateCount++;
+    } else {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
+    }
   }
 
-  $tableCount++;
-  my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
+  # cleanup
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
+  cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
 
-  if ($state eq "broken") {
-    $brokenCount++;
-  } elsif ($state eq "neededUpdate") {
-    $neededUpdateCount++;
-  } elsif ($state eq "up-to-date") {
-    $upToDateCount++;
+  # summary
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
+  if (!$tableCount) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
   } else {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid state $state");
+    ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
   }
-}
 
-# cleanup
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
-cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
+  # list broken tables
+  if ($brokenCount) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
+    foreach my $table (keys(%tuningTables)) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
+	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
+    }
 
-# summary
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
-if (!$tableCount) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
-}
-
-# list broken tables
-if ($brokenCount) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
-  foreach my $table (keys(%tuningTables)) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
-    if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
-}
-
-}
+  }
 
 
-if (!$indexesConfigured) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
-} elsif ($missingIndexes) {
-  ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
-						 . $indexesConfigured
-						 . " indexes configured were found to be missing");
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("All "
-						 . $indexesConfigured
-						 . " indexes were found to exist.");
-}
+  if (!$indexesConfigured) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
+  } elsif ($missingIndexes) {
+    ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
+						   . $indexesConfigured
+						   . " indexes configured were found to be missing");
+  } else {
+    ApiCommonData::Load::TuningConfig::Log::addLog("All "
+						   . $indexesConfigured
+						   . " indexes were found to exist.");
+  }
+};
+
+# log any errors inside eval
+ApiCommonData::Load::TuningConfig::Log::addErrorLog($@)
+  if $@;
+
 
 releaseLockForUpdate();
 
