@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $algName = $self->getParamValue('algName');
@@ -20,7 +20,7 @@ sub run {
 
   my $args = "--AlgorithmName $algName --AlgorithmDescription $algDesc --AlgImpVersion $algVersion  --AlgInvocStart '2000-01-01' --AlgInvocEnd '2000-01-01' --AlgInvocResult $algResult";
 
-  $self->runPlugin($test,
+  $self->runPlugin($test, $undo,
 		   "GUS::Community::Plugin::InsertMinimalAlgorithmInvocation",
 		   $args);
 }
@@ -41,12 +41,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
