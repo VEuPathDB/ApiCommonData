@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::CalculateAASeqMolWtMinMaxAndIsoelectricPoint;
+package ApiCommonData::Load::Plugin::CalculateAASeqAttributes;
 
 use strict;
 use warnings;
