@@ -304,6 +304,18 @@ sub getUpdateIds {
   return $updatedRows;
 }
 
+sub undoUpdatedTables {
+  my ($self) = @_;
 
+  return ('DoTS.AASequence',
+	  'DoTS.NASequence',
+          'DoTS.NRDBEntry',
+          'DoTS.OpticalMap',
+          'DoTS.MicrosatelliteMap',
+          'DoTS.RHMap',
+          'Tess.MoietyImp',
+          'DoTS.EndSequencePairMap'
+	 );
+}
 
 1;
