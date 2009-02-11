@@ -21,7 +21,6 @@ sub run {
     $self->runCmd(0,"echo hello > $localDataDir/$outputSmallFile");
     $self->runCmd(0,"echo hello > $localDataDir/$outputBigFile");
   }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputSmallFile");
     $self->runCmd(0, "rm -f $localDataDir/$outputBigFile");
