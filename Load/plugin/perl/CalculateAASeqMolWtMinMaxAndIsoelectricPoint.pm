@@ -79,7 +79,7 @@ sub new {
   bless $self, $class;
 
   $self->initialize({ requiredDbVersion => 3.5,
-		      cvsRevision =>  '$Revision: 26796 $',
+		      cvsRevision =>  '$Revision: 26797 $',
 		      name => ref($self),
 		      argsDeclaration   => $argsDeclaration,
 		      documentation     => $documentation
@@ -122,7 +122,7 @@ EOSQL
     # Bio::Tools::SeqStats didn't get the memo - J is not allowed.
     $seq =~ s/J/L/g;
     
-    my $seq = Bio::PrimarySeq->new(-id => $aaSeqId,
+    my $seq = Bio::Seq->new(-id => $aaSeqId,
 				   -seq => $seq,
 				   -alphabet => "protein",
 				  );
