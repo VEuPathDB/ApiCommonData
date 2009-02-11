@@ -13,14 +13,12 @@
               shortDisplayName="Isolate ID(s)"
               queryRef="IsolateIds.IsolateByIsolateId" 
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlasmoDB">
 
              <attributesList includeProjects="CryptoDB"
                summary="organism, strain, product, specific_host"/>
               <attributesList includeProjects="PlasmoDB"
                  summary="strain, country, data_type, length" /> 
- <attributesList includeProjects="ApiDB"
-               summary="organism, strain, country, data_type, product, length, specific_host"/>
              <summary>
                Find Isolates by ID.
              </summary>
@@ -34,14 +32,6 @@
                ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
                a semi colon, or any white spaces.
              </description>
- <description includeProjects="ApiDB">
-             <![CDATA[
-               Find Isolates by ID. Currently we have <i>Cryptosporidium</i> and <i>Plasmodium</i> isolates.  
-               Either enter the ID list manually, or upload a file that contains the list.  
-               The IDs are usually the Genbank accession number. 
-               IDs can be delimited by a comma, a semi colon, or any white spaces.
-             ]]> 
-             </description>
 
 
     <propertyList name="specificAttribution" includeProjects="CryptoDB">
@@ -53,6 +43,33 @@
     </propertyList> 
 
     </question>
+
+ <question name="IsolateByIsolateId" 
+              category="Other Attributes"
+              displayName="Isolate ID(s)"
+              shortDisplayName="Isolate ID(s)"
+              queryRef="IsolateIds.IsolateByIsolateId" 
+              recordClassRef="IsolateRecordClasses.IsolateRecordClass"
+              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+
+       
+ <attributesList includeProjects="ApiDB"
+               summary="organism, strain, country, data_type, product, length, specific_host"/>
+             <summary>
+               Find Isolates by ID.
+             </summary>
+          <description includeProjects="ApiDB">
+             <![CDATA[
+               Find Isolates by ID. Currently we have <i>Cryptosporidium</i> and <i>Plasmodium</i> isolates.  
+               Either enter the ID list manually, or upload a file that contains the list.  
+               The IDs are usually the Genbank accession number. 
+               IDs can be delimited by a comma, a semi colon, or any white spaces.
+             ]]> 
+             </description>
+
+
+      </question>
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- With Gene Overlap -->
