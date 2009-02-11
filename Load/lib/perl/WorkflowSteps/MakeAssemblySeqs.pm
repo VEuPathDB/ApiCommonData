@@ -12,7 +12,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 ## define genomeDataDir
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
@@ -28,7 +28,7 @@ sub run {
 
   $args .= " --idSQL \"$predictedTranscriptsSql\"" if ($predictedTranscriptsSql);
 
-  $self->runPlugin($test, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
+  $self->runPlugin($test, $undo, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
 
 }
 
@@ -48,12 +48,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
