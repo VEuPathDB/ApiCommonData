@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $outputSmallFile = $self->getParamValue('outputSmallFile');
@@ -30,12 +30,6 @@ sub run {
   }
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
 
 sub getConfigDeclaration {
   my @properties = 
@@ -56,5 +50,4 @@ sub getParamDeclaration {
   return @properties;
 }
 
-sub getDocumentation {
-}
+
