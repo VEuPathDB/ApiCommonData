@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test,$undo) = @_;
 
   my $mappingFileRelativeToDownloadDir = $self->getParamValue('mappingFileRelativeToDownloadDir');
   my $sourceIdRegex = $self->getParamValue('sourceIdRegex');
@@ -26,7 +26,7 @@ sub run {
     $self->testInputFile('mappingFile', "$mappingFile");
   }
 
-  $self->runPlugin($test, "ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile", $args);
+  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile", $args);
 
 }
 
