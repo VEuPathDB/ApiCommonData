@@ -42,15 +42,8 @@
       <depends name="calcTranslatedProteins"/>
     </step>
 
-    <step name="molecularWeightMinMax"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertAASeqMWMinMax">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends name="calcTranslatedProteins"/>
-    </step>
-
-    <step name="isoelectricPoint"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertIsoelectricPoint">
+    <step name="calcAASequenceAttributes"
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends name="calcTranslatedProteins"/>

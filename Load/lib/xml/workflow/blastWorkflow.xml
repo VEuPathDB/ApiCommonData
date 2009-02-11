@@ -68,7 +68,7 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="nrdbSubject">
+    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">$$subjectFile$$</paramValue>
       <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
@@ -77,7 +77,7 @@
     </step>
 
     <step name="updateNrdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$">
+          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset">
       <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
       <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
       <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
