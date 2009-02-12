@@ -1242,7 +1242,31 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
         where gf.na_feature_id = ssg.sequence_id
          and ssg.sequence_group_id = sg.sequence_group_id
          and ssg.source_table_id = ti.table_id
-         and ti.name = 'GeneFeature') orthologs
+         and ti.name = 'GeneFeature'
+        UNION
+        select chr6.na_feature_id, sg.name
+        from (select co.group_id, gf.source_id 
+              from apidb.chromosome6orthology co, dots.genefeature gf,
+                   sres.taxonname tn, dots.nasequence s
+              where co.source_id = gf.source_id
+               and gf.na_sequence_id = s.na_sequence_id
+               and tn.taxon_id = s.taxon_id
+               and tn.name = 'Cryptosporidium parvum Iowa II'
+             ) par, 
+             (select co.group_id, gf.source_id, gf.na_feature_id
+              from apidb.chromosome6orthology co, dots.genefeature gf,
+                   sres.taxonname tn, dots.nasequence s
+              where co.source_id = gf.source_id
+               and gf.na_sequence_id = s.na_sequence_id
+               and tn.taxon_id = s.taxon_id
+               and tn.name = 'Cryptosporidium parvum'
+             ) chr6, 
+             dots.genefeature gf, dots.sequencegroup sg, dots.sequencesequencegroup ssg
+        where chr6.group_id = par.group_id
+         and par.source_id = gf.source_id
+         and gf.na_feature_id = ssg.sequence_id
+         and ssg.sequence_group_id = sg.sequence_group_id
+       ) orthologs
 WHERE gf.source_id is not null
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
