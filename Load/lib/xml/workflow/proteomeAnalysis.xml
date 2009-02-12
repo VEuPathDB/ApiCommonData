@@ -35,13 +35,6 @@
       <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
     </step>
 
-    <step name="molecularWeight"
-          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateProteinMolWt">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends name="calcTranslatedProteins"/>
-    </step>
-
     <step name="calcAASequenceAttributes"
           stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
