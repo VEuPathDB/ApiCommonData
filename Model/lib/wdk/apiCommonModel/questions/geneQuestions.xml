@@ -3910,10 +3910,10 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          shortDisplayName="Orthologous"
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="ApiDB,TriTrypDB,CryptoDB"
               summary="organism,product,orthologs"
         />
-        <attributesList includeProjects="CryptoDB,PlasmoDB,TriTrypDB"
+        <attributesList includeProjects="PlasmoDB"
               summary="organism,product"
         /> 
         <attributesList includeProjects="ToxoDB"
@@ -3929,7 +3929,7 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
           ]]>
         </description>
 
-<dynamicAttributes>
+         <dynamicAttributes>
              <columnAttribute name="orthologs" displayName="Matching Input" align="center" inReportMaker="false"/>
          </dynamicAttributes>
 

@@ -137,7 +137,6 @@
                                                 'Cryptosporidium parvum', 4)) AS source_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
-                      AND ga.organism like $$organism$$
                       GROUP BY ga.orthomcl_name) f
                 WHERE c.source_id = f.source_id
                 ]]>

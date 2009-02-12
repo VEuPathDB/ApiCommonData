@@ -373,7 +373,7 @@
               AND ga.project_id = '@PROJECT_ID@'
            ]]>
        </sql>
-<sql  includeProjects="TrichDB">
+       <sql  includeProjects="TrichDB">
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
               decode(gf.is_pseudo,0,'No',1,'Yes') as is_pseudo
@@ -555,7 +555,23 @@
         <column name="project_id" />
         <column name="orthologs"/>
 
-        <sql includeProjects="CryptoDB,PlasmoDB,TriTrypDB">
+        <sql includeProjects="TriTrypDB,CryptoDB">
+            <![CDATA[
+            SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
+                   apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
+            FROM $$gene_result$$ qr, apidb.GENEATTRIBUTES gf1,
+                 apidb.GENEATTRIBUTES gf2, dots.NaSequence ens
+            WHERE qr.source_id = gf1.source_id
+              AND gf1.orthomcl_name = gf2.ORTHOMCL_NAME
+              AND gf2.gene_type = 'protein coding' /* this because non protein coding have orthmcl_name for counting distinct "ortholog" results */
+              AND gf2.na_sequence_id = ens.na_sequence_id
+              AND ens.taxon_id in ($$organism$$)
+            GROUP BY gf2.source_id
+            ORDER BY gf2.source_id
+           ]]>
+       </sql>
+
+        <sql includeProjects="PlasmoDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 

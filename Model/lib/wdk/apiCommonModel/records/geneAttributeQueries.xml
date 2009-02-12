@@ -163,6 +163,8 @@
             <column name="nonsyn_syn_ratio_all_strains"/>
             <column name="signalp_scores" />
             <column name="signalp_peptide" />
+            <column name="ortholog_number" />
+            <column name="paralog_number" />
             <column name="ann_go_component" excludeProjects="GiardiaDB"/>
             <column name="ann_go_process" excludeProjects="GiardiaDB"/>
             <column name="ann_go_function" excludeProjects="GiardiaDB"/>
@@ -302,7 +304,8 @@
                    bfmv.nonsynonymous_snps as nonsynonymous_snps_all_strains,
                    bfmv.nonsyn_syn_ratio as nonsyn_syn_ratio_all_strains,
                    bfmv.synonymous_snps as synonymous_snps_all_strains,
-                   bfmv.signalp_scores,bfmv.signalp_peptide
+                   bfmv.signalp_scores,bfmv.signalp_peptide,
+                   ortholog_number,paralog_number
             FROM apidb.GeneAttributes bfmv
             ]]>
             </sql>
