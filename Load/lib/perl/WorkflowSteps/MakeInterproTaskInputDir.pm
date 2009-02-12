@@ -21,19 +21,23 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
-
-  # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::IprscanTask");
 
   if ($test) {
     $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
   }
 
-  # make task.prop file
-  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+  if ($undo) {
+    $self->runCmd(0,"rm -rf $localDataDir/$taskInputDir");
+  }else {
+    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
+
+    # make controller.prop file
+    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::IprscanTask");
+
+    # make task.prop file
+    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
   print F
 "seqfile=$computeClusterDataDir/$proteinsFile
@@ -45,6 +49,7 @@ crc=false
 ";
 
   #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+  }
 }
 
 sub getParamsDeclaration {
@@ -61,12 +66,4 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
