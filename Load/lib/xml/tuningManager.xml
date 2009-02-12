@@ -1320,6 +1320,12 @@ CREATE INDEX apidb.GeneAttr_geneid_ix&1
     </sql>
     <sql>
       <![CDATA[
+CREATE INDEX apidb.GeneAttr_orthoname_ix&1
+       ON apidb.GeneAttributes&1 (orthomcl_name)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
   update apidb.geneattributes&1
   set exon_count = 1
   where exon_count > 1
@@ -1331,6 +1337,36 @@ CREATE INDEX apidb.GeneAttr_geneid_ix&1
                          'Tc00.1047053508153.440',
                          'Tc00.1047053508547.110',
                          'Tc00.1047053508973.50')
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        update apidb.GENEATTRIBUTES&1
+        set orthomcl_name = source_id 
+        where orthomcl_name is null
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+       alter table apidb.GENEATTRIBUTES&1
+       add (
+            paralog_number number,
+            ortholog_number number
+            )
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+       update apidb.GENEATTRIBUTES&1 gaup
+       set paralog_number = (select count(*)
+                             from apidb.GENEATTRIBUTES&1 g1
+                             where g1.orthomcl_name = gaup.orthomcl_name
+                             and g1.organism = gaup.organism
+                             and gaup.source_id != g1.source_id),
+           ortholog_number = (select count(*)
+                             from apidb.GENEATTRIBUTES&1 g1
+                             where g1.orthomcl_name = gaup.orthomcl_name
+                             and g1.organism != gaup.organism)
       ]]>
     </sql>
   </tuningTable>
