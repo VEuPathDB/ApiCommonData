@@ -7,16 +7,16 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
 
-  my ($self, $test) = @_;
+  my ($self, $test,$undo) = @_;
 
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
   my $organismTwoLetterAbbrev = $self->getParamValue('organismTwoLetterAbbrev');
 
   my $taxonId = $self->getTaxonIdFromNcbiTaxId($test, $ncbiTaxonId);
 
-  my $cmd = "updateAssSourceIdFromPK --prefix '${organismTwoLetterAbbrev}DT.' --suffix '.tmp' --TaxonId $taxonId";
+  my $args = "--prefix '${organismTwoLetterAbbrev}DT.' --suffix '.tmp' --taxonId $taxonId";
 
-  $self->runCmd($test, $cmd);
+  $self->runPlugin($test, $undo,"ApiCommonData::Load::Plugin::UpdateAssemblySourceId",$args);
 }
 
 sub getParamDeclaration {
@@ -33,12 +33,4 @@ sub getConfigDeclaration {
     );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
