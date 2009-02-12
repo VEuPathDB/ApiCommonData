@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameter values
   my $taskInputDir = $self->getParamValue("taskInputDir");
@@ -20,22 +20,24 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
-
-  # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::GenomeAlignWithGfClientTask");
-
   if ($test) {
     $self->testInputFile('queryFile', "$localDataDir/$queryFile");
     $self->testInputFile('targetDir', "$localDataDir/$targetDir");
   }
 
-  # make task.prop file
-  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+  if ($undo) {
+    $self->runCmd(0,"rm -rf $localDataDir/$taskInputDir");
+  }else {
+    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
-  print F
+    # make controller.prop file
+    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::GenomeAlignWithGfClientTask");
+    # make task.prop file
+    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+
+    print F
 "gaBinPath=$gaBinPath
 targetDirPath=$computeClusterDataDir/$targetDir/nib
 queryPath=$computeClusterDataDir/$queryFile
@@ -44,11 +46,12 @@ maxIntron=$maxIntronSize
 ";
   close(F);
 
-  $self->makeGenomeTargetListFile("$localDataDir/$targetDir",
-				  "$localDataDir/$taskInputDir/targetList",
-				  "$computeClusterDataDir/$targetDir");
+    $self->makeGenomeTargetListFile("$localDataDir/$targetDir",
+				    "$localDataDir/$taskInputDir/targetList",
+				    "$computeClusterDataDir/$targetDir");
 
-  #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+    #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+  }
 }
 
 sub makeGenomeTargetListFile {
@@ -84,12 +87,3 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
