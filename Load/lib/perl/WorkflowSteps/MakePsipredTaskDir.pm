@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $taskInputDir = $self->getParamValue('taskInputDir');
@@ -20,32 +20,33 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0,"mkdir $localDataDir/$taskInputDir");
-
-  # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::PsipredTask");
-
- 
-
-
 
   if ($test) {
     $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
     $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
   }
 
- # make task.prop file
-  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+  if ($undo) {
+    $self->runCmd(0,"rm -rf $localDataDir/$taskInputDir");
+  }else {
+    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
-  print F
+    # make controller.prop file
+    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::PsipredTask");
+
+    # make task.prop file
+    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+
+    print F
 "psipredDir=$psipredPath
 dbFilePath=$computeClusterDataDir/$nrdbFile
 inputFilePath=$computeClusterDataDir/$proteinsFile
 ncbiBinDir=$ncbiBinPath
 ";
     close(F);
+  }
 }
 
 sub getParamsDeclaration {
@@ -65,12 +66,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
