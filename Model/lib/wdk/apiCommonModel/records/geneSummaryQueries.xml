@@ -146,20 +146,16 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                 SELECT c.*
-                 FROM   
-                    (SELECT source_id, project_id
-                      FROM $$gene_answer$$ ) c,
-                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Trypanosoma brucei TREU927', 1, 
                                                 'Leishmania braziliensis', 2,
                                                 'Leishmania infantum', 3,
                                                 'Leishmania major', 4,
-                                                'Trypanosoma cruzi strain CL Brener', 5)) AS source_id
+                                                'Trypanosoma cruzi strain CL Brener', 5)) AS source_id,
+                      ga.project_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
-                      GROUP BY ga.orthomcl_name) f
-                WHERE c.source_id = f.source_id
+                      GROUP BY ga.orthomcl_name,ga.project_id 
                 ]]>
             </sql>
         </sqlQuery>
@@ -171,20 +167,15 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                 SELECT c.*
-                 FROM   
-                    (SELECT source_id, project_id
-                      FROM $$gene_answer$$ ) c,
-                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(sa.database_name, 'Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton', 1, 
                                                 'Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton', 2,
-                                                'T.cruzi contigs and annotations', 3)) AS source_id
+                                                'T.cruzi contigs and annotations', 3)) AS source_id, ga.project_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga, apidb.sequenceattributes sa
                       WHERE ga.source_id = ca.source_id
                       AND sa.na_sequence_id = ga.na_sequence_id
                       AND ga.organism like $$organism$$
-                      GROUP BY ga.gene_id) f
-                WHERE c.source_id = f.source_id
+                      GROUP BY ga.gene_id,ga.project_id
                 ]]>
             </sql>
         </sqlQuery>
@@ -197,19 +188,15 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                 SELECT c.*
-                 FROM   
-                    (SELECT source_id, project_id
-                      FROM $$gene_answer$$ ) c,
-                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
-                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                                                'Toxoplasma gondii VEG', 3)) AS source_id,
+                      ga.project_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$organism$$
-                      GROUP BY ga.gene_id) f
-                WHERE c.source_id = f.source_id
+                      GROUP BY ga.gene_id,ga.project_id
                 ]]>
             </sql>
         </sqlQuery>
@@ -309,19 +296,14 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                 SELECT c.*
-                 FROM   
-                    (SELECT source_id, project_id
-                      FROM $$gene_answer$$ ) c,
-                    (SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
-                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                                                'Toxoplasma gondii VEG', 3)) AS source_id,ga.project_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
                       AND ga.organism like $$strain_a$$
-                      GROUP BY ga.gene_id) f
-                WHERE c.source_id = f.source_id
+                      GROUP BY ga.gene_id
                 ]]>
             </sql>
         </sqlQuery>
