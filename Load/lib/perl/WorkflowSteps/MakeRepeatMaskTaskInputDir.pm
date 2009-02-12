@@ -5,7 +5,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $taskInputDir = $self->getParamValue('taskInputDir');
@@ -20,19 +20,22 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
-
-  # make controller.prop file
-  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
-				       "DJob::DistribJobTasks::RepeatMaskerTask");
-
   if ($test) {
     $self->testInputFile('seqsFile', "$localDataDir/$seqsFile");
   }
 
-  # make task.prop file
-  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+  if ($undo) {
+    $self->runCmd(0,"rm -rf $localDataDir/$taskInputDir");
+  }else {
+    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
+
+    # make controller.prop file
+    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+				       "DJob::DistribJobTasks::RepeatMaskerTask");
+
+    # make task.prop file
+    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
     print F 
 "rmPath=$rmPath
@@ -42,6 +45,7 @@ rmOptions=$options
 dangleMax=$dangleMax
 ";
     close(F);
+  }
 
 }
 
@@ -58,12 +62,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}
