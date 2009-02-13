@@ -10,7 +10,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 ## API $self->runCmdInBackground 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $ncbiTaxonId = $self->getParamValue('ncbiTaxonId');
@@ -23,8 +23,10 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $args = "--clusterfile $localDataDir/$inputFile $reassemble --taxon_id $taxonId --cap4Dir $cap4Dir";
+
+  my $workflowStepId = $self->getId();
   
-  my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --comment '$args'";
+  my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --workflowstepid $id --comment '$args'";
 
   my $cmd = "runUpdateAssembliesPlugin --clusterFile $localDataDir/$inputFile --pluginCmd \"$pluginCmd\"";
 
@@ -32,15 +34,13 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self->runCmd($test, $cmd);
+  if ($undo) {
+    $self->runPlugin($test, $undo, $pluginCmd);
+  }else {
+    $self->runCmd($test, $cmd);
+  }
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
 
 sub getConfigDeclaration {
   my @properties = 
@@ -62,5 +62,4 @@ sub getParamDeclaration {
   return @properties;
 }
 
-sub getDocumentation {
-}
+
