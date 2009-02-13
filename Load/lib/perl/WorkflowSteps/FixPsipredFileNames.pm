@@ -13,7 +13,7 @@ sub run {
 
     my $localDataDir = $self->getLocalDataDir();
 
-    #$self->runCmd(0,"cp -r $localDataDir/$inputDir  $localDataDir/$outputDir");
+    $self->runCmd(0,"cp -r $localDataDir/$inputDir  $localDataDir/$outputDir");
 
     opendir(DIR, "$localDataDir/$outputDir") || die "Can't open directory '$localDataDir/$outputDir'";
     
