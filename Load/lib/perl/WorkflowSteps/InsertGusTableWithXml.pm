@@ -7,19 +7,19 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $xmlFile = $self->getParamValue('xmlFileRelativeToGusHomeDir');
   my $gusTable = $self->getParamValue('gusTable');
 
   my $gusHome = $self->getGlobalConfig('gusHome');
 
-  my $args = "--filename $gusHome/$xmlFile";
+  my $args = "--filename $gusHome/$xmlFile --tableName $gusTable";
 
   if ($test) {
       $self->testInputFile('xmlFile', "$gusHome/$xmlFile");
   }
-  $self->runPlugin($test, "GUS::Supported::Plugin::LoadGusXml", $args);
+  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::LoadGusXml", $args);
 
 }
 
@@ -36,12 +36,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}
