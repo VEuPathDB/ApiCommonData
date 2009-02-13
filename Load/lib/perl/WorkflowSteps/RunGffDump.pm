@@ -16,13 +16,16 @@ sub run {
   my $organismFullName = $self->getParamValue('organismFullName');
   my $projectDB = $self->getParamValue('projectDB');
 
-  my $cmd = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $apiSiteFilesDir/$outputFile";
+  my $cmd1 = "wdkCache -model $projectDB  -recreate";
+  my $cmd2 = "gffDump  -model $projectDB  -organism \"$organismFullName\"  -dir $apiSiteFilesDir/$outputFile";
+
   if ($test) {
       $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
   } elsif($undo) {
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$downloadSiteDataDir/$outputFile");
   }else {
-      $self->runCmd($test, $cmd);
+      $self->runCmd($test, $cmd1);
+      $self->runCmd($test, $cmd2);
   }
 
 }
@@ -44,3 +47,8 @@ sub getConfigDeclaration {
          );
 }
 
+ my $cmd = <<"EOF";
+     wdkCache \\
+     -model $model \\
+     -recreate\\
+     2>> $logFile
