@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $outputDir = $self->getParamValue('outputDir');
@@ -22,7 +22,7 @@ sub run {
       $self->testInputFile('outputDir', "$localDataDir/$outputDir");
       $self->runCmdOnCluster(0,"echo test > $computeClusterDataDir/$outputDir/test.nib");
   }
-  $self->runCmdOnCluster($test,$cmd);
+  $self->runCmdOnCluster($test,$cmd) unless $undo;
 }
 
 sub getParamDeclaration {
