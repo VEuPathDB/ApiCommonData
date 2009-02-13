@@ -40,7 +40,7 @@
 
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
-      <paramValue name="numNodes">15</paramValue>
+      <paramValue name="numNodes">20</paramValue>
       <paramValue name="processorsPerNode">4</paramValue>
       <depends name="mirrorToCluster"/>
     </step>
@@ -72,7 +72,6 @@
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">$$subjectFile$$</paramValue>
       <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
-      <paramValue name="nrdbExtDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <depends name="extractIdsFromBlastResult"/>
     </step>
 
@@ -82,7 +81,7 @@
       <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
       <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
       <paramValue name="idSql">select source_id, aa_sequence_id from dots.externalaasequence</paramValue>
-      <paramValue name="extDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
       <depends name="loadSubjectSubset"/>
     </step>
