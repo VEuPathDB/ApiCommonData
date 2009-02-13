@@ -26,7 +26,7 @@ sub run {
 
   my $workflowStepId = $self->getId();
   
-  my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --workflowstepid $id --comment '$args'";
+  my $pluginCmd = "ga DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4 --commit $args --workflowstepid $workflowStepId --comment '$args'";
 
   my $cmd = "runUpdateAssembliesPlugin --clusterFile $localDataDir/$inputFile --pluginCmd \"$pluginCmd\"";
 
