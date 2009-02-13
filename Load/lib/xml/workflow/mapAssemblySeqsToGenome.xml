@@ -46,7 +46,7 @@
       <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask">
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask" stepLoadTypes="cluster">
       <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
       <paramValue name="numNodes">1</paramValue>
       <paramValue name="processorsPerNode">1</paramValue>
