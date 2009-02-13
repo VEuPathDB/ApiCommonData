@@ -38,7 +38,7 @@ sub run {
     if ($undo) {
       $self->runCmd(0, "rm -rf $localDataDir/$outputDirForSeparateFiles");
     } else {
-      $self->runCmd($test,"gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose";);
+      $self->runCmd($test,"gusExtractIndividualSequences --outputDir $localDataDir/$outputDirForSeparateFiles --idSQL \"$sql\" --verbose");
     }
 
   } else {
