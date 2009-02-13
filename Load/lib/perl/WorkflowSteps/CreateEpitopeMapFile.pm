@@ -25,6 +25,8 @@ sub run {
     if ($test) {
       $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
       $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+      $self->runCmd(0,"mkdir -p $localDataDir/$outputDir");
+      $self->runCmd(0,"echo hello > $localDataDir/$outputDir/IEDBExport.out");
     }
 
     $self->runCmd($test,$cmd);
