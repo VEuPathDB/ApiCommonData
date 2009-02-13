@@ -220,11 +220,14 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
             <column name="project_id"/>
             <sql>
                 <![CDATA[
-                    SELECT  MAX(c.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
-                            DECODE(c.organism, 'Toxoplasma gondii ME49', 1, 
+                 SELECT source_id,'@PROJECT_ID@' as project_id
+                 FROM   
+                    (SELECT  MAX(d.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(d.organism, 'Toxoplasma gondii ME49', 1, 
                                                 'Toxoplasma gondii GT1', 2,
-                                                'Toxoplasma gondii VEG', 3)) AS source_id,
-                            '@PROJECT_ID@' as project_id
+                                                'Toxoplasma gondii VEG', 3)) AS source_id
+                      FROM 
+                  (SELECT c.source_id, c.project_id,c.organism,c.gene_id
                   FROM $$gene_answer$$ ca, 
                     (SELECT gb.source_id, gb.project_id, ga.organism,ga.gene_id
                     FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
@@ -237,7 +240,9 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
                     WHERE ga.source_id = cc.source_id
                     AND ga.organism = $$strain_b$$
                     AND gb.gene_id = ga.gene_id ) c
-                group by c.gene_id
+                  WHERE c.source_id = ca.source_id
+                  AND c.organism = $$strain_a$$ ) d
+                group by d.gene_id)
                 ]]>
             </sql>
         </sqlQuery>
