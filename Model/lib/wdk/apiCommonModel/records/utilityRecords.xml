@@ -86,7 +86,34 @@
           </textAttribute>
 
         </recordClass>
+
+    </recordClassSet>
+   
+    <recordClassSet name="UtilityAjaxClasses">
         
+        <recordClass name="CurrentlyRunningSql" doNotTest="true" type="Ontology">
+            <primaryKeyAttribute name="primary_key"
+                                 displayName="SQL">
+                <columnRef>source_id</columnRef>
+                <columnRef>project_id</columnRef>
+                <text>
+                    <![CDATA[
+                    $$project_id$$:$$source_id$$
+                    ]]>
+                </text>                
+            </primaryKeyAttribute>
+            <table name="CurrentlyRunningSql" displayName="Currently Running SQL"
+                   queryRef="UtilityQueries.CurrentlyRunningSql">
+              <columnAttribute name="sid"              displayName="sid" /> 
+              <columnAttribute name="serial_no"        displayName="serial_no" />
+              <columnAttribute name="osuser"           displayName="osuser" /> 
+              <columnAttribute name="username"         displayName="username" /> 
+              <columnAttribute name="status"           displayName="status" /> 
+              <columnAttribute name="logon_time"       displayName="logon_time" />
+              <columnAttribute name="last_active_time" displayName="last_active_time" /> 
+              <columnAttribute name="sql_fulltext"     displayName="sql_fulltext" />
+            </table>
+        </recordClass>
     </recordClassSet>
 
 </wdkModel>

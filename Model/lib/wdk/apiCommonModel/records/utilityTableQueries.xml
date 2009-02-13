@@ -198,6 +198,41 @@
            </sql>
         </sqlQuery>
 
+        <!-- UtilityQueries.CurrentRunningSql -->
+        <sqlQuery name="CurrentlyRunningSql" isCacheable='false'>
+
+            <paramRef ref="recordParams.source_id"/> 
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="sid" /> 
+            <column name="serial_no" /> 
+            <column name="osuser" /> 
+            <column name="username" /> 
+            <column name="status" /> 
+            <column name="logon_time" />
+            <column name="last_active_time" /> 
+            <column name="sql_fulltext" />
+           <sql> 
+            <![CDATA[           
+            select $$source_id$$ AS source_id, 
+                   '@PROJECT_ID@' AS project_id,
+                    s.sid, s.serial# AS serial_no, s.osuser, 
+                    s.username, s.status, 
+                    s.logon_time, vs.last_active_time,
+                    vs.sql_fulltext
+              from v$session s, v$sql vs, v$process vp
+             where s.sql_address = vs.address
+               and s.sql_hash_value = vs.hash_value
+               and vs.users_executing > 0
+               and s.paddr = vp.addr
+               and s.status = 'ACTIVE'
+               and s.osuser != 'oracle'
+               --and lower(s.username) = (select lower(user) from dual)
+            ]]>
+           </sql>
+        </sqlQuery>
+
      </querySet>
 <!-- ////////// END UTILITY //////////// -->
 
