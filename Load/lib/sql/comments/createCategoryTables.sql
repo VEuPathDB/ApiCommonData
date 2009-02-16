@@ -1,9 +1,11 @@
+DROP TABLE comments2.CommentFile;
 DROP TABLE comments2.CommentTargetCategory;
 DROP TABLE comments2.TargetCategory;
 DROP TABLE comments2.CommentReference;
 
 DROP SEQUENCE comments2.commentTargetCategory_pkseq; 
 DROP SEQUENCE comments2.commentReference_pkseq; 
+DROP SEQUENCE comments2.commentFile_pkseq; 
 
 CREATE TABLE comments2.TargetCategory
 (
@@ -60,3 +62,20 @@ GRANT select on comments2.CommentReference to GUS_R;
 CREATE SEQUENCE comments2.commentReference_pkseq START WITH 1 INCREMENT BY 1;
 GRANT select on comments2.commentReference_pkseq to GUS_W;
 GRANT select on comments2.commentReference_pkseq to GUS_R;
+
+CREATE TABLE comments2.CommentFile
+(
+  file_id NUMBER(10) NOT NULL,
+	uri VARCHAR2(500) NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+	CONSTRAINT file_id_key PRIMARY KEY (file_id),
+	CONSTRAINT comment_id_file_fkey FOREIGN KEY (comment_id)
+	   REFERENCES comments2.comments (comment_id)
+);
+
+GRANT insert, update, delete on comments2.CommentFile to GUS_W;
+GRANT select on comments2.CommentFile to GUS_R;
+
+CREATE SEQUENCE comments2.commentFile_pkseq START WITH 1 INCREMENT BY 1;
+GRANT select on comments2.commentFile_pkseq to GUS_W;
+GRANT select on comments2.commentFile_pkseq to GUS_R;
