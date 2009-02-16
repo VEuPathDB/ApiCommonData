@@ -49,7 +49,7 @@
       <depends name="formatNcbiBlastFile"/>
     </step>
 
-    <step name="insertEpitopeMapping" stepClass="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping">
+    <step name="insertEpitopeMapping" stepClass="ApiCommonData::Load::WorkflowSteps::InsertEpitopeMapping" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/results/IEDBExport.out</paramValue>
       <paramValue name="iedbExtDbRlsSpec">$$iedbExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>

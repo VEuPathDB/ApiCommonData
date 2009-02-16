@@ -18,7 +18,7 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
     </step>
@@ -30,14 +30,14 @@
       <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult/</paramValue>
       <paramValue name="outputFiles"></paramValue>
       <depends name="runClusterTask"/>
     </step>
 
-    <step name="insert" stepClass="ApiCommonData::Load::WorkflowSteps::InsertInterpro">
+    <step name="insert" stepClass="ApiCommonData::Load::WorkflowSteps::InsertInterpro" stepLoadTypes="plugin">
       <paramValue name="inputDir">$$dataDir$$/master/mainresult/</paramValue>
       <paramValue name="interproExtDbRlsSpec">$$interproExtDbRlsSpec$$</paramValue>
       <paramValue name="configFileRelativeToDownloadDir">InterproscanData/iprscan$$interproVersion$$/iprscan/data/insertInterpro-config.xml</paramValue>

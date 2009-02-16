@@ -31,7 +31,7 @@
       <depends name="fixProteinIds"/>
     </step>
 
-    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="createTaskDir"/>
     </step>
@@ -43,7 +43,7 @@
       <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFiles"></paramValue>
@@ -56,7 +56,7 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="makeAlgInv" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAlgInv">
+    <step name="makeAlgInv" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAlgInv" stepLoadTypes="plugin">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="algVersion">dontcare</paramValue>
       <paramValue name="algDesc">dontcare</paramValue>
@@ -64,7 +64,7 @@
       <depends name="fixFileNames"/>
     </step>
 
-    <step name="insertPsipred" stepClass="ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures">
+    <step name="insertPsipred" stepClass="ApiCommonData::Load::WorkflowSteps::LoadSecondaryStructures" stepLoadTypes="plugin">
       <paramValue name="algName">psipred</paramValue>
       <paramValue name="inputDir">$$dataDir$$/master/mainresult_fixed</paramValue>
       <depends name="makeAlgInv"/>

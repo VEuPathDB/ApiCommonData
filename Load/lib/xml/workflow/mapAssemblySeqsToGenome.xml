@@ -34,13 +34,13 @@
       <depends name="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
-    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeTaskInputDir"/>
       <depends name="extractGenomicSeqsIntoSeparateFastaFiles"/>
     </step>
 
-    <step name="runNibOnCluster" stepClass="ApiCommonData::Load::WorkflowSteps::RunNibOnCluster">
+    <step name="runNibOnCluster" stepClass="ApiCommonData::Load::WorkflowSteps::RunNibOnCluster" stepLoadTypes="cluster">
       <paramValue name="inputFile">$$dataDir$$/input/targetList</paramValue>
       <paramValue name="outputDir">$$genomicSeqsDir$$</paramValue>
       <depends name="mirrorToCluster"/>
@@ -53,19 +53,19 @@
       <depends name="runNibOnCluster"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFiles">out.psl</paramValue>
       <depends name="runClusterTask"/>
     </step>
 
-    <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml">
+    <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml" stepLoadTypes="cluster">
       <paramValue name="xmlFileRelativeToGusHomeDir">/config/blatalignmentquality.xml</paramValue>
       <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
     </step>
 
-    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
+    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="cluster">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
@@ -82,7 +82,7 @@
       <depends name="InsertGusTableWithXml"/>
     </step>
 
-    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment">
+    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="cluster">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>

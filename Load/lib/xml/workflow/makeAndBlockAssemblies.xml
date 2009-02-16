@@ -42,7 +42,7 @@
     </step>
 
    <step name="makeAndLoadAssembliesFromSmallClusters"
-          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies">
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/smallClusters.out</paramValue>
       <paramValue name="ncbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
@@ -50,7 +50,7 @@
     </step>
 
    <step name="makeAndLoadAssembliesFromBigClusters"
-          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies">
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/bigClusters.out</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
@@ -75,7 +75,7 @@
       <depends name="extractAssemblies"/>
     </step>
 
-    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
       <depends name="extractAssemblies"/>
@@ -88,7 +88,7 @@
       <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFiles">blocked.seq</paramValue>

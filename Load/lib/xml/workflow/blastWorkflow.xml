@@ -33,7 +33,7 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
     </step>
@@ -45,7 +45,7 @@
       <depends name="mirrorToCluster"/>
     </step>
 
-    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster">
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
       <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
       <paramValue name="outputFiles">blastSimilarity.out</paramValue>
@@ -68,7 +68,7 @@
       <depends name="mirrorFromCluster"/>
      </step>
 
-    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset">
+    <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset,plugin">
       <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
       <paramValue name="fastaFile">$$subjectFile$$</paramValue>
       <paramValue name="idsFile">$$dataDir$$/blastSimIds.out</paramValue>
@@ -76,7 +76,7 @@
     </step>
 
     <step name="updateNrdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset">
+          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset,plugin">
       <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
       <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
       <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
@@ -86,7 +86,7 @@
       <depends name="loadSubjectSubset"/>
     </step>
 
-    <step name="loadSimilarities" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlastSimilarities">
+    <step name="loadSimilarities" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlastSimilarities" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out</paramValue>
       <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="queryTableIdCol">source_id</paramValue>

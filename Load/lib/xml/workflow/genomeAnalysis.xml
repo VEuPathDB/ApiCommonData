@@ -51,7 +51,7 @@
       <depends name="makeDataDir"/> 
     </subgraph>
 
-   <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+   <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
@@ -85,7 +85,7 @@
     </step>
 
     <step name="loadOrfFile"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertOrfFile">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertOrfFile" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/Orf50.gff</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="substepClass">ExternalNASequence</paramValue>
@@ -104,7 +104,7 @@
     </step>
 
     <step name="loadTandemRepeats"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTandemRepeats">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTandemRepeats" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/tandemRepeats.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="findTandemRepeats"/>
@@ -121,7 +121,7 @@
     </step>
 
     <step name="loadLowComplexityFile"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$genomicSeqsFile$$.dust</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="seqType">dna</paramValue>

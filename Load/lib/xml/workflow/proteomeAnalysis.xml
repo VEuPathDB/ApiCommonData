@@ -20,13 +20,13 @@
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
 
     <step name="calcTranslatedProteins"
-          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$">
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$" stepLoadTypes="plugin">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="soVersion">$$soVersion$$</paramValue>
     </step>
 
     <step name="updatePdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField">
+          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" stepLoadTypes="plugin">
       <paramValue name="mappingFileRelativeToDownloadDir">FetchPDBidx/source.idx.processed</paramValue>
       <paramValue name="sourceIdRegex">^(\\w+)</paramValue>
       <paramValue name="taxonRegex">--taxonNameRegex "^\\w+\\s+(.+)"</paramValue>
@@ -36,7 +36,7 @@
     </step>
 
     <step name="calcAASequenceAttributes"
-          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes">
+          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes" stepLoadTypes="plugin">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
       <depends name="calcTranslatedProteins"/>
@@ -55,7 +55,7 @@
       <depends name="makeDataDir"/>
     </step>
 
-    <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster">
+    <step name="mirrorProteinsToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractProteins"/>
     </step>
@@ -68,7 +68,7 @@
     </step>
 
     <step name="insertTmhmm"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTmhmm">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTmhmm" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runTmhmm"/>
@@ -83,7 +83,7 @@
     </step>
 
     <step name="insertSignalP"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertSignalP">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertSignalP" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/signalP.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runSignalP"/>
@@ -100,7 +100,7 @@
     </subgraph>
 
    <step name="runLowComplexityFilter"
-          stepClass="ApiCommonData::Load::WorkflowSteps::RunLowComplexityFilter">
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunLowComplexityFilter"> 
 
       <paramValue name="seqFile">$$proteinsFile$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
@@ -110,7 +110,7 @@
     </step>
 
     <step name="loadLowComplexityFile"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences">
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="seqType">protein</paramValue>
@@ -128,7 +128,7 @@
        <depends name="extractProteins"/>
     </step>
 
-    <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs">
+    <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs" stepLoadTypes="plugin">
       <paramValue name="xrefsFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
       <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
       <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
