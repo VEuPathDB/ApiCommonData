@@ -20,12 +20,13 @@ sub run {
 
   if ($test) {
       $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
+      $self->runCmd(0,"echo test > $localDataDir/$toFile");
   }
 
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$toFile");
   } else {
-      $self->runCmd(0, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
+      $self->runCmd($test, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
   }
 }
 
