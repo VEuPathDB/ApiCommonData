@@ -4,7 +4,7 @@ package ApiCommonData::Load::Plugin::UpdateAssemblySourceId;
 use strict;
 
 use GUS::PluginMgr::Plugin;
-
+use GUS::Model::DoTS::Assembly;
 $| = 1;
 
 
@@ -98,17 +98,11 @@ sub run {
   my $resultDescrip;
 
   if ($self->getArg('prefix') && $self->getArg('suffix') && $self->getArg('taxonId')){
-      $resultDescrip = $self->updateSourceIds();
+      $self->updateSourceIds();
   }else {
     $self->userError("must supply prefix, suffix and taxonId.");
   }
 
-  #$self->getQueryHandle()->commit();
-
-  $resultDescrip.="Committing update\n";
-
-  $self->setResultDescr($resultDescrip);
-  $self->logData($resultDescrip);
 }
 
 sub updateSourceIds {
@@ -120,17 +114,38 @@ sub updateSourceIds {
 
   my $suffix=$self->getArg('suffix');
 
-  my $updateSql = "update dots.assembly set source_id = '$prefix' || na_sequence_id || '$suffix' where taxon_id= '$taxonId'";
+  my $selectSql = "select na_sequence_id from dots.assembly where taxon_id= '$taxonId'";
 
   my $dbh = $self->getQueryHandle();
 
-  my $stmt = $dbh->prepareAndExecute($updateSql) || die "SQL failed: $updateSql\n";;
+  my $stmt = $dbh->prepareAndExecute($selectSql) || die "SQL failed: $selectSql\n";
 
-  my $resultDescrip="Updating source_id of dots.assembly with SQL: $updateSql\n";
+  my $count=0;
 
-  $self->undefPointerCache();
+  while (my ($na_sequence_id) = $stmt->fetchrow_array()){
 
-  return $resultDescrip;
+      my $sourceId = "$prefix". $na_sequence_id ."$suffix";
+
+      my $AssemblyObj = GUS::Model::DoTS::Assembly-> new({na_sequence_id => $na_sequence_id});
+
+      $AssemblyObj -> retrieveFromDB();
+ 
+      $AssemblyObj -> set('source_id',$sourceId); 
+
+      $AssemblyObj->submit();
+
+      $count++;
+
+      $self->undefPointerCache();
+
+      if($count % 100 == 0) {
+      $self->log("Updated $count assembly sequences.");
+      $self->undefPointerCache();
+    }
+
+  $self->log("Done.  Updated $count assembly sequences.");
+}
+
 }
 
 sub undoUpdatedTables {
