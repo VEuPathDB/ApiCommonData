@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $inputFile = $self->getParamValue('inputFile');
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
@@ -40,7 +40,7 @@ EOF
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self->runPlugin($test, "GUS::Supported::Plugin::InsertSequenceFeatures", $args);
+  $self->runPlugin($test, $undo,"GUS::Supported::Plugin::InsertSequenceFeatures", $args);
 }
 
 

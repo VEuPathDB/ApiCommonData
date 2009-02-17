@@ -165,7 +165,7 @@ sub getInputFiles{
     my @noDotFiles = grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
     @inputFiles = map { "$fileOrDir/$_" } @noDotFiles;
     @inputFiles = grep(/.*\.$inputFileNameExtension/, @inputFiles) if $inputFileNameExtension;
-    @inputFiles = grep(/.*$inputFileNameRegex.*/,@inputFiles) if $inputFileNameExtension;
+    @inputFiles = grep(/$inputFileNameRegex/,@inputFiles) if $inputFileNameRegex;
   } else {
     $inputFiles[0] = $fileOrDir;
   }

@@ -18,9 +18,10 @@ sub run {
     my $downloadDir = $self->getGlobalConfig('downloadDir');
 
     my $inputDir="$downloadDir/$inputDirRelativeToDownloadsDir";
-    my $cmd = "cat";
+    my $cmd = "cat ";
     my @inputFileNames = $self->getInputFiles($test,$inputDir,$organismName);
- 
+    my $size=scalar @inputFileNames;
+
     if (scalar @inputFileNames==0){
 	die "No input files. Please check inputDir: $inputDir\n";
     }else {

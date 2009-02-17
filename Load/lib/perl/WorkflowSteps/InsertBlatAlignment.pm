@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $targetNcbiTaxId = $self->getParamValue('targetNcbiTaxId');
   my $targetExtDbRlsSpec = $self->getParamValue('targetExtDbRlsSpec');
@@ -40,7 +40,7 @@ sub run {
     $self->testInputFile('blatFile', "$localDataDir/$blatFile");
   }
 
-  $self->runPlugin($test, "GUS::Community::Plugin::LoadBLATAlignments", $args);
+  $self->runPlugin($test, $undo,"GUS::Community::Plugin::LoadBLATAlignments", $args);
 }
 
 sub getParamDeclaration {
