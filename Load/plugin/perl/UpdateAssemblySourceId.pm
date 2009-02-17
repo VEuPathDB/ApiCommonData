@@ -103,7 +103,7 @@ sub run {
     $self->userError("must supply prefix, suffix and taxonId.");
   }
 
-  $self->getQueryHandle()->commit();
+  #$self->getQueryHandle()->commit();
 
   $resultDescrip.="Committing update\n";
 
