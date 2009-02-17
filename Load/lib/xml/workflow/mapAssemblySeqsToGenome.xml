@@ -60,12 +60,7 @@
       <depends name="runClusterTask"/>
     </step>
 
-    <step name="InsertGusTableWithXml" stepClass="ApiCommonData::Load::WorkflowSteps::InsertGusTableWithXml" stepLoadTypes="cluster">
-      <paramValue name="xmlFileRelativeToGusHomeDir">/config/blatalignmentquality.xml</paramValue>
-      <paramValue name="gusTable">BlatAlignmentQuality</paramValue>
-    </step>
-
-    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="cluster">
+    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="plugin">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
@@ -82,7 +77,7 @@
       <depends name="InsertGusTableWithXml"/>
     </step>
 
-    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="cluster">
+    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="plugin">
 
       <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryNcbiTaxId">$$parentNcbiTaxonId$$</paramValue>
