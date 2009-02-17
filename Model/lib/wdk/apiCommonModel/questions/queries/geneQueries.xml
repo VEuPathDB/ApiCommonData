@@ -3264,10 +3264,13 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByMr4Reagents" includeProjects="ApiDB"
+    <processQuery name="GenesByReagents" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+<!--
 <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.mr4_reagent_type" quote="false"/>
+-->
+          <paramRef ref="geneParams.reagent_type" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
@@ -3506,6 +3509,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.pvalue_cutoff"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+          <wsColumn name="pvalue" width="32"/>
     </processQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

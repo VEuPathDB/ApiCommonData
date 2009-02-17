@@ -1236,6 +1236,12 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+ <processQuery name="nameWithGenesGFF" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
     <!--===================================================================-->
     <!-- with ESTs -->  
     <!--===================================================================-->
@@ -1528,7 +1534,7 @@ UNION
     </processQuery>
 
     <!--===================================================================-->
-    <!-- plasmoWithGenes  -->  
+    <!-- withPlasmoGenes  -->  
     <!--===================================================================-->
 
     <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB" isCacheable="true">
@@ -1619,7 +1625,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withPlasmoGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withTriTrypGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
