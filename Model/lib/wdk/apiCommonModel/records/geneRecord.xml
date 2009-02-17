@@ -1170,10 +1170,10 @@
                  queryRef="GeneTables.SNPs">
             <columnAttribute internal="true" name="strain_a_query"/>
             <columnAttribute internal="true" name="strain_b_query"/>
-            <columnAttribute internal="true" name="strain_a_disp"/>
-            <columnAttribute internal="true" name="strain_b_disp"/>
+            <columnAttribute internal="true" name="strain_a_disp" displayName="Strain A"/>
+            <columnAttribute internal="true" name="strain_b_disp" displayName="Strain B"/>
             <columnAttribute internal="true" name="gene_source_id"/>
-            <linkAttribute name="LinkForStrainComparison"
+            <linkAttribute name="LinkForStrainComparison" inReportMaker="false"
                            displayName="Strains">
                  <displayText>
                     <![CDATA[
@@ -1225,7 +1225,7 @@
                  queryRef="GeneTables.ToxoExpandStrainsMicroarray"
                  includeProjects="ToxoDB">
 
-            <columnAttribute name="me49_source_id" internal="true" inReportMaker="false"/>
+            <columnAttribute name="me49_source_id" internal="true" inReportMaker="true" displayName="ME49 Gene Model"/>
 
             <textAttribute name="3strains" displayName="3 Clonal Lineages Expression Profile Graph"
                         inReportMaker="false" truncateTo="100000" sortable="false" includeProjects="ToxoDB">
@@ -1476,8 +1476,7 @@
          <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB,ApiDB"
                  displayName="Sage Tags"
                  queryRef="GeneTables.SageTags">
-            <columnAttribute displayName= "tag_source_id"
-                             name="tag_source_id" internal="true"/>
+            <columnAttribute name="tag_source_id" internal="true" displayName="External ID"/>
             <columnAttribute displayName= "source id"
                              name="source_id" internal="true"/>
             <linkAttribute includeProjects="GiardiaDB" displayName="External ID" name="tag_link"
@@ -1525,8 +1524,8 @@
                  queryRef="GeneTables.UserComments">
         <columnAttribute name="comment_id" internal="true"/>
         <columnAttribute name="stable_id" internal="true"/>
-            <columnAttribute name="headline" internal="true"/>
-      <linkAttribute name="headline_link"
+            <columnAttribute name="headline" internal="true" displayName="Headline"/>
+      <linkAttribute name="headline_link" inReportMaker="false"
               displayName="Headline">
                  <displayText>
                     <![CDATA[
@@ -1550,9 +1549,9 @@
           <table name="EcNumber"
                  displayName="EC Number"
                  queryRef="GeneTables.EcNumber">
-            <columnAttribute name="ec_number" internal="true" inReportMaker="false"/>
+            <columnAttribute name="ec_number" displayName="EC Number" internal="true" inReportMaker="true"/>
             <columnAttribute name="expasy_url" internal="true" inReportMaker="false" excludeProjects="CryptoDB"/>
-            <linkAttribute name="ec_number_link"
+            <linkAttribute name="ec_number_link" inReportMaker="false"
                            displayName="EC Number">
                  <displayText>
                     <![CDATA[
@@ -1601,9 +1600,9 @@
           <table name="GoTerms"
                  displayName="GO Terms"
                  queryRef="GeneTables.GoTerms">
-            <columnAttribute name="go_id" internal="true"/>
+            <columnAttribute name="go_id" displayName="GO ID" internal="true"/>
             <columnAttribute displayName="Ontology" name="ontology"/>
-            <linkAttribute name="go_id_link" displayName="GO ID">
+            <linkAttribute name="go_id_link" displayName="GO ID" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$go_id$$
@@ -1615,9 +1614,9 @@
             </linkAttribute>
             <columnAttribute displayName="GO Term Name" name="go_term_name"/>
             <columnAttribute displayName="Source" name="source"/>
-            <columnAttribute name="evidence_code" internal="true"/>
+            <columnAttribute name="evidence_code" internal="true" displayName="Evidence Code"/>
             <columnAttribute name="lowercase_evidence_code" internal="true"/>
-            <linkAttribute name="evidence_code_link"
+            <linkAttribute name="evidence_code_link" inReportMaker="false"
                            displayName="Evidence Code">
                  <displayText>
                     <![CDATA[
@@ -1650,8 +1649,8 @@
                  queryRef="GeneTables.PhenotypeTable" includeProjects="TriTrypDB,ApiDB">
             <columnAttribute displayName="Phenotype" name="phenotype"/>
             <columnAttribute displayName="Evidence" name="evidence"/>
-            <columnAttribute name="pubmed_id" internal="true"/>
-            <linkAttribute name="geneLink" displayName="PubMed">
+            <columnAttribute name="pubmed_id" internal="true" displayName="PubMed"/>
+            <linkAttribute name="geneLink" displayName="PubMed" inReportMaker="false">
                <displayText>
                   <![CDATA[
                     PMID:$$pubmed_id$$
@@ -1672,8 +1671,8 @@
           <table name="Y2hInteractions"
                  displayName="Y2H Interactions"
                  queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,ApiDB">
-              <columnAttribute name="source_id" internal="true"/>
-              <linkAttribute name="geneLink" displayName="Gene">
+              <columnAttribute name="source_id" internal="true" displayName="Gene"/>
+              <linkAttribute name="geneLink" displayName="Gene" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$source_id$$
@@ -1711,8 +1710,8 @@
           <table name="Orthologs" excludeProjects="TrichDB,GiardiaDB"
                  displayName="Orthologs and Paralogs within @PROJECT_ID@"
                  queryRef="GeneTables.Orthologs">
-            <columnAttribute name="ortho_source_id" internal="true"/>
-            <linkAttribute name="gene" displayName="Gene">
+            <columnAttribute name="ortho_source_id" internal="true" displayName="Gene"/>
+            <linkAttribute name="gene" displayName="Gene" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$ortho_source_id$$
@@ -1735,8 +1734,8 @@
                  displayName="Metabolic Pathways"
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
-            <columnAttribute name="pathway_name" internal="true"/>
-            <linkAttribute name="pathway" displayName="Pathway">
+            <columnAttribute name="pathway_name" internal="true" displayName="Pathway"/>
+            <linkAttribute name="pathway" displayName="Pathway" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$pathway_name$$
@@ -1759,8 +1758,8 @@
           <table name="Strains" includeProjects="ToxoDB"
                  displayName="Strains summary"
                  queryRef="GeneTables.Strains">
-            <columnAttribute name="source_id" internal="true"/>
-            <linkAttribute name="gene" displayName="Gene">
+            <columnAttribute name="source_id" internal="true" displayName="Gene"/>
+            <linkAttribute name="gene" displayName="Gene" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$source_id$$
@@ -1799,10 +1798,10 @@
                  displayName="Mapped Array Elements"
                  queryRef="GeneTables.ArrayElements"
                  includeProjects="PlasmoDB,ApiDB">
-            <columnAttribute name="array_source_id" internal="true"/>
+            <columnAttribute name="array_source_id" internal="true" displayName="Array Element"/>
             <columnAttribute name="array_provider" displayName="Provider"
                              internal="false"/>
-            <linkAttribute name="element_link" displayName="Array Element">
+            <linkAttribute name="element_link" displayName="Array Element" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$array_source_id$$
@@ -1847,8 +1846,8 @@
                  displayName="MR4 Reagents"
                  queryRef="GeneTables.Mr4Reagents"
                  includeProjects="PlasmoDB,ApiDB">
-            <columnAttribute name="atcc_number" internal="true"/>
-            <linkAttribute name="atcc_link" displayName="ATCC Number">
+            <columnAttribute name="atcc_number" internal="true" displayName="ATTC Number"/>
+            <linkAttribute name="atcc_link" displayName="ATCC Number" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$atcc_number$$
@@ -1871,8 +1870,8 @@
                  queryRef="GeneTables.Antibody"
                  includeProjects="ToxoDB,CryptoDB">
             <columnAttribute name="remark" internal="true"/>
-            <columnAttribute name="bei_number" internal="true"/>
-            <linkAttribute name="bei_link" displayName="Reagent ID">
+            <columnAttribute name="bei_number" internal="true" displayName="Reagent ID"/>
+            <linkAttribute name="bei_link" displayName="Reagent ID" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$bei_number$$
@@ -1896,11 +1895,11 @@
                  queryRef="GeneTables.ProteinDatabase"
                  includeProjects="PlasmoDB,ApiDB">
             <columnAttribute name="dataset" displayName="Database"/>
-            <columnAttribute name="accession" internal="true"/>
+            <columnAttribute name="accession" internal="true" displayName="Accession"/>
             <columnAttribute name="gi" internal="true"/>
             <columnAttribute name="accession_url" internal="true"/>
-            <columnAttribute name="gi_url" internal="true"/>
-            <linkAttribute name="accession_link" displayName="Accession">
+            <columnAttribute name="gi_url" internal="true" displayName="GI"/>
+            <linkAttribute name="accession_link" displayName="Accession" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$accession$$
@@ -1908,7 +1907,7 @@
                  </displayText>
                  <url>$$accession_url$$</url>
             </linkAttribute>
-            <linkAttribute name="gi_link" displayName="GI">
+            <linkAttribute name="gi_link" displayName="GI" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$gi$$
@@ -1937,7 +1936,7 @@
             <columnAttribute name="dataset" displayName="Database" internal="true"/>
             <columnAttribute name="source_id" internal="true"/>
             <columnAttribute name="link_url" internal="true"/>
-            <linkAttribute name="db_link" displayName="Database Link">
+            <linkAttribute name="db_link" displayName="Database" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$dataset$$
@@ -1956,9 +1955,9 @@
                  displayName="3D Structure Predictions"
                  queryRef="GeneTables.3dPreds"
                  includeProjects="PlasmoDB,ApiDB">
-            <columnAttribute name="search_term" internal="true"/>
-            <columnAttribute name="pdb_template" internal="true"/>
-            <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB">
+            <columnAttribute name="search_term" internal="true" displayName="ICGEB"/>
+            <columnAttribute name="pdb_template" internal="true" displayName="PDB Template"/>
+            <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$search_term$$-$$pdb_template$$
@@ -1968,7 +1967,7 @@
                      http://bioinfo.icgeb.res.in/codes/model_simple.php?search_term=$$search_term$$
                  </url>
             </linkAttribute>
-            <linkAttribute name="pdb_link" displayName="PDB Template">
+            <linkAttribute name="pdb_link" displayName="PDB Template" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$pdb_template$$
@@ -1986,11 +1985,11 @@
                  displayName="Similarities to Protein Data Bank (PDB) Chains"
                  queryRef="GeneTables.PdbSimilarities"
                  includeProjects="CryptoDB,TriTrypDB,PlasmoDB,ApiDB">
-            <columnAttribute name="pdb_chain" internal="true"/>
+            <columnAttribute name="pdb_chain" internal="true" displayName="PDB Structure"/>
             <columnAttribute name="pdb_id" internal="true"/>
             <columnAttribute name="pvalue_mant" internal="true"/>
             <columnAttribute name="pvalue_exp" internal="true"/>
-            <linkAttribute name="pdb_link" displayName="PDB Structure">
+            <linkAttribute name="pdb_link" displayName="PDB Structure" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$pdb_chain$$
@@ -2035,8 +2034,8 @@
           <table name="Epitopes"
                  displayName="Epitopes from IEDB"
                  queryRef="GeneTables.Epitopes" excludeProjects="TrichDB">
-            <columnAttribute name="iedb_id" internal="true"/>
-            <linkAttribute name="iedb_link" displayName="Epitope">
+            <columnAttribute name="iedb_id" internal="true" displayName="Epitope"/>
+            <linkAttribute name="iedb_link" displayName="Epitope" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$iedb_id$$
@@ -2062,9 +2061,9 @@
                  displayName="Isolates"
                  queryRef="GeneTables.IsolateOverlap">
             <columnAttribute name="source_id" displayName="Gene Name"/>
-            <columnAttribute name="total" internal="true"/>
+            <columnAttribute name="total" internal="true" displayName="Number of Isolates Overlap"/>
             <linkAttribute name="isolate_total_link" 
-                        displayName="Number of Isolates Overlap">
+                        displayName="Number of Isolates Overlap" inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$total$$

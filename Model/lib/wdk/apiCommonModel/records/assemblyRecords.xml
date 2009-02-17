@@ -155,7 +155,7 @@
             <columnAttribute displayName="Length" name="length"   internal="false" />
             <columnAttribute displayName="Number of ESTs" name="count" />
 
-            <linkAttribute displayName="Genomic Sequence" name="alignedcontig">
+            <linkAttribute displayName="Genomic Sequence" name="alignedcontig" inReportMaker="false">
                  <displayText>
                     <![CDATA[ $$sequence_id$$ ]]>
                  </displayText>
@@ -182,7 +182,7 @@
                  </url>
             </linkAttribute>
 
-            <linkAttribute displayName="Alignment" name="alignmentlink">
+            <linkAttribute displayName="Alignment" name="alignmentlink" inReportMaker="false">
                  <displayText>
                     <![CDATA[ view ]]>
                  </displayText>
@@ -234,8 +234,8 @@
         <table name="EstInfo" includeProjects="ToxoDB,CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB"
                displayName="ESTs in Assembly"
                queryRef="AssemblyTables.EstInfo">
-            <columnAttribute displayName="EST" name="est"  internal="true" />
-            <linkAttribute displayName="EST" name="est_link">
+            <columnAttribute displayName="EST" name="est"  internal="true"  inReportMaker="true"/>
+            <linkAttribute displayName="EST" name="est_link"  inReportMaker="false">
                  <displayText>
                     <![CDATA[
                     $$est$$
