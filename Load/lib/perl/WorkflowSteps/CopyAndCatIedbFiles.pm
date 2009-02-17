@@ -19,13 +19,15 @@ sub run {
 
     my $inputDir="$downloadDir/$inputDirRelativeToDownloadsDir";
     my $cmd = "cat";
-    my @inputFileNames = $self->getInputFiles($test,$inputDir);
-
-    foreach my $fileName (@inputFileNames){
-
-	$cmd .= " $fileName" if ($fileName =~ /$organismName/);
+    my @inputFileNames = $self->getInputFiles($test,$inputDir,$organismName);
+ 
+    if (scalar @inputFileNames==0){
+	die "No input files. Please check inputDir: $inputDir\n";
+    }else {
+	$cmd .= join (" " ,@inputFileNames);
     }
-    $cmd .= " >$localDataDir/$outputDir/IEDBExport.txt";
+
+   $cmd .= " >$localDataDir/$outputDir/IEDBExport.txt";
 
     if ($test) {
       $self->testInputFile('inputDir', "$inputDir");
