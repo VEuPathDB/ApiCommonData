@@ -3,6 +3,7 @@
     <param name="nrdbFileShortDefline"/>
     <param name="proteinsFile"/>
     <param name="parentDataDir"/>
+    <param name="organismName"/>
 
     <constant name="dataDir">$$parentDataDir$$/psipred</constant>
 
@@ -57,10 +58,10 @@
      </step>
 
     <step name="makeAlgInv" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAlgInv" stepLoadTypes="plugin">
-      <paramValue name="algName">psipred</paramValue>
-      <paramValue name="algVersion">dontcare</paramValue>
-      <paramValue name="algDesc">dontcare</paramValue>
-      <paramValue name="algResult">dontcare</paramValue>
+      <paramValue name="algName">Psipred</paramValue>
+      <paramValue name="algVersion">2.5</paramValue>
+      <paramValue name="algDesc">Psipred method for protein secondary structure prediction</paramValue>
+      <paramValue name="algResult">Secondary Structure prediction for all $$organismName$$ annotated proteins</paramValue>
       <depends name="fixFileNames"/>
     </step>
 
