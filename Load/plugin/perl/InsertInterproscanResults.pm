@@ -16,6 +16,7 @@ use GUS::Model::DoTS::ExternalAASequence;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::DbRefAAFeature;
 
+
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [
