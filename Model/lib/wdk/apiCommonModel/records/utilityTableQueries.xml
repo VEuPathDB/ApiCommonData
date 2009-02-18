@@ -205,29 +205,37 @@
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
-            <column name="sid" /> 
             <column name="serial_no" /> 
             <column name="osuser" /> 
+            <column name="machine" /> 
             <column name="username" /> 
-            <column name="status" /> 
-            <column name="logon_time" />
+            <column name="qTime" /> 
             <column name="last_active_time" /> 
             <column name="sql_fulltext" />
+            <column name="isSelf" />
            <sql> 
             <![CDATA[           
             select $$source_id$$ AS source_id, 
                    '@PROJECT_ID@' AS project_id,
-                    s.sid, s.serial# AS serial_no, s.osuser, 
-                    s.username, s.status, 
-                    s.logon_time, vs.last_active_time,
-                    vs.sql_fulltext
-              from v$session s, v$sql vs, v$process vp
+                    s.serial# AS serial_no, s.osuser, 
+                    lower(s.username) username, 
+                    to_char(SYSDATE,'YYYY-MM-DD HH24:MI:SS') qTime,
+                    to_char(vs.last_active_time,'YYYY-MM-DD HH24:MI:SS') last_active_time,
+                    vs.sql_fulltext,
+                    s.machine,
+                    CASE WHEN
+                        lower(s.username) = (select lower(user) from dual) then 'true'
+                        else 'false'
+                    END AS isSelf
+              from v$session s, v$sql vs, v$process vp, dba_users dba
              where s.sql_address = vs.address
                and s.sql_hash_value = vs.hash_value
                and vs.users_executing > 0
                and s.paddr = vp.addr
                and s.status = 'ACTIVE'
+               and vs.parsing_user_id = dba.user_id
                and s.osuser != 'oracle'
+               and vs.sql_text not like '%vs.sql_fulltext%'
                --and lower(s.username) = (select lower(user) from dual)
             ]]>
            </sql>
