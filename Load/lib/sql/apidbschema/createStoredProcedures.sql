@@ -133,4 +133,113 @@ show errors
 GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_r;
 GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_w;
 
+-------------------------------------------------------------------------------
+create or replace type apidb.clobagg_type as object
+(
+  string clob,
+  delimiter varchar2(10),
+
+  static function ODCIAggregateInitialize
+    ( sctx in out clobagg_type )
+    return number ,
+
+  member function ODCIAggregateIterate
+    ( self  in out clobagg_type ,
+      value in     clob
+    ) return number ,
+
+  member function ODCIAggregateTerminate
+    ( self        in  clobagg_type,
+      returnvalue out clob,
+      flags in number
+    ) return number ,
+
+  member function ODCIAggregateMerge
+    ( self in out clobagg_type,
+      ctx2 in     clobagg_type
+    ) return number
+);
+/
+
+create or replace type body apidb.clobagg_type
+is
+
+  static function ODCIAggregateInitialize
+  ( sctx in out clobagg_type )
+  return number
+  is
+  begin
+
+    sctx := clobagg_type(EMPTY_CLOB() , chr(10) ) ;
+    dbms_lob.createtemporary(sctx.string, TRUE);
+    
+    return ODCIConst.Success ;
+
+  end;
+
+  member function ODCIAggregateIterate
+  ( self  in out clobagg_type ,
+    value in     clob
+  ) return number
+  is
+  begin
+
+    IF dbms_lob.getlength(self.string) > 0 THEN
+      if dbms_lob.getlength(value) > 0 THEN
+        dbms_lob.writeappend(self.string, 1, self.delimiter);
+      END IF;
+    END IF;
+    dbms_lob.append(self.string, value);
+
+    return ODCIConst.Success;
+
+  end;
+
+  member function ODCIAggregateTerminate
+  ( self        in  clobagg_type ,
+    returnvalue out clob ,
+    flags       in  number
+  ) return number
+  is
+  begin
+
+    returnValue := self.string;
+    
+    return ODCIConst.Success;
+
+  end;
+
+  member function ODCIAggregateMerge
+  ( self in out clobagg_type ,
+    ctx2 in     clobagg_type
+  ) return number
+  is
+  begin
+
+    IF dbms_lob.getlength(self.string) > 0 THEN
+      IF dbms_lob.getlength(ctx2.string) > 0 THEN
+        dbms_lob.writeappend(self.string, 1, self.delimiter);
+      END IF;
+    END IF;
+    dbms_lob.append(self.string, ctx2.string);
+
+    return ODCIConst.Success;
+
+  end;
+
+end;
+/
+
+create or replace function apidb.clobagg
+  ( input clob )
+  return clob
+  deterministic
+  parallel_enable
+  aggregate using clobagg_type
+;
+/
+
+GRANT execute ON apidb.clobagg TO gus_r;
+GRANT execute ON apidb.clobagg TO gus_w;
+-------------------------------------------------------------------------------
 exit;
