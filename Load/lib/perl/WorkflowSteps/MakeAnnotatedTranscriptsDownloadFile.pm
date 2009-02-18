@@ -11,7 +11,7 @@ sub run {
   # get parameters
   my $outputFile = $self->getParamValue('outputFile');
   my $organismSource = $self->getParamValue('organismSource');
-  my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
+  my $deprecated = ($self->getParamValue('deprecated') eq 'true') ? 1 :0;
 
   my (@dbnames,@dbvers);
   my ($name,$ver) = $self->getExtDbInfo($test, $self->getParamValue('genomeExtDbRlsSpec')) if $self->getParamValue('genomeExtDbRlsSpec');

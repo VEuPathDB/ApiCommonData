@@ -10,7 +10,8 @@ sub run {
   # get parameters
   my @genomeExtDbSpecList = split(/,/,$self->getParamValue('genomeExtDbSpecList'));
   my $outputFile = $self->getParamValue('outputFile');
-  my $deprecated = $self->getParamValue('deprecated') ? 1 : 0;
+  my $deprecated = ($self->getParamValue('deprecated') eq 'true') ? 1 :0;
+
   my $organismSource = $self->getParamValue('organismSource');
 
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
