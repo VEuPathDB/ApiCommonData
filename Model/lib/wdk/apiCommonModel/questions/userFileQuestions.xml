@@ -1,0 +1,34 @@
+<wdkModel>
+  <questionSet name="UserFileQuestions" displayName=""  internal="true">
+    <question name="UserFileUploads"
+         displayName="Community Uploaded Files"
+         shortDisplayName="Files"
+         queryRef="UserFiles.Files"
+         recordClassRef="UserFileRecords.UserFile"
+         noSummaryOnSingleRecord="true">
+         <attributesList 
+           summary="title, notes, uploadtime"
+         />
+         
+         <summary>
+           <![CDATA[
+             Search files uploaded by the user community.
+            ]]>
+        </summary>
+        
+         <description>
+           <![CDATA[
+             Search files uploaded by the user community.
+          ]]>
+         </description>
+         <dynamicAttributes>
+             <columnAttribute name="title" displayName="Title"
+                              inReportMaker="false"/>
+             <columnAttribute name="notes" displayName="Description"
+                              inReportMaker="false"/>
+             <columnAttribute name="uploadtime" displayName="Upload Time"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+  </questionSet>
+</wdkModel>
