@@ -47,8 +47,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="GeneModel" isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="type"/>
@@ -91,7 +89,6 @@
               ) gm
          where gm.na_feature_id = gf.na_feature_id
          and s.na_sequence_id = gl.na_sequence_id
-         and gf.source_id =  $$source_id$$
          and gf.na_feature_id = gl.na_feature_id
          and gl.is_top_level = 1
          order by case when gl.is_reversed = 1 then -1 * gm.start_min else gm.start_min end
@@ -104,22 +101,20 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <sqlQuery name="ToxoExpandStrainsMicroarray" isCacheable="false" includeProjects="ToxoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="me49_source_id"/>
             <sql>
             select oga.source_id as me49_source_id,
                    ga.source_id as source_id,
-                   '@PROJECT_ID@' as project_id
+                   ga.project_id
             from dots.geneinstance gi, apidb.geneattributes ga,
                  dots.geneinstance ogi, apidb.geneattributes oga,
                  apidb.ToxoExpressionGraphs teg
             where gi.na_feature_id = ga.na_feature_id
              and gi.gene_id = ogi.gene_id
              and ogi.na_feature_id = oga.na_feature_id
-             and ga.source_id = $$source_id$$
+             and ga.project_id = '@PROJECT_ID@'
              and teg.source_id = oga.source_id
              and teg.graph_archetypal = 1
             </sql>
@@ -130,8 +125,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="ToxoStrainsMicroarrayPercentile" isCacheable="false" includeProjects="ToxoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="strain"/>
@@ -149,7 +142,6 @@
             and r.row_id = gf.na_feature_id
             and r.table_id = t.table_id
             and t.name = 'GeneFeature'
-            and gf.source_id = $$source_id$$
             and p.name = 'Paul Davis Expression Percentile'
            order by type, strain
             </sql>
@@ -162,8 +154,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="alias"/>
@@ -171,8 +161,7 @@
             SELECT distinct gf.source_id, '@PROJECT_ID@' AS project_id,
                    ng.name AS alias
             FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
-            WHERE gf.source_id = $$source_id$$
-              AND gf.na_feature_id = nfng.na_feature_id
+            WHERE gf.na_feature_id = nfng.na_feature_id
               AND nfng.na_gene_id = ng.na_gene_id
             </sql>
         </sqlQuery>
@@ -182,18 +171,16 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="PhenotypeTable" isCacheable="false" includeProjects="TriTrypDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="phenotype"/>
             <column name="evidence"/>
             <column name="pubmed_id"/>
             <sql>
-            SELECT distinct ga.source_id, '@PROJECT_ID@' AS project_id,
+            SELECT distinct ga.source_id, ga.project_id,
             si.pato_term||' '||CASE WHEN si.pato_term = 'lethal' THEN '' ELSE go_term||' ' END||si.rel_time||' '||plo_term as phenotype, evid_desc as evidence, db_xref as pubmed_id
             from apidb.GENEATTRIBUTES ga, apidb.SIRNA si
-            where si.gene = $$source_id$$
+            where ga.project_id = '@PROJECT_ID@'
             and ga.source_id = si.gene
             order by si.pato_term||' '||CASE WHEN si.pato_term = 'lethal' THEN '' ELSE go_term||' ' END||si.rel_time||' '||plo_term
             </sql>
@@ -210,8 +197,6 @@
                <paramValue name="source_id">cgd3_510</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="strain_a_query"/>
@@ -229,7 +214,7 @@
             <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
               SELECT source_id, '@PROJECT_ID@' AS project_id,
-              source_id as gene_source_id,'@PROJECT_ID@' as project_id,
+              source_id as gene_source_id,
               'Pf-' || replace(strain_a,' ','%20') as strain_a_query,
               CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-'|| replace(strain_b,' ','%20') END  as strain_b_query,
               CASE WHEN strain_b = 'Preich' THEN 'Sp. Pf-'||strain_a ELSE strain_a END as strain_a_disp,
@@ -242,8 +227,7 @@
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density
         FROM apidb.snpsummary
-        WHERE source_id = $$source_id$$
-              ORDER BY ord desc
+        ORDER BY ord desc
             ]]>
             </sql>
 
@@ -265,7 +249,6 @@
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,              
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density             
               FROM apidb.SnpSummary ss
-              WHERE ss.source_id = $$source_id$$ 
               ORDER BY num_total desc
             ]]>
             </sql>
@@ -291,7 +274,6 @@
               stop as num_nonsense,non_coding as num_non_coding,total as num_total,              
               round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density             
               FROM apidb.SnpSummary ss
-              WHERE ss.source_id = $$source_id$$ 
               ORDER BY num_total desc
             ]]>
             </sql>
@@ -308,8 +290,6 @@
                <paramValue name="source_id">cgd3_1400</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="interpro_name"/>
@@ -337,8 +317,7 @@
              dots.transcript t,
              dots.translatedaafeature taf,
              dots.translatedaasequence tas
-             where gf.source_id = $$source_id$$
-             and xd3.name = 'INTERPRO'
+             where xd3.name = 'INTERPRO'
              and gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = tas.aa_sequence_id
@@ -376,8 +355,6 @@
                <paramValue name="source_id">Tc00.1047053508175.80</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="tmf_name"/>
@@ -401,8 +378,7 @@
              dots.translatedaafeature taf,
              dots.translatedaasequence tas,
              dots.transmembraneaafeature tmf
-             where gf.source_id = $$source_id$$
-             and gf.na_feature_id = t.parent_id
+             where gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = tas.aa_sequence_id
              and tas.aa_sequence_id = tmf.aa_sequence_id
@@ -418,8 +394,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Strains" isCacheable="false" includeProjects="ToxoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="strain"/>
@@ -441,7 +415,7 @@
                from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,dots.TRANSCRIPT t, 
                  dots.TRANSLATEDAAFEATURE taaf, apidb.MASSSPECSUMMARY ms,
                  @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
-               where ga.source_id = $$source_id$$ 
+               where ga.project_id = '@PROJECT_ID@' 
                and gb.GENE_ID = ga.GENE_ID
                and gb.na_feature_id = t.parent_id(+)
                and t.na_feature_id = taaf.na_feature_id(+)
@@ -476,8 +450,6 @@
                <paramValue name="source_id">Tb10.389.0300</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="spf_name"/>
@@ -506,8 +478,7 @@
              dots.translatedaafeature taf,
              dots.translatedaasequence tas,
              dots.signalpeptidefeature spf
-             where gf.source_id = $$source_id$$
-             and gf.na_feature_id = t.parent_id
+             where gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = tas.aa_sequence_id
              and tas.aa_sequence_id = spf.aa_sequence_id
@@ -531,8 +502,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="BlastP" isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="blastp_feature_id"/>
@@ -558,7 +527,6 @@
              round(number_identical / total_match_length) AS blastp_percent_identity,
              round(number_positive / total_match_length) AS blastp_percent_positive
              from apidb.blastp
-             where source_id = $$source_id$$
              order by pvalue_exp, pvalue_mant
              ]]>
             </sql>
@@ -582,8 +550,6 @@
             </testParamValues>
 
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="lc_name"/>
@@ -606,8 +572,7 @@
              dots.translatedaafeature taf,
              dots.lowcomplexityaafeature lc, 
              dots.aaSequence aas
-             where gf.source_id = $$source_id$$
-             and gf.na_feature_id = t.parent_id
+             where gf.na_feature_id = t.parent_id
              and t.na_feature_id = taf.na_feature_id
              and taf.aa_sequence_id = lc.aa_sequence_id
              and lc.aa_feature_id = aal.aa_feature_id
@@ -632,8 +597,6 @@
                <paramValue name="source_id">GL50803_8010</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_string"/>
@@ -642,8 +605,7 @@
             SELECT nfc.comment_string, 
             nf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
-            WHERE nf.source_id=$$source_id$$
-              AND nf.na_feature_id = nfc.na_feature_id
+            WHERE nf.na_feature_id = nfc.na_feature_id
               AND NOT to_char(comment_string) = 'NULL;'
             ]]>
             </sql>
@@ -651,15 +613,12 @@
             <![CDATA[
             SELECT nfc.comment_string, nf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.naFeatureComment nfc, dots.GeneFeature nf
-            WHERE nf.source_id = $$source_id$$
-              AND nf.na_feature_id = nfc.na_feature_id
+            WHERE nf.na_feature_id = nfc.na_feature_id
               AND NOT to_char(comment_string) = 'NULL;'
               and nfc.na_feature_comment_id not in (
                  select c.na_feature_comment_id 
                  from dots.NAFEATURECOMMENT c, apidb.SIRNA s, dots.GENEFEATURE f
-                 where s.gene = $$source_id$$
-                 and f.source_id = $$source_id$$
-                 and c.na_feature_id = f.na_feature_id
+                 where c.na_feature_id = f.na_feature_id
                  and to_char(c.comment_string) like '%'||s.db_xref||'%')
             ]]>
             </sql>
@@ -678,7 +637,6 @@
             select source_id, na_feature_id from dots.genefeature g
             ) feat
             WHERE nafc.na_feature_id = feat.na_feature_id
-            AND feat.source_id = $$source_id$$
             AND TO_CHAR(comment_string) not like 'introns and exons likely.' 
             AND TO_CHAR(comment_string) not like 'introns and exons likely'
             ]]>
@@ -709,8 +667,6 @@
             </testParamValues>-->
             <testParamValues minRows="0" includeProjects="TriTrypDB"/>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_id"/>
@@ -734,7 +690,6 @@
               WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = gf.source_id
-                    AND gf.source_id = $$source_id$$
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
               ORDER BY c.comment_date DESC
@@ -766,8 +721,6 @@
                <paramValue name="source_id">Tb927.7.1690</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="ec_number" />
@@ -799,8 +752,7 @@
                  dots.transcript t,
                  dots.aaSequenceEnzymeClass asec, 
                  sres.enzymeClass ec
-            WHERE  gf.source_id=$$source_id$$
-              AND  gf.na_feature_id = t.parent_id
+            WHERE  gf.na_feature_id = t.parent_id
               AND  t.na_feature_id = taf.na_feature_id
               AND  taf.aa_sequence_id = asec.aa_sequence_id
               AND  asec.enzyme_class_id = ec.enzyme_class_id
@@ -823,8 +775,7 @@
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE gf.source_id=$$source_id$$
-              AND t.parent_id = gf.na_feature_id
+            WHERE t.parent_id = gf.na_feature_id
               AND taf.na_feature_id = t.na_feature_id
               AND asec.aa_sequence_id = taf.aa_sequence_id
               AND ec.enzyme_class_id = asec.enzyme_class_id
@@ -835,8 +786,6 @@
 <!--
   <sqlQuery name="EcNumber" includeProjects="ApiDB" 
                isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="ec_number" />
             <column name="source"/>
             <column name="ec_description"/>
@@ -867,8 +816,6 @@
                <paramValue name="source_id">GL50803_10019</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="is_not"/>
@@ -885,7 +832,6 @@
                     lower(gts.evidence_code) AS lowercase_evidence_code, 
                     gts.source_id, '@PROJECT_ID@' as project_id
             FROM apidb.GoTermSummary gts
-            WHERE gts.source_id = $$source_id$$
             ORDER BY gts.ontology, gts.go_id
             ]]>
             </sql>
@@ -902,8 +848,6 @@
                <paramValue name="source_id">TGME49_078740</paramValue>
             </testParamValues>
 
-           <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pathway_id"/>
@@ -920,8 +864,7 @@
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-            AND gf.na_feature_id = drnf.na_feature_id
+            WHERE gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             AND dr.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
@@ -938,10 +881,9 @@
                    dr.remark as activity
       FROM dots.GeneFeature gf,dots.Transcript t, dots.DbRefaaFeature draf, 
            sres.DbRef dr, dots.TranslatedAaFeature taf,
-     sres.ExternalDatabaseRelease edr,
-     sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-      AND gf.na_feature_id = t.parent_id
+           sres.ExternalDatabaseRelease edr,
+           sres.ExternalDatabase ed
+    WHERE gf.na_feature_id = t.parent_id
       AND t.na_feature_id = taf.na_feature_id
             AND taf.aa_feature_id = draf.aa_feature_id
             AND draf.db_ref_id = dr.db_ref_id
@@ -965,8 +907,6 @@
                <paramValue name="source_id">TGME49_053730</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="ortho_source_id"/>
@@ -980,8 +920,7 @@
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
                  sres.TaxonName tn
-            WHERE gf1.source_id = $$source_id$$
-              AND gf1.na_feature_id = ssg1.sequence_id
+            WHERE gf1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
               AND ssg1.sequence_group_id = ssg2.sequence_group_id
               AND ssg2.source_table_id = ti.table_id
@@ -1003,8 +942,7 @@
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
                  sres.TaxonName tn
-            WHERE gf1.source_id = $$source_id$$
-              AND gf1.na_feature_id = ssg1.sequence_id
+            WHERE gf1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
               AND ssg1.sequence_group_id = ssg2.sequence_group_id
               AND ssg2.source_table_id = ti.table_id
@@ -1021,8 +959,7 @@
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf,
                  dots.NaSequence ens, core.TableInfo ti,
                  sres.TaxonName tn, apidb.geneattributes ga1, apidb.geneattributes ga2
-            WHERE ga1.source_id = $$source_id$$
-              AND ga1.gene_id = ga2.gene_id
+            WHERE ga1.gene_id = ga2.gene_id
               AND ga1.gene_id IS NOT NULL
               AND ga2.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
@@ -1060,8 +997,6 @@
                <paramValue name="source_id">LmjF18.1480</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="iedb_id"/>
@@ -1075,7 +1010,6 @@
                        es.confidence, 
                        es.source_id, '@PROJECT_ID@' as project_id
                 FROM apidb.EpitopeSummary es
-                WHERE es.source_id = $$source_id$$
                 ORDER BY DECODE(es.confidence, 'Low', 1,
                               'Medium', 2,
                               'High', 3,
@@ -1095,8 +1029,6 @@
                <paramValue name="source_id">cgd6_2090</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="total"/>
@@ -1104,8 +1036,7 @@
             <![CDATA[
             SELECT source_id, '@PROJECT_ID@' as project_id, count(*) as total
             FROM (SELECT DISTINCT gio.gene_source_id as source_id, gio.isolate_source_id as isolate
-                  FROM apidb.GeneIsolateOverlap gio            
-                  WHERE gio.gene_source_id = $$source_id$$) isolates
+                  FROM apidb.GeneIsolateOverlap gio) isolates
             GROUP BY source_id
             ]]>
            </sql>
@@ -1118,8 +1049,6 @@
        <sqlQuery name="MassSpec" includeProjects="PlasmoDB,ApiDB"
                   isCacheable="false">
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="developmental_stage"/>
@@ -1137,8 +1066,7 @@
                       gf.source_id, '@PROJECT_ID@' as project_id
                FROM dots.TranslatedAaFeature taf, dots.genefeature gf, 
                     dots.transcript t, apidb.MassSpecSummary mss
-               WHERE gf.source_id = $$source_id$$
-                 AND t.parent_id = gf.na_feature_id
+               WHERE t.parent_id = gf.na_feature_id
                  AND taf.na_feature_id = t.na_feature_id
                  AND mss.aa_sequence_id = taf.aa_sequence_id
                ORDER by mss.developmental_stage
@@ -1155,8 +1083,6 @@
                <paramValue name="source_id">Tb10.6k15.0310</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="experiment"/>
@@ -1168,7 +1094,6 @@
                SELECT msgt.sequence, msgt.sum_sequence_count, msgt.sum_spectrum_count,
                      msgt.experiment, msgt.source_id, '@PROJECT_ID@' as project_id
                FROM apidb.MassSpecGeneTable msgt
-               WHERE msgt.source_id = $$source_id$$
             ]]>
             </sql>
         </sqlQuery>
@@ -1178,8 +1103,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <sqlQuery name="ToxoVer4Genes" isCacheable="false" includeProjects="ToxoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="old_source_id"/>
@@ -1200,8 +1123,7 @@
                      decode(toa.new_protein,0,'Yes',1,'No') as same_protein,
                      upper(old_source_id) as cyc_gene_id
               from apidb.TRACKOLDANNOTATION toa, apidb.TOXOVERSION4GENES tv
-              where toa.source_id = $$source_id$$
-              and toa.old_source_id = tv.source_id
+              where toa.old_source_id = tv.source_id
             ]]>
             </sql>
         </sqlQuery>
@@ -1212,8 +1134,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
      <sqlQuery name="Genbank" isCacheable="false" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence_source_id"/>
@@ -1238,7 +1158,7 @@
             </sqlParamValue>
             <sql>
             <![CDATA[
-              SELECT fl.feature_source_id AS source_id, '@PROJECT_ID@' AS project_id,
+              SELECT fl.feature_source_id AS source_id, ga.project_id,
                      fl.feature_source_id,
                      fl.sequence_source_id,
                      &&top_level&& as is_top_level,
@@ -1248,7 +1168,7 @@
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl,apidb.geneattributes ga
-              WHERE ga.source_id = $$source_id$$
+              WHERE ga.project_id = '@PROJECT_ID@'
               AND ga.na_feature_id = fl.na_feature_id
               ORDER BY fl.is_top_level desc
             ]]>
@@ -1261,8 +1181,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="tag_source_id"/>
             <column name="library"/>
             <column name="sequence"/>
@@ -1283,11 +1201,11 @@
                       to_char(t.library_total_tag_count,'99999') as libraryTotalTagCount, 
                       t.occurrence as genomeOccurrences,
                       decode(tg.antisense,0,'sense',1,'antisense') as sense,
-                      sta.source_id,
+                      sta.source_id AS sta_source_id, 
+                      tg.gene_source_id AS source_id,
                       '@PROJECT_ID@' as project_id, a.assay_id
                FROM apidb.SageTagAnalysisAttributes t, apidb.SageTagGene tg, apidb.SageTagAttributes sta, rad.assay a
-               WHERE tg.gene_source_id = $$source_id$$
-                 AND t.composite_element_id = tg.tag_source_id
+               WHERE t.composite_element_id = tg.tag_source_id
                  AND tg.tag_feature_id = sta.na_feature_id
                  AND a.name = t.library_name
                  AND tg.distance = 0
@@ -1303,8 +1221,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Product" isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="product"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -1313,7 +1229,6 @@
                SELECT source_id, product,
                       '@PROJECT_ID@' as project_id
                FROM dots.GeneFeature
-               WHERE source_id = $$source_id$$
             ]]>
             </sql>
         </sqlQuery>
@@ -1335,8 +1250,6 @@
                <paramValue name="source_id">LinJ23_V3.0370</paramValue>
             </testParamValues>
 
-        <paramRef ref="recordParams.source_id"/>
-         <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="gff_alias"/>
@@ -1345,8 +1258,7 @@
                 SELECT distinct ng.name AS gff_alias, 
                        gf.source_id, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng
-                WHERE gf.source_id = $$source_id$$
-                  AND gf.na_feature_id = nfng.na_feature_id
+                WHERE gf.na_feature_id = nfng.na_feature_id
                   AND nfng.na_gene_id = ng.na_gene_id
                 ]]>
                 </sql>
@@ -1358,8 +1270,6 @@
                <paramValue name="source_id">GL50803_14842</paramValue>
             </testParamValues>
 
-         <paramRef ref="recordParams.source_id"/>
-         <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
                 <column name="gff_go_id"/>
@@ -1368,15 +1278,12 @@
                 SELECT gts.source_id, '@PROJECT_ID@' as project_id,
                        gts.go_id AS gff_go_id
                 FROM apidb.GoTermSummary gts
-                WHERE gts.source_id = $$source_id$$
                 ORDER BY gts.ontology, gts.go_id
                 ]]>
                 </sql>
        </sqlQuery>
 
        <sqlQuery name="GeneGffDbxrefs" isCacheable="false">
-        <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
         <column name="gff_dbxref"/>
@@ -1389,8 +1296,7 @@
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.GeneFeature gf, dots.NaSequence ns, sres.Taxon t
-            WHERE gf.source_id = $$source_id$$
-              AND gf.na_sequence_id = ns.na_sequence_id
+            WHERE gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id = t.taxon_id
            UNION
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,
@@ -1398,24 +1304,21 @@
             FROM dots.GeneFeature gf,
                  dots.translatedAaFeature taf, dots.Transcript t,
                  dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
-            WHERE gf.source_id=$$source_id$$
-              AND t.parent_id = gf.na_feature_id
+            WHERE t.parent_id = gf.na_feature_id
               AND taf.na_feature_id = t.na_feature_id
               AND asec.aa_sequence_id = taf.aa_sequence_id
               AND ec.enzyme_class_id = asec.enzyme_class_id
            UNION
 /*            SELECT gf.source_id, '@PROJECT_ID@' as project_id, so.so_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.SequenceOntology so
-            WHERE gf.source_id = $$source_id$$
-              AND gf.sequence_ontology_id = so.sequence_ontology_id
+            WHERE gf.sequence_ontology_id = so.sequence_ontology_id
            UNION
 */            SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                    'NCBI_gi:' || dr.secondary_identifier AS gff_dbxref
             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-              AND gf.na_feature_id = drnf.na_feature_id
+            WHERE gf.na_feature_id = drnf.na_feature_id
               AND drnf.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id
                     = edr.external_database_release_id
@@ -1429,8 +1332,7 @@
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-              AND gf.na_feature_id = t.parent_id
+            WHERE gf.na_feature_id = t.parent_id
               AND t.na_feature_id = aaf.na_feature_id
               AND aaf.aa_feature_id = drnf.aa_feature_id
               AND drnf.db_ref_id = dr.db_ref_id
@@ -1442,23 +1344,18 @@
                    'Sanger:' || gf.source_id AS gff_dbxref
             FROM dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-              AND gf.external_database_release_id
-                  = edr.external_database_release_id
+            WHERE gf.external_database_release_id = edr.external_database_release_id
               AND edr.external_database_id = ed.external_database_id
               AND ed.name like 'Sanger%'
            UNION
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,
                    '&&brcName&&:' || gf.source_id AS gff_dbxref
             FROM dots.GeneFeature gf
-            WHERE gf.source_id = $$source_id$$
           ]]>
         </sql>
     </sqlQuery>
 
     <sqlQuery name="GeneGffRnas" isCacheable="false">
-        <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
         <column name="gff_seqid"/>
@@ -1512,8 +1409,7 @@
                   where gf2.na_feature_id = t.parent_id
                     and t.na_feature_id = taf.na_feature_id
                     and taf.aa_sequence_id = tas.aa_sequence_id) protein
-            where gf.source_id = $$source_id$$
-                and gf.na_feature_id = rna.parent_id
+            where gf.na_feature_id = rna.parent_id
                 and gf.na_feature_id = nl.na_feature_id
                 and nl.is_top_level = 1
                 and ns.na_sequence_id = nl.na_sequence_id
@@ -1526,8 +1422,6 @@
     </sqlQuery>
 
     <sqlQuery name="GeneGffCdss" isCacheable="false">
-        <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
         <column name="gff_seqid"/>
@@ -1571,8 +1465,7 @@
                  DoTS.NaSequence ns,
                  sres.SequenceOntology so,
                  dots.RnaFeatureExon rfe
-            where gf.source_id = $$source_id$$
-            and gf.na_feature_id = rna.parent_id
+            where gf.na_feature_id = rna.parent_id
             and rna.na_feature_id = rfe.rna_feature_id
             and ef.na_feature_id = rfe.exon_feature_id
             and ef.na_feature_id = nl.na_feature_id
@@ -1591,8 +1484,6 @@
 
 
     <sqlQuery name="GeneGffExons" isCacheable="false">
-        <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
         <column name="gff_seqid"/>
@@ -1630,8 +1521,7 @@
                  apidb.FeatureLocation nl, 
                  DoTS.NaSequence ns,
                  dots.RnaFeatureExon rfe
-            where gf.source_id = $$source_id$$
-            and gf.na_feature_id = rna.parent_id
+            where gf.na_feature_id = rna.parent_id
             and rna.na_feature_id = rfe.rna_feature_id
             and ef.na_feature_id = rfe.exon_feature_id
             and ef.na_feature_id = nl.na_feature_id
@@ -1660,8 +1550,6 @@
             </testParamValues>
 
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="bait_start"/>
@@ -1673,13 +1561,12 @@
             <column name="prey_number_of_baits"/>
             <sql>
             <![CDATA[
-            SELECT bf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
+            SELECT pf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
                    gi.prey_end, gi.times_observed, gi.number_of_searches,
                    gi.prey_number_of_baits, '@PROJECT_ID@' as project_id
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
-           WHERE pf.source_id=$$source_id$$
-             AND pf.na_feature_id = gi.prey_gene_feature_id
+           WHERE pf.na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
             </sql>
@@ -1696,8 +1583,6 @@
                <paramValue name="source_id">PFL0275w</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="bait_start"/>
@@ -1709,13 +1594,12 @@
             <column name="bait_number_of_preys"/>
             <sql>
             <![CDATA[
-            SELECT pf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
+            SELECT bf.source_id, gi.bait_start, gi.bait_end, gi.prey_start,
                    gi.prey_end, gi.times_observed, gi.number_of_searches,
                    gi.bait_number_of_preys, '@PROJECT_ID@' as project_id
            FROM dots.GeneFeature bf, dots.GeneFeature pf,
                 apidb.GeneInteraction gi
-           WHERE bf.source_id=$$source_id$$
-             AND pf.na_feature_id = gi.prey_gene_feature_id
+           WHERE pf.na_feature_id = gi.prey_gene_feature_id
              AND bf.na_feature_id = gi.bait_gene_feature_id
             ]]>
             </sql>
@@ -1732,8 +1616,6 @@
                <paramValue name="source_id">PFL0275w</paramValue>
             </testParamValues>
 
-        <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="bait_start"/>
@@ -1747,23 +1629,21 @@
         <column name="bait_or_prey"/>
         <sql>
             <![CDATA[
-               SELECT pf.source_id, bait_start, bait_end, prey_start, prey_end,
+               SELECT bf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, NULL AS prey_number_of_baits,
                        bait_number_of_preys, 'bait' as bait_or_prey, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens, apidb.GeneInteraction gi
-                WHERE bf.source_id = $$source_id$$
-                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                WHERE bf.na_feature_id = gi.bait_gene_feature_id
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND pf.na_sequence_id = ens.na_sequence_id
                 UNION
-                SELECT bf.source_id, bait_start, bait_end, prey_start, prey_end,
+                SELECT pf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, prey_number_of_baits,
                        NULL AS bait_number_of_preys, 'prey' as bait_or_prey, '@PROJECT_ID@' as project_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens,  apidb.GeneInteraction gi
-                WHERE pf.source_id = $$source_id$$
-                  AND bf.na_feature_id = gi.bait_gene_feature_id
+                WHERE bf.na_feature_id = gi.bait_gene_feature_id
                   AND gi.prey_gene_feature_id = pf.na_feature_id
                   AND bf.na_sequence_id = ens.na_sequence_id
            ]]>
@@ -1776,8 +1656,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ArrayElements" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="array_source_id"/>
@@ -1792,8 +1670,7 @@
                     sres.ExternalDatabaseRelease edr,
                     dots.ExternalNaSequence ens,
                     core.TableInfo ti1, core.TableInfo ti2
-               WHERE gf.source_id = $$source_id$$
-                 AND t.parent_id = gf.na_feature_id
+               WHERE t.parent_id = gf.na_feature_id
                  AND ed.external_database_id = edr.external_database_id
                  AND edr.external_database_release_id = ens.external_database_release_id
                  AND ens.na_sequence_id = s.query_id
@@ -1816,8 +1693,6 @@
                <paramValue name="source_id">PB000172.01.0</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="profile_element"/>
@@ -1831,8 +1706,7 @@
                  apidb.profileElement pe,
                  apidb.profile p,
                  apidb.profileSet ps
-            WHERE p.source_id = $$source_id$$
-            AND ps.name = 'berghei_proteomic_Sinden'
+            WHERE ps.name = 'berghei_proteomic_Sinden'
             AND ps.profile_set_id = p.profile_set_id
       AND ps.profile_set_id = pen.profile_set_id
             AND p.profile_id = pe.profile_id
@@ -1848,8 +1722,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Mr4Reagents" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="atcc_number"/>
@@ -1867,8 +1739,7 @@
                      dots.TranslatedAAFeature taf,
                      sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE gf.source_id = $$source_id$$
-                  AND t.parent_id = gf.na_feature_id
+                WHERE t.parent_id = gf.na_feature_id
                   AND taf.na_feature_id = t.na_feature_id
                   AND df.aa_feature_id = taf.aa_feature_id
                   AND dbr.db_ref_id = df.db_ref_id
@@ -1891,8 +1762,6 @@
                <paramValue name="source_id">TGGT1_043200</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="bei_number"/>
@@ -1910,8 +1779,7 @@
                      dots.TranslatedAAFeature taf,
                      sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE gf.source_id = $$source_id$$
-                  AND t.parent_id = gf.na_feature_id
+                WHERE t.parent_id = gf.na_feature_id
                   AND taf.na_feature_id = t.na_feature_id
                   AND df.aa_feature_id = taf.aa_feature_id
                   AND dbr.db_ref_id = df.db_ref_id
@@ -1930,36 +1798,32 @@
 
        <sqlQuery name="gene_dbrefs" 
                   isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="dataset"/>
             <column name="link_url"/>
             <sql>
             <![CDATA[
-               select gf.source_id, $$project_id$$ AS project_id,
+               select gf.source_id, '@PROJECT_ID@' AS project_id,
                DECODE(ed.name,'Winzeler_OPI_clusters','Ontology Based pattern Identification',
                       'Winzeler_Literature_References','Literature Database') as dataset,
                r.remark || gf.source_id as link_url
                from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
                dots.genefeature gf, sres.externaldatabase ed
-               where gf.source_id = $$source_id$$
-               and gf.na_feature_id = rf.na_feature_id
+               where gf.na_feature_id = rf.na_feature_id
                and rf.db_ref_id = r.db_ref_id
                and r.external_database_release_id = rel.external_database_release_id
                and rel.external_database_id = ed.external_database_id
                and ed.name in ('Winzeler_OPI_clusters','Winzeler_Literature_References')
                UNION
-               select $$source_id$$ as source_id, $$project_id$$ AS project_id,
+               select ga.source_id, ga.project_id,
                'UCSC <i>Plasmodium falciparum</i> genome browser' as dataset,
                'http://areslab.ucsc.edu/cgi-bin/hgTracks?position=' || source_id as link_url
-               from apidb.geneattributes
-               where source_id = $$source_id$$
-               and project_id = $$project_id$$
+               from apidb.geneattributes ga
+               where ga.project_id = '@PROJECT_ID@'
                and organism = 'Plasmodium falciparum 3D7'
                UNION
-               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               select ga.source_id, ga.project_id, 
                'GeneDB' as dataset,
                DECODE(organism,
                       'Plasmodium falciparum 3D7', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=malaria&desc=yes&wildcard=yes',
@@ -1967,43 +1831,39 @@
                       'Plasmodium chabaudi chabaudi', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=pchabaudi&desc=yes&wildcard=yes',
                       'Plasmodium knowlesi strain H', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=pknowlesi&desc=yes&wildcard=yes'
                       ) AS link_url
-                FROM apidb.geneattributes 
-                where project_id = $$project_id$$
-                and source_id = $$source_id$$
+                FROM apidb.geneattributes  ga
+                where ga.project_id = '@PROJECT_ID@'
                 and organism in ('Plasmodium knowlesi strain H','Plasmodium chabaudi chabaudi','Plasmodium berghei strain ANKA','Plasmodium falciparum 3D7')
                 UNION
-                select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+                select ga.source_id, ga.project_id, 
                 'OrthoMCL' as dataset,
-                'http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=' || $$source_id$$  as link_url
-                from dual
+                'http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=' || ga.source_id  as link_url
+                from apidb.geneattributes ga
                UNION
-               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               select ga.source_id, ga.project_id, 
                'TDR Targets Database' as dataset,
                'http://tdrtargets.org/targets/view?gene_name=' || source_id as link_url
-               from apidb.geneattributes
-               where source_id = $$source_id$$
-               and project_id = $$project_id$$
+               from apidb.geneattributes ga
+               where ga.project_id = '@PROJECT_ID@'
                and organism = 'Plasmodium falciparum 3D7'
                 UNION
-                select gf.source_id, $$project_id$$ AS project_id,
+                select gf.source_id, '@PROJECT_ID@' AS project_id,
                 'PlasmoMAP' as dataset,
                 r.remark as link_url
                 from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
                 dots.genefeature gf, sres.externaldatabase ed
-                where gf.source_id = $$source_id$$
-                and gf.na_feature_id = rf.na_feature_id
+                where gf.na_feature_id = rf.na_feature_id
                 and rf.db_ref_id = r.db_ref_id
                 and r.external_database_release_id = rel.external_database_release_id
                 and rel.external_database_id = ed.external_database_id
                 and ed.name = 'plasmoMAP DbRefs'
                 UNION
-                select gf.source_id, $$project_id$$ AS project_id,
+                select gf.source_id, '@PROJECT_ID@' AS project_id,
                 'PASA ESTs' as dataset,
                 r.remark as link_url
                 from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
                 dots.genefeature gf, sres.externaldatabase ed
-                where gf.source_id = $$source_id$$
-                and gf.na_feature_id = rf.na_feature_id
+                where gf.na_feature_id = rf.na_feature_id
                 and rf.db_ref_id = r.db_ref_id
                 and r.external_database_release_id = rel.external_database_release_id
                 and rel.external_database_id = ed.external_database_id
@@ -2014,15 +1874,13 @@
 
        <sqlQuery name="gene_dbrefs" 
                   isCacheable="false" includeProjects="TriTrypDB,ToxoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="dataset"/>
             <column name="link_url"/>
             <sql includeProjects="TriTrypDB">
             <![CDATA[
-               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               select source_id, project_id, 
                'GeneDB' as dataset,
                DECODE(organism,
                       'Leishmania major', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=leish&desc=yes&wildcard=yes',
@@ -2032,19 +1890,17 @@
                       'Trypanosoma cruzi strain CL Brener', 'http://www.genedb.org/genedb/Search?submit=Search+for&name='||source_id||'&organism=tcruzi&desc=yes&wildcard=yes'
                       ) AS link_url
                 FROM apidb.geneattributes 
-                where project_id = $$project_id$$
-                and source_id = $$source_id$$
+                where project_id = '@PROJECT_ID@'
             ]]>
             </sql>
 
             <sql includeProjects="ToxoDB">
             <![CDATA[
-               select $$source_id$$ as source_id, $$project_id$$ AS project_id, 
+               select source_id, project_id, 
                'GeneDB' as dataset,
                'http://www.genedb.org/genedb/Search?name='||source_id||'&organism=ncaninum&desc=yes&searchId=Search' AS link_url
                 FROM apidb.geneattributes 
-                where project_id = $$project_id$$
-                and source_id = $$source_id$$
+                where project_id = '@PROJECT_ID@'
                 and organism = 'Neospora caninum'
             ]]>
             </sql>
@@ -2057,8 +1913,6 @@
 
        <sqlQuery name="ProteinDatabase" 
                   isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="accession"/>
@@ -2108,8 +1962,7 @@
                 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
                      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                      sres.ExternalDatabase ed
-                WHERE gf.source_id = $$source_id$$
-                  AND gf.na_feature_id = drnf.na_feature_id
+                WHERE gf.na_feature_id = drnf.na_feature_id
                   AND drnf.db_ref_id = dr.db_ref_id
                   AND dr.external_database_release_id
                         = edr.external_database_release_id
@@ -2134,21 +1987,18 @@
                <paramValue name="source_id">cgd3_300</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pdb_id"/>
             <sql>
               <![CDATA[
             SELECT dr.primary_identifier AS pdb_id,
-                   gf.source_id, $$project_id$$ AS project_id
+                   gf.source_id, '@PROJECT_ID@' AS project_id
             FROM dots.GeneFeature gf,
                  dots.DbRefNaFeature drnf,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-            AND gf.na_feature_id = drnf.na_feature_id
+            WHERE gf.na_feature_id = drnf.na_feature_id
             AND drnf.db_ref_id = dr.db_ref_id
             AND dr.external_database_release_id = edr.external_database_release_id
             AND edr.external_database_id = ed.external_database_id
@@ -2164,8 +2014,6 @@
 
        <sqlQuery name="3dPreds"
                   isCacheable="false" includeProjects="PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="search_term"/>
@@ -2177,8 +2025,7 @@
             FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-            WHERE gf.source_id = $$source_id$$
-              AND gf.na_feature_id = t.parent_id
+            WHERE gf.na_feature_id = t.parent_id
               AND t.na_feature_id = aaf.na_feature_id
               AND aaf.aa_feature_id = drnf.aa_feature_id
               AND drnf.db_ref_id = dr.db_ref_id
@@ -2195,8 +2042,6 @@
 
        <sqlQuery name="PdbSimilarities"
                   isCacheable="false" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pdb_chain"/>
@@ -2214,7 +2059,6 @@
                        ps.percent_plasmo_coverage, 
                        ps.source_id, '@PROJECT_ID@' as project_id
                 FROM apidb.PdbSimilarity ps
-                WHERE ps.source_id = $$source_id$$
                 ORDER BY ps.score DESC
             ]]>
             </sql>
@@ -2231,8 +2075,6 @@
                <paramValue name="source_id">PB000296.02.0</paramValue>
             </testParamValues>
 
-       <paramRef ref="recordParams.source_id"/>
-       <paramRef ref="recordParams.project_id"/>
         <column name="source_id"/>
         <column name="project_id"/>
        <column name="studyName" />
@@ -2244,7 +2086,8 @@
           SELECT lg.name as studyName,
                  max(to_char(de.fold_change, '999.99')) as fold_change,
                  max(to_char(de.confidence,'99.99')) as confidence, 
-                 '@PROJECT_ID@' as project_id
+                 '@PROJECT_ID@' as project_id,
+                 ga.gene as source_id
             FROM Rad.LogicalGroup lg,
                  Rad.AnalysisInput ai,
                  Rad.Analysis a, 
@@ -2260,7 +2103,6 @@
              AND de.analysis_id = a.analysis_id
              AND sof.composite_element_id = de.row_id
              AND sof.source_id is not null
-             AND ga.gene = $$source_id$$
              AND ga.alias = sof.source_id
              AND p.name = 'PaGE'
              AND a.protocol_id = p.protocol_id
@@ -2293,19 +2135,17 @@
                <paramValue name="source_id">TGME49_033070</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_string"/>
             <sql>
       <![CDATA[
       SELECT NVL(c.content, '<i>none</i>') AS comment_string, 
-             c.stable_id, '@PROJECT_ID@' as project_id
+             c.stable_id as source_id, 
+             '@PROJECT_ID@' as project_id
 /*      FROM toxocomm.comments@COMMENT_DBLINK@ c  */
       FROM @TOXO_COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c
-      WHERE c.stable_id = $$source_id$$
-        AND c.review_status_id = 'task'
+      WHERE c.review_status_id = 'task'
       ]]>
             </sql>
         </sqlQuery>
@@ -2324,13 +2164,10 @@
         <!-- GeneTables.ProteinIds -->
 <!-- 
        <sqlQuery name="ProteinIds" includeProjects="CryptoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="protein_id"/>
             <sql>
             SELECT protein_id, '@PROJECT_ID@' as project_id
             FROM dots.transcript
-            WHERE source_id = $$source_id$$
             </sql>
         </sqlQuery>
 -->
