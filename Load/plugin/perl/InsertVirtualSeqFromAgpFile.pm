@@ -20,6 +20,7 @@ use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 
 
+
 sub getArgsDeclaration {
 my $argsDeclaration  =
 [
