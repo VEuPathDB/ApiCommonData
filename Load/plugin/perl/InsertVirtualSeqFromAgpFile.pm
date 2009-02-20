@@ -210,7 +210,7 @@ sub run {
 
   die "Do not use both 'chromosomeOrderMappingFile' and 'chromosomesInOrder', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder'));
 
- # $self->validateFileFormat($file);
+ $self->validateFileFormat($file);
 
   my $restart = $self->getArg('retart');
 
@@ -332,7 +332,6 @@ sub makeVirtualSequence {
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
   my $chromosome="chromosome $chromosomeOrderNum";
-  print STDERR "source_id=$sourceId, chromosome=$chromosome, chromosome_order_num=$chromosomeOrderNum\n";
 
   my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
                                                            chromosome => $chromosome,
