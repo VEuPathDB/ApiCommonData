@@ -210,7 +210,7 @@ sub run {
 
   die "Do not use both 'chromosomeOrderMappingFile' and 'chromosomesInOrder', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder'));
 
-  $self->validateFileFormat($file);
+ # $self->validateFileFormat($file);
 
   my $restart = $self->getArg('retart');
 
@@ -262,7 +262,7 @@ sub processFile {
     if ($arr[0] ne $virAcc) {
       $numVirInserted++;
 
-      $chromosomeOrder= self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc};
+      $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc};
 
       die "No chromosome order information provided for virtual sequence\n" unless $chromosomeOrder;
 
@@ -331,9 +331,11 @@ sub makeVirtualSequence {
   my $virDbRlsId = $self->getVirDbRlsId($self->getArg('virSeqExtDbName'),$self->getArg('virSeqExtDbRlsVer'));
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
+  my $chromosome="chromosome $chromosomeOrderNum";
+  print STDERR "source_id=$sourceId, chromosome=$chromosome, chromosome_order_num=$chromosomeOrderNum\n";
 
   my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
-                                                           chromosome => $virAcc,
+                                                           chromosome => $chromosome,
                                                            chromosome_order_num => $chromosomeOrderNum,
                                                            external_database_release_id => $virDbRlsId,
                                                            sequence_version => 1,
