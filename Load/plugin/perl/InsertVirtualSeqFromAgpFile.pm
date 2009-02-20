@@ -20,7 +20,6 @@ use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 
 
-
 sub getArgsDeclaration {
 my $argsDeclaration  =
 [
@@ -31,6 +30,15 @@ fileArg({name => 'agpFile',
          reqd  => 1,
          isList => 0,
          mustExist => 1,
+         format=>'Text'
+        }),
+
+fileArg({name => 'chromosomeOrderMappingFile',
+         descr => 'file of correct chromosome order if chromosomes in agp file are randomly ordered',
+         constraintFunc=> undef,
+         reqd  => 0,
+         isList => 0,
+         mustExist => 0,
          format=>'Text'
         }),
 
@@ -99,6 +107,12 @@ integerArg({name => 'ncbiTaxId',
        reqd  => 0,
        isList => 0,
       }),
+
+ booleanArg({  name            =>  'chromosomesInOrder', 
+               descr           =>  'if true the chromosomes are in sequential order in agp file',
+               reqd            =>  0,
+               isList          =>  0
+              }),
 
 ];
 
@@ -194,6 +208,8 @@ sub run {
 
   my $file = $self->getArg('agpFile');
 
+  die "Do not use both 'chromosomeOrderMappingFile' and 'chromosomesInOrder', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder'));
+
   $self->validateFileFormat($file);
 
   my $restart = $self->getArg('retart');
@@ -221,7 +237,14 @@ sub processFile {
 
   my $numVirInserted=0;
 
-  my %virtual;
+  my (%virtual,$refChromosomeOrderMapping,$chromosomeOrder);
+
+  if ($self->getArg('chromosomeOrderMappingFile')){
+
+      my $chromosomeOrderMappingFile = $self->getArg('chromosomeOrderMappingFile') ;
+
+      $refChromosomeOrderMapping=$self->getChromOrderMapping($chromosomeOrderMappingFile);
+  }
 
   open(FILE, "<$file") or die "Couldn't open file '$file':\n";
 
@@ -238,7 +261,12 @@ sub processFile {
 
     if ($arr[0] ne $virAcc) {
       $numVirInserted++;
-      $self->makeVirtualSequence(\%virtual, $virAcc, $numVirInserted);
+
+      $chromosomeOrder= self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc};
+
+      die "No chromosome order information provided for virtual sequence\n" unless $chromosomeOrder;
+
+      $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder);
 
       $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -261,7 +289,7 @@ sub processFile {
 
   }
 
- $numVirInserted += $self->makeVirtualSequence(\%virtual, $virAcc, $numVirInserted);
+ $numVirInserted += $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder);
 
   $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -270,6 +298,26 @@ sub processFile {
   return $numVirInserted;
 }
 
+sub getChromOrderMapping{
+  my ($self, $chromosomeOrderMappingFile) = @_;
+
+  my %chromosomeOrderMapping;
+
+  open(FILE, "<$chromosomeOrderMappingFile") or die "Couldn't open file '$chromosomeOrderMappingFile':\n";
+
+  while (<FILE>) {
+    chomp;
+
+    next if ($_ =~ /^#/ || $_ =~ /^\s*$/);
+
+    my @arr = split(/\t/, $_);
+
+    $chromosomeOrderMapping{$arr[0]} = $arr[1]; 
+  }
+
+  return \%chromosomeOrderMapping;
+
+}
 
 sub makeVirtualSequence {
   my ($self, $virtual, $virAcc, $chromosomeOrderNum) = @_;
