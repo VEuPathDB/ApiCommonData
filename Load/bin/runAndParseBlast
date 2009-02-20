@@ -68,10 +68,15 @@ my $batchQueryFile  = Bio::SeqIO->new(-file => $queryFile , '-format' => 'Fasta'
 
 print STDERR "Running BLAST...\n";
 
+my $seqCountWithNoBlastHits=0;
+
+my $seqCount=0;
+
 #loop through those sequences one at a time
 while ( my $seq = $batchQueryFile->next_seq() ) {
   my $queryLength = $seq->length();
   my $seqId = $seq->id();
+  $seqCount++;
 
   #create file containing single sequence
   &createSeqFile($tempFile, $seq);
@@ -107,6 +112,7 @@ print "more than one hit\n";
   }elsif($blast->getSubjectCount() == 0){
 
     print STDERR "No blast hits returned for $seqId\n";
+    $seqCountWithNoBlastHits++;
 
   }else{
     ##we're good
@@ -125,6 +131,10 @@ print "more than one hit\n";
   my $status = $? >> 8;
   die "Failed with status '$status running cmd: $cmd'" if $status;
 }
+
+#----------------validation for Blast Hits------------
+
+die "No blast hits returned for all $seqCount sequences, check the source_id regex $regex and query file $queryFile\n" unless ($seqCountWithNoBlastHits < $seqCount);
 
 
 #----------------Subroutines----------------------
