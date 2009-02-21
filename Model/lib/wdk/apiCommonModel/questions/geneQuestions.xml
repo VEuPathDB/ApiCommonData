@@ -1402,10 +1402,15 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
          shortDisplayName="GO Term"
               queryRef="GeneId.GenesByGoTerm"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList excludeProjects="ToxoDB"
+        <attributesList excludeProjects="ToxoDB,GiardiaDB"
               summary="organism,location_text,product,ann_go_function,pred_go_function"
               sorting="project asc,organism asc,location_text asc"
         /> 
+       <attributesList includeProjects="GiardiaDB"
+              summary="organism,location_text,product"
+              sorting="project asc,organism asc,location_text asc"
+        />
+
         <attributesList includeProjects="ToxoDB"
               summary="formatted_gene_id,organism,location_text,product,ann_go_function,pred_go_function"
               sorting="formatted_gene_id asc,location_text asc"

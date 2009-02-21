@@ -6,7 +6,7 @@
 
   -->
 
-    <recordClassSet name="SnpRecordClasses" includeProjects="ToxoDB,PlasmoDB,ApiDB,CryptoDB">
+    <recordClassSet name="SnpRecordClasses" includeProjects="GiardiaDB,ToxoDB,PlasmoDB,ApiDB,CryptoDB">
 
         <recordClass name="SnpRecordClass" type="SNP">
 
@@ -198,7 +198,7 @@
           <!-- strains table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Strains" excludeProjects="ApiDB" 
+          <table name="Strains" excludeProjects="GiardiaDB,ApiDB" 
                  displayName="Strains"
                  queryRef="SnpTables.Strains">
               <columnAttribute displayName="Strain" name="strain"/>
@@ -248,7 +248,7 @@
           <!--  Providers table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Providers_other_SNPs" excludeProjects="ApiDB" 
+          <table name="Providers_other_SNPs" excludeProjects="GiardiaDB,ApiDB" 
                  displayName="Other SNPs at this location including combined SNPs"
                  queryRef="SnpTables.Providers">
               <columnAttribute name="source_id_link" internal="true" displayName="SNP ID"/>
