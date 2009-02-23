@@ -2295,7 +2295,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByProfileSimilarity" includeProjects="PlasmoDB"  
              processName="org.apidb.apicomplexa.wsfplugin.profile.ProfileSimilarityPlugin">
-       <paramRef ref="geneParams.ProfileGeneId"/>
+       <paramRef ref="geneParams.ProfileGeneId"  quote="false"/>
        <paramRef ref="geneParams.ProfileDistanceMethod"  quote="false"/>
        <paramRef ref="geneParams.ProfileNumToReturn"/>
        <paramRef ref="geneParams.ProfileProfileSet"  quote="false"/>
