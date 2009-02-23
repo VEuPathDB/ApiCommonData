@@ -38,6 +38,7 @@ create table apidb.WorkflowStep (
   undo_state          varchar(30),
   undo_state_handled  number(1),
   off_line            number(1),
+  stop_after          number(1),
   start_time          date,
   end_time            date,
   step_class          varchar(200),
