@@ -5,12 +5,6 @@ package ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs;
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
-
-## to do
-## API $self->getTaxonIdFromNcbiTaxId($test,$ncbiTaxId) 
-## API $self->getTaxonIdList($test, $taxonId,$taxonHierarchy)
-## define genomeDataDir
-
 sub run {
   my ($self, $test, $undo) = @_;
 
