@@ -13,6 +13,7 @@ GRANT CREATE MATERIALIZED VIEW TO ApiDB;
 GRANT CREATE TABLE TO ApiDB;
 GRANT CREATE SYNONYM TO ApiDB;
 GRANT CREATE SESSION TO ApiDB;
+GRANT CREATE ANY INDEX TO ApiDB;
 
 GRANT REFERENCES ON dots.GeneFeature TO ApiDB;
 GRANT REFERENCES ON dots.NaFeature TO ApiDB;
@@ -29,5 +30,11 @@ SELECT core.databaseinfo_sq.nextval, 'ApiDB',
        1, 1, 1, 1, 1, 1, 1, 1, p.project_id, 0
 FROM dual, (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p
 WHERE lower('ApiDB') NOT IN (SELECT lower(name) FROM core.DatabaseInfo);
+
+-- tuningManager needs there to be a index named "apidb.blastp_text_ix"
+--  (because OracleText needs it)
+CREATE INDEX apidb.blastp_text_ix
+ON core.tableinfo(superclass_table_id, table_id, database_id);
+
 
 exit
