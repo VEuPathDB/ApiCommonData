@@ -56,14 +56,15 @@
              isCacheable="false">
         <column name="source_id"/>
         <column name="project_id"/>
+        <column name="filename"/>
         <column name="title"/>
         <column name="notes"/>
         <column name="uploadtime"/>
 
         <sql>
             <![CDATA[
-            select filename as source_id, '@PROJECT_ID@' as project_id,
-                   title, notes, 
+            select userfileid as source_id, '@PROJECT_ID@' as project_id,
+                   filename, title, notes, 
                    to_char(uploadtime,'YYYY-MM-DD HH24:MI:SS') uploadtime
             from uploads.UserFile@USER_DBLINK@
            ]]>
