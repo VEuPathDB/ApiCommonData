@@ -19,12 +19,13 @@ sub run {
 
   if ($test) {
     $self->testInputFile('fromFile', "$apiSiteFilesDir/$fromFile");
+    $self->runCmd(0, "cat test > $localDataDir/$toFile");
   }
 
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$toFile");
   } else {
-    $self->runCmd(0, $cmd);
+    $self->runCmd($test, $cmd);
   }
 
 }
