@@ -1170,6 +1170,7 @@
               FROM apidb.featurelocation fl,apidb.geneattributes ga
               WHERE ga.project_id = '@PROJECT_ID@'
               AND ga.na_feature_id = fl.na_feature_id
+              AND fl.feature_type = 'GeneFeature'
               ORDER BY fl.is_top_level desc
             ]]>
             </sql>
