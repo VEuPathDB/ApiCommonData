@@ -29,6 +29,7 @@
   <param name="pdbExtDbRlsSpec"/>
   <param name="goVersion"/>
   <param name="genomeSize"/>
+  <param name="skipProteomeAnalysis"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
@@ -71,7 +72,7 @@
     <depends name="mirrorToCluster"/>
   </subgraph>
 
-  <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml">
+  <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml" excludeIf="$$skipProteomeAnalysis$$">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
