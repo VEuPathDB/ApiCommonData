@@ -14,6 +14,8 @@ use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::RNAType;
 use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
@@ -155,8 +157,7 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $scanReleaseId = $self->getExtDbRlsId($self->getArg('scanDbName'),
-					       $self->getArg('scanDbVer')) || $self->error("Can't find db_rel_id for tRNAScan");
+  my $scanReleaseId =  $self->getOrCreateExtDbAndDbRls($self->getArg('scanDbName'),$self->getArg('scanDbVer'))|| $self->error("Can't find db_el_id for tRNA Scan");
 
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
 						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
@@ -478,6 +479,96 @@ sub getTranscriptSeq{
   return $transcriptNaSeq;
 }
 
+sub getOrCreateExtDbAndDbRls{
+  my ($self, $dbName,$dbVer) = @_;
+
+  my $extDbId=$self->InsertExternalDatabase($dbName);
+
+  my $extDbRlsId=$self->InsertExternalDatabaseRls($dbName,$dbVer,$extDbId);
+
+  return $extDbRlsId;
+}
+
+sub InsertExternalDatabase{
+
+    my ($self,$dbName) = @_;
+    my $extDbId;
+
+    my $sql = "select external_database_id from sres.externaldatabase where lower(name) like '" . lc($dbName) ."'";
+    my $sth = $self->prepareAndExecute($sql);
+    $extDbId = $sth->fetchrow_array();
+
+    if ($extDbId){
+	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
+    }
+
+    else {
+	my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({
+	    name => $dbName,
+	   });
+	$newDatabase->submit();
+	$extDbId = $newDatabase->getId();
+	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+    }
+    return $extDbId;
+}
+
+sub InsertExternalDatabaseRls{
+
+    my ($self,$dbName,$dbVer,$extDbId) = @_;
+
+    my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
+
+    if ($extDbRlsId){
+	print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
+    }
+
+    else{
+        $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
+	print STDERR "Created new release id for $dbName with version $dbVer and release id $extDbRlsId\n";
+    }
+    return $extDbRlsId;
+}
+
+
+sub releaseAlreadyExists{
+    my ($self, $extDbId,$dbVer) = @_;
+
+    my $sql = "select external_database_release_id 
+               from SRes.ExternalDatabaseRelease
+               where external_database_id = $extDbId
+               and version = '$dbVer'";
+
+    my $sth = $self->prepareAndExecute($sql);
+    my ($relId) = $sth->fetchrow_array();
+
+    return $relId; #if exists, entry has already been made for this version
+
+}
+
+sub makeNewReleaseId{
+    my ($self, $extDbId,$dbVer) = @_;
+
+    my $newRelease = GUS::Model::SRes::ExternalDatabaseRelease->new({
+	external_database_id => $extDbId,
+	version => $dbVer,
+	download_url => '',
+	id_type => '',
+	id_url => '',
+	secondary_id_type => '',
+	secondary_id_url => '',
+	description => 'annotation data from tRNAscan-SE analysis',
+	file_name => '',
+	file_md5 => '',
+	
+    });
+
+    $newRelease->submit();
+    my $newReleasePk = $newRelease->getId();
+
+    return $newReleasePk;
+
+}
 
 sub undoTables {
   return ('DoTS.NALocation',
@@ -486,6 +577,9 @@ sub undoTables {
 	  'DoTS.Transcript',
 	  'DoTS.SplicedNASequence',
 	  'DoTS.ExonFeature',
-	  'DoTS.GeneFeature'
+	  'DoTS.GeneFeature',
+	  'SRes.ExternalDatabaseRelease',
+	  'SRes.ExternalDatabase',
 	 );
 }
+
