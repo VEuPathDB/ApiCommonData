@@ -1,0 +1,48 @@
+<workflowGraph name="trnaScanWorkflow">
+    <param name="parentDataDir"/>
+    <param name="genomicSeqsFile"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="tRNAExtDbRlsSpec"/>
+    <param name="soVersion"/>
+
+    <constant name="dataDir">$$parentDataDir$$/TRNAScan</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeTrnaScanTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="makeClusterTaskInputDir"/>
+    </step>
+
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask" stepLoadTypes="cluster">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="numNodes">20</paramValue>
+      <paramValue name="processorsPerNode">4</paramValue>
+      <depends name="mirrorToCluster"/>
+    </step>
+
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
+      <paramValue name="outputFiles">trnascan.out</paramValue>
+      <depends name="runClusterTask"/>
+    </step>
+
+
+    <step name="loadTRNAScan" stepClass="ApiCommonData::Load::WorkflowSteps::InsertTRNAScan" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$dataDir$$/master/mainresult/trnascan.out</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="tRNAExtDbRlsSpec">$$tRNAExtDbRlsSpec$$</paramValue>
+      <paramValue name="soVersion">$$soVersion$$</paramValue>
+      <depends name="mirrorFromCluster"/>
+    </step>
+
+</workflowGraph>
