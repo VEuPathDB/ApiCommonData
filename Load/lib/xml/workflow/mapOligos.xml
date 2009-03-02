@@ -1,0 +1,85 @@
+<workflowGraph name="mapOligos">
+
+    <param name="parentDataDir"/>
+    <param name="oligoExtDbRlsSpec"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="genomicSeqsFile"/>
+    <param name="idRegex"/>
+    <param name="loadOptions"/>
+
+
+    <constant name="dataDir">$$parentDataDir$$/Oligo</constant>
+    <constant name="oligoSeqsFile">$$dataDir$$/oligo.fsa</constant>
+    <constant name="annotatedTranscriptSeqsFile">$$dataDir$$/transcript.fsa</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="extractAnnotatedTranscriptSeqs" stepClass="ApiCommonData::Load::WorkflowSteps::ExtractAnnotatedTranscriptSeqs">
+      <paramValue name="extDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="outputFile">$$annotatedTranscriptSeqsFile$$</paramValue>
+      <paramValue name="transcriptTable">Transcript</paramValue>
+      <paramValue name="seqTable">SplicedNASequence</paramValue>
+      <paramValue name="identifier">source_id</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+   <step name="extractOligoSeqs"
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
+      <paramValue name="extDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
+      <paramValue name="table">ExternalNASequence</paramValue>
+      <paramValue name="alternateDefline"></paramValue>
+      <paramValue name="outputFile">$$oligoSeqsFile$$</paramValue>
+      <paramValue name="separateFastaFiles">false</paramValue>
+      <paramValue name="outputDirForSeparateFiles"></paramValue>
+      <depends name="makeDataDir"/> 
+    </step>
+
+   <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="extractAnnotatedTranscriptSeqs"/>
+      <depends name="extractOligoSeqs"/>
+    </step>
+
+    <subgraph name="blastnOligoSeqsGenomicSeqs" xmlFile="blastWorkflow.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="nickName">blastnGenomicSeqs</paramValue>
+      <paramValue name="queryFile">$$oligoSeqsFile$$</paramValue>
+      <paramValue name="queryTable">DoTS::ExternalNASequence</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="subjectTable">DoTS::ExternalNASequence</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="blastArgs">-nogaps E=0.05</paramValue>
+      <paramValue name="idRegex">$$idRegex$$</paramValue>
+      <paramValue name="blastType">blastn</paramValue>
+      <paramValue name="vendor">wu</paramValue>
+      <paramValue name="loadSubjectSubset">false</paramValue>
+      <paramValue name="filterByTaxon">false</paramValue>
+      <paramValue name="taxonHierarchyForFilter"></paramValue>
+      <paramValue name="loadOptions">$$loadOptions$$</paramValue>
+      <depends name="mirrorToCluster"/>
+    </subgraph>
+
+    <subgraph name="blastnOligoSeqsTranscriptSeqs" xmlFile="blastWorkflow.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="nickName">blastnTranscriptSeqs</paramValue>
+      <paramValue name="queryFile">$$oligoSeqsFile$$</paramValue>
+      <paramValue name="queryTable">DoTS::ExternalNASequence</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectFile">$$annotatedTranscriptSeqsFile$$</paramValue>
+      <paramValue name="subjectTable">DoTS::Transcript</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="blastArgs">-nogaps E=0.05</paramValue>
+      <paramValue name="idRegex">$$idRegex$$</paramValue>
+      <paramValue name="blastType">blastn</paramValue>
+      <paramValue name="vendor">wu</paramValue>
+      <paramValue name="loadSubjectSubset">false</paramValue>
+      <paramValue name="filterByTaxon">false</paramValue>
+      <paramValue name="taxonHierarchyForFilter"></paramValue>
+      <paramValue name="loadOptions">$$loadOptions$$</paramValue>
+      <depends name="mirrorToCluster"/>
+    </subgraph>
+
+</workflowGraph>
