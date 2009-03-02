@@ -1,0 +1,106 @@
+<workflowGraph name="pfalciparumSpecificAnalysis">
+  <param name="parentDataDir"/>
+  <param name="organismName"/>
+  <param name="organismFullName"/>
+  <param name="genomeExtDbRlsSpec"/>
+  <param name="genomicSeqsFile"/>
+  <param name="suSnpExtDbRlsSpec"/>
+  <param name="broadSnpExtDbRlsSpec"/>
+  <param name="winzelerSnpExtDbRlsSpec"/>
+  <param name="sangerItGhanaSnpExtDbRlsSpec"/>
+  <param name="sangerReichenowiSnpExtDbRlsSpec"/>
+  <param name="combinedSnpExtDbRlsSpec"/>
+  <param name="sageTagExtDbRlsSpec"/>
+  <param name="oligoExtDbRlsSpec"/>
+
+
+  <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
+
+  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+    <paramValue name="dataDir">$$dataDir$$</paramValue>
+  </step>
+
+  <subgraph name="suSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="suSnpExtDbRlsSpec">$$suSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">Su_SNPs</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="broadSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="broadSnpExtDbRlsSpec">$$broadSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">Broad_SNPs</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="sangerItGhanaSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="sangerItGhanaSnpExtDbRlsSpec">$$sangerItGhanaSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">sangerItGhanaSnps</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="sangerReichenowiSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="sangerReichenowiSnpExtDbRlsSpec">$$sangerReichenowiSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">sangerReichenowiSnps</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="winzelerSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="winzelerSnpExtDbRlsSpec">$$winzelerSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">WinzelerGeneticVariationArray</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="combinedSnps_Mummer" xmlFile="runMummer.xml">
+    <paramValue name="combinedSnpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpNickName">plasmoDbCombinedSnps</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <subgraph name="mapSageTags" xmlFile="mapSageTags.xml">
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="sageTagExtDbRlsSpec">$$sageTagExtDbRlsSpec$$</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+
+  <subgraph name="mapOligos" xmlFile="mapOligos.xml">
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="oligoExtDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="idRegex">(\\S+)\\s+length</paramValue>
+    <paramValue name="loadOptions">--hspMatchLength 64 --hspPctIdent 95 --hspsLimit 1</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <step name="loadAnticodons" stepClass="ApiCommonData::Load::WorkflowSteps::LoadAnticodons">
+     <paramValue name="inputFileRelativeToManualDeliveryDir">anticodons/PfAntiCodons</paramValue>
+     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+  </step>
+ 
+</workflowGraph>

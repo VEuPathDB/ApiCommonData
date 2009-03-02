@@ -1,0 +1,31 @@
+<workflowGraph name="pyoeliiSpecificAnalysis">
+  <param name="parentDataDir"/>
+  <param name="organismName"/>
+  <param name="organismFullName"/>
+  <param name="genomeExtDbRlsSpec"/>
+  <param name="genomicSeqsFile"/>
+  <param name="oligoExtDbRlsSpec"/>
+
+
+  <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
+
+  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+    <paramValue name="dataDir">$$dataDir$$</paramValue>
+  </step>
+
+  <subgraph name="mapOligos" xmlFile="mapOligos.xml">
+    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+    <paramValue name="oligoExtDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+    <paramValue name="idRegex">(\\S+)</paramValue>
+    <paramValue name="loadOptions">--hspMatchLength 59 --noHsps --hspPctIdent 95 --hspsLimit 1</paramValue>
+    <depends name="makeDataDir"/>
+  </subgraph>
+
+  <step name="loadAnticodons" stepClass="ApiCommonData::Load::WorkflowSteps::LoadAnticodons">
+     <paramValue name="inputFileRelativeToManualDeliveryDir">anticodons/PfAntiCodons</paramValue>
+     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+  </step>
+ 
+</workflowGraph>
