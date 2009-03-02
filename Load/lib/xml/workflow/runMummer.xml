@@ -1,0 +1,54 @@
+<workflowGraph name="runMummer">
+
+    <param name="parentDataDir"/>
+    <param name="snpNickName"/>
+    <param name="genomicSeqsFile"/>
+    <param name="organismFullName"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="snpExtDbRlsSpec"/>
+
+    <constant name="dataDir">$$parentDataDir$$/$$snpNickName$$</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="copySnpGffFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
+      <paramValue name="resourcesFile">$$snpNickName$$/*.gff</paramValue>
+      <paramValue name="toFile">$$dataDir$$/SNPs.gff</paramValue>
+      <paramValue name="strain">3D7</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="snpGffToFasta" stepClass="ApiCommonData::Load::WorkflowSteps::SnpGffToFasta">
+      <paramValue name="inputFile">$$dataDir$$/SNPs.gff</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/SNPs.fasta</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="runMummer" stepClass="ApiCommonData::Load::WorkflowSteps::RunMummer">
+      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="inputDir">$$dataDir$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/SNPsMummer.out</paramValue>
+      <depends name="snpGffToFasta"/>
+    </step>
+
+    <step name="snpMummerToGff" stepClass="ApiCommonData::Load::WorkflowSteps::SnpMummerToGff">
+      <paramValue name="inputFile">$$dataDir$$/SNPsMummer.out</paramValue>
+      <paramValue name="gffFile">$$dataDir$$/SNPs.gff</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/SNPsMummer.gff</paramValue>
+      <paramValue name="strain">3D7</paramValue>
+      <depends name="runMummer"/>
+    </step>
+
+    <step name="insertSnpMummer" stepClass="ApiCommonData::Load::WorkflowSteps::InsertSnpMummer" stepLoadTypes="insertSnpMummer,plugin">
+      <paramValue name="inputFile">$$dataDir$$/SNPsMummer.gff</paramValue>
+      <paramValue name="strain">3D7</paramValue>
+      <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="transcriptExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="snpExtDbRlsSpec">$$snpExtDbRlsSpec$$</paramValue>
+      <depends name="snpMummerToGff"/>
+    </step>
+
+</workflowGraph>
