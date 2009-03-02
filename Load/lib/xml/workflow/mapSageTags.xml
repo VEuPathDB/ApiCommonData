@@ -1,0 +1,45 @@
+<workflowGraph name="mapSageTags">
+
+    <param name="parentDataDir"/>
+    <param name="genomicSeqsFile"/>
+    <param name="sageTagExtDbRlsSpec"/>
+
+    <constant name="dataDir">$$parentDataDir$$/SageTags</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="extractSageTags" stepClass="ApiCommonData::Load::WorkflowSteps::ExtractSageTags">
+      <paramValue name="sageTagExtDbRlsSpec">$$sageTagExtDbRlsSpec$$</paramValue>
+      <paramValue name="prependSeq">CATG</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/sageTags.fsa</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="mapSageTagsToNaSequences" stepClass="ApiCommonData::Load::WorkflowSteps::MapSageTagsToNaSequences">
+      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="sageTagFile">$$dataDir$$/sageTags.fsa</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/mapSageTagsToNaSequences.out</paramValue>
+      <depends name="extractSageTags"/>
+    </step>
+
+    <step name="loadSageTagMap" stepClass="ApiCommonData::Load::WorkflowSteps::LoadSageTagMap" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$dataDir$$/mapSageTagsToNaSequences.out</paramValue>
+      <depends name="mapSageTagsToNaSequences"/>
+    </step>
+
+    <step name="createSageTagNormFile" stepClass="ApiCommonData::Load::WorkflowSteps::CreateSageTagNormFile" stepLoadTypes="plugin">
+
+      <paramValue name="studyName">Transcriptional profile of P.falciparum by Serial analysis of gene expression</paramValue>
+      <paramValue name="paramValue">25372</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/NormFiles</paramValue>
+      <depends name="loadSageTagMap"/>
+    </step>
+
+    <step name="insertNormSageTagFreqs" stepClass="ApiCommonData::Load::WorkflowSteps::InsertNormSageTagFreqs" stepLoadTypes="plugin">
+      <paramValue name="inputDir">$$dataDir$$/NormFiles</paramValue>
+      <depends name="createSageTagNormFile"/>
+    </step>
+
+</workflowGraph>
