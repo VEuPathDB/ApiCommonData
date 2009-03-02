@@ -10,7 +10,7 @@ sub run {
 
   my $parentNcbiTaxonId = $self->getParamValue('parentNcbiTaxonId');
   my $useTaxonHierarchy = $self->getParamValue('useTaxonHierarchy');
-  my $predictedTranscriptsSql = $self->getParamValue('predictedTranscriptsSql');
+
 
   my $vectorFile = $self->getConfig('vectorFile');
   my $phrapDir = $self->getConfig('phrapDir');
@@ -20,7 +20,6 @@ sub run {
 
   my $args = "--taxon_id_list '$taxonIdList' --repeatFile $vectorFile --phrapDir $phrapDir";
 
-  $args .= " --idSQL \"$predictedTranscriptsSql\"" if ($predictedTranscriptsSql);
 
   $self->runPlugin($test, $undo, "DoTS::DotsBuild::Plugin::MakeAssemblySequences", $args);
 
@@ -30,7 +29,6 @@ sub getParamsDeclaration {
   return (
 	  'parentNcbiTaxonId',
 	  'useTaxonHierarchy',
-	  'predictedTranscriptsSql',
 	 );
 }
 

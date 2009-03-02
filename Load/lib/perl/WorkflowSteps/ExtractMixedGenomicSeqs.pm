@@ -17,9 +17,11 @@ sub run {
   my $genomeExtDbRlsSpec = $self->getParamValue('genomeExtDbRlsSpec');
   my $genomeVirtualSeqsExtDbRlsSpec = $self->getParamValue('genomeVirtualSeqsExtDbRlsSpec');
   my $genomeSource = $self->getParamValue('genomeSource');
+  my $withVirtualSeqs = $self->getParamValue('withVirtualSeqs');
 
   my $genomDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
-  my $virtualDbRlsId = $self->getExtDbRlsId($test, $genomeVirtualSeqsExtDbRlsSpec);
+  my $virtualDbRlsId; 
+  $virtualDbRlsI= $self->getExtDbRlsId($test, $genomeVirtualSeqsExtDbRlsSpec) if $withVirtualSeqs;
 
   my $sql1 = "select source_id, sequence from Dots.VIRTUALSEQUENCE where external_database_release_id = '$virtualDbRlsId'";
 
