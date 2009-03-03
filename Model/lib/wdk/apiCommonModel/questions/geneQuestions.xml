@@ -173,7 +173,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               summary="formatted_gene_id,organism,location_text,product,is_pseudo"
               sorting="formatted_gene_id asc,organism asc,location_text asc"
         />
-         <attributesList excludeProjects="ToxoDB,GiardiaDB"
+         <attributesList excludeProjects="ApiDB,ToxoDB,GiardiaDB"
+              summary="organism,location_text,product,is_pseudo"
+              sorting="primary_key asc,organism asc,location_text asc"
+        />
+         <attributesList includeProjects="ApiDB"
               summary="organism,location_text,product,is_pseudo"
               sorting="project asc,organism asc,location_text asc"
         />
@@ -233,9 +237,13 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               summary="formatted_gene_id,organism,location_text,product,exon_count"
               sorting="formatted_gene_id asc,exon_count desc,location_text asc"
         />
-        <attributesList excludeProjects="ToxoDB"
+        <attributesList includeProjects="ApiDB"
               summary="organism,location_text,product,exon_count"
               sorting="project asc,organism asc,exon_count desc,location_text asc"
+        />
+        <attributesList excludeProjects="ToxoDB,ApiDB"
+              summary="organism,location_text,product,exon_count"
+              sorting="primary_key asc,organism asc,exon_count desc,location_text asc"
         />
         <summary>
         Find genes having a given number of exons.
@@ -271,9 +279,13 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
          summary="formatted_gene_id,organism,location_text,product,isoelectric_point"
          sorting="formatted_gene_id asc,isoelectric_point asc, location_text asc"
         /> 
-        <attributesList excludeProjects="ToxoDB,GiardiaDB"
+        <attributesList includeProjects="ApiDB"
          summary="organism,location_text,product,isoelectric_point"
          sorting="project asc,organism asc,isoelectric_point asc, location_text asc"
+        />  
+        <attributesList excludeProjects="ToxoDB,GiardiaDB,ApiDB"
+         summary="organism,location_text,product,isoelectric_point"
+         sorting="primary_key asc,organism asc,isoelectric_point asc, location_text asc"
         /> 
         <summary>
           Find genes whose protein product has an isoelectric point in a range that you specify.
@@ -3912,7 +3924,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
      <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
          displayName="Orthology to Genes in a Query Result"
-         shortDisplayName="Orthologous"
+         shortDisplayName="Orthologs"
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="ApiDB,TriTrypDB,CryptoDB"
