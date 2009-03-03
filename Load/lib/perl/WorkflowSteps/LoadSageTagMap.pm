@@ -19,7 +19,7 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::LoadSageTagFeature", $args);
+  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::LoadExpressionFeature", $args);
 
 }
 

@@ -19,7 +19,12 @@ sub run {
   $self->runCmd(0, "gunzip $downloadDir/$resourcesFile.gz") if (-e "$downloadDir/$resourcesFile.gz");
 
   if ($test) {
-      $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
+      if ($resourcesFile =~/\*/){#if file name contains wild character 
+	  my($directory, $filename) = $resourcesFile =~ m/(.*\/)(.*)$/;
+	  $self->testInputFile('resourcesFile',"$filename","$downloadDir/$directory");	  
+      }else{
+	  $self->testInputFile('resourcesFile', "$downloadDir/$resourcesFile");
+      }
       $self->runCmd(0,"echo test > $localDataDir/$toFile");
   }
 

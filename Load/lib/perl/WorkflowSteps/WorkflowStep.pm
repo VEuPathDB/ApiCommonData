@@ -74,9 +74,16 @@ restart=no
 }
 
 sub testInputFile {
-  my ($self, $paramName, $fileName) = @_;
+  my ($self, $paramName, $fileName, $directory) = @_;
 
-  $self->error("Input file '$fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $fileName;
+  if($directory){
+      $fileName =~ s/\*//g;
+      my @inputFiles = $self->getInputFiles(1,$directory,$fileName);
+      $self->error("Input file '$directory and $fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $inputFiles[0];
+  }else {
+      $self->error("Input file '$fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $fileName;
+  }
+
 }
 
 # avoid using this subroutine!

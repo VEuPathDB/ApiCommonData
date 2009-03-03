@@ -21,7 +21,7 @@ sub run {
 
   my $genomDbRlsId = $self->getExtDbRlsId($test, $genomeExtDbRlsSpec);
   my $virtualDbRlsId; 
-  $virtualDbRlsI= $self->getExtDbRlsId($test, $genomeVirtualSeqsExtDbRlsSpec) if $withVirtualSeqs;
+  $virtualDbRlsId= $self->getExtDbRlsId($test, $genomeVirtualSeqsExtDbRlsSpec) if $withVirtualSeqs;
 
   my $sql1 = "select source_id, sequence from Dots.VIRTUALSEQUENCE where external_database_release_id = '$virtualDbRlsId'";
 
