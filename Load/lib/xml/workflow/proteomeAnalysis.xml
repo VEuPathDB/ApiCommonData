@@ -15,6 +15,7 @@
   <param name="pdbExtDbRlsSpec"/>
   <param name="goVersion"/>
   <param name="organismName"/>
+  <param name="runExportPred"/>
 
   <constant name="dataDir">$$parentDataDir$$/proteome</constant>
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
@@ -72,6 +73,20 @@
       <paramValue name="inputFile">$$dataDir$$/tmhmm.out</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runTmhmm"/>
+    </step>
+
+    <step name="runExportPred"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunExportPred" includeIf="$$runExportPred$$">
+      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/exportPred.out</paramValue>
+      <depends name="extractProteins"/>
+    </step>
+
+    <step name="insertExportPred"
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertExportPred" stepLoadTypes="plugin" includeIf="$$runExportPred$$">
+      <paramValue name="inputFile">$$dataDir$$/exportPred.out</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <depends name="runExportPred"/>
     </step>
 
     <step name="runSignalP"

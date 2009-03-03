@@ -11,11 +11,16 @@
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
   <param name="soVersion"/>
+  <param name="goVersion"/>
   <param name="dbESTVersion"/>
   <param name="ncbiTaxonVersion"/>
   <param name="ncbiTaxonId"/>
   <param name="parentNcbiTaxonId"/>
-  <param name="predictedTranscriptsSql"/>
+  <param name="makePredictedTranscripts"/>
+  <param name="predictedTranscriptsExtDbRlsSpec"/>
+  <param name="withVirtualSeqs"/>
+  <param name="runtRNAScan"/>
+  <param name="runExportPred"/>
   <param name="pdbFile"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>  
@@ -25,11 +30,10 @@
   <param name="runSplign"/>
   <param name="nrdbExtDbRlsSpec"/>  
   <param name="repeatMaskSpecies"/>
-  <param name="maxIntronSize"/>
   <param name="pdbExtDbRlsSpec"/>
-  <param name="goVersion"/>
   <param name="genomeSize"/>
   <param name="skipProteomeAnalysis"/>
+
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
@@ -58,7 +62,9 @@
     <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
     <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>    
     <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
-    <paramValue name="predictedTranscriptsSql"></paramValue>
+    <paramValue name="makePredictedTranscripts">$$makePredictedTranscripts$$</paramValue>
+    <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
+    <paramValue name="withVirtualSeqs">$$withVirtualSeqs$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
@@ -67,10 +73,11 @@
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
     <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
-    <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     <paramValue name="genomeSize">$$genomeSize$$</paramValue>
+    <paramValue name="runtRNAScan">$$runtRNAScan$$</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
+
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml" excludeIf="$$skipProteomeAnalysis$$">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -89,6 +96,7 @@
     <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
     <paramValue name="goVersion">$$goVersion$$</paramValue>
     <paramValue name="maxIntronSize">$$genomeSize$$</paramValue>
+    <paramValue name="runExportPred">$$runExportPred$$</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
 

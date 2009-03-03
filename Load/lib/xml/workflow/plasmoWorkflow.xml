@@ -1,37 +1,11 @@
 <workflowGraph name="trypWorkflow">
   <param name="PfalciparumExtDbRlsSpec"/>
-  <param name="PfalciparumVirtualSeqsExtDbRlsSpec"/>
   <param name="PfalciparumGenomeSource"/>
-  <param name="PvivaxExtDbRlsSpec"/>
-  <param name="PvivaxGenomeSource"/>
-  <param name="PvivaxVirtualSeqsExtDbRlsSpec"/>
+  <param name="PfalciparumPredictedTranscriptsExtDbRlsSpec"/>
   <param name="PyoeliiExtDbRlsSpec"/>
-  <param name="PyoeliiVirtualSeqsExtDbRlsSpec"/>
   <param name="PyoeliiGenomeSource"/>
-  <param name="PyoeliiExtDbRlsSpec"/>
-  <param name="PyoeliiVirtualSeqsExtDbRlsSpec"/>
-  <param name="PyoeliiGenomeSource"/>
-  <param name="PchabaudiExtDbRlsSpec"/>
-  <param name="PchabaudiVirtualSeqsExtDbRlsSpec"/>
-  <param name="PchabaudiGenomeSource"/>
-  <param name="PknowlesiExtDbRlsSpec"/>
-  <param name="PknowlesiVirtualSeqsExtDbRlsSpec"/>
-  <param name="PknowlesiGenomeSource"/>
-  <param name="PfalciparumPlastidExtDbRlsSpec"/>
-  <param name="PfalciparumPlastidVirtualSeqsExtDbRlsSpec"/>
-  <param name="PfalciparumPlastidGenomeSource"/>
-  <param name="PfalciparumMitoExtDbRlsSpec"/>
-  <param name="PfalciparumMitoVirtualSeqsExtDbRlsSpec"/>
-  <param name="PfalciparumMitoGenomeSource"/>
-  <param name="PvivaxMitoExtDbRlsSpec"/>
-  <param name="PvivaxMitoVirtualSeqsExtDbRlsSpec"/>
-  <param name="PvivaxMitoGenomeSource"/>
   <param name="PreichenowiExtDbRlsSpec"/>
-  <param name="PreichenowiVirtualSeqsExtDbRlsSpec"/>
   <param name="PreichenowiGenomeSource"/>
-  <param name="PgallinaceumExtDbRlsSpec"/>
-  <param name="PgallinaceumVirtualSeqsExtDbRlsSpec"/>
-  <param name="PgallinaceumGenomeSource"/>
   <param name="interproVersion"/>
   <param name="iedbVersion"/>
   <param name="nrdbVersion"/>
@@ -42,6 +16,16 @@
   <param name="projectName"/>
   <param name="projectVersion"/>
   <param name="pdbExtDbRlsSpec"/>
+
+  <param name="suSnpExtDbRlsSpec"/>
+  <param name="broadSnpExtDbRlsSpec"/>
+  <param name="winzelerSnpExtDbRlsSpec"/>
+  <param name="sangerItGhanaSnpExtDbRlsSpec"/>
+  <param name="sangerReichenowiSnpExtDbRlsSpec"/>
+  <param name="combinedSnpExtDbRlsSpec"/>
+  <param name="pfalciparumSageTagExtDbRlsSpec"/>
+  <param name="pfalciparumDeRisiOligosExtDbRlsSpec"/>
+  <param name="pyoeliiVaidyaBergmanOligosExtDbRlsSpec"/>
 
 
   <constant name="pdbFile">common/pdb.fsa</constant>
@@ -66,7 +50,7 @@
     <paramValue name="organismFullName">Plasmodium falciparum</paramValue>
     <paramValue name="organismTwoLetterAbbrev">Pf</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$PfalciparumExtDbRlsSpec$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$PfalciparumVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
     <paramValue name="genomeSource">$$PfalciparumGenomeSource$$</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
@@ -77,6 +61,10 @@
     <paramValue name="ncbiTaxonId">36329</paramValue>    
     <paramValue name="parentNcbiTaxonId">5833</paramValue>
     <paramValue name="makePredictedTranscripts">true</paramValue>
+    <paramValue name="predictedTranscriptsExtDbRlsSpec">$$PfalciparumPredictedTranscriptsExtDbRlsSpec$$</paramValue>
+    <paramValue name="withVirtualSeqs">false</paramValue>
+    <paramValue name="runtRNAScan">false</paramValue>
+    <paramValue name="runExportPred">true</paramValue>
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
@@ -88,12 +76,72 @@
     <paramValue name="repeatMaskSpecies">-species Plasmodium</paramValue>
     <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
     <paramValue name="genomeSize">23267177</paramValue>
+    <paramValue name="skipProteomeAnalysis">false</paramValue>
+    <depends name="common"/>
+  </subgraph>
+  <subgraph name="PreichenowiAnalysis" xmlFile="organismAnalysis.xml">
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Preichenowi</paramValue>
+    <paramValue name="organismFullName">Plasmodium reichenowi</paramValue>
+    <paramValue name="organismTwoLetterAbbrev">Pr</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PreichenowiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="genomeSource">$$PreichenowiGenomeSource$$</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
+    <paramValue name="soVersion">$$soVersion$$</paramValue>
+    <paramValue name="goVersion">$$goVersion$$</paramValue>
+    <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId">5854</paramValue>    
+    <paramValue name="parentNcbiTaxonId">5854</paramValue>
+    <paramValue name="makePredictedTranscripts">false</paramValue>
+    <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>
+    <paramValue name="withVirtualSeqs">false</paramValue>
+    <paramValue name="runtRNAScan">true</paramValue>
+    <paramValue name="runExportPred">false</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="maxIntronSize">20000</paramValue>
+    <paramValue name="calculateTranslatedProteins">false</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
+    <paramValue name="runSplign">false</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Plasmodium</paramValue>
+    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeSize">23267177</paramValue>
+    <paramValue name="skipProteomeAnalysis">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
 
+  <subgraph name="PfalciparumSpecificAnalysis" xmlFile="pfalciparumSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pfalciparum</paramValue>
+    <paramValue name="organismFullName">Plasmodium falciparum</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PfalciparumExtDbRlsSpec$$</paramValue>
+    <paramValue name="suSnpExtDbRlsSpec">$$suSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="broadSnpExtDbRlsSpec">$$broadSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="winzelerSnpExtDbRlsSpec">$$winzelerSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="sangerItGhanaSnpExtDbRlsSpec">$$sangerItGhanaSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="sangerReichenowiSnpExtDbRlsSpec">$$sangerReichenowiSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="combinedSnpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="sageTagExtDbRlsSpec">$$pfalciparumSageTagExtDbRlsSpec$$</paramValue>
+    <paramValue name="oligoExtDbRlsSpec">$$pfalciparumDeRisiOligosExtDbRlsSpec$$</paramValue>
+    <depends name="PfalciparumAnalysis"/>
+  </subgraph>
 
-
+  <subgraph name="PyoeliiSpecificAnalysis" xmlFile="pyoeliiSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pyoelii</paramValue>
+    <paramValue name="organismFullName">Plasmodium yoelii</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PyoeliiExtDbRlsSpec$$</paramValue>
+    <paramValue name="oligoExtDbRlsSpec">$$pyoeliiVaidyaBergmanOligosExtDbRlsSpec$$</paramValue>
+    <depends name="PreichenowiAnalysis"/>
+  </subgraph>
 
   <subgraph name="MercatorAnalysis" xmlFile="mercatorAnalysis.xml">
     <paramValue name="mercator_genomes"></paramValue>
@@ -105,8 +153,8 @@
     <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
     <paramValue name="genomeExtDbRlsSpec"></paramValue>
     <paramValue name="mercatorDir">$$mercatorDir$$</paramValue>
-    <depends name="TcruziAnalysis"/>
-    <depends name="TbruceiAnalysis"/>
+    <depends name="PfalciparumAnalysis"/>
+    <depends name="PreichenowiAnalysis"/>
   </subgraph>
 
 </workflowGraph>

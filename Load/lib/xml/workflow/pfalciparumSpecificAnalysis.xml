@@ -3,7 +3,6 @@
   <param name="organismName"/>
   <param name="organismFullName"/>
   <param name="genomeExtDbRlsSpec"/>
-  <param name="genomicSeqsFile"/>
   <param name="suSnpExtDbRlsSpec"/>
   <param name="broadSnpExtDbRlsSpec"/>
   <param name="winzelerSnpExtDbRlsSpec"/>
@@ -15,13 +14,14 @@
 
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
+  <constant name="genomicSeqsFile">$$parentDataDir$$/$$organismName$$/genome/genomicSeqs.fsa</constant>
 
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
   </step>
 
   <subgraph name="suSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="suSnpExtDbRlsSpec">$$suSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$suSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">Su_SNPs</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -31,7 +31,7 @@
   </subgraph>
 
   <subgraph name="broadSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="broadSnpExtDbRlsSpec">$$broadSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$broadSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">Broad_SNPs</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -41,7 +41,7 @@
   </subgraph>
 
   <subgraph name="sangerItGhanaSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="sangerItGhanaSnpExtDbRlsSpec">$$sangerItGhanaSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$sangerItGhanaSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">sangerItGhanaSnps</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -51,7 +51,7 @@
   </subgraph>
 
   <subgraph name="sangerReichenowiSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="sangerReichenowiSnpExtDbRlsSpec">$$sangerReichenowiSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$sangerReichenowiSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">sangerReichenowiSnps</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -61,7 +61,7 @@
   </subgraph>
 
   <subgraph name="winzelerSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="winzelerSnpExtDbRlsSpec">$$winzelerSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$winzelerSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">WinzelerGeneticVariationArray</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -71,7 +71,7 @@
   </subgraph>
 
   <subgraph name="combinedSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="combinedSnpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="snpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="snpNickName">plasmoDbCombinedSnps</paramValue>
     <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>

@@ -8,7 +8,9 @@
   <param name="soVersion"/>
   <param name="ncbiTaxonId"/>
   <param name="parentNcbiTaxonId"/>
-  <param name="predictedTranscriptsSql"/>
+  <param name="makePredictedTranscripts"/>
+  <param name="predictedTranscriptsExtDbRlsSpec"/>
+  <param name="withVirtualSeqs"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>
   <param name="maxIntronSize"/>
@@ -19,6 +21,7 @@
   <param name="maxIntronSize"/>
   <param name="organismFullName"/>
   <param name="genomeSize"/>
+  <param name="runtRNAScan"/>
 
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
@@ -48,6 +51,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="organismName">$$organismName$$</paramValue>
       <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <paramValue name="withVirtualSeqs">$$withVirtualSeqs$$</paramValue>
       <depends name="makeDataDir"/> 
     </subgraph>
 
@@ -55,6 +59,7 @@
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
+
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -75,6 +80,17 @@
       <paramValue name="loadOptions"></paramValue>
       <depends name="mirrorToCluster"/>
     </subgraph>
+
+
+    <subgraph name="tRNAScan" xmlFile="trnaScanWorkflow.xml" includeIf="$$runtRNAScan$$">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="tRNAExtDbRlsSpec">$$organismName$$TRNAscan-SE|1.23</paramValue>
+      <paramValue name="soVersion">$$soVersion$$</paramValue>
+      <depends name="mirrorToCluster"/>
+    </subgraph>
+
 
     <step name="makeOrfFile"
           stepClass="ApiCommonData::Load::WorkflowSteps::MakeOrfFile">
@@ -134,9 +150,10 @@
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
-      <paramValue name="predictedTranscriptsSql">$$predictedTranscriptsSql$$</paramValue>
+      <paramValue name="makePredictedTranscripts">$$makePredictedTranscripts$$</paramValue>
       <paramValue name="dataDir">$$assemblySeqsDataDir$$</paramValue>
       <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </subgraph>
 
