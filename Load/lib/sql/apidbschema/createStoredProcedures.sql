@@ -109,7 +109,7 @@ begin
 		for t in (select distinct(table_name) from
 					(select distinct(table_name) table_name from all_tables where owner = s.schema and last_analyzed is null
 				  			union
-				  	 select distinct(table_name) table_name from all_indexes where owner = s.schema and last_analyzed is null))
+				  	 select distinct(table_name) table_name from all_indexes where table_owner = s.schema and last_analyzed is null))
 		loop
 			dbms_stats.unlock_table_stats(ownname => s.schema, tabname => t.table_name);
 			select count(table_name) into tab_count from all_tables
