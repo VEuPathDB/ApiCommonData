@@ -10,6 +10,11 @@
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
+   <step name="makeNormFileDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$/NormFiles</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
     <step name="extractSageTags" stepClass="ApiCommonData::Load::WorkflowSteps::ExtractSageTags">
       <paramValue name="sageTagExtDbRlsSpec">$$sageTagExtDbRlsSpec$$</paramValue>
       <paramValue name="prependSeq">CATG</paramValue>
@@ -35,6 +40,7 @@
       <paramValue name="paramValue">25372</paramValue>
       <paramValue name="outputDir">$$dataDir$$/NormFiles</paramValue>
       <depends name="loadSageTagMap"/>
+      <depends name="makeNormFileDir"/>
     </step>
 
     <step name="insertNormSageTagFreqs" stepClass="ApiCommonData::Load::WorkflowSteps::InsertNormSageTagFreqs" stepLoadTypes="plugin">

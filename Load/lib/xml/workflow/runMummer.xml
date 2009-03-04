@@ -23,7 +23,7 @@
     <step name="snpGffToFasta" stepClass="ApiCommonData::Load::WorkflowSteps::SnpGffToFasta">
       <paramValue name="inputFile">$$dataDir$$/SNPs.gff</paramValue>
       <paramValue name="outputFile">$$dataDir$$/SNPs.fasta</paramValue>
-      <depends name="makeDataDir"/>
+      <depends name="copySnpGffFile"/>
     </step>
 
     <step name="runMummer" stepClass="ApiCommonData::Load::WorkflowSteps::RunMummer">

@@ -125,26 +125,4 @@
     <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
-  <subgraph name="makeGffFile" xmlFile="makeGffFile.xml">
-    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
-    <paramValue name="organismName">$$organismName$$</paramValue>
-    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="projectName">$$projectName$$</paramValue>
-    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
-    <depends name="runTuningManager"/>
-    <depends name="makeDownloadSiteDataDir"/>
-  </subgraph>
-
-  <step name="fullRecordDump" stepClass="ApiCommonData::Load::WorkflowSteps::RunfullRecordDump">
-    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
-    <paramValue name="organismName">$$organismName$$</paramValue>
-    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="projectDB">$$projectName$$</paramValue>
-    <paramValue name="recordType">gene,sequence</paramValue>
-    <paramValue name="outputGeneFile">$$organismName$$Gene_$$projectName$$-$$projectVersion$$.txt</paramValue>
-    <paramValue name="outputSeqFile">$$organismName$$Sequence_$$projectName$$-$$projectVersion$$.txt</paramValue>
-
-    <depends name="runTuningManager"/>
-    <depends name="makeDownloadSiteDataDir"/>
-  </step>
 </workflowGraph>
