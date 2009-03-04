@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-    my ($self, $undo ,$test) = @_;
+    my ($self,$test, $undo) = @_;
 
 
     my $genomicSeqsFile = $self->getParamValue('genomicSeqsFile');
@@ -16,7 +16,7 @@ sub run {
     my $localDataDir = $self->getLocalDataDir();
     my $mummerPath = $self->getConfig('mummerPath');
 
-    my @inputFileNames = $self->getInputFiles($test,$localDataDir/$inputDir,'','fasta');
+    my @inputFileNames = $self->getInputFiles($test,"$localDataDir/$inputDir",'','fasta');
 
     if (scalar @inputFileNames==0){
 	die "No input files. Please check inputDir: $inputDir\n";

@@ -19,7 +19,7 @@ sub run {
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     $self->testInputFile('gffFile', "$localDataDir/$gffFile");
-    $self->runCmd(0, "cat test > $localDataDir/$outputFile");
+    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
   }
 
   if ($undo) {

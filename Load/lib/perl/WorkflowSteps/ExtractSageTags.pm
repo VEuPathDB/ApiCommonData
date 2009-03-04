@@ -31,6 +31,7 @@ sub run {
     } else {
       $self->runCmd($test,"gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose");
     }
+}
   
 sub getParamsDeclaration {
   return (

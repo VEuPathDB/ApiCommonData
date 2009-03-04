@@ -13,7 +13,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  opendir (DIR,$localDataDir/$inputDir);
+  opendir (DIR,"$localDataDir/$inputDir");
 
   my @files = grep { /\w*\.dat/ && -f "$localDataDir/$inputDir/$_" } readdir(DIR); 
 

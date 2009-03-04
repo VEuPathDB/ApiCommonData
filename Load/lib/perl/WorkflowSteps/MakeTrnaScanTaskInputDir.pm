@@ -21,7 +21,6 @@ sub run {
 
   if ($test) {
     $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
-    $self->testInputFile('subjectFile', "$localDataDir/$subjectFile");
   }
 
   if ($undo) {
@@ -34,10 +33,6 @@ sub run {
 				       "DJob::DistribJobTasks::tRNAscanTask"); 
 
     # make task.prop file
-    my $ccBlastParamsFile = "blastParams";
-    my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
-    my $vendorString = $vendor? "blastVendor=$vendor" : "";
-
     my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
     open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
