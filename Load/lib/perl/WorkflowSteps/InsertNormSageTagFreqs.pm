@@ -25,7 +25,7 @@ sub run {
 
     my $args = "--cfg_file '$localDataDir/$inputDir/$cfgFile' --data_file '$localDataDir/$inputDir/$dataFile' --subclass_view RAD::DataTransformationResult";
 
-  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles", $args);
+  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::InsertRadAnalysis", $args);
 
   }
    

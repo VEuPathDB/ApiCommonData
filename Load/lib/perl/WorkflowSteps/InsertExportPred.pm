@@ -14,7 +14,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $args = "--inputFile  $inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec '$genomeExtDbRlsSpec' --extDbRlsSpec '$genomeExtDbRlsSpec'";
+  my $args = "--inputFile $localDataDir/$inputFile --seqTable DoTS::AASequence --seqExtDbRlsSpec '$genomeExtDbRlsSpec' --extDbRlsSpec '$genomeExtDbRlsSpec'";
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }

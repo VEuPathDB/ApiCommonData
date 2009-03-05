@@ -16,7 +16,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "${binPath}/exportpred --input=$proteinsFile --output=$outputFile";
+  my $cmd = "${binPath}/exportpred --input=$localDataDir/$proteinsFile --output=$localDataDir/$outputFile";
 
   if ($test) {
       $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");

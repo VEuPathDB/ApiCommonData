@@ -14,7 +14,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "tagToSeq.pl $genomicSeqsFile $sageTagFile 2>> $outputFile";
+  my $cmd = "tagToSeq.pl $localDataDir/$genomicSeqsFile $localDataDir/$sageTagFile 2>> $localDataDir/$outputFile";
   if ($test) {
     $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
     $self->testInputFile('sageTagFile', "$localDataDir/$sageTagFile");
