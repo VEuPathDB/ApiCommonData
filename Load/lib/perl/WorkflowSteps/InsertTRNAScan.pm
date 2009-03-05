@@ -22,7 +22,7 @@ sub run {
 
   my ($tRNAExtDbName,$tRNAExtDbVersion)=$self->getExtDbInfo($test,$tRNAExtDbRlsSpec);
 
-  my $args = "--data_file $inputFile --scanDbName '$tRNAExtDbName' --scanDbVer '$tRNAExtDbVersion' --genomeDbName '$genomeExtDbName' --genomeDbVer '$genomeExtDbVersion' --soVersion '$soVersion'";
+  my $args = "--data_file $localDataDir/$inputFile --scanDbName '$tRNAExtDbName' --scanDbVer '$tRNAExtDbVersion' --genomeDbName '$genomeExtDbName' --genomeDbVer '$genomeExtDbVersion' --soVersion '$soVersion'";
     if ($test) {
       $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     }
