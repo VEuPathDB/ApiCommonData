@@ -3,7 +3,7 @@
     <param name="parentDataDir"/>
     <param name="parentNcbiTaxonId"/>
     <param name="ncbiTaxonId"/>
-    <param name="makePredictedTranscripts"/>
+    <param name="usePredictedTranscripts"/>
     <param name="predictedTranscriptsExtDbRlsSpec"/>
     <param name="dataDir"/>
     <param name="repeatMaskSpecies"/>
@@ -15,9 +15,10 @@
     <step name="makeAssemblySeqs" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
+      <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>
     </step>
 
-    <step name="makeAssemblySeqsFromPredictedTranscripts" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqsFromPredictedTranscripts" includeIf="$$makePredictedTranscripts$$">
+    <step name="makeAssemblySeqsFromPredictedTranscripts" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs" includeIf="$$usePredictedTranscripts$$">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
