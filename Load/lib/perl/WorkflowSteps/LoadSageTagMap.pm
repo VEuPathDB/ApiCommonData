@@ -13,7 +13,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
       
-  my $args = "--tagToSeqFile $localDataDir/$inputFile";
+  my $args = "--tagToSeqFile $localDataDir/$inputFile --extDbSpec 'RAD.SAGETag|continuous' --featureType SAGETagFeature";
 
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
