@@ -26,23 +26,6 @@
       <paramValue name="soVersion">$$soVersion$$</paramValue>
     </step>
 
-    <step name="updatePdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" stepLoadTypes="plugin">
-      <paramValue name="mappingFileRelativeToDownloadDir">FetchPDBidx/source.idx.processed</paramValue>
-      <paramValue name="sourceIdRegex">^(\\w+)</paramValue>
-      <paramValue name="taxonRegex">--taxonNameRegex "^\\w+\\s+(.+)"</paramValue>
-      <paramValue name="idSql">select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence</paramValue>
-      <paramValue name="extDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
-    </step>
-
-    <step name="calcAASequenceAttributes"
-          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes" stepLoadTypes="plugin">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends name="calcTranslatedProteins"/>
-    </step>
-
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
@@ -61,20 +44,6 @@
       <depends name="extractProteins"/>
     </step>
 
-    <step name="runTmhmm"
-          stepClass="ApiCommonData::Load::WorkflowSteps::RunTmhmm">
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/tmhmm.out</paramValue>
-      <depends name="extractProteins"/>
-    </step>
-
-    <step name="insertTmhmm"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTmhmm" stepLoadTypes="plugin">
-      <paramValue name="inputFile">$$dataDir$$/tmhmm.out</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <depends name="runTmhmm"/>
-    </step>
-
     <step name="runExportPred"
           stepClass="ApiCommonData::Load::WorkflowSteps::RunExportPred" includeIf="$$runExportPred$$">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
@@ -88,124 +57,5 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <depends name="runExportPred"/>
     </step>
-
-    <step name="runSignalP"
-          stepClass="ApiCommonData::Load::WorkflowSteps::RunSignalP">
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/signalP.out</paramValue>
-      <paramValue name="options">-t euk -f short -m nn+hmm -q -trunc 70</paramValue>
-      <depends name="extractProteins"/>
-    </step>
-
-    <step name="insertSignalP"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertSignalP" stepLoadTypes="plugin">
-      <paramValue name="inputFile">$$dataDir$$/signalP.out</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <depends name="runSignalP"/>
-    </step>
-
-    <subgraph name="mapEpitopesToProteins" xmlFile="epitopesWorkflow.xml">
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <paramValue name="iedbExtDbRlsSpec">Links to IEDB epitopes|$$iedbVersion$$</paramValue>
-      <depends name="extractProteins"/>
-    </subgraph>
-
-   <step name="runLowComplexityFilter"
-          stepClass="ApiCommonData::Load::WorkflowSteps::RunLowComplexityFilter"> 
-
-      <paramValue name="seqFile">$$proteinsFile$$</paramValue>
-      <paramValue name="outputFile">$$proteinsFile$$.seg</paramValue>
-      <paramValue name="filterType">seg</paramValue>
-      <paramValue name="options">-x</paramValue>
-      <depends name="extractProteins"/>
-    </step>
-
-    <step name="loadLowComplexityFile"
-          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences" stepLoadTypes="plugin">
-      <paramValue name="inputFile">$$proteinsFile$$.seg</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="seqType">protein</paramValue>
-      <paramValue name="mask">x</paramValue> 
-      <paramValue name="options"></paramValue>
-      <depends name="runLowComplexityFilter"/>
-    </step>
-
-    <step name="findNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::FindNrdbXrefs">
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
-      <paramValue name="proteinsFileRegex">^([\\w\\.]+)</paramValue>
-      <paramValue name="nrdbFileRegex">^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|</paramValue>
-      <paramValue name="outputFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
-       <depends name="extractProteins"/>
-    </step>
-
-    <step name="loadNrdbXrefs" stepClass="ApiCommonData::Load::WorkflowSteps::LoadNrdbXrefs" stepLoadTypes="plugin">
-      <paramValue name="xrefsFile">$$dataDir$$/nrdbXrefs.txt</paramValue>
-      <paramValue name="dbAbbrevList">emb,gb,dbj,ref,sp,pdb</paramValue>
-      <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-      <depends name="findNrdbXrefs"/>
- 
-    </step>
-
-    <subgraph name="interpro" xmlFile="interproWorkflow.xml">
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="interproExtDbRlsSpec">INTERPRO|$$interproVersion$$</paramValue>
-      <paramValue name="interproVersion">$$interproVersion$$</paramValue>
-      <paramValue name="goVersion">$$goVersion$$</paramValue>
-      <depends name="mirrorProteinsToCluster"/>
-    </subgraph>
-
-    <subgraph name="psipred" xmlFile="psipredWorkflow.xml">
-      <paramValue name="nrdbFileShortDefline">$$nrdbShortDeflineFile$$</paramValue>
-      <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <depends name="mirrorProteinsToCluster"/>
-    </subgraph>
-
-    <subgraph name="blastpNrdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="nickName">blastpNrdb</paramValue>
-      <paramValue name="queryFile">$$proteinsFile$$</paramValue>
-      <paramValue name="queryTable">DoTS::TranslatedAASequence</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="subjectFile">$$nrdbFile$$</paramValue>
-      <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000</paramValue>
-      <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
-      <paramValue name="blastType">blastp</paramValue>
-      <paramValue name="vendor">wu</paramValue>
-      <paramValue name="loadSubjectSubset">true</paramValue>
-      <paramValue name="filterByTaxon">false</paramValue>
-      <paramValue name="taxonHierarchyForFilter"></paramValue>
-      <paramValue name="loadOptions">--subjectsLimit 50</paramValue>
-      <depends name="mirrorProteinsToCluster"/>
-    </subgraph>
-
-    <subgraph name="blastpPdb" xmlFile="blastWorkflow.xml">
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="nickName">blastpPdb</paramValue>
-      <paramValue name="queryFile">$$proteinsFile$$</paramValue>
-      <paramValue name="queryTable">DoTS::TranslatedAASequence</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="subjectFile">$$pdbFile$$</paramValue>
-      <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1</paramValue>
-      <paramValue name="idRegex">(\\w+)\\s+mol:protein</paramValue>
-      <paramValue name="blastType">blastp</paramValue>
-      <paramValue name="vendor">wu</paramValue>
-      <paramValue name="loadSubjectSubset">false</paramValue>
-      <paramValue name="filterByTaxon">false</paramValue>
-      <paramValue name="taxonHierarchyForFilter"></paramValue>
-      <paramValue name="loadOptions">--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30</paramValue>
-      <depends name="mirrorProteinsToCluster"/>
-    </subgraph>
 
 </workflowGraph>

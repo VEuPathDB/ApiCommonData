@@ -69,7 +69,7 @@
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
-    <paramValue name="calculateTranslatedProteins">false</paramValue>
+    <paramValue name="calculateTranslatedProteins">true</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="runSplign">false</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -134,13 +134,5 @@
     <depends name="PfalciparumAnalysis"/>
   </subgraph>
 
-  <subgraph name="PyoeliiSpecificAnalysis" xmlFile="pyoeliiSpecificAnalysis.xml">
-    <paramValue name="parentDataDir"></paramValue>
-    <paramValue name="organismName">Pyoelii</paramValue>
-    <paramValue name="organismFullName">Plasmodium yoelii</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$PyoeliiExtDbRlsSpec$$</paramValue>
-    <paramValue name="oligoExtDbRlsSpec">$$pyoeliiVaidyaBergmanOligosExtDbRlsSpec$$</paramValue>
-    <depends name="PreichenowiAnalysis"/>
-  </subgraph>
 
 </workflowGraph>
