@@ -45,10 +45,41 @@
       <depends name="makeDataDir"/> 
     </step>
 
+    <subgraph name="dumpAndBlockMixedGenomicSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="organismName">$$organismName$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <paramValue name="useVirtualSeqs">$$useVirtualSeqs$$</paramValue>
+      <depends name="makeDataDir"/> 
+    </subgraph>
+
    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
+
+
+    <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="nickName">blastxNrdb</paramValue>
+      <paramValue name="queryFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="queryTable">DoTS::ExternalNASequence</paramValue>
+      <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
+      <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
+      <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
+      <paramValue name="blastArgs">-cpus=4 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1 Y=$$genomeSize$$</paramValue>
+      <paramValue name="idRegex">gi\\|(\\d+)\\|</paramValue>
+      <paramValue name="blastType">blastx</paramValue>
+      <paramValue name="vendor">wu</paramValue>
+      <paramValue name="loadSubjectSubset">true</paramValue>
+      <paramValue name="filterByTaxon">true</paramValue>
+      <paramValue name="taxonHierarchyForFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
+      <paramValue name="loadOptions"></paramValue>
+      <depends name="mirrorToCluster"/>
+    </subgraph>
 
 
     <subgraph name="tRNAScan" xmlFile="trnaScanWorkflow.xml" includeIf="$$runtRNAScan$$">
@@ -60,6 +91,61 @@
       <depends name="mirrorToCluster"/>
     </subgraph>
 
+
+    <step name="makeOrfFile"
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeOrfFile">
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="minPepLength">50</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/Orf50.gff</paramValue>
+      <depends name="extractGenomicSeqs"/>
+    </step>
+
+    <step name="loadOrfFile"
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertOrfFile" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$dataDir$$/Orf50.gff</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="substepClass">ExternalNASequence</paramValue>
+      <paramValue name="defaultOrg">$$organismFullName$$</paramValue>
+      <paramValue name="isfMappingFileRelToGusHome">config/orf2gus.xml</paramValue>
+      <paramValue name="soVersion">$$soVersion$$</paramValue>
+      <depends name="makeOrfFile"/>
+    </step>
+
+    <step name="findTandemRepeats"
+          stepClass="ApiCommonData::Load::WorkflowSteps::FindTandemRepeats">
+      <paramValue name="seqsFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="repeatFinderArgs">2 7 7 80 20 50 500</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/tandemRepeats.out</paramValue>
+      <depends name="extractGenomicSeqs"/>
+    </step>
+
+    <step name="loadTandemRepeats"
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertTandemRepeats" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$dataDir$$/tandemRepeats.out</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <depends name="findTandemRepeats"/>
+    </step>
+
+   <step name="runLowComplexityFilter"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunLowComplexityFilter">
+
+      <paramValue name="seqFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="outputFile">$$genomicSeqsFile$$.dust</paramValue>
+      <paramValue name="filterType">dust</paramValue>
+      <paramValue name="options"></paramValue>
+      <depends name="extractGenomicSeqs"/>
+    </step>
+
+    <step name="loadLowComplexityFile"
+          stepClass="ApiCommonData::Load::WorkflowSteps::InsertLowComplexitySequences" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$genomicSeqsFile$$.dust</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="seqType">dna</paramValue>
+      <paramValue name="mask">N</paramValue> 
+      <paramValue name="options">--LowComplexityName 'dust'</paramValue>
+      <depends name="runLowComplexityFilter"/>
+    </step>
+
     <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -69,6 +155,43 @@
       <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
       <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
       <depends name="extractGenomicSeqs"/>
+    </subgraph>
+
+    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
+      <paramValue name="dataDir">$$mapAssemblySeqsDataDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <depends name="makeAndBlockAssemblySeqs"/>
+    </subgraph>
+
+    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="dataDir">$$assembliesDataDir$$</paramValue>
+      <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <depends name="mapAssemblySeqsToGenome"/>
+    </subgraph>
+
+    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="assembliesDataDir">$$assembliesDataDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
+      <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
+      <depends name="makeAndBlockAssemblies"/>
     </subgraph>
 
 </workflowGraph>
