@@ -8,6 +8,7 @@
     <param name="snpExtDbRlsSpec"/>
 
     <constant name="dataDir">$$parentDataDir$$/$$snpNickName$$</constant>
+    <constant name="strain">3D7</constant>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -16,13 +17,13 @@
     <step name="copySnpGffFile" stepClass="ApiCommonData::Load::WorkflowSteps::CopyResourcesFile">
       <paramValue name="resourcesFile">$$snpNickName$$/*.gff</paramValue>
       <paramValue name="toFile">$$dataDir$$/SNPs.gff</paramValue>
-      <paramValue name="strain">3D7</paramValue>
       <depends name="makeDataDir"/>
     </step>
 
     <step name="snpGffToFasta" stepClass="ApiCommonData::Load::WorkflowSteps::SnpGffToFasta">
       <paramValue name="inputFile">$$dataDir$$/SNPs.gff</paramValue>
       <paramValue name="outputFile">$$dataDir$$/SNPs.fasta</paramValue>
+      <paramValue name="strain">$$strain$$</paramValue>
       <depends name="copySnpGffFile"/>
     </step>
 
@@ -37,13 +38,13 @@
       <paramValue name="inputFile">$$dataDir$$/SNPsMummer.out</paramValue>
       <paramValue name="gffFile">$$dataDir$$/SNPs.gff</paramValue>
       <paramValue name="outputFile">$$dataDir$$/SNPsMummer.gff</paramValue>
-      <paramValue name="strain">3D7</paramValue>
+      <paramValue name="strain">$$strain$$</paramValue>
       <depends name="runMummer"/>
     </step>
 
     <step name="insertSnpMummer" stepClass="ApiCommonData::Load::WorkflowSteps::InsertSnpMummer" stepLoadTypes="insertSnpMummer,plugin">
       <paramValue name="inputFile">$$dataDir$$/SNPsMummer.gff</paramValue>
-      <paramValue name="strain">3D7</paramValue>
+      <paramValue name="strain">$$strain$$</paramValue>
       <paramValue name="organismFullName">$$organismFullName$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="transcriptExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
