@@ -28,7 +28,7 @@ sub run {
 	    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 	}else{
 	    foreach my $inputFile (@inputFileNames){
-		my $cmd = "callMUMmerForSnps --mummerDir $mummerPath --query_file $localDataDir/$genomicSeqsFile --output_file $localDataDir/$outputFile --snp_file $localDataDir/$inputFile"; 
+		my $cmd = "callMUMmerForSnps --mummerDir $mummerPath --query_file $localDataDir/$genomicSeqsFile --output_file $localDataDir/$outputFile --snp_file $inputFile"; 
 		$self->runCmd($test,$cmd);
 	    }
 	}

@@ -15,7 +15,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $cmd = "snpFastaMUMmerGff --gff_file $localDataDir/$gffFile --mummer_file $localDataDir/$inputFile --output_file $localDataDir/$outputFile --reference_strain $strain --gff_format gff2 --skip_multiple_matches";
+  my $cmd = "snpFastaMUMmerGff --gff_file $localDataDir/$gffFile --mummer_file $localDataDir/$inputFile --output_file $localDataDir/$outputFile --reference_strain $strain --gff_format gff2 --skip_multiple_matches --error_log step.err";
   if ($test) {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
     $self->testInputFile('gffFile', "$localDataDir/$gffFile");
