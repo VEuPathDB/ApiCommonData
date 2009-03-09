@@ -27,14 +27,23 @@ while (my $seq = $db->next_seq) {
 # OK, now do the actual mapping:
 
 my $tagdb = Bio::SeqIO->new(-format => "fasta", -file => shift(@ARGV));
+
+my $outputFile = shift(@ARGV);
+
+print "outputFile=$outputFile\n";
+
+open (OUT, ">$outputFile") if ($outputFile);
+
 while (my $tag = $tagdb->next_seq) {
   my $tagseq = uc $tag->seq;
 
   # match against forward strand sequence:
   for my $match ($sarr->match($tagseq)) {
     my ($pos, $idx) = @$match;
-
-    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
+    
+    print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n" if ($outputFile);
+    
+#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
   }
 
   # reverse complement the SAGE tag:
@@ -45,7 +54,11 @@ while (my $tag = $tagdb->next_seq) {
   for my $match ($sarr->match($tagseq)) {
     my ($pos, $idx) = @$match;
 
-    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
+    print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n" if ($outputFile);
+
+#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
   }
 
 }
+
+close OUT;
