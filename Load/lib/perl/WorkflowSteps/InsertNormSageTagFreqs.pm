@@ -9,9 +9,15 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 sub run {
   my ($self, $test, $undo) = @_;
 
-  my $inputDir = $self->getParamValue('inputDir');
+  my $studyName = $self->getParamValue('studyName');
 
   my $localDataDir = $self->getLocalDataDir();
+
+  $studyName =~ s/\s/_/g;
+
+  $studyName =~ s/[\(\)]//g;
+
+  my $inputDir = $self->getParamValue('inputDir')  ."/" . $studyName;
 
   opendir (DIR,"$localDataDir/$inputDir");
 
