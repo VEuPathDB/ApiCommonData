@@ -30,8 +30,6 @@ my $tagdb = Bio::SeqIO->new(-format => "fasta", -file => shift(@ARGV));
 
 my $outputFile = shift(@ARGV);
 
-print "outputFile=$outputFile\n";
-
 open (OUT, ">$outputFile") if ($outputFile);
 
 while (my $tag = $tagdb->next_seq) {
@@ -43,7 +41,7 @@ while (my $tag = $tagdb->next_seq) {
     
     print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n" if ($outputFile);
     
-#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
+    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
   }
 
   # reverse complement the SAGE tag:
@@ -56,7 +54,7 @@ while (my $tag = $tagdb->next_seq) {
 
     print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n" if ($outputFile);
 
-#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
+    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
   }
 
 }
