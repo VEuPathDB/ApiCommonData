@@ -5082,7 +5082,7 @@ sub documentCAP4 {
   my ($mgr) = @_;
   my $description = "CAP4 is used to generate predicted, alternatively-spliced transcripts. CAP4 aligns and assembles clustered sequence reads and produces consensus sequences";
   my $documentation =    { name => "CAP4",
-                         input => "clusters of EST and mRNA sequences"
+                         input => "clusters of EST and mRNA sequences",
 			   output => "assembled consensus sequence and quality values",
 			   descrip => $description,
                            tools => [{ name => "CAP4",
@@ -5102,7 +5102,7 @@ sub documentRepeatMasker {
 
   my $description = "RepeatMasker uses cross-match and a RepBase repeat library to screen DNA sequences for interspersed repeats and low complexity DNA sequences and outputs a modified version of the query sequence in which all the repeats have been masked.";
   my $documentation =    { name => "RepeatMasker",
-                         input => "Fasta file of nucleic acid sequences and RepBase "
+                         input => "Fasta file of nucleic acid sequences and RepBase ",
 			   output => "Fasta file of masked nucleic acid sequences",
 			   descrip => $description,
                            tools => [{ name => "RepeatMasker",
