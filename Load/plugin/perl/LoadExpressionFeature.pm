@@ -156,12 +156,37 @@ sub run {
 
   my $type = $self->getArg('featureType');
 
-  my $numFeatures = $self->processFile();
+  my $naSequencesMap = $self->getNaSequenceMapping();
+
+  my $numFeatures = $self->processFile($naSequencesMap);
 
   my $resultDescrip = "$numFeatures rows inserted into $type";
 
   $self->setResultDescr($resultDescrip);
   $self->log($resultDescrip);
+}
+
+sub getNaSequenceMapping {
+  my ($self) = @_;
+
+  my $sql = "select s.source_id, s.na_sequence_id
+from dots.nasequence s, sres.sequenceontology so
+where s.sequence_ontology_id = so.sequence_ontology_id
+and so.term_name in ('supercontig','contig','chromosome')";
+
+  my $dbh = $self->getQueryHandle();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my %rv;
+
+  while(my ($sourceId, $naSequenceId) = $sh->fetchrow_array()) {
+    $rv{$sourceId} = $naSequenceId;
+  }
+
+  $sh->finish();
+
+  return \%rv;
 }
 
 sub checkFileFormat {
@@ -225,7 +250,7 @@ sub getPredAlgId {
 }
 
 sub processFile {
-  my ($self) = @_;
+  my ($self, $naSequenceIds) = @_;
 
   my $processed = $self->getArg('restart') ? $self->getArg('restart') : 0;
 
@@ -242,7 +267,9 @@ sub processFile {
     my $orient = $arr[9] eq 'reverse' ? 1 : 0;
 
     if($arr[3] =~ /\D/) {
-      $arr[3] = $self->getNaSequenceIdFromSourceId($arr[3]);
+      my $naSeqId = $naSequenceIds->{$arr[3]};
+      $self->error("No NaSequenceId found for $arr[3]") unless($naSeqId);
+      $arr[3] = $naSeqId;
     }
 
     my %args = ('sourceId'=>$arr[0],'naSeqId'=>$arr[3],'start'=>$arr[5],'end'=>$arr[7],'tagOrient'=>$orient);
