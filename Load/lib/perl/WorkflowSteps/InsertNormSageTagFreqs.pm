@@ -18,35 +18,44 @@ sub run {
   $studyName =~ s/[\(\)]//g;
 
   my $inputDir = $self->getParamValue('inputDir')  ."/" . $studyName;
+  
+  my $configFile = "configFile";
 
-  opendir (DIR,"$localDataDir/$inputDir");
+  if($undo){
+    $self->runCmd(0,"rm -rf $configFile");
+  }else{
 
-  my @files = grep { /\w*\.dat/ && -f "$localDataDir/$inputDir/$_" } readdir(DIR); 
+      opendir (DIR,"$localDataDir/$inputDir") || die "Can not open dir $localDataDir/$inputDir";
 
-  foreach my $dataFile (@files) {
+      my @files = grep { /\w*\.dat/ && -f "$localDataDir/$inputDir/$_" } readdir(DIR); 
 
-    my $cfgFile = $dataFile;
+      open(F,">$configFile");
 
-    $cfgFile =~ s/\.dat/\.cfg/;
+      foreach my $dataFile (@files) {
 
-    my $args = "--cfg_file '$localDataDir/$inputDir/$cfgFile' --data_file '$localDataDir/$inputDir/$dataFile' --subclass_view RAD::DataTransformationResult";
+	  my $cfgFile = $dataFile;
 
-  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::InsertRadAnalysis", $args);
-
+	  $cfgFile =~ s/\.dat/\.cfg/;
+    
+	  print F "$cfgFile\t$dataFile\n";
+      }
+     
+      close F;
   }
-   
+
+  my $args = "--configFile '$configFile' --subclass_view RAD::DataTransformationResult";
+
+  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertRadAnalysis", $args);
 
   if ($test) {
     $self->testInputFile('inputDir', "$localDataDir/$inputDir");
   }
 
-
-
 }
 
 sub getParamDeclaration {
   return (
-	  'inputDir',
+	  'studyName',
 	 );
 }
 
