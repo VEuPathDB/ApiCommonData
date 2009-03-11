@@ -3446,6 +3446,42 @@ where t.taxon_id in (select ns.taxon_id
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.Blastx">
+    <externalDependency name="dots.ExternalAaSequence"/>
+    <externalDependency name="dots.NaSequence"/>
+    <internalDependency name="apidb.SimilaritySpanLocation"/>
+    <sql>
+      <![CDATA[
+create table apidb.blastx&1
+      (similarity_id, name, score, pvalue, na_sequence_id, startm, end, strand, atts,
+       constraint blastx&1_pk primary key(na_sequence_id, startm, pvalue, end, similarity_id))
+organization index
+as
+select distinct sim.similarity_id,
+       extt.source_id name, 
+       substr(sim.similarity_score || '', 1, 6) score, 
+       to_number(sim.pvalue_mant || 'e' || sim.pvalue_exp) pvalue,
+       extq.na_sequence_id,
+       sim.min_query_start startm, 
+       sim.max_query_end end, 
+       decode (sim.similarity_is_reversed, 0, '+1', 1, '-1', '.') strand, 
+       substr('Score=' || sim.similarity_score || ',' || 
+              'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||','|| 
+              'Defline=' || extt.description || ',' || 
+              'PercentIdentity=' || sim.percent_identical || ',' ||
+              'PercentPositive=' || sim.percent_positive || ',' ||
+              'TStart=' || sim.min_query_start || ',' || 
+              'TStop=' || sim.max_query_end, 1, 400) atts 
+from apidb.SimilaritySpanLocation sim, dots.ExternalAaSequence extt, 
+     dots.NaSequence extq
+where sim.query_id = extq.na_sequence_id
+  and sim.subject_id = extt.aa_sequence_id
+  and (sim.max_query_end - sim.min_query_start) < 5000
+  and sim.pvalue_exp < -10
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
