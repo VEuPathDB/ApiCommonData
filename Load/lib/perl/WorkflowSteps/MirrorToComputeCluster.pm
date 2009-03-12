@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 use File::Basename;
 
 sub run {
-  my ($self) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get param values
   my $fileOrDirToMirror = $self->getParamValue('fileOrDirToMirror');
@@ -17,9 +17,14 @@ sub run {
 
   my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
 
-  $self->copyToCluster("$localDataDir/$relativeDir",
-		       $filename,
-		       "$computeClusterDataDir/$relativeDir");
+  if($undo){
+      $self->runCmdOnCluster(0, "rm -fr $computeClusterDataDir/$fileOrDirToMirror");
+  }else{
+
+      $self->copyToCluster("$localDataDir/$relativeDir",
+			   $filename,
+			   "$computeClusterDataDir/$relativeDir");
+  }
 }
 
 sub getParamDeclaration {
@@ -34,12 +39,3 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

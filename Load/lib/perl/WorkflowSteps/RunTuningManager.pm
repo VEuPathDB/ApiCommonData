@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $configFile = $self->getParamValue('configFileRelativeToGusHomeDir');
 
@@ -35,7 +35,13 @@ sub run {
       $self->testInputFile('configFile', "$gusHome/$configFile");
       
   }
-  $self->runCmd($test, $cmd);
+  
+  if ($undo){
+     $self->runCmd(0, "echo Doing nothing for \"undo\" Tuning Manager.\n");  
+  }else{
+     $self->runCmd($test, $cmd);
+  }
+
 
 }
 
@@ -51,12 +57,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub getDocumentation {
-}
 
-sub restart {
-}
-
-sub undo {
-
-}

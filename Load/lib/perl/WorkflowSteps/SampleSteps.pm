@@ -6,7 +6,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 TEMPLATE
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
 
@@ -20,7 +20,11 @@ sub run {
   } else {
   }
 
-  $self->runPlugin($test, '', $args);
+  if ($undo){
+  }else{
+   $self->runPlugin($test, '', $args);
+  }
+
 
 }
 
@@ -36,12 +40,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

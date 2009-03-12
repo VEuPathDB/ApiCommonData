@@ -6,7 +6,7 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-    my ($self, $test) = @_;
+    my ($self, $test, $undo) = @_;
 
 
     my $inputDir = $self->getParamValue('inputDir');
@@ -29,7 +29,11 @@ sub run {
       $self->runCmd(0,"echo hello > $localDataDir/$outputDir/IEDBExport.out");
     }
 
-    $self->runCmd($test,$cmd);
+    if ($undo) {
+      $self->runCmd(0, "rm -fr $localDataDir/$outputDir");
+    } else {
+      $self->runCmd($test, $cmd);
+    }
 }
 
 sub getParamsDeclaration {
@@ -48,11 +52,3 @@ sub getConfigDeclaration {
            );
 }
 
-sub getDocumentation {
-}
-
-sub restart {
-}
-
-sub undo {
-}

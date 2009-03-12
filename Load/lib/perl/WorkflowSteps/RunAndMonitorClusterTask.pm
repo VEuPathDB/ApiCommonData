@@ -3,9 +3,10 @@ package ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask;
 @ISA = (ApiCommonData::Load::WorkflowSteps::WorkflowStep);
 use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
+use File::Basename;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   # get parameters
   my $taskInputDir = $self->getParamValue('taskInputDir');
@@ -25,10 +26,17 @@ sub run {
   my $processIdFile = "$clusterDataDir/$taskInputDir/task.id";
   my $logFile = "$clusterTaskLogsDir/" . $self->getName() . ".log";
 
-  my $success=$self->runAndMonitorClusterTask($test, $userName, $clusterServer, $processIdFile, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
-  if (!$success){
-      $self->error ("Task did not successfully run. Check log file: $logFile\n");
+  if($undo){
+      my ($relativeTaskInputDir, $relativeDir) = fileparse($taskInputDir);
+      $self->runCmdOnCluster(0, "rm -fr $clusterDataDir/$relativeDir/master");
+  }else{
+
+      my $success=$self->runAndMonitorClusterTask($test, $userName, $clusterServer, $processIdFile, $logFile, $propFile, $numNodes, 15000, $clusterQueue, $processorsPerNode);
+      if (!$success){
+	  $self->error ("Task did not successfully run. Check log file: $logFile\n");
+      }
   }
+
 }
 
 sub getParamsDeclaration {
@@ -45,12 +53,3 @@ sub getConfigDeclaration {
          );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

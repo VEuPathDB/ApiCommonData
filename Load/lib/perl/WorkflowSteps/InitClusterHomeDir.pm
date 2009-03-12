@@ -5,13 +5,22 @@ use strict;
 use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $clusterDataDir = $self->getComputeClusterDataDir();
   my $clusterTaskLogsDir = $self->getComputeClusterTaskLogsDir();
 
-  $self->runCmdOnCluster(0, "mkdir -p $clusterDataDir");
-  $self->runCmdOnCluster(0, "mkdir -p $clusterTaskLogsDir");
+
+
+   if ($undo) {
+      $self->runCmdOnCluster(0, "rm -fr $clusterDataDir");
+      $self->runCmdOnCluster(0, "rm -fr $clusterTaskLogsDir");
+   } else { 
+       
+      $self->runCmdOnCluster(0, "mkdir -p $clusterDataDir");
+      $self->runCmdOnCluster(0, "mkdir -p $clusterTaskLogsDir");
+   }
+
 }
 
 sub getParamsDeclaration {
@@ -24,12 +33,4 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
 
-sub undo {
-
-}
-
-sub getDocumentation {
-}
