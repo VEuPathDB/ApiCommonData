@@ -16,7 +16,7 @@ sub run {
 
   if($undo){
 
-      $self->runCmd(0, "rm -fr $baseDir/$apiSiteFilesDir");
+      $self->runCmd(0, "echo Doing nothing for undo");
 
   }else{
 

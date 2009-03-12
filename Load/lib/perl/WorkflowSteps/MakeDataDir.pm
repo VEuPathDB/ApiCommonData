@@ -20,7 +20,7 @@ sub run {
 
   }else{
 
-      $self->runCmd(0, "mkdir $localDataDir/$dataDir");
+      $self->runCmd(0, "mkdir -p $localDataDir/$dataDir");
 
   }
 
