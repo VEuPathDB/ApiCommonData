@@ -23,13 +23,27 @@ sub run {
     $self->runCmd(0,"echo test > $localDataDir/$outputDir/test.out");
   }
 
+  if($undo){
+
+      my $normFileDir = $studyName; 
+      
+      $normFileDir=~ s/\s/_/g;
+
+      $normFileDir =~ s/[\(\)]//g;
+
+      $self->runCmd(0,"rm -fr $localDataDir/$outputDir/$normFileDir");
+
+  }
+
   $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles", $args);
 
 }
 
 sub getParamDeclaration {
   return (
-	  'inputFile',
+	  'studyName',
+	  'paramValue',
+	  'outputDir',
 	 );
 }
 
