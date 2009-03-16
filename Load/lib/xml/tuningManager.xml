@@ -3465,12 +3465,12 @@ select distinct sim.similarity_id,
        sim.min_query_start startm, 
        sim.max_query_end end, 
        decode (sim.similarity_is_reversed, 0, '+1', 1, '-1', '.') strand, 
-       substr('Score=' || sim.similarity_score || ',' || 
-              'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||','|| 
-              'Defline=' || extt.description || ',' || 
-              'PercentIdentity=' || sim.percent_identical || ',' ||
-              'PercentPositive=' || sim.percent_positive || ',' ||
-              'TStart=' || sim.min_query_start || ',' || 
+       substr('Score=' || sim.similarity_score || ';;' || 
+              'Expect=' || (sim.pvalue_mant || 'e' ||sim.pvalue_exp)||';;'|| 
+              'Defline=' || extt.description || ';;' || 
+              'PercentIdentity=' || sim.percent_identical || ';;' ||
+              'PercentPositive=' || sim.percent_positive || ';;' ||
+              'TStart=' || sim.min_query_start || ';;' || 
               'TStop=' || sim.max_query_end, 1, 400) atts 
 from apidb.SimilaritySpanLocation sim, dots.ExternalAaSequence extt, 
      dots.NaSequence extq
