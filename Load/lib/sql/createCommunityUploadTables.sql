@@ -70,6 +70,7 @@ CREATE TABLE uploads.UserFile
   OwnerUserId   VARCHAR2(40)   NOT NULL, /* userlogins3.users.signature */
   Title         VARCHAR(4000),
   Notes         VARCHAR(4000),
+  PROJECT_NAME  VARCHAR(200),
   CONSTRAINT fieldid_pkey   PRIMARY KEY (UserFileId)
 );
 
