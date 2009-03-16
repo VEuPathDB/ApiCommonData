@@ -391,7 +391,7 @@ sub undoTables {
   return ('Core.Algorithm',
 	  'DoTS.NALocation',
 	  'DoTS.ArrayElementFeature',
-	  'DoTS.NAFeature',
+	  'DoTS.SAGETagFeature',
 	 );
 }
 

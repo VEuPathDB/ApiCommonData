@@ -467,6 +467,17 @@ sub getContactForUser {
   return $contact;
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('SRes.Contact',
+	  'RAD.LogicalGroupLink',
+	  'RAD.LogicalGroup',
+	  'RAD.ProtocolParam',
+	  'RAD.Protocol',
+	  'Study.OntologyEntry',
+	 );
+}
 
 
 1;
