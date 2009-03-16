@@ -384,4 +384,16 @@ sub getNaSeqDesc {
   return $name;
 }
 
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('Core.Algorithm',
+	  'DoTS.NALocation',
+	  'DoTS.ArrayElementFeature',
+	  'DoTS.NAFeature',
+	 );
+}
+
+
 1;
