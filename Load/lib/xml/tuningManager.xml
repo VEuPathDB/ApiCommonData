@@ -3456,6 +3456,7 @@ create table apidb.blastx&1
       (similarity_id, name, score, pvalue, na_sequence_id, startm, end, strand, atts,
        constraint blastx&1_pk primary key(na_sequence_id, startm, pvalue, end, similarity_id))
 organization index
+nologging
 as
 select distinct sim.similarity_id,
        extt.source_id name, 
