@@ -7,19 +7,22 @@ use strict;
 
 my ($excelDir, $outDir);
 
+my $newFormat =0;
+
 &GetOptions("excelDir=s" => \$excelDir,
 	    "outDir=s" => \$outDir,
+            "newFormat!" => \$newFormat,
 	   );
 
 if (!$excelDir || !$outDir) {
-  die "usage: createEpitopeFilesFromExcel --excelDir <DIRPATH> --outDir <DIRPATH>\n";
+  die "usage: createEpitopeFilesFromExcel --excelDir <DIRPATH> --outDir <DIRPATH>  [--newFormat]\n";
 }
 
-&createEpitopeFiles($excelDir,$outDir);
+&createEpitopeFiles($excelDir,$outDir,$newFormat);
 &createEpitopeFastaFiles($outDir);
 
 sub createEpitopeFiles{
-  my ($excelDir,$outDir) = @_;
+  my ($excelDir,$outDir,$newFormat) = @_;
 
   unless (-d $outDir){
     my $cmd = "mkdir -p $outDir";
@@ -43,7 +46,9 @@ sub createEpitopeFiles{
       $outFile =~ s/(\w+).\w+/$1/;
       $outFile = "$outDir/$outFile.txt";
 
-      my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile";
+      my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile ";
+
+      $cmd .= "--newFormat" if $newFormat;
 
       &exeCmd($cmd);
 

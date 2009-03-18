@@ -9,16 +9,18 @@ use Bio::Tools::GFF;
 use Getopt::Long qw(GetOptions);
 
 my $verbose = 0;
+my $newFormat = 0;
 my $inputFile;
 my $outputFile;
 
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s"     => \$inputFile,
            "outputFile=s"    => \$outputFile,
+	   "newFormat!"        => \$newFormat,
           );
 
 unless (-e $inputFile) {
-  die "Must supply a valid input file!\nUsage: extractFromExcel --inputFile <FILE> --outputFile <FILE> [--verbose]";
+  die "Must supply a valid input file!\nUsage: extractFromExcel --inputFile <FILE> --outputFile <FILE> [--verbose][--newFormat] ";
 }
 
 my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
@@ -30,13 +32,25 @@ open(OUT, ">> $outputFile");
 print OUT "Accession\tIEDB ID\tStrain\tSequence\tEpitope Name\n";
 
 while(my $data = $spreadSheet->getNextRow()){
-  next unless $data;
 
-  my $iedbId = $$data[1];
-  my $epiName = $$data[2];
-  my $seq = $$data[4];
-  my $accession = $$data[10];
-  my $strain = $$data[7];
+    my ($iedbId,$epiName,$seq,$accession,$strain);
+    next unless $data;
+    if ($newFormat){
+	$iedbId = $$data[0];
+	$epiName = $$data[2];
+	$seq = $$data[1];
+	$seq =~ s/(\S+?)\.*/$1/g;
+	$seq =~ s/\d*//g;
+	$accession = $$data[0];
+	$strain = $$data[3];
+
+    }else{
+	$iedbId = $$data[1];
+	$epiName = $$data[2];
+	$seq = $$data[4];
+	$accession = $$data[10];
+	$strain = $$data[7];
+    }
 
   print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
 }
