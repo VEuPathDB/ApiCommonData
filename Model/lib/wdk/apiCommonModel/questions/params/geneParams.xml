@@ -4722,7 +4722,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <sqlQuery name="GeneTypes" excludeProjects="ApiDB">
             <column name="internal"/>
             <column name="term"/>
-            <sql excludeProjects="CryptoDB,TrichDB">
+            <sql excludeProjects="CryptoDB,TrichDB,TritrypDB">
               SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
                    sequence_ontology_id AS internal
               FROM sres.SequenceOntology
@@ -4752,6 +4752,17 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                                   'tRNA_encoding',
                                   'non_protein_coding',
                                   'repeat_region')
+            </sql>
+            <sql includeProjects="TritrypDB">
+              SELECT REPLACE(REPLACE(REPLACE(term_name, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term,
+                   sequence_ontology_id AS internal
+              FROM sres.SequenceOntology
+              WHERE term_name IN ('protein_coding',
+                                  'rRNA_encoding',
+                                  'snoRNA_encoding',
+                                  'tRNA_encoding',
+                                  'snRNA_encoding',
+                                  'non_protein_coding')
             </sql>
         </sqlQuery>
 
