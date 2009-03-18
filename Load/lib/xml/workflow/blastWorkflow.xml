@@ -65,7 +65,7 @@
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out</paramValue>
       <paramValue name="idType">subject</paramValue>
       <paramValue name="outputFile">$$dataDir$$/blastSimIds.out</paramValue>
-      <depends name="mirrorFromCluster"/>
+      <depends name="filterResultsByTaxon"/>
      </step>
 
     <step name="loadSubjectSubset" stepClass="ApiCommonData::Load::WorkflowSteps::InsertFastaSubset" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset,plugin">

@@ -24,7 +24,6 @@ sub run {
 
   if ($outputBlastDbDir ne $relativeDir) {
     $fileToFormat = "$localDataDir/$outputBlastDbDir/$filename";
-    $self->runCmd(0,"ln -s $localDataDir/$inputFile $fileToFormat");
   }
 
   if ($test) {
@@ -33,8 +32,16 @@ sub run {
   }
 
   if ($undo) {
+    if ($outputBlastDbDir ne $relativeDir) {
+      $self->runCmd(0,"rm -f $fileToFormat");
+    }
     $self->runCmd(0, "rm -f ${fileToFormat}.p*");
-  } else {
+  }
+
+  else {
+    if ($outputBlastDbDir ne $relativeDir) {
+      $self->runCmd(0,"ln -s $localDataDir/$inputFile $fileToFormat");
+    }
     $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
   }
 }

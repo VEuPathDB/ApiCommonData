@@ -79,9 +79,9 @@ sub testInputFile {
   if($directory){
       $fileName =~ s/\*//g;
       my @inputFiles = $self->getInputFiles(1,$directory,$fileName);
-      $self->error("Input file '$directory and $fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $inputFiles[0];
+      $self->error("Input file '$directory and $fileName' for param '$paramName' in step '$self->{name}' does not exist") unless -e $inputFiles[0];
   }else {
-      $self->error("Input file '$fileName' for param $paramName in step '$self->{name}' does not exist") unless -e $fileName;
+      $self->error("Input file '$fileName' for param '$paramName' in step '$self->{name}' does not exist") unless -e $fileName;
   }
 
 }
