@@ -2381,12 +2381,12 @@ SELECT f.na_feature_id   as na_feature_id,
        CASE 
           WHEN a.name like '%H3K9%' then 'H3K9ac'
           WHEN a.name like '%H3K4%' then 'H3K4me3'
-          WHEN a.name like '%K5-K8-K12-K16%' then 'H4(K5-K8-K12-K16)ac'
+          WHEN a.name like '%K5,K8,K12,K16%' then 'H4(K5-K8-K12-K16)ac'
        ELSE 'unknown' 
        END as antibody,
        CASE
           WHEN a.name like '%DMSO%' then 'DMSO Control'
-          WHEN a.name like 'FR235222' then 'FR235222 (Drug A)'
+          WHEN a.name like '%FR235222%' then 'FR235222 (Drug A)'
        ELSE 'none'
        END as treatment,
        CASE 
