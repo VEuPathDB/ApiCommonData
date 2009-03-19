@@ -20,9 +20,14 @@ sub run {
   if ($test) {
       $self->testInputFile('inputFile', "$localDataDir/$inputFile");
       $self->testInputFile('outputDir', "$localDataDir/$outputDir");
-      $self->runCmdOnCluster(0,"echo test > $computeClusterDataDir/$outputDir/test.nib");
+      $self->runCmdOnCluster(0,"echo test > $computeClusterDataDir/$outputDir/test.nib") unless $undo;
   }
-  $self->runCmdOnCluster($test,$cmd) unless $undo;
+
+  if ($undo) {
+    $self->runCmdOnCluster($test,"rm -f $computeClusterDataDir/$outputDir/test.nib");
+  } else {
+    $self->runCmdOnCluster($test,$cmd);
+  }
 }
 
 sub getParamDeclaration {
