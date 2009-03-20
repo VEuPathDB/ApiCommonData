@@ -5,24 +5,25 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($excelDir, $outDir);
+my ($excelDir,$antigenDir, $outDir);
 
 my $newFormat =0;
 
 &GetOptions("excelDir=s" => \$excelDir,
+	    "antigenDir=s" => \$antigenDir,
 	    "outDir=s" => \$outDir,
             "newFormat!" => \$newFormat,
 	   );
 
 if (!$excelDir || !$outDir) {
-  die "usage: createEpitopeFilesFromExcel --excelDir <DIRPATH> --outDir <DIRPATH>  [--newFormat]\n";
+  die "usage: createEpitopeFilesFromExcel --excelDir <DIRPATH> [--antigenDir <DIRPATH>] --outDir <DIRPATH>  [--newFormat]\n";
 }
 
-&createEpitopeFiles($excelDir,$outDir,$newFormat);
+&createEpitopeFiles($excelDir,$outDir,$newFormat,$antigenDir);
 &createEpitopeFastaFiles($outDir);
 
 sub createEpitopeFiles{
-  my ($excelDir,$outDir,$newFormat) = @_;
+  my ($excelDir,$outDir,$newFormat,$antigenDir) = @_;
 
   unless (-d $outDir){
     my $cmd = "mkdir -p $outDir";
@@ -42,13 +43,16 @@ sub createEpitopeFiles{
       my $inFile = "$excelDir/$file";
       next unless qx(od -c $inFile | head -1 |egrep '376 067 000 043|320 317 021 340|333 245-000 000 000'); # MS Office format
 
-      my $outFile = $file;
-      $outFile =~ s/(\w+).\w+/$1/;
+      my ($outFile,$extension) = split('\.',$file);
       $outFile = "$outDir/$outFile.txt";
 
       my $cmd = "extractFromExcel --inputFile $inFile --outputFile $outFile ";
 
-      $cmd .= "--newFormat" if $newFormat;
+      $cmd .= "--newFormat " if $newFormat;
+
+      if (-d $antigenDir){
+	  $cmd .= "--inputAntigenFile $antigenDir/$file";	  
+      }
 
       &exeCmd($cmd);
 
@@ -78,8 +82,7 @@ sub createEpitopeFastaFiles{
 
 	next unless -f $inFile;
 
-	my $outFile = $file;
-	$outFile =~ s/(\w+).\w+/$1/;
+        my ($outFile,$extension) = split('\.',$file);
 	$outFile = "$outputDir/$outFile.fsa";
 
 	my $cmd = "generateEpitopeFastaFile --inputFile $inFile --outputFile $outFile";
