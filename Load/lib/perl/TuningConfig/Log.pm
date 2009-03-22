@@ -8,6 +8,7 @@ BEGIN {
   # returns the value accreted so far.
 
   my $log;
+  my $logPreamble;
   my $updateNeededFlag;
   my $updatePerformedFlag;
   my $errorsEncounteredFlag;
@@ -25,8 +26,19 @@ BEGIN {
     $log .= "$message\n";
   }
 
+  sub addLogPreamble {
+    my ($message) = @_;
+
+    $message =~ s/\n/\n$indentString/;
+    $message = $indentString . $message;
+
+    $| = 1;
+    print "$message\n";
+    $logPreamble .= "$message\n";
+  }
+
   sub getLog {
-    return $log;
+    return $logPreamble . $log;
   }
 
   sub increaseIndent {

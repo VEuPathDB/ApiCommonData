@@ -17,7 +17,7 @@ my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
-ApiCommonData::Load::TuningConfig::Log::addLog("Starting tuningManager as "
+ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager as "
 					       . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
@@ -196,32 +196,47 @@ eval {
   cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
 
   # summary
-  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Summary");
   if (!$tableCount) {
     ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
   } else {
-    ApiCommonData::Load::TuningConfig::Log::addLog("$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken");
+    my $summaryString = "\n$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken";
+    $summaryString .= " -- tuningManager ran successfully"
+      if !ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
+    ApiCommonData::Load::TuningConfig::Log::addLogPreamble($summaryString);
   }
 
   # list broken tables
   if ($brokenCount) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("   broken table(s):");
+    ApiCommonData::Load::TuningConfig::Log::addLogPreamble("   broken table(s):");
     foreach my $table (keys(%tuningTables)) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("     " . $tuningTables{$table}->getName())
+      ApiCommonData::Load::TuningConfig::Log::addLogPreamble("     " . $tuningTables{$table}->getName())
 	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
     }
+
+  # list updated/outdated tables
+  if ($neededUpdateCount) {
+    if ($doUpdate) {
+      ApiCommonData::Load::TuningConfig::Log::addLogPreamble("   table(s) updated:");
+    } else {
+      ApiCommonData::Load::TuningConfig::Log::addLogPreamble("   table(s) needing update:");
+    }
+    foreach my $table (keys(%tuningTables)) {
+      ApiCommonData::Load::TuningConfig::Log::addLogPreamble("     " . $tuningTables{$table}->getName())
+	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "neededUpdate";
+    }
+  }
 
   }
 
 
   if (!$indexesConfigured) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("No tuningIndex entities were defined in the config file");
+    ApiCommonData::Load::TuningConfig::Log::addLogPreamble("No tuningIndex entities were defined in the config file");
   } elsif ($missingIndexes) {
-    ApiCommonData::Load::TuningConfig::Log::addLog($missingIndexes . " of the "
+    ApiCommonData::Load::TuningConfig::Log::addLogPreamble($missingIndexes . " of the "
 						   . $indexesConfigured
 						   . " indexes configured were found to be missing");
   } else {
-    ApiCommonData::Load::TuningConfig::Log::addLog("All "
+    ApiCommonData::Load::TuningConfig::Log::addLogPreamble("All "
 						   . $indexesConfigured
 						   . " indexes were found to exist.");
   }
@@ -234,13 +249,21 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog($@)
 
 releaseLockForUpdate();
 
-# set last update/r in registry if we did a successful full update (and made changes)
-$tuningRegistry->setLastUpdate()
+# set last updater in registry if we did a successful full update (and made changes)
+$tuningRegistry->setLastUpdater()
   if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
 
-# set last check/er in registry if we found everything up to date
-$tuningRegistry->setLastCheck()
-  if !$tables && !$neededUpdateCount;
+# set last checker
+$tuningRegistry->setLastChecker()
+  if !$tables && !$doUpdate;
+$tuningRegistry->setLastUpdater()
+  if !$tables && !$doUpdate;
+
+$tuningRegistry->setOk()
+  if !$tables && !$neededUpdateCount && !$brokenCount;
+
+$tuningRegistry->setOutdated()
+  if $neededUpdateCount || $brokenCount;
 
 # if a temporary config-file dir was checked out from svn, delete it now
 if ($configDir) {
@@ -252,7 +275,7 @@ if ($configDir) {
 my $elapsed = time - $startTime;
 my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
 
-ApiCommonData::Load::TuningConfig::Log::addLog(time - $startTime .
+ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
 
 $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
@@ -474,8 +497,15 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
+
+    if (!ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag()) {
+      ApiCommonData::Load::TuningConfig::Log::addLog(". . . dropping");
+      $dbh->do("drop table $table")
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    }
   }
+
   $stmt->finish();
 
   # check for apidb.ObsoleteTuningTable records whose tables don't exist

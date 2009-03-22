@@ -63,7 +63,7 @@ sub getInstanceName {
     return($self->{instance_name});
 }
 
-sub setLastUpdate {
+sub setLastUpdater {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
@@ -71,7 +71,7 @@ sub setLastUpdate {
 
     my $sql = <<SQL;
       update apidb.TuningInstance\@apidb.login_comment
-      set last_update = sysdate, last_updater = '$processInfo'
+      set last_updater = '$processInfo'
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
@@ -79,7 +79,7 @@ SQL
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
-sub setLastCheck {
+sub setLastChecker {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
@@ -87,7 +87,39 @@ sub setLastCheck {
 
     my $sql = <<SQL;
       update apidb.TuningInstance\@apidb.login_comment
-      set last_check = sysdate, last_checker = '$processInfo'
+      set last_checker = '$processInfo'
+      where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
+SQL
+
+    $dbh->do($sql)
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+}
+
+sub setOk {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+    my $sql = <<SQL;
+      update apidb.TuningInstance\@apidb.login_comment
+      set last_ok = sysdate, outdated_since = null
+      where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
+SQL
+
+    $dbh->do($sql)
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+}
+
+sub setOutdated {
+    my ($self) = @_;
+
+    my $dbh = $self->{dbh};
+    my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+
+    my $sql = <<SQL;
+      update apidb.TuningInstance\@apidb.login_comment
+      set outdated_since = sysdate
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
