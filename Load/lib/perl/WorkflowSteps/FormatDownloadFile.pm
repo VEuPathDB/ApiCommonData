@@ -23,13 +23,14 @@ sub run {
 
       $self->testInputFile('inputFile', "$apiSiteFilesDir/$inputFile");
       $self->testInputFile('outputDir', "$apiSiteFilesDir/$outputDir");
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.test");
+      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.xnd");
 
-  }elsif($undo) {
+  }
+
+  if($undo) {
 
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputDir/${formattedFileName}.x*");
-  }
-  else{
+  } else{
 
     if($args =~/\-p/){
 

@@ -47,7 +47,9 @@ sub run {
 
   if ($test) {
     $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
-  }elsif($undo){
+  }
+  
+  if($undo){
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputFile");
   }else{
     $self->runCmd($test, $cmd);
