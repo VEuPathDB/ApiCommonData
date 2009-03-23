@@ -40,7 +40,6 @@ INSERT INTO comments2.TargetCategory (target_category_id, category, comment_targ
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(15, 'Characteristics/Overview', 'snp');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(16, 'Gene Context', 'snp');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(17, 'Strains', 'snp');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(18, 'strains', 'snp');
 
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(19, 'Characteristics/Overview', 'est');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(20, 'Alignment', 'est');
